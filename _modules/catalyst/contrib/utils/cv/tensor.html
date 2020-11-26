@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.utils.cv.tensor &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.contrib.utils.cv.tensor &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -318,7 +318,6 @@
               
   <h1>Source code for catalyst.contrib.utils.cv.tensor</h1><div class="highlight"><pre>
 <span></span><span class="c1"># flake8: noqa</span>
-<span class="c1"># @TODO: code formatting issue for 20.07 release</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -330,7 +329,15 @@
 
 
 <div class="viewcode-block" id="tensor_from_rgb_image"><a class="viewcode-back" href="../../../../../api/utils.html#catalyst.contrib.utils.cv.tensor.tensor_from_rgb_image">[docs]</a><span class="k">def</span> <span class="nf">tensor_from_rgb_image</span><span class="p">(</span><span class="n">image</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates tensor from RGB image.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        image: RGB image stored as np.ndarray</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tensor</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">moveaxis</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
     <span class="n">image</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>

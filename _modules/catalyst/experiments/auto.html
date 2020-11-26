@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.experiments.supervised &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.experiments.auto &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -290,7 +290,7 @@
         
           <li><a href="../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.experiments.supervised</li>
+      <li>catalyst.experiments.auto</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -316,28 +316,24 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.experiments.supervised</h1><div class="highlight"><pre>
+  <h1>Source code for catalyst.experiments.auto</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 
 <span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">ReduceLROnPlateau</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.criterion</span> <span class="kn">import</span> <span class="n">CriterionCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.optimizer</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AMPOptimizerCallback</span><span class="p">,</span>
-    <span class="n">IOptimizerCallback</span><span class="p">,</span>
-    <span class="n">OptimizerCallback</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.optimizer</span> <span class="kn">import</span> <span class="n">IOptimizerCallback</span><span class="p">,</span> <span class="n">OptimizerCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.scheduler</span> <span class="kn">import</span> <span class="n">ISchedulerCallback</span><span class="p">,</span> <span class="n">SchedulerCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.functional</span> <span class="kn">import</span> <span class="n">check_callback_isinstance</span>
 <span class="kn">from</span> <span class="nn">catalyst.experiments.experiment</span> <span class="kn">import</span> <span class="n">Experiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">check_amp_available</span>
 
 
-<div class="viewcode-block" id="SupervisedExperiment"><a class="viewcode-back" href="../../../api/experiments.html#catalyst.experiments.SupervisedExperiment">[docs]</a><span class="k">class</span> <span class="nc">SupervisedExperiment</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
+<span class="c1"># @TODO: should be mixin-based</span>
+<div class="viewcode-block" id="AutoCallbackExperiment"><a class="viewcode-back" href="../../../api/experiments.html#catalyst.experiments.AutoCallbackExperiment">[docs]</a><span class="k">class</span> <span class="nc">AutoCallbackExperiment</span><span class="p">(</span><span class="n">Experiment</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Supervised experiment.</span>
+<span class="sd">    Auto-optimized experiment.</span>
 
 <span class="sd">    The main difference with Experiment that it will</span>
 <span class="sd">    add several callbacks by default if you haven&#39;t.</span>
@@ -361,7 +357,7 @@
 <span class="sd">            will raise exception if needed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="SupervisedExperiment.get_callbacks"><a class="viewcode-back" href="../../../api/experiments.html#catalyst.experiments.SupervisedExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="AutoCallbackExperiment.get_callbacks"><a class="viewcode-back" href="../../../api/experiments.html#catalyst.experiments.AutoCallbackExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Override of ``BaseExperiment.get_callbacks`` method.</span>
 <span class="sd">        Will add several of callbacks by default in case they missed.</span>
@@ -380,12 +376,7 @@
         <span class="c1"># default_callbacks = [(Name, InterfaceClass, InstanceFactory)]</span>
         <span class="n">default_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="n">is_amp_enabled</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;amp&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check_amp_available</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="n">optimizer_cls</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">AMPOptimizerCallback</span> <span class="k">if</span> <span class="n">is_amp_enabled</span> <span class="k">else</span> <span class="n">OptimizerCallback</span>
-        <span class="p">)</span>
+        <span class="n">optimizer_cls</span> <span class="o">=</span> <span class="n">OptimizerCallback</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span>
@@ -423,7 +414,7 @@
         <span class="k">return</span> <span class="n">callbacks</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SupervisedExperiment&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;AutoCallbackExperiment&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

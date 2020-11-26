@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics.functional &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.metrics.functional &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -706,11 +706,6 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        wrapped metric function with List[Dict] output</span>
-
-<span class="sd">    Raises:</span>
-<span class="sd">        NotImplementedError: if metrics returned values are out of</span>
-<span class="sd">            torch.Tensor, int, float, Dict union.</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">metric_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">metric_fn</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="n">topk_args</span><span class="p">)</span>
 

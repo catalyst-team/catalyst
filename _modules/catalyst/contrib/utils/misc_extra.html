@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.cv.reader &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.contrib.utils.misc_extra &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -290,7 +290,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.data.cv.reader</li>
+      <li>catalyst.contrib.utils.misc_extra</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -316,99 +316,87 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.data.cv.reader</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+  <h1>Source code for catalyst.contrib.utils.misc_extra</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">tee</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.contrib.utils.cv.image</span> <span class="kn">import</span> <span class="n">imread</span><span class="p">,</span> <span class="n">mimread</span>
-<span class="kn">from</span> <span class="nn">catalyst.data.reader</span> <span class="kn">import</span> <span class="n">ReaderSpec</span>
-
-
-<div class="viewcode-block" id="ImageReader"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.cv.reader.ImageReader">[docs]</a><span class="k">class</span> <span class="nc">ImageReader</span><span class="p">(</span><span class="n">ReaderSpec</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Image reader abstraction. Reads images from a ``csv`` dataset.&quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="ImageReader.__init__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.cv.reader.ImageReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">output_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">rootpath</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">grayscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            input_key: key to use from annotation dict</span>
-<span class="sd">            output_key: key to use to store the result,</span>
-<span class="sd">                default: ``input_key``</span>
-<span class="sd">            rootpath: path to images dataset root directory</span>
-<span class="sd">                (so your can use relative paths in annotations)</span>
-<span class="sd">            grayscale: flag if you need to work only</span>
-<span class="sd">                with grayscale images</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="n">output_key</span> <span class="ow">or</span> <span class="n">input_key</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span> <span class="o">=</span> <span class="n">rootpath</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">grayscale</span> <span class="o">=</span> <span class="n">grayscale</span></div>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reads a row from your annotations dict with filename and</span>
-<span class="sd">        transfer it to an image</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            element: elem in your dataset</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            np.ndarray: Image</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">image_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">])</span>
-        <span class="n">img</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span>
-            <span class="n">image_name</span><span class="p">,</span> <span class="n">rootpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span><span class="p">,</span> <span class="n">grayscale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grayscale</span>
-        <span class="p">)</span>
-
-        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">:</span> <span class="n">img</span><span class="p">}</span>
-        <span class="k">return</span> <span class="n">output</span></div>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="MaskReader"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.cv.reader.MaskReader">[docs]</a><span class="k">class</span> <span class="nc">MaskReader</span><span class="p">(</span><span class="n">ReaderSpec</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Mask reader abstraction. Reads masks from a `csv` dataset.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="pairwise"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.misc_extra.pairwise">[docs]</a><span class="k">def</span> <span class="nf">pairwise</span><span class="p">(</span><span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Iterate sequences by pairs.</span>
 
-<div class="viewcode-block" id="MaskReader.__init__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.cv.reader.MaskReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">output_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">rootpath</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">clip_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Args:</span>
-<span class="sd">            input_key: key to use from annotation dict</span>
-<span class="sd">            output_key: key to use to store the result,</span>
-<span class="sd">                default: ``input_key``</span>
-<span class="sd">            rootpath: path to images dataset root directory</span>
-<span class="sd">                (so your can use relative paths in annotations)</span>
-<span class="sd">            clip_range (Tuple[int, int]): lower and upper interval edges,</span>
-<span class="sd">                image values outside the interval are clipped</span>
-<span class="sd">                to the interval edges</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="n">output_key</span> <span class="ow">or</span> <span class="n">input_key</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span> <span class="o">=</span> <span class="n">rootpath</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">clip</span> <span class="o">=</span> <span class="n">clip_range</span></div>
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; for i in pairwise([1, 2, 5, -3]):</span>
+<span class="sd">        &gt;&gt;&gt;     print(i)</span>
+<span class="sd">        (1, 2)</span>
+<span class="sd">        (2, 5)</span>
+<span class="sd">        (5, -3)</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reads a row from your annotations dict with filename and</span>
-<span class="sd">        transfer it to a mask</span>
+<span class="sd">    Args:</span>
+<span class="sd">        iterable: Any iterable sequence</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            element: elem in your dataset.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            np.ndarray: Mask</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">mask_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">])</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="n">mimread</span><span class="p">(</span><span class="n">mask_name</span><span class="p">,</span> <span class="n">rootpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span><span class="p">,</span> <span class="n">clip_range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clip</span><span class="p">)</span>
-
-        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">:</span> <span class="n">mask</span><span class="p">}</span>
-        <span class="k">return</span> <span class="n">output</span></div>
+<span class="sd">    Returns:</span>
+<span class="sd">        pairwise iterator</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">tee</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="nb">next</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ImageReader&quot;</span><span class="p">,</span> <span class="s2">&quot;MaskReader&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="make_tuple"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.misc_extra.make_tuple">[docs]</a><span class="k">def</span> <span class="nf">make_tuple</span><span class="p">(</span><span class="n">tuple_like</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a tuple if given ``tuple_like`` value isn&#39;t list or tuple.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tuple_like: tuple like object - list or tuple</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple or list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tuple_like</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">tuple_like</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tuple_like</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
+        <span class="k">else</span> <span class="p">(</span><span class="n">tuple_like</span><span class="p">,</span> <span class="n">tuple_like</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">tuple_like</span></div>
+
+
+<div class="viewcode-block" id="args_are_not_none"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.misc_extra.args_are_not_none">[docs]</a><span class="k">def</span> <span class="nf">args_are_not_none</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check that all arguments are not ``None``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *args: values  # noqa: RST213</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bool: True if all value were not None, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="find_value_ids"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.misc_extra.find_value_ids">[docs]</a><span class="k">def</span> <span class="nf">find_value_ids</span><span class="p">(</span><span class="n">it</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        it: list of any</span>
+<span class="sd">        value: query element</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        indices of the all elements equal x0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">it</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># could be very slow</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="k">if</span> <span class="n">el</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">inds</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;args_are_not_none&quot;</span><span class="p">,</span> <span class="s2">&quot;make_tuple&quot;</span><span class="p">,</span> <span class="s2">&quot;pairwise&quot;</span><span class="p">,</span> <span class="s2">&quot;find_value_ids&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

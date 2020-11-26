@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.tools.meters.classerrormeter &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.contrib.utils.torch_extra &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -290,7 +290,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.tools.meters.classerrormeter</li>
+      <li>catalyst.contrib.utils.torch_extra</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -316,79 +316,90 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.tools.meters.classerrormeter</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numbers</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+  <h1>Source code for catalyst.contrib.utils.torch_extra</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.tools.meters</span> <span class="kn">import</span> <span class="n">meter</span>
+
+<div class="viewcode-block" id="calculate_tp_fp_fn"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.torch_extra.calculate_tp_fp_fn">[docs]</a><span class="k">def</span> <span class="nf">calculate_tp_fp_fn</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculated TP, FP, FN statistics from confusion matrix.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        confusion_matrix: confusion matrix, np.ndarray</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dictionary with TP, FP, FN statistics</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">true_positives</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">)</span>
+    <span class="n">false_positives</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-</span> <span class="n">true_positives</span>
+    <span class="n">false_negatives</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">true_positives</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;true_positives&quot;</span><span class="p">:</span> <span class="n">true_positives</span><span class="p">,</span>
+        <span class="s2">&quot;false_positives&quot;</span><span class="p">:</span> <span class="n">false_positives</span><span class="p">,</span>
+        <span class="s2">&quot;false_negatives&quot;</span><span class="p">:</span> <span class="n">false_negatives</span><span class="p">,</span>
+    <span class="p">}</span></div>
 
 
-<div class="viewcode-block" id="ClassErrorMeter"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.classerrormeter.ClassErrorMeter">[docs]</a><span class="k">class</span> <span class="nc">ClassErrorMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="calculate_confusion_matrix_from_arrays"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.torch_extra.calculate_confusion_matrix_from_arrays">[docs]</a><span class="k">def</span> <span class="nf">calculate_confusion_matrix_from_arrays</span><span class="p">(</span>
+    <span class="n">predictions</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">labels</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculate confusion matrix for a given set of classes.</span>
+<span class="sd">    If labels value is outside of the [0, num_classes) it is excluded.</span>
 
-<div class="viewcode-block" id="ClassErrorMeter.__init__"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.classerrormeter.ClassErrorMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">accuracy</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor method for the ``AverageValueMeter`` class.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">ClassErrorMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">topk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">topk</span><span class="p">)</span> <span class="k">if</span> <span class="n">topk</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">accuracy</span> <span class="o">=</span> <span class="n">accuracy</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
+<span class="sd">    Args:</span>
+<span class="sd">        predictions: model predictions</span>
+<span class="sd">        labels: ground truth labels</span>
+<span class="sd">        num_classes: number of classes</span>
 
-<div class="viewcode-block" id="ClassErrorMeter.reset"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.classerrormeter.ClassErrorMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sum</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">topk</span><span class="p">}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span></div>
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: confusion matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># @TODO: add `num_class`=None handling</span>
+    <span class="c1"># a long 2xn array with each column being a pixel pair</span>
+    <span class="n">replace_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">labels</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">predictions</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
 
-<div class="viewcode-block" id="ClassErrorMeter.add"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.classerrormeter.ClassErrorMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">output</span><span class="p">):</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-            <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">target</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="n">numbers</span><span class="o">.</span><span class="n">Number</span><span class="p">):</span>
-            <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">target</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span>
-            <span class="p">),</span> <span class="s2">&quot;wrong output size (1D or 2D expected)&quot;</span>
-            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">target</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;target and output do not match&quot;</span>
-        <span class="k">assert</span> <span class="p">(</span>
-            <span class="n">target</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="p">),</span> <span class="s2">&quot;target and output do not match&quot;</span>
-        <span class="n">topk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">topk</span>
-        <span class="n">maxk</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">topk</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># seems like Python3 wants int and not np.int64</span>
-        <span class="n">no</span> <span class="o">=</span> <span class="n">output</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">valid_index</span> <span class="o">=</span> <span class="n">replace_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span> <span class="o">&lt;</span> <span class="n">num_classes</span>
+    <span class="n">replace_indices</span> <span class="o">=</span> <span class="n">replace_indices</span><span class="p">[:,</span> <span class="n">valid_index</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
 
-        <span class="n">pred</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">topk</span><span class="p">(</span><span class="n">maxk</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">largest</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="nb">sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="n">correct</span> <span class="o">=</span> <span class="n">pred</span> <span class="o">==</span> <span class="n">target</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">pred</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">topk</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sum</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">no</span> <span class="o">-</span> <span class="n">correct</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">:</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="n">no</span></div>
-
-<div class="viewcode-block" id="ClassErrorMeter.value"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.classerrormeter.ClassErrorMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="p">(</span>
-                <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sum</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-            <span class="p">),</span> <span class="s2">&quot;invalid k (this k was not provided at construction time)&quot;</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">accuracy</span><span class="p">:</span>
-                <span class="k">return</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="mf">100.0</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sum</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">*</span> <span class="mf">100.0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">(</span><span class="n">topk</span><span class="p">)</span> <span class="k">for</span> <span class="n">topk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">topk</span><span class="p">]</span></div></div>
+    <span class="c1"># add up confusion matrix</span>
+    <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogramdd</span><span class="p">(</span>
+        <span class="n">replace_indices</span><span class="p">,</span>
+        <span class="n">bins</span><span class="o">=</span><span class="p">(</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">),</span>
+        <span class="nb">range</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)],</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ClassErrorMeter&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="calculate_confusion_matrix_from_tensors"><a class="viewcode-back" href="../../../../api/utils.html#catalyst.contrib.utils.torch_extra.calculate_confusion_matrix_from_tensors">[docs]</a><span class="k">def</span> <span class="nf">calculate_confusion_matrix_from_tensors</span><span class="p">(</span>
+    <span class="n">y_pred_logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">y_true</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate confusion matrix from tensors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        y_pred_logits: model logits</span>
+<span class="sd">        y_true: true labels</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray: confusion matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num_classes</span> <span class="o">=</span> <span class="n">y_pred_logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">y_pred_logits</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">predictions</span> <span class="o">=</span> <span class="n">y_pred</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">y_true</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">calculate_confusion_matrix_from_arrays</span><span class="p">(</span>
+        <span class="n">predictions</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">num_classes</span>
+    <span class="p">)</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;calculate_tp_fp_fn&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;calculate_confusion_matrix_from_arrays&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;calculate_confusion_matrix_from_tensors&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
              </article>

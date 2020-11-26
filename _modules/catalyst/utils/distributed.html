@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.distributed &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.utils.distributed &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -394,7 +394,17 @@
 
 
 <div class="viewcode-block" id="initialize_apex"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.initialize_apex">[docs]</a><span class="k">def</span> <span class="nf">initialize_apex</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">distributed_params</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepares model and optimizer for work with Nvidia Apex.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model: torch model</span>
+<span class="sd">        optimizer: torch optimizer</span>
+<span class="sd">        **distributed_params: extra params for ``apex.amp.initialize``</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        model and optimiezer, wrapped with Nvidia Apex initialization</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">import</span> <span class="nn">apex</span>
 
     <span class="n">amp_params</span> <span class="o">=</span> <span class="n">get_fn_default_params</span><span class="p">(</span>

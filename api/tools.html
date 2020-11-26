@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tools &mdash; Catalyst 20.11 documentation</title>
+  <title>Tools &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -342,15 +342,9 @@
 <li><p><a class="reference internal" href="#meters" id="id6">Meters</a></p>
 <ul>
 <li><p><a class="reference internal" href="#module-catalyst.tools.meters.meter" id="id7">Meter</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.tools.meters.apmeter" id="id8">AP Meter</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.tools.meters.aucmeter" id="id9">AUC Meter</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.tools.meters.averagevaluemeter" id="id10">Average Value Meter</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.tools.meters.classerrormeter" id="id11">Class Error Meter</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.tools.meters.confusionmeter" id="id12">Confusion Meter</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.tools.meters.mapmeter" id="id13">Map Meter</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.tools.meters.movingaveragevaluemeter" id="id14">Moving Average Value Meter</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.tools.meters.msemeter" id="id15">MSE Meter</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.tools.meters.ppv_tpr_f1_meter" id="id16">Precision-Recall-F1 Meter</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.tools.meters.averagevaluemeter" id="id8">Average Value Meter</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.tools.meters.confusionmeter" id="id9">Confusion Meter</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.tools.meters.ppv_tpr_f1_meter" id="id10">Precision-Recall-F1 Meter</a></p></li>
 </ul>
 </li>
 </ul>
@@ -423,13 +417,6 @@ Example of usage can be found in <a class="reference internal" href="core.html#c
 <span id="contrib"></span><h2><a class="toc-backref" href="#id4">Contrib</a><a class="headerlink" href="#module-catalyst.contrib.tools" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.contrib.tools.tensorboard">
 <span id="tensorboard"></span><h3><a class="toc-backref" href="#id5">Tensorboard</a><a class="headerlink" href="#module-catalyst.contrib.tools.tensorboard" title="Permalink to this headline">¶</a></h3>
-<dl class="simple">
-<dt>Tensorboard readers:</dt><dd><ul class="simple">
-<li><p><a class="reference internal" href="#catalyst.contrib.tools.tensorboard.EventsFileReader" title="catalyst.contrib.tools.tensorboard.EventsFileReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">EventsFileReader</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.contrib.tools.tensorboard.SummaryReader" title="catalyst.contrib.tools.tensorboard.SummaryReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">SummaryReader</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
 <dl class="exception">
 <dt id="catalyst.contrib.tools.tensorboard.EventReadingException">
 <em class="property">exception </em><code class="sig-prename descclassname">catalyst.contrib.tools.tensorboard.</code><code class="sig-name descname">EventReadingException</code><a class="reference internal" href="../_modules/catalyst/contrib/tools/tensorboard.html#EventReadingException"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.tools.tensorboard.EventReadingException" title="Permalink to this definition">¶</a></dt>
@@ -559,140 +546,8 @@ follow.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.tools.meters.apmeter">
-<span id="ap-meter"></span><h3><a class="toc-backref" href="#id8">AP Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.apmeter" title="Permalink to this headline">¶</a></h3>
-<p>The APMeter measures the average precision per class.</p>
-<dl class="class">
-<dt id="catalyst.tools.meters.apmeter.APMeter">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.meters.apmeter.</code><code class="sig-name descname">APMeter</code><a class="reference internal" href="../_modules/catalyst/tools/meters/apmeter.html#APMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.apmeter.APMeter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.tools.meters.meter.Meter" title="catalyst.tools.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.tools.meters.meter.Meter</span></code></a></p>
-<p>The APMeter is designed to operate on <cite>NxK</cite> Tensors <cite>output</cite> and
-<cite>target</cite>, and optionally a <cite>Nx1</cite> Tensor weight where:</p>
-<p>1. The <cite>output</cite> contains model output scores for <cite>N</cite> examples and
-<cite>K</cite> classes that ought to be higher when the model is more convinced
-that the example should be positively labeled, and smaller when the
-model believes the example should be negatively labeled
-(for instance, the output of a sigmoid function).</p>
-<p>2. The <cite>target</cite> contains only values 0 (for negative examples)
-and 1 (for positive examples).</p>
-<p>3. The <cite>weight</cite> ( &gt; 0) represents weight
-for each sample.</p>
-<dl class="method">
-<dt id="catalyst.tools.meters.apmeter.APMeter.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/apmeter.html#APMeter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.apmeter.APMeter.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method for the <code class="docutils literal notranslate"><span class="pre">APMeter</span></code> class.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.apmeter.APMeter.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">output: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em>, <em class="sig-param">weight: torch.Tensor = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/meters/apmeter.html#APMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.apmeter.APMeter.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a new observation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>output</strong> – NxK tensor that for each of the N examples
-indicates the probability of the example belonging to each of
-the K classes, according to the model. The probabilities should
-sum to one over all classes</p></li>
-<li><p><strong>target</strong> – binary NxK tensort that encodes which of the K
-classes are associated with the N-th input
-(eg: a row [0, 1, 0, 1] indicates that the example is
-associated with classes 2 and 4)</p></li>
-<li><p><strong>weight</strong> (<em>optional</em><em>, </em><em>Tensor</em>) – Nx1 tensor representing the weight for
-each example (each weight &gt; 0)</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.apmeter.APMeter.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/apmeter.html#APMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.apmeter.APMeter.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resets the meter with empty member variables.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.apmeter.APMeter.value">
-<code class="sig-name descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/tools/meters/apmeter.html#APMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.apmeter.APMeter.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the model”s average precision for each class.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>1xK tensor, with avg precision for each class k</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>torch.Tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-catalyst.tools.meters.aucmeter">
-<span id="auc-meter"></span><h3><a class="toc-backref" href="#id9">AUC Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.aucmeter" title="Permalink to this headline">¶</a></h3>
-<p>The AUCMeter measures the area under the receiver-operating characteristic
-(ROC) curve for binary classification problems. The area under the curve
-(AUC) can be interpreted as the probability that, given a randomly selected
-positive     example and a randomly selected negative example, the positive
-example is assigned a higher score by the classification model than the
-negative example.</p>
-<dl class="class">
-<dt id="catalyst.tools.meters.aucmeter.AUCMeter">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.meters.aucmeter.</code><code class="sig-name descname">AUCMeter</code><a class="reference internal" href="../_modules/catalyst/tools/meters/aucmeter.html#AUCMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.aucmeter.AUCMeter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.tools.meters.meter.Meter" title="catalyst.tools.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.tools.meters.meter.Meter</span></code></a></p>
-<p>The AUCMeter is designed to operate on one-dimensional Tensors <cite>output</cite>
-and <cite>target</cite>, where:</p>
-<p>1. The <cite>output</cite> contains model output scores that ought to be higher
-when the model is more convinced that the example should be positively
-labeled, and smaller when the model believes the example should be
-negatively labeled (for instance, the output of a sigmoid function)</p>
-<p>2. The <cite>target</cite> contains only values 0 (for
-negative examples) and 1 (for positive examples).</p>
-<dl class="method">
-<dt id="catalyst.tools.meters.aucmeter.AUCMeter.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/aucmeter.html#AUCMeter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.aucmeter.AUCMeter.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method for the <code class="docutils literal notranslate"><span class="pre">AUCMeter</span></code> class.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.aucmeter.AUCMeter.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">output: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/meters/aucmeter.html#AUCMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.aucmeter.AUCMeter.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update stored scores and targets.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>output</strong> – one-dimensional tensor <cite>output</cite></p></li>
-<li><p><strong>target</strong> – one-dimensional tensor <cite>target</cite></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.aucmeter.AUCMeter.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/meters/aucmeter.html#AUCMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.aucmeter.AUCMeter.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset stored scores and targets.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.aucmeter.AUCMeter.value">
-<code class="sig-name descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/aucmeter.html#AUCMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.aucmeter.AUCMeter.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return metric values of AUC, TPR and FPR.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>(AUC, TPR, FPR)</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>tuple of floats</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-catalyst.tools.meters.averagevaluemeter">
-<span id="average-value-meter"></span><h3><a class="toc-backref" href="#id10">Average Value Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.averagevaluemeter" title="Permalink to this headline">¶</a></h3>
+<span id="average-value-meter"></span><h3><a class="toc-backref" href="#id8">Average Value Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.averagevaluemeter" title="Permalink to this headline">¶</a></h3>
 <p>Average value meter</p>
 <dl class="class">
 <dt id="catalyst.tools.meters.averagevaluemeter.AverageValueMeter">
@@ -754,42 +609,8 @@ that have been updated online.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.tools.meters.classerrormeter">
-<span id="class-error-meter"></span><h3><a class="toc-backref" href="#id11">Class Error Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.classerrormeter" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.tools.meters.classerrormeter.ClassErrorMeter">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.meters.classerrormeter.</code><code class="sig-name descname">ClassErrorMeter</code><span class="sig-paren">(</span><em class="sig-param">topk=None</em>, <em class="sig-param">accuracy=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/classerrormeter.html#ClassErrorMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.classerrormeter.ClassErrorMeter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.tools.meters.meter.Meter" title="catalyst.tools.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.tools.meters.meter.Meter</span></code></a></p>
-<p>&#64;TODO: Docs. Contribution is welcome.</p>
-<dl class="method">
-<dt id="catalyst.tools.meters.classerrormeter.ClassErrorMeter.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">topk=None</em>, <em class="sig-param">accuracy=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/classerrormeter.html#ClassErrorMeter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.classerrormeter.ClassErrorMeter.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method for the <code class="docutils literal notranslate"><span class="pre">AverageValueMeter</span></code> class.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.classerrormeter.ClassErrorMeter.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">output</em>, <em class="sig-param">target</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/meters/classerrormeter.html#ClassErrorMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.classerrormeter.ClassErrorMeter.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.classerrormeter.ClassErrorMeter.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/meters/classerrormeter.html#ClassErrorMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.classerrormeter.ClassErrorMeter.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.classerrormeter.ClassErrorMeter.value">
-<code class="sig-name descname">value</code><span class="sig-paren">(</span><em class="sig-param">k=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/classerrormeter.html#ClassErrorMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.classerrormeter.ClassErrorMeter.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-catalyst.tools.meters.confusionmeter">
-<span id="confusion-meter"></span><h3><a class="toc-backref" href="#id12">Confusion Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.confusionmeter" title="Permalink to this headline">¶</a></h3>
+<span id="confusion-meter"></span><h3><a class="toc-backref" href="#id9">Confusion Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.confusionmeter" title="Permalink to this headline">¶</a></h3>
 <p>Maintains a confusion matrix for a given classification problem.</p>
 <dl class="class">
 <dt id="catalyst.tools.meters.confusionmeter.ConfusionMeter">
@@ -852,187 +673,8 @@ targets.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.tools.meters.mapmeter">
-<span id="map-meter"></span><h3><a class="toc-backref" href="#id13">Map Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.mapmeter" title="Permalink to this headline">¶</a></h3>
-<p>The mAP meter measures the mean average precision over all classes.</p>
-<dl class="class">
-<dt id="catalyst.tools.meters.mapmeter.mAPMeter">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.meters.mapmeter.</code><code class="sig-name descname">mAPMeter</code><a class="reference internal" href="../_modules/catalyst/tools/meters/mapmeter.html#mAPMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.mapmeter.mAPMeter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.tools.meters.meter.Meter" title="catalyst.tools.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.tools.meters.meter.Meter</span></code></a></p>
-<p>This meter is a wrapper for
-<a class="reference internal" href="#catalyst.tools.meters.apmeter.APMeter" title="catalyst.tools.meters.apmeter.APMeter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.tools.meters.apmeter.APMeter</span></code></a>.
-The mAPMeter is designed to operate on <cite>NxK</cite> Tensors <cite>output</cite> and
-<cite>target</cite>, and optionally a <cite>Nx1</cite> Tensor weight where:</p>
-<p>1. The <cite>output</cite> contains model output scores for <cite>N</cite> examples and <cite>K</cite>
-classes that ought to be higher when the model is more convinced that
-the example should be positively labeled, and smaller when the model
-believes the example should be negatively labeled
-(for instance, the output of a sigmoid function)</p>
-<p>2. The <cite>target</cite> contains only values 0 (for negative examples) and 1
-(for positive examples)</p>
-<p>3. The <cite>weight</cite> ( &gt; 0) represents weight
-for each sample.</p>
-<dl class="method">
-<dt id="catalyst.tools.meters.mapmeter.mAPMeter.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/mapmeter.html#mAPMeter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.mapmeter.mAPMeter.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method for the <code class="docutils literal notranslate"><span class="pre">mAPMeter</span></code> class.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.mapmeter.mAPMeter.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">output: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em>, <em class="sig-param">weight: Optional[torch.Tensor] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/meters/mapmeter.html#mAPMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.mapmeter.mAPMeter.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update <cite>self.apmeter</cite>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>output</strong> – Model output scores as <cite>NxK</cite> tensor</p></li>
-<li><p><strong>target</strong> – Target scores as <cite>NxK</cite> tensor</p></li>
-<li><p><strong>weight</strong> (<em>Tensor</em><em>, </em><em>optional</em>) – Weight values for each sample
-as <cite>Nx1</cite> Tensor</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.mapmeter.mAPMeter.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/meters/mapmeter.html#mAPMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.mapmeter.mAPMeter.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset <cite>self.apmeter</cite>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.mapmeter.mAPMeter.value">
-<code class="sig-name descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/mapmeter.html#mAPMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.mapmeter.mAPMeter.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns mean of <cite>self.apmeter</cite> value.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>mAP scalar tensor</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>torch.Tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-catalyst.tools.meters.movingaveragevaluemeter">
-<span id="moving-average-value-meter"></span><h3><a class="toc-backref" href="#id14">Moving Average Value Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.movingaveragevaluemeter" title="Permalink to this headline">¶</a></h3>
-<p>Moving average meter calculates average for moving window of values.</p>
-<dl class="class">
-<dt id="catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.meters.movingaveragevaluemeter.</code><code class="sig-name descname">MovingAverageValueMeter</code><span class="sig-paren">(</span><em class="sig-param">windowsize</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/movingaveragevaluemeter.html#MovingAverageValueMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.tools.meters.meter.Meter" title="catalyst.tools.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.tools.meters.meter.Meter</span></code></a></p>
-<p>MovingAverageValueMeter stores mean and standard deviation
-for population of array that is handled like a queue during updates.
-Queue(window) is filled with zeros from the start by default.
-Meter updates are applied online, one value for each update.
-Meter values are moving average and moving standard deviation.</p>
-<dl class="method">
-<dt id="catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">windowsize</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/movingaveragevaluemeter.html#MovingAverageValueMeter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>windowsize</strong> – size of window of values, which is continuous
-and ends on last updated element</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">value: float</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/meters/movingaveragevaluemeter.html#MovingAverageValueMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds observation sample.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>value</strong> – scalar</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/meters/movingaveragevaluemeter.html#MovingAverageValueMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset sum, number of elements, moving variance and zero out window.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.value">
-<code class="sig-name descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/movingaveragevaluemeter.html#MovingAverageValueMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.movingaveragevaluemeter.MovingAverageValueMeter.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return mean and standard deviation of window.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>(window mean, window std)</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>tuple of floats</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-catalyst.tools.meters.msemeter">
-<span id="mse-meter"></span><h3><a class="toc-backref" href="#id15">MSE Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.msemeter" title="Permalink to this headline">¶</a></h3>
-<p>MSE and RMSE meters.</p>
-<dl class="class">
-<dt id="catalyst.tools.meters.msemeter.MSEMeter">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.meters.msemeter.</code><code class="sig-name descname">MSEMeter</code><span class="sig-paren">(</span><em class="sig-param">root: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/msemeter.html#MSEMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.msemeter.MSEMeter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.tools.meters.meter.Meter" title="catalyst.tools.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.tools.meters.meter.Meter</span></code></a></p>
-<p>This meter can handle MSE and RMSE.
-Root calculation can be toggled(not calculated by default).</p>
-<dl class="method">
-<dt id="catalyst.tools.meters.msemeter.MSEMeter.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">root: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/msemeter.html#MSEMeter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.msemeter.MSEMeter.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>root</strong> – Toggle between calculation of
-RMSE (True) and MSE (False)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.msemeter.MSEMeter.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">output: torch.Tensor</em>, <em class="sig-param">target: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/meters/msemeter.html#MSEMeter.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.msemeter.MSEMeter.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update squared error stored sum and number of elements.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>output</strong> – Model output tensor or numpy array</p></li>
-<li><p><strong>target</strong> – Target tensor or numpy array</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.msemeter.MSEMeter.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/meters/msemeter.html#MSEMeter.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.msemeter.MSEMeter.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset meter number of elements and squared error sum.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.meters.msemeter.MSEMeter.value">
-<code class="sig-name descname">value</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; float<a class="reference internal" href="../_modules/catalyst/tools/meters/msemeter.html#MSEMeter.value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.msemeter.MSEMeter.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate MSE and return RMSE or MSE.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Root of MSE if <cite>self.root</cite> is True else MSE</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-catalyst.tools.meters.ppv_tpr_f1_meter">
-<span id="precision-recall-f1-meter"></span><h3><a class="toc-backref" href="#id16">Precision-Recall-F1 Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.ppv_tpr_f1_meter" title="Permalink to this headline">¶</a></h3>
+<span id="precision-recall-f1-meter"></span><h3><a class="toc-backref" href="#id10">Precision-Recall-F1 Meter</a><a class="headerlink" href="#module-catalyst.tools.meters.ppv_tpr_f1_meter" title="Permalink to this headline">¶</a></h3>
 <p>In this module <strong>precision</strong>, <strong>recall</strong> and <strong>F1 score</strong>
 calculations are defined in separate functions.</p>
 <p><a class="reference internal" href="#catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter" title="catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PrecisionRecallF1ScoreMeter</span></code></a> can keep track for all three of these.</p>
@@ -1145,14 +787,8 @@ tp/fp/fn counts.</p>
 </li>
 <li><a class="reference internal" href="#meters">Meters</a><ul>
 <li><a class="reference internal" href="#module-catalyst.tools.meters.meter">Meter</a></li>
-<li><a class="reference internal" href="#module-catalyst.tools.meters.apmeter">AP Meter</a></li>
-<li><a class="reference internal" href="#module-catalyst.tools.meters.aucmeter">AUC Meter</a></li>
 <li><a class="reference internal" href="#module-catalyst.tools.meters.averagevaluemeter">Average Value Meter</a></li>
-<li><a class="reference internal" href="#module-catalyst.tools.meters.classerrormeter">Class Error Meter</a></li>
 <li><a class="reference internal" href="#module-catalyst.tools.meters.confusionmeter">Confusion Meter</a></li>
-<li><a class="reference internal" href="#module-catalyst.tools.meters.mapmeter">Map Meter</a></li>
-<li><a class="reference internal" href="#module-catalyst.tools.meters.movingaveragevaluemeter">Moving Average Value Meter</a></li>
-<li><a class="reference internal" href="#module-catalyst.tools.meters.msemeter">MSE Meter</a></li>
 <li><a class="reference internal" href="#module-catalyst.tools.meters.ppv_tpr_f1_meter">Precision-Recall-F1 Meter</a></li>
 </ul>
 </li>

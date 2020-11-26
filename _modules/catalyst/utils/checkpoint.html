@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.checkpoint &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.utils.checkpoint &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -318,25 +318,48 @@
               
   <h1>Source code for catalyst.utils.checkpoint</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_nn_from_ddp_module</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">maybe_recursive_call</span>
 
 
 <div class="viewcode-block" id="pack_checkpoint"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.checkpoint.pack_checkpoint">[docs]</a><span class="k">def</span> <span class="nf">pack_checkpoint</span><span class="p">(</span>
-    <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">scheduler</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``</span>
+<span class="sd">    and some extra info ``**kwargs`` to torch-based checkpoint.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model: torch model</span>
+<span class="sd">        criterion: torch criterion</span>
+<span class="sd">        optimizer: torch optimizer</span>
+<span class="sd">        scheduler: torch scheduler</span>
+<span class="sd">        **kwargs: some extra info to pack</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch-based checkpoint with ``model_state_dict``,</span>
+<span class="sd">        ``criterion_state_dict``, ``optimizer_state_dict``,</span>
+<span class="sd">        ``scheduler_state_dict`` keys.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">kwargs</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">model_module</span> <span class="o">=</span> <span class="n">get_nn_from_ddp_module</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">checkpoint</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;model_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span>
+                <span class="n">model_module</span><span class="p">,</span> <span class="s2">&quot;state_dict&quot;</span>
+            <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">model_module</span> <span class="o">=</span> <span class="n">get_nn_from_ddp_module</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;model_state_dict&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span>
@@ -349,7 +372,7 @@
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">dict2save</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">continue</span>
-        <span class="c1"># @TODO refactor with maybe_recursive_call</span>
+        <span class="c1"># @TODO refactor with maybe_recursive_call (?)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict2save</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dict2save</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>

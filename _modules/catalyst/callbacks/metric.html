@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.metric &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.callbacks.metric &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -328,8 +328,8 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.meters.averagevaluemeter</span> <span class="kn">import</span> <span class="n">AverageValueMeter</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.dict</span> <span class="kn">import</span> <span class="n">get_dictkey_auto_fn</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_distributed_mean</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_dictkey_auto_fn</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>

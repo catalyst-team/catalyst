@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.sampler &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.data.sampler &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -329,7 +329,7 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DistributedSampler</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data.sampler</span> <span class="kn">import</span> <span class="n">BatchSampler</span><span class="p">,</span> <span class="n">Sampler</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.contrib.utils.misc</span> <span class="kn">import</span> <span class="n">find_value_ids</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.utils.misc_extra</span> <span class="kn">import</span> <span class="n">find_value_ids</span>
 <span class="kn">from</span> <span class="nn">catalyst.data.dataset.torch</span> <span class="kn">import</span> <span class="n">DatasetFromSampler</span>
 
 
@@ -890,10 +890,10 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;BalanceClassSampler&quot;</span><span class="p">,</span>
     <span class="s2">&quot;BalanceBatchSampler&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;MiniEpochSampler&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DistributedSamplerWrapper&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DynamicBalanceClassSampler&quot;</span><span class="p">,</span>
     <span class="s2">&quot;DynamicLenBatchSampler&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;MiniEpochSampler&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

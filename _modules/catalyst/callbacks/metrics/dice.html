@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.metrics.dice &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.callbacks.metrics.dice &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -322,7 +322,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.metric</span> <span class="kn">import</span> <span class="n">BatchMetricCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.contrib.utils.confusion_matrix</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.utils.torch_extra</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">calculate_confusion_matrix_from_tensors</span><span class="p">,</span>
     <span class="n">calculate_tp_fp_fn</span><span class="p">,</span>
 <span class="p">)</span>
@@ -436,7 +436,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">confusion_matrix</span> <span class="o">+=</span> <span class="n">confusion_matrix</span></div>
 
 <div class="viewcode-block" id="MultiClassDiceMetricCallback.on_loader_end"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.callbacks.metrics.dice.MultiClassDiceMetricCallback.on_loader_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.</span>
+        <span class="sd">&quot;&quot;&quot;Logs dice scores to the ``loader_metrics``.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner: current runner</span>

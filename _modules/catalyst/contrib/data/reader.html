@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.tools.meters.msemeter &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.contrib.data.reader &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -290,7 +290,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.tools.meters.msemeter</li>
+      <li>catalyst.contrib.data.reader</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -316,62 +316,189 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.tools.meters.msemeter</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">MSE and RMSE meters.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">import</span> <span class="nn">math</span>
+  <h1>Source code for catalyst.contrib.data.reader</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">import</span> <span class="nn">functools</span>
 
-<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.tools.meters</span> <span class="kn">import</span> <span class="n">meter</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.numpy</span> <span class="kn">import</span> <span class="n">get_one_hot</span>
 
 
-<div class="viewcode-block" id="MSEMeter"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.msemeter.MSEMeter">[docs]</a><span class="k">class</span> <span class="nc">MSEMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This meter can handle MSE and RMSE.</span>
-<span class="sd">    Root calculation can be toggled(not calculated by default).</span>
+<div class="viewcode-block" id="IReader"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.IReader">[docs]</a><span class="k">class</span> <span class="nc">IReader</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Reader abstraction for all Readers.</span>
+
+<span class="sd">    Applies a function to an element of your data.</span>
+<span class="sd">    For example to a row from csv, or to an image, etc.</span>
+
+<span class="sd">    All inherited classes have to implement `__call__`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MSEMeter.__init__"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.msemeter.MSEMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="IReader.__init__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.IReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            root: Toggle between calculation of</span>
-<span class="sd">                RMSE (True) and MSE (False)</span>
+<span class="sd">            input_key: input key to use from annotation dict</span>
+<span class="sd">            output_key: output key to use to store the result,</span>
+<span class="sd">                default: ``input_key``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">MSEMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="o">=</span> <span class="n">root</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span></div>
 
-<div class="viewcode-block" id="MSEMeter.reset"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.msemeter.MSEMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Reset meter number of elements and squared error sum.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sesum</span> <span class="o">=</span> <span class="mf">0.0</span></div>
-
-<div class="viewcode-block" id="MSEMeter.add"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.msemeter.MSEMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Update squared error stored sum and number of elements.</span>
+<div class="viewcode-block" id="IReader.__call__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.IReader.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads a row from your annotations dict and transfer it to data,</span>
+<span class="sd">        needed by your network for example open image by path,</span>
+<span class="sd">        or read string and tokenize it.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            output: Model output tensor or numpy array</span>
-<span class="sd">            target: Target tensor or numpy array</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">output</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">torch</span><span class="o">.</span><span class="n">is_tensor</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
-            <span class="n">output</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-            <span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">from_numpy</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">+=</span> <span class="n">output</span><span class="o">.</span><span class="n">numel</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sesum</span> <span class="o">+=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">output</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="MSEMeter.value"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.msemeter.MSEMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Calculate MSE and return RMSE or MSE.</span>
+<span class="sd">            element: elem in your dataset</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            float: Root of MSE if `self.root` is True else MSE</span>
+<span class="sd">            Data object used for your neural network</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">mse</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sesum</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">mse</span><span class="p">)</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">root</span> <span class="k">else</span> <span class="n">mse</span></div></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+            <span class="s2">&quot;You cannot apply a transformation using `BaseReader`&quot;</span>
+        <span class="p">)</span></div></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MSEMeter&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="ScalarReader"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.ScalarReader">[docs]</a><span class="k">class</span> <span class="nc">ScalarReader</span><span class="p">(</span><span class="n">IReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Numeric data reader abstraction.</span>
+<span class="sd">    Reads a single float, int, str or other from data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ScalarReader.__init__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.ScalarReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="p">:</span> <span class="n">Type</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+        <span class="n">default_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">one_hot_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">smoothing</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            input_key: input key to use from annotation dict</span>
+<span class="sd">            output_key: output key to use to store the result,</span>
+<span class="sd">                default: ``input_key``</span>
+<span class="sd">            dtype: datatype of scalar values to use</span>
+<span class="sd">            default_value: default value to use if something goes wrong</span>
+<span class="sd">            one_hot_classes: number of one-hot classes</span>
+<span class="sd">            smoothing (float, optional): if specified applies label smoothing</span>
+<span class="sd">                to one_hot classes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="n">output_key</span> <span class="ow">or</span> <span class="n">input_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span> <span class="o">=</span> <span class="n">dtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_value</span> <span class="o">=</span> <span class="n">default_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">one_hot_classes</span> <span class="o">=</span> <span class="n">one_hot_classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span> <span class="o">=</span> <span class="n">smoothing</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">one_hot_classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">smoothing</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;If smoothing is specified it must be in (0; 1), &quot;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;got </span><span class="si">{</span><span class="n">smoothing</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ScalarReader.__call__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.ScalarReader.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads a row from your annotations dict and</span>
+<span class="sd">        transfer it to a single value</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element: elem in your dataset</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dtype: Scalar value</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scalar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">element</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_value</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">one_hot_classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scalar</span> <span class="o">=</span> <span class="n">get_one_hot</span><span class="p">(</span>
+                <span class="n">scalar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">one_hot_classes</span><span class="p">,</span> <span class="n">smoothing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">smoothing</span>
+            <span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">:</span> <span class="n">scalar</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">output</span></div></div>
+
+
+<div class="viewcode-block" id="LambdaReader"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.LambdaReader">[docs]</a><span class="k">class</span> <span class="nc">LambdaReader</span><span class="p">(</span><span class="n">IReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reader abstraction with an lambda encoders.</span>
+<span class="sd">    Can read an elem from dataset and apply `encode_fn` function to it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LambdaReader.__init__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.LambdaReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">lambda_fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            input_key: input key to use from annotation dict</span>
+<span class="sd">            output_key: output key to use to store the result</span>
+<span class="sd">            lambda_fn: encode function to use to prepare your data</span>
+<span class="sd">              (for example convert chars/words/tokens to indices, etc)</span>
+<span class="sd">            kwargs: kwargs for encode function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="n">output_key</span><span class="p">)</span>
+        <span class="n">lambda_fn</span> <span class="o">=</span> <span class="n">lambda_fn</span> <span class="ow">or</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_fn</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">lambda_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LambdaReader.__call__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.LambdaReader.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads a row from your annotations dict</span>
+<span class="sd">        and applies `encode_fn` function.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element: elem in your dataset.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Value after applying `lambda_fn` function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">element</span> <span class="o">=</span> <span class="n">element</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambda_fn</span><span class="p">(</span><span class="n">element</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">:</span> <span class="n">output</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">output</span></div></div>
+
+
+<div class="viewcode-block" id="ReaderCompose"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.ReaderCompose">[docs]</a><span class="k">class</span> <span class="nc">ReaderCompose</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Abstraction to compose several readers into one open function.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ReaderCompose.__init__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.ReaderCompose.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">readers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">IReader</span><span class="p">],</span> <span class="n">mixins</span><span class="p">:</span> <span class="nb">list</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            readers: list of reader to compose</span>
+<span class="sd">            mixins: list of mixins to use</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">readers</span> <span class="o">=</span> <span class="n">readers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mixins</span> <span class="o">=</span> <span class="n">mixins</span> <span class="ow">or</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="ReaderCompose.__call__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.reader.ReaderCompose.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reads a row from your annotations dict</span>
+<span class="sd">        and applies all readers and mixins</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element: elem in your dataset.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Value after applying all readers and mixins</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">reader_fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">readers</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">result</span><span class="p">,</span> <span class="o">**</span><span class="n">reader_fn</span><span class="p">(</span><span class="n">element</span><span class="p">)}</span>
+        <span class="k">for</span> <span class="n">mixin_fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">mixins</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">result</span><span class="p">,</span> <span class="o">**</span><span class="n">mixin_fn</span><span class="p">(</span><span class="n">result</span><span class="p">)}</span>
+        <span class="k">return</span> <span class="n">result</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;IReader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ScalarReader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;LambdaReader&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ReaderCompose&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
              </article>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.cv.mixins.rotate &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.contrib.data.cv.mixins.blur &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -25,25 +25,25 @@
 
   
 
-  <link rel="stylesheet" href="../../../../../_static/css/theme.css" type="text/css" />
-  <!-- <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" /> -->
-    <link rel="index" title="Index" href="../../../../../genindex.html" />
-    <link rel="search" title="Search" href="../../../../../search.html" /> 
+  <link rel="stylesheet" href="../../../../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../../../../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
-  <script src="../../../../../_static/js/googleanalytics.min.js"></script>
+  <script src="../../../../../../_static/js/googleanalytics.min.js"></script>
   
-  <script src="../../../../../_static/js/modernizr.min.js"></script>
+  <script src="../../../../../../_static/js/modernizr.min.js"></script>
 
   <!-- Preload the theme fonts -->
 
-<link rel="preload" href="../../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-<link rel="preload" href="../../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
 
 <!-- Preload the katex fonts -->
 
@@ -167,7 +167,7 @@
 
 
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search Docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -185,10 +185,10 @@
             
               <p class="caption"><span class="caption-text">Getting started</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../index.html">Catalyst</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../getting_started/quickstart.html">Quickstart 101</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
@@ -199,34 +199,34 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP / DDP / TPU</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials/ddp.html">Distributed training tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Core</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../core/experiment.html">Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../core/runner.html">[WIP] Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../core/callback.html">[WIP] Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../core/experiment.html">Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../core/runner.html">[WIP] Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../core/callback.html">[WIP] Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/intro.html">How to make X?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/data.html">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/amp.html">Mixed precision training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/tpu.html">TPU training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/multi_components.html">Multiple components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/early_stopping.html">Early stopping</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/checkpointing.html">Model checkpointing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/debugging.html">Model debugging</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/logging.html">Logging</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/inference.html">Inference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/finetuning.html">[WIP] Finetuning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/stages.html">[WIP] Multi-stage experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/config_api.html">[WIP] Config API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/slurm.html">Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/tpu.html">TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/finetuning.html">[WIP] Finetuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/stages.html">[WIP] Multi-stage experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/config_api.html">[WIP] Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../faq/optuna.html">Optuna integration</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
@@ -236,18 +236,18 @@
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/callbacks.html">Callbacks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/contrib.html">Contrib</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/data.html">Data</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/experiments.html">Experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/metrics.html">Metrics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/registry.html">Registry</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/runners.html">Runners</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/settings.html">Settings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/tools.html">Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/typing.html">Typing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../api/utils.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/experiments.html">Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/registry.html">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/typing.html">Typing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../../api/utils.html">Utilities</a></li>
 </ul>
 
             
@@ -280,7 +280,7 @@
   <ul class="catalyst-breadcrumbs">
     
       <li>
-        <a href="../../../../../index.html">
+        <a href="../../../../../../index.html">
           
             Docs
           
@@ -288,9 +288,9 @@
       </li>
 
         
-          <li><a href="../../../../index.html">Module code</a> &gt;</li>
+          <li><a href="../../../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.data.cv.mixins.rotate</li>
+      <li>catalyst.contrib.data.cv.mixins.blur</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -316,25 +316,25 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.data.cv.mixins.rotate</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">random</span>
+  <h1>Source code for catalyst.contrib.data.cv.mixins.blur</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">albumentations</span> <span class="k">as</span> <span class="nn">albu</span>
 
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
 
+<div class="viewcode-block" id="BlurMixin"><a class="viewcode-back" href="../../../../../../api/data.html#catalyst.contrib.data.cv.mixins.blur.BlurMixin">[docs]</a><span class="k">class</span> <span class="nc">BlurMixin</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Calculates blur factor for augmented image.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="RotateMixin"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.data.cv.mixins.rotate.RotateMixin">[docs]</a><span class="k">class</span> <span class="nc">RotateMixin</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Calculates rotation factor for augmented image.&quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="RotateMixin.__init__"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.data.cv.mixins.rotate.RotateMixin.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="BlurMixin.__init__"><a class="viewcode-back" href="../../../../../../api/data.html#catalyst.contrib.data.cv.mixins.blur.BlurMixin.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span>
-        <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;rotation_factor&quot;</span><span class="p">,</span>
-        <span class="n">targets_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">rotate_probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="n">hflip_probability</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-        <span class="n">one_hot_classes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;blur_factor&quot;</span><span class="p">,</span>
+        <span class="n">blur_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="n">blur_max</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span>
+        <span class="n">blur</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -343,49 +343,38 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">targets_key</span> <span class="o">=</span> <span class="n">targets_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rotate_probability</span> <span class="o">=</span> <span class="n">rotate_probability</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hflip_probability</span> <span class="o">=</span> <span class="n">hflip_probability</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rotate</span> <span class="o">=</span> <span class="n">albu</span><span class="o">.</span><span class="n">RandomRotate90</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">hflip</span> <span class="o">=</span> <span class="n">albu</span><span class="o">.</span><span class="n">HorizontalFlip</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">one_hot_classes</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">one_hot_classes</span> <span class="o">*</span> <span class="mi">8</span> <span class="k">if</span> <span class="n">one_hot_classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="p">)</span></div>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">blur_min</span> <span class="o">=</span> <span class="n">blur_min</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blur_max</span> <span class="o">=</span> <span class="n">blur_max</span>
+        <span class="n">blur</span> <span class="o">=</span> <span class="n">blur</span> <span class="ow">or</span> <span class="p">[</span><span class="s2">&quot;Blur&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blur</span> <span class="o">=</span> <span class="p">[</span><span class="n">albu</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">x</span><span class="p">]()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">blur</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_blur</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blur</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_blur_classes</span> <span class="o">=</span> <span class="n">blur_max</span> <span class="o">-</span> <span class="n">blur_min</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">blur_probability</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_blur_classes</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_blur_classes</span></div>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="n">image</span> <span class="o">=</span> <span class="n">dictionary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span>
-        <span class="n">rotation_factor</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">blur_factor</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotate_probability</span><span class="p">:</span>
-            <span class="n">rotation_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotate</span><span class="o">.</span><span class="n">get_params</span><span class="p">()[</span><span class="s2">&quot;factor&quot;</span><span class="p">]</span>
-            <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotate</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="n">rotation_factor</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">hflip_probability</span><span class="p">:</span>
-            <span class="n">rotation_factor</span> <span class="o">+=</span> <span class="mi">4</span>
-            <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hflip</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">img</span><span class="o">=</span><span class="n">image</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">blur_probability</span><span class="p">:</span>
+            <span class="n">blur_fn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blur</span><span class="p">)</span>
+            <span class="n">blur_factor</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">blur_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">blur_max</span><span class="p">)</span>
+                <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">blur_min</span>
+                <span class="o">+</span> <span class="mi">1</span>
+            <span class="p">)</span>
+            <span class="n">image</span> <span class="o">=</span> <span class="n">blur_fn</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="n">ksize</span><span class="o">=</span><span class="n">blur_factor</span><span class="p">)</span>
 
         <span class="n">dictionary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span>
-        <span class="n">dictionary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">rotation_factor</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">targets_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">class_rotation_factor</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">dictionary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">targets_key</span><span class="p">]</span> <span class="o">*</span> <span class="mi">8</span> <span class="o">+</span> <span class="n">rotation_factor</span>
-            <span class="p">)</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;class_rotation_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">targets_key</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="n">dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">class_rotation_factor</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">one_hot_classes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">one_hot</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_one_hot</span><span class="p">(</span>
-                    <span class="n">class_rotation_factor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">one_hot_classes</span>
-                <span class="p">)</span>
-                <span class="n">key</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;class_rotation_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">targets_key</span><span class="si">}</span><span class="s2">_one_hot&quot;</span>
-                <span class="n">dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">one_hot</span>
+        <span class="n">dictionary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">blur_factor</span>
 
         <span class="k">return</span> <span class="n">dictionary</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;RotateMixin&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BlurMixin&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
@@ -429,19 +418,19 @@
   
 
      
-       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../" src="../../../../../_static/documentation_options.js"></script>
-         <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
-         <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
-         <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
-         <script type="text/javascript" src="../../../../../_static/language_data.js"></script>
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../../../../" src="../../../../../../_static/documentation_options.js"></script>
+         <script type="text/javascript" src="../../../../../../_static/jquery.js"></script>
+         <script type="text/javascript" src="../../../../../../_static/underscore.js"></script>
+         <script type="text/javascript" src="../../../../../../_static/doctools.js"></script>
+         <script type="text/javascript" src="../../../../../../_static/language_data.js"></script>
          <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
      
 
   
 
-  <script type="text/javascript" src="../../../../../_static/js/vendor/popper.min.js"></script>
-  <script type="text/javascript" src="../../../../../_static/js/vendor/bootstrap.min.js"></script>
-  <script type="text/javascript" src="../../../../../_static/js/theme.js"></script>
+  <script type="text/javascript" src="../../../../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../../../../_static/js/theme.js"></script>
 
   <script type="text/javascript">
       jQuery(function () {
@@ -531,7 +520,7 @@
 
   <!-- End Mobile Menu -->
 
-  <script type="text/javascript" src="../../../../../_static/js/vendor/anchor.min.js"></script>
+  <script type="text/javascript" src="../../../../../../_static/js/vendor/anchor.min.js"></script>
 
   <script type="text/javascript">
     $(document).ready(function() {

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.nn.criterion.triplet &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.contrib.nn.criterion.triplet &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -325,7 +325,7 @@
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">TripletMarginLoss</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.contrib.nn.criterion.functional</span> <span class="kn">import</span> <span class="n">triplet_loss</span>
-<span class="kn">from</span> <span class="nn">catalyst.data.utils</span> <span class="kn">import</span> <span class="n">convert_labels2list</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">convert_labels2list</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">catalyst.data.sampler_inbatch</span> <span class="kn">import</span> <span class="n">IInbatchTripletSampler</span>

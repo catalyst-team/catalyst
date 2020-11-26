@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.datasets.cv.fastai &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.contrib.data.cv.dataset &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -290,7 +290,7 @@
         
           <li><a href="../../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.contrib.datasets.cv.fastai</li>
+      <li>catalyst.contrib.data.cv.dataset</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -316,81 +316,87 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.contrib.datasets.cv.fastai</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="kn">import</span> <span class="nn">os</span>
+  <h1>Source code for catalyst.contrib.data.cv.dataset</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets.functional</span> <span class="kn">import</span> <span class="n">download_and_extract_archive</span>
-<span class="kn">from</span> <span class="nn">catalyst.data.cv</span> <span class="kn">import</span> <span class="n">ImageFolderDataset</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.data.cv.reader</span> <span class="kn">import</span> <span class="n">ImageReader</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.data.reader</span> <span class="kn">import</span> <span class="n">ReaderCompose</span><span class="p">,</span> <span class="n">ScalarReader</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.utils.cv.image</span> <span class="kn">import</span> <span class="n">has_image_extension</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.dataset.torch</span> <span class="kn">import</span> <span class="n">PathsDataset</span>
 
 
-<div class="viewcode-block" id="ImageClassificationDataset"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset">[docs]</a><span class="k">class</span> <span class="nc">ImageClassificationDataset</span><span class="p">(</span><span class="n">ImageFolderDataset</span><span class="p">):</span>
+<span class="c1"># @TODO: chage arch to primitives-based</span>
+<span class="c1"># contrib/data/... datasets/transforms/mixins/... cv/nlp</span>
+<span class="c1"># it&#39;s much easier to handle dependencies</span>
+<div class="viewcode-block" id="ImageFolderDataset"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.contrib.data.cv.dataset.ImageFolderDataset">[docs]</a><span class="k">class</span> <span class="nc">ImageFolderDataset</span><span class="p">(</span><span class="n">PathsDataset</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Base class for datasets with the following structure:</span>
+<span class="sd">    Dataset class that derives targets from samples filesystem paths.</span>
+<span class="sd">    Dataset structure should be the following:</span>
 
 <span class="sd">    .. code-block:: bash</span>
 
-<span class="sd">        path/to/dataset/</span>
-<span class="sd">        |-- train/</span>
-<span class="sd">        |   |-- class1/  # folder of N images</span>
-<span class="sd">        |   |   |-- train_image11</span>
-<span class="sd">        |   |   |-- train_image12</span>
-<span class="sd">        |   |   ...</span>
-<span class="sd">        |   |   `-- train_image1N</span>
+<span class="sd">        rootpat/</span>
+<span class="sd">        |-- class1/  # folder of N images</span>
+<span class="sd">        |   |-- image11</span>
+<span class="sd">        |   |-- image12</span>
 <span class="sd">        |   ...</span>
-<span class="sd">        |   `-- classM/  # folder of K images</span>
-<span class="sd">        |       |-- train_imageM1</span>
-<span class="sd">        |       |-- train_imageM2</span>
-<span class="sd">        |       ...</span>
-<span class="sd">        |       `-- train_imageMK</span>
-<span class="sd">        `-- val/</span>
-<span class="sd">            |-- class1/  # folder of P images</span>
-<span class="sd">            |   |-- val_image11</span>
-<span class="sd">            |   |-- val_image12</span>
-<span class="sd">            |   ...</span>
-<span class="sd">            |   `-- val_image1P</span>
+<span class="sd">        |   `-- image1N</span>
+<span class="sd">        ...</span>
+<span class="sd">        `-- classM/  # folder of K images</span>
+<span class="sd">            |-- imageM1</span>
+<span class="sd">            |-- imageM2</span>
 <span class="sd">            ...</span>
-<span class="sd">            `-- classM/  # folder of T images</span>
-<span class="sd">                |-- val_imageT1</span>
-<span class="sd">                |-- val_imageT2</span>
-<span class="sd">                ...</span>
-<span class="sd">                `-- val_imageMT</span>
+<span class="sd">            `-- imageMK</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># name of dataset folder</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
-
-    <span class="c1"># list of (url, md5 hash) tuples representing files to download</span>
-    <span class="n">resources</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
-
-<div class="viewcode-block" id="ImageClassificationDataset.__init__"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">train</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor method for the ``ImageClassificationDataset`` class.</span>
+<div class="viewcode-block" id="ImageFolderDataset.__init__"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.contrib.data.cv.dataset.ImageFolderDataset.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">rootpath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
+        <span class="n">dir2class</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">dict_transform</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">Dict</span><span class="p">],</span> <span class="n">Dict</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Constructor method for the :class:`ImageFolderDataset` class.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            root: root directory of dataset</span>
-<span class="sd">            train: if ``True``, creates dataset from ``train/``</span>
-<span class="sd">                subfolder, otherwise from ``val/``</span>
-<span class="sd">            download: if ``True``, downloads the dataset from</span>
-<span class="sd">                the internet and puts it in root directory. If dataset</span>
-<span class="sd">                is already downloaded, it is not downloaded again</span>
-<span class="sd">            **kwargs:</span>
+<span class="sd">            rootpath: root directory of dataset</span>
+<span class="sd">            target_key: key to use to store target label</span>
+<span class="sd">            dir2class (Mapping[str, int], optional): mapping from folder name</span>
+<span class="sd">                to class index</span>
+<span class="sd">            dict_transform (Callable[[Dict], Dict]], optional): transforms</span>
+<span class="sd">                to use on dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># downlad dataset if needed</span>
-        <span class="k">if</span> <span class="n">download</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">iglob</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">rootpath</span><span class="si">}</span><span class="s2">/**/*&quot;</span><span class="p">)</span>
+        <span class="n">images</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="n">has_image_extension</span><span class="p">,</span> <span class="n">files</span><span class="p">))</span>
 
-            <span class="c1"># download files</span>
-            <span class="k">for</span> <span class="n">url</span><span class="p">,</span> <span class="n">md5</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">resources</span><span class="p">:</span>
-                <span class="n">filename</span> <span class="o">=</span> <span class="n">url</span><span class="o">.</span><span class="n">rpartition</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
-                <span class="n">download_and_extract_archive</span><span class="p">(</span>
-                    <span class="n">url</span><span class="p">,</span> <span class="n">download_root</span><span class="o">=</span><span class="n">root</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">md5</span><span class="o">=</span><span class="n">md5</span>
-                <span class="p">)</span>
+        <span class="k">if</span> <span class="n">dir2class</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dirs</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">({</span><span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">images</span><span class="p">})</span>
+            <span class="n">dir2class</span> <span class="o">=</span> <span class="p">{</span><span class="n">dirname</span><span class="p">:</span> <span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">dirname</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dirs</span><span class="p">)}</span>
 
-        <span class="n">rootpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span> <span class="k">if</span> <span class="n">train</span> <span class="k">else</span> <span class="s2">&quot;val&quot;</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">rootpath</span><span class="o">=</span><span class="n">rootpath</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">filenames</span><span class="o">=</span><span class="n">images</span><span class="p">,</span>
+            <span class="n">open_fn</span><span class="o">=</span><span class="n">ReaderCompose</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="n">ImageReader</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">rootpath</span><span class="o">=</span><span class="n">rootpath</span><span class="p">),</span>
+                    <span class="n">ScalarReader</span><span class="p">(</span>
+                        <span class="n">input_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
+                        <span class="n">output_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
+                        <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
+                        <span class="n">default_value</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="p">),</span>
+                <span class="p">]</span>
+            <span class="p">),</span>
+            <span class="n">label_fn</span><span class="o">=</span><span class="k">lambda</span> <span class="n">fn</span><span class="p">:</span> <span class="n">dir2class</span><span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span><span class="p">],</span>
+            <span class="n">features_key</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">,</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
+            <span class="n">dict_transform</span><span class="o">=</span><span class="n">dict_transform</span><span class="p">,</span>
+        <span class="p">)</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ImageFolderDataset&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

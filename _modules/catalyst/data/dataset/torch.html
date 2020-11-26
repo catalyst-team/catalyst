@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.dataset.torch &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.data.dataset.torch &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -324,9 +324,42 @@
 
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">Sampler</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.utils.dict</span> <span class="kn">import</span> <span class="n">merge_dicts</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">merge_dicts</span>
 
 <span class="n">_Path</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="DatasetFromSampler"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.torch.DatasetFromSampler">[docs]</a><span class="k">class</span> <span class="nc">DatasetFromSampler</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Dataset to create indexes from `Sampler`.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sampler: PyTorch sampler</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DatasetFromSampler.__init__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.torch.DatasetFromSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">Sampler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialisation for DatasetFromSampler.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sampler_list</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="DatasetFromSampler.__getitem__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.torch.DatasetFromSampler.__getitem__">[docs]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Gets element of the dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            index: index of the element in the dataset</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Single element by index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sampler_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_list</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DatasetFromSampler.__len__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.torch.DatasetFromSampler.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            int: length of the dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="ListDataset"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.torch.ListDataset">[docs]</a><span class="k">class</span> <span class="nc">ListDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
@@ -517,39 +550,6 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">list_data</span><span class="o">=</span><span class="n">list_data</span><span class="p">,</span> <span class="n">open_fn</span><span class="o">=</span><span class="n">open_fn</span><span class="p">,</span> <span class="o">**</span><span class="n">list_dataset_params</span>
         <span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="DatasetFromSampler"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.torch.DatasetFromSampler">[docs]</a><span class="k">class</span> <span class="nc">DatasetFromSampler</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Dataset to create indexes from `Sampler`.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        sampler: PyTorch sampler</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="DatasetFromSampler.__init__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.torch.DatasetFromSampler.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampler</span><span class="p">:</span> <span class="n">Sampler</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialisation for DatasetFromSampler.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sampler_list</span> <span class="o">=</span> <span class="kc">None</span></div>
-
-<div class="viewcode-block" id="DatasetFromSampler.__getitem__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.torch.DatasetFromSampler.__getitem__">[docs]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Gets element of the dataset.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            index: index of the element in the dataset</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Single element by index</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sampler_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_list</span><span class="p">[</span><span class="n">index</span><span class="p">]</span></div>
-
-<div class="viewcode-block" id="DatasetFromSampler.__len__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.data.dataset.torch.DatasetFromSampler.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns:</span>
-<span class="sd">            int: length of the dataset</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>

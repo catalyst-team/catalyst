@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Callbacks &mdash; Catalyst 20.11 documentation</title>
+  <title>Callbacks &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -357,26 +357,25 @@
 <li><p><a class="reference internal" href="#module-catalyst.callbacks.metrics.f1_score" id="id23">F1 score</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.callbacks.metrics.iou" id="id24">IOU</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.callbacks.metrics.mrr" id="id25">MRR</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.callbacks.metrics.ppv_tpr_f1" id="id26">Global precision, recall and F1-score</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.callbacks.metrics.precision" id="id27">Precision</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.callbacks.metrics.perplexity" id="id26">Perplexity</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.callbacks.metrics.ppv_tpr_f1" id="id27">Global precision, recall and F1-score</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.callbacks.metrics.precision" id="id28">Precision</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks" id="id28">Contrib</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks" id="id29">Contrib</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.alchemy_logger" id="id29">AlchemyLogger</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.confusion_matrix_logger" id="id30">ConfusionMatrixCallback</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.cutmix_callback" id="id31">CutmixCallback</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.gradnorm_logger" id="id32">GradNormLogger</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.inference_callback" id="id33">InferCallback</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.knn_metric" id="id34">KNNMetricCallback</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.alchemy_logger" id="id30">AlchemyLogger</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.confusion_matrix_logger" id="id31">ConfusionMatrixCallback</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.cutmix_callback" id="id32">CutmixCallback</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.gradnorm_logger" id="id33">GradNormLogger</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.inference_callback" id="id34">InferCallback</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.kornia_transform" id="id35">BatchTransformCallback</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.mask_inference" id="id36">InferMaskCallback</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.mixup_callback" id="id37">MixupCallback</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.neptune_logger" id="id38">NeptuneLogger</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.optuna_callback" id="id39">OptunaCallback</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.perplexity_metric" id="id40">PerplexityMetricCallback</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.telegram_logger" id="id41">TelegramLogger</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.wandb_logger" id="id42">WandbLogger</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.telegram_logger" id="id40">TelegramLogger</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.callbacks.wandb_logger" id="id41">WandbLogger</a></p></li>
 </ul>
 </li>
 </ul>
@@ -1398,6 +1397,57 @@ to remove always_show metrics set it to an empty list <code class="docutils lite
 
 </dd></dl>
 
+<dl class="class">
+<dt id="catalyst.callbacks.logging.CSVLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.logging.</code><code class="sig-name descname">CSVLogger</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/logging.html#CSVLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.logging.CSVLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.logging.ILoggerCallback" title="catalyst.callbacks.logging.ILoggerCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.logging.ILoggerCallback</span></code></a></p>
+<p>Logs metrics to csv file on epoch end</p>
+<dl class="method">
+<dt id="catalyst.callbacks.logging.CSVLogger.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/logging.html#CSVLogger.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.logging.CSVLogger.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>metric_names</strong> – list of metric names to log,
+if none - logs everything</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.callbacks.logging.CSVLogger.on_epoch_end">
+<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/logging.html#CSVLogger.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.logging.CSVLogger.on_epoch_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs metrics here</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – runner for experiment</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.callbacks.logging.CSVLogger.on_loader_start">
+<code class="sig-name descname">on_loader_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/logging.html#CSVLogger.on_loader_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.logging.CSVLogger.on_loader_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>On loader start action.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.callbacks.logging.CSVLogger.on_stage_end">
+<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/logging.html#CSVLogger.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.logging.CSVLogger.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>Closes loggers</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – runner for experiment</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-catalyst.callbacks.metric">
 <span id="metric"></span><h3><a class="toc-backref" href="#id9">Metric</a><a class="headerlink" href="#module-catalyst.callbacks.metric" title="Permalink to this headline">¶</a></h3>
@@ -1716,126 +1766,34 @@ Must be either <code class="docutils literal notranslate"><span class="pre">sum<
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.callbacks.optimizer.AMPOptimizerCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.optimizer.</code><code class="sig-name descname">AMPOptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">loss_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#AMPOptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.AMPOptimizerCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.optimizer.IOptimizerCallback" title="catalyst.callbacks.optimizer.IOptimizerCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.optimizer.IOptimizerCallback</span></code></a></p>
-<p>Optimizer callback with native torch amp support.</p>
-<dl class="method">
-<dt id="catalyst.callbacks.optimizer.AMPOptimizerCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">loss_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#AMPOptimizerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.AMPOptimizerCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>loss_key</strong> – key to get loss from <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code></p></li>
-<li><p><strong>optimizer_key</strong> – A key to take a optimizer in case
-there are several of them and they are in a dictionary format.</p></li>
-<li><p><strong>accumulation_steps</strong> – number of steps before
-<code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code></p></li>
-<li><p><strong>grad_clip_params</strong> – params for gradient clipping</p></li>
-<li><p><strong>decouple_weight_decay</strong> – If True - decouple weight decay
-regularization.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.callbacks.optimizer.AMPOptimizerCallback.grad_step">
-<code class="sig-name descname">grad_step</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">grad_clip_fn: Callable = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#AMPOptimizerCallback.grad_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.AMPOptimizerCallback.grad_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Makes a gradient step for a given optimizer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>optimizer</strong> – the optimizer</p></li>
-<li><p><strong>grad_clip_fn</strong> – function for gradient clipping</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.callbacks.optimizer.AMPOptimizerCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#AMPOptimizerCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.AMPOptimizerCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>On batch end event</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.callbacks.optimizer.AMPOptimizerCallback.on_batch_start">
-<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#AMPOptimizerCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.AMPOptimizerCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>On batch start event</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.callbacks.optimizer.AMPOptimizerCallback.on_epoch_end">
-<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#AMPOptimizerCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.AMPOptimizerCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>On epoch end event.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.callbacks.optimizer.AMPOptimizerCallback.on_stage_end">
-<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#AMPOptimizerCallback.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.AMPOptimizerCallback.on_stage_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>On stage end event.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.callbacks.optimizer.AMPOptimizerCallback.on_stage_start">
-<code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#AMPOptimizerCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.AMPOptimizerCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks that the current stage has correct optimizer.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
 <dt id="catalyst.callbacks.optimizer.OptimizerCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.optimizer.</code><code class="sig-name descname">OptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">decouple_weight_decay: bool = True</em>, <em class="sig-param">loss_key: str = None</em>, <em class="sig-param">use_fast_zero_grad: bool = False</em>, <em class="sig-param">xla_barrier: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#OptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.OptimizerCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.optimizer.</code><code class="sig-name descname">OptimizerCallback</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">decouple_weight_decay: bool = False</em>, <em class="sig-param">loss_key: str = None</em>, <em class="sig-param">use_fast_zero_grad: bool = False</em>, <em class="sig-param">xla_barrier: bool = True</em>, <em class="sig-param">use_amp: bool = None</em>, <em class="sig-param">use_apex: bool = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#OptimizerCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.OptimizerCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.optimizer.IOptimizerCallback" title="catalyst.callbacks.optimizer.IOptimizerCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.optimizer.IOptimizerCallback</span></code></a></p>
 <p>Optimizer callback, abstraction over optimizer step.</p>
 <dl class="method">
 <dt id="catalyst.callbacks.optimizer.OptimizerCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">decouple_weight_decay: bool = True</em>, <em class="sig-param">loss_key: str = None</em>, <em class="sig-param">use_fast_zero_grad: bool = False</em>, <em class="sig-param">xla_barrier: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#OptimizerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.OptimizerCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None</em>, <em class="sig-param">optimizer_key: str = None</em>, <em class="sig-param">accumulation_steps: int = 1</em>, <em class="sig-param">grad_clip_params: Dict = None</em>, <em class="sig-param">decouple_weight_decay: bool = False</em>, <em class="sig-param">loss_key: str = None</em>, <em class="sig-param">use_fast_zero_grad: bool = False</em>, <em class="sig-param">xla_barrier: bool = True</em>, <em class="sig-param">use_amp: bool = None</em>, <em class="sig-param">use_apex: bool = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#OptimizerCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.OptimizerCallback.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>loss_key</strong> – key to get loss from <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code></p></li>
 <li><p><strong>optimizer_key</strong> – A key to take a optimizer in case
 there are several of them and they are in a dictionary format.</p></li>
-<li><p><strong>accumulation_steps</strong> – number of steps before
-<code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code></p></li>
-<li><p><strong>grad_clip_params</strong> – params for gradient clipping</p></li>
+<li><p><strong>accumulation_steps</strong> – number of steps before <code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code></p></li>
+<li><p><strong>grad_clip_params</strong> – params for gradient clipping, example:
+<code class="docutils literal notranslate"><span class="pre">{'func':</span> <span class="pre">'clip_grad_norm_',</span> <span class="pre">'max_norm':</span> <span class="pre">1,</span> <span class="pre">norm_type':</span> <span class="pre">2}</span></code></p></li>
 <li><p><strong>decouple_weight_decay</strong> – If <code class="docutils literal notranslate"><span class="pre">True</span></code> - decouple weight decay
-regularization.</p></li>
-<li><p><strong>use_fast_zero_grad</strong> – boost <code class="docutils literal notranslate"><span class="pre">optiomizer.zero_grad()</span></code>,
+regularization, default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>use_fast_zero_grad</strong> – boost <code class="docutils literal notranslate"><span class="pre">optimizer.zero_grad()</span></code>,
 default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
-<li><p><strong>xla_barrier</strong> – <p>barrier option for xla. Here you can find
+<li><p><strong>xla_barrier</strong> – barrier option for xla. Here you can find
 more about usage of <a class="reference external" href="https://pytorch.org/xla/release/1.5/index.html?highlight=optimizer_step#torch_xla.core.xla_model.optimizer_step">barrier flag</a>
-and <a class="reference external" href="https://pytorch.org/xla/release/1.5/index.html#running-on-a-single-xla-device">examples</a>.</p>
-<p>Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
-</p></li>
+and <a class="reference external" href="https://pytorch.org/xla/release/1.5/index.html#running-on-a-single-xla-device">examples</a>.
+Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>use_amp</strong> – whether to use native pytorch AMP, if None will be set
+based on runner.experiment.distributed_params on stage start</p></li>
+<li><p><strong>use_apex</strong> – whether to use apex, if None will be set
+based on runner.experiment.distributed_params on stage start</p></li>
 </ul>
 </dd>
 </dl>
@@ -1843,14 +1801,12 @@ and <a class="reference external" href="https://pytorch.org/xla/release/1.5/inde
 
 <dl class="method">
 <dt id="catalyst.callbacks.optimizer.OptimizerCallback.grad_step">
-<code class="sig-name descname">grad_step</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">optimizer_wds: List[float] = 0</em>, <em class="sig-param">grad_clip_fn: Callable = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#OptimizerCallback.grad_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.OptimizerCallback.grad_step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">grad_step</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">grad_clip_fn: Callable = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#OptimizerCallback.grad_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.OptimizerCallback.grad_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Makes a gradient step for a given optimizer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>optimizer</strong> – the optimizer</p></li>
-<li><p><strong>optimizer_wds</strong> – list of weight decay parameters
-for each param group</p></li>
 <li><p><strong>grad_clip_fn</strong> – function for gradient clipping</p></li>
 </ul>
 </dd>
@@ -1861,6 +1817,17 @@ for each param group</p></li>
 <dt id="catalyst.callbacks.optimizer.OptimizerCallback.on_batch_end">
 <code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#OptimizerCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.OptimizerCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
 <dd><p>On batch end event</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.callbacks.optimizer.OptimizerCallback.on_batch_start">
+<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#OptimizerCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.OptimizerCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
+<dd><p>On batch start event</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> – current runner</p>
@@ -1891,9 +1858,20 @@ for each param group</p></li>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.callbacks.optimizer.OptimizerCallback.on_stage_end">
+<code class="sig-name descname">on_stage_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#OptimizerCallback.on_stage_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.OptimizerCallback.on_stage_end" title="Permalink to this definition">¶</a></dt>
+<dd><p>On stage end event.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.callbacks.optimizer.OptimizerCallback.on_stage_start">
 <code class="sig-name descname">on_stage_start</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/optimizer.html#OptimizerCallback.on_stage_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optimizer.OptimizerCallback.on_stage_start" title="Permalink to this definition">¶</a></dt>
-<dd><p>Checks that the current stage has correct optimizer.</p>
+<dd><p>Resolve amp/apex settings, prepare optimizer and scaler</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> (<a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><em>IRunner</em></a>) – current runner</p>
@@ -2864,7 +2842,7 @@ if list, make sure it corresponds to the number of classes</p></li>
 <dl class="method">
 <dt id="catalyst.callbacks.metrics.dice.MultiClassDiceMetricCallback.on_loader_end">
 <code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/dice.html#MultiClassDiceMetricCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.dice.MultiClassDiceMetricCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>&#64;TODO: Docs. Contribution is welcome.</p>
+<dd><p>Logs dice scores to the <code class="docutils literal notranslate"><span class="pre">loader_metrics</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> – current runner</p>
@@ -3030,8 +3008,59 @@ specifies our <code class="docutils literal notranslate"><span class="pre">y_pre
 </dd></dl>
 
 </div>
+<div class="section" id="module-catalyst.callbacks.metrics.perplexity">
+<span id="perplexity"></span><h3><a class="toc-backref" href="#id26">Perplexity</a><a class="headerlink" href="#module-catalyst.callbacks.metrics.perplexity" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.callbacks.metrics.perplexity.PerplexityCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.perplexity.</code><code class="sig-name descname">PerplexityCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'perplexity'</em>, <em class="sig-param">ignore_index: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/perplexity.html#PerplexityCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.perplexity.PerplexityCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metric.BatchMetricCallback" title="catalyst.callbacks.metric.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metric.BatchMetricCallback</span></code></a></p>
+<p>Perplexity is a very popular metric in NLP
+especially in Language Modeling task.
+It is 2^cross_entropy.</p>
+<dl class="method">
+<dt id="catalyst.callbacks.metrics.perplexity.PerplexityCallback.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'perplexity'</em>, <em class="sig-param">ignore_index: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/perplexity.html#PerplexityCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.perplexity.PerplexityCallback.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> – input key to use for perplexity calculation,
+target tokens</p></li>
+<li><p><strong>output_key</strong> – output key to use for perplexity calculation,
+logits of the predicted tokens</p></li>
+<li><p><strong>ignore_index</strong> – index to ignore, usually pad_index</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.callbacks.metrics.perplexity.PerplexityCallback.metric_fn">
+<code class="sig-name descname">metric_fn</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">targets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/perplexity.html#PerplexityCallback.metric_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.perplexity.PerplexityCallback.metric_fn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate perplexity</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – model output</p></li>
+<li><p><strong>targets</strong> – model targets</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>computed perplexity metric</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="catalyst.callbacks.metrics.perplexity.PerplexityMetricCallback">
+<code class="sig-prename descclassname">catalyst.callbacks.metrics.perplexity.</code><code class="sig-name descname">PerplexityMetricCallback</code><a class="headerlink" href="#catalyst.callbacks.metrics.perplexity.PerplexityMetricCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#catalyst.callbacks.metrics.perplexity.PerplexityCallback" title="catalyst.callbacks.metrics.perplexity.PerplexityCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metrics.perplexity.PerplexityCallback</span></code></a></p>
+</dd></dl>
+
+</div>
 <div class="section" id="module-catalyst.callbacks.metrics.ppv_tpr_f1">
-<span id="global-precision-recall-and-f1-score"></span><h3><a class="toc-backref" href="#id26">Global precision, recall and F1-score</a><a class="headerlink" href="#module-catalyst.callbacks.metrics.ppv_tpr_f1" title="Permalink to this headline">¶</a></h3>
+<span id="global-precision-recall-and-f1-score"></span><h3><a class="toc-backref" href="#id27">Global precision, recall and F1-score</a><a class="headerlink" href="#module-catalyst.callbacks.metrics.ppv_tpr_f1" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.ppv_tpr_f1.PrecisionRecallF1ScoreCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.ppv_tpr_f1.</code><code class="sig-name descname">PrecisionRecallF1ScoreCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">class_names: List[str] = None</em>, <em class="sig-param">num_classes: int = 2</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/ppv_tpr_f1.html#PrecisionRecallF1ScoreCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.ppv_tpr_f1.PrecisionRecallF1ScoreCallback" title="Permalink to this definition">¶</a></dt>
@@ -3067,7 +3096,7 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 
 </div>
 <div class="section" id="module-catalyst.callbacks.metrics.precision">
-<span id="precision"></span><h3><a class="toc-backref" href="#id27">Precision</a><a class="headerlink" href="#module-catalyst.callbacks.metrics.precision" title="Permalink to this headline">¶</a></h3>
+<span id="precision"></span><h3><a class="toc-backref" href="#id28">Precision</a><a class="headerlink" href="#module-catalyst.callbacks.metrics.precision" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.precision.AveragePrecisionCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.precision.</code><code class="sig-name descname">AveragePrecisionCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'average_precision'</em>, <em class="sig-param">multiplier: float = 1.0</em>, <em class="sig-param">class_args: List[str] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/precision.html#AveragePrecisionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.precision.AveragePrecisionCallback" title="Permalink to this definition">¶</a></dt>
@@ -3099,9 +3128,9 @@ If None, defaults to indices for each class, starting from 0</p></li>
 </div>
 </div>
 <div class="section" id="module-catalyst.contrib.callbacks">
-<span id="contrib"></span><h2><a class="toc-backref" href="#id28">Contrib</a><a class="headerlink" href="#module-catalyst.contrib.callbacks" title="Permalink to this headline">¶</a></h2>
+<span id="contrib"></span><h2><a class="toc-backref" href="#id29">Contrib</a><a class="headerlink" href="#module-catalyst.contrib.callbacks" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.contrib.callbacks.alchemy_logger">
-<span id="alchemylogger"></span><h3><a class="toc-backref" href="#id29">AlchemyLogger</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.alchemy_logger" title="Permalink to this headline">¶</a></h3>
+<span id="alchemylogger"></span><h3><a class="toc-backref" href="#id30">AlchemyLogger</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.alchemy_logger" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.callbacks.alchemy_logger.AlchemyLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.callbacks.alchemy_logger.</code><code class="sig-name descname">AlchemyLogger</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = True</em>, <em class="sig-param">log_on_epoch_end: bool = True</em>, <em class="sig-param">**logging_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/alchemy_logger.html#AlchemyLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.alchemy_logger.AlchemyLogger" title="Permalink to this definition">¶</a></dt>
@@ -3170,7 +3199,7 @@ if none - logs everything</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.callbacks.confusion_matrix_logger">
-<span id="confusionmatrixcallback"></span><h3><a class="toc-backref" href="#id30">ConfusionMatrixCallback</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.confusion_matrix_logger" title="Permalink to this headline">¶</a></h3>
+<span id="confusionmatrixcallback"></span><h3><a class="toc-backref" href="#id31">ConfusionMatrixCallback</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.confusion_matrix_logger" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.callbacks.confusion_matrix_logger.ConfusionMatrixCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.callbacks.confusion_matrix_logger.</code><code class="sig-name descname">ConfusionMatrixCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'confusion_matrix'</em>, <em class="sig-param">mode: str = 'tnt'</em>, <em class="sig-param">class_names: List[str] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">plot_params: Dict = None</em>, <em class="sig-param">tensorboard_callback_name: str = '_tensorboard'</em>, <em class="sig-param">version: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/confusion_matrix_logger.html#ConfusionMatrixCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.confusion_matrix_logger.ConfusionMatrixCallback" title="Permalink to this definition">¶</a></dt>
@@ -3234,7 +3263,7 @@ Must be one of [tnt, sklearn]</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.callbacks.cutmix_callback">
-<span id="cutmixcallback"></span><h3><a class="toc-backref" href="#id31">CutmixCallback</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.cutmix_callback" title="Permalink to this headline">¶</a></h3>
+<span id="cutmixcallback"></span><h3><a class="toc-backref" href="#id32">CutmixCallback</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.cutmix_callback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.callbacks.cutmix_callback.CutmixCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.callbacks.cutmix_callback.</code><code class="sig-name descname">CutmixCallback</code><span class="sig-paren">(</span><em class="sig-param">fields: List[str] = ('features'</em>, <em class="sig-param">)</em>, <em class="sig-param">alpha=1.0</em>, <em class="sig-param">on_train_only=True</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/cutmix_callback.html#CutmixCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.cutmix_callback.CutmixCallback" title="Permalink to this definition">¶</a></dt>
@@ -3290,7 +3319,7 @@ for validation.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.callbacks.gradnorm_logger">
-<span id="gradnormlogger"></span><h3><a class="toc-backref" href="#id32">GradNormLogger</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.gradnorm_logger" title="Permalink to this headline">¶</a></h3>
+<span id="gradnormlogger"></span><h3><a class="toc-backref" href="#id33">GradNormLogger</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.gradnorm_logger" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.callbacks.gradnorm_logger.GradNormLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.callbacks.gradnorm_logger.</code><code class="sig-name descname">GradNormLogger</code><span class="sig-paren">(</span><em class="sig-param">norm_type: int = 2</em>, <em class="sig-param">accumulation_steps: int = 1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/gradnorm_logger.html#GradNormLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.gradnorm_logger.GradNormLogger" title="Permalink to this definition">¶</a></dt>
@@ -3350,7 +3379,7 @@ Should be the same as in <cite>OptimizerCallback</cite>.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.callbacks.inference_callback">
-<span id="infercallback"></span><h3><a class="toc-backref" href="#id33">InferCallback</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.inference_callback" title="Permalink to this headline">¶</a></h3>
+<span id="infercallback"></span><h3><a class="toc-backref" href="#id34">InferCallback</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.inference_callback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.callbacks.inference_callback.InferCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.callbacks.inference_callback.</code><code class="sig-name descname">InferCallback</code><span class="sig-paren">(</span><em class="sig-param">out_dir=None</em>, <em class="sig-param">out_prefix=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/inference_callback.html#InferCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.inference_callback.InferCallback" title="Permalink to this definition">¶</a></dt>
@@ -3406,76 +3435,6 @@ Should be the same as in <cite>OptimizerCallback</cite>.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> – current runner</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-catalyst.contrib.callbacks.knn_metric">
-<span id="knnmetriccallback"></span><h3><a class="toc-backref" href="#id34">KNNMetricCallback</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.knn_metric" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.contrib.callbacks.knn_metric.KNNMetricCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.callbacks.knn_metric.</code><code class="sig-name descname">KNNMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'logits'</em>, <em class="sig-param">output_key: str = 'targets'</em>, <em class="sig-param">prefix: str = 'knn'</em>, <em class="sig-param">num_classes: int = 2</em>, <em class="sig-param">class_names: dict = None</em>, <em class="sig-param">cv_loader_names: Dict[str</em>, <em class="sig-param">List[str]] = None</em>, <em class="sig-param">metric_fn: str = 'f1-score'</em>, <em class="sig-param">knn_metric: str = 'euclidean'</em>, <em class="sig-param">num_neighbors: int = 5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/knn_metric.html#KNNMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.knn_metric.KNNMetricCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
-<p>A callback that returns single metric on <code class="docutils literal notranslate"><span class="pre">runner.on_loader_end</span></code>.</p>
-<dl class="method">
-<dt id="catalyst.contrib.callbacks.knn_metric.KNNMetricCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'logits'</em>, <em class="sig-param">output_key: str = 'targets'</em>, <em class="sig-param">prefix: str = 'knn'</em>, <em class="sig-param">num_classes: int = 2</em>, <em class="sig-param">class_names: dict = None</em>, <em class="sig-param">cv_loader_names: Dict[str</em>, <em class="sig-param">List[str]] = None</em>, <em class="sig-param">metric_fn: str = 'f1-score'</em>, <em class="sig-param">knn_metric: str = 'euclidean'</em>, <em class="sig-param">num_neighbors: int = 5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/knn_metric.html#KNNMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.knn_metric.KNNMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns metric value calculated using kNN algorithm.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> – input key to get features.</p></li>
-<li><p><strong>output_key</strong> – output key to get targets.</p></li>
-<li><p><strong>prefix</strong> – key to store in logs.</p></li>
-<li><p><strong>num_classes</strong> – Number of classes; must be &gt; 1.</p></li>
-<li><p><strong>class_names</strong> – of indexes and class names.</p></li>
-<li><p><strong>cv_loader_names</strong> – dict with keys and values of loader_names
-for which cross validation should be calculated.
-For example {“train” : [“valid”, “test”]}.</p></li>
-<li><p><strong>metric_fn</strong> – one of <cite>accuracy</cite>, <cite>precision</cite>, <cite>recall</cite>, <cite>f1-score</cite>.
-default is <cite>f1-score</cite>.</p></li>
-<li><p><strong>knn_metric</strong> – look sklearn.neighbors.NearestNeighbors parameter.</p></li>
-<li><p><strong>num_neighbors</strong> – number of neighbors, default is 5.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.callbacks.knn_metric.KNNMetricCallback.on_batch_end">
-<code class="sig-name descname">on_batch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/callbacks/knn_metric.html#KNNMetricCallback.on_batch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.knn_metric.KNNMetricCallback.on_batch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Batch end hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.callbacks.knn_metric.KNNMetricCallback.on_epoch_end">
-<code class="sig-name descname">on_epoch_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/callbacks/knn_metric.html#KNNMetricCallback.on_epoch_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.knn_metric.KNNMetricCallback.on_epoch_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Epoch end hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.callbacks.knn_metric.KNNMetricCallback.on_loader_end">
-<code class="sig-name descname">on_loader_end</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/callbacks/knn_metric.html#KNNMetricCallback.on_loader_end"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.knn_metric.KNNMetricCallback.on_loader_end" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loader end hook.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>runner</strong> – current runner</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>Warning</strong> – if targets has more classes than num classes</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3726,7 +3685,7 @@ for validation.</p></li>
 
 <dl class="method">
 <dt id="catalyst.contrib.callbacks.mixup_callback.MixupCallback.on_batch_start">
-<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/mixup_callback.html#MixupCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.mixup_callback.MixupCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">on_batch_start</code><span class="sig-paren">(</span><em class="sig-param">runner: catalyst.core.runner.IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/callbacks/mixup_callback.html#MixupCallback.on_batch_start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.mixup_callback.MixupCallback.on_batch_start" title="Permalink to this definition">¶</a></dt>
 <dd><p>Batch start hook.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -3918,53 +3877,8 @@ Takes <code class="docutils literal notranslate"><span class="pre">optuna_trial<
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.contrib.callbacks.perplexity_metric">
-<span id="perplexitymetriccallback"></span><h3><a class="toc-backref" href="#id40">PerplexityMetricCallback</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.perplexity_metric" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.contrib.callbacks.perplexity_metric.PerplexityMetricCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.callbacks.perplexity_metric.</code><code class="sig-name descname">PerplexityMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'perplexity'</em>, <em class="sig-param">ignore_index: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/perplexity_metric.html#PerplexityMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.perplexity_metric.PerplexityMetricCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metric.BatchMetricCallback" title="catalyst.callbacks.metric.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metric.BatchMetricCallback</span></code></a></p>
-<p>Perplexity is a very popular metric in NLP
-especially in Language Modeling task.
-It is 2^cross_entropy.</p>
-<dl class="method">
-<dt id="catalyst.contrib.callbacks.perplexity_metric.PerplexityMetricCallback.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'targets'</em>, <em class="sig-param">output_key: str = 'logits'</em>, <em class="sig-param">prefix: str = 'perplexity'</em>, <em class="sig-param">ignore_index: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/perplexity_metric.html#PerplexityMetricCallback.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.perplexity_metric.PerplexityMetricCallback.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> – input key to use for perplexity calculation,
-target tokens</p></li>
-<li><p><strong>output_key</strong> – output key to use for perplexity calculation,
-logits of the predicted tokens</p></li>
-<li><p><strong>ignore_index</strong> – index to ignore, usually pad_index</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.callbacks.perplexity_metric.PerplexityMetricCallback.metric_fn">
-<code class="sig-name descname">metric_fn</code><span class="sig-paren">(</span><em class="sig-param">outputs</em>, <em class="sig-param">targets</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/perplexity_metric.html#PerplexityMetricCallback.metric_fn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.perplexity_metric.PerplexityMetricCallback.metric_fn" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate perplexity</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> – model output</p></li>
-<li><p><strong>targets</strong> – model targets</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>computed perplexity metric</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-catalyst.contrib.callbacks.telegram_logger">
-<span id="telegramlogger"></span><h3><a class="toc-backref" href="#id41">TelegramLogger</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.telegram_logger" title="Permalink to this headline">¶</a></h3>
+<span id="telegramlogger"></span><h3><a class="toc-backref" href="#id40">TelegramLogger</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.telegram_logger" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.callbacks.telegram_logger.TelegramLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.callbacks.telegram_logger.</code><code class="sig-name descname">TelegramLogger</code><span class="sig-paren">(</span><em class="sig-param">token: str = None</em>, <em class="sig-param">chat_id: str = None</em>, <em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_stage_start: bool = True</em>, <em class="sig-param">log_on_loader_start: bool = True</em>, <em class="sig-param">log_on_loader_end: bool = True</em>, <em class="sig-param">log_on_stage_end: bool = True</em>, <em class="sig-param">log_on_exception: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/telegram_logger.html#TelegramLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.telegram_logger.TelegramLogger" title="Permalink to this definition">¶</a></dt>
@@ -4025,7 +3939,7 @@ if none - logs everything.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.callbacks.wandb_logger">
-<span id="wandblogger"></span><h3><a class="toc-backref" href="#id42">WandbLogger</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.wandb_logger" title="Permalink to this headline">¶</a></h3>
+<span id="wandblogger"></span><h3><a class="toc-backref" href="#id41">WandbLogger</a><a class="headerlink" href="#module-catalyst.contrib.callbacks.wandb_logger" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.contrib.callbacks.wandb_logger.WandbLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.callbacks.wandb_logger.</code><code class="sig-name descname">WandbLogger</code><span class="sig-paren">(</span><em class="sig-param">metric_names: List[str] = None</em>, <em class="sig-param">log_on_batch_end: bool = False</em>, <em class="sig-param">log_on_epoch_end: bool = True</em>, <em class="sig-param">log: str = None</em>, <em class="sig-param">**logging_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/callbacks/wandb_logger.html#WandbLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.callbacks.wandb_logger.WandbLogger" title="Permalink to this definition">¶</a></dt>
@@ -4195,6 +4109,7 @@ and <cite>dir</cite> which is set to <cite>&lt;logdir&gt;</cite></p></li>
 <li><a class="reference internal" href="#module-catalyst.callbacks.metrics.f1_score">F1 score</a></li>
 <li><a class="reference internal" href="#module-catalyst.callbacks.metrics.iou">IOU</a></li>
 <li><a class="reference internal" href="#module-catalyst.callbacks.metrics.mrr">MRR</a></li>
+<li><a class="reference internal" href="#module-catalyst.callbacks.metrics.perplexity">Perplexity</a></li>
 <li><a class="reference internal" href="#module-catalyst.callbacks.metrics.ppv_tpr_f1">Global precision, recall and F1-score</a></li>
 <li><a class="reference internal" href="#module-catalyst.callbacks.metrics.precision">Precision</a></li>
 </ul>
@@ -4205,13 +4120,11 @@ and <cite>dir</cite> which is set to <cite>&lt;logdir&gt;</cite></p></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.callbacks.cutmix_callback">CutmixCallback</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.callbacks.gradnorm_logger">GradNormLogger</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.callbacks.inference_callback">InferCallback</a></li>
-<li><a class="reference internal" href="#module-catalyst.contrib.callbacks.knn_metric">KNNMetricCallback</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.callbacks.kornia_transform">BatchTransformCallback</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.callbacks.mask_inference">InferMaskCallback</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.callbacks.mixup_callback">MixupCallback</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.callbacks.neptune_logger">NeptuneLogger</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.callbacks.optuna_callback">OptunaCallback</a></li>
-<li><a class="reference internal" href="#module-catalyst.contrib.callbacks.perplexity_metric">PerplexityMetricCallback</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.callbacks.telegram_logger">TelegramLogger</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.callbacks.wandb_logger">WandbLogger</a></li>
 </ul>

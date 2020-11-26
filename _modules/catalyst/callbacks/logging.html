@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.logging &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.callbacks.logging &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -327,8 +327,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.formatters</span> <span class="kn">import</span> <span class="n">TxtMetricsFormatter</span>
 <span class="kn">from</span> <span class="nn">catalyst.contrib.tools.tensorboard</span> <span class="kn">import</span> <span class="n">SummaryWriter</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.dict</span> <span class="kn">import</span> <span class="n">split_dict_to_subdicts</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">is_exception</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">is_exception</span><span class="p">,</span> <span class="n">split_dict_to_subdicts</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
@@ -593,11 +592,112 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
 
 
+<div class="viewcode-block" id="CSVLogger"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.logging.CSVLogger">[docs]</a><span class="k">class</span> <span class="nc">CSVLogger</span><span class="p">(</span><span class="n">ILoggerCallback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Logs metrics to csv file on epoch end&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CSVLogger.__init__"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.logging.CSVLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">metric_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            metric_names: list of metric names to log,</span>
+<span class="sd">                if none - logs everything</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">logging</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">master</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics_to_log</span> <span class="o">=</span> <span class="n">metric_names</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">header_created</span> <span class="o">=</span> <span class="p">{}</span></div>
+
+<div class="viewcode-block" id="CSVLogger.on_loader_start"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.logging.CSVLogger.on_loader_start">[docs]</a>    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        On loader start action.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">:</span>
+            <span class="n">log_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="si">}</span><span class="s2">_log&quot;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">[</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="p">]</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">log_dir</span><span class="p">,</span> <span class="s2">&quot;logs.csv&quot;</span><span class="p">),</span> <span class="s2">&quot;a+&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">header_created</span><span class="p">[</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+    <span class="k">def</span> <span class="nf">_log_metrics</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics_to_log</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">metrics_to_log</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">metrics_to_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics_to_log</span>
+
+        <span class="n">log_line_csv</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">step</span><span class="si">}</span><span class="s2">,&quot;</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics_to_log</span><span class="p">:</span>
+            <span class="n">log_line_csv</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">metrics</span><span class="p">[</span><span class="n">metric</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+        <span class="n">log_line_csv</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">log_line_csv</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>  <span class="c1"># replace last &quot;,&quot; with new line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">[</span><span class="n">loader_key</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">log_line_csv</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_make_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics_to_log</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">metrics_to_log</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">metrics</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">metrics_to_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics_to_log</span>
+        <span class="n">log_line_header</span> <span class="o">=</span> <span class="s2">&quot;step,&quot;</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">metrics_to_log</span><span class="p">:</span>
+            <span class="n">log_line_header</span> <span class="o">+=</span> <span class="n">metric</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span>
+        <span class="n">log_line_header</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">log_line_header</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>  <span class="c1"># replace last &quot;,&quot; with new line</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">[</span><span class="n">loader_key</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">log_line_header</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CSVLogger.on_epoch_end"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.logging.CSVLogger.on_epoch_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Logs metrics here</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: runner for experiment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">logdir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">per_loader_metrics</span> <span class="o">=</span> <span class="n">split_dict_to_subdicts</span><span class="p">(</span>
+            <span class="n">dct</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">,</span>
+            <span class="n">prefixes</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
+            <span class="n">extra_key</span><span class="o">=</span><span class="s2">&quot;_base&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">loader_key</span><span class="p">,</span> <span class="n">per_loader_metrics</span> <span class="ow">in</span> <span class="n">per_loader_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">&quot;base&quot;</span> <span class="ow">in</span> <span class="n">loader_key</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">header_created</span><span class="p">[</span><span class="n">loader_key</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_make_header</span><span class="p">(</span>
+                    <span class="n">metrics</span><span class="o">=</span><span class="n">per_loader_metrics</span><span class="p">,</span> <span class="n">loader_key</span><span class="o">=</span><span class="n">loader_key</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">header_created</span><span class="p">[</span><span class="n">loader_key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_log_metrics</span><span class="p">(</span>
+                <span class="n">metrics</span><span class="o">=</span><span class="n">per_loader_metrics</span><span class="p">,</span>
+                <span class="n">step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">global_epoch</span><span class="p">,</span>
+                <span class="n">loader_key</span><span class="o">=</span><span class="n">loader_key</span><span class="p">,</span>
+            <span class="p">)</span></div>
+
+<div class="viewcode-block" id="CSVLogger.on_stage_end"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.logging.CSVLogger.on_stage_end">[docs]</a>    <span class="k">def</span> <span class="nf">on_stage_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Closes loggers</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: runner for experiment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">_k</span><span class="p">,</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div></div>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;ILoggerCallback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ConsoleLogger&quot;</span><span class="p">,</span>
     <span class="s2">&quot;TensorboardLogger&quot;</span><span class="p">,</span>
     <span class="s2">&quot;VerboseLogger&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CSVLogger&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

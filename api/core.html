@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Core &mdash; Catalyst 20.11 documentation</title>
+  <title>Core &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -335,6 +335,7 @@
 </ul>
 </li>
 <li><p><a class="reference internal" href="#callback" id="id7">Callback</a></p></li>
+<li><p><a class="reference internal" href="#scripts" id="id8">Scripts</a></p></li>
 </ul>
 </div>
 <span class="target" id="module-catalyst.core"></span><div class="section" id="experiment">
@@ -363,7 +364,7 @@ In general, the Experiment knows <strong>what</strong> you would like to run.</p
 <div><ul class="simple">
 <li><p><a class="reference internal" href="experiments.html#catalyst.experiments.experiment.Experiment" title="catalyst.experiments.experiment.Experiment"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.experiments.experiment.Experiment</span></code></a></p></li>
 <li><p><a class="reference internal" href="experiments.html#catalyst.experiments.config.ConfigExperiment" title="catalyst.experiments.config.ConfigExperiment"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.experiments.config.ConfigExperiment</span></code></a></p></li>
-<li><p><a class="reference internal" href="experiments.html#catalyst.experiments.supervised.SupervisedExperiment" title="catalyst.experiments.supervised.SupervisedExperiment"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.experiments.supervised.SupervisedExperiment</span></code></a></p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.experiments.supervised.SupervisedExperiment</span></code></p></li>
 </ul>
 </div></blockquote>
 <dl class="method">
@@ -769,7 +770,7 @@ In general, the Experiment knows <strong>what</strong> you would like to run.</p
 <div><ul class="simple">
 <li><p><a class="reference internal" href="experiments.html#catalyst.experiments.experiment.Experiment" title="catalyst.experiments.experiment.Experiment"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.experiments.experiment.Experiment</span></code></a></p></li>
 <li><p><a class="reference internal" href="experiments.html#catalyst.experiments.config.ConfigExperiment" title="catalyst.experiments.config.ConfigExperiment"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.experiments.config.ConfigExperiment</span></code></a></p></li>
-<li><p><a class="reference internal" href="experiments.html#catalyst.experiments.supervised.SupervisedExperiment" title="catalyst.experiments.supervised.SupervisedExperiment"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.experiments.supervised.SupervisedExperiment</span></code></a></p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.experiments.supervised.SupervisedExperiment</span></code></p></li>
 </ul>
 </div></blockquote>
 <dl class="method">
@@ -1393,7 +1394,6 @@ counter for all epochs,    that have passed during model training, validation an
 <p><strong>runner.batch_size</strong> - int, length of the current batch</p>
 <p>Logging section</p>
 <p><strong>runner.logdir</strong> - string, path to logging directory to save    all logs, metrics, checkpoints and artifacts</p>
-<p><strong>runner.checkpoint_data</strong> - dictionary    with all extra data for experiment tracking</p>
 <p>Extra section</p>
 <p><strong>runner.exception</strong> - python Exception instance to raise (or not ;) )</p>
 <dl class="method">
@@ -1823,7 +1823,6 @@ counter for all epochs,    that have passed during model training, validation an
 <p><strong>runner.batch_size</strong> - int, length of the current batch</p>
 <p>Logging section</p>
 <p><strong>runner.logdir</strong> - string, path to logging directory to save    all logs, metrics, checkpoints and artifacts</p>
-<p><strong>runner.checkpoint_data</strong> - dictionary    with all extra data for experiment tracking</p>
 <p>Extra section</p>
 <p><strong>runner.exception</strong> - python Exception instance to raise (or not ;) )</p>
 <dl class="method">
@@ -2901,6 +2900,14 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 </dd></dl>
 
 </div>
+<div class="section" id="scripts">
+<h2><a class="toc-backref" href="#id8">Scripts</a><a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
+<p>You can use Catalyst scripts with <cite>catalyst-dl</cite> in your terminal.
+For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-dl run --help
+</pre></div>
+</div>
+<span class="target" id="module-catalyst.dl.__main__"></span></div>
 </div>
 
 
@@ -2949,6 +2956,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 </ul>
 </li>
 <li><a class="reference internal" href="#callback">Callback</a></li>
+<li><a class="reference internal" href="#scripts">Scripts</a></li>
 </ul>
 </li>
 </ul>

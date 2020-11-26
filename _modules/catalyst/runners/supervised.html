@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.supervised &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.runners.supervised &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -322,7 +322,7 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.experiments.supervised</span> <span class="kn">import</span> <span class="n">SupervisedExperiment</span>
+<span class="kn">from</span> <span class="nn">catalyst.experiments.auto</span> <span class="kn">import</span> <span class="n">AutoCallbackExperiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.runners.runner</span> <span class="kn">import</span> <span class="n">Runner</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Device</span><span class="p">,</span> <span class="n">RunnerModel</span>
 
@@ -339,7 +339,7 @@
         <span class="n">input_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
         <span class="n">input_target_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
-        <span class="n">experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">SupervisedExperiment</span><span class="p">,</span>
+        <span class="n">experiment_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">AutoCallbackExperiment</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>

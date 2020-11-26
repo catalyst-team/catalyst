@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.tools.meters.mapmeter &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.contrib.data.augmentor &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -290,7 +290,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.tools.meters.mapmeter</li>
+      <li>catalyst.contrib.data.augmentor</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -316,72 +316,126 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.tools.meters.mapmeter</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">The mAP meter measures the mean average precision over all classes.</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
-
-<span class="kn">import</span> <span class="nn">torch</span>
-
-<span class="kn">from</span> <span class="nn">catalyst.tools.meters</span> <span class="kn">import</span> <span class="n">APMeter</span><span class="p">,</span> <span class="n">meter</span>
+  <h1>Source code for catalyst.contrib.data.augmentor</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
 
-<div class="viewcode-block" id="mAPMeter"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.mapmeter.mAPMeter">[docs]</a><span class="k">class</span> <span class="nc">mAPMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>  <span class="c1"># noqa: N801</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    This meter is a wrapper for</span>
-<span class="sd">    :py:class:`catalyst.tools.meters.apmeter.APMeter`.</span>
-<span class="sd">    The mAPMeter is designed to operate on `NxK` Tensors `output` and</span>
-<span class="sd">    `target`, and optionally a `Nx1` Tensor weight where:</span>
+<div class="viewcode-block" id="Augmentor"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.augmentor.Augmentor">[docs]</a><span class="k">class</span> <span class="nc">Augmentor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Augmentation abstraction to use with data dictionaries.&quot;&quot;&quot;</span>
 
-<span class="sd">    1. The `output` contains model output scores for `N` examples and `K`</span>
-<span class="sd">    classes that ought to be higher when the model is more convinced that</span>
-<span class="sd">    the example should be positively labeled, and smaller when the model</span>
-<span class="sd">    believes the example should be negatively labeled</span>
-<span class="sd">    (for instance, the output of a sigmoid function)</span>
-
-<span class="sd">    2. The `target` contains only values 0 (for negative examples) and 1</span>
-<span class="sd">    (for positive examples)</span>
-
-<span class="sd">    3. The `weight` ( &gt; 0) represents weight</span>
-<span class="sd">    for each sample.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="mAPMeter.__init__"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.mapmeter.mAPMeter.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Constructor method for the ``mAPMeter`` class.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">mAPMeter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">apmeter</span> <span class="o">=</span> <span class="n">APMeter</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="mAPMeter.reset"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.mapmeter.mAPMeter.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Reset `self.apmeter`.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">apmeter</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="mAPMeter.add"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.mapmeter.mAPMeter.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span>
+<div class="viewcode-block" id="Augmentor.__init__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.augmentor.Augmentor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">output</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-        <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-        <span class="n">weight</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Update `self.apmeter`.</span>
+        <span class="n">dict_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">augment_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Augmentation abstraction to use with data dictionaries.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            output: Model output scores as `NxK` tensor</span>
-<span class="sd">            target: Target scores as `NxK` tensor</span>
-<span class="sd">            weight (Tensor, optional): Weight values for each sample</span>
-<span class="sd">                as `Nx1` Tensor</span>
+<span class="sd">            dict_key: key to transform</span>
+<span class="sd">            augment_fn: augmentation function to use</span>
+<span class="sd">            input_key: ``augment_fn`` input key</span>
+<span class="sd">            output_key: ``augment_fn`` output key</span>
+<span class="sd">            **kwargs: default kwargs for augmentations function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">apmeter</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">weight</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict_key</span> <span class="o">=</span> <span class="n">dict_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">augment_fn</span> <span class="o">=</span> <span class="n">augment_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span></div>
 
-<div class="viewcode-block" id="mAPMeter.value"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.mapmeter.mAPMeter.value">[docs]</a>    <span class="k">def</span> <span class="nf">value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Returns mean of `self.apmeter` value.</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Applies the augmentation.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">augment_fn</span><span class="p">(</span>
+                <span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">:</span> <span class="n">dict_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_key</span><span class="p">]},</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">augment_fn</span><span class="p">(</span><span class="n">dict_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_key</span><span class="p">],</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dict_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dict_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">dict_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">output</span>
+        <span class="k">return</span> <span class="n">dict_</span></div>
+
+
+<div class="viewcode-block" id="AugmentorCompose"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.augmentor.AugmentorCompose">[docs]</a><span class="k">class</span> <span class="nc">AugmentorCompose</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Compose augmentors.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AugmentorCompose.__init__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.augmentor.AugmentorCompose.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key2augment_fn</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            key2augment_fn (Dict[str, Callable]): mapping from input key</span>
+<span class="sd">                to augmentation function to apply</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">key2augment_fn</span> <span class="o">=</span> <span class="n">key2augment_fn</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            dictionary: item from dataset</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            torch.Tensor: mAP scalar tensor</span>
+<span class="sd">            dict: dictionaty with augmented data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">apmeter</span><span class="o">.</span><span class="n">value</span><span class="p">()</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div></div>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">augment_fn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">key2augment_fn</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">results</span><span class="p">,</span> <span class="o">**</span><span class="n">augment_fn</span><span class="p">({</span><span class="n">key</span><span class="p">:</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]})}</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">dictionary</span><span class="p">,</span> <span class="o">**</span><span class="n">results</span><span class="p">}</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mAPMeter&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="AugmentorKeys"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.augmentor.AugmentorKeys">[docs]</a><span class="k">class</span> <span class="nc">AugmentorKeys</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Augmentation abstraction to match input and augmentations keys.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="AugmentorKeys.__init__"><a class="viewcode-back" href="../../../../api/data.html#catalyst.contrib.data.augmentor.AugmentorKeys.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dict2fn_dict</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+        <span class="n">augment_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            dict2fn_dict (Dict[str, str]): keys matching dict</span>
+<span class="sd">                ``{input_key: augment_fn_key}``. For example:</span>
+<span class="sd">                ``{&quot;image&quot;: &quot;image&quot;, &quot;mask&quot;: &quot;mask&quot;}``</span>
+<span class="sd">            augment_fn: augmentation function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict2fn_dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">dict2fn_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">dict2fn_dict</span><span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dict2fn_dict</span> <span class="o">=</span> <span class="n">dict2fn_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">augment_fn</span> <span class="o">=</span> <span class="n">augment_fn</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            dictionary: item from dataset</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict: dictionaty with augmented data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># link keys from dict_ with augment_fn keys</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">fn_key</span><span class="p">:</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">dict_key</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">dict_key</span><span class="p">,</span> <span class="n">fn_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict2fn_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="n">augmented</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">augment_fn</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="c1"># link keys from augment_fn back to dict_ keys</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">dict_key</span><span class="p">:</span> <span class="n">augmented</span><span class="p">[</span><span class="n">fn_key</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">dict_key</span><span class="p">,</span> <span class="n">fn_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dict2fn_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">dictionary</span><span class="p">,</span> <span class="o">**</span><span class="n">results</span><span class="p">}</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Augmentor&quot;</span><span class="p">,</span> <span class="s2">&quot;AugmentorCompose&quot;</span><span class="p">,</span> <span class="s2">&quot;AugmentorKeys&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

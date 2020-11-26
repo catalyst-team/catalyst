@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.cv.mixins.flare &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.contrib.data.cv.reader &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -290,7 +290,7 @@
         
           <li><a href="../../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.data.cv.mixins.flare</li>
+      <li>catalyst.contrib.data.cv.reader</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -316,52 +316,99 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.data.cv.mixins.flare</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
-<span class="kn">import</span> <span class="nn">random</span>
+  <h1>Source code for catalyst.contrib.data.cv.reader</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">albumentations</span> <span class="k">as</span> <span class="nn">albu</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.data.reader</span> <span class="kn">import</span> <span class="n">IReader</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.utils.cv.image</span> <span class="kn">import</span> <span class="n">imread</span><span class="p">,</span> <span class="n">mimread</span>
 
 
-<div class="viewcode-block" id="FlareMixin"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.data.cv.mixins.flare.FlareMixin">[docs]</a><span class="k">class</span> <span class="nc">FlareMixin</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Calculates flare factor for augmented image.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ImageReader"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.contrib.data.cv.reader.ImageReader">[docs]</a><span class="k">class</span> <span class="nc">ImageReader</span><span class="p">(</span><span class="n">IReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Image reader abstraction. Reads images from a ``csv`` dataset.&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="FlareMixin.__init__"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.data.cv.mixins.flare.FlareMixin.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="ImageReader.__init__"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.contrib.data.cv.reader.ImageReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span>
-        <span class="n">output_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;flare_factor&quot;</span><span class="p">,</span>
-        <span class="n">sunflare_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rootpath</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">grayscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
-<span class="sd">            input_key: input key to use from annotation dict</span>
-<span class="sd">            output_key: output key to use to store the result</span>
-<span class="sd">            sunflare_params: params to init</span>
-<span class="sd">                ``albumentations.RandomSunFlare``</span>
+<span class="sd">            input_key: key to use from annotation dict</span>
+<span class="sd">            output_key: key to use to store the result,</span>
+<span class="sd">                default: ``input_key``</span>
+<span class="sd">            rootpath: path to images dataset root directory</span>
+<span class="sd">                (so your can use relative paths in annotations)</span>
+<span class="sd">            grayscale: flag if you need to work only</span>
+<span class="sd">                with grayscale images</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="n">output_key</span> <span class="ow">or</span> <span class="n">input_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span> <span class="o">=</span> <span class="n">rootpath</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grayscale</span> <span class="o">=</span> <span class="n">grayscale</span></div>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">sunflare_params</span> <span class="o">=</span> <span class="n">sunflare_params</span> <span class="ow">or</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">albu</span><span class="o">.</span><span class="n">RandomSunFlare</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">sunflare_params</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads a row from your annotations dict with filename and</span>
+<span class="sd">        transfer it to an image</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dictionary</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
-        <span class="n">image</span> <span class="o">=</span> <span class="n">dictionary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span>
-        <span class="n">sunflare_factor</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="sd">        Args:</span>
+<span class="sd">            element: elem in your dataset</span>
 
-        <span class="k">if</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">p</span><span class="p">:</span>
-            <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">get_params</span><span class="p">()</span>
-            <span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">image</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
-            <span class="n">sunflare_factor</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: Image</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">image_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">])</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">imread</span><span class="p">(</span>
+            <span class="n">image_name</span><span class="p">,</span> <span class="n">rootpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span><span class="p">,</span> <span class="n">grayscale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grayscale</span>
+        <span class="p">)</span>
 
-        <span class="n">dictionary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">image</span>
-        <span class="n">dictionary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">sunflare_factor</span>
-
-        <span class="k">return</span> <span class="n">dictionary</span></div>
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">:</span> <span class="n">img</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">output</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FlareMixin&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="MaskReader"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.contrib.data.cv.reader.MaskReader">[docs]</a><span class="k">class</span> <span class="nc">MaskReader</span><span class="p">(</span><span class="n">IReader</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Mask reader abstraction. Reads masks from a `csv` dataset.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MaskReader.__init__"><a class="viewcode-back" href="../../../../../api/data.html#catalyst.contrib.data.cv.reader.MaskReader.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">rootpath</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">clip_range</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            input_key: key to use from annotation dict</span>
+<span class="sd">            output_key: key to use to store the result,</span>
+<span class="sd">                default: ``input_key``</span>
+<span class="sd">            rootpath: path to images dataset root directory</span>
+<span class="sd">                (so your can use relative paths in annotations)</span>
+<span class="sd">            clip_range (Tuple[int, int]): lower and upper interval edges,</span>
+<span class="sd">                image values outside the interval are clipped</span>
+<span class="sd">                to the interval edges</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="n">output_key</span> <span class="ow">or</span> <span class="n">input_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span> <span class="o">=</span> <span class="n">rootpath</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clip</span> <span class="o">=</span> <span class="n">clip_range</span></div>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Reads a row from your annotations dict with filename and</span>
+<span class="sd">        transfer it to a mask</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            element: elem in your dataset.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            np.ndarray: Mask</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mask_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">element</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">])</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">mimread</span><span class="p">(</span><span class="n">mask_name</span><span class="p">,</span> <span class="n">rootpath</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">rootpath</span><span class="p">,</span> <span class="n">clip_range</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">clip</span><span class="p">)</span>
+
+        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">:</span> <span class="n">mask</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ImageReader&quot;</span><span class="p">,</span> <span class="s2">&quot;MaskReader&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

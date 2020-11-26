@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.experiments.config &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.experiments.config &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -336,18 +336,14 @@
     <span class="n">VerboseLogger</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.metric</span> <span class="kn">import</span> <span class="n">MetricManagerCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.optimizer</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">AMPOptimizerCallback</span><span class="p">,</span>
-    <span class="n">IOptimizerCallback</span><span class="p">,</span>
-    <span class="n">OptimizerCallback</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.optimizer</span> <span class="kn">import</span> <span class="n">IOptimizerCallback</span><span class="p">,</span> <span class="n">OptimizerCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.scheduler</span> <span class="kn">import</span> <span class="n">ISchedulerCallback</span><span class="p">,</span> <span class="n">SchedulerCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.timer</span> <span class="kn">import</span> <span class="n">TimerCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.validation</span> <span class="kn">import</span> <span class="n">ValidationManagerCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.data.augmentor</span> <span class="kn">import</span> <span class="n">Augmentor</span><span class="p">,</span> <span class="n">AugmentorCompose</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.experiment</span> <span class="kn">import</span> <span class="n">IExperiment</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.functional</span> <span class="kn">import</span> <span class="n">check_callback_isinstance</span>
-<span class="kn">from</span> <span class="nn">catalyst.data.augmentor</span> <span class="kn">import</span> <span class="n">Augmentor</span><span class="p">,</span> <span class="n">AugmentorCompose</span>
 <span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CALLBACKS</span><span class="p">,</span>
     <span class="n">CRITERIONS</span><span class="p">,</span>
@@ -358,11 +354,9 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.checkpoint</span> <span class="kn">import</span> <span class="n">load_checkpoint</span><span class="p">,</span> <span class="n">unpack_checkpoint</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.dict</span> <span class="kn">import</span> <span class="n">merge_dicts</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">check_amp_available</span><span class="p">,</span> <span class="n">get_rank</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.hash</span> <span class="kn">import</span> <span class="n">get_short_hash</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_rank</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.loaders</span> <span class="kn">import</span> <span class="n">get_loaders_from_params</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_utcnow_time</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_short_hash</span><span class="p">,</span> <span class="n">get_utcnow_time</span><span class="p">,</span> <span class="n">merge_dicts</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">any2device</span><span class="p">,</span> <span class="n">get_device</span><span class="p">,</span> <span class="n">process_model_params</span>
 
 
@@ -856,12 +850,7 @@
         <span class="c1"># default_callbacks = [(Name, InterfaceClass, InstanceFactory)]</span>
         <span class="n">default_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="n">is_amp_enabled</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;amp&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span> <span class="ow">and</span> <span class="n">check_amp_available</span><span class="p">()</span>
-        <span class="p">)</span>
-        <span class="n">optimizer_cls</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">AMPOptimizerCallback</span> <span class="k">if</span> <span class="n">is_amp_enabled</span> <span class="k">else</span> <span class="n">OptimizerCallback</span>
-        <span class="p">)</span>
+        <span class="n">optimizer_cls</span> <span class="o">=</span> <span class="n">OptimizerCallback</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
             <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_verbose&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">VerboseLogger</span><span class="p">))</span>

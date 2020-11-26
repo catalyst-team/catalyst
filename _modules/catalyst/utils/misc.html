@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.utils.misc &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.utils.misc &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -317,8 +317,13 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.misc</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">urlsafe_b64encode</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha256</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">random</span>
@@ -326,6 +331,40 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">packaging.version</span> <span class="kn">import</span> <span class="n">parse</span><span class="p">,</span> <span class="n">Version</span>
+
+
+<div class="viewcode-block" id="boolean_flag"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.boolean_flag">[docs]</a><span class="k">def</span> <span class="nf">boolean_flag</span><span class="p">(</span>
+    <span class="n">parser</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">help</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># noqa: WPS125</span>
+    <span class="n">shorthand</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Add a boolean flag to a parser inplace.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; parser = argparse.ArgumentParser()</span>
+<span class="sd">        &gt;&gt;&gt; boolean_flag(</span>
+<span class="sd">        &gt;&gt;&gt;     parser, &quot;flag&quot;, default=False, help=&quot;some flag&quot;, shorthand=&quot;f&quot;</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        parser: parser to add the flag to</span>
+<span class="sd">        name: argument name</span>
+<span class="sd">            --&lt;name&gt; will enable the flag,</span>
+<span class="sd">            while --no-&lt;name&gt; will disable it</span>
+<span class="sd">        default (bool, optional): default value of the flag</span>
+<span class="sd">        help: help string for the flag</span>
+<span class="sd">        shorthand: shorthand string for the argument</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dest</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">shorthand</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">shorthand</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="o">*</span><span class="n">names</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="n">dest</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">help</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--no-&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_false&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="n">dest</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="set_global_seed"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.set_global_seed">[docs]</a><span class="k">def</span> <span class="nf">set_global_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -504,18 +543,15 @@
 <span class="sd">    for example\</span>
 <span class="sd">    ::</span>
 
-<span class="sd">        # example 1</span>
-<span class="sd">        runner.get_attr(&quot;criterion&quot;)</span>
+<span class="sd">        get_attr(runner, &quot;criterion&quot;)</span>
 <span class="sd">        # is equivalent to</span>
 <span class="sd">        runner.criterion</span>
 
-<span class="sd">        # example 2</span>
-<span class="sd">        runner.get_attr(&quot;optimizer&quot;)</span>
+<span class="sd">        get_attr(runner, &quot;optimizer&quot;)</span>
 <span class="sd">        # is equivalent to</span>
 <span class="sd">        runner.optimizer</span>
 
-<span class="sd">        # example 3</span>
-<span class="sd">        runner.get_attr(&quot;scheduler&quot;)</span>
+<span class="sd">        get_attr(runner, &quot;scheduler&quot;)</span>
 <span class="sd">        # is equivalent to</span>
 <span class="sd">        runner.scheduler</span>
 
@@ -523,18 +559,15 @@
 <span class="sd">    and would get `inner_key` from this dict; for example,</span>
 <span class="sd">    ::</span>
 
-<span class="sd">        # example 1</span>
-<span class="sd">        runner.get_attr(&quot;criterion&quot;, &quot;bce&quot;)</span>
+<span class="sd">        get_attr(runner, &quot;criterion&quot;, &quot;bce&quot;)</span>
 <span class="sd">        # is equivalent to</span>
 <span class="sd">        runner.criterion[&quot;bce&quot;]</span>
 
-<span class="sd">        # example 2</span>
-<span class="sd">        runner.get_attr(&quot;optimizer&quot;, &quot;adam&quot;)</span>
+<span class="sd">        get_attr(runner, &quot;optimizer&quot;, &quot;adam&quot;)</span>
 <span class="sd">        # is equivalent to</span>
 <span class="sd">        runner.optimizer[&quot;adam&quot;]</span>
 
-<span class="sd">        # example 3</span>
-<span class="sd">        runner.get_attr(&quot;scheduler&quot;, &quot;adam&quot;)</span>
+<span class="sd">        get_attr(runner, &quot;scheduler&quot;, &quot;adam&quot;)</span>
 <span class="sd">        # is equivalent to</span>
 <span class="sd">        runner.scheduler[&quot;adam&quot;]</span>
 
@@ -553,7 +586,209 @@
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">)[</span><span class="n">inner_key</span><span class="p">]</span></div>
 
 
+<span class="k">def</span> <span class="nf">_get_key_str</span><span class="p">(</span>
+    <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_get_key_list</span><span class="p">(</span>
+    <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">key</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">_get_key_dict</span><span class="p">(</span>
+    <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">key_out</span><span class="p">:</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">key_in</span><span class="p">]</span> <span class="k">for</span> <span class="n">key_in</span><span class="p">,</span> <span class="n">key_out</span> <span class="ow">in</span> <span class="n">key</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">_get_key_none</span><span class="p">(</span>
+    <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{}</span>
+
+
+<span class="k">def</span> <span class="nf">_get_key_all</span><span class="p">(</span>
+    <span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">dictionary</span>
+
+
+<div class="viewcode-block" id="get_dictkey_auto_fn"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_dictkey_auto_fn">[docs]</a><span class="k">def</span> <span class="nf">get_dictkey_auto_fn</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Function generator for sub-dict preparation from dict</span>
+<span class="sd">    based on predefined keys.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        key: keys</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        function</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError: if key is out of</span>
+<span class="sd">            `str`, `tuple`, `list`, `dict`, `None`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;__all__&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_get_key_all</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_get_key_str</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">_get_key_list</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_get_key_dict</span>
+    <span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_get_key_none</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="merge_dicts"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.merge_dicts">[docs]</a><span class="k">def</span> <span class="nf">merge_dicts</span><span class="p">(</span><span class="o">*</span><span class="n">dicts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Recursive dict merge.</span>
+<span class="sd">    Instead of updating only top-level keys,</span>
+<span class="sd">    ``merge_dicts`` recurses down into dicts nested</span>
+<span class="sd">    to an arbitrary depth, updating keys.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *dicts: several dictionaries to merge</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: deep-merged dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">dicts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+
+    <span class="n">dict_</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dicts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">merge_dict</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">merge_dict</span> <span class="o">=</span> <span class="n">merge_dict</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">merge_dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">k</span> <span class="ow">in</span> <span class="n">dict_</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict_</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">merge_dict</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">collections</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">dict_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">(</span><span class="n">dict_</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">merge_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dict_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">merge_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">dict_</span></div>
+
+
+<div class="viewcode-block" id="flatten_dict"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.flatten_dict">[docs]</a><span class="k">def</span> <span class="nf">flatten_dict</span><span class="p">(</span>
+    <span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">parent_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;collections.OrderedDict&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Make the given dictionary flatten.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary: giving dictionary</span>
+<span class="sd">        parent_key (str, optional): prefix nested keys with</span>
+<span class="sd">            string ``parent_key``</span>
+<span class="sd">        separator (str, optional): delimiter between</span>
+<span class="sd">            ``parent_key`` and ``key`` to use</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        collections.OrderedDict: ordered dictionary with flatten keys</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">new_key</span> <span class="o">=</span> <span class="n">parent_key</span> <span class="o">+</span> <span class="n">separator</span> <span class="o">+</span> <span class="n">key</span> <span class="k">if</span> <span class="n">parent_key</span> <span class="k">else</span> <span class="n">key</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">):</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="n">flatten_dict</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">new_key</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="n">separator</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">new_key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(</span><span class="n">items</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="split_dict_to_subdicts"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.split_dict_to_subdicts">[docs]</a><span class="k">def</span> <span class="nf">split_dict_to_subdicts</span><span class="p">(</span><span class="n">dct</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">prefixes</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span> <span class="n">extra_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Splits dict into subdicts with spesicied ``prefixes``.</span>
+<span class="sd">    Keys, which don&#39;t startswith one of the prefixes go to ``extra_key``.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; dct = {&quot;train_v1&quot;: 1, &quot;train_v2&quot;: 2, &quot;not_train&quot;: 3}</span>
+<span class="sd">        &gt;&gt;&gt; split_dict_to_subdicts(dct, prefixes=[&quot;train&quot;], extra_key=&quot;_extra&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; {&quot;train&quot;: {&quot;v1&quot;: 1, &quot;v2&quot;: 2}, &quot;_extra&quot;: {&quot;not_train&quot;: 3}}</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dct: dictionary with keys with prefixes</span>
+<span class="sd">        prefixes: prefixes of interest, which we would like to reveal</span>
+<span class="sd">        extra_key: extra key to store everything else</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dictionary with subdictionaries with</span>
+<span class="sd">        ``prefixes`` and ``extra_key`` keys</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">subdicts</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">extra_subdict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dct</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="ow">not</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span> <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">prefixes</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">extra_subdict</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">subdicts</span><span class="p">[</span><span class="n">extra_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">extra_subdict</span>
+    <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="n">prefixes</span><span class="p">:</span>
+        <span class="n">subdicts</span><span class="p">[</span><span class="n">prefix</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">_&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">):</span> <span class="n">v</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">dct</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="k">return</span> <span class="n">subdicts</span></div>
+
+
+<span class="k">def</span> <span class="nf">_make_hashable</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(((</span><span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">_make_hashable</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">o</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="nb">sorted</span><span class="p">(</span>
+                <span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">_make_hashable</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">o</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">_make_hashable</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">o</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">o</span>
+
+
+<div class="viewcode-block" id="get_hash"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_hash">[docs]</a><span class="k">def</span> <span class="nf">get_hash</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates unique hash from object following way:</span>
+<span class="sd">    - Represent obj as sting recursively</span>
+<span class="sd">    - Hash this string with sha256 hash function</span>
+<span class="sd">    - encode hash with url-safe base64 encoding</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: object to hash</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        base64-encoded string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bytes_to_hash</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+    <span class="n">hash_bytes</span> <span class="o">=</span> <span class="n">sha256</span><span class="p">(</span><span class="n">bytes_to_hash</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">hash_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="get_short_hash"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_short_hash">[docs]</a><span class="k">def</span> <span class="nf">get_short_hash</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates unique short hash from object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: object to hash</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        short base64-encoded string (6 chars)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hash_</span> <span class="o">=</span> <span class="n">get_hash</span><span class="p">(</span><span class="n">obj</span><span class="p">)[:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">hash_</span></div>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;boolean_flag&quot;</span><span class="p">,</span>
     <span class="s2">&quot;copy_directory&quot;</span><span class="p">,</span>
     <span class="s2">&quot;format_metric&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_fn_default_params&quot;</span><span class="p">,</span>
@@ -563,6 +798,12 @@
     <span class="s2">&quot;maybe_recursive_call&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_attr&quot;</span><span class="p">,</span>
     <span class="s2">&quot;set_global_seed&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_dictkey_auto_fn&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;merge_dicts&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;flatten_dict&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;split_dict_to_subdicts&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_hash&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_short_hash&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

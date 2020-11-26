@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.settings &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.settings &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -369,12 +369,10 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">contrib_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">cv_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">ml_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">nlp_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">alchemy_logger_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">neptune_logger_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">visdom_logger_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">wandb_logger_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">alchemy_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">neptune_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">wandb_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">optuna_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">plotly_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">telegram_logger_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -386,12 +384,15 @@
         <span class="n">segmentation_models_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_libjpeg_turbo</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">nmslib_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pandas_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">sklearn_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scipy_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">transformers_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ipython_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># [catalyst]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">contrib_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">contrib_required</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cv_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">cv_required</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ml_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">ml_required</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nlp_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">nlp_required</span>
 
         <span class="c1"># stages</span>
@@ -405,17 +406,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_infer_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;infer&quot;</span>
 
         <span class="c1"># [catalyst-contrib]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alchemy_logger_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">alchemy_logger_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alchemy_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">alchemy_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">neptune_logger_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">neptune_logger_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neptune_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">neptune_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">visdom_logger_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">visdom_logger_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wandb_logger_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">wandb_logger_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wandb_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">wandb_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">optuna_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
             <span class="n">optuna_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
@@ -423,8 +421,25 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">plotly_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
             <span class="n">plotly_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
         <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nmslib_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">nmslib_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scipy_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">scipy_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pandas_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">pandas_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sklearn_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">sklearn_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ipython_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">ipython_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">telegram_logger_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">telegram_logger_token</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">telegram_logger_chat_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">telegram_logger_chat_id</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">use_lz4</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_lz4</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_pyarrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_pyarrow</span>
 
@@ -439,11 +454,6 @@
             <span class="n">segmentation_models_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">cv_required</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_libjpeg_turbo</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_libjpeg_turbo</span>
-
-        <span class="c1"># [catalyst-ml]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nmslib_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">nmslib_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ml_required</span>
-        <span class="p">)</span>
 
         <span class="c1"># [catalyst-nlp]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transformers_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
@@ -664,6 +674,7 @@
 <span class="nb">setattr</span><span class="p">(</span>  <span class="c1"># noqa: B010</span>
     <span class="n">SETTINGS</span><span class="p">,</span> <span class="s2">&quot;IS_QUANTIZATION_AVAILABLE&quot;</span><span class="p">,</span> <span class="n">IS_QUANTIZATION_AVAILABLE</span>
 <span class="p">)</span>
+<span class="nb">setattr</span><span class="p">(</span><span class="n">SETTINGS</span><span class="p">,</span> <span class="s2">&quot;IS_OPTUNA_AVAILABLE&quot;</span><span class="p">,</span> <span class="n">IS_OPTUNA_AVAILABLE</span><span class="p">)</span>  <span class="c1"># noqa: B010</span>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
@@ -675,6 +686,7 @@
     <span class="s2">&quot;IS_XLA_AVAILABLE&quot;</span><span class="p">,</span>
     <span class="s2">&quot;IS_GIT_AVAILABLE&quot;</span><span class="p">,</span>
     <span class="s2">&quot;IS_QUANTIZATION_AVAILABLE&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;IS_OPTUNA_AVAILABLE&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

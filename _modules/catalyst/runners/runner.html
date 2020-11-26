@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.runner &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.runners.runner &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -337,6 +337,7 @@
     <span class="n">RunnerModel</span><span class="p">,</span>
     <span class="n">Scheduler</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">check_amp_available</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.checkpoint</span> <span class="kn">import</span> <span class="n">load_checkpoint</span><span class="p">,</span> <span class="n">unpack_checkpoint</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.components</span> <span class="kn">import</span> <span class="n">process_components</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">maybe_recursive_call</span><span class="p">,</span> <span class="n">set_global_seed</span>
@@ -347,6 +348,28 @@
     <span class="n">set_requires_grad</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.tracing</span> <span class="kn">import</span> <span class="n">save_traced_model</span><span class="p">,</span> <span class="n">trace_model</span>
+
+
+<span class="k">def</span> <span class="nf">_resolve_bool_fp16</span><span class="p">(</span><span class="n">fp16</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">bool</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Resolves fp16/distributed params usage.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fp16: fp16 params</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        resolved version of fp16</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">fp16</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="p">{</span><span class="s2">&quot;amp&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">}</span>
+                <span class="k">if</span> <span class="n">check_amp_available</span><span class="p">()</span>
+                <span class="k">else</span> <span class="p">{</span><span class="s2">&quot;apex&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span> <span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fp16</span>
 
 
 <div class="viewcode-block" id="Runner"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.Runner">[docs]</a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">IStageBasedRunner</span><span class="p">):</span>
@@ -432,9 +455,14 @@
 <span class="sd">            stage_kwargs: additional params for stage</span>
 <span class="sd">            checkpoint_data: additional data to save in checkpoint,</span>
 <span class="sd">                for example: ``class_names``, ``date_of_training``, etc</span>
-<span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.</span>
-<span class="sd">                See https://nvidia.github.io/apex/amp.html#properties</span>
-<span class="sd">                if fp16=True, params by default will be ``{&quot;opt_level&quot;: &quot;O1&quot;}``</span>
+<span class="sd">            fp16: parameters for fp16/distributed training.</span>
+<span class="sd">                to use pytorch native amp - ``{&quot;amp&quot;: True}``.</span>
+<span class="sd">                to use apex - ``{&quot;apex&quot;: True, &quot;opt_level&quot;: &quot;O1&quot;, ...}``.</span>
+<span class="sd">                If fp16=True, params by default will be:</span>
+<span class="sd">                ``{&quot;amp&quot;: True}`` if torch&gt;=1.6.0,</span>
+<span class="sd">                ``{&quot;apex&quot;: True, &quot;opt_level&quot;: &quot;O1&quot;, ...}`` if torch&lt;1.6.0.</span>
+<span class="sd">                See https://nvidia.github.io/apex/amp.html#properties for</span>
+<span class="sd">                more params.</span>
 <span class="sd">            distributed: if `True` will start training</span>
 <span class="sd">                in distributed mode.</span>
 <span class="sd">                Note: Works only with python scripts. No jupyter support.</span>
@@ -457,8 +485,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">state_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">stage_kwargs</span> <span class="ow">is</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
-            <span class="n">fp16</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
+        <span class="n">fp16</span> <span class="o">=</span> <span class="n">_resolve_bool_fp16</span><span class="p">(</span><span class="n">fp16</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">resume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">load_best_on_end</span><span class="p">:</span>
             <span class="n">load_on_stage_end</span> <span class="o">=</span> <span class="kc">None</span>
@@ -542,9 +569,7 @@
 <span class="sd">            verbose: if `True`, it displays the status of the training</span>
 <span class="sd">                to the console.</span>
 <span class="sd">            stage_kwargs: additional stage params</span>
-<span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.</span>
-<span class="sd">                See https://nvidia.github.io/apex/amp.html#properties</span>
-<span class="sd">                if fp16=True, params by default will be ``{&quot;opt_level&quot;: &quot;O1&quot;}``</span>
+<span class="sd">            fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)</span>
 <span class="sd">            check: if True, then only checks that pipeline is working</span>
 <span class="sd">                (3 epochs only)</span>
 <span class="sd">            timeit: if True, computes the execution time</span>
@@ -558,8 +583,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">state_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">stage_kwargs</span> <span class="ow">is</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
-            <span class="n">fp16</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
+        <span class="n">fp16</span> <span class="o">=</span> <span class="n">_resolve_bool_fp16</span><span class="p">(</span><span class="n">fp16</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">resume</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">callbacks</span> <span class="o">=</span> <span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="n">callbacks</span><span class="p">)</span>
@@ -631,14 +655,13 @@
 <span class="sd">            loader: loader to predict</span>
 <span class="sd">            model: model to use for prediction</span>
 <span class="sd">            resume: path to checkpoint to resume</span>
-<span class="sd">            fp16 (Union[Dict, bool]): fp16 usage flag</span>
+<span class="sd">            fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)</span>
 <span class="sd">            initial_seed: seed to use before prediction</span>
 
 <span class="sd">        Yields:</span>
 <span class="sd">            bathes with model predictions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
-            <span class="n">fp16</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">}</span>
+        <span class="n">fp16</span> <span class="o">=</span> <span class="n">_resolve_bool_fp16</span><span class="p">(</span><span class="n">fp16</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
@@ -694,8 +717,7 @@
 <span class="sd">            method_name: model&#39;s method name that will be traced</span>
 <span class="sd">            mode: ``train`` or ``eval``</span>
 <span class="sd">            requires_grad: flag to trace with gradients</span>
-<span class="sd">            fp16 (Union[Dict, bool]): If not None, then sets</span>
-<span class="sd">                tracing params to FP16</span>
+<span class="sd">            fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)</span>
 <span class="sd">            device: Torch device or a string</span>
 <span class="sd">            predict_params: additional parameters for model forward</span>
 
@@ -705,6 +727,8 @@
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: if `batch` and `loader` are Nones</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># @TODO: refactor for easy use</span>
+        <span class="c1"># @TODO: also add quantize, prune, onnx-convert</span>
         <span class="k">if</span> <span class="n">batch</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">loader</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -716,14 +740,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="n">fp16</span><span class="p">:</span>
-            <span class="n">opt_level</span> <span class="o">=</span> <span class="s2">&quot;O1&quot;</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">bool</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">fp16</span><span class="p">:</span>
-            <span class="n">opt_level</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">fp16</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">opt_level</span> <span class="o">=</span> <span class="n">fp16</span><span class="p">[</span><span class="s2">&quot;opt_level&quot;</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">opt_level</span> <span class="o">=</span> <span class="n">fp16</span>
+        <span class="n">fp16</span> <span class="o">=</span> <span class="n">_resolve_bool_fp16</span><span class="p">(</span><span class="n">fp16</span><span class="p">)</span>
+        <span class="n">opt_level</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">fp16</span><span class="p">:</span>
+            <span class="n">opt_level</span> <span class="o">=</span> <span class="n">fp16</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;opt_level&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">opt_level</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span>

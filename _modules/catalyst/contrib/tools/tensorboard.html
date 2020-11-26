@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.tools.tensorboard &mdash; Catalyst 20.11 documentation</title>
+  <title>catalyst.contrib.tools.tensorboard &mdash; Catalyst 20.11.1 documentation</title>
   
 
   
@@ -317,39 +317,16 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.contrib.tools.tensorboard</h1><div class="highlight"><pre>
-<span></span><span class="c1"># isort:skip_file</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Tensorboard readers:</span>
-<span class="sd">    * :py:class:`EventsFileReader`</span>
-<span class="sd">    * :py:class:`SummaryReader`</span>
-<span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">BinaryIO</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">BinaryIO</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
 <span class="kn">from</span> <span class="nn">collections.abc</span> <span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">struct</span>
 
-<span class="kn">from</span> <span class="nn">tensorboardX.crc32c</span> <span class="kn">import</span> <span class="n">crc32c</span>  <span class="c1"># noqa: E402</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  <span class="c1"># noqa: E402</span>
-
-<span class="c1"># # Native tensorboard support from 1.2.0 version of PyTorch</span>
-<span class="c1"># from torch import __version__ as torch_version  # noqa: E402</span>
-<span class="c1"># from packaging import version  # noqa: E402</span>
-
-<span class="c1"># if version.parse(torch_version) &lt; version.parse(&quot;1.2.0&quot;):</span>
-<span class="c1">#     from tensorboardX import SummaryWriter as tensorboardX_SummaryWriter</span>
-<span class="c1">#     from tensorboardX.proto.event_pb2 import Event</span>
-
-<span class="c1">#     SummaryWriter = tensorboardX_SummaryWriter</span>
-<span class="c1"># else:</span>
-<span class="c1">#     from torch.utils.tensorboard import SummaryWriter as torch_SummaryWriter</span>
-<span class="c1">#     from torch.utils.tensorboard.writer import Event</span>
-
-<span class="c1">#     SummaryWriter = torch_SummaryWriter</span>
-
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">tensorboardX</span> <span class="kn">import</span> <span class="n">SummaryWriter</span> <span class="k">as</span> <span class="n">tensorboardX_SummaryWriter</span>
+<span class="kn">from</span> <span class="nn">tensorboardX.crc32c</span> <span class="kn">import</span> <span class="n">crc32c</span>
 <span class="kn">from</span> <span class="nn">tensorboardX.proto.event_pb2</span> <span class="kn">import</span> <span class="n">Event</span>
 
 <span class="n">SummaryWriter</span> <span class="o">=</span> <span class="n">tensorboardX_SummaryWriter</span>
