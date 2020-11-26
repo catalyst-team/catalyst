@@ -9,9 +9,7 @@ from catalyst.metrics.functional import process_recsys_components
 
 
 def reciprocal_rank_at_k(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    k: int
+    outputs: torch.Tensor, targets: torch.Tensor, k: int
 ) -> torch.Tensor:
     """
     Calculate the Reciprocal Rank (MRR)
@@ -51,9 +49,7 @@ def reciprocal_rank_at_k(
 
 
 def mrr(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    topk: List[int]
+    outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]
 ) -> List[torch.Tensor]:
     """
     Calculate the Mean Reciprocal Rank (MRR)
@@ -86,10 +82,9 @@ def mrr(
 
     results = []
     for k in topk:
-        results.append(
-            torch.mean(reciprocal_rank_at_k(outputs, targets, k))
-        )
+        results.append(torch.mean(reciprocal_rank_at_k(outputs, targets, k)))
 
     return results
+
 
 __all__ = ["mrr"]

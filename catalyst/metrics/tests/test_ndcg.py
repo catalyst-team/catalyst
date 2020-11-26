@@ -16,30 +16,36 @@ def test_dcg():
     y_true = [2.0, 1.0, 2.0, 0.0]
     y_pred = np.arange(3, -1, -1)
 
-    dcg_at4 = metrics.dcg_at_k(
-        torch.tensor([y_pred]),
-        torch.tensor([y_true]),
-        gain_function="linear_rank",
+    dcg_at4 = torch.sum(
+        metrics.dcg(
+            torch.tensor([y_pred]),
+            torch.tensor([y_true]),
+            gain_function="linear_rank",
+        )
     )
     assert torch.isclose(dcg_at4, torch.tensor(4.261), atol=0.05)
 
     y_true = [2.0, 2.0, 1.0, 0.0]
     y_pred = np.arange(3, -1, -1)
 
-    dcg_at4 = metrics.dcg_at_k(
-        torch.tensor([y_pred]),
-        torch.tensor([y_true]),
-        gain_function="linear_rank",
+    dcg_at4 = torch.sum(
+        metrics.dcg(
+            torch.tensor([y_pred]),
+            torch.tensor([y_true]),
+            gain_function="linear_rank",
+        )
     )
     assert torch.isclose(dcg_at4, torch.tensor(4.631), atol=0.05)
 
     y_true = [3, 2, 3, 0, 0, 1, 2, 2, 3, 0]
     y_pred = np.arange(9, -1, -1)
 
-    dcg_at10 = metrics.dcg_at_k(
-        torch.tensor([y_pred]),
-        torch.tensor([y_true]),
-        gain_function="linear_rank",
+    dcg_at10 = torch.sum(
+        metrics.dcg(
+            torch.tensor([y_pred]),
+            torch.tensor([y_true]),
+            gain_function="linear_rank",
+        )
     )
 
     assert torch.isclose(dcg_at10, torch.tensor(9.61), atol=0.05)

@@ -71,9 +71,7 @@ def avg_precision_at_k(
 
 
 def mean_avg_precision(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    topk: List[int]
+    outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]
 ) -> List[torch.Tensor]:
     """
     Calculate the mean average precision (MAP) for RecSys.
@@ -104,9 +102,7 @@ def mean_avg_precision(
     """
     result = []
     for k in topk:
-        result.append(
-            torch.mean(avg_precision_at_k(outputs, targets, k))
-        )
+        result.append(torch.mean(avg_precision_at_k(outputs, targets, k)))
 
     return result
 

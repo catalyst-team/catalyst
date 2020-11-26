@@ -1,18 +1,15 @@
 """
 Discounted Cumulative Gain metrics
 """
-from typing import List, Tuple
+from typing import List
 
 import torch
 
 from catalyst.metrics.functional import process_recsys_components
 
 
-def dcg_at_k(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    k=10,
-    gain_function="exp_rank",
+def dcg(
+    outputs: torch.Tensor, targets: torch.Tensor, gain_function="exp_rank",
 ) -> torch.Tensor:
     """
     Computes DCG@topk for the specified values of `k`.
@@ -34,44 +31,37 @@ def dcg_at_k(
             - `rank`: x
             On the default, `exp_rank` is used
             to emphasize on retrieving the relevant documents.
-        k (int):
-            Parameter fro evaluation on top-k items
 
     Returns:
         dcg_score (torch.Tensor):
-            The dcg score at k
+            The discounted gains tensor
 
     Raises:
         ValueError: gain function can be either `pow_rank` or `rank`
     """
-    k = min(outputs.size(1), k)
-    targets_sort_by_outputs_at_k = process_recsys_components(
-        outputs, targets, k
-    )
+    targets_sort_by_outputs = process_recsys_components(outputs, targets)
 
     if gain_function == "exp_rank":
         gain_function = lambda x: torch.pow(2, x) - 1
-        gains = gain_function(targets_sort_by_outputs_at_k)
+        gains = gain_function(targets_sort_by_outputs)
         discounts = torch.tensor(1) / torch.log2(
-            torch.arange(
-                targets_sort_by_outputs_at_k.shape[1], dtype=torch.float
-            ) + 2.0
+            torch.arange(targets_sort_by_outputs.shape[1], dtype=torch.float)
+            + 2.0
         )
-        discounted_gains = (gains * discounts)[:, :k]
+        discounted_gains = gains * discounts
 
     elif gain_function == "linear_rank":
         discounts = torch.tensor(1) / torch.log2(
-            torch.arange(
-                targets_sort_by_outputs_at_k.shape[1], dtype=torch.float
-            ) + 1.0
+            torch.arange(targets_sort_by_outputs.shape[1], dtype=torch.float)
+            + 1.0
         )
         discounts[0] = 1
-        discounted_gains = (targets_sort_by_outputs_at_k * discounts)[:, :k]
+        discounted_gains = targets_sort_by_outputs * discounts
 
     else:
         raise ValueError("gain function can be either exp_rank or linear_rank")
 
-    dcg_score = torch.sum(discounted_gains, dim=1)
+    dcg_score = discounted_gains
     return dcg_score
 
 
@@ -106,10 +96,12 @@ def ndcg(
 
     result = []
     for k in topk:
-        ideal_dcgs = dcg_at_k(targets, targets, k, gain_function)
-        predicted_dcgs = dcg_at_k(outputs, targets, k, gain_function)
-        ndcg_score = predicted_dcgs / ideal_dcgs
-        idcg_mask = ideal_dcgs == 0
+        ideal_dcgs = dcg(targets, targets, gain_function)[:, :k]
+        predicted_dcgs = dcg(outputs, targets, gain_function)[:, :k]
+        ideal_dcgs_score = torch.sum(ideal_dcgs, dim=1)
+        predicted_dcgs_score = torch.sum(predicted_dcgs, dim=1)
+        ndcg_score = predicted_dcgs_score / ideal_dcgs_score
+        idcg_mask = ideal_dcgs_score == 0
         ndcg_score[idcg_mask] = 0.0
         result.append(torch.mean(ndcg_score))
     return result

@@ -82,9 +82,7 @@ def process_multiclass_components(
 
 
 def process_recsys_components(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    k: int
+    outputs: torch.Tensor, targets: torch.Tensor
 ) -> torch.Tensor:
     """
     General pre-processing for calculation recsys metrics
@@ -100,15 +98,14 @@ def process_recsys_components(
             for the user and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
-        k (int):
-            Parameter fro evaluation on top-k items
     """
     check_consistent_length(outputs, targets)
     outputs_order = torch.argsort(outputs, descending=True, dim=-1)
     targets_sorted_by_outputs = torch.gather(
         targets, dim=-1, index=outputs_order
     )
-    return targets_sorted_by_outputs[:, :k]
+    return targets_sorted_by_outputs
+
 
 def process_multilabel_components(
     outputs: torch.Tensor,
@@ -377,7 +374,7 @@ def check_consistent_length(*tensors):
 
     TO-DO: write tests for the mehtod.
     """
-    lengths = [X.size(0) * X.size(1)for X in tensors]
+    lengths = [X.size(0) * X.size(1) for X in tensors]
     uniques = np.unique(lengths)
     if len(uniques) > 1:
         raise ValueError("Inconsistent numbers of samples")
