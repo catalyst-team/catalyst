@@ -31,19 +31,14 @@ from catalyst.utils.torch import (
 from catalyst.utils.tracing import save_traced_model, trace_model
 
 
-def _resolve_bool_fp16(fp16: Union[Dict, bool]):
-    """If fp16 is bool then converts it to dict in the following way
-    If ``fp16==True``:
-        * ``{"amp": True}`` if torch>=1.6.0
-        * ``{"apex": True, "opt_level": "O1", ...}`` if torch<1.6.0
-    If ``fp16==False``:
-        * ``{}``
-    Otherwise returns fp16 unchanged
+def _resolve_bool_fp16(fp16: Union[Dict, bool]) -> Dict:
+    """Resolves fp16/distributed params usage.
 
     Args:
-        fp16: (Union[Dict, bool]): fp16 params
+        fp16: fp16 params
 
-    Returns: resolved version of fp16
+    Returns:
+        resolved version of fp16
     """
     if isinstance(fp16, bool):
         if fp16:
@@ -141,13 +136,14 @@ class Runner(IStageBasedRunner):
             stage_kwargs: additional params for stage
             checkpoint_data: additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
-            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
-                To use pytorch native amp: ``{"amp": True}``
-                To use apex: ``{"apex": True, "opt_level": "O1", ...}``
+            fp16: parameters for fp16/distributed training.
+                to use pytorch native amp - ``{"amp": True}``.
+                to use apex - ``{"apex": True, "opt_level": "O1", ...}``.
+                If fp16=True, params by default will be:
+                ``{"amp": True}`` if torch>=1.6.0,
+                ``{"apex": True, "opt_level": "O1", ...}`` if torch<1.6.0.
                 See https://nvidia.github.io/apex/amp.html#properties for
-                more params. If fp16=True, params by default will be:
-                * ``{"amp": True}`` if torch>=1.6.0
-                * ``{"apex": True, "opt_level": "O1", ...}`` if torch<1.6.0
+                more params.
             distributed: if `True` will start training
                 in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
