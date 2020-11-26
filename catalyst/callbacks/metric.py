@@ -498,7 +498,7 @@ class MetricManagerCallback(Callback):
             value = value.mean
             runner.loader_metrics[key] = value
         for key, value in runner.loader_metrics.items():
-            runner.epoch_metrics[f"{runner.loader_name}_{key}"] = value
+            runner.epoch_metrics[f"{runner.loader_key}_{key}"] = value
 
 
 # backward compatibility

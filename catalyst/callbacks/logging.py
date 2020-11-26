@@ -66,7 +66,7 @@ class VerboseLogger(ILoggerCallback):
         self.tqdm = tqdm(
             total=runner.loader_len,
             desc=f"{runner.epoch}/{runner.num_epochs}"
-            f" * Epoch ({runner.loader_name})",
+            f" * Epoch ({runner.loader_key})",
             leave=True,
             ncols=0,
             file=sys.stdout,
@@ -222,9 +222,9 @@ class TensorboardLogger(ILoggerCallback):
 
     def on_loader_start(self, runner: "IRunner"):
         """Prepare tensorboard writers for the current stage."""
-        if runner.loader_name not in self.loggers:
-            log_dir = os.path.join(runner.logdir, f"{runner.loader_name}_log")
-            self.loggers[runner.loader_name] = SummaryWriter(log_dir)
+        if runner.loader_key not in self.loggers:
+            log_dir = os.path.join(runner.logdir, f"{runner.loader_key}_log")
+            self.loggers[runner.loader_key] = SummaryWriter(log_dir)
 
     def on_batch_end(self, runner: "IRunner"):
         """Translate batch metrics to tensorboard."""
@@ -232,7 +232,7 @@ class TensorboardLogger(ILoggerCallback):
             return
 
         if self.log_on_batch_end:
-            mode = runner.loader_name
+            mode = runner.loader_key
             metrics = runner.batch_metrics
             self._log_metrics(
                 metrics=metrics,

@@ -6,7 +6,7 @@ Catalyst
     :alt: Catalyst logo
 
 
-PyTorch framework for Deep Learning research and development.
+PyTorch framework for Deep Learning R&D.
 --------------------------------------------------------------------------------
 
 It focuses on reproducibility, rapid experimentation, and codebase reuse
@@ -215,19 +215,25 @@ Indices and tables
 
     ML - Linear Regression <https://github.com/catalyst-team/catalyst#minimal-examples>
 
-    CV - Classification <https://github.com/catalyst-team/catalyst#minimal-examples>
-    CV - Segmentation <https://github.com/catalyst-team/catalyst#minimal-examples>
-    CV - AutoEncoder <https://github.com/catalyst-team/catalyst#minimal-examples>
-    CV - Variational AutoEncoder <https://github.com/catalyst-team/catalyst#minimal-examples>
+    CV - Classification / Segmentation <https://github.com/catalyst-team/catalyst#minimal-examples>
+    CV - AE / VAE <https://github.com/catalyst-team/catalyst#minimal-examples>
     CV - GAN <https://github.com/catalyst-team/catalyst#minimal-examples>
 
-    Engine - AMP <https://github.com/catalyst-team/catalyst#minimal-examples>
-    Engine - DDP <https://github.com/catalyst-team/catalyst#minimal-examples>
-    Engine - TPU <https://github.com/catalyst-team/catalyst#minimal-examples>
+    Engine - AMP / DDP / TPU <https://github.com/catalyst-team/catalyst#minimal-examples>
 
     AutoML - Catalyst with Optuna <https://github.com/catalyst-team/catalyst#minimal-examples>
 
     tutorials/ddp
+
+.. toctree::
+    :caption: Core
+    :maxdepth: 2
+    :hidden:
+
+    core/experiment
+    core/runner
+    core/callback
+..    core/engine
 
 .. toctree::
     :caption: FAQ
@@ -236,15 +242,36 @@ Indices and tables
 
     faq/intro
 
+    faq/data
+    faq/lr_finder
+
+    faq/dp
+    faq/amp
+    faq/ddp
+    faq/slurm
+    faq/tpu
+
+    faq/multi_components
+    faq/early_stopping
+    faq/checkpointing
+    faq/debugging
+    faq/logging
+    faq/inference
+    faq/finetuning
+
+    faq/stages
+    faq/config_api
+    faq/optuna
+
+
 .. toctree::
-    :caption: Contributing guide
+    :caption: Contribution guide
     :maxdepth: 2
     :hidden:
 
-    contributing/how_to_start
-    contributing/codestyle
-    contributing/contributors
-
+    How to start <https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md>
+    Codestyle <https://github.com/catalyst-team/codestyle>
+    Acknowledgments <https://github.com/catalyst-team/catalyst#acknowledgments>
 
 
 .. toctree::

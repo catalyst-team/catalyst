@@ -33,7 +33,7 @@ class ValidationManagerCallback(Callback):
         Args:
             runner: current runner
         """
-        if runner.stage_name.startswith("infer"):
+        if runner.stage.startswith("infer"):
             return
 
         runner.valid_metrics = {

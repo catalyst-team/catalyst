@@ -174,6 +174,13 @@ BatchLimitLoaderWrapper
     :exclude-members: __dict__, __module__
     :special-members:
 
+BatchPrefetchLoaderWrapper
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.data.loader.BatchPrefetchLoaderWrapper
+    :members:
+    :exclude-members: __dict__, __module__
+    :special-members:
+
 
 Readers
 --------------------------------------
@@ -234,6 +241,13 @@ DistributedSamplerWrapper
     :undoc-members:
     :special-members: __iter__, __len__
 
+DynamicBalanceClassSampler
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.data.sampler.DynamicBalanceClassSampler
+    :members:
+    :undoc-members:
+    :special-members: __iter__, __len__
+
 DynamicLenBatchSampler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.sampler.DynamicLenBatchSampler
@@ -249,7 +263,7 @@ MiniEpochSampler
     :special-members: __iter__, __len__
 
 
-Computer Vision Extensions
+CV Extensions
 --------------------------------------
 
 Dataset
@@ -356,7 +370,7 @@ OneOfPerSample
     :show-inheritance:
 
 
-Natural Language Processing Extensions
+NLP Extensions
 --------------------------------------
 
 .. automodule:: catalyst.data.nlp
