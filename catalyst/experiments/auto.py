@@ -9,7 +9,6 @@ from catalyst.core.callback import Callback
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.experiments.experiment import Experiment
 from catalyst.typing import Criterion, Optimizer, Scheduler
-from catalyst.utils.distributed import check_amp_available
 
 
 # @TODO: should be mixin-based

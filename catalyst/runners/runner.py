@@ -144,12 +144,10 @@ class Runner(IStageBasedRunner):
             fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
                 To use pytorch native amp: ``{"amp": True}``
                 To use apex: ``{"apex": True, "opt_level": "O1", ...}``
-                    See https://nvidia.github.io/apex/amp.html#properties
-                    for more params
-
-                If fp16=True, params by default will be:
-                    * ``{"amp": True}`` if torch>=1.6.0
-                    * ``{"apex": True, "opt_level": "O1", ...}`` if torch<1.6.0
+                See https://nvidia.github.io/apex/amp.html#properties for
+                more params. If fp16=True, params by default will be:
+                * ``{"amp": True}`` if torch>=1.6.0
+                * ``{"apex": True, "opt_level": "O1", ...}`` if torch<1.6.0
             distributed: if `True` will start training
                 in distributed mode.
                 Note: Works only with python scripts. No jupyter support.

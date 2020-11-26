@@ -72,9 +72,6 @@ class GradNormLogger(Callback):
 
         Args:
             runner: current runner
-
-        Returns:
-            nothing
         """
         if not runner.is_train_loader:
             return

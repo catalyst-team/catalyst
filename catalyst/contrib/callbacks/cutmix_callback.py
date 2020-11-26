@@ -115,9 +115,6 @@ class CutmixCallback(CriterionCallback):
 
         Args:
             runner: current runner
-
-        Returns:
-            nothing
         """
         if not self.is_needed:
             return

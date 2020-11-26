@@ -387,6 +387,11 @@ def wrap_topk_metric2dict(
 
     Returns:
         wrapped metric function with List[Dict] output
+
+    Raises:
+        NotImplementedError: if metric is not an instance of
+            int, float, torch.Tensor or Dict
+
     """
     metric_fn = partial(metric_fn, topk=topk_args)
 
