@@ -80,7 +80,7 @@ class MixupCallback(CriterionCallback):
         """
         self.is_needed = not self.on_train_only or runner.is_train_loader
 
-    def on_batch_start(self, runner: "IRunner"):
+    def on_batch_start(self, runner: "IRunner") -> None:
         """Batch start hook.
 
         Args:

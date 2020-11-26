@@ -34,9 +34,7 @@ releases_github_path = "catalyst-team/catalyst"
 
 
 def get_version(mode: str = "full") -> str:
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """Docs? Contribution is welcome."""
     current_dir = os.path.abspath(os.path.dirname(__file__))
     root = os.path.dirname(current_dir)
     version_file = os.path.join(root, "catalyst", "__version__.py")

@@ -13,6 +13,14 @@ Experiments
     :show-inheritance:
 
 
+AutoCallbackExperiment
+----------------------
+.. automodule:: catalyst.experiments.auto
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
 ConfigExperiment
 ----------------------
 .. automodule:: catalyst.experiments.config
@@ -24,14 +32,6 @@ ConfigExperiment
 Experiment
 ----------------------
 .. automodule:: catalyst.experiments.experiment
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-SupervisedExperiment
-----------------------
-.. automodule:: catalyst.experiments.supervised
     :members:
     :undoc-members:
     :show-inheritance:

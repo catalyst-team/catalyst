@@ -6,3 +6,7 @@ sphinx==2.2.1
 mock==3.0.5
 catalyst-codestyle==20.06.1
 catalyst-sphinx-theme==1.1.2
+# TODO: remove
+ipython
+pandas
+sklearn
