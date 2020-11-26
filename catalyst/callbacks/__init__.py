@@ -24,6 +24,7 @@ from catalyst.callbacks.logging import (
     VerboseLogger,
     ConsoleLogger,
     TensorboardLogger,
+    CSVLogger,
 )
 from catalyst.callbacks.meter import MeterMetricsCallback
 from catalyst.callbacks.metric import (
