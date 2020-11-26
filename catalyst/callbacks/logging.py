@@ -273,9 +273,110 @@ class TensorboardLogger(ILoggerCallback):
             logger.close()
 
 
+class CSVLogger(ILoggerCallback):
+    """Logs metrics to csv file on epoch end"""
+
+    def __init__(
+        self, metric_names: List[str] = None,
+    ):
+        """
+        Args:
+            metric_names: list of metric names to log,
+                if none - logs everything
+        """
+        super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
+        self.metrics_to_log = metric_names
+
+        self.loggers = {}
+        self.header_created = {}
+
+    def on_loader_start(self, runner: "IRunner") -> None:
+        """
+        On loader start action.
+
+        Args:
+            runner: current runner
+        """
+        if runner.loader_key not in self.loggers:
+            log_dir = os.path.join(runner.logdir, f"{runner.loader_key}_log")
+            os.makedirs(log_dir, exist_ok=True)
+            self.loggers[runner.loader_key] = open(
+                os.path.join(log_dir, "logs.csv"), "a+"
+            )
+            self.header_created[runner.loader_key] = False
+
+    def _log_metrics(
+        self, metrics: Dict[str, float], step: int, loader_key: str
+    ):
+        if self.metrics_to_log is None:
+            metrics_to_log = sorted(metrics.keys())
+        else:
+            metrics_to_log = self.metrics_to_log
+
+        log_line_csv = f"{step},"
+        for metric in metrics_to_log:
+            log_line_csv += str(metrics[metric]) + ","
+        log_line_csv = (
+            log_line_csv[:-1] + "\n"
+        )  # replace last "," with new line
+        self.loggers[loader_key].write(log_line_csv)
+
+    def _make_header(self, metrics: Dict[str, float], loader_key: str):
+        if self.metrics_to_log is None:
+            metrics_to_log = sorted(metrics.keys())
+        else:
+            metrics_to_log = self.metrics_to_log
+        log_line_header = "step,"
+        for metric in metrics_to_log:
+            log_line_header += metric + ","
+        log_line_header = (
+            log_line_header[:-1] + "\n"
+        )  # replace last "," with new line
+        self.loggers[loader_key].write(log_line_header)
+
+    def on_epoch_end(self, runner: "IRunner"):
+        """
+        Logs metrics here
+
+        Args:
+            runner: runner for experiment
+        """
+        if runner.logdir is None:
+            return
+        per_loader_metrics = split_dict_to_subdicts(
+            dct=runner.epoch_metrics,
+            prefixes=list(runner.loaders.keys()),
+            extra_key="_base",
+        )
+        for loader_key, per_loader_metrics in per_loader_metrics.items():
+            if "base" in loader_key:
+                continue
+            if not self.header_created[loader_key]:
+                self._make_header(
+                    metrics=per_loader_metrics, loader_key=loader_key
+                )
+                self.header_created[loader_key] = True
+            self._log_metrics(
+                metrics=per_loader_metrics,
+                step=runner.global_epoch,
+                loader_key=loader_key,
+            )
+
+    def on_stage_end(self, runner: "IRunner") -> None:
+        """
+        Closes loggers
+
+        Args:
+            runner: runner for experiment
+        """
+        for _k, logger in self.loggers.items():
+            logger.close()
+
+
 __all__ = [
     "ILoggerCallback",
     "ConsoleLogger",
     "TensorboardLogger",
     "VerboseLogger",
+    "CSVLogger",
 ]
