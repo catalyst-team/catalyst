@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Generator, List, Optional, Sequence, Tuple
+from typing import Callable, Dict, Optional, Sequence, Tuple
 from functools import partial
 
 import numpy as np
@@ -87,7 +87,7 @@ def process_recsys_components(
     """
     General pre-processing for calculation recsys metrics
 
-        Args:
+    Args:
         outputs (torch.Tensor):
             Tensor weith predicted score
             size: [batch_size, slate_length]
@@ -98,6 +98,10 @@ def process_recsys_components(
             for the user and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
+
+    Returns:
+        targets_sorted_by_outputs (torch.Tensor):
+            targets tensor sorted by outputs
     """
     check_consistent_length(outputs, targets)
     outputs_order = torch.argsort(outputs, descending=True, dim=-1)
@@ -367,14 +371,16 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
 def check_consistent_length(*tensors):
     """Check that all arrays have consistent first dimensions.
     Checks whether all objects in arrays have the same shape or length.
-    Parameters
-    ----------
-    *tensors : list or tensores of input objects.
-        Objects that will be checked for consistent length.
 
-    TO-DO: write tests for the mehtod.
+    Args:
+        tensors : list or tensores of input objects.
+            Objects that will be checked for consistent length.
+
+    Raises:
+        ValueError: "Inconsistent numbers of samples"
+
     """
-    lengths = [X.size(0) * X.size(1) for X in tensors]
+    lengths = [tensor.size(0) * tensor.size(1) for tensor in tensors]
     uniques = np.unique(lengths)
     if len(uniques) > 1:
         raise ValueError("Inconsistent numbers of samples")

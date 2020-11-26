@@ -90,11 +90,10 @@ def ndcg(
             Parameter fro evaluation on top-k items
 
     Returns:
-        result (Tuple[float]):
-        tuple with computed ndcg@topk
+        results (Tuple[float]):
+            tuple with computed ndcg@topk
     """
-
-    result = []
+    results = []
     for k in topk:
         ideal_dcgs = dcg(targets, targets, gain_function)[:, :k]
         predicted_dcgs = dcg(outputs, targets, gain_function)[:, :k]
@@ -103,8 +102,8 @@ def ndcg(
         ndcg_score = predicted_dcgs_score / ideal_dcgs_score
         idcg_mask = ideal_dcgs_score == 0
         ndcg_score[idcg_mask] = 0.0
-        result.append(torch.mean(ndcg_score))
-    return result
+        results.append(torch.mean(ndcg_score))
+    return results
 
 
 __all__ = ["dcg", "ndcg"]

@@ -8,8 +8,8 @@ import torch
 from catalyst.metrics.functional import process_recsys_components
 
 
-def avg_precision_at_k(
-    outputs: torch.Tensor, targets: torch.Tensor, k=10
+def avg_precision(
+    outputs: torch.Tensor, targets: torch.Tensor
 ) -> torch.Tensor:
     """
     Calculate the Average Precision for RecSys.
@@ -42,27 +42,21 @@ def avg_precision_at_k(
             and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
-        k (int):
-            The position to compute the truncated AP,
-            must be positive
 
     Returns:
         ap_score (torch.Tensor):
             The map score for each batch.
             size: [batch_size, 1]
     """
-    k = min(outputs.size(1), k)
-    targets_sort_by_outputs_at_k = process_recsys_components(
-        outputs, targets, k
-    )
-    precisions = torch.zeros_like(targets_sort_by_outputs_at_k)
+    targets_sort_by_outputs = process_recsys_components(outputs, targets)
+    precisions = torch.zeros_like(targets_sort_by_outputs)
 
-    for index in range(k):
+    for index in range(outputs.size(1)):
         precisions[:, index] = torch.sum(
-            targets_sort_by_outputs_at_k[:, : (index + 1)], dim=1
+            targets_sort_by_outputs[:, : (index + 1)], dim=1
         ) / float(index + 1)
 
-    only_relevant_precision = precisions * targets_sort_by_outputs_at_k
+    only_relevant_precision = precisions * targets_sort_by_outputs
     ap_score = only_relevant_precision.sum(dim=1) / (
         (only_relevant_precision != 0).sum(dim=1)
     )
@@ -91,7 +85,7 @@ def mean_avg_precision(
             and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
-        top_k (List[int]):
+        topk (List[int]):
             List of parameter for evaluation
             topK items
 
@@ -100,11 +94,12 @@ def mean_avg_precision(
             The map score for every k.
             size: len(top_k)
     """
-    result = []
+    results = []
     for k in topk:
-        result.append(torch.mean(avg_precision_at_k(outputs, targets, k)))
+        k = min(outputs.size(1), k)
+        results.append(torch.mean(avg_precision(outputs, targets)[:k]))
 
-    return result
+    return results
 
 
 __all__ = ["mean_avg_precision", "avg_precision"]

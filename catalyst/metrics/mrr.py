@@ -1,14 +1,14 @@
 """
 MRR metric.
 """
-from typing import List, Tuple
+from typing import List
 
 import torch
 
 from catalyst.metrics.functional import process_recsys_components
 
 
-def reciprocal_rank_at_k(
+def reciprocal_rank(
     outputs: torch.Tensor, targets: torch.Tensor, k: int
 ) -> torch.Tensor:
     """
@@ -34,11 +34,10 @@ def reciprocal_rank_at_k(
         mrr_score (torch.Tensor):
             The mrr score for each batch.
     """
-
     k = min(outputs.size(1), k)
-    targets_sort_by_outputs_at_k = process_recsys_components(
-        outputs, targets, k
-    )
+    targets_sort_by_outputs_at_k = process_recsys_components(outputs, targets)[
+        :, :k
+    ]
     values, indices = torch.max(targets_sort_by_outputs_at_k, dim=1)
     indices = indices.type_as(values).unsqueeze(dim=0).t()
     mrr_score = torch.tensor(1.0) / (indices + torch.tensor(1.0))
@@ -72,19 +71,18 @@ def mrr(
             and 0 if it's not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
-        k (int):
+        topk (int):
             Parameter fro evaluation on top-k items
 
     Returns:
         mrr_score (torch.Tensor):
             The mrr score for each batch.
     """
-
     results = []
     for k in topk:
-        results.append(torch.mean(reciprocal_rank_at_k(outputs, targets, k)))
+        results.append(torch.mean(reciprocal_rank(outputs, targets, k)))
 
     return results
 
 
-__all__ = ["mrr"]
+__all__ = ["reciprocal_rank", "mrr"]
