@@ -11,7 +11,7 @@ from catalyst.metrics.functional import process_recsys_components
 
 def hitrate(
     outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]
-) -> Tuple[float]:
+) -> List[torch.Tensor]:
     """
     Calculate the hit rate score given model outputs and targets.
     Hit-rate is a metric for evaluating ranking systems.
@@ -38,7 +38,7 @@ def hitrate(
             Parameter fro evaluation on top-k items
 
     Returns:
-        hitrate_at_k (Tuple[float]):
+        hitrate_at_k (List[torch.Tensor]):
             the hit rate score
     """
     results = []
