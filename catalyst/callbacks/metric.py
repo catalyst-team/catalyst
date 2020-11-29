@@ -1,4 +1,13 @@
-from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    TYPE_CHECKING,
+    Union,
+)
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import logging
@@ -173,25 +182,68 @@ class ILoaderMetricCallback(IMetricCallback):
         """
         super().__init__(**kwargs)
 
-        self.input = defaultdict(lambda: [])
-        self.output = defaultdict(lambda: [])
+        self.input: Optional[Dict[str, Iterable[Any]]] = None
+        self.output: Optional[Dict[str, Iterable[Any]]] = None
+        self._storage_size: int = 0
+        self._cur_idx: int = 0
 
     def on_loader_start(self, runner: "IRunner"):
         """Reinitialises internal storage."""
-        self.input = defaultdict(lambda: [])
-        self.output = defaultdict(lambda: [])
+        self.input = defaultdict(lambda: np.array)
+        self.output = defaultdict(lambda: np.array)
+
+    def on_batch_start(self, runner: "IRunner"):
+        """Allocate memory for data accumulation"""
+        output = self._get_output(runner.output, self.output_key)
+        input = self._get_input(runner.input, self.input_key)
+
+        dataset = runner.loaders[runner.loader_name].dataset
+        self._storage_size = len(dataset)
+
+        is_first_batch = not (self.input and self.output)
+        if not is_first_batch:
+            return
+
+        for data, storage in zip((input, output), (self.input, self.output)):
+            if isinstance(data, dict):
+                for key, value in data.items():
+                    value_shape = value.shape
+                    field_shape = (
+                        (self._storage_size, value_shape[1])
+                        if len(value_shape) > 1
+                        else (self._storage_size,)
+                    )
+                    storage[key] = np.empty(shape=field_shape)
+            else:
+                storage["_data"] = np.empty(shape=(self._storage_size,))
+        self._cur_idx = 0
 
     def on_batch_end(self, runner: "IRunner") -> None:
         """Stores new input/output for the metric computation."""
         output = self._get_output(runner.output, self.output_key)
         input = self._get_input(runner.input, self.input_key)
 
+        value_shape = 0
         for data, storage in zip((input, output), (self.input, self.output)):
             if isinstance(data, dict):
                 for key, value in data.items():
-                    storage[key].append(value.detach().cpu().numpy())
+                    value_shape = value.shape[0]
+                    storage[key][
+                        self._cur_idx : self._cur_idx + value_shape
+                    ] = (value.detach().cpu().numpy())
             else:
-                storage["_data"].append(data.detach().cpu().numpy())
+                value_shape = len(data)
+                storage["_data"][
+                    self._cur_idx : self._cur_idx + value_shape
+                ] = (data.detach().cpu().numpy())
+        self._cur_idx += value_shape
+
+    def _check_completeness(self) -> None:
+        """Check if callback allocated all the data from loader"""
+        assert self._cur_idx == self._storage_size, (
+            f"An error occurred during the accumulation process: expected "
+            f"to get {self._storage_size} elements, got {self._cur_idx}."
+        )
 
     def on_loader_end(self, runner: "IRunner"):
         """Computes loader-based metric.
@@ -199,20 +251,22 @@ class ILoaderMetricCallback(IMetricCallback):
         Args:
             runner: current runner
         """
-        input = {
-            key: torch.from_numpy(np.concatenate(self.input[key], axis=0))
-            for key in self.input
-        }
+        self._check_completeness()
+        input = {key: torch.from_numpy(self.input[key]) for key in self.input}
         output = {
-            key: torch.from_numpy(np.concatenate(self.output[key], axis=0))
-            for key in self.output
+            key: torch.from_numpy(self.output[key]) for key in self.output
         }
 
-        input = {self.input_key: input["_data"]} if len(input) == 1 else input
-        output = (
-            {self.output_key: output["_data"]} if len(output) == 1 else output
+        input = (
+            {self.input_key: input["_data"]}
+            if list(input.keys()) == ["_data"]
+            else input
         )
-
+        output = (
+            {self.output: output["_data"]}
+            if list(output.keys()) == ["_data"]
+            else output
+        )
         metrics = self._compute_metric(output, input)
         metrics = self._process_computed_metric(metrics)
         runner.loader_metrics.update(**metrics)
