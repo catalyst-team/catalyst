@@ -75,6 +75,8 @@ If you want to predict one batch:
     batch_prediciton == batch_model_prediciton
     >>> True
 
+You could also check out the example above in `this Google Colab notebook`_.
+
 Predict loader
 ----------------------------------------------------
 If you want to predict entire loader:
@@ -86,6 +88,10 @@ If you want to predict entire loader:
 
 The ``runner.predict_loader`` method just iteratively goes through the loader batches,
 makes model predictions and yields the results.
+
+You could also check out the example above in `this Google Colab notebook`_.
+
+.. _`this Google Colab notebook`: https://colab.research.google.com/drive/1A_JVXdnecanWCM74qi-KqUn0boElvISk?usp=sharing
 
 If you haven't found the answer for your question, feel free to `join our slack`_ for the discussion.
 

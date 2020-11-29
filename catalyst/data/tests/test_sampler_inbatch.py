@@ -11,7 +11,7 @@ from scipy.special import binom
 import torch
 from torch import Tensor, tensor
 
-from catalyst.contrib.utils.misc import find_value_ids
+from catalyst.contrib.utils.misc_extra import find_value_ids
 from catalyst.data.sampler_inbatch import (
     AllTripletsSampler,
     HardClusterSampler,

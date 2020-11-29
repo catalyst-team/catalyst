@@ -55,12 +55,10 @@ class Settings(FrozenClass):
         self,
         contrib_required: bool = False,
         cv_required: bool = False,
-        ml_required: bool = False,
         nlp_required: bool = False,
-        alchemy_logger_required: Optional[bool] = None,
-        neptune_logger_required: Optional[bool] = None,
-        visdom_logger_required: Optional[bool] = None,
-        wandb_logger_required: Optional[bool] = None,
+        alchemy_required: Optional[bool] = None,
+        neptune_required: Optional[bool] = None,
+        wandb_required: Optional[bool] = None,
         optuna_required: Optional[bool] = None,
         plotly_required: Optional[bool] = None,
         telegram_logger_token: Optional[str] = None,
@@ -72,12 +70,15 @@ class Settings(FrozenClass):
         segmentation_models_required: Optional[bool] = None,
         use_libjpeg_turbo: bool = False,
         nmslib_required: Optional[bool] = None,
+        pandas_required: Optional[bool] = None,
+        sklearn_required: Optional[bool] = None,
+        scipy_required: Optional[bool] = None,
         transformers_required: Optional[bool] = None,
+        ipython_required: Optional[bool] = None,
     ):
         # [catalyst]
         self.contrib_required: bool = contrib_required
         self.cv_required: bool = cv_required
-        self.ml_required: bool = ml_required
         self.nlp_required: bool = nlp_required
 
         # stages
@@ -91,17 +92,14 @@ class Settings(FrozenClass):
         self.loader_infer_prefix: str = "infer"
 
         # [catalyst-contrib]
-        self.alchemy_logger_required: bool = self._optional_value(
-            alchemy_logger_required, default=contrib_required
+        self.alchemy_required: bool = self._optional_value(
+            alchemy_required, default=contrib_required
         )
-        self.neptune_logger_required: bool = self._optional_value(
-            neptune_logger_required, default=contrib_required
+        self.neptune_required: bool = self._optional_value(
+            neptune_required, default=contrib_required
         )
-        self.visdom_logger_required: bool = self._optional_value(
-            visdom_logger_required, default=contrib_required
-        )
-        self.wandb_logger_required: bool = self._optional_value(
-            wandb_logger_required, default=contrib_required
+        self.wandb_required: bool = self._optional_value(
+            wandb_required, default=contrib_required
         )
         self.optuna_required: bool = self._optional_value(
             optuna_required, default=contrib_required
@@ -109,8 +107,25 @@ class Settings(FrozenClass):
         self.plotly_required: bool = self._optional_value(
             plotly_required, default=contrib_required
         )
+        self.nmslib_required: bool = self._optional_value(
+            nmslib_required, default=False
+        )
+        self.scipy_required: bool = self._optional_value(
+            scipy_required, default=False
+        )
+        self.pandas_required: bool = self._optional_value(
+            pandas_required, default=False
+        )
+        self.sklearn_required: bool = self._optional_value(
+            sklearn_required, default=False
+        )
+        self.ipython_required: bool = self._optional_value(
+            ipython_required, default=False
+        )
+
         self.telegram_logger_token: str = telegram_logger_token
         self.telegram_logger_chat_id: str = telegram_logger_chat_id
+
         self.use_lz4: bool = use_lz4
         self.use_pyarrow: bool = use_pyarrow
 
@@ -125,11 +140,6 @@ class Settings(FrozenClass):
             segmentation_models_required, default=cv_required
         )
         self.use_libjpeg_turbo: bool = use_libjpeg_turbo
-
-        # [catalyst-ml]
-        self.nmslib_required: bool = self._optional_value(
-            nmslib_required, default=ml_required
-        )
 
         # [catalyst-nlp]
         self.transformers_required: bool = self._optional_value(
@@ -351,6 +361,8 @@ setattr(  # noqa: B010
     SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE
 )
 setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_OPTUNA_AVAILABLE", IS_OPTUNA_AVAILABLE)  # noqa: B010
+
 
 __all__ = [
     "SETTINGS",
@@ -361,4 +373,5 @@ __all__ = [
     "IS_XLA_AVAILABLE",
     "IS_GIT_AVAILABLE",
     "IS_QUANTIZATION_AVAILABLE",
+    "IS_OPTUNA_AVAILABLE",
 ]
