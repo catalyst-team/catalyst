@@ -4,6 +4,7 @@ import logging
 import os
 
 import torch
+
 from catalyst.tools.frozen_class import FrozenClass
 
 logger = logging.getLogger(__name__)

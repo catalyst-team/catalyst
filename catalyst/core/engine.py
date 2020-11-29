@@ -1,8 +1,10 @@
+from typing import Any, Callable, List, Mapping
+from abc import ABC, abstractmethod
+
 import torch.nn as nn
 import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
-from typing import Mapping, Any, List, Callable
-from abc import ABC, abstractmethod
+
 from catalyst.core.callback import ICallback
 
 

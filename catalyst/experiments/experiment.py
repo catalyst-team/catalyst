@@ -31,11 +31,10 @@ from catalyst.core.functional import (
     check_callback_isinstance,
     sort_callbacks_by_order,
 )
+from catalyst.engines import DeviceEngine, IEngine
 from catalyst.settings import SETTINGS
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.loaders import get_loaders_from_params
-
-from catalyst.engines import IEngine, DeviceEngine
 
 if TYPE_CHECKING:
     from catalyst.core.callback import Callback

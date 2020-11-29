@@ -1,5 +1,6 @@
-import torch.nn as nn
 from device import DeviceEngine
+
+import torch.nn as nn
 
 
 class DistributedDeviceEngine(DeviceEngine):

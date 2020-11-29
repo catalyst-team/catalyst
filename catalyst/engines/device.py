@@ -1,7 +1,9 @@
+from typing import Any, Mapping
+
 import torch
 import torch.nn as nn
+
 from catalyst.core.engine import IEngine
-from typing import Mapping, Any
 
 
 class DeviceEngine(IEngine):
