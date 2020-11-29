@@ -154,11 +154,12 @@ class OptimizerCallback(IOptimizerCallback):
         self._optimizer = get_attr(
             runner, key="optimizer", inner_key=self.optimizer_key
         )
+        self._optimizer_step_fn = runner._engine.optimizer_step
         # device based optimization step
-        if runner.device.type == "xla":
-            self._optimizer_step_fn = self._optimizer_step_tpu
-        else:
-            self._optimizer_step_fn = self._optimizer_step
+        # if runner.device.type == "xla":
+        #     self._optimizer_step_fn = self._optimizer_step_tpu
+        # else:
+        #     self._optimizer_step_fn = self._optimizer_step
 
         assert self._optimizer is not None
 

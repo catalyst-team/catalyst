@@ -35,6 +35,8 @@ from catalyst.settings import SETTINGS
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.loaders import get_loaders_from_params
 
+from catalyst.engines import IEngine, DeviceEngine
+
 if TYPE_CHECKING:
     from catalyst.core.callback import Callback
 
@@ -66,6 +68,7 @@ class Experiment(IExperiment):
         checkpoint_data: Dict = None,
         distributed_params: Dict = None,
         initial_seed: int = 42,
+        engine: str = None,
     ):
         """
         Args:
@@ -111,10 +114,17 @@ class Experiment(IExperiment):
             distributed_params: dictionary with the parameters
                 for distributed and FP16 method
             initial_seed: experiment's initial seed value
+            engine: engine to use, if ``None`` then will be used
+                device engine.
         """
         assert (
             datasets is not None or loaders is not None
         ), "Please specify the data sources"
+
+        default_engine = DeviceEngine(
+            "cuda:0" if SETTINGS.IS_CUDA_AVAILABLE else "cpu"
+        )
+        self._engine: IEngine = engine or default_engine
 
         self._model = model
         self._loaders, self._valid_loader = self._get_loaders(
@@ -242,19 +252,19 @@ class Experiment(IExperiment):
 
     def get_model(self, stage: str) -> Model:
         """Returns the model for a given stage."""
-        return self._model
+        return self._engine.process_model(self._model)
 
     def get_criterion(self, stage: str) -> Criterion:
         """Returns the criterion for a given stage."""
-        return self._criterion
+        return self._engine.process_criterion(self._criterion)
 
     def get_optimizer(self, stage: str, model: nn.Module) -> Optimizer:
         """Returns the optimizer for a given stage."""
-        return self._optimizer
+        return self._engine.process_optimizer(self._optimizer, model)
 
     def get_scheduler(self, stage: str, optimizer=None) -> Scheduler:
         """Returns the scheduler for a given stage."""
-        return self._scheduler
+        return self._engine.process_scheduler(self._scheduler, optimizer)
 
     def get_loaders(
         self, stage: str, epoch: int = None,

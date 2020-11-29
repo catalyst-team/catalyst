@@ -1,4 +1,7 @@
-from typing import Mapping, Any
+import torch.nn as nn
+import torch.optim as optim
+import torch.optim.lr_scheduler as lr_scheduler
+from typing import Mapping, Any, List, Callable
 from abc import ABC, abstractmethod
 from catalyst.core.callback import ICallback
 
@@ -16,16 +19,20 @@ class IEngine(ABC, ICallback):
     """
 
     # taken for runner
-    def process_model(self):
+    def process_model(self, model: nn.Module) -> nn.Module:
         pass
 
-    def process_criterion(self):
+    def process_criterion(self, criterion: nn.Module) -> nn.Module:
         pass
 
-    def process_optimizer(self):
+    def process_optimizer(
+        self, optimizer: optim.Optimizer, model: nn.Module
+    ) -> optim.Optimizer:
         pass
 
-    def process_scheduler(self):
+    def process_scheduler(
+        self, scheduler: nn.Module, optimizer: optim.Optimizer
+    ) -> nn.Module:
         pass
 
     def process_components(self):
@@ -36,11 +43,15 @@ class IEngine(ABC, ICallback):
         # return any2device(batch, self.device)
 
     # taken for utils
-    def sync_metric(self):
+    def sync_metric(self) -> None:
         pass
 
-    def save_checkpoint(self):
+    def save_checkpoint(self) -> None:
         pass
 
-    def load_checkpoint(self):
+    def load_checkpoint(self) -> None:
         pass
+
+    def optimizer_step(self, optimizer: optim.Optimizer) -> None:
+        """Do one optimization step."""
+        optimizer.step()
