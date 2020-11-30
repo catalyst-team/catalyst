@@ -6,7 +6,7 @@ from skimage.color import label2rgb
 from skimage.color.colorlabel import DEFAULT_COLORS
 
 import torch
-from torch.utils.tensorboard import SummaryWriter
+from catalyst.contrib.tools.tensorboard import SummaryWriter
 
 from catalyst import utils
 from catalyst.callbacks import ILoggerCallback
