@@ -318,6 +318,7 @@
               
   <h1>Source code for catalyst.utils.scripts</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">importlib.util</span> <span class="kn">import</span> <span class="n">module_from_spec</span><span class="p">,</span> <span class="n">spec_from_file_location</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pathlib</span>
@@ -375,13 +376,14 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Experiment, Runner, Config for Config API usage.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">copy_config</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expdir</span><span class="p">,</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
         <span class="n">expdir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
     <span class="n">m</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
     <span class="n">experiment_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s2">&quot;Experiment&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="n">runner_fn</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s2">&quot;Runner&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="n">experiment_params</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;experiment_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">experiment_params</span> <span class="o">=</span> <span class="n">copy_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;experiment_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
     <span class="n">experiment_from_config</span> <span class="o">=</span> <span class="n">experiment_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;experiment&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">any</span><span class="p">(</span>
         <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">experiment_fn</span><span class="p">,</span> <span class="n">experiment_from_config</span><span class="p">)</span>
@@ -389,7 +391,7 @@
     <span class="k">if</span> <span class="n">experiment_fn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">experiment_from_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">experiment_fn</span> <span class="o">=</span> <span class="n">EXPERIMENTS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">experiment_from_config</span><span class="p">)</span>
 
-    <span class="n">runner_params</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;runner_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">runner_params</span> <span class="o">=</span> <span class="n">copy_config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;runner_params&quot;</span><span class="p">,</span> <span class="p">{})</span>
     <span class="n">runner_from_config</span> <span class="o">=</span> <span class="n">runner_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;runner&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">any</span><span class="p">(</span>
         <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">runner_fn</span><span class="p">,</span> <span class="n">runner_from_config</span><span class="p">)</span>
@@ -397,7 +399,7 @@
     <span class="k">if</span> <span class="n">runner_fn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">runner_from_config</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">runner_fn</span> <span class="o">=</span> <span class="n">RUNNERS</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">runner_from_config</span><span class="p">)</span>
 
-    <span class="n">experiment</span> <span class="o">=</span> <span class="n">experiment_fn</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+    <span class="n">experiment</span> <span class="o">=</span> <span class="n">experiment_fn</span><span class="p">(</span><span class="n">copy_config</span><span class="p">)</span>
     <span class="n">runner</span> <span class="o">=</span> <span class="n">runner_fn</span><span class="p">(</span><span class="o">**</span><span class="n">runner_params</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">experiment</span><span class="p">,</span> <span class="n">runner</span><span class="p">,</span> <span class="n">config</span></div>
