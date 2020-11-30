@@ -11,11 +11,7 @@ from catalyst.contrib.callbacks.confusion_matrix_logger import (
 from catalyst.contrib.callbacks.cutmix_callback import CutmixCallback
 from catalyst.contrib.callbacks.gradnorm_logger import GradNormLogger
 from catalyst.contrib.callbacks.inference_callback import InferCallback
-from catalyst.contrib.callbacks.knn_metric import KNNMetricCallback
 from catalyst.contrib.callbacks.mixup_callback import MixupCallback
-from catalyst.contrib.callbacks.perplexity_metric import (
-    PerplexityMetricCallback,
-)
 from catalyst.contrib.callbacks.telegram_logger import TelegramLogger
 
 logger = logging.getLogger(__name__)
@@ -59,7 +55,7 @@ try:
     import alchemy
     from catalyst.contrib.callbacks.alchemy_logger import AlchemyLogger
 except ImportError as ex:
-    if SETTINGS.alchemy_logger_required:
+    if SETTINGS.alchemy_required:
         logger.warning(
             "alchemy not available, to install alchemy, "
             "run `pip install alchemy`."
@@ -71,7 +67,7 @@ try:
     import neptune
     from catalyst.contrib.callbacks.neptune_logger import NeptuneLogger
 except ImportError as ex:
-    if SETTINGS.neptune_logger_required:
+    if SETTINGS.neptune_required:
         logger.warning(
             "neptune not available, to install neptune, "
             "run `pip install neptune-client`."
@@ -82,7 +78,7 @@ try:
     import wandb
     from catalyst.contrib.callbacks.wandb_logger import WandbLogger
 except ImportError as ex:
-    if SETTINGS.wandb_logger_required:
+    if SETTINGS.wandb_required:
         logger.warning(
             "wandb not available, to install wandb, "
             "run `pip install wandb`."

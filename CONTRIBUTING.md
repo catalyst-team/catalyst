@@ -52,15 +52,15 @@ If you are not familiar with creating a Pull Request, here are some guides:
     # It is often useful to have one or more Python environments 
     # where you can experiment with different combinations 
     # of packages without affecting your main installation. 
-    # Create the virtual environment with your python setup
-    virtualenv catalyst-dev
-    source catalyst-dev/bin/activate
+    # Create the virtual conda environment
+    conda create --name catalyst_dev
+    conda activate catalyst_dev
     
     # Install the required dependencies√
     pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
     
     # for easy-to-go development, we suggest installing extra dependencies
-    pip install -r requirements/requirements-ml.txt -r requirements/requirements-cv.txt -r requirements/requirements-nlp.txt
+    pip install -r requirements/requirements-cv.txt -r requirements/requirements-nlp.txt
     ```
 2. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.

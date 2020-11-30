@@ -1,21 +1,33 @@
 from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
+import logging
 
 from catalyst.__version__ import __version__
 from catalyst.dl.scripts import quantize, run, swa, trace
-from catalyst.settings import IS_GIT_AVAILABLE, IS_OPTUNA_AVAILABLE
+from catalyst.settings import SETTINGS
+
+logger = logging.getLogger(__name__)
 
 COMMANDS = OrderedDict(
     [("quantize", quantize), ("run", run), ("swa", swa), ("trace", trace)]
 )
-if IS_GIT_AVAILABLE:
-    from catalyst.dl.scripts import init
 
-    COMMANDS["init"] = init
-if IS_OPTUNA_AVAILABLE:
+if SETTINGS.IS_OPTUNA_AVAILABLE:
     from catalyst.dl.scripts import tune
 
     COMMANDS["tune"] = tune
+
+try:
+    from catalyst.dl.scripts import init
+
+    COMMANDS["init"] = init
+except ImportError as ex:
+    if SETTINGS.ipython_required:
+        logger.warning(
+            "ipython not available, to install ipython,"
+            " run `pip install ipython`."
+        )
+        raise ex
 
 
 COMMANDS = OrderedDict(sorted(COMMANDS.items()))

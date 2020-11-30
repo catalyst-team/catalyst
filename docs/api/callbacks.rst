@@ -184,6 +184,13 @@ MRR
     :undoc-members:
     :show-inheritance:
 
+Perplexity
+~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.callbacks.metrics.perplexity
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Global precision, recall and F1-score
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.callbacks.metrics.ppv_tpr_f1
@@ -241,13 +248,6 @@ InferCallback
     :undoc-members:
     :show-inheritance:
 
-KNNMetricCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.knn_metric
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 BatchTransformCallback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.callbacks.kornia_transform
@@ -279,13 +279,6 @@ NeptuneLogger
 OptunaCallback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.callbacks.optuna_callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-PerplexityMetricCallback
-~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.perplexity_metric
     :members:
     :undoc-members:
     :show-inheritance:

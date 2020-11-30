@@ -8,9 +8,12 @@ from pathlib import Path
 
 import optuna
 
-from catalyst.contrib.utils.argparse import boolean_flag
 from catalyst.utils.distributed import get_rank
-from catalyst.utils.misc import maybe_recursive_call, set_global_seed
+from catalyst.utils.misc import (
+    boolean_flag,
+    maybe_recursive_call,
+    set_global_seed,
+)
 from catalyst.utils.parser import parse_args_uargs
 from catalyst.utils.scripts import dump_code, prepare_config_api_components
 from catalyst.utils.sys import dump_environment
