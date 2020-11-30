@@ -54,6 +54,10 @@ from catalyst.utils.misc import (
     split_dict_to_subdicts,
     get_hash,
     get_short_hash,
+    args_are_not_none,
+    make_tuple,
+    pairwise,
+    find_value_ids,
 )
 from catalyst.utils.numpy import get_one_hot
 from catalyst.utils.parser import parse_config_args, parse_args_uargs

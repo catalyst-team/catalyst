@@ -12,15 +12,12 @@ from catalyst.contrib.utils.compression import (
     unpack,
     unpack_if_needed,
 )
+
+# @TODO: remove
 from catalyst.contrib.utils.torch_extra import (
     calculate_tp_fp_fn,
     calculate_confusion_matrix_from_arrays,
     calculate_confusion_matrix_from_tensors,
-)
-from catalyst.contrib.utils.misc_extra import (
-    args_are_not_none,
-    make_tuple,
-    pairwise,
 )
 from catalyst.contrib.utils.parallel import (
     parallel_imap,
@@ -28,10 +25,28 @@ from catalyst.contrib.utils.parallel import (
     get_pool,
 )
 from catalyst.contrib.utils.serialization import deserialize, serialize
-from catalyst.contrib.utils.visualization import (
-    plot_confusion_matrix,
-    render_figure_to_tensor,
-)
+
+try:
+    import matplotlib  # noqa: F401
+
+    from catalyst.contrib.utils.visualization import (
+        plot_confusion_matrix,
+        render_figure_to_tensor,
+    )
+except ModuleNotFoundError as ex:
+    if SETTINGS.matplotlib_required:
+        logger.warning(
+            "matplotlib is not available, to install matplotlib,"
+            " run `pip install matplotlib`."
+        )
+        raise ex
+except ImportError as ex:
+    if SETTINGS.matplotlib_required:
+        logger.warning(
+            "matplotlib is not available, to install matplotlib,"
+            " run `pip install matplotlib`."
+        )
+        raise ex
 
 try:
     import sklearn  # noqa: F401 F811
@@ -57,17 +72,17 @@ try:
         create_dataframe,
     )
 except ModuleNotFoundError as ex:
-    if SETTINGS.sklearn_required or SETTINGS.pandas_required:
+    if SETTINGS.ml_required:
         logger.warning(
-            "pandas/sklearn are not available, to install them,"
-            " run `pip install pandas sklearn`."
+            "catalyst[ml] requirements are not available, to install them,"
+            " run `pip install catalyst[ml]`."
         )
         raise ex
 except ImportError as ex:
-    if SETTINGS.sklearn_required or SETTINGS.pandas_required:
+    if SETTINGS.ml_required:
         logger.warning(
-            "pandas/sklearn are not available, to install them,"
-            " run `pip install pandas sklearn`."
+            "catalyst[ml] requirements are not available, to install them,"
+            " run `pip install catalyst[ml]`."
         )
         raise ex
 
@@ -102,17 +117,17 @@ try:
         Wizard,
     )
 except ModuleNotFoundError as ex:
-    if SETTINGS.ipython_required:
+    if SETTINGS.ml_required:
         logger.warning(
-            "ipython/prompt_toolkit not available, to install them,"
-            " run `pip install ipython prompt_toolkit`."
+            "catalyst[ml] requirements are not available, to install them,"
+            " run `pip install catalyst[ml]`."
         )
         raise ex
 except ImportError as ex:
-    if SETTINGS.ipython_required:
+    if SETTINGS.ml_required:
         logger.warning(
-            "ipython/prompt_toolkit not available, to install them,"
-            " run `pip install ipython prompt_toolkit`."
+            "catalyst[ml] requirements are not available, to install them,"
+            " run `pip install catalyst[ml]`."
         )
         raise ex
 

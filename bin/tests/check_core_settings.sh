@@ -6,16 +6,20 @@ set -eo pipefail -v
 
 ################################  pipeline 00  ################################
 # checking catalyst-core loading (default)
-pip uninstall -r requirements/requirements-contrib.txt -y
 pip uninstall -r requirements/requirements-cv.txt -y
-pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-ecosystem.txt -y
-pip uninstall nmslib scikit-learn pandas -y
-pip install -r requirements/requirements.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+pip uninstall -r requirements/requirements-log.txt -y
+pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-tune.txt -y
+pip uninstall nmslib optuna
+pip install -r requirements/requirements.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
 
 cat <<EOT > .catalyst
 [catalyst]
-contrib_required = false
+log_required = false
 cv_required = false
 nlp_required = false
 EOT
@@ -35,18 +39,20 @@ else:
 
 ################################  pipeline 01  ################################
 # checking catalyst-contrib dependencies loading
-pip uninstall -r requirements/requirements-contrib.txt -y
 pip uninstall -r requirements/requirements-cv.txt -y
-pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-ecosystem.txt -y
-pip uninstall nmslib scikit-learn pandas -y
+pip uninstall -r requirements/requirements-log.txt -y
+pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-tune.txt -y
+pip uninstall nmslib optuna
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
 
 cat <<EOT > .catalyst
 [catalyst]
-contrib_required = true
+log_required = true
 cv_required = false
 nlp_required = false
 nmslib_required = false
@@ -85,18 +91,20 @@ from catalyst.contrib.callbacks import WandbLogger
 
 ################################  pipeline 02  ################################
 # checking catalyst-cv dependencies loading
-pip uninstall -r requirements/requirements-contrib.txt -y
 pip uninstall -r requirements/requirements-cv.txt -y
-pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-ecosystem.txt -y
-pip uninstall nmslib scikit-learn pandas -y
+pip uninstall -r requirements/requirements-log.txt -y
+pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-tune.txt -y
+pip uninstall nmslib optuna
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
 
 cat <<EOT > .catalyst
 [catalyst]
-contrib_required = false
+log_required = false
 cv_required = true
 nlp_required = false
 nmslib_required = false
@@ -149,18 +157,20 @@ assert (
 
 ################################  pipeline 03  ################################
 # checking catalyst-ml dependencies loading
-pip uninstall -r requirements/requirements-contrib.txt -y
 pip uninstall -r requirements/requirements-cv.txt -y
-pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-ecosystem.txt -y
-pip uninstall nmslib scikit-learn pandas -y
+pip uninstall -r requirements/requirements-log.txt -y
+pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-tune.txt -y
+pip uninstall nmslib optuna
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
 
 cat <<EOT > .catalyst
 [catalyst]
-contrib_required = false
+log_required = false
 cv_required = false
 nlp_required = false
 nmslib_required = true
@@ -195,18 +205,20 @@ assert 'check-index-model' in COMMANDS and 'create-index-model' in COMMANDS
 
 ################################  pipeline 04  ################################
 # checking catalyst-nlp dependencies loading
-pip uninstall -r requirements/requirements-contrib.txt -y
 pip uninstall -r requirements/requirements-cv.txt -y
-pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-ecosystem.txt -y
-pip uninstall nmslib scikit-learn pandas -y
+pip uninstall -r requirements/requirements-log.txt -y
+pip uninstall -r requirements/requirements-nlp.txt -y
+pip uninstall -r requirements/requirements-tune.txt -y
+pip uninstall nmslib optuna
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
 
 cat <<EOT > .catalyst
 [catalyst]
-contrib_required = false
+log_required = false
 cv_required = false
 nlp_required = true
 nmslib_required = false
