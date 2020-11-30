@@ -1,8 +1,9 @@
-from typing import Iterable, Optional, TYPE_CHECKING
+from typing import Iterable, List, Optional, TYPE_CHECKING
 import os
 
 import numpy as np
 from skimage.color import label2rgb
+from skimage.color.colorlabel import DEFAULT_COLORS
 
 import torch
 from torch.utils.tensorboard import SummaryWriter
@@ -14,6 +15,8 @@ from catalyst.core.callback import CallbackNode, CallbackOrder
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
+
+DEFAULT_COLORS = np.array(DEFAULT_COLORS)
 
 
 class DrawMasksCallback(ILoggerCallback):
@@ -137,6 +140,21 @@ class DrawMasksCallback(ILoggerCallback):
             mask[prob_mask >= self.threshold] = i + 1
         return mask
 
+    @staticmethod
+    def _get_colors(mask: np.ndarray) -> List[str]:
+        """
+        Select colors for mask labels
+
+        Args:
+            mask: [H, W] label mask
+
+        Returns: colors for labels
+        """
+        colors_labels = np.unique(mask)
+        colors_labels = colors_labels[colors_labels > 0] - 1
+        colors = DEFAULT_COLORS[colors_labels % len(DEFAULT_COLORS)]
+        return colors
+
     def on_batch_end(self, runner: "IRunner"):
         """Batch end hook.
 
@@ -163,9 +181,15 @@ class DrawMasksCallback(ILoggerCallback):
                 # white background
                 image = np.ones_like(pred_mask, dtype=np.uint8) * 255
 
-            image_over_predicted_mask = label2rgb(pred_mask, image, bg_label=0)
+            pred_colors = self._get_colors(pred_mask)
+            image_over_predicted_mask = label2rgb(
+                pred_mask, image, bg_label=0, colors=pred_colors
+            )
             if gt_mask is not None:
-                image_over_gt_mask = label2rgb(gt_mask, image, bg_label=0)
+                gt_colors = self._get_colors(gt_mask)
+                image_over_gt_mask = label2rgb(
+                    gt_mask, image, bg_label=0, colors=gt_colors
+                )
             else:
                 image_over_gt_mask = None
 
