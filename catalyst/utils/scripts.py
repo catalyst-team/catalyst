@@ -1,4 +1,5 @@
 from typing import Callable, Dict, Union
+import copy
 from importlib.util import module_from_spec, spec_from_file_location
 import os
 import pathlib
@@ -6,7 +7,6 @@ import shutil
 import subprocess
 import sys
 import warnings
-import copy
 
 import torch
 import torch.distributed
