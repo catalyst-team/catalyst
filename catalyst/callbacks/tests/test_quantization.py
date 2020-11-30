@@ -7,9 +7,9 @@ from torch import nn
 from torch.utils.data import DataLoader
 
 from catalyst import dl
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.modules import Flatten
-from catalyst.data.cv import ToTensor
 from catalyst.settings import IS_QUANTIZATION_AVAILABLE
 
 

@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import data, dl, utils
 from catalyst.contrib import datasets, models, nn
-import catalyst.data.cv.transforms.torch as t
+import catalyst.contrib.data.cv.transforms.torch as t
 
 
 def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:

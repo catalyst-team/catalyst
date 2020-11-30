@@ -7,6 +7,10 @@ Contrib
 .. contents::
    :local:
 
+.. automodule:: catalyst.contrib
+    :members:
+    :undoc-members:
+
 
 Datasets
 --------------------
@@ -32,13 +36,6 @@ MovieLens
 
 Computer Vision
 ~~~~~~~~~~~~~~~~
-
-ImageClassificationDataset
-""""""""""""""""""""""""""
-.. automodule:: catalyst.contrib.datasets.cv.fastai
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Imagenette
 """"""""""
@@ -323,3 +320,17 @@ PSPnet
     :members:
     :undoc-members:
     :show-inheritance:
+
+Scripts
+--------------------
+
+You can use contrib scripts with `catalyst-contrib` in your terminal.
+For example:
+
+.. code-block:: bash
+
+    $ catalyst-contrib tag2label --help
+
+.. automodule:: catalyst.contrib.__main__
+    :members:
+    :exclude-members: build_parser, main

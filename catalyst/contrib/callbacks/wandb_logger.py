@@ -10,7 +10,7 @@ from catalyst.core.callback import (
     CallbackOrder,
     CallbackScope,
 )
-from catalyst.utils.dict import split_dict_to_subdicts
+from catalyst.utils.misc import split_dict_to_subdicts
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -148,14 +148,10 @@ class WandbLogger(Callback):
             models=runner.model, criterion=runner.criterion, log=self.log
         )
 
-    def on_stage_end(self, runner: "IRunner"):
-        """Finish logging to Weights & Biases."""
-        wandb.join()
-
     def on_batch_end(self, runner: "IRunner"):
         """Translate batch metrics to Weights & Biases."""
         if self.log_on_batch_end:
-            mode = runner.loader_name
+            mode = runner.loader_key
             metrics = runner.batch_metrics
             self._log_metrics(
                 metrics=metrics,
@@ -168,7 +164,7 @@ class WandbLogger(Callback):
     def on_loader_end(self, runner: "IRunner"):
         """Translate loader metrics to Weights & Biases."""
         if self.log_on_epoch_end:
-            mode = runner.loader_name
+            mode = runner.loader_key
             metrics = runner.loader_metrics
             self._log_metrics(
                 metrics=metrics,
@@ -197,6 +193,10 @@ class WandbLogger(Callback):
                     suffix=self.epoch_log_suffix,
                     commit=True,
                 )
+
+    def on_stage_end(self, runner: "IRunner"):
+        """Finish logging to Weights & Biases."""
+        wandb.join()
 
 
 __all__ = ["WandbLogger"]

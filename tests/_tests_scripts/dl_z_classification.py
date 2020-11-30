@@ -18,7 +18,7 @@ import collections
 import torch
 
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.cv import ToTensor, Compose, Normalize
+from catalyst.contrib.data.cv import ToTensor, Compose, Normalize
 
 bs = 32
 num_workers = 0

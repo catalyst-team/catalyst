@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 def _transforms_loader(r: Registry):
     from torch.jit.frontend import UnsupportedNodeError
 
-    from catalyst.data.cv.transforms import torch as t
+    from catalyst.contrib.data.cv.transforms import torch as t
 
     r.add_from_module(t, prefix=["catalyst.", "C."])
 
@@ -22,7 +22,7 @@ def _transforms_loader(r: Registry):
 
         r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
 
-        from catalyst.data.cv.transforms import albumentations as t
+        from catalyst.contrib.data.cv.transforms import albumentations as t
 
         r.add_from_module(t, prefix=["catalyst.", "C."])
     except ImportError as ex:
@@ -38,7 +38,7 @@ def _transforms_loader(r: Registry):
 
         r.add_from_module(k, prefix=["kornia."])
 
-        from catalyst.data.cv.transforms import kornia as t
+        from catalyst.contrib.data.cv.transforms import kornia as t
 
         r.add_from_module(t, prefix=["catalyst.", "C."])
     except ImportError as ex:

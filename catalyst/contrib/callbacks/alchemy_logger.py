@@ -108,7 +108,7 @@ class AlchemyLogger(Callback):
     def on_batch_end(self, runner: "IRunner"):
         """Translate batch metrics to Alchemy."""
         if self.log_on_batch_end:
-            mode = runner.loader_name
+            mode = runner.loader_key
             metrics = runner.batch_metrics
             self._log_metrics(
                 metrics=metrics,
@@ -120,7 +120,7 @@ class AlchemyLogger(Callback):
     def on_loader_end(self, runner: "IRunner"):
         """Translate loader metrics to Alchemy."""
         if self.log_on_epoch_end:
-            mode = runner.loader_name
+            mode = runner.loader_key
             metrics = runner.loader_metrics
             self._log_metrics(
                 metrics=metrics,

@@ -1,5 +1,4 @@
 # flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 """
 This script outputs relevant system environment info.
 Diagnose your system and show basic information.

@@ -11,10 +11,10 @@ from torch.utils.data import DataLoader
 from catalyst.callbacks.criterion import CriterionCallback
 from catalyst.callbacks.optimizer import OptimizerCallback
 from catalyst.contrib.callbacks.gradnorm_logger import GradNormLogger
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.data.cv import ToTensor
 from catalyst.dl import SupervisedRunner
 from catalyst.registry import Model
 

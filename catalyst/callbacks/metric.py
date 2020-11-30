@@ -18,8 +18,8 @@ import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.tools.meters.averagevaluemeter import AverageValueMeter
-from catalyst.utils.dict import get_dictkey_auto_fn
 from catalyst.utils.distributed import get_distributed_mean
+from catalyst.utils.misc import get_dictkey_auto_fn
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -197,7 +197,7 @@ class ILoaderMetricCallback(IMetricCallback):
         output = self._get_output(runner.output, self.output_key)
         input = self._get_input(runner.input, self.input_key)
 
-        dataset = runner.loaders[runner.loader_name].dataset
+        dataset = runner.loaders[runner.loader_key].dataset
         self._storage_size = len(dataset)
 
         is_first_batch = not (self.input and self.output)
@@ -552,7 +552,7 @@ class MetricManagerCallback(Callback):
             value = value.mean
             runner.loader_metrics[key] = value
         for key, value in runner.loader_metrics.items():
-            runner.epoch_metrics[f"{runner.loader_name}_{key}"] = value
+            runner.epoch_metrics[f"{runner.loader_key}_{key}"] = value
 
 
 # backward compatibility

@@ -88,3 +88,17 @@ Callback
     :members:
     :undoc-members:
     :show-inheritance:
+
+Scripts
+--------------------------------------
+
+You can use Catalyst scripts with `catalyst-dl` in your terminal.
+For example:
+
+.. code-block:: bash
+
+    $ catalyst-dl run --help
+
+.. automodule:: catalyst.dl.__main__
+    :members:
+    :exclude-members: build_parser, main

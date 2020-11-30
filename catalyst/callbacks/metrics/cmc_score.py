@@ -113,7 +113,7 @@ class CMCScoreCallback(LoaderMetricCallback):
             ValueError: if dataset that contains accumulative data
                 is not a QueryGalleryDataset
         """
-        dataset = runner.loaders[runner.loader_name].dataset
+        dataset = runner.loaders[runner.loader_key].dataset
         if not isinstance(dataset, QueryGalleryDataset):
             raise ValueError(
                 "CMCScoreCallback should be used with QueryGalleryDataset."
@@ -230,7 +230,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
             ValueError: if dataset that contains accumulative data
                 is not a QueryGalleryDataset
         """
-        dataset = runner.loaders[runner.loader_name].dataset
+        dataset = runner.loaders[runner.loader_key].dataset
         if not isinstance(dataset, QueryGalleryDataset):
             raise ValueError(
                 "ReidCMCScoreCallback should be used with QueryGalleryDataset."
