@@ -6,11 +6,11 @@ from skimage.color import label2rgb
 from skimage.color.colorlabel import DEFAULT_COLORS
 
 import torch
-from catalyst.contrib.tools.tensorboard import SummaryWriter
 
 from catalyst import utils
 from catalyst.callbacks import ILoggerCallback
 from catalyst.contrib.utils.cv.tensor import tensor_to_ndimage
+from catalyst.contrib.tools.tensorboard import SummaryWriter
 from catalyst.core.callback import CallbackNode, CallbackOrder
 
 if TYPE_CHECKING:
