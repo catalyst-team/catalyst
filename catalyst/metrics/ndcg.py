@@ -28,7 +28,7 @@ def dcg(
             String indicates the gain function for the ground truth labels.
             Two options available:
             - `exp_rank`: torch.pow(2, x) - 1
-            - `rank`: x
+            - `linear_rank`: x
             On the default, `exp_rank` is used
             to emphasize on retrieving the relevant documents.
 
@@ -40,19 +40,20 @@ def dcg(
         ValueError: gain function can be either `pow_rank` or `rank`
     """
     targets_sort_by_outputs = process_recsys_components(outputs, targets)
+    target_device = targets_sort_by_outputs.device
 
     if gain_function == "exp_rank":
         gain_function = lambda x: torch.pow(2, x) - 1
         gains = gain_function(targets_sort_by_outputs)
         discounts = torch.tensor(1) / torch.log2(
-            torch.arange(targets_sort_by_outputs.shape[1], dtype=torch.float)
+            torch.arange(targets_sort_by_outputs.shape[1], dtype=torch.float, device=target_device)
             + 2.0
         )
         discounted_gains = gains * discounts
 
     elif gain_function == "linear_rank":
         discounts = torch.tensor(1) / torch.log2(
-            torch.arange(targets_sort_by_outputs.shape[1], dtype=torch.float)
+            torch.arange(targets_sort_by_outputs.shape[1], dtype=torch.float, device=target_device)
             + 1.0
         )
         discounts[0] = 1
@@ -83,7 +84,7 @@ def ndcg(
             callable, gain function for the ground truth labels.
             Two options available:
             - `exp_rank`: torch.pow(2, x) - 1
-            - `rank`: x
+            - `linear_rank`: x
             On the default, `exp_rank` is used
             to emphasize on retrieving the relevant documents.
         topk (List[int]):

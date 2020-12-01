@@ -468,6 +468,7 @@ def wrap_topk_metric2dict(
 
 
 __all__ = [
+    "check_consistent_length",
     "process_multilabel_components",
     "process_recsys_components",
     "get_binary_statistics",
