@@ -133,14 +133,6 @@ Compression
     :undoc-members:
     :show-inheritance:
 
-
-Misc
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.misc_extra
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Pandas
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.pandas

@@ -367,81 +367,46 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>  <span class="c1"># noqa: D107</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">contrib_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="c1"># CV</span>
         <span class="n">cv_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">nlp_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">alchemy_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">neptune_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">wandb_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">optuna_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">plotly_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">telegram_logger_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">telegram_logger_chat_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">use_lz4</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">use_pyarrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">albumentations_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">kornia_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">segmentation_models_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">use_libjpeg_turbo</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-        <span class="n">nmslib_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># LOG</span>
+        <span class="n">log_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">alchemy_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">neptune_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">wandb_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">plotly_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># ML</span>
+        <span class="n">ml_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ipython_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">matplotlib_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scipy_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">pandas_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">sklearn_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">scipy_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">git_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># NLP</span>
+        <span class="n">nlp_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">transformers_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ipython_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># TUNE</span>
+        <span class="n">tune_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">optuna_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># KNN</span>
+        <span class="n">nmslib_required</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="c1"># extras</span>
+        <span class="n">use_lz4</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_pyarrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">telegram_logger_token</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">telegram_logger_chat_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="c1"># [catalyst]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">contrib_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">contrib_required</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cv_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">cv_required</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">log_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">log_required</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ml_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">ml_required</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nlp_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">nlp_required</span>
-
-        <span class="c1"># stages</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stage_train_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stage_valid_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;valid&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stage_infer_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;infer&quot;</span>
-
-        <span class="c1"># loader</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loader_train_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loader_valid_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;valid&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loader_infer_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;infer&quot;</span>
-
-        <span class="c1"># [catalyst-contrib]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">alchemy_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">alchemy_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">neptune_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">neptune_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wandb_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">wandb_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">optuna_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">optuna_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">plotly_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">plotly_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">contrib_required</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">nmslib_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">nmslib_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">scipy_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">scipy_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pandas_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">pandas_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sklearn_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">sklearn_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ipython_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
-            <span class="n">ipython_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">False</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">telegram_logger_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">telegram_logger_token</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">telegram_logger_chat_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">telegram_logger_chat_id</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">use_lz4</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_lz4</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">use_pyarrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_pyarrow</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tune_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">tune_required</span>
 
         <span class="c1"># [catalyst-cv]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">albumentations_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
@@ -455,10 +420,69 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">use_libjpeg_turbo</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_libjpeg_turbo</span>
 
+        <span class="c1"># [catalyst-log]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alchemy_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">alchemy_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">log_required</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">neptune_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">neptune_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">log_required</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wandb_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">wandb_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">log_required</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plotly_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">plotly_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">log_required</span>
+        <span class="p">)</span>
+
+        <span class="c1"># [catalyst-ml]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scipy_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">scipy_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ml_required</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matplotlib_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">matplotlib_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ml_required</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pandas_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">pandas_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ml_required</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sklearn_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">sklearn_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ml_required</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ipython_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">ipython_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ml_required</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">git_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">git_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">ml_required</span>
+        <span class="p">)</span>
+
         <span class="c1"># [catalyst-nlp]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transformers_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
             <span class="n">transformers_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">nlp_required</span>
         <span class="p">)</span>
+
+        <span class="c1"># [catalyst-tune]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">optuna_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optional_value</span><span class="p">(</span>
+            <span class="n">optuna_required</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">tune_required</span>
+        <span class="p">)</span>
+
+        <span class="c1"># [catalyst-knn]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nmslib_required</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">nmslib_required</span>
+
+        <span class="c1"># [catalyst-extras]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_lz4</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_lz4</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_pyarrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">use_pyarrow</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">telegram_logger_token</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">telegram_logger_token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">telegram_logger_chat_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">telegram_logger_chat_id</span>
+
+        <span class="c1"># [catalyst-global]</span>
+        <span class="c1"># stages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage_train_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage_valid_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;valid&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage_infer_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;infer&quot;</span>
+
+        <span class="c1"># loader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_train_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_valid_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;valid&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_infer_prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;infer&quot;</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_optional_value</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">default</span><span class="p">):</span>

@@ -317,7 +317,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.misc</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">urlsafe_b64encode</span>
 <span class="kn">import</span> <span class="nn">collections</span>
@@ -325,6 +325,7 @@
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha256</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">tee</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
@@ -787,6 +788,79 @@
     <span class="k">return</span> <span class="n">hash_</span></div>
 
 
+<div class="viewcode-block" id="pairwise"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.pairwise">[docs]</a><span class="k">def</span> <span class="nf">pairwise</span><span class="p">(</span><span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Iterate sequences by pairs.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; for i in pairwise([1, 2, 5, -3]):</span>
+<span class="sd">        &gt;&gt;&gt;     print(i)</span>
+<span class="sd">        (1, 2)</span>
+<span class="sd">        (2, 5)</span>
+<span class="sd">        (5, -3)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        iterable: Any iterable sequence</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pairwise iterator</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">tee</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="nb">next</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_tuple"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.make_tuple">[docs]</a><span class="k">def</span> <span class="nf">make_tuple</span><span class="p">(</span><span class="n">tuple_like</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a tuple if given ``tuple_like`` value isn&#39;t list or tuple.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tuple_like: tuple like object - list or tuple</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple or list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tuple_like</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">tuple_like</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tuple_like</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span>
+        <span class="k">else</span> <span class="p">(</span><span class="n">tuple_like</span><span class="p">,</span> <span class="n">tuple_like</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">tuple_like</span></div>
+
+
+<div class="viewcode-block" id="args_are_not_none"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.args_are_not_none">[docs]</a><span class="k">def</span> <span class="nf">args_are_not_none</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check that all arguments are not ``None``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *args: values  # noqa: RST213</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bool: True if all value were not None, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="find_value_ids"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.find_value_ids">[docs]</a><span class="k">def</span> <span class="nf">find_value_ids</span><span class="p">(</span><span class="n">it</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        it: list of any</span>
+<span class="sd">        value: query element</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        indices of the all elements equal x0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">it</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># could be very slow</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="k">if</span> <span class="n">el</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">inds</span></div>
+
+
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;boolean_flag&quot;</span><span class="p">,</span>
     <span class="s2">&quot;copy_directory&quot;</span><span class="p">,</span>
@@ -804,6 +878,10 @@
     <span class="s2">&quot;split_dict_to_subdicts&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_hash&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_short_hash&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;args_are_not_none&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;make_tuple&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pairwise&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;find_value_ids&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>
 

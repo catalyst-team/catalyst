@@ -356,21 +356,3 @@ ImageFolderDataset
     :show-inheritance:
     :members:
     :special-members: __getitem__, __len__
-
-
-Datasets (NLP)
-~~~~~~~~~~~~~~~~
-
-LanguageModelingDataset
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset
-    :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__
-
-TextClassificationDataset
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.nlp.dataset.text_classification.TextClassificationDataset
-    :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__

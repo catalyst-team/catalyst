@@ -421,12 +421,6 @@
 <li><p><a class="reference internal" href="#imagefolderdataset" id="id55">ImageFolderDataset</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#datasets-nlp" id="id56">Datasets (NLP)</a></p>
-<ul>
-<li><p><a class="reference internal" href="#languagemodelingdataset" id="id57">LanguageModelingDataset</a></p></li>
-<li><p><a class="reference internal" href="#textclassificationdataset" id="id58">TextClassificationDataset</a></p></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -2205,110 +2199,6 @@ to use on dict</p></li>
 
 </div>
 </div>
-<div class="section" id="datasets-nlp">
-<h3><a class="toc-backref" href="#id56">Datasets (NLP)</a><a class="headerlink" href="#datasets-nlp" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="languagemodelingdataset">
-<h4><a class="toc-backref" href="#id57">LanguageModelingDataset</a><a class="headerlink" href="#languagemodelingdataset" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
-<dt id="catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.nlp.dataset.language_modeling.</code><code class="sig-name descname">LanguageModelingDataset</code><span class="sig-paren">(</span><em class="sig-param">texts: Iterable[str], tokenizer: Union[str, transformers.tokenization_utils.PreTrainedTokenizer], max_seq_length: int = None, sort: bool = True, lazy: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/nlp/dataset/language_modeling.html#LanguageModelingDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
-<p>Dataset for (masked) language model task.
-Can sort sequnces for efficient padding.</p>
-<dl class="method">
-<dt id="catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset.__getitem__">
-<code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param">idx</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/nlp/dataset/language_modeling.html#LanguageModelingDataset.__getitem__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset.__getitem__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return tokenized and encoded sequence</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">texts: Iterable[str], tokenizer: Union[str, transformers.tokenization_utils.PreTrainedTokenizer], max_seq_length: int = None, sort: bool = True, lazy: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/nlp/dataset/language_modeling.html#LanguageModelingDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>texts</strong> – Iterable object with text</p></li>
-<li><p><strong>tokenizer</strong> (<em>str</em><em> or </em><em>tokenizer</em>) – pre trained
-huggingface tokenizer or model name</p></li>
-<li><p><strong>max_seq_length</strong> – max sequence length to tokenize</p></li>
-<li><p><strong>sort</strong> – If True then sort all sequences by length
-for efficient padding</p></li>
-<li><p><strong>lazy</strong> – If True then tokenize and encode sequence
-in __getitem__ method
-else will tokenize in __init__ also
-if set to true sorting is unavialible</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset.__len__">
-<code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/nlp/dataset/language_modeling.html#LanguageModelingDataset.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.nlp.dataset.language_modeling.LanguageModelingDataset.__len__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return length of dataloader</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="textclassificationdataset">
-<h4><a class="toc-backref" href="#id58">TextClassificationDataset</a><a class="headerlink" href="#textclassificationdataset" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
-<dt id="catalyst.contrib.data.nlp.dataset.text_classification.TextClassificationDataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.nlp.dataset.text_classification.</code><code class="sig-name descname">TextClassificationDataset</code><span class="sig-paren">(</span><em class="sig-param">texts: List[str], labels: List[str] = None, label_dict: Mapping[str, int] = None, max_seq_length: int = 512, model_name: str = 'distilbert-base-uncased'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/nlp/dataset/text_classification.html#TextClassificationDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.nlp.dataset.text_classification.TextClassificationDataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
-<p>Wrapper around Torch Dataset to perform text classification.</p>
-<dl class="method">
-<dt id="catalyst.contrib.data.nlp.dataset.text_classification.TextClassificationDataset.__getitem__">
-<code class="sig-name descname">__getitem__</code><span class="sig-paren">(</span><em class="sig-param">index</em><span class="sig-paren">)</span> &#x2192; Mapping[str, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/contrib/data/nlp/dataset/text_classification.html#TextClassificationDataset.__getitem__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.nlp.dataset.text_classification.TextClassificationDataset.__getitem__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets element of the dataset.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>index</strong> – index of the element in the dataset</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Single element by index</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.data.nlp.dataset.text_classification.TextClassificationDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">texts: List[str], labels: List[str] = None, label_dict: Mapping[str, int] = None, max_seq_length: int = 512, model_name: str = 'distilbert-base-uncased'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/nlp/dataset/text_classification.html#TextClassificationDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.nlp.dataset.text_classification.TextClassificationDataset.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>texts</strong> – a list with texts to classify or to train the
-classifier on</p></li>
-<li><p><strong>List</strong><strong>[</strong><strong>str</strong><strong>]</strong> (<em>labels</em>) – a list with classification labels (optional)</p></li>
-<li><p><strong>label_dict</strong> – a dictionary mapping class names to class ids,
-to be passed to the validation data (optional)</p></li>
-<li><p><strong>max_seq_length</strong> – maximal sequence length in tokens,
-texts will be stripped to this length</p></li>
-<li><p><strong>model_name</strong> – transformer model name, needed to perform
-appropriate tokenization</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.contrib.data.nlp.dataset.text_classification.TextClassificationDataset.__len__">
-<code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/contrib/data/nlp/dataset/text_classification.html#TextClassificationDataset.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.nlp.dataset.text_classification.TextClassificationDataset.__len__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>length of the dataset</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
 </div>
 </div>
 
@@ -2429,11 +2319,6 @@ appropriate tokenization</p></li>
 </li>
 <li><a class="reference internal" href="#datasets-cv">Datasets (CV)</a><ul>
 <li><a class="reference internal" href="#imagefolderdataset">ImageFolderDataset</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#datasets-nlp">Datasets (NLP)</a><ul>
-<li><a class="reference internal" href="#languagemodelingdataset">LanguageModelingDataset</a></li>
-<li><a class="reference internal" href="#textclassificationdataset">TextClassificationDataset</a></li>
 </ul>
 </li>
 </ul>
