@@ -435,9 +435,6 @@ def wrap_topk_metric2dict(
 
     Returns:
         wrapped metric function with List[Dict] output
-
-    Raises:
-        NotImplementedError
     """
     metric_fn = partial(metric_fn, topk=topk_args)
 
