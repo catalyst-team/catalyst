@@ -117,22 +117,14 @@ try:
     COMMANDS["tag2label"] = tag2label
     COMMANDS["split-dataframe"] = split_dataframe
 except ModuleNotFoundError as ex:
-    if (
-        SETTINGS.pandas_required
-        or SETTINGS.sklearn_required
-        or SETTINGS.scipy_required
-    ):
+    if SETTINGS.ml_required:
         logger.warning(
             "catalyst[ml] requirements are not available, to install them,"
             " run `pip install catalyst[ml]`."
         )
         raise ex
 except ImportError as ex:
-    if (
-        SETTINGS.pandas_required
-        or SETTINGS.sklearn_required
-        or SETTINGS.scipy_required
-    ):
+    if SETTINGS.ml_required:
         logger.warning(
             "catalyst[ml] requirements are not available, to install them,"
             " run `pip install catalyst[ml]`."
@@ -149,27 +141,29 @@ try:
     COMMANDS["check-index-model"] = check_index_model
     COMMANDS["create-index-model"] = create_index_model
 except ModuleNotFoundError as ex:
-    if (
-        SETTINGS.nmslib_required
-        or SETTINGS.sklearn_required
-        or SETTINGS.pandas_required
-    ):
+    if SETTINGS.ml_required and SETTINGS.nmslib_required:
         logger.warning(
             "catalyst-ml/nmslib are not available, to install them,"
             + " run `pip install catalyst[ml] nmslib`."
         )
         raise ex
+    elif SETTINGS.ml_required or SETTINGS.nmslib_required:
+        logger.warning(
+            "catalyst-ml/nmslib are not available, to install them,"
+            + " run `pip install catalyst[ml] nmslib`."
+        )
 except ImportError as ex:
-    if (
-        SETTINGS.nmslib_required
-        or SETTINGS.sklearn_required
-        or SETTINGS.pandas_required
-    ):
+    if SETTINGS.ml_required and SETTINGS.nmslib_required:
         logger.warning(
             "catalyst-ml/nmslib are not available, to install them,"
             + " run `pip install catalyst[ml] nmslib`."
         )
         raise ex
+    elif SETTINGS.ml_required or SETTINGS.nmslib_required:
+        logger.warning(
+            "catalyst-ml/nmslib are not available, to install them,"
+            + " run `pip install catalyst[ml] nmslib`."
+        )
 
 try:
     import cv2  # noqa: F401
@@ -181,19 +175,29 @@ try:
     COMMANDS["process-images"] = process_images
     COMMANDS["image2embedding"] = image2embedding
 except ModuleNotFoundError as ex:  # noqa: WPS440
-    if SETTINGS.cv_required or SETTINGS.pandas_required:
+    if SETTINGS.cv_required and SETTINGS.pandas_required:
         logger.warning(
             "catalyst-cv/pandas are not available, to install them,"
             + " run `pip install catalyst[cv] pandas`."
         )
         raise ex
+    elif SETTINGS.cv_required or SETTINGS.pandas_required:
+        logger.warning(
+            "catalyst-cv/pandas are not available, to install them,"
+            + " run `pip install catalyst[cv] pandas`."
+        )
 except ImportError as ex:  # noqa: WPS440
-    if SETTINGS.cv_required or SETTINGS.pandas_required:
+    if SETTINGS.cv_required and SETTINGS.pandas_required:
         logger.warning(
             "catalyst-cv/pandas are not available, to install them,"
             + " run `pip install catalyst[cv] pandas`."
         )
         raise ex
+    elif SETTINGS.cv_required or SETTINGS.pandas_required:
+        logger.warning(
+            "catalyst-cv/pandas are not available, to install them,"
+            + " run `pip install catalyst[cv] pandas`."
+        )
 
 try:
     import transformers  # noqa: F401
@@ -202,19 +206,29 @@ try:
 
     COMMANDS["text2embedding"] = text2embedding
 except ModuleNotFoundError as ex:  # noqa: WPS440
-    if SETTINGS.transformers_required or SETTINGS.pandas_required:
+    if SETTINGS.nlp_required and SETTINGS.pandas_required:
         logger.warning(
             "catalyst-nlp/pandas are not available, to install them,"
             + " run `pip install catalyst[nlp] pandas`."
         )
         raise ex
+    elif SETTINGS.nlp_required or SETTINGS.pandas_required:
+        logger.warning(
+            "catalyst-nlp/pandas are not available, to install them,"
+            + " run `pip install catalyst[nlp] pandas`."
+        )
 except ImportError as ex:  # noqa: WPS440
-    if SETTINGS.transformers_required or SETTINGS.pandas_required:
+    if SETTINGS.nlp_required and SETTINGS.pandas_required:
         logger.warning(
             "catalyst-nlp/pandas are not available, to install them,"
             + " run `pip install catalyst[nlp] pandas`."
         )
         raise ex
+    elif SETTINGS.nlp_required or SETTINGS.pandas_required:
+        logger.warning(
+            "catalyst-nlp/pandas are not available, to install them,"
+            + " run `pip install catalyst[nlp] pandas`."
+        )
 
 COMMANDS = OrderedDict(sorted(COMMANDS.items()))
 
