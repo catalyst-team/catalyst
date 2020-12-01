@@ -8,9 +8,8 @@ from torch.utils.data import DataLoader, Dataset, DistributedSampler
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 from catalyst.registry import SAMPLER
-from catalyst.utils.dict import merge_dicts
 from catalyst.utils.distributed import get_rank
-from catalyst.utils.seed import set_global_seed
+from catalyst.utils.misc import merge_dicts, set_global_seed
 
 
 def get_loader(

@@ -10,12 +10,19 @@ from catalyst.core.callback import Callback
 from catalyst.core.functional import sort_callbacks_by_order
 from catalyst.core.runner import IStageBasedRunner
 from catalyst.experiments.experiment import Experiment
-from catalyst.typing import Criterion, Device, Model, Optimizer, Scheduler
+from catalyst.typing import (
+    Criterion,
+    Device,
+    Model,
+    Optimizer,
+    RunnerModel,
+    Scheduler,
+)
+from catalyst.utils import check_amp_available
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.components import process_components
-from catalyst.utils.misc import maybe_recursive_call
+from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 from catalyst.utils.scripts import distributed_cmd_run
-from catalyst.utils.seed import set_global_seed
 from catalyst.utils.torch import (
     get_device,
     get_requires_grad,
@@ -24,15 +31,48 @@ from catalyst.utils.torch import (
 from catalyst.utils.tracing import save_traced_model, trace_model
 
 
+def _resolve_bool_fp16(fp16: Union[Dict, bool]) -> Dict:
+    """Resolves fp16/distributed params usage.
+
+    Args:
+        fp16: fp16 params
+
+    Returns:
+        resolved version of fp16
+    """
+    if isinstance(fp16, bool):
+        if fp16:
+            return (
+                {"amp": True}
+                if check_amp_available()
+                else {"apex": True, "opt_level": "O1"}
+            )
+        else:
+            return {}
+    else:
+        return fp16
+
+
 class Runner(IStageBasedRunner):
-    """
-    Deep Learning Runner for supervised, unsupervised, gan, etc runs.
-    """
+    """Deep Learning Runner for supervised, unsupervised, gan, etc runs."""
 
-    _experiment_fn: Callable = Experiment
+    def __init__(
+        self,
+        model: RunnerModel = None,
+        device: Device = None,
+        experiment_fn: Callable = Experiment,
+    ):
+        """
 
-    def _init(self, **kwargs):
-        self.experiment: Experiment = None
+        Args:
+            model: Torch model object
+            device: Torch device
+            experiment_fn: callable function,
+                which defines default experiment type to use
+                during ``.train`` and ``.infer`` methods.
+        """
+        super().__init__(model=model, device=device)
+        self._experiment_fn = experiment_fn
 
     def train(
         self,
@@ -96,9 +136,14 @@ class Runner(IStageBasedRunner):
             stage_kwargs: additional params for stage
             checkpoint_data: additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
-            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
-                See https://nvidia.github.io/apex/amp.html#properties
-                if fp16=True, params by default will be ``{"opt_level": "O1"}``
+            fp16: parameters for fp16/distributed training.
+                to use pytorch native amp - ``{"amp": True}``.
+                to use apex - ``{"apex": True, "opt_level": "O1", ...}``.
+                If fp16=True, params by default will be:
+                ``{"amp": True}`` if torch>=1.6.0,
+                ``{"apex": True, "opt_level": "O1", ...}`` if torch<1.6.0.
+                See https://nvidia.github.io/apex/amp.html#properties for
+                more params.
             distributed: if `True` will start training
                 in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
@@ -121,8 +166,7 @@ class Runner(IStageBasedRunner):
         """
         assert state_kwargs is None or stage_kwargs is None
 
-        if isinstance(fp16, bool) and fp16:
-            fp16 = {"opt_level": "O1"}
+        fp16 = _resolve_bool_fp16(fp16)
 
         if resume is not None or load_best_on_end:
             load_on_stage_end = None
@@ -206,9 +250,7 @@ class Runner(IStageBasedRunner):
             verbose: if `True`, it displays the status of the training
                 to the console.
             stage_kwargs: additional stage params
-            fp16 (Union[Dict, bool]): If not None, then sets training to FP16.
-                See https://nvidia.github.io/apex/amp.html#properties
-                if fp16=True, params by default will be ``{"opt_level": "O1"}``
+            fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)
             check: if True, then only checks that pipeline is working
                 (3 epochs only)
             timeit: if True, computes the execution time
@@ -222,8 +264,7 @@ class Runner(IStageBasedRunner):
         """
         assert state_kwargs is None or stage_kwargs is None
 
-        if isinstance(fp16, bool) and fp16:
-            fp16 = {"opt_level": "O1"}
+        fp16 = _resolve_bool_fp16(fp16)
 
         if resume is not None:
             callbacks = sort_callbacks_by_order(callbacks)
@@ -295,14 +336,13 @@ class Runner(IStageBasedRunner):
             loader: loader to predict
             model: model to use for prediction
             resume: path to checkpoint to resume
-            fp16 (Union[Dict, bool]): fp16 usage flag
+            fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)
             initial_seed: seed to use before prediction
 
         Yields:
             bathes with model predictions
         """
-        if isinstance(fp16, bool) and fp16:
-            fp16 = {"opt_level": "O1"}
+        fp16 = _resolve_bool_fp16(fp16)
 
         if model is not None:
             self.model = model
@@ -358,8 +398,7 @@ class Runner(IStageBasedRunner):
             method_name: model's method name that will be traced
             mode: ``train`` or ``eval``
             requires_grad: flag to trace with gradients
-            fp16 (Union[Dict, bool]): If not None, then sets
-                tracing params to FP16
+            fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)
             device: Torch device or a string
             predict_params: additional parameters for model forward
 
@@ -369,6 +408,8 @@ class Runner(IStageBasedRunner):
         Raises:
             ValueError: if `batch` and `loader` are Nones
         """
+        # @TODO: refactor for easy use
+        # @TODO: also add quantize, prune, onnx-convert
         if batch is None:
             if loader is None:
                 raise ValueError(
@@ -380,14 +421,10 @@ class Runner(IStageBasedRunner):
             self.model = model
         assert self.model is not None
 
-        if isinstance(fp16, bool) and fp16:
-            opt_level = "O1"
-        elif isinstance(fp16, bool) and not fp16:
-            opt_level = None
-        elif isinstance(fp16, dict):
-            opt_level = fp16["opt_level"]
-        else:
-            opt_level = fp16
+        fp16 = _resolve_bool_fp16(fp16)
+        opt_level = None
+        if fp16:
+            opt_level = fp16.get("opt_level", None)
 
         if opt_level is not None:
             device = "cuda"

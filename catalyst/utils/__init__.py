@@ -15,17 +15,6 @@ from catalyst.utils.checkpoint import (
 )
 from catalyst.utils.components import process_components
 from catalyst.utils.config import load_config, save_config
-from catalyst.utils.dict import (
-    get_key_str,
-    get_key_none,
-    get_key_list,
-    get_key_dict,
-    get_key_all,
-    get_dictkey_auto_fn,
-    merge_dicts,
-    flatten_dict,
-    split_dict_to_subdicts,
-)
 from catalyst.utils.distributed import (
     get_nn_from_ddp_module,
     get_slurm_params,
@@ -40,12 +29,6 @@ from catalyst.utils.distributed import (
     check_amp_available,
     initialize_apex,
     assert_fp16_available,
-)
-from catalyst.utils.hash import get_hash, get_short_hash
-from catalyst.utils.initialization import (
-    get_optimal_inner_init,
-    outer_init,
-    reset_weights_if_possible,
 )
 from catalyst.utils.loaders import (
     get_loaders_from_params,
@@ -62,7 +45,15 @@ from catalyst.utils.misc import (
     get_utcnow_time,
     is_exception,
     maybe_recursive_call,
-    fn_ends_with_pass,
+    get_attr,
+    set_global_seed,
+    boolean_flag,
+    get_dictkey_auto_fn,
+    merge_dicts,
+    flatten_dict,
+    split_dict_to_subdicts,
+    get_hash,
+    get_short_hash,
 )
 from catalyst.utils.numpy import get_one_hot
 from catalyst.utils.parser import parse_config_args, parse_args_uargs
@@ -74,7 +65,6 @@ from catalyst.utils.scripts import (
     dump_experiment_code,
     distributed_cmd_run,
 )
-from catalyst.utils.seed import set_global_seed
 from catalyst.utils.swa import (
     average_weights,
     get_averaged_weights_by_path_mask,
@@ -86,6 +76,9 @@ from catalyst.utils.sys import (
     dump_environment,
 )
 from catalyst.utils.torch import (
+    get_optimal_inner_init,
+    outer_init,
+    reset_weights_if_possible,
     any2device,
     get_activation_fn,
     get_available_gpus,
@@ -122,11 +115,5 @@ if IS_QUANTIZATION_AVAILABLE:
         save_quantized_model,
         quantize_model_from_checkpoint,
     )
-
-from catalyst.settings import IS_GIT_AVAILABLE
-
-if IS_GIT_AVAILABLE:
-    from catalyst.utils.pipelines import clone_pipeline
-    from catalyst.utils.wizard import run_wizard, Wizard
 
 from catalyst.contrib.utils import *

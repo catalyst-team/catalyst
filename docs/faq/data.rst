@@ -4,9 +4,9 @@ Dataflow
 Base dataflow
 ----------------------------------------------------
 Catalyst uses the "key-value is all you need" approach.
-Speaking so, it expects key-value outputs from your Dataset/Dataloader.
+In other words, the output of your Dataset/Dataloader should be a key-value (python `dict`).
 
-Example dataflow:
+Example of dataflow:
 
 .. code-block:: python
 
@@ -104,7 +104,7 @@ you don't have to rewrite your code:
     runner.train(...)
 
 
-Key-value storage is also used to store the datasets/loaders for the experiment.
+Key-value storage also can be used to store the datasets/loaders for the experiment.
 In this case we also need to use ``OrderedDict`` to ensure correct epoch handling -
 that your model will firstly train on some ``train`` dataset
 and only then will be evaluated on some ``valid`` dataset:
@@ -184,7 +184,7 @@ Once again, it's also valid to do something like:
 
 Loader for model selection
 ----------------------------------------------------
-In case of multiple loaders, you could easily select one for model selection
+In case of multiple loaders, you could select one of them for model selection
 with ``valid_loader`` param in the ``runner.train``.
 For example, to use ``valid2`` loaders as your
 model selection one you could do the following:
@@ -213,7 +213,7 @@ model selection one you could do the following:
 
 Metric for model selection
 ----------------------------------------------------
-Suppose, you are using a number of different metrics in your pipeline:
+Suppose, you are using set of different metrics in your pipeline:
 
 .. code-block:: python
 
@@ -273,7 +273,7 @@ as your model selection one you could do the following:
 Use part of the data
 ----------------------------------------------------
 If you would like to use only some part of your data from the loader
-(for example, you would like to check your pipeline and overfit for one small portion of the data),
+(for example, you would like to overfit for one small portion of the data to check your pipeline),
 you could use ``BatchLimitLoaderWrapper``:
 
 .. code-block:: python
@@ -297,7 +297,7 @@ As a more user-friendly approach with ``runner.train``:
     # here we overfit for one batch per loader
     runner.train(model=model, loaders=loaders, overfit=True)
 
-And more convenient and customasible way:
+And more convenient and customizable way:
 
 .. code-block:: python
 

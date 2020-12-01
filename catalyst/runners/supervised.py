@@ -3,7 +3,7 @@ import logging
 
 import torch
 
-from catalyst.experiments.supervised import SupervisedExperiment
+from catalyst.experiments.auto import AutoCallbackExperiment
 from catalyst.runners.runner import Runner
 from catalyst.typing import Device, RunnerModel
 
@@ -13,8 +13,6 @@ logger = logging.getLogger(__name__)
 class SupervisedRunner(Runner):
     """Runner for experiments with supervised model."""
 
-    _experiment_fn: Callable = SupervisedExperiment
-
     def __init__(
         self,
         model: RunnerModel = None,
@@ -22,6 +20,7 @@ class SupervisedRunner(Runner):
         input_key: Any = "features",
         output_key: Any = "logits",
         input_target_key: str = "targets",
+        experiment_fn: Callable = AutoCallbackExperiment,
     ):
         """
         Args:
@@ -31,29 +30,13 @@ class SupervisedRunner(Runner):
             output_key: Key in output dict model output
                 will be stored under
             input_target_key: Key in batch dict mapping for target
+            experiment_fn: callable function,
+                which defines default experiment type to use
+                during ``.train`` and ``.infer`` methods.
         """
         super().__init__(
-            model=model,
-            device=device,
-            input_key=input_key,
-            output_key=output_key,
-            input_target_key=input_target_key,
+            model=model, device=device, experiment_fn=experiment_fn
         )
-
-    def _init(
-        self,
-        input_key: Any = "features",
-        output_key: Any = "logits",
-        input_target_key: str = "targets",
-    ):
-        """
-        Args:
-            input_key: Key in batch dict mapping for model input
-            output_key: Key in output dict model output
-                will be stored under
-            input_target_key: Key in batch dict mapping for target
-        """
-        self.experiment: SupervisedExperiment = None
 
         self.input_key = input_key
         self.output_key = output_key
@@ -82,13 +65,6 @@ class SupervisedRunner(Runner):
             self._process_output = self._process_output_none
         else:
             raise NotImplementedError()
-
-    def _batch2device(self, batch: Mapping[str, Any], device: Device):
-        if isinstance(batch, (tuple, list)):
-            assert len(batch) == 2
-            batch = {self.input_key: batch[0], self.target_key: batch[1]}
-        batch = super()._batch2device(batch, device)
-        return batch
 
     def _process_input_str(self, batch: Mapping[str, Any], **kwargs):
         output = self.model(batch[self.input_key], **kwargs)
@@ -132,6 +108,13 @@ class SupervisedRunner(Runner):
         output = self._process_output(output)
         return output
 
+    def _handle_device(self, batch: Mapping[str, Any]):
+        if isinstance(batch, (tuple, list)):
+            assert len(batch) == 2
+            batch = {self.input_key: batch[0], self.target_key: batch[1]}
+        batch = super()._handle_device(batch)
+        return batch
+
     def _handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
         Inner method to handle specified data batch.
@@ -162,7 +145,7 @@ class SupervisedRunner(Runner):
         Returns:
             Mapping[str, Any]: model output dictionary
         """
-        batch = self._batch2device(batch, self.device)
+        batch = self._handle_device(batch)
         output = self.forward(batch, **kwargs)
         return output
 

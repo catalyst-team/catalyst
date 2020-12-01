@@ -5,15 +5,14 @@ from argparse import ArgumentParser
 import os
 from pathlib import Path
 
-from catalyst.contrib.utils.argparse import boolean_flag
 from catalyst.utils.distributed import get_rank
+from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.parser import parse_args_uargs
 from catalyst.utils.scripts import (
     distributed_cmd_run,
     dump_code,
     prepare_config_api_components,
 )
-from catalyst.utils.seed import set_global_seed
 from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import prepare_cudnn
 

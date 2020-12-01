@@ -2,12 +2,12 @@
 
 
 def foo(a, b):
-    """@TODO: Docs. Contribution is welcome."""
+    """Docs? Contribution is welcome."""
     return {"a": a, "b": b}
 
 
 def bar():
-    """@TODO: Docs. Contribution is welcome."""
+    """Docs? Contribution is welcome."""
     pass
 
 

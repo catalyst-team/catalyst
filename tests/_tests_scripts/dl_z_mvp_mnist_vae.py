@@ -9,8 +9,8 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from catalyst import dl, metrics
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.cv import ToTensor
 
 LOG_SCALE_MAX = 2
 LOG_SCALE_MIN = -10

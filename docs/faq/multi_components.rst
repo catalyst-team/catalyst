@@ -274,7 +274,7 @@ Multi-criterion example:
         load_best_on_end=True,
     )
 
-SSame approach here - just use key-value storage to pass criterion through the experiment.
+Same approach here - just use key-value storage to pass criterion through the experiment.
 
 
 If you haven't found the answer for your question, feel free to `join our slack`_ for the discussion.

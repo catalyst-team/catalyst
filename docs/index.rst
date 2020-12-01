@@ -6,7 +6,7 @@ Catalyst
     :alt: Catalyst logo
 
 
-PyTorch framework for Deep Learning research and development.
+PyTorch framework for Deep Learning R&D.
 --------------------------------------------------------------------------------
 
 It focuses on reproducibility, rapid experimentation, and codebase reuse
@@ -215,13 +215,11 @@ Indices and tables
 
     ML - Linear Regression <https://github.com/catalyst-team/catalyst#minimal-examples>
 
-    CV - Classification <https://github.com/catalyst-team/catalyst#minimal-examples>
-    CV - Segmentation <https://github.com/catalyst-team/catalyst#minimal-examples>
-    CV - AutoEncoder <https://github.com/catalyst-team/catalyst#minimal-examples>
-    CV - Variational AutoEncoder <https://github.com/catalyst-team/catalyst#minimal-examples>
+    CV - Classification / Segmentation <https://github.com/catalyst-team/catalyst#minimal-examples>
+    CV - AE / VAE <https://github.com/catalyst-team/catalyst#minimal-examples>
     CV - GAN <https://github.com/catalyst-team/catalyst#minimal-examples>
 
-    Engine - AMP/DDP/TPU <https://github.com/catalyst-team/catalyst#minimal-examples>
+    Engine - AMP / DDP / TPU <https://github.com/catalyst-team/catalyst#minimal-examples>
 
     AutoML - Catalyst with Optuna <https://github.com/catalyst-team/catalyst#minimal-examples>
 
@@ -267,7 +265,7 @@ Indices and tables
 
 
 .. toctree::
-    :caption: Contributing guide
+    :caption: Contribution guide
     :maxdepth: 2
     :hidden:
 
