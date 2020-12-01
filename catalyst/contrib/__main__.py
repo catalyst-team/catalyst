@@ -89,7 +89,7 @@ try:
     COMMANDS["project-embeddings"] = project_embeddings
 except ModuleNotFoundError as ex:
     if SETTINGS.pandas_required:
-        logger.warning(
+        logger.error(
             "pandas not available, to install pandas,"
             " run `pip install pandas`."
         )
@@ -118,7 +118,7 @@ try:
     COMMANDS["split-dataframe"] = split_dataframe
 except ModuleNotFoundError as ex:
     if SETTINGS.ml_required:
-        logger.warning(
+        logger.error(
             "catalyst[ml] requirements are not available, to install them,"
             " run `pip install catalyst[ml]`."
         )
@@ -142,7 +142,7 @@ try:
     COMMANDS["create-index-model"] = create_index_model
 except ModuleNotFoundError as ex:
     if SETTINGS.ml_required and SETTINGS.nmslib_required:
-        logger.warning(
+        logger.error(
             "catalyst-ml/nmslib are not available, to install them,"
             + " run `pip install catalyst[ml] nmslib`."
         )
@@ -154,7 +154,7 @@ except ModuleNotFoundError as ex:
         )
 except ImportError as ex:
     if SETTINGS.ml_required and SETTINGS.nmslib_required:
-        logger.warning(
+        logger.error(
             "catalyst-ml/nmslib are not available, to install them,"
             + " run `pip install catalyst[ml] nmslib`."
         )
@@ -176,7 +176,7 @@ try:
     COMMANDS["image2embedding"] = image2embedding
 except ModuleNotFoundError as ex:  # noqa: WPS440
     if SETTINGS.cv_required and SETTINGS.pandas_required:
-        logger.warning(
+        logger.error(
             "catalyst-cv/pandas are not available, to install them,"
             + " run `pip install catalyst[cv] pandas`."
         )
@@ -188,7 +188,7 @@ except ModuleNotFoundError as ex:  # noqa: WPS440
         )
 except ImportError as ex:  # noqa: WPS440
     if SETTINGS.cv_required and SETTINGS.pandas_required:
-        logger.warning(
+        logger.error(
             "catalyst-cv/pandas are not available, to install them,"
             + " run `pip install catalyst[cv] pandas`."
         )
@@ -207,7 +207,7 @@ try:
     COMMANDS["text2embedding"] = text2embedding
 except ModuleNotFoundError as ex:  # noqa: WPS440
     if SETTINGS.nlp_required and SETTINGS.pandas_required:
-        logger.warning(
+        logger.error(
             "catalyst-nlp/pandas are not available, to install them,"
             + " run `pip install catalyst[nlp] pandas`."
         )
@@ -219,7 +219,7 @@ except ModuleNotFoundError as ex:  # noqa: WPS440
         )
 except ImportError as ex:  # noqa: WPS440
     if SETTINGS.nlp_required and SETTINGS.pandas_required:
-        logger.warning(
+        logger.error(
             "catalyst-nlp/pandas are not available, to install them,"
             + " run `pip install catalyst[nlp] pandas`."
         )

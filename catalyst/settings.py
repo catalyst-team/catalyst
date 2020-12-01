@@ -75,7 +75,7 @@ class Settings(FrozenClass):
         tune_required: bool = False,
         optuna_required: Optional[bool] = None,
         # KNN
-        nmslib_required: Optional[bool] = None,
+        nmslib_required: Optional[bool] = False,
         # extras
         use_lz4: bool = False,
         use_pyarrow: bool = False,

@@ -13,7 +13,7 @@ pip uninstall -r requirements/requirements-log.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip uninstall -r requirements/requirements-tune.txt -y
-pip uninstall nmslib
+pip uninstall nmslib -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -49,7 +49,7 @@ pip uninstall -r requirements/requirements-log.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip uninstall -r requirements/requirements-tune.txt -y
-pip uninstall nmslib
+pip uninstall nmslib -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -97,7 +97,7 @@ pip uninstall -r requirements/requirements-log.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip uninstall -r requirements/requirements-tune.txt -y
-pip uninstall nmslib
+pip uninstall nmslib -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -162,7 +162,7 @@ pip uninstall -r requirements/requirements-log.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip uninstall -r requirements/requirements-tune.txt -y
-pip uninstall nmslib
+pip uninstall nmslib -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -214,7 +214,7 @@ pip uninstall -r requirements/requirements-log.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip uninstall -r requirements/requirements-tune.txt -y
-pip uninstall nmslib
+pip uninstall nmslib -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -270,7 +270,7 @@ pip uninstall -r requirements/requirements-log.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip uninstall -r requirements/requirements-tune.txt -y
-pip uninstall nmslib
+pip uninstall nmslib -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -319,7 +319,7 @@ pip uninstall -r requirements/requirements-log.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-nlp.txt -y
 pip uninstall -r requirements/requirements-tune.txt -y
-pip uninstall nmslib
+pip uninstall nmslib -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
