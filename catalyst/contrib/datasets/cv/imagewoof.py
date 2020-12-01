@@ -1,4 +1,4 @@
-from catalyst.contrib.datasets.cv.fastai import ImageClassificationDataset
+from catalyst.contrib.datasets.cv.functional import ImageClassificationDataset
 
 
 class Imagewoof(ImageClassificationDataset):

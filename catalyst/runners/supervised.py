@@ -3,7 +3,7 @@ import logging
 
 import torch
 
-from catalyst.experiments.supervised import SupervisedExperiment
+from catalyst.experiments.auto import AutoCallbackExperiment
 from catalyst.runners.runner import Runner
 from catalyst.typing import Device, RunnerModel
 
@@ -20,7 +20,7 @@ class SupervisedRunner(Runner):
         input_key: Any = "features",
         output_key: Any = "logits",
         input_target_key: str = "targets",
-        experiment_fn: Callable = SupervisedExperiment,
+        experiment_fn: Callable = AutoCallbackExperiment,
     ):
         """
         Args:

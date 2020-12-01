@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 from catalyst.callbacks.metric import BatchMetricCallback
-from catalyst.contrib.utils.confusion_matrix import (
+from catalyst.contrib.utils.torch_extra import (
     calculate_confusion_matrix_from_tensors,
     calculate_tp_fp_fn,
 )
@@ -117,7 +117,7 @@ class MultiClassDiceMetricCallback(Callback):
             self.confusion_matrix += confusion_matrix
 
     def on_loader_end(self, runner: "IRunner"):
-        """@TODO: Docs. Contribution is welcome.
+        """Logs dice scores to the ``loader_metrics``.
 
         Args:
             runner: current runner

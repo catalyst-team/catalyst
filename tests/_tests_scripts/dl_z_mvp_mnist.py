@@ -6,8 +6,8 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from catalyst import dl, metrics
+from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.cv import ToTensor
 
 model = torch.nn.Linear(28 * 28, 10)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)

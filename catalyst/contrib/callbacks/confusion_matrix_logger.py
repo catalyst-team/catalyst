@@ -1,8 +1,5 @@
 from typing import Dict, List, TYPE_CHECKING
 
-import numpy as np
-from sklearn.metrics import confusion_matrix as confusion_matrix_fn
-
 import torch
 import torch.distributed  # noqa: WPS301
 
@@ -51,8 +48,8 @@ class ConfusionMatrixCallback(Callback):
         self.input_key = input_key
         self.tensorboard_callback_name = tensorboard_callback_name
 
-        assert mode in ["tnt", "sklearn"]
-        assert version in [None, "tnt", "sklearn"]
+        assert mode in ["tnt"]
+        assert version in [None, "tnt"]
         self._mode = version or mode
         self._plot_params = plot_params or {}
 
@@ -65,33 +62,13 @@ class ConfusionMatrixCallback(Callback):
         self._reset_stats()
 
     def _reset_stats(self):
-        if self._mode == "tnt":
-            self.confusion_matrix = ConfusionMeter(self.num_classes)
-        elif self._mode == "sklearn":
-            self.outputs = []
-            self.targets = []
+        self.confusion_matrix = ConfusionMeter(self.num_classes)
 
     def _add_to_stats(self, outputs, targets):
-        if self._mode == "tnt":
-            self.confusion_matrix.add(predicted=outputs, target=targets)
-        elif self._mode == "sklearn":
-            outputs = outputs.cpu().numpy()
-            targets = targets.cpu().numpy()
-
-            outputs = np.argmax(outputs, axis=1)
-
-            self.outputs.extend(outputs)
-            self.targets.extend(targets)
+        self.confusion_matrix.add(predicted=outputs, target=targets)
 
     def _compute_confusion_matrix(self):
-        if self._mode == "tnt":
-            confusion_matrix = self.confusion_matrix.value()
-        elif self._mode == "sklearn":
-            confusion_matrix = confusion_matrix_fn(
-                y_true=self.targets, y_pred=self.outputs
-            )
-        else:
-            raise NotImplementedError()
+        confusion_matrix = self.confusion_matrix.value()
         return confusion_matrix
 
     def _plot_confusion_matrix(

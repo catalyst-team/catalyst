@@ -3,7 +3,7 @@ from typing import Callable, List, Optional, Union
 from torch.nn import Module
 from torch.nn.utils import prune
 
-from catalyst.utils.initialization import reset_weights_if_possible
+from catalyst.utils.torch import reset_weights_if_possible
 
 
 def prune_model(

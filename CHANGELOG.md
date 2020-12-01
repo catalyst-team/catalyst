@@ -9,19 +9,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- 
+- ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
+    - a few docs 
 
 ### Changed
 
-- 
+- ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
+    - ``tensorboard, ipython, matplotlib, pandas, scikit-learn`` moved to optional requirements
+    - ``PerplexityMetricCallback`` moved to ``catalyst.callbacks`` from ``catalyst.contrib.callbacks``
+    - ``PerplexityMetricCallback`` renamed to ``PerplexityCallback``
+    - ``catalyst.contrib.utils.confusion_matrix`` renamed to ``catalyst.contrib.utils.torch_extra``
+    - many parts of ``catalyst.data`` moved to ``catalyst.contrib.data``
+    - ``catalyst.data.scripts`` moved to ``catalyst.contrib.scripts``
+    - ``catalyst.utils``, ``catalyst.data.utils`` and ``catalyst.contrib.utils`` restructured
+    - ``ReaderSpec`` renamed to ``IReader``
+    - ``SupervisedExperiment`` renamed to ``AutoCallbackExperiment``
 
 ### Removed
 
-- 
+- ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
+    - ``KNNMetricCallback``
+    - ``sklearn`` mode for ``ConfusionMatrixLogger``
+    - ``catalyst.data.utils``
+    - unnecessary ``catalyst.tools.meters``
+    - todos for unnecessary docs
+ 
 
 ### Fixed
 
-- 
+- prevented modifying config during the experiment and runner initialization ([#1004](https://github.com/catalyst-team/catalyst/pull/1004))
 
 
 
