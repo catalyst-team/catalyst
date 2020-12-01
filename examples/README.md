@@ -62,11 +62,6 @@ Full description of configs with comments:
     - metrics visualization with tensorboard
 1. [features – model training with stages](cifar_stages)
     - pipeline example with stages
-1. [features - vanilla GAN on MNIST](mnist_gan)
-    - experiment with multiple phases & models & optimizers
-1. [features - Text classification with DistilBert](distilbert_text_classification)
-    - DistilBERT model
-    - Kaggle kernel with the same example
 
 ----
 
@@ -74,9 +69,6 @@ Full description of configs with comments:
 For Reinforcement Learning examples check out our [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl)
 
 ----
-
-### Catalyst-info
-[Link](https://github.com/catalyst-team/catalyst-info)
 
 
 ### Contributions

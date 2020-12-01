@@ -72,19 +72,22 @@ class Settings(FrozenClass):
         nlp_required: bool = False,
         transformers_required: Optional[bool] = None,
         # TUNE
+        tune_required: bool = False,
         optuna_required: Optional[bool] = None,
+        # KNN
+        nmslib_required: Optional[bool] = None,
         # extras
         use_lz4: bool = False,
         use_pyarrow: bool = False,
         telegram_logger_token: Optional[str] = None,
         telegram_logger_chat_id: Optional[str] = None,
-        nmslib_required: Optional[bool] = None,
     ):
         # [catalyst]
         self.cv_required: bool = cv_required
         self.log_required: bool = log_required
         self.ml_required: bool = ml_required
         self.nlp_required: bool = nlp_required
+        self.tune_required: bool = tune_required
 
         # [catalyst-cv]
         self.albumentations_required: bool = self._optional_value(
@@ -136,15 +139,20 @@ class Settings(FrozenClass):
         self.transformers_required: bool = self._optional_value(
             transformers_required, default=nlp_required
         )
+
         # [catalyst-tune]
-        self.optuna_required: bool = optuna_required
+        self.optuna_required: bool = self._optional_value(
+            optuna_required, default=tune_required
+        )
+
+        # [catalyst-knn]
+        self.nmslib_required: bool = nmslib_required
 
         # [catalyst-extras]
         self.use_lz4: bool = use_lz4
         self.use_pyarrow: bool = use_pyarrow
         self.telegram_logger_token: str = telegram_logger_token
         self.telegram_logger_chat_id: str = telegram_logger_chat_id
-        self.nmslib_required: bool = nmslib_required
 
         # [catalyst-global]
         # stages
