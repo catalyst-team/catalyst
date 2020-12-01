@@ -75,7 +75,7 @@ else:
     raise AssertionError('\'ImportError\' expected')
 """
 
-pip install -r requirements/requirements-contrib.txt --quiet \
+pip install -r requirements/requirements-log.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
 pip install -r requirements/requirements-ecosystem.txt --quiet \
