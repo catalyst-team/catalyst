@@ -400,6 +400,36 @@
     <span class="k">return</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">num_classes</span>
 
 
+<div class="viewcode-block" id="process_recsys_components"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.functional.process_recsys_components">[docs]</a><span class="k">def</span> <span class="nf">process_recsys_components</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    General pre-processing for calculation recsys metrics</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        outputs (torch.Tensor):</span>
+<span class="sd">            Tensor weith predicted score</span>
+<span class="sd">            size: [batch_size, slate_length]</span>
+<span class="sd">            model outputs, logits</span>
+<span class="sd">        targets (torch.Tensor):</span>
+<span class="sd">            Binary tensor with ground truth.</span>
+<span class="sd">            1 means the item is relevant</span>
+<span class="sd">            for the user and 0 not relevant</span>
+<span class="sd">            size: [batch_szie, slate_length]</span>
+<span class="sd">            ground truth, labels</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        targets_sorted_by_outputs (torch.Tensor):</span>
+<span class="sd">            targets tensor sorted by outputs</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">check_consistent_length</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+    <span class="n">outputs_order</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">targets_sorted_by_outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
+        <span class="n">targets</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">outputs_order</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">targets_sorted_by_outputs</span></div>
+
+
 <div class="viewcode-block" id="process_multilabel_components"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.functional.process_multilabel_components">[docs]</a><span class="k">def</span> <span class="nf">process_multilabel_components</span><span class="p">(</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
     <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
@@ -657,6 +687,24 @@
     <span class="k">return</span> <span class="n">result</span></div>
 
 
+<div class="viewcode-block" id="check_consistent_length"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.functional.check_consistent_length">[docs]</a><span class="k">def</span> <span class="nf">check_consistent_length</span><span class="p">(</span><span class="o">*</span><span class="n">tensors</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check that all arrays have consistent first dimensions.</span>
+<span class="sd">    Checks whether all objects in arrays have the same shape or length.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensors : list or tensores of input objects.</span>
+<span class="sd">            Objects that will be checked for consistent length.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: &quot;Inconsistent numbers of samples&quot;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lengths</span> <span class="o">=</span> <span class="p">[</span><span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="n">tensors</span><span class="p">]</span>
+    <span class="n">uniques</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">lengths</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">uniques</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Inconsistent numbers of samples&quot;</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="wrap_class_metric2dict"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.functional.wrap_class_metric2dict">[docs]</a><span class="k">def</span> <span class="nf">wrap_class_metric2dict</span><span class="p">(</span>
     <span class="n">metric_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">class_args</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
@@ -706,6 +754,9 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        wrapped metric function with List[Dict] output</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">metric_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">metric_fn</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="n">topk_args</span><span class="p">)</span>
 
@@ -734,7 +785,9 @@
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;check_consistent_length&quot;</span><span class="p">,</span>
     <span class="s2">&quot;process_multilabel_components&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;process_recsys_components&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_binary_statistics&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_multiclass_statistics&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_multilabel_statistics&quot;</span><span class="p">,</span>

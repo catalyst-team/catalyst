@@ -324,12 +324,11 @@
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
+<span class="kn">from</span> <span class="nn">catalyst.metrics.functional</span> <span class="kn">import</span> <span class="n">process_recsys_components</span>
+
 
 <div class="viewcode-block" id="dcg"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.ndcg.dcg">[docs]</a><span class="k">def</span> <span class="nf">dcg</span><span class="p">(</span>
-    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
-    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;pow_rank&quot;</span><span class="p">,</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Computes DCG@topk for the specified values of `k`.</span>
@@ -347,55 +346,61 @@
 <span class="sd">        gain_function:</span>
 <span class="sd">            String indicates the gain function for the ground truth labels.</span>
 <span class="sd">            Two options available:</span>
-<span class="sd">            - `pow_rank`: torch.pow(2, x) - 1</span>
-<span class="sd">            - `rank`: x</span>
-<span class="sd">            On the default, `pow_rank` is used</span>
-<span class="sd">            to emphasize on retrievng the relevant documents.</span>
-<span class="sd">        k (int):</span>
-<span class="sd">            Parameter fro evaluation on top-k items</span>
+<span class="sd">            - `exp_rank`: torch.pow(2, x) - 1</span>
+<span class="sd">            - `linear_rank`: x</span>
+<span class="sd">            On the default, `exp_rank` is used</span>
+<span class="sd">            to emphasize on retrieving the relevant documents.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        torch.Tensor for dcg at k</span>
+<span class="sd">        dcg_score (torch.Tensor):</span>
+<span class="sd">            The discounted gains tensor</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: gain function can be either `pow_rank` or `rank`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
-    <span class="n">order</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">true_sorted_by_preds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">order</span><span class="p">)</span>
+    <span class="n">targets_sort_by_outputs</span> <span class="o">=</span> <span class="n">process_recsys_components</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+    <span class="n">target_device</span> <span class="o">=</span> <span class="n">targets_sort_by_outputs</span><span class="o">.</span><span class="n">device</span>
 
-    <span class="k">if</span> <span class="n">gain_function</span> <span class="o">==</span> <span class="s2">&quot;pow_rank&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">gain_function</span> <span class="o">==</span> <span class="s2">&quot;exp_rank&quot;</span><span class="p">:</span>
         <span class="n">gain_function</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="n">gains</span> <span class="o">=</span> <span class="n">gain_function</span><span class="p">(</span><span class="n">true_sorted_by_preds</span><span class="p">)</span>
+        <span class="n">gains</span> <span class="o">=</span> <span class="n">gain_function</span><span class="p">(</span><span class="n">targets_sort_by_outputs</span><span class="p">)</span>
         <span class="n">discounts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">true_sorted_by_preds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+                <span class="n">targets_sort_by_outputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="n">target_device</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="o">+</span> <span class="mf">2.0</span>
         <span class="p">)</span>
-        <span class="n">discounted_gains</span> <span class="o">=</span> <span class="p">(</span><span class="n">gains</span> <span class="o">*</span> <span class="n">discounts</span><span class="p">)[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">discounted_gains</span> <span class="o">=</span> <span class="n">gains</span> <span class="o">*</span> <span class="n">discounts</span>
 
-    <span class="k">elif</span> <span class="n">gain_function</span> <span class="o">==</span> <span class="s2">&quot;rank&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">gain_function</span> <span class="o">==</span> <span class="s2">&quot;linear_rank&quot;</span><span class="p">:</span>
         <span class="n">discounts</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">torch</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">true_sorted_by_preds</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span>
+                <span class="n">targets_sort_by_outputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float</span><span class="p">,</span>
+                <span class="n">device</span><span class="o">=</span><span class="n">target_device</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="o">+</span> <span class="mf">1.0</span>
         <span class="p">)</span>
         <span class="n">discounts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">discounted_gains</span> <span class="o">=</span> <span class="p">(</span><span class="n">true_sorted_by_preds</span> <span class="o">*</span> <span class="n">discounts</span><span class="p">)[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">discounted_gains</span> <span class="o">=</span> <span class="n">targets_sort_by_outputs</span> <span class="o">*</span> <span class="n">discounts</span>
 
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;gain function can be either pow_rank or rank&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;gain function can be either exp_rank or linear_rank&quot;</span><span class="p">)</span>
 
-    <span class="n">sum_dcg</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">discounted_gains</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">sum_dcg</span></div>
+    <span class="n">dcg_score</span> <span class="o">=</span> <span class="n">discounted_gains</span>
+    <span class="k">return</span> <span class="n">dcg_score</span></div>
 
 
 <div class="viewcode-block" id="ndcg"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.ndcg.ndcg">[docs]</a><span class="k">def</span> <span class="nf">ndcg</span><span class="p">(</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
     <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">top_k</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
-    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;pow_rank&quot;</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="n">topk</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span>
+    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Computes nDCG@topk for the specified values of `top_k`.</span>
+<span class="sd">    Computes nDCG@topk for the specified values of `topk`.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        outputs (torch.Tensor): model outputs, logits</span>
@@ -404,24 +409,29 @@
 <span class="sd">            with shape [batch_size; slate_size]</span>
 <span class="sd">        gain_function:</span>
 <span class="sd">            callable, gain function for the ground truth labels.</span>
-<span class="sd">            on the deafult, the torch.pow(2, x) - 1 function used</span>
-<span class="sd">            to get emphasise on the retirvng the revelant documnets.</span>
-<span class="sd">        top_k (List[int]):</span>
+<span class="sd">            Two options available:</span>
+<span class="sd">            - `exp_rank`: torch.pow(2, x) - 1</span>
+<span class="sd">            - `linear_rank`: x</span>
+<span class="sd">            On the default, `exp_rank` is used</span>
+<span class="sd">            to emphasize on retrieving the relevant documents.</span>
+<span class="sd">        topk (List[int]):</span>
 <span class="sd">            Parameter fro evaluation on top-k items</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        tuple with computed ndcg@topk</span>
+<span class="sd">        results (Tuple[float]):</span>
+<span class="sd">            tuple with computed ndcg@topk</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">ndcg_k_tuple</span> <span class="o">=</span> <span class="p">()</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">top_k</span><span class="p">:</span>
-        <span class="n">ideal_dcgs</span> <span class="o">=</span> <span class="n">dcg</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">gain_function</span><span class="p">)</span>
-        <span class="n">predicted_dcgs</span> <span class="o">=</span> <span class="n">dcg</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">gain_function</span><span class="p">)</span>
-        <span class="n">ndcg_score</span> <span class="o">=</span> <span class="n">predicted_dcgs</span> <span class="o">/</span> <span class="n">ideal_dcgs</span>
-        <span class="n">idcg_mask</span> <span class="o">=</span> <span class="n">ideal_dcgs</span> <span class="o">==</span> <span class="mi">0</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">topk</span><span class="p">:</span>
+        <span class="n">ideal_dcgs</span> <span class="o">=</span> <span class="n">dcg</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">gain_function</span><span class="p">)[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">predicted_dcgs</span> <span class="o">=</span> <span class="n">dcg</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">gain_function</span><span class="p">)[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span>
+        <span class="n">ideal_dcgs_score</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">ideal_dcgs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">predicted_dcgs_score</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">predicted_dcgs</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ndcg_score</span> <span class="o">=</span> <span class="n">predicted_dcgs_score</span> <span class="o">/</span> <span class="n">ideal_dcgs_score</span>
+        <span class="n">idcg_mask</span> <span class="o">=</span> <span class="n">ideal_dcgs_score</span> <span class="o">==</span> <span class="mi">0</span>
         <span class="n">ndcg_score</span><span class="p">[</span><span class="n">idcg_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="n">ndcg_k_tuple</span> <span class="o">+=</span> <span class="p">(</span><span class="n">ndcg_score</span><span class="p">,)</span>
-
-    <span class="k">return</span> <span class="n">ndcg_k_tuple</span></div>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">ndcg_score</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">results</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;dcg&quot;</span><span class="p">,</span> <span class="s2">&quot;ndcg&quot;</span><span class="p">]</span>

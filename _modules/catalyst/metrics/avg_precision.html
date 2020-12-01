@@ -320,13 +320,15 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">MAP metric.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
+<span class="kn">from</span> <span class="nn">catalyst.metrics.functional</span> <span class="kn">import</span> <span class="n">process_recsys_components</span>
+
 
 <div class="viewcode-block" id="avg_precision"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.avg_precision.avg_precision">[docs]</a><span class="k">def</span> <span class="nf">avg_precision</span><span class="p">(</span>
-    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the Average Precision for RecSys.</span>
@@ -359,40 +361,31 @@
 <span class="sd">            and 0 not relevant</span>
 <span class="sd">            size: [batch_szie, slate_length]</span>
 <span class="sd">            ground truth, labels</span>
-<span class="sd">        k (int):</span>
-<span class="sd">            The position to compute the truncated AP,</span>
-<span class="sd">            must be positive</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        result (torch.Tensor):</span>
+<span class="sd">        ap_score (torch.Tensor):</span>
 <span class="sd">            The map score for each batch.</span>
 <span class="sd">            size: [batch_size, 1]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">indices_for_sort</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">targets_sorted_by_outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
-        <span class="n">targets</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">indices_for_sort</span>
-    <span class="p">)</span>
+    <span class="n">targets_sort_by_outputs</span> <span class="o">=</span> <span class="n">process_recsys_components</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+    <span class="n">precisions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">targets_sort_by_outputs</span><span class="p">)</span>
 
-    <span class="n">targets_sorted_by_outputs_topk</span> <span class="o">=</span> <span class="n">targets_sorted_by_outputs</span><span class="p">[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span>
-    <span class="n">precisions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">targets_sorted_by_outputs_topk</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">)):</span>
         <span class="n">precisions</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-            <span class="n">targets_sorted_by_outputs_topk</span><span class="p">[:,</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
+            <span class="n">targets_sort_by_outputs</span><span class="p">[:,</span> <span class="p">:</span> <span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
         <span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">only_relevant_precision</span> <span class="o">=</span> <span class="n">precisions</span> <span class="o">*</span> <span class="n">targets_sorted_by_outputs_topk</span>
-    <span class="n">ap</span> <span class="o">=</span> <span class="n">only_relevant_precision</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+    <span class="n">only_relevant_precision</span> <span class="o">=</span> <span class="n">precisions</span> <span class="o">*</span> <span class="n">targets_sort_by_outputs</span>
+    <span class="n">ap_score</span> <span class="o">=</span> <span class="n">only_relevant_precision</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
         <span class="p">(</span><span class="n">only_relevant_precision</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="n">ap</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ap</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">return</span> <span class="n">ap</span></div>
+    <span class="n">ap_score</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">ap_score</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">ap_score</span></div>
 
 
 <div class="viewcode-block" id="mean_avg_precision"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.avg_precision.mean_avg_precision">[docs]</a><span class="k">def</span> <span class="nf">mean_avg_precision</span><span class="p">(</span>
-    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">top_k</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">topk</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the mean average precision (MAP) for RecSys.</span>
 <span class="sd">    The metrics calculate the mean of the AP across all batches</span>
@@ -411,19 +404,21 @@
 <span class="sd">            and 0 not relevant</span>
 <span class="sd">            size: [batch_szie, slate_length]</span>
 <span class="sd">            ground truth, labels</span>
-<span class="sd">        top_k (List[int]):</span>
+<span class="sd">        topk (List[int]):</span>
 <span class="sd">            List of parameter for evaluation</span>
 <span class="sd">            topK items</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        result (Dict[str, int]):</span>
+<span class="sd">        map_at_k (Tuple[float]):</span>
 <span class="sd">            The map score for every k.</span>
-<span class="sd">            size: [len(top_k), 1]</span>
+<span class="sd">            size: len(top_k)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">map_k_tuple</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">avg_precision</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">top_k</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">map_k_tuple</span></div>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">topk</span><span class="p">:</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">avg_precision</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)[:</span><span class="n">k</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">results</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mean_avg_precision&quot;</span><span class="p">,</span> <span class="s2">&quot;avg_precision&quot;</span><span class="p">]</span>

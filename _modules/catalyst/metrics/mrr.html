@@ -320,17 +320,61 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">MRR metric.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
+<span class="kn">from</span> <span class="nn">catalyst.metrics.functional</span> <span class="kn">import</span> <span class="n">process_recsys_components</span>
 
-<div class="viewcode-block" id="mrr"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.mrr.mrr">[docs]</a><span class="k">def</span> <span class="nf">mrr</span><span class="p">(</span><span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+
+<div class="viewcode-block" id="reciprocal_rank"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.mrr.reciprocal_rank">[docs]</a><span class="k">def</span> <span class="nf">reciprocal_rank</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">k</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the Reciprocal Rank (MRR)</span>
+<span class="sd">    score given model outputs and targets</span>
+<span class="sd">    Data aggregated in batches.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        outputs (torch.Tensor):</span>
+<span class="sd">            Tensor weith predicted score</span>
+<span class="sd">            size: [batch_size, slate_length]</span>
+<span class="sd">            model outputs, logits</span>
+<span class="sd">        targets (torch.Tensor):</span>
+<span class="sd">            Binary tensor with ground truth.</span>
+<span class="sd">            1 means the item is relevant</span>
+<span class="sd">            and 0 if it&#39;s not relevant</span>
+<span class="sd">            size: [batch_szie, slate_length]</span>
+<span class="sd">            ground truth, labels</span>
+<span class="sd">        k (int):</span>
+<span class="sd">            Parameter fro evaluation on top-k items</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        mrr_score (torch.Tensor):</span>
+<span class="sd">            The mrr score for each batch.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">targets_sort_by_outputs_at_k</span> <span class="o">=</span> <span class="n">process_recsys_components</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)[</span>
+        <span class="p">:,</span> <span class="p">:</span><span class="n">k</span>
+    <span class="p">]</span>
+    <span class="n">values</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">targets_sort_by_outputs_at_k</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
+    <span class="n">mrr_score</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">indices</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="n">zero_sum_mask</span> <span class="o">=</span> <span class="n">values</span> <span class="o">==</span> <span class="mf">0.0</span>
+    <span class="n">mrr_score</span><span class="p">[</span><span class="n">zero_sum_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">mrr_score</span></div>
+
+
+<div class="viewcode-block" id="mrr"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.mrr.mrr">[docs]</a><span class="k">def</span> <span class="nf">mrr</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">topk</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calculate the Mean Reciprocal Rank (MRR)</span>
-<span class="sd">    score given model ouptputs and targets</span>
-<span class="sd">    User&#39;s data aggreagtesd in batches.</span>
+<span class="sd">    score given model outputs and targets</span>
+<span class="sd">    Data aggregated in batches.</span>
 
-<span class="sd">    The MRR@k is the mean overall user of the</span>
+<span class="sd">    The MRR@k is the mean overall batch of the</span>
 <span class="sd">    reciprocal rank, that is the rank of the highest</span>
 <span class="sd">    ranked relevant item, if any in the top *k*, 0 otherwise.</span>
 <span class="sd">    https://en.wikipedia.org/wiki/Mean_reciprocal_rank</span>
@@ -343,33 +387,24 @@
 <span class="sd">        targets (torch.Tensor):</span>
 <span class="sd">            Binary tensor with ground truth.</span>
 <span class="sd">            1 means the item is relevant</span>
-<span class="sd">            for the user and 0 not relevant</span>
+<span class="sd">            and 0 if it&#39;s not relevant</span>
 <span class="sd">            size: [batch_szie, slate_length]</span>
 <span class="sd">            ground truth, labels</span>
-<span class="sd">        k (int):</span>
+<span class="sd">        topk (int):</span>
 <span class="sd">            Parameter fro evaluation on top-k items</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        result (torch.Tensor):</span>
-<span class="sd">            The mrr score for each user.</span>
+<span class="sd">        mrr_score (torch.Tensor):</span>
+<span class="sd">            The mrr score for each batch.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
-    <span class="n">_</span><span class="p">,</span> <span class="n">indices_for_sort</span> <span class="o">=</span> <span class="n">outputs</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">descending</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">true_sorted_by_preds</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span>
-        <span class="n">targets</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">indices_for_sort</span>
-    <span class="p">)</span>
-    <span class="n">true_sorted_by_pred_shrink</span> <span class="o">=</span> <span class="n">true_sorted_by_preds</span><span class="p">[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">topk</span><span class="p">:</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">reciprocal_rank</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">k</span><span class="p">)))</span>
 
-    <span class="n">values</span><span class="p">,</span> <span class="n">indices</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">true_sorted_by_pred_shrink</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">indices</span> <span class="o">=</span> <span class="n">indices</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">t</span><span class="p">()</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">indices</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="mf">1.0</span><span class="p">))</span>
-
-    <span class="n">zero_sum_mask</span> <span class="o">=</span> <span class="n">values</span> <span class="o">==</span> <span class="mf">0.0</span>
-    <span class="n">result</span><span class="p">[</span><span class="n">zero_sum_mask</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-    <span class="k">return</span> <span class="n">result</span></div>
+    <span class="k">return</span> <span class="n">results</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mrr&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;reciprocal_rank&quot;</span><span class="p">,</span> <span class="s2">&quot;mrr&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

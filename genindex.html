@@ -806,14 +806,14 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.any2device">any2device() (in module catalyst.utils.torch)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data.html#catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor.apply">apply() (catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor method)</a>
 
       <ul>
         <li><a href="api/data.html#catalyst.contrib.data.cv.transforms.albumentations.TensorToImage.apply">(catalyst.contrib.data.cv.transforms.albumentations.TensorToImage method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/data.html#catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor.apply_to_mask">apply_to_mask() (catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor method)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.arcface.ArcFace">ArcFace (class in catalyst.contrib.nn.modules.arcface)</a>
@@ -841,8 +841,6 @@
 </li>
       </ul></li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.lama.LamaPooling.available_groups">available_groups (catalyst.contrib.nn.modules.lama.LamaPooling attribute)</a>
-</li>
-      <li><a href="api/metrics.html#catalyst.metrics.precision.average_precision">average_precision() (in module catalyst.metrics.precision)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.swa.average_weights">average_weights() (in module catalyst.utils.swa)</a>
 </li>
@@ -1118,10 +1116,10 @@
 </li>
       <li><a href="api/utils.html#module-catalyst.contrib.utils.cv.tensor">catalyst.contrib.utils.cv.tensor (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#module-catalyst.contrib.utils.misc_extra">catalyst.contrib.utils.misc_extra (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#module-catalyst.contrib.utils.nlp">catalyst.contrib.utils.nlp (module)</a>
 </li>
       <li><a href="api/utils.html#module-catalyst.contrib.utils.nlp.text">catalyst.contrib.utils.nlp.text (module)</a>
@@ -1172,6 +1170,8 @@
 </li>
       <li><a href="api/metrics.html#module-catalyst.metrics.cmc_score">catalyst.metrics.cmc_score (module)</a>
 </li>
+      <li><a href="api/metrics.html#module-catalyst.metrics.dcg">catalyst.metrics.dcg (module)</a>
+</li>
       <li><a href="api/metrics.html#module-catalyst.metrics.dice">catalyst.metrics.dice (module)</a>
 </li>
       <li><a href="api/metrics.html#module-catalyst.metrics.f1_score">catalyst.metrics.f1_score (module)</a>
@@ -1187,8 +1187,6 @@
       <li><a href="api/metrics.html#module-catalyst.metrics.mrr">catalyst.metrics.mrr (module)</a>
 </li>
       <li><a href="api/metrics.html#module-catalyst.metrics.ndcg">catalyst.metrics.ndcg (module)</a>
-</li>
-      <li><a href="api/metrics.html#module-catalyst.metrics.precision">catalyst.metrics.precision (module)</a>
 </li>
       <li><a href="api/metrics.html#module-catalyst.metrics.recall">catalyst.metrics.recall (module)</a>
 </li>
@@ -1255,6 +1253,8 @@
       <li><a href="api/utils.html#catalyst.utils.distributed.check_amp_available">check_amp_available() (in module catalyst.utils.distributed)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.distributed.check_apex_available">check_apex_available() (in module catalyst.utils.distributed)</a>
+</li>
+      <li><a href="api/metrics.html#catalyst.metrics.functional.check_consistent_length">check_consistent_length() (in module catalyst.metrics.functional)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.distributed.check_ddp_wrapped">check_ddp_wrapped() (in module catalyst.utils.distributed)</a>
 </li>
@@ -2572,8 +2572,6 @@
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.plotly.plot_tensorboard_log">plot_tensorboard_log() (in module catalyst.contrib.utils.plotly)</a>
 </li>
-      <li><a href="api/metrics.html#catalyst.metrics.precision.precision">precision() (in module catalyst.metrics.precision)</a>
-</li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.ppv_tpr_f1.PrecisionRecallF1ScoreCallback">PrecisionRecallF1ScoreCallback (class in catalyst.callbacks.metrics.ppv_tpr_f1)</a>
 </li>
       <li><a href="api/tools.html#catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter">PrecisionRecallF1ScoreMeter (class in catalyst.tools.meters.ppv_tpr_f1_meter)</a>
@@ -2619,6 +2617,8 @@
       <li><a href="api/utils.html#catalyst.utils.torch.process_model_params">process_model_params() (in module catalyst.utils.torch)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional.process_multilabel_components">process_multilabel_components() (in module catalyst.metrics.functional)</a>
+</li>
+      <li><a href="api/metrics.html#catalyst.metrics.functional.process_recsys_components">process_recsys_components() (in module catalyst.metrics.functional)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.datasets.mnist.MNIST.processed_folder">processed_folder() (catalyst.contrib.datasets.mnist.MNIST property)</a>
 
@@ -2678,6 +2678,8 @@
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.recall.recall">recall() (in module catalyst.metrics.recall)</a>
 </li>
+      <li><a href="api/metrics.html#catalyst.metrics.mrr.reciprocal_rank">reciprocal_rank() (in module catalyst.metrics.mrr)</a>
+</li>
       <li><a href="api/metrics.html#catalyst.metrics.focal.reduced_focal_loss">reduced_focal_loss() (in module catalyst.metrics.focal)</a>
 </li>
       <li><a href="api/registry.html#catalyst.registry.registry.Registry">Registry (class in catalyst.registry.registry)</a>
@@ -2706,10 +2708,10 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.models.cv.segmentation.fpn.ResnetFPNUnet">ResnetFPNUnet (class in catalyst.contrib.models.cv.segmentation.fpn)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.models.cv.segmentation.linknet.ResnetLinknet">ResnetLinknet (class in catalyst.contrib.models.cv.segmentation.linknet)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/contrib.html#catalyst.contrib.models.cv.segmentation.linknet.ResnetLinknet">ResnetLinknet (class in catalyst.contrib.models.cv.segmentation.linknet)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.models.cv.segmentation.psp.ResnetPSPnet">ResnetPSPnet (class in catalyst.contrib.models.cv.segmentation.psp)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.models.cv.segmentation.unet.ResnetUnet">ResnetUnet (class in catalyst.contrib.models.cv.segmentation.unet)</a>

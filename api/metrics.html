@@ -339,7 +339,7 @@
 <li><p><a class="reference internal" href="#module-catalyst.metrics.mrr" id="id9">MRR</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.metrics.avg_precision" id="id10">MAP</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.metrics.ndcg" id="id11">NDCG</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.precision" id="id12">Precision</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.dcg" id="id12">DCG</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.metrics.recall" id="id13">Recall</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.metrics.functional" id="id14">Functional</a></p></li>
 </ul>
@@ -657,7 +657,7 @@ Default: “mean”</p></li>
 </dl>
 <dl class="function">
 <dt id="catalyst.metrics.hitrate.hitrate">
-<code class="sig-prename descclassname">catalyst.metrics.hitrate.</code><code class="sig-name descname">hitrate</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">k=10</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/hitrate.html#hitrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.hitrate.hitrate" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.metrics.hitrate.</code><code class="sig-name descname">hitrate</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/hitrate.html#hitrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.hitrate.hitrate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the hit rate score given model outputs and targets.
 Hit-rate is a metric for evaluating ranking systems.
 Generate top-N recommendations and if one of the recommendation is
@@ -677,14 +677,14 @@ model outputs, logits</p></li>
 for the user and 0 not relevant
 size: [batch_szie, slate_length]
 ground truth, labels</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Parameter fro evaluation on top-k items</p></li>
+<li><p><strong>topk</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – Parameter fro evaluation on top-k items</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>the hit rate score</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>hitrate (torch.Tensor)</p>
+<dd class="field-odd"><p>hitrate_at_k (List[torch.Tensor])</p>
 </dd>
 </dl>
 </dd></dl>
@@ -748,12 +748,41 @@ Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 <span id="mrr"></span><h2><a class="toc-backref" href="#id9">MRR</a><a class="headerlink" href="#module-catalyst.metrics.mrr" title="Permalink to this headline">¶</a></h2>
 <p>MRR metric.</p>
 <dl class="function">
+<dt id="catalyst.metrics.mrr.reciprocal_rank">
+<code class="sig-prename descclassname">catalyst.metrics.mrr.</code><code class="sig-name descname">reciprocal_rank</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">k: int</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/mrr.html#reciprocal_rank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.mrr.reciprocal_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the Reciprocal Rank (MRR)
+score given model outputs and targets
+Data aggregated in batches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – Tensor weith predicted score
+size: [batch_size, slate_length]
+model outputs, logits</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – Binary tensor with ground truth.
+1 means the item is relevant
+and 0 if it’s not relevant
+size: [batch_szie, slate_length]
+ground truth, labels</p></li>
+<li><p><strong>k</strong> (<em>int</em>) – Parameter fro evaluation on top-k items</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The mrr score for each batch.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>mrr_score (torch.Tensor)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.metrics.mrr.mrr">
-<code class="sig-prename descclassname">catalyst.metrics.mrr.</code><code class="sig-name descname">mrr</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">k=100</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/mrr.html#mrr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.mrr.mrr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.metrics.mrr.</code><code class="sig-name descname">mrr</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/mrr.html#mrr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.mrr.mrr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the Mean Reciprocal Rank (MRR)
-score given model ouptputs and targets
-User’s data aggreagtesd in batches.</p>
-<p>The MRR&#64;k is the mean overall user of the
+score given model outputs and targets
+Data aggregated in batches.</p>
+<p>The MRR&#64;k is the mean overall batch of the
 reciprocal rank, that is the rank of the highest
 ranked relevant item, if any in the top <em>k</em>, 0 otherwise.
 <a class="reference external" href="https://en.wikipedia.org/wiki/Mean_reciprocal_rank">https://en.wikipedia.org/wiki/Mean_reciprocal_rank</a></p>
@@ -765,17 +794,17 @@ size: [batch_size, slate_length]
 model outputs, logits</p></li>
 <li><p><strong>targets</strong> (<em>torch.Tensor</em>) – Binary tensor with ground truth.
 1 means the item is relevant
-for the user and 0 not relevant
+and 0 if it’s not relevant
 size: [batch_szie, slate_length]
 ground truth, labels</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Parameter fro evaluation on top-k items</p></li>
+<li><p><strong>topk</strong> (<em>int</em>) – Parameter fro evaluation on top-k items</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The mrr score for each user.</p>
+<dd class="field-even"><p>The mrr score for each batch.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>result (torch.Tensor)</p>
+<dd class="field-odd"><p>mrr_score (torch.Tensor)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -786,7 +815,7 @@ ground truth, labels</p></li>
 <p>MAP metric.</p>
 <dl class="function">
 <dt id="catalyst.metrics.avg_precision.mean_avg_precision">
-<code class="sig-prename descclassname">catalyst.metrics.avg_precision.</code><code class="sig-name descname">mean_avg_precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, top_k: List[int]</em><span class="sig-paren">)</span> &#x2192; Dict[str, int]<a class="reference internal" href="../_modules/catalyst/metrics/avg_precision.html#mean_avg_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.avg_precision.mean_avg_precision" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.metrics.avg_precision.</code><code class="sig-name descname">mean_avg_precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/avg_precision.html#mean_avg_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.avg_precision.mean_avg_precision" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the mean average precision (MAP) for RecSys.
 The metrics calculate the mean of the AP across all batches</p>
 <p>MAP amplifies the interest in finding many
@@ -802,23 +831,23 @@ model outputs, logits</p></li>
 and 0 not relevant
 size: [batch_szie, slate_length]
 ground truth, labels</p></li>
-<li><p><strong>top_k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – List of parameter for evaluation
+<li><p><strong>topk</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – List of parameter for evaluation
 topK items</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The map score for every k.
-size: [len(top_k), 1]</p>
+size: len(top_k)</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>result (Dict[str, int])</p>
+<dd class="field-odd"><p>map_at_k (Tuple[float])</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.metrics.avg_precision.avg_precision">
-<code class="sig-prename descclassname">catalyst.metrics.avg_precision.</code><code class="sig-name descname">avg_precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">k=10</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/avg_precision.html#avg_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.avg_precision.avg_precision" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.metrics.avg_precision.</code><code class="sig-name descname">avg_precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/avg_precision.html#avg_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.avg_precision.avg_precision" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the Average Precision for RecSys.
 The precision metric summarizes the fraction of relevant items
 out of the whole the recommendation list.</p>
@@ -844,8 +873,6 @@ model outputs, logits</p></li>
 and 0 not relevant
 size: [batch_szie, slate_length]
 ground truth, labels</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – The position to compute the truncated AP,
-must be positive</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -853,7 +880,7 @@ must be positive</p></li>
 size: [batch_size, 1]</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>result (torch.Tensor)</p>
+<dd class="field-odd"><p>ap_score (torch.Tensor)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -864,7 +891,7 @@ size: [batch_size, 1]</p>
 <p>Discounted Cumulative Gain metrics</p>
 <dl class="function">
 <dt id="catalyst.metrics.ndcg.dcg">
-<code class="sig-prename descclassname">catalyst.metrics.ndcg.</code><code class="sig-name descname">dcg</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">k=10</em>, <em class="sig-param">gain_function='pow_rank'</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/ndcg.html#dcg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.ndcg.dcg" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.metrics.ndcg.</code><code class="sig-name descname">dcg</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">gain_function='exp_rank'</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/ndcg.html#dcg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.ndcg.dcg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes <a class="reference external" href="mailto:DCG&#37;&#52;&#48;topk">DCG<span>&#64;</span>topk</a> for the specified values of <cite>k</cite>.
 Graded relevance as a measure of  usefulness,
 or gain, from examining a set of items.
@@ -880,26 +907,28 @@ with shape [batch_size; slate_length]</p></li>
 with shape [batch_size; slate_length]</p></li>
 <li><p><strong>gain_function</strong> – String indicates the gain function for the ground truth labels.
 Two options available:
-- <cite>pow_rank</cite>: torch.pow(2, x) - 1
-- <cite>rank</cite>: x
-On the default, <cite>pow_rank</cite> is used
-to emphasize on retrievng the relevant documents.</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Parameter fro evaluation on top-k items</p></li>
+- <cite>exp_rank</cite>: torch.pow(2, x) - 1
+- <cite>linear_rank</cite>: x
+On the default, <cite>exp_rank</cite> is used
+to emphasize on retrieving the relevant documents.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>torch.Tensor for dcg at k</p>
+<dd class="field-even"><p>The discounted gains tensor</p>
 </dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>ValueError</strong> – gain function can be either <cite>pow_rank</cite> or <cite>rank</cite></p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dcg_score (torch.Tensor)</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – gain function can be either <cite>pow_rank</cite> or <cite>rank</cite></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.metrics.ndcg.ndcg">
-<code class="sig-prename descclassname">catalyst.metrics.ndcg.</code><code class="sig-name descname">ndcg</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, top_k: List[int], gain_function='pow_rank'</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/ndcg.html#ndcg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.ndcg.ndcg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes <a class="reference external" href="mailto:nDCG&#37;&#52;&#48;topk">nDCG<span>&#64;</span>topk</a> for the specified values of <cite>top_k</cite>.</p>
+<code class="sig-prename descclassname">catalyst.metrics.ndcg.</code><code class="sig-name descname">ndcg</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, topk: List[int], gain_function='exp_rank'</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/ndcg.html#ndcg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.ndcg.ndcg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes <a class="reference external" href="mailto:nDCG&#37;&#52;&#48;topk">nDCG<span>&#64;</span>topk</a> for the specified values of <cite>topk</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -908,73 +937,65 @@ with shape [batch_size; slate_size]</p></li>
 <li><p><strong>targets</strong> (<em>torch.Tensor</em>) – ground truth, labels
 with shape [batch_size; slate_size]</p></li>
 <li><p><strong>gain_function</strong> – callable, gain function for the ground truth labels.
-on the deafult, the torch.pow(2, x) - 1 function used
-to get emphasise on the retirvng the revelant documnets.</p></li>
-<li><p><strong>top_k</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – Parameter fro evaluation on top-k items</p></li>
+Two options available:
+- <cite>exp_rank</cite>: torch.pow(2, x) - 1
+- <cite>linear_rank</cite>: x
+On the default, <cite>exp_rank</cite> is used
+to emphasize on retrieving the relevant documents.</p></li>
+<li><p><strong>topk</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – Parameter fro evaluation on top-k items</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>tuple with computed <a class="reference external" href="mailto:ndcg&#37;&#52;&#48;topk">ndcg<span>&#64;</span>topk</a></p>
 </dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>results (Tuple[float])</p>
+</dd>
 </dl>
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.metrics.precision">
-<span id="precision"></span><h2><a class="toc-backref" href="#id12">Precision</a><a class="headerlink" href="#module-catalyst.metrics.precision" title="Permalink to this headline">¶</a></h2>
-<dl class="function">
-<dt id="catalyst.metrics.precision.average_precision">
-<code class="sig-prename descclassname">catalyst.metrics.precision.</code><code class="sig-name descname">average_precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">weights: Optional[torch.Tensor] = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/precision.html#average_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.precision.average_precision" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the average precision.</p>
+<div class="section" id="module-catalyst.metrics.dcg">
+<span id="dcg"></span><h2><a class="toc-backref" href="#id12">DCG</a><a class="headerlink" href="#module-catalyst.metrics.dcg" title="Permalink to this headline">¶</a></h2>
+<p>Computes <a class="reference external" href="mailto:DCG&#37;&#52;&#48;topk">DCG<span>&#64;</span>topk</a> for the specified values of <cite>k</cite>.
+Graded relevance as a measure of  usefulness,
+or gain, from examining a set of items.
+Gain may be reduced at lower ranks.
+Reference:
+<a class="reference external" href="https://en.wikipedia.org/wiki/Discounted_cumulative_gain">https://en.wikipedia.org/wiki/Discounted_cumulative_gain</a></p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> – NxK tensor that for each of the N examples
-indicates the probability of the example belonging to each of
-the K classes, according to the model.</p></li>
-<li><p><strong>targets</strong> – binary NxK tensort that encodes which of the K
-classes are associated with the N-th input
-(eg: a row [0, 1, 0, 1] indicates that the example is
-associated with classes 2 and 4)</p></li>
-<li><p><strong>weights</strong> – importance for each sample</p></li>
-</ul>
+<dt class="field-odd">param outputs</dt>
+<dd class="field-odd"><p>model outputs, logits
+with shape [batch_size; slate_length]</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>tensor of [K; ] shape,
-with average precision for K classes</p>
+<dt class="field-even">type outputs</dt>
+<dd class="field-even"><p>torch.Tensor</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>torch.Tensor</p>
+<dt class="field-odd">param targets</dt>
+<dd class="field-odd"><p>ground truth, labels
+with shape [batch_size; slate_length]</p>
+</dd>
+<dt class="field-even">type targets</dt>
+<dd class="field-even"><p>torch.Tensor</p>
+</dd>
+<dt class="field-odd">param gain_function</dt>
+<dd class="field-odd"><p>String indicates the gain function for the ground truth labels.
+Two options available:
+- <cite>exp_rank</cite>: torch.pow(2, x) - 1
+- <cite>linear_rank</cite>: x
+On the default, <cite>exp_rank</cite> is used
+to emphasize on retrieving the relevant documents.</p>
+</dd>
+<dt class="field-even">returns</dt>
+<dd class="field-even"><p>The discounted gains tensor</p>
+</dd>
+<dt class="field-odd">rtype</dt>
+<dd class="field-odd"><p>dcg_score (torch.Tensor)</p>
+</dd>
+<dt class="field-even">raises ValueError</dt>
+<dd class="field-even"><p>gain function can be either <cite>pow_rank</cite> or <cite>rank</cite></p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="function">
-<dt id="catalyst.metrics.precision.precision">
-<code class="sig-prename descclassname">catalyst.metrics.precision.</code><code class="sig-name descname">precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">argmax_dim: int = -1</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">num_classes: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[float, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/precision.html#precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.precision.precision" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiclass precision metric.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> – estimated targets as predicted by a model
-with shape [bs; …, (num_classes or 1)]</p></li>
-<li><p><strong>targets</strong> – ground truth (correct) target values
-with shape [bs; …, 1]</p></li>
-<li><p><strong>argmax_dim</strong> – int, that specifies dimension for argmax transformation
-in case of scores/probabilities in <code class="docutils literal notranslate"><span class="pre">outputs</span></code></p></li>
-<li><p><strong>eps</strong> – float. Epsilon to avoid zero division.</p></li>
-<li><p><strong>num_classes</strong> – int, that specifies number of classes if it known</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tensor</p>
-</dd>
-</dl>
-</dd></dl>
-
 </div>
 <div class="section" id="module-catalyst.metrics.recall">
 <span id="recall"></span><h2><a class="toc-backref" href="#id13">Recall</a><a class="headerlink" href="#module-catalyst.metrics.recall" title="Permalink to this headline">¶</a></h2>
@@ -1008,6 +1029,22 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 <div class="section" id="module-catalyst.metrics.functional">
 <span id="functional"></span><h2><a class="toc-backref" href="#id14">Functional</a><a class="headerlink" href="#module-catalyst.metrics.functional" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
+<dt id="catalyst.metrics.functional.check_consistent_length">
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">check_consistent_length</code><span class="sig-paren">(</span><em class="sig-param">*tensors</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/functional.html#check_consistent_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.check_consistent_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that all arrays have consistent first dimensions.
+Checks whether all objects in arrays have the same shape or length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tensors</strong> – list or tensores of input objects.
+Objects that will be checked for consistent length.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – “Inconsistent numbers of samples”</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.metrics.functional.process_multilabel_components">
 <code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">process_multilabel_components</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">weights: Optional[torch.Tensor] = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#process_multilabel_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.process_multilabel_components" title="Permalink to this definition">¶</a></dt>
 <dd><p>General preprocessing for multi-label-based metrics.</p>
@@ -1027,6 +1064,32 @@ associated with classes 2 and 4)</p></li>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>processed <code class="docutils literal notranslate"><span class="pre">outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code>
 with [batch_size; num_classes] shape</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.metrics.functional.process_recsys_components">
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">process_recsys_components</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#process_recsys_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.process_recsys_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>General pre-processing for calculation recsys metrics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – Tensor weith predicted score
+size: [batch_size, slate_length]
+model outputs, logits</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – Binary tensor with ground truth.
+1 means the item is relevant
+for the user and 0 not relevant
+size: [batch_szie, slate_length]
+ground truth, labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>targets tensor sorted by outputs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>targets_sorted_by_outputs (torch.Tensor)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1191,6 +1254,9 @@ with passed <cite>topk</cite> argument.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>wrapped metric function with List[Dict] output</p>
 </dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – </p>
+</dd>
 </dl>
 </dd></dl>
 
@@ -1270,7 +1336,7 @@ default: None - class indexes will be used.</p></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.mrr">MRR</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.avg_precision">MAP</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.ndcg">NDCG</a></li>
-<li><a class="reference internal" href="#module-catalyst.metrics.precision">Precision</a></li>
+<li><a class="reference internal" href="#module-catalyst.metrics.dcg">DCG</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.recall">Recall</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.functional">Functional</a></li>
 </ul>
