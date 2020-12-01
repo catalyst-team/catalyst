@@ -46,14 +46,22 @@ def dcg(
         gain_function = lambda x: torch.pow(2, x) - 1
         gains = gain_function(targets_sort_by_outputs)
         discounts = torch.tensor(1) / torch.log2(
-            torch.arange(targets_sort_by_outputs.shape[1], dtype=torch.float, device=target_device)
+            torch.arange(
+                targets_sort_by_outputs.shape[1],
+                dtype=torch.float,
+                device=target_device,
+            )
             + 2.0
         )
         discounted_gains = gains * discounts
 
     elif gain_function == "linear_rank":
         discounts = torch.tensor(1) / torch.log2(
-            torch.arange(targets_sort_by_outputs.shape[1], dtype=torch.float, device=target_device)
+            torch.arange(
+                targets_sort_by_outputs.shape[1],
+                dtype=torch.float,
+                device=target_device,
+            )
             + 1.0
         )
         discounts[0] = 1
