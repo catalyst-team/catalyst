@@ -123,8 +123,8 @@ except ModuleNotFoundError as ex:
         or SETTINGS.scipy_required
     ):
         logger.warning(
-            "pandas/scipy/sklearn are not available, to install them,"
-            " run `pip install pandas scipy sklearn`."
+            "catalyst[ml] requirements are not available, to install them,"
+            " run `pip install catalyst[ml]`."
         )
         raise ex
 except ImportError as ex:
@@ -134,8 +134,8 @@ except ImportError as ex:
         or SETTINGS.scipy_required
     ):
         logger.warning(
-            "pandas/scipy/sklearn are not available, to install them,"
-            " run `pip install pandas scipy sklearn`."
+            "catalyst[ml] requirements are not available, to install them,"
+            " run `pip install catalyst[ml]`."
         )
         raise ex
 
@@ -155,8 +155,8 @@ except ModuleNotFoundError as ex:
         or SETTINGS.pandas_required
     ):
         logger.warning(
-            "nmslib/pandas/sklearn are not available, to install them,"
-            " run `pip install nmslib pandas sklearn`."
+            "catalyst-ml/nmslib are not available, to install them,"
+            + " run `pip install catalyst[ml] nmslib`."
         )
         raise ex
 except ImportError as ex:
@@ -166,8 +166,8 @@ except ImportError as ex:
         or SETTINGS.pandas_required
     ):
         logger.warning(
-            "nmslib/pandas/sklearn are not available, to install them,"
-            " run `pip install nmslib pandas sklearn`."
+            "catalyst-ml/nmslib are not available, to install them,"
+            + " run `pip install catalyst[ml] nmslib`."
         )
         raise ex
 
@@ -184,14 +184,14 @@ except ModuleNotFoundError as ex:  # noqa: WPS440
     if SETTINGS.cv_required or SETTINGS.pandas_required:
         logger.warning(
             "catalyst-cv/pandas are not available, to install them,"
-            + " run `pip install catalyst[nlp] pandas`."
+            + " run `pip install catalyst[cv] pandas`."
         )
         raise ex
 except ImportError as ex:  # noqa: WPS440
     if SETTINGS.cv_required or SETTINGS.pandas_required:
         logger.warning(
             "catalyst-cv/pandas are not available, to install them,"
-            + " run `pip install catalyst[nlp] pandas`."
+            + " run `pip install catalyst[cv] pandas`."
         )
         raise ex
 

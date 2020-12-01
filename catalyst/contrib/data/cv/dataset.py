@@ -8,7 +8,7 @@ from catalyst.contrib.utils.cv.image import has_image_extension
 from catalyst.data.dataset.torch import PathsDataset
 
 
-# @TODO: chage arch to primitives-based
+# @TODO: change arch to primitives-based
 # contrib/data/... datasets/transforms/mixins/... cv/nlp
 # it's much easier to handle dependencies
 class ImageFolderDataset(PathsDataset):
