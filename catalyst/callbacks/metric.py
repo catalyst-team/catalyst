@@ -189,8 +189,8 @@ class ILoaderMetricCallback(IMetricCallback):
 
     def on_loader_start(self, runner: "IRunner"):
         """Reinitialises internal storage."""
-        self.input = defaultdict(lambda: np.array)
-        self.output = defaultdict(lambda: np.array)
+        self.input = defaultdict(lambda: np.ndarray(0))
+        self.output = defaultdict(lambda: np.ndarray(0))
 
     def on_batch_start(self, runner: "IRunner"):
         """Allocate memory for data accumulation"""

@@ -11,7 +11,6 @@ if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
 TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
-TAccumulative = Union[List[int], torch.Tensor]
 
 
 class CMCScoreCallback(LoaderMetricCallback):
@@ -66,7 +65,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         self.is_query_key = is_query_key
         self.topk_args = topk_args
 
-    def _compute_metric_key_value(
+    def _compute_metric(
         self, output: Dict, input: Dict
     ) -> Dict[str, float]:
         """
@@ -159,7 +158,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
         self.is_query_key = is_query_key
         self.topk_args = topk_args
 
-    def _compute_metric_key_value(
+    def _compute_metric(
         self, output: Dict, input: Dict
     ) -> Dict[str, float]:
         """
