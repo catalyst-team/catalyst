@@ -2,12 +2,16 @@
 Hitrate metric:
     * :func:`hitrate`
 """
+from typing import List
+
 import torch
+
+from catalyst.metrics.functional import process_recsys_components
 
 
 def hitrate(
-    outputs: torch.Tensor, targets: torch.Tensor, k=10
-) -> torch.Tensor:
+    outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]
+) -> List[torch.Tensor]:
     """
     Calculate the hit rate score given model outputs and targets.
     Hit-rate is a metric for evaluating ranking systems.
@@ -30,21 +34,22 @@ def hitrate(
             for the user and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
-        k (int):
+        topk (List[int]):
             Parameter fro evaluation on top-k items
 
     Returns:
-        hitrate (torch.Tensor): the hit rate score
+        hitrate_at_k (List[torch.Tensor]):
+            the hit rate score
     """
-    k = min(outputs.size(1), k)
+    results = []
 
-    _, indices_for_sort = outputs.sort(descending=True, dim=-1)
-    true_sorted_by_preds = torch.gather(
-        targets, dim=-1, index=indices_for_sort
-    )
-    true_sorted_by_pred_shrink = true_sorted_by_preds[:, :k]
-    hits = torch.sum(true_sorted_by_pred_shrink, dim=1) / k
-    return hits
+    targets_sort_by_outputs = process_recsys_components(outputs, targets)
+    for k in topk:
+        k = min(outputs.size(1), k)
+        hits_score = torch.sum(targets_sort_by_outputs[:, :k], dim=1) / k
+        results.append(torch.mean(hits_score))
+
+    return results
 
 
 __all__ = ["hitrate"]
