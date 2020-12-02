@@ -6,7 +6,8 @@ import torch
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.utils.misc import get_attr
-from catalyst.utils.torch import get_optimizer_momentum
+from catalyst.utils.torch import (get_optimizer_momentum,
+                                  get_optimizer_momentum_list)
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -116,55 +117,66 @@ class SchedulerCallback(ISchedulerCallback):
     ):
         if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
             scheduler.step(reduced_metric)
-            lr = scheduler.optimizer.param_groups[0]["lr"]
         else:
             scheduler.step()
-            lr = scheduler.get_lr()[0]
 
-        momentum = get_optimizer_momentum(scheduler.optimizer)
+        lr_list = [param_group["lr"]
+                   for param_group in scheduler.optimizer.param_groups]
+        momentum_list = get_optimizer_momentum_list(scheduler.optimizer)
+        return lr_list, momentum_list
 
-        return lr, momentum
+    def _update_lr_and_momentum_in_metrics_dict(self, metrics_dict,
+                                                lr_list, momentum_list):
+        """Update learning rate and momentum in metrics_dict
+
+        Args:
+            metrics_dict (dict): batch_metrics or epoch_metrics
+            lr_list (List[float]): lr for each param group
+            momentum_list (List[float, None]): momentum for each param group
+
+        """
+        if len(lr_list) == 1:
+            lr = lr_list[0]
+            momentum = momentum_list[0]
+
+            lr_key = f"lr/{self.scheduler_key}" if self.scheduler_key is not None else "lr"
+            metrics_dict[lr_key] = lr
+
+            if momentum is not None:
+                momentum_key = f"momentum/{self.scheduler_key}" if self.scheduler_key is not None else "momentum"
+                metrics_dict[momentum_key] = momentum
+
+        else:
+            for i, (lr, momentum) in enumerate(zip(lr_list, momentum_list)):
+                lr_key = f"lr/{self.scheduler_key}/group_{i}" if self.scheduler_key is not None else f"lr/group_{i}"
+                metrics_dict[lr_key] = lr
+
+                if momentum is not None:
+                    momentum_key = f"momentum/{self.scheduler_key}/group_{i}" if self.scheduler_key is not None else f"momentum/group_{i}"
+                    metrics_dict[momentum_key] = momentum
 
     def step_batch(self, runner: "IRunner") -> None:
-        """Update learning rate and momentum in runner.
+        """Perform scheduler step and update batch metrics
 
         Args:
             runner: current runner
         """
-        lr, momentum = self._scheduler_step(scheduler=self._scheduler)
-
-        if self.scheduler_key is not None:
-            runner.batch_metrics[f"lr/{self.scheduler_key}"] = lr
-            if momentum is not None:
-                runner.batch_metrics[
-                    f"momentum/{self.scheduler_key}"
-                ] = momentum
-        else:
-            runner.batch_metrics["lr"] = lr
-            if momentum is not None:
-                runner.batch_metrics["momentum"] = momentum
+        lr_list, momentum_list = self._scheduler_step(scheduler=self._scheduler)
+        self._update_lr_and_momentum_in_metrics_dict(runner.batch_metrics,
+                                                     lr_list, momentum_list)
 
     def step_epoch(self, runner: "IRunner") -> None:
-        """Update momentum in runner.
+        """Perform scheduler step and update epoch metrics
 
         Args:
             runner: current runner
         """
         reduced_metric = runner.valid_metrics[self.reduced_metric]
-        lr, momentum = self._scheduler_step(
+        lr_list, momentum_list = self._scheduler_step(
             scheduler=self._scheduler, reduced_metric=reduced_metric
         )
-
-        if self.scheduler_key is not None:
-            runner.epoch_metrics[f"lr/{self.scheduler_key}"] = lr
-            if momentum is not None:
-                runner.epoch_metrics[
-                    f"momentum/{self.scheduler_key}"
-                ] = momentum
-        else:
-            runner.epoch_metrics["lr"] = lr
-            if momentum is not None:
-                runner.epoch_metrics["momentum"] = momentum
+        self._update_lr_and_momentum_in_metrics_dict(runner.epoch_metrics,
+                                                     lr_list, momentum_list)
 
     def on_stage_start(self, runner: "IRunner") -> None:
         """Stage start hook.

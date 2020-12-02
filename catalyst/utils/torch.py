@@ -124,6 +124,25 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
     return betas[0] if betas is not None else momentum
 
 
+def get_optimizer_momentum_list(optimizer: Optimizer) -> List[Union[float, None]]:
+    """Get list of optimizer momentums (for each param group)
+
+    Args:
+        optimizer: PyTorch optimizer
+
+    Returns:
+        momentum_list (List[Union[float, None]]): momentum for each param group
+    """
+    result = []
+
+    for param_group in optimizer.param_groups:
+        betas = param_group.get("betas", None)
+        momentum = param_group.get("momentum", None)
+        result.append(betas[0] if betas is not None else momentum)
+
+    return result
+
+
 def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
     """Set momentum of ``index`` 'th param group of optimizer to ``value``.
 
