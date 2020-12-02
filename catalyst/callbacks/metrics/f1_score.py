@@ -1,3 +1,5 @@
+from typing import Optional
+
 from catalyst.callbacks.metric import BatchMetricCallback
 from catalyst.metrics.f1_score import f1_score
 
@@ -14,6 +16,8 @@ class F1ScoreCallback(BatchMetricCallback):
         eps: float = 1e-7,
         threshold: float = None,
         activation: str = "Sigmoid",
+        argmax_dim: int = -1,
+        num_classes: Optional[int] = None,
     ):
         """
         Args:
@@ -27,6 +31,9 @@ class F1ScoreCallback(BatchMetricCallback):
             threshold: threshold for outputs binarization
             activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax2d'``
+            argmax_dim: int, that specifies dimension for argmax transformation
+                in case of scores/probabilities in ``outputs``
+            num_classes: int, that specifies number of classes if it known
         """
         super().__init__(
             prefix=prefix,
@@ -37,6 +44,8 @@ class F1ScoreCallback(BatchMetricCallback):
             eps=eps,
             threshold=threshold,
             activation=activation,
+            argmax_dim=argmax_dim,
+            num_classes=num_classes,
         )
 
 
