@@ -168,7 +168,8 @@ class SchedulerCallback(ISchedulerCallback):
         Args:
             runner: current runner
         """
-        lr_list, momentum_list = self._scheduler_step(scheduler=self._scheduler)
+        lr_list, momentum_list = \
+            self._scheduler_step(scheduler=self._scheduler)
         self._update_lr_and_momentum_in_metrics_dict(runner.batch_metrics,
                                                      lr_list, momentum_list)
 
