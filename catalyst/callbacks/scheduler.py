@@ -122,13 +122,16 @@ class SchedulerCallback(ISchedulerCallback):
         else:
             scheduler.step()
 
-        lr_list = [param_group["lr"]
-                   for param_group in scheduler.optimizer.param_groups]
+        lr_list = [
+            param_group["lr"]
+            for param_group in scheduler.optimizer.param_groups
+        ]
         momentum_list = get_optimizer_momentum_list(scheduler.optimizer)
         return lr_list, momentum_list
 
-    def _update_lr_and_momentum_in_metrics_dict(self, metrics_dict,
-                                                lr_list, momentum_list):
+    def _update_lr_and_momentum_in_metrics_dict(
+            self, metrics_dict, lr_list, momentum_list
+    ):
         """Update learning rate and momentum in metrics_dict
 
         Args:
@@ -141,13 +144,19 @@ class SchedulerCallback(ISchedulerCallback):
             lr = lr_list[0]
             momentum = momentum_list[0]
 
-            lr_key = f"lr/{self.scheduler_key}"\
-                if self.scheduler_key is not None else "lr"
+            lr_key = (
+                f"lr/{self.scheduler_key}"
+                if self.scheduler_key is not None
+                else "lr"
+            )
             metrics_dict[lr_key] = lr
 
             if momentum is not None:
-                momentum_key = f"momentum/{self.scheduler_key}"\
-                    if self.scheduler_key is not None else "momentum"
+                momentum_key = (
+                    f"momentum/{self.scheduler_key}"
+                    if self.scheduler_key is not None
+                    else "momentum"
+                )
                 metrics_dict[momentum_key] = momentum
 
         else:
@@ -168,10 +177,12 @@ class SchedulerCallback(ISchedulerCallback):
         Args:
             runner: current runner
         """
-        lr_list, momentum_list = \
-            self._scheduler_step(scheduler=self._scheduler)
-        self._update_lr_and_momentum_in_metrics_dict(runner.batch_metrics,
-                                                     lr_list, momentum_list)
+        lr_list, momentum_list = self._scheduler_step(
+            scheduler=self._scheduler
+        )
+        self._update_lr_and_momentum_in_metrics_dict(
+            runner.batch_metrics, lr_list, momentum_list
+        )
 
     def step_epoch(self, runner: "IRunner") -> None:
         """Perform scheduler step and update epoch metrics
@@ -183,8 +194,9 @@ class SchedulerCallback(ISchedulerCallback):
         lr_list, momentum_list = self._scheduler_step(
             scheduler=self._scheduler, reduced_metric=reduced_metric
         )
-        self._update_lr_and_momentum_in_metrics_dict(runner.epoch_metrics,
-                                                     lr_list, momentum_list)
+        self._update_lr_and_momentum_in_metrics_dict(
+            runner.epoch_metrics, lr_list, momentum_list
+        )
 
     def on_stage_start(self, runner: "IRunner") -> None:
         """Stage start hook.

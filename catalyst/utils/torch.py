@@ -125,7 +125,7 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
 
 
 def get_optimizer_momentum_list(
-        optimizer: Optimizer
+    optimizer: Optimizer,
 ) -> List[Union[float, None]]:
     """Get list of optimizer momentums (for each param group)
 
