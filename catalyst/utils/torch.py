@@ -124,7 +124,9 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
     return betas[0] if betas is not None else momentum
 
 
-def get_optimizer_momentum_list(optimizer: Optimizer) -> List[Union[float, None]]:
+def get_optimizer_momentum_list(
+        optimizer: Optimizer
+) -> List[Union[float, None]]:
     """Get list of optimizer momentums (for each param group)
 
     Args:

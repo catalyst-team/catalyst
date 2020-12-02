@@ -6,8 +6,10 @@ import torch
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.utils.misc import get_attr
-from catalyst.utils.torch import (get_optimizer_momentum,
-                                  get_optimizer_momentum_list)
+from catalyst.utils.torch import (
+    get_optimizer_momentum,
+    get_optimizer_momentum_list
+)
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -139,20 +141,25 @@ class SchedulerCallback(ISchedulerCallback):
             lr = lr_list[0]
             momentum = momentum_list[0]
 
-            lr_key = f"lr/{self.scheduler_key}" if self.scheduler_key is not None else "lr"
+            lr_key = f"lr/{self.scheduler_key}"\
+                if self.scheduler_key is not None else "lr"
             metrics_dict[lr_key] = lr
 
             if momentum is not None:
-                momentum_key = f"momentum/{self.scheduler_key}" if self.scheduler_key is not None else "momentum"
+                momentum_key = f"momentum/{self.scheduler_key}"\
+                    if self.scheduler_key is not None else "momentum"
                 metrics_dict[momentum_key] = momentum
 
         else:
             for i, (lr, momentum) in enumerate(zip(lr_list, momentum_list)):
-                lr_key = f"lr/{self.scheduler_key}/group_{i}" if self.scheduler_key is not None else f"lr/group_{i}"
+                lr_key = f"lr/{self.scheduler_key}/group_{i}"\
+                    if self.scheduler_key is not None else f"lr/group_{i}"
                 metrics_dict[lr_key] = lr
 
                 if momentum is not None:
-                    momentum_key = f"momentum/{self.scheduler_key}/group_{i}" if self.scheduler_key is not None else f"momentum/group_{i}"
+                    momentum_key = f"momentum/{self.scheduler_key}/group_{i}"\
+                        if self.scheduler_key is not None\
+                        else f"momentum/group_{i}"
                     metrics_dict[momentum_key] = momentum
 
     def step_batch(self, runner: "IRunner") -> None:
