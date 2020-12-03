@@ -32,6 +32,46 @@ def accuracy(
 
     Returns:
         list with computed accuracy@topk
+
+    Example:
+        >>> accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([0, 1, 2]),
+        >>> )
+        [tensor([1.])]
+        >>> accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 1, 0],
+        >>>     ]),
+        >>>     targets=torch.tensor([0, 1, 2]),
+        >>> )
+        [tensor([0.6667])]
+        >>> accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([0, 1, 2]),
+        >>>     topk=[1, 3],
+        >>> )
+        [tensor([1.]), tensor([1.])]
+        >>> accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 1, 0],
+        >>>     ]),
+        >>>     targets=torch.tensor([0, 1, 2]),
+        >>>     topk=[1, 3],
+        >>> )
+        [tensor([0.6667]), tensor([1.])]
     """
     activation_fn = get_activation_fn(activation)
     outputs = activation_fn(outputs)
@@ -79,6 +119,36 @@ def multi_label_accuracy(
 
     Returns:
         computed multi-label accuracy
+
+    Example:
+        >>> multi_label_accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor([1.])
+        >>> multi_label_accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 1, 0],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor(0.7778)
     """
     outputs, targets, _ = process_multilabel_components(
         outputs=outputs, targets=targets
