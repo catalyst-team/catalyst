@@ -9,11 +9,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- CVS Logger ([#1005](https://github.com/catalyst-team/catalyst/pull/1005))
 - ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
-    - a few docs 
+    - a few docs
+- ([#998](https://github.com/catalyst-team/catalyst/pull/998))
+    - ``reciprocal_rank`` metric 
+    - unified recsys metrics preprocessing 
 
 ### Changed
 
+- docs update ([#1000](https://github.com/catalyst-team/catalyst/pull/1000))
+- ``AMPOptimizerCallback`` and ``OptimizerCallback`` were merged ([#1007](https://github.com/catalyst-team/catalyst/pull/1007))
 - ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
     - ``tensorboard, ipython, matplotlib, pandas, scikit-learn`` moved to optional requirements
     - ``PerplexityMetricCallback`` moved to ``catalyst.callbacks`` from ``catalyst.contrib.callbacks``
@@ -24,6 +30,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
     - ``catalyst.utils``, ``catalyst.data.utils`` and ``catalyst.contrib.utils`` restructured
     - ``ReaderSpec`` renamed to ``IReader``
     - ``SupervisedExperiment`` renamed to ``AutoCallbackExperiment``
+- gain functions renamed for ``dcg``/``ndcg`` metrics ([#998](https://github.com/catalyst-team/catalyst/pull/998))
+- ([#1014](https://github.com/catalyst-team/catalyst/pull/1014))
+    - requirements respecification: ``catalyst[cv]``, ``catalyst[dev]``, ``catalyst[log]``, ``catalyst[ml]``, ``catalyst[nlp]``,``catalyst[tune]``
+    - settings respecification
+    - extra tests for settings
+    - contrib refactoring
 
 ### Removed
 
@@ -33,6 +45,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
     - ``catalyst.data.utils``
     - unnecessary ``catalyst.tools.meters``
     - todos for unnecessary docs
+- ([#1014](https://github.com/catalyst-team/catalyst/pull/1014))
+    - transformers-based contrib (too unstable)
  
 
 ### Fixed
@@ -58,6 +72,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - update Catalyst version to `20.10.1` for tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 - added link to dl-course ([#967](https://github.com/catalyst-team/catalyst/pull/967))
+- ``IRunner`` -> simplified ``IRunner`` ([#984](https://github.com/catalyst-team/catalyst/pull/984))
 - docs were restructured ([#985](https://github.com/catalyst-team/catalyst/pull/985))
 - `set_global_seed` moved from `utils.seed` to `utils.misc` ([#986](https://github.com/catalyst-team/catalyst/pull/986))
 
