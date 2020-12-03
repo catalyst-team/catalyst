@@ -130,7 +130,7 @@ class SchedulerCallback(ISchedulerCallback):
         return lr_list, momentum_list
 
     def _update_lr_and_momentum_in_metrics_dict(
-            self, metrics_dict, lr_list, momentum_list
+        self, metrics_dict, lr_list, momentum_list
     ):
         """Update learning rate and momentum in metrics_dict
 
@@ -161,14 +161,19 @@ class SchedulerCallback(ISchedulerCallback):
 
         else:
             for i, (lr, momentum) in enumerate(zip(lr_list, momentum_list)):
-                lr_key = f"lr/{self.scheduler_key}/group_{i}"\
-                    if self.scheduler_key is not None else f"lr/group_{i}"
+                lr_key = (
+                    f"lr/{self.scheduler_key}/group_{i}"
+                    if self.scheduler_key is not None
+                    else f"lr/group_{i}"
+                )
                 metrics_dict[lr_key] = lr
 
                 if momentum is not None:
-                    momentum_key = f"momentum/{self.scheduler_key}/group_{i}"\
-                        if self.scheduler_key is not None\
+                    momentum_key = (
+                        f"momentum/{self.scheduler_key}/group_{i}"
+                        if self.scheduler_key is not None
                         else f"momentum/group_{i}"
+                    )
                     metrics_dict[momentum_key] = momentum
 
     def step_batch(self, runner: "IRunner") -> None:
