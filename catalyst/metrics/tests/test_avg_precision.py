@@ -59,8 +59,8 @@ def test_avg_precision():
 
     average_precision = metrics.avg_precision(y_pred_torch, y_true_torch)
 
-    assert np.isclose(average_precision[0], 0.5833, atol=1e3)
-    assert np.isclose(average_precision[1], 0.333, atol=1e3)
+    assert np.isclose(average_precision[0], 0.5833, atol=1e-3)
+    assert np.isclose(average_precision[1], 0.333, atol=1e-3)
 
     # check 5
     # Stanford Introdcution to information retrieval primer
@@ -77,7 +77,7 @@ def test_avg_precision():
     assert np.allclose(
         [average_precision[0], 0.6222],
         [average_precision[1], 0.4429],
-        atol=1e3,
+        atol=1e-3,
     )
 
 
@@ -98,7 +98,7 @@ def test_mean_avg_precision():
     top_k = [10]
     map_at10 = metrics.mean_avg_precision(y_pred_torch, y_true_torch, top_k)[0]
 
-    assert np.allclose(map_at10, 0.53, atol=1e3)
+    assert np.allclose(map_at10, 0.53, atol=1e-3)
 
 
 def test_wrapper_metrics():
@@ -117,4 +117,4 @@ def test_wrapper_metrics():
     map_wrapper = wrap_topk_metric2dict(metrics.mean_avg_precision, topk_args)
     map_dict = map_wrapper(outputs, targets)
     map_at10 = map_dict["10"]
-    assert np.allclose(map_at10, 0.53, atol=1e3)
+    assert np.allclose(map_at10, 0.53, atol=1e-3)
