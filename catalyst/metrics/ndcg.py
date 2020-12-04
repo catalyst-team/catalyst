@@ -1,6 +1,3 @@
-"""
-Discounted Cumulative Gain metrics
-"""
 from typing import List
 
 import torch

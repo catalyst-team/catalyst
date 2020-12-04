@@ -1,6 +1,3 @@
-"""
-MRR metric.
-"""
 from typing import List
 
 import torch
@@ -28,11 +25,10 @@ def reciprocal_rank(
             size: [batch_szie, slate_length]
             ground truth, labels
         k (int):
-            Parameter fro evaluation on top-k items
+            Parameter for evaluation on top-k items
 
     Returns:
-        mrr_score (torch.Tensor):
-            The mrr score for each batch.
+        MRR score
     """
     k = min(outputs.size(1), k)
     targets_sort_by_outputs_at_k = process_recsys_components(outputs, targets)[
@@ -75,8 +71,7 @@ def mrr(
             Parameter fro evaluation on top-k items
 
     Returns:
-        mrr_score (torch.Tensor):
-            The mrr score for each batch.
+        MRR score
     """
     results = []
     for k in topk:
