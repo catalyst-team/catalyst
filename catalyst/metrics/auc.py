@@ -58,11 +58,51 @@ def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     AUC metric.
 
     Args:
-        outputs: [bs; num_classes] estimated scores from a model.
-        targets: [bs; num_classes] ground truth (correct) target values.
+        outputs: [data_len; num_classes] estimated scores from a model.
+        targets: [data_len; num_classes] ground truth (correct) target values.
 
     Returns:
         torch.Tensor: Tensor with [num_classes] shape of per-class-aucs
+
+    Example:
+        >>> auc(
+        >>>     outputs=torch.tensor([
+        >>>         [0.9, 0.1],
+        >>>         [0.1, 0.9],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0],
+        >>>         [0, 1],
+        >>>     ]),
+        >>> )
+        tensor([1., 1.])
+        >>> auc(
+        >>>     outputs=torch.tensor([
+        >>>         [0.9],
+        >>>         [0.8],
+        >>>         [0.7],
+        >>>         [0.6],
+        >>>         [0.5],
+        >>>         [0.4],
+        >>>         [0.3],
+        >>>         [0.2],
+        >>>         [0.1],
+        >>>         [0.0],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [0],
+        >>>         [1],
+        >>>         [1],
+        >>>         [1],
+        >>>         [1],
+        >>>         [1],
+        >>>         [1],
+        >>>         [0],
+        >>>         [0],
+        >>>         [0],
+        >>>     ]),
+        >>> )
+        tensor([0.7500])
     """
     if len(outputs) == 0:
         return 0.5
