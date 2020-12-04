@@ -123,32 +123,40 @@ def multi_label_accuracy(
     Example:
         >>> multi_label_accuracy(
         >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
+        >>>         [1, 0],
+        >>>         [0, 1],
         >>>     ]),
         >>>     targets=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
+        >>>         [1, 0],
+        >>>         [0, 1],
         >>>     ]),
         >>>     threshold=0.5,
         >>> )
         tensor([1.])
         >>> multi_label_accuracy(
         >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
+        >>>         [1.0, 0.0],
+        >>>         [0.6, 1.0],
         >>>     ]),
         >>>     targets=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 1, 0],
+        >>>         [1, 0],
+        >>>         [0, 1],
         >>>     ]),
         >>>     threshold=0.5,
         >>> )
-        tensor(0.7778)
+        tensor(0.7500)
+        >>> multi_label_accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1.0, 0.0],
+        >>>         [0.4, 1.0],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0],
+        >>>         [0, 1],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor(1.0)
     """
     outputs, targets, _ = process_multilabel_components(
         outputs=outputs, targets=targets
