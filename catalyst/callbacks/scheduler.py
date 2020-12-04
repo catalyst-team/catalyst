@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, TYPE_CHECKING, List, Union
+from typing import List, Optional, Tuple, TYPE_CHECKING, Union
 from abc import ABC, abstractmethod
 
 import torch
@@ -133,7 +133,7 @@ class SchedulerCallback(ISchedulerCallback):
         self,
         metrics_dict: dict,
         lr_list: List[float],
-        momentum_list: List[Union[float, None]]
+        momentum_list: List[Union[float, None]],
     ):
         """Update learning rate and momentum in metrics_dict
 
