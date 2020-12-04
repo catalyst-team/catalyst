@@ -14,6 +14,8 @@ class MRRCallback(MetricCallback):
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "mrr",
+        multiplier: float = 1.0,
+        **kwargs,
     ):
         """
         Args:
@@ -22,12 +24,15 @@ class MRRCallback(MetricCallback):
             output_key (str): output key to use for mrr calculation;
                 specifies our ``y_pred``
             prefix (str): name to display for mrr when printing
+
         """
         super().__init__(
             prefix=prefix,
             metric_fn=mrr,
             input_key=input_key,
             output_key=output_key,
+            multiplier=multiplier,
+            **kwargs,
         )
 
 
