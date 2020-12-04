@@ -1661,6 +1661,23 @@ and <code class="docutils literal notranslate"><span class="pre">config</span></
 </dd></dl>
 
 <dl class="function">
+<dt id="catalyst.utils.torch.get_optimizer_momentum_list">
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_optimizer_momentum_list</code><span class="sig-paren">(</span><em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em><span class="sig-paren">)</span> &#x2192; List[Optional[float]]<a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimizer_momentum_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimizer_momentum_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get list of optimizer momentums (for each param group)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>optimizer</strong> – PyTorch optimizer</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>momentum for each param group</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>momentum_list (List[Union[float, None]])</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.utils.torch.set_optimizer_momentum">
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">set_optimizer_momentum</code><span class="sig-paren">(</span><em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em>, <em class="sig-param">value: float</em>, <em class="sig-param">index: int = 0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#set_optimizer_momentum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.set_optimizer_momentum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set momentum of <code class="docutils literal notranslate"><span class="pre">index</span></code> ‘th param group of optimizer to <code class="docutils literal notranslate"><span class="pre">value</span></code>.</p>

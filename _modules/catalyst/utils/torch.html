@@ -443,6 +443,27 @@
     <span class="k">return</span> <span class="n">betas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">betas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">momentum</span></div>
 
 
+<div class="viewcode-block" id="get_optimizer_momentum_list"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.get_optimizer_momentum_list">[docs]</a><span class="k">def</span> <span class="nf">get_optimizer_momentum_list</span><span class="p">(</span>
+    <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Get list of optimizer momentums (for each param group)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        optimizer: PyTorch optimizer</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        momentum_list (List[Union[float, None]]): momentum for each param group</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">param_group</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
+        <span class="n">betas</span> <span class="o">=</span> <span class="n">param_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;betas&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">momentum</span> <span class="o">=</span> <span class="n">param_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;momentum&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">betas</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">betas</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">momentum</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
 <div class="viewcode-block" id="set_optimizer_momentum"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.torch.set_optimizer_momentum">[docs]</a><span class="k">def</span> <span class="nf">set_optimizer_momentum</span><span class="p">(</span><span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Set momentum of ``index`` &#39;th param group of optimizer to ``value``.</span>
 
@@ -804,6 +825,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;get_optimizable_params&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_optimizer_momentum&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_optimizer_momentum_list&quot;</span><span class="p">,</span>
     <span class="s2">&quot;set_optimizer_momentum&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_device&quot;</span><span class="p">,</span>
     <span class="s2">&quot;get_available_gpus&quot;</span><span class="p">,</span>

@@ -2256,7 +2256,7 @@ specified in experiment.</p></li>
 <dl class="method">
 <dt id="catalyst.callbacks.scheduler.SchedulerCallback.step_batch">
 <code class="sig-name descname">step_batch</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/scheduler.html#SchedulerCallback.step_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.scheduler.SchedulerCallback.step_batch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update learning rate and momentum in runner.</p>
+<dd><p>Perform scheduler step and update batch metrics</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> – current runner</p>
@@ -2267,7 +2267,7 @@ specified in experiment.</p></li>
 <dl class="method">
 <dt id="catalyst.callbacks.scheduler.SchedulerCallback.step_epoch">
 <code class="sig-name descname">step_epoch</code><span class="sig-paren">(</span><em class="sig-param">runner: IRunner</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/callbacks/scheduler.html#SchedulerCallback.step_epoch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.scheduler.SchedulerCallback.step_epoch" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update momentum in runner.</p>
+<dd><p>Perform scheduler step and update epoch metrics</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>runner</strong> – current runner</p>
