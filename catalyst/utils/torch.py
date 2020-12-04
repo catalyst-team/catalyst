@@ -506,6 +506,7 @@ def convert_labels2list(labels: Union[Tensor, List[int]]) -> List[int]:
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
+    "get_optimizer_momentum_list",
     "set_optimizer_momentum",
     "get_device",
     "get_available_gpus",

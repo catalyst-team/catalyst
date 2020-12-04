@@ -89,6 +89,7 @@ from catalyst.utils.torch import (
     get_device,
     get_optimizable_params,
     get_optimizer_momentum,
+    get_optimizer_momentum_list,
     prepare_cudnn,
     process_model_params,
     set_optimizer_momentum,

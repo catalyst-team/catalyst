@@ -1,4 +1,4 @@
-from typing import Optional, Tuple, TYPE_CHECKING
+from typing import Optional, Tuple, TYPE_CHECKING, List, Union
 from abc import ABC, abstractmethod
 
 import torch
@@ -130,14 +130,17 @@ class SchedulerCallback(ISchedulerCallback):
         return lr_list, momentum_list
 
     def _update_lr_and_momentum_in_metrics_dict(
-        self, metrics_dict, lr_list, momentum_list
+        self,
+        metrics_dict: dict,
+        lr_list: List[float],
+        momentum_list: List[Union[float, None]]
     ):
         """Update learning rate and momentum in metrics_dict
 
         Args:
-            metrics_dict (dict): batch_metrics or epoch_metrics
-            lr_list (List[float]): lr for each param group
-            momentum_list (List[float, None]): momentum for each param group
+            metrics_dict: batch_metrics or epoch_metrics
+            lr_list: lr for each param group
+            momentum_list: momentum for each param group
 
         """
         if len(lr_list) == 1:
