@@ -5,12 +5,11 @@ from typing import List
 
 import torch
 
+from catalyst.metrics.functional import process_recsys_components
+
 
 def dcg(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    k=10,
-    gain_function="pow_rank",
+    outputs: torch.Tensor, targets: torch.Tensor, gain_function="exp_rank",
 ) -> torch.Tensor:
     """
     Computes DCG@topk for the specified values of `k`.
@@ -28,55 +27,61 @@ def dcg(
         gain_function:
             String indicates the gain function for the ground truth labels.
             Two options available:
-            - `pow_rank`: torch.pow(2, x) - 1
-            - `rank`: x
-            On the default, `pow_rank` is used
-            to emphasize on retrievng the relevant documents.
-        k (int):
-            Parameter fro evaluation on top-k items
+            - `exp_rank`: torch.pow(2, x) - 1
+            - `linear_rank`: x
+            On the default, `exp_rank` is used
+            to emphasize on retrieving the relevant documents.
 
     Returns:
-        torch.Tensor for dcg at k
+        dcg_score (torch.Tensor):
+            The discounted gains tensor
 
     Raises:
         ValueError: gain function can be either `pow_rank` or `rank`
     """
-    k = min(outputs.size(1), k)
-    order = torch.argsort(outputs, descending=True, dim=-1)
-    true_sorted_by_preds = torch.gather(targets, dim=-1, index=order)
+    targets_sort_by_outputs = process_recsys_components(outputs, targets)
+    target_device = targets_sort_by_outputs.device
 
-    if gain_function == "pow_rank":
+    if gain_function == "exp_rank":
         gain_function = lambda x: torch.pow(2, x) - 1
-        gains = gain_function(true_sorted_by_preds)
+        gains = gain_function(targets_sort_by_outputs)
         discounts = torch.tensor(1) / torch.log2(
-            torch.arange(true_sorted_by_preds.shape[1], dtype=torch.float)
+            torch.arange(
+                targets_sort_by_outputs.shape[1],
+                dtype=torch.float,
+                device=target_device,
+            )
             + 2.0
         )
-        discounted_gains = (gains * discounts)[:, :k]
+        discounted_gains = gains * discounts
 
-    elif gain_function == "rank":
+    elif gain_function == "linear_rank":
         discounts = torch.tensor(1) / torch.log2(
-            torch.arange(true_sorted_by_preds.shape[1], dtype=torch.float)
+            torch.arange(
+                targets_sort_by_outputs.shape[1],
+                dtype=torch.float,
+                device=target_device,
+            )
             + 1.0
         )
         discounts[0] = 1
-        discounted_gains = (true_sorted_by_preds * discounts)[:, :k]
+        discounted_gains = targets_sort_by_outputs * discounts
 
     else:
-        raise ValueError("gain function can be either pow_rank or rank")
+        raise ValueError("gain function can be either exp_rank or linear_rank")
 
-    sum_dcg = torch.sum(discounted_gains, dim=1)
-    return sum_dcg
+    dcg_score = discounted_gains
+    return dcg_score
 
 
 def ndcg(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    top_k: List[int],
-    gain_function="pow_rank",
-) -> torch.Tensor:
+    topk: List[int],
+    gain_function="exp_rank",
+) -> List[torch.Tensor]:
     """
-    Computes nDCG@topk for the specified values of `top_k`.
+    Computes nDCG@topk for the specified values of `topk`.
 
     Args:
         outputs (torch.Tensor): model outputs, logits
@@ -85,24 +90,29 @@ def ndcg(
             with shape [batch_size; slate_size]
         gain_function:
             callable, gain function for the ground truth labels.
-            on the deafult, the torch.pow(2, x) - 1 function used
-            to get emphasise on the retirvng the revelant documnets.
-        top_k (List[int]):
+            Two options available:
+            - `exp_rank`: torch.pow(2, x) - 1
+            - `linear_rank`: x
+            On the default, `exp_rank` is used
+            to emphasize on retrieving the relevant documents.
+        topk (List[int]):
             Parameter fro evaluation on top-k items
 
     Returns:
-        tuple with computed ndcg@topk
+        results (Tuple[float]):
+            tuple with computed ndcg@topk
     """
-    ndcg_k_tuple = ()
-    for k in top_k:
-        ideal_dcgs = dcg(targets, targets, k, gain_function)
-        predicted_dcgs = dcg(outputs, targets, k, gain_function)
-        ndcg_score = predicted_dcgs / ideal_dcgs
-        idcg_mask = ideal_dcgs == 0
+    results = []
+    for k in topk:
+        ideal_dcgs = dcg(targets, targets, gain_function)[:, :k]
+        predicted_dcgs = dcg(outputs, targets, gain_function)[:, :k]
+        ideal_dcgs_score = torch.sum(ideal_dcgs, dim=1)
+        predicted_dcgs_score = torch.sum(predicted_dcgs, dim=1)
+        ndcg_score = predicted_dcgs_score / ideal_dcgs_score
+        idcg_mask = ideal_dcgs_score == 0
         ndcg_score[idcg_mask] = 0.0
-        ndcg_k_tuple += (ndcg_score,)
-
-    return ndcg_k_tuple
+        results.append(torch.mean(ndcg_score))
+    return results
 
 
 __all__ = ["dcg", "ndcg"]

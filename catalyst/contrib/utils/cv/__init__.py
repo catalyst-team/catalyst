@@ -19,8 +19,8 @@ try:
 except ImportError as ex:
     if SETTINGS.cv_required:
         logger.warning(
-            "some of catalyst-cv dependencies are not available,"
-            " to install dependencies, run `pip install catalyst[cv]`."
+            "catalyst[cv] requirements are not available, to install them,"
+            " run `pip install catalyst[cv]`."
         )
         raise ex
 

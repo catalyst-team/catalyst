@@ -10,7 +10,7 @@ import numpy as np
 import torch
 from torch import Tensor
 
-from catalyst.contrib.utils.misc_extra import find_value_ids
+from catalyst.utils.misc import find_value_ids
 from catalyst.utils.torch import convert_labels2list, normalize
 
 # order in the triplets: (anchor, positive, negative)

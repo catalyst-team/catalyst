@@ -11,7 +11,6 @@ from scipy.special import binom
 import torch
 from torch import Tensor, tensor
 
-from catalyst.contrib.utils.misc_extra import find_value_ids
 from catalyst.data.sampler_inbatch import (
     AllTripletsSampler,
     HardClusterSampler,
@@ -19,6 +18,7 @@ from catalyst.data.sampler_inbatch import (
     TLabels,
 )
 from catalyst.data.tests.test_sampler import generate_valid_labels
+from catalyst.utils.misc import find_value_ids
 
 
 @pytest.fixture()
