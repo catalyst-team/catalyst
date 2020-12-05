@@ -41,6 +41,7 @@ class CurricularFace(nn.Module):
         >>> output = layer(embedding, target)
         >>> loss = loss_fn(output, target)
         >>> loss.backward()
+
     """
 
     def __init__(  # noqa: D107
