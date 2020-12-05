@@ -244,7 +244,7 @@ def test_curricularface_with_cross_entropy_loss():
     # fmt: on
 
     layer = CurricularFace(emb_size, n_classes, s, m)
-    layer.weight.data = torch.from_numpy(weight)
+    layer.weight.data = torch.from_numpy(weight.T)
     loss_fn = nn.CrossEntropyLoss(reduction="none")
 
     normalized_features = normalize(features)  # 2x4
@@ -284,7 +284,7 @@ def test_curricularface_with_cross_entropy_loss():
 
     # reinitialize layer (t is changed)
     layer = CurricularFace(emb_size, n_classes, s, m)
-    layer.weight.data = torch.from_numpy(weight)
+    layer.weight.data = torch.from_numpy(weight.T)
     loss_fn = nn.CrossEntropyLoss(reduction="mean")
 
     expected_loss = cross_entropy(cosine, mask, 1)
@@ -301,7 +301,7 @@ def test_curricularface_with_cross_entropy_loss():
 
     # reinitialize layer (t is changed)
     layer = CurricularFace(emb_size, n_classes, s, m)
-    layer.weight.data = torch.from_numpy(weight)
+    layer.weight.data = torch.from_numpy(weight.T)
     loss_fn = nn.CrossEntropyLoss(reduction="sum")
 
     expected_loss = cross_entropy(cosine, mask, 1)

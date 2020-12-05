@@ -63,7 +63,7 @@ class CurricularFace(nn.Module):
         self.threshold = math.cos(math.pi - m)
         self.mm = math.sin(math.pi - m) * m
 
-        self.weight = nn.Parameter(torch.Tensor(out_features, in_features))
+        self.weight = nn.Parameter(torch.Tensor(in_features, out_features))
         self.register_buffer("t", torch.zeros(1))
 
         nn.init.normal_(self.weight, std=0.01)
@@ -95,7 +95,9 @@ class CurricularFace(nn.Module):
             tensor (logits) with shapes ``BxC``
             where ``C`` is a number of classes.
         """
-        cos_theta = F.linear(F.normalize(input), F.normalize(self.weight))
+        cos_theta = torch.mm(
+            F.normalize(input), F.normalize(self.weight, dim=0)
+        )
         cos_theta = cos_theta.clamp(-1, 1)  # for numerical stability
 
         target_logit = cos_theta[torch.arange(0, input.size(0)), label].view(
