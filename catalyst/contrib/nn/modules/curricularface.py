@@ -42,7 +42,7 @@ class CurricularFace(nn.Module):
         >>> loss = loss_fn(output, target)
         >>> loss.backward()
 
-    """
+    """  # noqa: RST215
 
     def __init__(  # noqa: D107
         self,
@@ -63,10 +63,10 @@ class CurricularFace(nn.Module):
         self.threshold = math.cos(math.pi - m)
         self.mm = math.sin(math.pi - m) * m
 
-        self.kernel = nn.Parameter(torch.Tensor(in_features, out_features))
+        self.weight = nn.Parameter(torch.Tensor(in_features, out_features))
         self.register_buffer("t", torch.zeros(1))
 
-        nn.init.normal_(self.kernel, std=0.01)
+        nn.init.normal_(self.weight, std=0.01)
 
     def __repr__(self) -> str:  # noqa: D105
         rep = (
@@ -96,7 +96,7 @@ class CurricularFace(nn.Module):
             where ``C`` is a number of classes.
         """
         cos_theta = torch.mm(
-            F.normalize(input, dim=1), F.normalize(self.kernel, dim=0)
+            F.normalize(input, dim=1), F.normalize(self.weight, dim=0)
         )
         cos_theta = cos_theta.clamp(-1, 1)  # for numerical stability
 
