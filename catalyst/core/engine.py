@@ -56,6 +56,9 @@ class IEngine(ABC, ICallback):
     def load_checkpoint(self) -> None:
         pass
 
+    def zero_grad(self, optimizer: optim.Optimizer) -> None:
+        optimizer.zero_grad()
+
     def optimizer_step(self, optimizer: optim.Optimizer) -> None:
         """Do one optimization step."""
         optimizer.step()
