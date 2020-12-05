@@ -7,12 +7,17 @@ import torch.nn.functional as F
 
 class CurricularFace(nn.Module):
     """Implementation of
-    `CurricularFace: Adaptive Curriculum Learning \
+    `CurricularFace: Adaptive Curriculum Learning\
         Loss for Deep Face Recognition`_.
 
-    .. _CurricularFace\: Adaptive Curriculum Learning \
+    .. _CurricularFace\: Adaptive Curriculum Learning\
         Loss for Deep Face Recognition:
         https://arxiv.org/abs/2004.00288
+
+    Official `pytorch implementation`_.
+
+    .. _pytorch implementation:
+        https://github.com/HuangYG123/CurricularFace
 
     Args:
         in_features: size of each input sample.
@@ -62,7 +67,7 @@ class CurricularFace(nn.Module):
 
         nn.init.normal_(self.kernel, std=0.01)
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # noqa: D105
         rep = (
             "CurricularFace("
             f"in_features={self.in_features},"
@@ -93,9 +98,6 @@ class CurricularFace(nn.Module):
             F.normalize(input, dim=1), F.normalize(self.kernel, dim=0)
         )
         cos_theta = cos_theta.clamp(-1, 1)  # for numerical stability
-
-        with torch.no_grad():
-            origin_cos = cos_theta.clone()
 
         target_logit = cos_theta[torch.arange(0, input.size(0)), label].view(
             -1, 1
