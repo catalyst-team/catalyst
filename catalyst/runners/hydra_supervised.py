@@ -1,6 +1,5 @@
-from typing import Any, Callable, List, Mapping, Optional, Tuple, Union
+from typing import Any, Callable, List, Mapping, Tuple, Union
 import logging
-from pathlib import Path
 
 import torch
 
@@ -14,13 +13,12 @@ logger = logging.getLogger(__name__)
 class HydraSupervisedRunner(Runner):
     """Runner for experiments with supervised model."""
 
-    _experiment_fn: Callable = HydraConfigExperiment
-
     def __init__(
         self,
         model: RunnerModel = None,
         device: Device = None,
         models_keys: Mapping[str, Any] = None,
+        experiment_fn: Callable = HydraConfigExperiment,
     ):
         """
 
@@ -29,22 +27,14 @@ class HydraSupervisedRunner(Runner):
             device: (Device) Torch device
             models_keys: (Mapping[str, Any]) Key in batch dict mapping
                 for model input, output, target
+            experiment_fn: callable function,
+                which defines default experiment type to use
+                during ``.train`` and ``.infer`` methods.
 
         """
         super().__init__(
-            model=model, device=device, models_keys=models_keys,
+            model=model, device=device, experiment_fn=experiment_fn,
         )
-
-    def _init(
-        self, models_keys: Mapping[str, Any] = None,
-    ):
-        """
-        Args:
-            models_keys: (Mapping[str, Any]) Key in batch dict mapping
-                for model input, output, target
-
-        """
-        self.experiment: Optional[HydraConfigExperiment] = None
 
         self.input_key = {}
         self.output_key = {}
@@ -92,13 +82,7 @@ class HydraSupervisedRunner(Runner):
             else:
                 raise NotImplementedError()
 
-    def _prepare_for_stage(self, stage: str) -> None:
-        super()._prepare_for_stage(stage)
-        self.logdir: Path = Path(
-            self.experiment.logdir
-        ) if self.experiment.logdir is not None else None
-
-    def _batch2device(self, batch: Mapping[str, Any], device: Device):
+    def _handle_device(self, batch: Mapping[str, Any]):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 2
             batch_dict = {}
@@ -107,7 +91,7 @@ class HydraSupervisedRunner(Runner):
             for _, target_key in self.target_key.items():
                 batch_dict.setdefault(target_key, batch[1])
             batch = batch_dict
-        batch = super()._batch2device(batch, device)
+        batch = super()._handle_device(batch)
         return batch
 
     def _process_input_str(
@@ -203,7 +187,7 @@ class HydraSupervisedRunner(Runner):
             Mapping[str, Any]: model output dictionary
 
         """
-        batch = self._batch2device(batch, self.device)
+        batch = self._handle_device(batch)
         output = self.forward(batch, **kwargs)
         return output
 

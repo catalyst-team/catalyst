@@ -121,7 +121,7 @@ if IS_QUANTIZATION_AVAILABLE:
         quantize_model_from_checkpoint,
     )
 
-from catalyst.tools.settings import IS_HYDRA_AVAILABLE
+from catalyst.settings import IS_HYDRA_AVAILABLE
 
 if IS_HYDRA_AVAILABLE:
     from catalyst.utils.hydra_config import (

@@ -1,4 +1,4 @@
-from catalyst.data.cv import Compose, Normalize, ToTensor
+from catalyst.contrib.data.cv import Compose, Normalize, ToTensor
 
 
 def simple_transform():
