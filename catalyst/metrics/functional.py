@@ -422,7 +422,7 @@ def wrap_class_metric2dict(
 
 def wrap_topk_metric2dict(
     metric_fn: Callable, topk_args: Sequence[int]
-) -> Callable:
+) -> Callable:  # noqa: DAR401
     """
     Logging wrapper for metrics with
     Sequence[Union[torch.Tensor, int, float, Dict]] output.

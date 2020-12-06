@@ -4,7 +4,9 @@ import argparse
 from argparse import ArgumentParser
 import os
 from pathlib import Path
+import sys
 
+from catalyst.tools.settings import IS_HYDRA_AVAILABLE
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.parser import parse_args_uargs
@@ -15,6 +17,9 @@ from catalyst.utils.scripts import (
 )
 from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import prepare_cudnn
+
+if IS_HYDRA_AVAILABLE:
+    from catalyst.dl.scripts.hydra_run import main as hydra_main
 
 
 def build_args(parser: ArgumentParser):
@@ -27,7 +32,7 @@ def build_args(parser: ArgumentParser):
         help="path to config/configs",
         metavar="CONFIG_PATH",
         dest="configs",
-        required=True,
+        required=not IS_HYDRA_AVAILABLE,
     )
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
@@ -94,6 +99,8 @@ def build_args(parser: ArgumentParser):
         help="Deterministic mode if running in CuDNN backend",
     )
     boolean_flag(parser, "benchmark", default=None, help="Use CuDNN benchmark")
+    if IS_HYDRA_AVAILABLE:
+        boolean_flag(parser, "hydra", default=None, help="Use Hydra")
 
     return parser
 
@@ -133,4 +140,8 @@ def main(args, unknown_args):
 
 if __name__ == "__main__":
     args, unknown_args = parse_args()
-    main(args, unknown_args)
+    if IS_HYDRA_AVAILABLE and args.hydra:
+        sys.argv.remove("--hydra")
+        hydra_main()
+    else:
+        main(args, unknown_args)

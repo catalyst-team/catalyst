@@ -4,5 +4,16 @@ from catalyst.experiments.experiment import Experiment
 from catalyst.experiments.auto import AutoCallbackExperiment
 from catalyst.experiments.config import ConfigExperiment
 
+from catalyst.tools.settings import IS_HYDRA_AVAILABLE
 
-__all__ = ["ConfigExperiment", "Experiment", "AutoCallbackExperiment"]
+if IS_HYDRA_AVAILABLE:
+    from catalyst.experiments.hydra_config import HydraConfigExperiment
+
+    __all__ = [
+        "ConfigExperiment",
+        "Experiment",
+        "AutoCallbackExperiment",
+        "HydraConfigExperiment",
+    ]
+else:
+    __all__ = ["ConfigExperiment", "Experiment", "AutoCallbackExperiment"]
