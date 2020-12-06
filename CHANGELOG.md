@@ -10,7 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
-    - a few docs 
+- DrawMasksCallback ([#999](https://github.com/catalyst-team/catalyst/pull/999))
+- a few docs 
 
 ### Changed
 
