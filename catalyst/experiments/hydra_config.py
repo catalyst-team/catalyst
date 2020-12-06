@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, Mapping
+from typing import Any, Dict, List, Mapping
 from collections import OrderedDict
 from copy import deepcopy
 import logging
@@ -9,7 +9,10 @@ from omegaconf import DictConfig, ListConfig, OmegaConf
 
 import torch
 from torch import nn
-from torch.utils.data import DataLoader, Dataset, DistributedSampler, Sampler
+from torch.utils.data.dataloader import DataLoader
+from torch.utils.data.dataset import Dataset
+from torch.utils.data.distributed import DistributedSampler
+from torch.utils.data.sampler import Sampler
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback
@@ -29,7 +32,7 @@ from catalyst.callbacks.validation import ValidationManagerCallback
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import check_callback_isinstance
-from catalyst.data import DistributedSamplerWrapper
+from catalyst.data.sampler import DistributedSamplerWrapper
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.distributed import get_rank
@@ -50,6 +53,7 @@ class HydraConfigExperiment(IExperiment):
             cfg (dict): dictionary with parameters
         """
         self._config: DictConfig = deepcopy(cfg)
+        self._trial = None
         self._initial_seed: int = self._config.args.seed
         self._verbose: bool = self._config.args.verbose
         self._check_time: bool = self._config.args.timeit
@@ -75,7 +79,7 @@ class HydraConfigExperiment(IExperiment):
     @property
     def trial(self) -> Any:
         """Returns hyperparameter trial for current experiment"""
-        return {}
+        return self._trial
 
     @property
     def distributed_params(self) -> Dict:
@@ -83,7 +87,7 @@ class HydraConfigExperiment(IExperiment):
         return self._config.distributed
 
     @property
-    def stages(self) -> Iterable[str]:
+    def stages(self) -> List[str]:
         """Experiment's stage names."""
         stages_keys = list(self._config.stages.keys())
         return stages_keys

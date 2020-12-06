@@ -3,23 +3,29 @@ import logging
 import hydra
 from omegaconf import DictConfig
 
-from catalyst.dl import utils
+from catalyst.utils.distributed import get_rank
+from catalyst.utils.hydra_config import prepare_config
+from catalyst.utils.hydra_scripts import distributed_cmd_run
+from catalyst.utils.hydra_sys import dump_environment
+from catalyst.utils.misc import set_global_seed
+from catalyst.utils.scripts import dump_code, import_module
+from catalyst.utils.torch import prepare_cudnn
 
 logger = logging.getLogger(__name__)
 
 
 def main_worker(cfg: DictConfig):
-    utils.set_global_seed(cfg.args.seed)
-    utils.prepare_cudnn(cfg.args.deterministic, cfg.args.benchmark)
+    set_global_seed(cfg.args.seed)
+    prepare_cudnn(cfg.args.deterministic, cfg.args.benchmark)
 
-    utils.import_module(hydra.utils.to_absolute_path(cfg.args.expdir))
+    import_module(hydra.utils.to_absolute_path(cfg.args.expdir))
 
     experiment = hydra.utils.instantiate(cfg.experiment, cfg=cfg)
     runner = hydra.utils.instantiate(cfg.runner)
 
-    if experiment.logdir is not None and utils.get_rank() <= 0:
-        utils.hydra_dump_environment(cfg, experiment.logdir)
-        utils.dump_code(
+    if experiment.logdir is not None and get_rank() <= 0:
+        dump_environment(cfg, experiment.logdir)
+        dump_code(
             hydra.utils.to_absolute_path(cfg.args.expdir), experiment.logdir
         )
 
@@ -35,8 +41,8 @@ def main(cfg: DictConfig):
         cfg: (DictConfig) configuration
 
     """
-    cfg = utils.hydra_prepare_config(cfg)
-    utils.hydra_distributed_cmd_run(main_worker, cfg.args.distributed, cfg)
+    cfg = prepare_config(cfg)
+    distributed_cmd_run(main_worker, cfg.args.distributed, cfg)
 
 
 __all__ = ["main"]

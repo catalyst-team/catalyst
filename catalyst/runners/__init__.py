@@ -3,7 +3,7 @@
 from catalyst.runners.runner import Runner
 from catalyst.runners.supervised import SupervisedRunner
 
-from catalyst.tools.settings import IS_HYDRA_AVAILABLE
+from catalyst.settings import IS_HYDRA_AVAILABLE
 
 if IS_HYDRA_AVAILABLE:
     from catalyst.runners.hydra_supervised import HydraSupervisedRunner

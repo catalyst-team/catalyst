@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 import sys
 
-from catalyst.tools.settings import IS_HYDRA_AVAILABLE
+from catalyst.settings import IS_HYDRA_AVAILABLE
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.parser import parse_args_uargs
