@@ -20,6 +20,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - docs update ([#1000](https://github.com/catalyst-team/catalyst/pull/1000))
 - ``AMPOptimizerCallback`` and ``OptimizerCallback`` were merged ([#1007](https://github.com/catalyst-team/catalyst/pull/1007))
+- ([#1017](https://github.com/catalyst-team/catalyst/pull/1017))
+    - fixed bug in `SchedulerCallback`
+    - Log LRs and momentums for all param groups, not only for the first one
 - ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
     - ``tensorboard, ipython, matplotlib, pandas, scikit-learn`` moved to optional requirements
     - ``PerplexityMetricCallback`` moved to ``catalyst.callbacks`` from ``catalyst.contrib.callbacks``
