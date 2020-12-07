@@ -1,7 +1,9 @@
 import torch
 
 
-# @TODO: make it work in "per class" mode
+# @TODO:
+# - make it work in "per class" mode
+# - add extra tests
 def iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
@@ -18,6 +20,36 @@ def iou(
 
     Returns:
         IoU (Jaccard) score
+
+    Examples:
+        >>> iou(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor(1.0)
+        >>> iou(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 0],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor(0.6667)
     """
     if threshold is not None:
         outputs = (outputs > threshold).float()

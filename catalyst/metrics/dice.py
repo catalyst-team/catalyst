@@ -3,7 +3,9 @@ import numpy as np
 import torch
 
 
-# @TODO: make it work in "per class" mode
+# @TODO:
+# - make it work in "per class" mode
+# - add extra tests
 def dice(
     outputs: torch.Tensor,
     targets: torch.Tensor,
@@ -22,6 +24,36 @@ def dice(
 
     Returns:
         Dice score
+
+    Examples:
+        >>> dice(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor(1.0)
+        >>> dice(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 0],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor(0.8000)
     """
 
     if threshold is not None:
