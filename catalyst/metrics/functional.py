@@ -7,6 +7,8 @@ import torch
 from torch import Tensor
 from torch.nn import functional as F
 
+from catalyst.utils.torch import get_activation_fn
+
 # @TODO:
 # after full classification metrics re-implementation, make a reference to
 # https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/metrics
@@ -386,6 +388,19 @@ def check_consistent_length(*tensors):
         raise ValueError("Inconsistent numbers of samples")
 
 
+def wrap_fn_output_with_activation(
+    callable: Callable, activation: str = None,
+):
+    activation_fn = get_activation_fn(activation)
+
+    def wrapped_callable(*args, **kwargs):
+        output = callable(*args, **kwargs)
+        output = activation_fn(output)
+        return output
+
+    return wrapped_callable
+
+
 def wrap_class_metric2dict(
     metric_fn: Callable, class_args: Sequence[str] = None
 ) -> Callable:
@@ -470,6 +485,7 @@ __all__ = [
     "get_multiclass_statistics",
     "get_multilabel_statistics",
     "get_default_topk_args",
+    "wrap_fn_output_with_activation",
     "wrap_topk_metric2dict",
     "wrap_class_metric2dict",
 ]
