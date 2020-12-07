@@ -1,8 +1,3 @@
-"""
-Various accuracy metrics:
-    * :func:`accuracy`
-    * :func:`multilabel_accuracy`
-"""
 from typing import Optional, Sequence, Union
 
 import numpy as np
