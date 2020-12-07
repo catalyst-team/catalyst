@@ -35,6 +35,48 @@ def dcg(
 
     Raises:
         ValueError: gain function can be either `pow_rank` or `rank`
+
+    Examples:
+        >>> dcg(
+        >>>     outputs = torch.tensor([
+        >>>         [3, 2, 1, 0],
+        >>>     ]),
+        >>>     targets = torch.Tensor([
+        >>>         [2.0, 2.0, 1.0, 0.0],
+        >>>     ]),
+        >>>     gain_function="linear_rank",
+        >>> )
+        tensor([[2.0000, 2.0000, 0.6309, 0.0000]])
+        >>> dcg(
+        >>>     outputs = torch.tensor([
+        >>>         [3, 2, 1, 0],
+        >>>     ]),
+        >>>     targets = torch.Tensor([
+        >>>         [2.0, 2.0, 1.0, 0.0],
+        >>>     ]),
+        >>>     gain_function="linear_rank",
+        >>> ).sum()
+        tensor(4.6309)
+        >>> dcg(
+        >>>     outputs = torch.tensor([
+        >>>         [3, 2, 1, 0],
+        >>>     ]),
+        >>>     targets = torch.Tensor([
+        >>>         [2.0, 2.0, 1.0, 0.0],
+        >>>     ]),
+        >>>     gain_function="exp_rank",
+        >>> )
+        tensor([[3.0000, 1.8928, 0.5000, 0.0000]])
+        >>> dcg(
+        >>>     outputs = torch.tensor([
+        >>>         [3, 2, 1, 0],
+        >>>     ]),
+        >>>     targets = torch.Tensor([
+        >>>         [2.0, 2.0, 1.0, 0.0],
+        >>>     ]),
+        >>>     gain_function="exp_rank",
+        >>> ).sum()
+        tensor(5.3928)
     """
     targets_sort_by_outputs = process_recsys_components(outputs, targets)
     target_device = targets_sort_by_outputs.device
@@ -98,6 +140,34 @@ def ndcg(
     Returns:
         results (Tuple[float]):
             tuple with computed ndcg@topk
+
+    Examples:
+        >>> ndcg(
+        >>>     outputs = torch.tensor([
+        >>>         [0.5, 0.2, 0.1],
+        >>>         [0.5, 0.2, 0.1],
+        >>>     ]),
+        >>>     targets = torch.Tensor([
+        >>>         [1.0, 0.0, 1.0],
+        >>>         [1.0, 0.0, 1.0],
+        >>>     ]),
+        >>>     topk=[2],
+        >>>     gain_function="exp_rank",
+        >>> )
+        [tensor(0.6131)]
+        >>> ndcg(
+        >>>     outputs = torch.tensor([
+        >>>         [0.5, 0.2, 0.1],
+        >>>         [0.5, 0.2, 0.1],
+        >>>     ]),
+        >>>     targets = torch.Tensor([
+        >>>         [1.0, 0.0, 1.0],
+        >>>         [1.0, 0.0, 1.0],
+        >>>     ]),
+        >>>     topk=[2],
+        >>>     gain_function="exp_rank",
+        >>> )
+        [tensor(0.5000)]
     """
     results = []
     for k in topk:
