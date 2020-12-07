@@ -13,7 +13,9 @@ def dice(
 
     Args:
         outputs:  a list of predicted elements
+            with shape [batch_size; num_classes; ...]
         targets: a list of elements that are to be predicted
+            with shape [batch_size; num_classes; ...]
         eps: epsilon
         threshold: threshold for outputs binarization
 

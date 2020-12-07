@@ -1,7 +1,7 @@
 from typing import List
 
 from catalyst.callbacks.metric import BatchMetricCallback
-from catalyst.metrics.accuracy import accuracy, multi_label_accuracy
+from catalyst.metrics.accuracy import accuracy, multilabel_accuracy
 from catalyst.metrics.functional import (
     get_default_topk_args,
     wrap_topk_metric2dict,
@@ -11,10 +11,10 @@ from catalyst.metrics.functional import (
 class AccuracyCallback(BatchMetricCallback):
     """Accuracy metric callback.
 
-    Computes multi-class accuracy@topk for the specified values of `topk`.
+    Computes multiclass accuracy@topk for the specified values of `topk`.
 
     .. note::
-        For multi-label accuracy please use
+        For multilabel accuracy please use
         `catalyst.callbacks.metrics.MultiLabelAccuracyCallback`
     """
 
@@ -61,10 +61,10 @@ class AccuracyCallback(BatchMetricCallback):
 
 class MultiLabelAccuracyCallback(BatchMetricCallback):
     """Accuracy metric callback.
-    Computes multi-class accuracy@topk for the specified values of `topk`.
+    Computes multiclass accuracy@topk for the specified values of `topk`.
 
     .. note::
-        For multi-label accuracy please use
+        For multilabel accuracy please use
         `catalyst.callbacks.metrics.MultiLabelAccuracyCallback`
     """
 
@@ -72,7 +72,7 @@ class MultiLabelAccuracyCallback(BatchMetricCallback):
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        prefix: str = "multi_label_accuracy",
+        prefix: str = "multilabel_accuracy",
         threshold: float = None,
         activation: str = "Sigmoid",
     ):
@@ -89,11 +89,10 @@ class MultiLabelAccuracyCallback(BatchMetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=multi_label_accuracy,
+            metric_fn=multilabel_accuracy,
             input_key=input_key,
             output_key=output_key,
             threshold=threshold,
-            activation=activation,
         )
 
 

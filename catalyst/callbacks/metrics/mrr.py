@@ -6,7 +6,7 @@ class MRRCallback(MetricCallback):
     """Calculates the AUC  per class for each loader.
 
     .. note::
-        Currently, supports binary and multi-label cases.
+        Currently, supports binary and multilabel cases.
     """
 
     def __init__(

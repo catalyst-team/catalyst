@@ -116,7 +116,7 @@ def process_multilabel_components(
     targets: torch.Tensor,
     weights: Optional[torch.Tensor] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    """General preprocessing for multi-label-based metrics.
+    """General preprocessing for multilabel-based metrics.
 
     Args:
         outputs: NxK tensor that for each of the N examples
@@ -151,7 +151,7 @@ def process_multilabel_components(
 
     if targets.dim() == 1:
         if outputs.shape[1] > 1:
-            # multi-class case
+            # multiclass case
             num_classes = outputs.shape[1]
             targets = F.one_hot(targets, num_classes).float()
         else:
@@ -220,7 +220,7 @@ def get_multiclass_statistics(
     """
     Computes the number of true negative, false positive,
     false negative, true negative and support
-    for a multi-class classification problem.
+    for a multiclass classification problem.
 
     Args:
         outputs: estimated targets as predicted by a model
@@ -276,7 +276,7 @@ def get_multilabel_statistics(
     """
     Computes the number of true negative, false positive,
     false negative, true negative and support
-    for a multi-label classification problem.
+    for a multilabel classification problem.
 
     Args:
         outputs: estimated targets as predicted by a model

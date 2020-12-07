@@ -17,9 +17,9 @@ def dcg(
     https://en.wikipedia.org/wiki/Discounted_cumulative_gain
 
     Args:
-        outputs (torch.Tensor): model outputs, logits
+        outputs: model outputs, logits
             with shape [batch_size; slate_length]
-        targets (torch.Tensor): ground truth, labels
+        targets: ground truth, labels
             with shape [batch_size; slate_length]
         gain_function:
             String indicates the gain function for the ground truth labels.

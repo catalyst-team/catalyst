@@ -10,7 +10,7 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
     recall (true positive rate or tpr), and F1-score per class for each loader.
 
     .. note::
-        Currently, supports binary and multi-label cases.
+        Currently, supports binary and multilabel cases.
     """
 
     def __init__(

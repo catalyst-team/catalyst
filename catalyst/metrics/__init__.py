@@ -12,7 +12,7 @@ from catalyst.metrics.functional import (
 )
 from catalyst.metrics.classification import precision_recall_fbeta_support
 
-from catalyst.metrics.accuracy import accuracy, multi_label_accuracy
+from catalyst.metrics.accuracy import accuracy, multilabel_accuracy
 from catalyst.metrics.auc import auc
 from catalyst.metrics.avg_precision import (
     avg_precision,

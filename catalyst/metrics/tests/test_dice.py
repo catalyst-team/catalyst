@@ -5,7 +5,7 @@ from catalyst.metrics.dice import dice
 
 def test_dice():
     """
-    Tests for catalyst.utils.metrics.dice metric.
+    Tests for catalyst.metrics.dice metric.
     """
     size = 4
     half_size = size // 2

@@ -5,7 +5,7 @@ from catalyst.metrics.iou import iou
 
 def test_iou():
     """
-    Tests for catalyst.utils.metrics.iou metric.
+    Tests for catalyst.metrics.iou metric.
     """
     size = 4
     half_size = size // 2

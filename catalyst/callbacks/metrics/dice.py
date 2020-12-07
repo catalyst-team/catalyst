@@ -63,7 +63,7 @@
 #
 # class MultiClassDiceMetricCallback(Callback):
 #     """
-#     Global Multi-Class Dice Metric Callback: calculates the exact
+#     Global multiclass Dice Metric Callback: calculates the exact
 #     dice score across multiple batches. This callback is good for getting
 #     the dice score with small batch sizes where the batchwise dice is noisier.
 #     """
