@@ -375,7 +375,7 @@ def check_consistent_length(*tensors):
     Checks whether all objects in arrays have the same shape or length.
 
     Args:
-        tensors : list or tensores of input objects.
+        tensors : list or tensors of input objects.
             Objects that will be checked for consistent length.
 
     Raises:
@@ -388,17 +388,19 @@ def check_consistent_length(*tensors):
         raise ValueError("Inconsistent numbers of samples")
 
 
-def wrap_fn_output_with_activation(
-    callable: Callable, activation: str = None,
+def wrap_metric_fn_with_activation(
+    metric_fn: Callable, activation: str = None,
 ):
     activation_fn = get_activation_fn(activation)
 
-    def wrapped_callable(*args, **kwargs):
-        output = callable(*args, **kwargs)
-        output = activation_fn(output)
+    def wrapped_metric_fn(
+        outputs: torch.Tensor, targets: torch.Tensor, *args, **kwargs
+    ):
+        outputs = activation_fn(outputs)
+        output = metric_fn(outputs, targets, *args, **kwargs)
         return output
 
-    return wrapped_callable
+    return wrapped_metric_fn
 
 
 def wrap_class_metric2dict(
@@ -485,7 +487,7 @@ __all__ = [
     "get_multiclass_statistics",
     "get_multilabel_statistics",
     "get_default_topk_args",
-    "wrap_fn_output_with_activation",
+    "wrap_metric_fn_with_activation",
     "wrap_topk_metric2dict",
     "wrap_class_metric2dict",
 ]

@@ -4,7 +4,7 @@ from catalyst.callbacks.metric import BatchMetricCallback
 from catalyst.metrics.accuracy import accuracy, multilabel_accuracy
 from catalyst.metrics.functional import (
     get_default_topk_args,
-    wrap_fn_output_with_activation,
+    wrap_metric_fn_with_activation,
     wrap_topk_metric2dict,
 )
 
@@ -90,8 +90,8 @@ class MultiLabelAccuracyCallback(BatchMetricCallback):
         """
         super().__init__(
             prefix=prefix,
-            metric_fn=wrap_fn_output_with_activation(
-                callable=multilabel_accuracy, activation=activation
+            metric_fn=wrap_metric_fn_with_activation(
+                metric_fn=multilabel_accuracy, activation=activation
             ),
             input_key=input_key,
             output_key=output_key,
