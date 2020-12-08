@@ -35,9 +35,9 @@ class DiceCallback(BatchMetricCallback):
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "dice",
+        activation: str = "Sigmoid",
         eps: float = 1e-7,
         threshold: float = None,
-        activation: str = "Sigmoid",
     ):
         """
         Args:
@@ -46,10 +46,10 @@ class DiceCallback(BatchMetricCallback):
             output_key: output key to use for iou calculation;
                 specifies our ``y_pred``
             prefix: key to store in logs
+            activation: An torch.nn activation applied to the model outputs.
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
             eps: epsilon to avoid zero division
             threshold: threshold for outputs binarization
-            activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         super().__init__(
             prefix=prefix,

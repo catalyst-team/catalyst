@@ -4,7 +4,8 @@ from functools import partial
 
 from torch import nn
 
-from catalyst import metrics
+from catalyst.metrics.functional import wrap_metric_fn_with_activation
+from catalyst.metrics.iou import iou
 
 
 class IoULoss(nn.Module):
@@ -27,9 +28,10 @@ class IoULoss(nn.Module):
                 Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
         """
         super().__init__()
-        self.metric_fn = partial(
-            metrics.iou, eps=eps, threshold=threshold, activation=activation
+        metric_fn = wrap_metric_fn_with_activation(
+            metric_fn=iou, activation=activation
         )
+        self.loss_fn = partial(metric_fn, eps=eps, threshold=threshold)
 
     def forward(self, outputs, targets):
         """@TODO: Docs. Contribution is welcome."""
