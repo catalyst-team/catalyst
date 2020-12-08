@@ -48,7 +48,6 @@ class IouCallback(BatchMetricCallback):
             output_key=output_key,
             eps=eps,
             threshold=threshold,
-            activation=activation,
         )
 
 

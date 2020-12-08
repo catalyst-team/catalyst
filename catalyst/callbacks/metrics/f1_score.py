@@ -11,7 +11,6 @@ class F1ScoreCallback(BatchMetricCallback):
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "f1_score",
-        multiplier: float = 1.0,
         activation: str = "Softmax",
         **kwargs,
     ):
@@ -32,7 +31,6 @@ class F1ScoreCallback(BatchMetricCallback):
             ),
             input_key=input_key,
             output_key=output_key,
-            multiplier=multiplier,
             **kwargs,
         )
 

@@ -24,7 +24,6 @@ class AccuracyCallback(BatchMetricCallback):
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "accuracy",
-        multiplier: float = 1.0,
         topk_args: List[int] = None,
         num_classes: int = None,
         accuracy_args: List[int] = None,
@@ -43,8 +42,6 @@ class AccuracyCallback(BatchMetricCallback):
                 [1, 3, 5] - accuracy at 1, 3 and 5
             num_classes: number of classes to calculate ``topk_args``
                 if ``accuracy_args`` is None
-            activation: An torch.nn activation applied to the outputs.
-                Must be one of ``"none"``, ``"Sigmoid"``, or ``"Softmax"``
         """
         topk_args = (
             topk_args or accuracy_args or get_default_topk_args(num_classes)
@@ -55,7 +52,6 @@ class AccuracyCallback(BatchMetricCallback):
             metric_fn=wrap_topk_metric2dict(accuracy, topk_args=topk_args),
             input_key=input_key,
             output_key=output_key,
-            multiplier=multiplier,
             **kwargs,
         )
 
@@ -74,8 +70,8 @@ class MultiLabelAccuracyCallback(BatchMetricCallback):
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "multilabel_accuracy",
-        threshold: float = None,
         activation: str = "Sigmoid",
+        threshold: float = None,
     ):
         """
         Args:
