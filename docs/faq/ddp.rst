@@ -43,7 +43,7 @@ Suppose you have the following pipeline with Linear Regression:
         verbose=True,
     )
 
-For correct DDP training, you need to split your dataset creation from the main training.
+For correct DDP training, you need to separate creation of the dataset(s) from the training.
 In this way Catalyst could easily transfer your datasets to the distributed mode
 and there would be no data re-creation on each worker.
 
@@ -122,17 +122,17 @@ You can vary availble GPUs with ``CUDA_VIBIBLE_DEVICES`` option, for example,
 
 
 What will happen is that the same model will be copied on all your available GPUs.
-During training, the full dataset will randomly be split between the GPUs
+During training, the full dataset will randomly split between the GPUs
 (that will change at each epoch).
-Each GPU will grab a batch (on that fractioned dataset),
-pass it through the model, compute the loss then back-propagate the gradients.
+Each GPU will grab a batch (on that fraction of the dataset),
+pass it through the model, compute the loss then back-propagate (to calculate the gradients).
 Then they will share their results and average them,
 which means like your training is the equivalent of a training
 with a batch size of ```batch_size x num_gpus``
 (where ``batch_size`` is what you used in your script).
 
 Since they all have the same gradients at this stage,
-they will al perform the same update,
+they will all perform the same update,
 so the models will still be the same after this step.
 Then training continues with the next batch,
 until the number of desired iterations is done.

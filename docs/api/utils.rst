@@ -42,20 +42,6 @@ Distributed
     :undoc-members:
     :show-inheritance:
 
-Hash
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.hash
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Initialization
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.initialization
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Loaders
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.loaders
@@ -80,13 +66,6 @@ Numpy
 Parser
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.parser
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Pipelines
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.pipelines
     :members:
     :undoc-members:
     :show-inheritance:
@@ -140,13 +119,6 @@ Tracing
     :undoc-members:
     :show-inheritance:
 
-Wizard
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.wizard
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Contrib
 ----------------------
@@ -154,37 +126,9 @@ Contrib
     :members:
     :show-inheritance:
 
-Argparse
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.argparse
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Compression
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.compression
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Confusion Matrix
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.confusion_matrix
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Dataset
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.dataset
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Misc
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.misc
     :members:
     :undoc-members:
     :show-inheritance:
@@ -217,9 +161,23 @@ Serialization
     :undoc-members:
     :show-inheritance:
 
+Torch
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.torch_extra
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Visualization
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.visualization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Wizard
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.wizard
     :members:
     :undoc-members:
     :show-inheritance:

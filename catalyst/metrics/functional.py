@@ -81,6 +81,36 @@ def process_multiclass_components(
     return outputs, targets, num_classes
 
 
+def process_recsys_components(
+    outputs: torch.Tensor, targets: torch.Tensor
+) -> torch.Tensor:
+    """
+    General pre-processing for calculation recsys metrics
+
+    Args:
+        outputs (torch.Tensor):
+            Tensor weith predicted score
+            size: [batch_size, slate_length]
+            model outputs, logits
+        targets (torch.Tensor):
+            Binary tensor with ground truth.
+            1 means the item is relevant
+            for the user and 0 not relevant
+            size: [batch_szie, slate_length]
+            ground truth, labels
+
+    Returns:
+        targets_sorted_by_outputs (torch.Tensor):
+            targets tensor sorted by outputs
+    """
+    check_consistent_length(outputs, targets)
+    outputs_order = torch.argsort(outputs, descending=True, dim=-1)
+    targets_sorted_by_outputs = torch.gather(
+        targets, dim=-1, index=outputs_order
+    )
+    return targets_sorted_by_outputs
+
+
 def process_multilabel_components(
     outputs: torch.Tensor,
     targets: torch.Tensor,
@@ -338,6 +368,24 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
     return result
 
 
+def check_consistent_length(*tensors):
+    """Check that all arrays have consistent first dimensions.
+    Checks whether all objects in arrays have the same shape or length.
+
+    Args:
+        tensors : list or tensores of input objects.
+            Objects that will be checked for consistent length.
+
+    Raises:
+        ValueError: "Inconsistent numbers of samples"
+
+    """
+    lengths = [tensor.size(0) * tensor.size(1) for tensor in tensors]
+    uniques = np.unique(lengths)
+    if len(uniques) > 1:
+        raise ValueError("Inconsistent numbers of samples")
+
+
 def wrap_class_metric2dict(
     metric_fn: Callable, class_args: Sequence[str] = None
 ) -> Callable:
@@ -387,11 +435,6 @@ def wrap_topk_metric2dict(
 
     Returns:
         wrapped metric function with List[Dict] output
-
-    Raises:
-        NotImplementedError: if metrics returned values are out of
-            torch.Tensor, int, float, Dict union.
-
     """
     metric_fn = partial(metric_fn, topk=topk_args)
 
@@ -420,7 +463,9 @@ def wrap_topk_metric2dict(
 
 
 __all__ = [
+    "check_consistent_length",
     "process_multilabel_components",
+    "process_recsys_components",
     "get_binary_statistics",
     "get_multiclass_statistics",
     "get_multilabel_statistics",

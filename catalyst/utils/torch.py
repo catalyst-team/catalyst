@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Union
+from typing import Callable, Dict, Iterable, List, Union
 import collections
 import os
 import re
@@ -6,19 +6,104 @@ import re
 import numpy as np
 
 import torch
-from torch import nn, Tensor
+from torch import int as tint, long, nn, short, Tensor
 import torch.backends
 from torch.backends import cudnn
 
 from catalyst.settings import IS_XLA_AVAILABLE
 from catalyst.typing import Device, Model, Optimizer
-from catalyst.utils.dict import merge_dicts
+from catalyst.utils.misc import merge_dicts
+
+# TODO: move to global registry with activation functions
+ACTIVATIONS = {  # noqa: WPS407
+    None: "sigmoid",
+    nn.Sigmoid: "sigmoid",
+    nn.Tanh: "tanh",
+    nn.ReLU: "relu",
+    nn.LeakyReLU: "leaky_relu",
+    nn.ELU: "relu",
+}
+
+
+def _nonlinearity2name(nonlinearity):
+    if isinstance(nonlinearity, nn.Module):
+        nonlinearity = nonlinearity.__class__
+    nonlinearity = ACTIVATIONS.get(nonlinearity, nonlinearity)
+    nonlinearity = nonlinearity.lower()
+    return nonlinearity
+
+
+def get_optimal_inner_init(
+    nonlinearity: nn.Module, **kwargs
+) -> Callable[[nn.Module], None]:
+    """
+    Create initializer for inner layers
+    based on their activation function (nonlinearity).
+
+    Args:
+        nonlinearity: non-linear activation
+        **kwargs: extra kwargs
+
+    Returns:
+        optimal initialization function
+
+    Raises:
+        NotImplementedError: if nonlinearity is out of
+            `sigmoid`, `tanh`, `relu, `leaky_relu`
+    """
+    nonlinearity: str = _nonlinearity2name(nonlinearity)
+    assert isinstance(nonlinearity, str)
+
+    if nonlinearity in ["sigmoid", "tanh"]:
+        weignt_init_fn = nn.init.xavier_uniform_
+        init_args = kwargs
+    elif nonlinearity in ["relu", "leaky_relu"]:
+        weignt_init_fn = nn.init.kaiming_normal_
+        init_args = {**{"nonlinearity": nonlinearity}, **kwargs}
+    else:
+        raise NotImplementedError
+
+    def inner_init(layer):
+        if isinstance(layer, (nn.Linear, nn.Conv1d, nn.Conv2d)):
+            weignt_init_fn(layer.weight.data, **init_args)
+            if layer.bias is not None:
+                nn.init.zeros_(layer.bias.data)
+
+    return inner_init
+
+
+def outer_init(layer: nn.Module) -> None:
+    """
+    Initialization for output layers of policy and value networks typically
+    used in deep reinforcement learning literature.
+
+    Args:
+        layer: torch nn.Module instance
+    """
+    if isinstance(layer, (nn.Linear, nn.Conv1d, nn.Conv2d)):
+        v = 3e-3
+        nn.init.uniform_(layer.weight.data, -v, v)
+        if layer.bias is not None:
+            nn.init.uniform_(layer.bias.data, -v, v)
+
+
+def reset_weights_if_possible(module: nn.Module):
+    """
+    Resets module parameters if possible.
+
+    Args:
+        module: Module to reset.
+    """
+    try:
+        module.reset_parameters()
+    except AttributeError:
+        pass
 
 
 def get_optimizable_params(model_or_params):
     """Returns all the parameters that requires gradients."""
     params: Iterable[torch.Tensor] = model_or_params
-    if isinstance(model_or_params, nn.Module):
+    if isinstance(model_or_params, torch.nn.Module):
         params = model_or_params.parameters()
 
     master_params = [p for p in params if p.requires_grad]
@@ -37,6 +122,27 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
     betas = optimizer.param_groups[0].get("betas", None)
     momentum = optimizer.param_groups[0].get("momentum", None)
     return betas[0] if betas is not None else momentum
+
+
+def get_optimizer_momentum_list(
+    optimizer: Optimizer,
+) -> List[Union[float, None]]:
+    """Get list of optimizer momentums (for each param group)
+
+    Args:
+        optimizer: PyTorch optimizer
+
+    Returns:
+        momentum_list (List[Union[float, None]]): momentum for each param group
+    """
+    result = []
+
+    for param_group in optimizer.param_groups:
+        betas = param_group.get("betas", None)
+        momentum = param_group.get("momentum", None)
+        result.append(betas[0] if betas is not None else momentum)
+
+    return result
 
 
 def set_optimizer_momentum(optimizer: Optimizer, value: float, index: int = 0):
@@ -369,9 +475,38 @@ def normalize(samples: Tensor) -> Tensor:
     return samples
 
 
+def convert_labels2list(labels: Union[Tensor, List[int]]) -> List[int]:
+    """
+    This function allows to work with 2 types of indexing:
+    using a integer tensor and a list of indices.
+
+    Args:
+        labels: labels of batch samples
+
+    Returns:
+        labels of batch samples in the aligned format
+
+    Raises:
+        TypeError: if type of input labels is not tensor and list
+    """
+    if isinstance(labels, Tensor):
+        labels = labels.squeeze()
+        assert (len(labels.shape) == 1) and (
+            labels.dtype in [short, tint, long]
+        ), "Labels cannot be interpreted as indices."
+        labels_list = labels.tolist()
+    elif isinstance(labels, list):
+        labels_list = labels.copy()
+    else:
+        raise TypeError(f"Unexpected type of labels: {type(labels)}).")
+
+    return labels_list
+
+
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
+    "get_optimizer_momentum_list",
     "set_optimizer_momentum",
     "get_device",
     "get_available_gpus",
@@ -385,4 +520,8 @@ __all__ = [
     "detach",
     "trim_tensors",
     "normalize",
+    "convert_labels2list",
+    "get_optimal_inner_init",
+    "outer_init",
+    "reset_weights_if_possible",
 ]

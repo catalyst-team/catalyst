@@ -9,8 +9,8 @@ import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.tools.meters.averagevaluemeter import AverageValueMeter
-from catalyst.utils.dict import get_dictkey_auto_fn
 from catalyst.utils.distributed import get_distributed_mean
+from catalyst.utils.misc import get_dictkey_auto_fn
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner

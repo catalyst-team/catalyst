@@ -48,66 +48,46 @@ class Settings(FrozenClass):
 
     def __init__(  # noqa: D107
         self,
-        contrib_required: bool = False,
+        # CV
         cv_required: bool = False,
-        ml_required: bool = False,
-        nlp_required: bool = False,
-        alchemy_logger_required: Optional[bool] = None,
-        neptune_logger_required: Optional[bool] = None,
-        visdom_logger_required: Optional[bool] = None,
-        wandb_logger_required: Optional[bool] = None,
-        optuna_required: Optional[bool] = None,
-        plotly_required: Optional[bool] = None,
-        telegram_logger_token: Optional[str] = None,
-        telegram_logger_chat_id: Optional[str] = None,
-        use_lz4: bool = False,
-        use_pyarrow: bool = False,
         albumentations_required: Optional[bool] = None,
         kornia_required: Optional[bool] = None,
         segmentation_models_required: Optional[bool] = None,
         use_libjpeg_turbo: bool = False,
-        nmslib_required: Optional[bool] = None,
+        # LOG
+        log_required: bool = False,
+        alchemy_required: Optional[bool] = None,
+        neptune_required: Optional[bool] = None,
+        wandb_required: Optional[bool] = None,
+        plotly_required: Optional[bool] = None,
+        # ML
+        ml_required: bool = False,
+        ipython_required: Optional[bool] = None,
+        matplotlib_required: Optional[bool] = None,
+        scipy_required: Optional[bool] = None,
+        pandas_required: Optional[bool] = None,
+        sklearn_required: Optional[bool] = None,
+        git_required: Optional[bool] = None,
+        # NLP
+        nlp_required: bool = False,
         transformers_required: Optional[bool] = None,
+        # TUNE
+        tune_required: bool = False,
+        optuna_required: Optional[bool] = None,
+        # KNN
+        nmslib_required: Optional[bool] = False,
+        # extras
+        use_lz4: bool = False,
+        use_pyarrow: bool = False,
+        telegram_logger_token: Optional[str] = None,
+        telegram_logger_chat_id: Optional[str] = None,
     ):
         # [catalyst]
-        self.contrib_required: bool = contrib_required
         self.cv_required: bool = cv_required
+        self.log_required: bool = log_required
         self.ml_required: bool = ml_required
         self.nlp_required: bool = nlp_required
-
-        # stages
-        self.stage_train_prefix: str = "train"
-        self.stage_valid_prefix: str = "valid"
-        self.stage_infer_prefix: str = "infer"
-
-        # loader
-        self.loader_train_prefix: str = "train"
-        self.loader_valid_prefix: str = "valid"
-        self.loader_infer_prefix: str = "infer"
-
-        # [catalyst-contrib]
-        self.alchemy_logger_required: bool = self._optional_value(
-            alchemy_logger_required, default=contrib_required
-        )
-        self.neptune_logger_required: bool = self._optional_value(
-            neptune_logger_required, default=contrib_required
-        )
-        self.visdom_logger_required: bool = self._optional_value(
-            visdom_logger_required, default=contrib_required
-        )
-        self.wandb_logger_required: bool = self._optional_value(
-            wandb_logger_required, default=contrib_required
-        )
-        self.optuna_required: bool = self._optional_value(
-            optuna_required, default=contrib_required
-        )
-        self.plotly_required: bool = self._optional_value(
-            plotly_required, default=contrib_required
-        )
-        self.telegram_logger_token: str = telegram_logger_token
-        self.telegram_logger_chat_id: str = telegram_logger_chat_id
-        self.use_lz4: bool = use_lz4
-        self.use_pyarrow: bool = use_pyarrow
+        self.tune_required: bool = tune_required
 
         # [catalyst-cv]
         self.albumentations_required: bool = self._optional_value(
@@ -121,15 +101,69 @@ class Settings(FrozenClass):
         )
         self.use_libjpeg_turbo: bool = use_libjpeg_turbo
 
+        # [catalyst-log]
+        self.alchemy_required: bool = self._optional_value(
+            alchemy_required, default=log_required
+        )
+        self.neptune_required: bool = self._optional_value(
+            neptune_required, default=log_required
+        )
+        self.wandb_required: bool = self._optional_value(
+            wandb_required, default=log_required
+        )
+        self.plotly_required: bool = self._optional_value(
+            plotly_required, default=log_required
+        )
+
         # [catalyst-ml]
-        self.nmslib_required: bool = self._optional_value(
-            nmslib_required, default=ml_required
+        self.scipy_required: bool = self._optional_value(
+            scipy_required, default=ml_required
+        )
+        self.matplotlib_required: bool = self._optional_value(
+            matplotlib_required, default=ml_required
+        )
+        self.pandas_required: bool = self._optional_value(
+            pandas_required, default=ml_required
+        )
+        self.sklearn_required: bool = self._optional_value(
+            sklearn_required, default=ml_required
+        )
+        self.ipython_required: bool = self._optional_value(
+            ipython_required, default=ml_required
+        )
+        self.git_required: bool = self._optional_value(
+            git_required, default=ml_required
         )
 
         # [catalyst-nlp]
         self.transformers_required: bool = self._optional_value(
             transformers_required, default=nlp_required
         )
+
+        # [catalyst-tune]
+        self.optuna_required: bool = self._optional_value(
+            optuna_required, default=tune_required
+        )
+
+        # [catalyst-knn]
+        self.nmslib_required: bool = nmslib_required
+
+        # [catalyst-extras]
+        self.use_lz4: bool = use_lz4
+        self.use_pyarrow: bool = use_pyarrow
+        self.telegram_logger_token: str = telegram_logger_token
+        self.telegram_logger_chat_id: str = telegram_logger_chat_id
+
+        # [catalyst-global]
+        # stages
+        self.stage_train_prefix: str = "train"
+        self.stage_valid_prefix: str = "valid"
+        self.stage_infer_prefix: str = "infer"
+
+        # loader
+        self.loader_train_prefix: str = "train"
+        self.loader_valid_prefix: str = "valid"
+        self.loader_infer_prefix: str = "infer"
 
     @staticmethod
     def _optional_value(value, default):
@@ -345,6 +379,7 @@ setattr(SETTINGS, "IS_PRUNING_AVAILABLE", IS_PRUNING_AVAILABLE)  # noqa: B010
 setattr(  # noqa: B010
     SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE
 )
+setattr(SETTINGS, "IS_OPTUNA_AVAILABLE", IS_OPTUNA_AVAILABLE)  # noqa: B010
 
 
 __all__ = [
@@ -356,4 +391,5 @@ __all__ = [
     "IS_XLA_AVAILABLE",
     "IS_GIT_AVAILABLE",
     "IS_QUANTIZATION_AVAILABLE",
+    "IS_OPTUNA_AVAILABLE",
 ]
