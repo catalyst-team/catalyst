@@ -35,7 +35,7 @@ class IoULoss(nn.Module):
 
     def forward(self, outputs, targets):
         """@TODO: Docs. Contribution is welcome."""
-        iou = self.metric_fn(outputs, targets)
+        iou = self.loss_fn(outputs, targets)
         return 1 - iou
 
 
