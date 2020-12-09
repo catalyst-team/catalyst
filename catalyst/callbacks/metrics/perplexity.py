@@ -38,7 +38,9 @@ class PerplexityCallback(BatchMetricCallback):
         self.cross_entropy_loss = nn.CrossEntropyLoss(
             ignore_index=self.ignore_index
         )
-        metric_fn = partial(_perplexity_metric, criterion=self.cross_entropy_loss)
+        metric_fn = partial(
+            _perplexity_metric, criterion=self.cross_entropy_loss
+        )
 
         super().__init__(
             metric_fn=metric_fn,

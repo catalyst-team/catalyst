@@ -26,9 +26,11 @@ class F1ScoreCallback(BatchMetricCallback):
                 specifies our ``y_true``
             output_key: output key to use for iou calculation;
                 specifies our ``y_pred``
-            prefix: key to store in logs
+            prefix: key for the metric's name
             activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
+            class_args: class names to display in the logs.
+                If None, defaults to indices for each class, starting from 0
         """
         metric_fn = wrap_metric_fn_with_activation(
             metric_fn=fbeta_score, activation=activation

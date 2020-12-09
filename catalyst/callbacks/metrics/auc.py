@@ -30,8 +30,10 @@ class AUCCallback(LoaderMetricCallback):
                 specifies our ``y_true``.
             output_key: output key to use for auc calculation;
                 specifies our ``y_pred``.
-            prefix: metric's name.
+            prefix: key for the metric's name
             multiplier: scale factor for the metric.
+            activation: An torch.nn activation applied to the outputs.
+                Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
         """
