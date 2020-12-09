@@ -8,7 +8,7 @@ from catalyst.utils import metrics
 
 def test_hitrate():
     """
-    Tests for catalyst.utils.metrics.hitrate metric.
+    Tests for catalyst.metrics.hitrate metric.
     """
     y_pred = [0.5, 0.2]
     y_true = [1.0, 0.0]

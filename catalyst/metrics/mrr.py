@@ -1,6 +1,3 @@
-"""
-MRR metric.
-"""
 from typing import List
 
 import torch
@@ -17,22 +14,47 @@ def reciprocal_rank(
     Data aggregated in batches.
 
     Args:
-        outputs (torch.Tensor):
+        outputs:
             Tensor weith predicted score
             size: [batch_size, slate_length]
             model outputs, logits
-        targets (torch.Tensor):
+        targets:
             Binary tensor with ground truth.
             1 means the item is relevant
             and 0 if it's not relevant
-            size: [batch_szie, slate_length]
+            size: [batch_size, slate_length]
             ground truth, labels
-        k (int):
-            Parameter fro evaluation on top-k items
+        k:
+            Parameter for evaluation on top-k items
 
     Returns:
-        mrr_score (torch.Tensor):
-            The mrr score for each batch.
+        MRR score
+
+    Examples:
+        >>> reciprocal_rank(
+        >>>     outputs=torch.Tensor([
+        >>>         [4.0, 2.0, 3.0, 1.0],
+        >>>         [1.0, 2.0, 3.0, 4.0],
+        >>>     ]),
+        >>>     targets=torch.Tensor([
+        >>>         [0, 0, 1.0, 1.0],
+        >>>         [0, 0, 1.0, 1.0],
+        >>>     ]),
+        >>>     k=1,
+        >>> )
+        tensor([[0.], [1.]])
+        >>> reciprocal_rank(
+        >>>     outputs=torch.Tensor([
+        >>>         [4.0, 2.0, 3.0, 1.0],
+        >>>         [1.0, 2.0, 3.0, 4.0],
+        >>>     ]),
+        >>>     targets=torch.Tensor([
+        >>>         [0, 0, 1.0, 1.0],
+        >>>         [0, 0, 1.0, 1.0],
+        >>>     ]),
+        >>>     k=3,
+        >>> )
+        tensor([[0.5000], [1.0000]])
     """
     k = min(outputs.size(1), k)
     targets_sort_by_outputs_at_k = process_recsys_components(outputs, targets)[
@@ -61,22 +83,35 @@ def mrr(
     https://en.wikipedia.org/wiki/Mean_reciprocal_rank
 
     Args:
-        outputs (torch.Tensor):
+        outputs:
             Tensor weith predicted score
             size: [batch_size, slate_length]
             model outputs, logits
-        targets (torch.Tensor):
+        targets:
             Binary tensor with ground truth.
             1 means the item is relevant
             and 0 if it's not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
-        topk (int):
+        topk:
             Parameter fro evaluation on top-k items
 
     Returns:
-        mrr_score (torch.Tensor):
-            The mrr score for each batch.
+        MRR score
+
+    Examples:
+        >>> mrr(
+        >>>     outputs=torch.Tensor([
+        >>>         [4.0, 2.0, 3.0, 1.0],
+        >>>         [1.0, 2.0, 3.0, 4.0],
+        >>>     ]),
+        >>>     targets=torch.Tensor([
+        >>>         [0, 0, 1.0, 1.0],
+        >>>         [0, 0, 1.0, 1.0],
+        >>>     ]),
+        >>>     k=[1, 3],
+        >>> )
+        [tensor(0.5000), tensor(0.7500)]
     """
     results = []
     for k in topk:

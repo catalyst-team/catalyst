@@ -7,12 +7,13 @@ from catalyst.metrics.functional import (
     get_multiclass_statistics,
     get_multilabel_statistics,
     get_default_topk_args,
+    wrap_metric_fn_with_activation,
     wrap_class_metric2dict,
     wrap_topk_metric2dict,
 )
 from catalyst.metrics.classification import precision_recall_fbeta_support
 
-from catalyst.metrics.accuracy import accuracy, multi_label_accuracy
+from catalyst.metrics.accuracy import accuracy, multilabel_accuracy
 from catalyst.metrics.auc import auc
 from catalyst.metrics.avg_precision import (
     avg_precision,

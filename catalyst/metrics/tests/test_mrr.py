@@ -76,7 +76,7 @@ def test_reciprocal_rank():
     y_pred_torch = torch.Tensor([y_pred1, y_pred2])
     y_true_torch = torch.Tensor([y_true1, y_true2])
 
-    value = metrics.reciprocal_rank(y_pred_torch, y_true_torch, k=1)
+    value = metrics.reciprocal_rank(y_pred_torch, y_true_torch, k=k)
 
     assert value[0][0] == 0.0
     assert value[1][0] == 1.0
