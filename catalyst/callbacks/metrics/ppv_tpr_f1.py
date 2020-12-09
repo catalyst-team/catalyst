@@ -33,7 +33,7 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
             num_classes: Number of classes; must be > 1
             threshold: threshold for outputs binarization
             activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
         """
         # adjusting num_classes automatically if class_names is not None
         num_classes = num_classes if class_names is None else len(class_names)

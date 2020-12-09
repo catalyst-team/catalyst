@@ -15,7 +15,7 @@ class IouCallback(BatchMetricCallback):
         eps: epsilon to avoid zero division
         threshold: threshold for outputs binarization
         activation: An torch.nn activation applied to the outputs.
-            Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+            Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
     """
 
     def __init__(
@@ -37,7 +37,7 @@ class IouCallback(BatchMetricCallback):
             eps: epsilon to avoid zero division
             threshold: threshold for outputs binarization
             activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
         """
         super().__init__(
             prefix=prefix,

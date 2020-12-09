@@ -25,7 +25,7 @@ class IoULoss(nn.Module):
             eps: epsilon to avoid zero division
             threshold: threshold for outputs binarization
             activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
         """
         super().__init__()
         metric_fn = wrap_metric_fn_with_activation(
@@ -57,7 +57,7 @@ class BCEIoULoss(nn.Module):
             eps: epsilon to avoid zero division
             threshold: threshold for outputs binarization
             activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
             reduction: Specifies the reduction to apply
                 to the output of BCE
         """

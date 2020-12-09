@@ -22,7 +22,7 @@ class F1ScoreCallback(BatchMetricCallback):
                 specifies our ``y_pred``
             prefix: key to store in logs
             activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax2d'``
+                Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
         """
         super().__init__(
             prefix=prefix,

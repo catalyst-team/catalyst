@@ -27,7 +27,7 @@ class DiceCallback(BatchMetricCallback):
         eps: epsilon to avoid zero division
         threshold: threshold for outputs binarization
         activation: An torch.nn activation applied to the outputs.
-            Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+            Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
     """
 
     def __init__(
@@ -47,7 +47,7 @@ class DiceCallback(BatchMetricCallback):
                 specifies our ``y_pred``
             prefix: key to store in logs
             activation: An torch.nn activation applied to the model outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
             eps: epsilon to avoid zero division
             threshold: threshold for outputs binarization
         """

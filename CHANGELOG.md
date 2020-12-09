@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - ([#998](https://github.com/catalyst-team/catalyst/pull/998))
     - ``reciprocal_rank`` metric 
     - unified recsys metrics preprocessing 
+-  ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
+    - readme examples for all supported metrics under ``catalyst.metrics``
+    - ``wrap_metric_fn_with_activation`` for model outputs wrapping with activation
+    -  
 
 ### Changed
 
@@ -50,11 +54,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
     - todos for unnecessary docs
 - ([#1014](https://github.com/catalyst-team/catalyst/pull/1014))
     - transformers-based contrib (too unstable)
+- ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
+    - ClasswiseIouCallback/ClasswiseJaccardCallback as deprecated on (should be refactored in future releases)
+
  
 
 ### Fixed
 
 - prevented modifying config during the experiment and runner initialization ([#1004](https://github.com/catalyst-team/catalyst/pull/1004))
+- a few test for RecSys MAP computation ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
 
 
 
