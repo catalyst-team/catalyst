@@ -8,7 +8,7 @@ from catalyst.metrics.auc import auc
 
 def test_auc():
     """
-    Tests for catalyst.utils.metrics.auc metric.
+    Tests for catalyst.metrics.auc metric.
     """
     test_size = 1000
     scores = torch.cat((torch.rand(test_size), torch.rand(test_size)))

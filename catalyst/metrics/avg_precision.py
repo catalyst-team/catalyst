@@ -33,7 +33,7 @@ def avg_precision(
 
     Args:
         outputs (torch.Tensor):
-            Tensor weith predicted score
+            Tensor with predicted score
             size: [batch_size, slate_length]
             model outputs, logits
         targets (torch.Tensor):
@@ -47,6 +47,19 @@ def avg_precision(
         ap_score (torch.Tensor):
             The map score for each batch.
             size: [batch_size, 1]
+
+    Examples:
+        >>> avg_precision(
+        >>>     outputs=torch.tensor([
+        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
+        >>>         [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+        >>>     ]),
+        >>> )
+        tensor([0.6222, 0.4429])
     """
     targets_sort_by_outputs = process_recsys_components(outputs, targets)
     precisions = torch.zeros_like(targets_sort_by_outputs)
@@ -76,7 +89,7 @@ def mean_avg_precision(
 
     Args:
         outputs (torch.Tensor):
-            Tensor weith predicted score
+            Tensor with predicted score
             size: [batch_size, slate_length]
             model outputs, logits
         targets (torch.Tensor):
@@ -93,6 +106,20 @@ def mean_avg_precision(
         map_at_k (Tuple[float]):
             The map score for every k.
             size: len(top_k)
+
+    Examples:
+        >>> mean_avg_precision(
+        >>>     outputs=torch.tensor([
+        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
+        >>>         [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+        >>>     ]),
+        >>>     topk=[10],
+        >>> )
+        [tensor(0.5325)]
     """
     results = []
     for k in topk:
