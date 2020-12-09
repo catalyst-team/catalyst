@@ -54,9 +54,9 @@ stages:
         callback: F1ScoreCallback
       perplexity:
         callback: PerplexityCallback
-      ppv_tpr_f1:
-        callback: PrecisionRecallF1ScoreCallback
-        num_classes: 10
+#      ppv_tpr_f1:
+#        callback: PrecisionRecallF1ScoreCallback
+#        num_classes: 10
       scheduler:
         callback: SchedulerCallback
         reduced_metric: *reduced_metric

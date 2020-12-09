@@ -24,6 +24,7 @@ class PerplexityCallback(BatchMetricCallback):
         output_key: str = "logits",
         prefix: str = "perplexity",
         ignore_index: int = None,
+        **kwargs,
     ):
         """
         Args:
@@ -37,16 +38,15 @@ class PerplexityCallback(BatchMetricCallback):
         self.cross_entropy_loss = nn.CrossEntropyLoss(
             ignore_index=self.ignore_index
         )
+        metric_fn = partial(_perplexity_metric, criterion=self.cross_entropy_loss)
+
         super().__init__(
-            metric_fn=self.metric_fn,
+            metric_fn=metric_fn,
             input_key=input_key,
             output_key=output_key,
             prefix=prefix,
+            **kwargs,
         )
-
-    def metric_fn(self):
-        """Defined perplexity metric."""
-        return partial(_perplexity_metric, criterion=self.cross_entropy_loss)
 
 
 # backward compatibility
