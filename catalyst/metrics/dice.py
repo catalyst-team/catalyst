@@ -55,7 +55,6 @@ def dice(
         >>> )
         tensor(0.8000)
     """
-
     if threshold is not None:
         outputs = (outputs > threshold).float()
 

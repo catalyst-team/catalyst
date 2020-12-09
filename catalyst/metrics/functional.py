@@ -391,6 +391,19 @@ def check_consistent_length(*tensors):
 def wrap_metric_fn_with_activation(
     metric_fn: Callable, activation: str = None,
 ):
+    """Wraps model outputs for ``metric_fn` with specified ``activation``.
+
+    Args:
+        metric_fn: metric function to compute
+        activation: activation name to use
+
+    Returns:
+        wrapped metric function with wrapped model outputs
+
+    .. note::
+        Works only with ``metric_fn`` like
+        ``metric_fn(outputs, targets, *args, **kwargs)``.
+    """
     activation_fn = get_activation_fn(activation)
 
     def wrapped_metric_fn(
