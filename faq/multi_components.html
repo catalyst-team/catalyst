@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Multiple components &mdash; Catalyst 20.11.1 documentation</title>
+  <title>Multiple components &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -206,8 +206,8 @@
 <p class="caption"><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">[WIP] Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">[WIP] Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul class="current">
@@ -537,8 +537,8 @@ That it, simple enough, no extra abstractions required.</p>
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
 <span class="c1"># &lt;--- multi-criterion setup ---&gt;</span>
 <span class="n">criterion</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;multi-class&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(),</span>
-    <span class="s2">&quot;multi-label&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">(),</span>
+    <span class="s2">&quot;multiclass&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(),</span>
+    <span class="s2">&quot;multilabel&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">(),</span>
 <span class="p">}</span>
 <span class="c1"># &lt;--- multi-criterion setup ---&gt;</span>
 
@@ -559,9 +559,9 @@ That it, simple enough, no extra abstractions required.</p>
         <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
 
         <span class="c1"># &lt;--- multi-criterion usage ---&gt;</span>
-        <span class="n">loss_multi_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">[</span><span class="s2">&quot;multi-class&quot;</span><span class="p">](</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="n">loss_multi_label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">[</span><span class="s2">&quot;multi-label&quot;</span><span class="p">](</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_multi_class</span> <span class="o">+</span> <span class="n">loss_multi_label</span>
+        <span class="n">loss_multiclass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">[</span><span class="s2">&quot;multiclass&quot;</span><span class="p">](</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">loss_multilabel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">[</span><span class="s2">&quot;multilabel&quot;</span><span class="p">](</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">F</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_multiclass</span> <span class="o">+</span> <span class="n">loss_multilabel</span>
         <span class="c1"># &lt;--- multi-criterion usage ---&gt;</span>
 
         <span class="n">accuracy01</span><span class="p">,</span> <span class="n">accuracy03</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>

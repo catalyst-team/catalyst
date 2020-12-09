@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.nn.criterion.dice &mdash; Catalyst 20.11.1 documentation</title>
+  <title>catalyst.contrib.nn.criterion.dice &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -204,8 +204,8 @@
 <p class="caption"><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../core/experiment.html">Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../core/runner.html">[WIP] Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../core/callback.html">[WIP] Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
@@ -324,7 +324,8 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics.dice</span> <span class="kn">import</span> <span class="n">dice</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics.functional</span> <span class="kn">import</span> <span class="n">wrap_metric_fn_with_activation</span>
 
 
 <div class="viewcode-block" id="DiceLoss"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.dice.DiceLoss">[docs]</a><span class="k">class</span> <span class="nc">DiceLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -339,9 +340,10 @@
         <span class="sd">&quot;&quot;&quot;@TODO: Docs. Contribution is welcome.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-            <span class="n">metrics</span><span class="o">.</span><span class="n">dice</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">activation</span>
-        <span class="p">)</span></div>
+        <span class="n">metric_fn</span> <span class="o">=</span> <span class="n">wrap_metric_fn_with_activation</span><span class="p">(</span>
+            <span class="n">metric_fn</span><span class="o">=</span><span class="n">dice</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="n">activation</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">metric_fn</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="DiceLoss.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.dice.DiceLoss.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logits</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculates loss between ``logits`` and ``target`` tensors.</span>

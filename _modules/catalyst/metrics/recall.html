@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics.recall &mdash; Catalyst 20.11.1 documentation</title>
+  <title>catalyst.metrics.recall &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -204,8 +204,8 @@
 <p class="caption"><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/experiment.html">Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">[WIP] Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">[WIP] Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
@@ -346,6 +346,22 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Tensor: recall for every class</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; recall(</span>
+<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
+<span class="sd">        &gt;&gt;&gt;         [1, 0, 0],</span>
+<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
+<span class="sd">        &gt;&gt;&gt;         [0, 0, 1],</span>
+<span class="sd">        &gt;&gt;&gt;     ]),</span>
+<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([0, 1, 2]),</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">        tensor([1., 1., 1.])</span>
+<span class="sd">        &gt;&gt;&gt; precision_recall_fbeta_support(</span>
+<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),</span>
+<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">        tensor([0.5000, 0.5000])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">precision_recall_fbeta_support</span><span class="p">(</span>
         <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span>

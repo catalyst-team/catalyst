@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Catalyst 20.11.1 documentation</title>
+  <title>Index &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -156,7 +156,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -205,8 +205,8 @@
 <p class="caption"><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="core/experiment.html">Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core/runner.html">[WIP] Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="core/callback.html">[WIP] Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
@@ -430,8 +430,6 @@
         <li><a href="api/callbacks.html#catalyst.callbacks.metrics.dice.MultiClassDiceMetricCallback.__init__">(catalyst.callbacks.metrics.dice.MultiClassDiceMetricCallback method)</a>
 </li>
         <li><a href="api/callbacks.html#catalyst.callbacks.metrics.f1_score.F1ScoreCallback.__init__">(catalyst.callbacks.metrics.f1_score.F1ScoreCallback method)</a>
-</li>
-        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.iou.ClasswiseIouCallback.__init__">(catalyst.callbacks.metrics.iou.ClasswiseIouCallback method)</a>
 </li>
         <li><a href="api/callbacks.html#catalyst.callbacks.metrics.iou.IouCallback.__init__">(catalyst.callbacks.metrics.iou.IouCallback method)</a>
 </li>
@@ -1102,10 +1100,10 @@
 </li>
       <li><a href="api/utils.html#module-catalyst.contrib.utils.cv.image">catalyst.contrib.utils.cv.image (module)</a>
 </li>
-      <li><a href="api/utils.html#module-catalyst.contrib.utils.cv.tensor">catalyst.contrib.utils.cv.tensor (module)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils.html#module-catalyst.contrib.utils.cv.tensor">catalyst.contrib.utils.cv.tensor (module)</a>
+</li>
       <li><a href="api/utils.html#module-catalyst.contrib.utils.nlp">catalyst.contrib.utils.nlp (module)</a>
 </li>
       <li><a href="api/utils.html#module-catalyst.contrib.utils.nlp.text">catalyst.contrib.utils.nlp.text (module)</a>
@@ -1264,10 +1262,6 @@
         <li><a href="api/contrib.html#catalyst.contrib.datasets.mnist.MnistQGDataset.classes">(catalyst.contrib.datasets.mnist.MnistQGDataset attribute)</a>
 </li>
       </ul></li>
-      <li><a href="api/callbacks.html#catalyst.callbacks.metrics.iou.ClasswiseIouCallback">ClasswiseIouCallback (class in catalyst.callbacks.metrics.iou)</a>
-</li>
-      <li><a href="api/callbacks.html#catalyst.callbacks.metrics.iou.ClasswiseJaccardCallback">ClasswiseJaccardCallback (in module catalyst.callbacks.metrics.iou)</a>
-</li>
       <li><a href="api/utils.html#catalyst.contrib.utils.wizard.clone_pipeline">clone_pipeline() (in module catalyst.contrib.utils.wizard)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.cmc_score.cmc_score">cmc_score() (in module catalyst.metrics.cmc_score)</a>
@@ -2091,8 +2085,6 @@
 </li>
         <li><a href="api/callbacks.html#catalyst.callbacks.metric.LoaderMetricCallback.metric_fn">(catalyst.callbacks.metric.LoaderMetricCallback property)</a>
 </li>
-        <li><a href="api/callbacks.html#catalyst.callbacks.metrics.perplexity.PerplexityCallback.metric_fn">(catalyst.callbacks.metrics.perplexity.PerplexityCallback method)</a>
-</li>
       </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -2134,11 +2126,11 @@
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.mrr.MRRCallback">MRRCallback (class in catalyst.callbacks.metrics.mrr)</a>
 </li>
-      <li><a href="api/metrics.html#catalyst.metrics.accuracy.multi_label_accuracy">multi_label_accuracy() (in module catalyst.metrics.accuracy)</a>
-</li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.dice.MultiClassDiceMetricCallback">MultiClassDiceMetricCallback (class in catalyst.callbacks.metrics.dice)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.dice.MulticlassDiceMetricCallback">MulticlassDiceMetricCallback (in module catalyst.callbacks.metrics.dice)</a>
+</li>
+      <li><a href="api/metrics.html#catalyst.metrics.accuracy.multilabel_accuracy">multilabel_accuracy() (in module catalyst.metrics.accuracy)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.accuracy.MultiLabelAccuracyCallback">MultiLabelAccuracyCallback (class in catalyst.callbacks.metrics.accuracy)</a>
 </li>
@@ -3087,6 +3079,8 @@
       <li><a href="api/core.html#catalyst.core.callback.CallbackNode.worker">worker (catalyst.core.callback.CallbackNode attribute)</a>, <a href="api/core.html#catalyst.core.callback.CallbackNode.worker">[1]</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional.wrap_class_metric2dict">wrap_class_metric2dict() (in module catalyst.metrics.functional)</a>
+</li>
+      <li><a href="api/metrics.html#catalyst.metrics.functional.wrap_metric_fn_with_activation">wrap_metric_fn_with_activation() (in module catalyst.metrics.functional)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional.wrap_topk_metric2dict">wrap_topk_metric2dict() (in module catalyst.metrics.functional)</a>
 </li>

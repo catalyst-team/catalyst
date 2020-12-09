@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.tools.meters.confusionmeter &mdash; Catalyst 20.11.1 documentation</title>
+  <title>catalyst.tools.meters.confusionmeter &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -204,8 +204,8 @@
 <p class="caption"><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../core/experiment.html">Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../core/runner.html">[WIP] Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../core/callback.html">[WIP] Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
@@ -329,8 +329,8 @@
 
 <div class="viewcode-block" id="ConfusionMeter"><a class="viewcode-back" href="../../../../api/tools.html#catalyst.tools.meters.confusionmeter.ConfusionMeter">[docs]</a><span class="k">class</span> <span class="nc">ConfusionMeter</span><span class="p">(</span><span class="n">meter</span><span class="o">.</span><span class="n">Meter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    ConfusionMeter constructs a confusion matrix for a multi-class</span>
-<span class="sd">    classification problems. It does not support multi-label, multi-class</span>
+<span class="sd">    ConfusionMeter constructs a confusion matrix for a multiclass</span>
+<span class="sd">    classification problems. It does not support multilabel, multiclass</span>
 <span class="sd">    problems: for such problems, please use MultiLabelConfusionMeter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -390,7 +390,7 @@
             <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;in one-hot encoding, target values should be 0 or 1&quot;</span>
             <span class="k">assert</span> <span class="p">(</span>
                 <span class="n">target</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;multi-label setting is not supported&quot;</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;multilabel setting is not supported&quot;</span>
             <span class="n">target</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">target</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="p">(</span><span class="n">predicted</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>

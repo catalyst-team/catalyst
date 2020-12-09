@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics.auc &mdash; Catalyst 20.11.1 documentation</title>
+  <title>catalyst.metrics.auc &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -204,8 +204,8 @@
 <p class="caption"><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/experiment.html">Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">[WIP] Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">[WIP] Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
@@ -377,11 +377,51 @@
 <span class="sd">    AUC metric.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        outputs: [bs; num_classes] estimated scores from a model.</span>
-<span class="sd">        targets: [bs; num_classes] ground truth (correct) target values.</span>
+<span class="sd">        outputs: [data_len; num_classes] estimated scores from a model.</span>
+<span class="sd">        targets: [data_len; num_classes] ground truth (correct) target values.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: Tensor with [num_classes] shape of per-class-aucs</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; auc(</span>
+<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
+<span class="sd">        &gt;&gt;&gt;         [0.9, 0.1],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.1, 0.9],</span>
+<span class="sd">        &gt;&gt;&gt;     ]),</span>
+<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([</span>
+<span class="sd">        &gt;&gt;&gt;         [1, 0],</span>
+<span class="sd">        &gt;&gt;&gt;         [0, 1],</span>
+<span class="sd">        &gt;&gt;&gt;     ]),</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">        tensor([1., 1.])</span>
+<span class="sd">        &gt;&gt;&gt; auc(</span>
+<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
+<span class="sd">        &gt;&gt;&gt;         [0.9],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.8],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.7],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.6],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.5],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.4],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.3],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.2],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.1],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.0],</span>
+<span class="sd">        &gt;&gt;&gt;     ]),</span>
+<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([</span>
+<span class="sd">        &gt;&gt;&gt;         [0],</span>
+<span class="sd">        &gt;&gt;&gt;         [1],</span>
+<span class="sd">        &gt;&gt;&gt;         [1],</span>
+<span class="sd">        &gt;&gt;&gt;         [1],</span>
+<span class="sd">        &gt;&gt;&gt;         [1],</span>
+<span class="sd">        &gt;&gt;&gt;         [1],</span>
+<span class="sd">        &gt;&gt;&gt;         [1],</span>
+<span class="sd">        &gt;&gt;&gt;         [0],</span>
+<span class="sd">        &gt;&gt;&gt;         [0],</span>
+<span class="sd">        &gt;&gt;&gt;         [0],</span>
+<span class="sd">        &gt;&gt;&gt;     ]),</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">        tensor([0.7500])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">0.5</span>

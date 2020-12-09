@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics.avg_precision &mdash; Catalyst 20.11.1 documentation</title>
+  <title>catalyst.metrics.avg_precision &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -204,8 +204,8 @@
 <p class="caption"><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../core/experiment.html">Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">[WIP] Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">[WIP] Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
@@ -352,7 +352,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        outputs (torch.Tensor):</span>
-<span class="sd">            Tensor weith predicted score</span>
+<span class="sd">            Tensor with predicted score</span>
 <span class="sd">            size: [batch_size, slate_length]</span>
 <span class="sd">            model outputs, logits</span>
 <span class="sd">        targets (torch.Tensor):</span>
@@ -366,6 +366,19 @@
 <span class="sd">        ap_score (torch.Tensor):</span>
 <span class="sd">            The map score for each batch.</span>
 <span class="sd">            size: [batch_size, 1]</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; avg_precision(</span>
+<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
+<span class="sd">        &gt;&gt;&gt;         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
+<span class="sd">        &gt;&gt;&gt;         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
+<span class="sd">        &gt;&gt;&gt;     ]),</span>
+<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([</span>
+<span class="sd">        &gt;&gt;&gt;         [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],</span>
+<span class="sd">        &gt;&gt;&gt;     ]),</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">        tensor([0.6222, 0.4429])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">targets_sort_by_outputs</span> <span class="o">=</span> <span class="n">process_recsys_components</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
     <span class="n">precisions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">targets_sort_by_outputs</span><span class="p">)</span>
@@ -395,7 +408,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        outputs (torch.Tensor):</span>
-<span class="sd">            Tensor weith predicted score</span>
+<span class="sd">            Tensor with predicted score</span>
 <span class="sd">            size: [batch_size, slate_length]</span>
 <span class="sd">            model outputs, logits</span>
 <span class="sd">        targets (torch.Tensor):</span>
@@ -412,6 +425,20 @@
 <span class="sd">        map_at_k (Tuple[float]):</span>
 <span class="sd">            The map score for every k.</span>
 <span class="sd">            size: len(top_k)</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; mean_avg_precision(</span>
+<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
+<span class="sd">        &gt;&gt;&gt;         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
+<span class="sd">        &gt;&gt;&gt;         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
+<span class="sd">        &gt;&gt;&gt;     ]),</span>
+<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([</span>
+<span class="sd">        &gt;&gt;&gt;         [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],</span>
+<span class="sd">        &gt;&gt;&gt;         [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],</span>
+<span class="sd">        &gt;&gt;&gt;     ]),</span>
+<span class="sd">        &gt;&gt;&gt;     topk=[10],</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+<span class="sd">        [tensor(0.5325)]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">topk</span><span class="p">:</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.contrib.nn.criterion.lovasz &mdash; Catalyst 20.11.1 documentation</title>
+  <title>catalyst.contrib.nn.criterion.lovasz &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -204,8 +204,8 @@
 <p class="caption"><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../core/experiment.html">Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../core/runner.html">[WIP] Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../core/callback.html">[WIP] Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
@@ -459,7 +459,7 @@
 
 
 <span class="k">def</span> <span class="nf">_lovasz_softmax_flat</span><span class="p">(</span><span class="n">probabilities</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;present&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The multi-class Lovasz-Softmax loss.</span>
+    <span class="sd">&quot;&quot;&quot;The multiclass Lovasz-Softmax loss.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        probabilities: [P, C]</span>
@@ -496,7 +496,7 @@
 <span class="k">def</span> <span class="nf">_lovasz_softmax</span><span class="p">(</span>
     <span class="n">probabilities</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">classes</span><span class="o">=</span><span class="s2">&quot;present&quot;</span><span class="p">,</span> <span class="n">per_image</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;The multi-class Lovasz-Softmax loss.</span>
+    <span class="sd">&quot;&quot;&quot;The multiclass Lovasz-Softmax loss.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        probabilities: [B, C, H, W]</span>
@@ -565,7 +565,7 @@
 
 
 <div class="viewcode-block" id="LovaszLossMultiClass"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiClass">[docs]</a><span class="k">class</span> <span class="nc">LovaszLossMultiClass</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Creates a criterion that optimizes a multi-class Lovasz loss.</span>
+    <span class="sd">&quot;&quot;&quot;Creates a criterion that optimizes a multiclass Lovasz loss.</span>
 
 <span class="sd">    It has been proposed in `The Lovasz-Softmax loss: A tractable surrogate</span>
 <span class="sd">    for the optimization of the intersection-over-union measure</span>
@@ -598,7 +598,7 @@
 
 
 <div class="viewcode-block" id="LovaszLossMultiLabel"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiLabel">[docs]</a><span class="k">class</span> <span class="nc">LovaszLossMultiLabel</span><span class="p">(</span><span class="n">_Loss</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Creates a criterion that optimizes a multi-label Lovasz loss.</span>
+    <span class="sd">&quot;&quot;&quot;Creates a criterion that optimizes a multilabel Lovasz loss.</span>
 
 <span class="sd">    It has been proposed in `The Lovasz-Softmax loss: A tractable surrogate</span>
 <span class="sd">    for the optimization of the intersection-over-union measure</span>

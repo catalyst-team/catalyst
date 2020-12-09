@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contrib &mdash; Catalyst 20.11.1 documentation</title>
+  <title>Contrib &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -206,8 +206,8 @@
 <p class="caption"><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">[WIP] Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">[WIP] Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
@@ -1251,7 +1251,7 @@ by Learning an Invariant Mapping</a>.</p>
 <dt id="catalyst.contrib.nn.criterion.focal.FocalLossMultiClass">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.focal.</code><code class="sig-name descname">FocalLossMultiClass</code><span class="sig-paren">(</span><em class="sig-param">ignore: int = None</em>, <em class="sig-param">reduced: bool = False</em>, <em class="sig-param">gamma: float = 2.0</em>, <em class="sig-param">alpha: float = 0.25</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/focal.html#FocalLossMultiClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.focal.FocalLossMultiClass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.nn.criterion.focal.FocalLossBinary" title="catalyst.contrib.nn.criterion.focal.FocalLossBinary"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.nn.criterion.focal.FocalLossBinary</span></code></a></p>
-<p>Compute focal loss for multi-class problem.
+<p>Compute focal loss for multiclass problem.
 Ignores targets having -1 label.</p>
 <p>It has been proposed in <a class="reference external" href="https://arxiv.org/abs/1708.02002">Focal Loss for Dense Object Detection</a> paper.</p>
 <p>&#64;TODO: Docs (add <cite>Example</cite>). Contribution is welcome.</p>
@@ -1349,7 +1349,7 @@ Ignores targets having -1 label.</p>
 <li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
 <li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
 <li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
-Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax2d'</span></code></p></li>
+Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax'</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -1378,7 +1378,7 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 <li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
 <li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
 <li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
-Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax2d'</span></code></p></li>
+Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax'</span></code></p></li>
 <li><p><strong>reduction</strong> – Specifies the reduction to apply
 to the output of BCE</p></li>
 </ul>
@@ -1432,7 +1432,7 @@ in neural networks</a>.</p>
 <dt id="catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiClass">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.lovasz.</code><code class="sig-name descname">LovaszLossMultiClass</code><span class="sig-paren">(</span><em class="sig-param">per_image=False</em>, <em class="sig-param">ignore=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/lovasz.html#LovaszLossMultiClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiClass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.loss._Loss</span></code></p>
-<p>Creates a criterion that optimizes a multi-class Lovasz loss.</p>
+<p>Creates a criterion that optimizes a multiclass Lovasz loss.</p>
 <p>It has been proposed in <a class="reference external" href="https://arxiv.org/abs/1705.08790">The Lovasz-Softmax loss: A tractable surrogate
 for the optimization of the intersection-over-union measure
 in neural networks</a>.</p>
@@ -1463,7 +1463,7 @@ in neural networks</a>.</p>
 <dt id="catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiLabel">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.lovasz.</code><code class="sig-name descname">LovaszLossMultiLabel</code><span class="sig-paren">(</span><em class="sig-param">per_image=False</em>, <em class="sig-param">ignore=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/lovasz.html#LovaszLossMultiLabel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiLabel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.loss._Loss</span></code></p>
-<p>Creates a criterion that optimizes a multi-label Lovasz loss.</p>
+<p>Creates a criterion that optimizes a multilabel Lovasz loss.</p>
 <p>It has been proposed in <a class="reference external" href="https://arxiv.org/abs/1705.08790">The Lovasz-Softmax loss: A tractable surrogate
 for the optimization of the intersection-over-union measure
 in neural networks</a>.</p>

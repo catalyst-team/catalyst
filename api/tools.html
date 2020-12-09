@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tools &mdash; Catalyst 20.11.1 documentation</title>
+  <title>Tools &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -206,8 +206,8 @@
 <p class="caption"><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">[WIP] Runner</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">[WIP] Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
@@ -616,8 +616,8 @@ that have been updated online.</p>
 <dt id="catalyst.tools.meters.confusionmeter.ConfusionMeter">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.meters.confusionmeter.</code><code class="sig-name descname">ConfusionMeter</code><span class="sig-paren">(</span><em class="sig-param">k: int</em>, <em class="sig-param">normalized: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/confusionmeter.html#ConfusionMeter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.confusionmeter.ConfusionMeter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.tools.meters.meter.Meter" title="catalyst.tools.meters.meter.Meter"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.tools.meters.meter.Meter</span></code></a></p>
-<p>ConfusionMeter constructs a confusion matrix for a multi-class
-classification problems. It does not support multi-label, multi-class
+<p>ConfusionMeter constructs a confusion matrix for a multiclass
+classification problems. It does not support multilabel, multiclass
 problems: for such problems, please use MultiLabelConfusionMeter.</p>
 <dl class="method">
 <dt id="catalyst.tools.meters.confusionmeter.ConfusionMeter.__init__">
@@ -685,7 +685,7 @@ calculations are defined in separate functions.</p>
 <p>Keeps track of global true positives, false positives, and false negatives
 for each epoch and calculates precision, recall, and F1-score based on
 those metrics. Currently, this meter works for binary cases only, please
-use multiple instances of this class for multi-label cases.</p>
+use multiple instances of this class for multilabel cases.</p>
 <dl class="method">
 <dt id="catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">threshold=0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/meters/ppv_tpr_f1_meter.html#PrecisionRecallF1ScoreMeter.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.meters.ppv_tpr_f1_meter.PrecisionRecallF1ScoreMeter.__init__" title="Permalink to this definition">¶</a></dt>
