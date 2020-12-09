@@ -3,6 +3,7 @@ from typing import List
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics.auc import auc
 from catalyst.metrics.functional import wrap_class_metric2dict
+from catalyst.metrics.functional import wrap_metric_fn_with_activation
 
 
 class AUCCallback(LoaderMetricCallback):
@@ -17,7 +18,7 @@ class AUCCallback(LoaderMetricCallback):
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "auc",
-        multiplier: float = 1.0,
+        activation: str = "Sigmoid",
         class_args: List[str] = None,
         **kwargs,
     ):
@@ -32,12 +33,15 @@ class AUCCallback(LoaderMetricCallback):
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
         """
+        metric_fn = wrap_metric_fn_with_activation(
+            metric_fn=auc, activation=activation
+        )
+        metric_fn = wrap_class_metric2dict(metric_fn, class_args=class_args)
         super().__init__(
             prefix=prefix,
-            metric_fn=wrap_class_metric2dict(auc, class_args=class_args),
+            metric_fn=metric_fn,
             input_key=input_key,
             output_key=output_key,
-            multiplier=multiplier,
             **kwargs,
         )
 

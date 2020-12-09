@@ -23,9 +23,8 @@ class IouCallback(BatchMetricCallback):
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "iou",
-        eps: float = 1e-7,
-        threshold: float = None,
         activation: str = "Sigmoid",
+        **kwargs,
     ):
         """
         Args:
@@ -46,8 +45,7 @@ class IouCallback(BatchMetricCallback):
             ),
             input_key=input_key,
             output_key=output_key,
-            eps=eps,
-            threshold=threshold,
+            **kwargs,
         )
 
 

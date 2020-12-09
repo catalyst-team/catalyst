@@ -36,8 +36,7 @@ class DiceCallback(BatchMetricCallback):
         output_key: str = "logits",
         prefix: str = "dice",
         activation: str = "Sigmoid",
-        eps: float = 1e-7,
-        threshold: float = None,
+        **kwargs,
     ):
         """
         Args:
@@ -58,8 +57,7 @@ class DiceCallback(BatchMetricCallback):
             ),
             input_key=input_key,
             output_key=output_key,
-            eps=eps,
-            threshold=threshold,
+            **kwargs,
         )
 
 

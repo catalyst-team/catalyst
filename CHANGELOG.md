@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 -  ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
     - readme examples for all supported metrics under ``catalyst.metrics``
     - ``wrap_metric_fn_with_activation`` for model outputs wrapping with activation
-    -  
+    -  extra tests for metrics
 
 ### Changed
 
