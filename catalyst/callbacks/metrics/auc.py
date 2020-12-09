@@ -2,8 +2,10 @@ from typing import List
 
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics.auc import auc
-from catalyst.metrics.functional import wrap_class_metric2dict
-from catalyst.metrics.functional import wrap_metric_fn_with_activation
+from catalyst.metrics.functional import (
+    wrap_class_metric2dict,
+    wrap_metric_fn_with_activation,
+)
 
 
 class AUCCallback(LoaderMetricCallback):
