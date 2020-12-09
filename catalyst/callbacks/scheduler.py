@@ -136,6 +136,7 @@ class SchedulerCallback(ISchedulerCallback):
         momentum_list: List[Union[float, None]],
     ):
         """Update learning rate and momentum in metrics_dict
+        (consider only 0-th param group)
 
         Args:
             metrics_dict: batch_metrics or epoch_metrics
@@ -143,41 +144,25 @@ class SchedulerCallback(ISchedulerCallback):
             momentum_list: momentum for each param group
 
         """
-        if len(lr_list) == 1:
-            lr = lr_list[0]
-            momentum = momentum_list[0]
 
-            lr_key = (
-                f"lr/{self.scheduler_key}"
+        # todo: consider saving lr and momentum for all param groups ?
+        lr = lr_list[0]
+        momentum = momentum_list[0]
+
+        lr_key = (
+            f"lr/{self.scheduler_key}"
+            if self.scheduler_key is not None
+            else "lr"
+        )
+        metrics_dict[lr_key] = lr
+
+        if momentum is not None:
+            momentum_key = (
+                f"momentum/{self.scheduler_key}"
                 if self.scheduler_key is not None
-                else "lr"
+                else "momentum"
             )
-            metrics_dict[lr_key] = lr
-
-            if momentum is not None:
-                momentum_key = (
-                    f"momentum/{self.scheduler_key}"
-                    if self.scheduler_key is not None
-                    else "momentum"
-                )
-                metrics_dict[momentum_key] = momentum
-
-        else:
-            for i, (lr, momentum) in enumerate(zip(lr_list, momentum_list)):
-                lr_key = (
-                    f"lr/{self.scheduler_key}/group_{i}"
-                    if self.scheduler_key is not None
-                    else f"lr/group_{i}"
-                )
-                metrics_dict[lr_key] = lr
-
-                if momentum is not None:
-                    momentum_key = (
-                        f"momentum/{self.scheduler_key}/group_{i}"
-                        if self.scheduler_key is not None
-                        else f"momentum/group_{i}"
-                    )
-                    metrics_dict[momentum_key] = momentum
+            metrics_dict[momentum_key] = momentum
 
     def step_batch(self, runner: "IRunner") -> None:
         """Perform scheduler step and update batch metrics
