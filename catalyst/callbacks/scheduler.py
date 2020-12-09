@@ -144,7 +144,6 @@ class SchedulerCallback(ISchedulerCallback):
             momentum_list: momentum for each param group
 
         """
-
         # todo: consider saving lr and momentum for all param groups ?
         lr = lr_list[0]
         momentum = momentum_list[0]
