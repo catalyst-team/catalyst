@@ -64,6 +64,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - prevented modifying config during the experiment and runner initialization ([#1004](https://github.com/catalyst-team/catalyst/pull/1004))
 - a few test for RecSys MAP computation ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
+- leave batch size the same for default distributed training ([#1023](https://github.com/catalyst-team/catalyst/issues/1023))
 
 
 
