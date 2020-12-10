@@ -26,9 +26,9 @@ class DrawMasksCallback(ILoggerCallback):
 
     def __init__(
         self,
-        pred_mask_key: str,
-        image_key: Optional[str] = None,
-        gt_mask_key: Optional[str] = None,
+        output_key: str,
+        input_image_key: Optional[str] = None,
+        input_mask_key: Optional[str] = None,
         mask2show: Optional[Iterable[int]] = None,
         activation: Optional[str] = "Sigmoid",
         log_name: str = "images",
@@ -38,10 +38,10 @@ class DrawMasksCallback(ILoggerCallback):
         """
 
         Args:
-            pred_mask_key: predicted mask key
-            image_key: input image key. If None mask will be drawn on black
-            background
-            gt_mask_key: ground truth mask key. If None, will not be drawn
+            output_key: predicted mask key
+            input_image_key: input image key. If None mask will be drawn on
+            white background
+            input_mask_key: ground truth mask key. If None, will not be drawn
             mask2show: mask indexes to show, if None all mask will be drawn. By
             this parameter you can change the mask order
             activation: An torch.nn activation applied to the outputs.
@@ -55,9 +55,9 @@ class DrawMasksCallback(ILoggerCallback):
         assert activation in ["none", "Sigmoid", "Softmax2d"]
         super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
 
-        self.image_key = image_key
-        self.gt_mask_key = gt_mask_key
-        self.pred_mask_key = pred_mask_key
+        self.input_image_key = input_image_key
+        self.input_mask_key = input_mask_key
+        self.output_key = output_key
 
         self.mask2show = mask2show
         self.summary_step = summary_step
@@ -162,20 +162,20 @@ class DrawMasksCallback(ILoggerCallback):
             runner: current runner
         """
         if self.step % self.summary_step == 0:
-            pred_mask = runner.output[self.pred_mask_key][0]
+            pred_mask = runner.output[self.output_key][0]
             pred_mask = self.activation(pred_mask)
             pred_mask = utils.detach(pred_mask)
             pred_mask = self._prob2mask(pred_mask)
 
-            if self.gt_mask_key is not None:
-                gt_mask = runner.input[self.gt_mask_key][0]
+            if self.input_mask_key is not None:
+                gt_mask = runner.input[self.input_mask_key][0]
                 gt_mask = utils.detach(gt_mask)
                 gt_mask = self._prob2mask(gt_mask)
             else:
                 gt_mask = None
 
-            if self.image_key is not None:
-                image = runner.input[self.image_key][0].cpu()
+            if self.input_image_key is not None:
+                image = runner.input[self.input_image_key][0].cpu()
                 image = tensor_to_ndimage(image)
             else:
                 # white background
