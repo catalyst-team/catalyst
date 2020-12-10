@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader, Dataset, DistributedSampler
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
 from catalyst.registry import SAMPLER
-from catalyst.utils.distributed import get_rank
+from catalyst.utils.distributed import get_distributed_params, get_rank
 from catalyst.utils.misc import merge_dicts, set_global_seed
 
 
@@ -275,6 +275,15 @@ def get_loaders_from_params(
             num_gpus = max(1, torch.cuda.device_count())
             batch_size *= num_gpus
             num_workers *= num_gpus
+        elif not per_gpu_scaling and distributed:
+            world_size = get_distributed_params().pop("world_size", 1)
+            if batch_size % world_size == 0:
+                batch_size = int(batch_size / world_size)
+            else:
+                raise ValueError(
+                    "For this distributed mode with per_gpu_scaling = False "
+                    "you need to have batch_size divisible by number of GPUs"
+                )
 
         loader_params = {
             "batch_size": batch_size,
