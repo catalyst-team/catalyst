@@ -10,6 +10,7 @@ from catalyst.contrib.nn.modules.common import (
     Normalize,
 )
 from catalyst.contrib.nn.modules.cosface import CosFace, AdaCos
+from catalyst.contrib.nn.modules.curricularface import CurricularFace
 from catalyst.contrib.nn.modules.lama import (
     LamaPooling,
     TemporalLastPooling,
