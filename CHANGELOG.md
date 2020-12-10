@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - CVS Logger ([#1005](https://github.com/catalyst-team/catalyst/pull/1005))
+- DrawMasksCallback ([#999](https://github.com/catalyst-team/catalyst/pull/999))
 - ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
     - a few docs
 - ([#998](https://github.com/catalyst-team/catalyst/pull/998))
