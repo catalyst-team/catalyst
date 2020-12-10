@@ -45,7 +45,7 @@ class DrawMasksCallback(ILoggerCallback):
             mask2show: mask indexes to show, if None all mask will be drawn. By
             this parameter you can change the mask order
             activation: An torch.nn activation applied to the outputs.
-            Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+            Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
             log_name: logging name. If you use several such "callbacks", they
             must have different logging names
             summary_step: logging frequency
@@ -66,7 +66,7 @@ class DrawMasksCallback(ILoggerCallback):
 
         if activation == "Sigmoid":
             self.activation = torch.nn.Sigmoid()
-        elif activation == "Softmax2d":
+        elif activation == "Softmax":
             self.activation = torch.nn.Softmax2d()
         else:
             self.activation = torch.nn.Identity()
