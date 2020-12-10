@@ -10,7 +10,7 @@ from catalyst.metrics.functional import wrap_topk_metric2dict
 
 def test_dcg():
     """
-    Tests for catalyst.utils.metrics.dcg metric.
+    Tests for catalyst.metrics.dcg metric.
     Tests from Stanforf course
     """
     y_true = [2.0, 1.0, 2.0, 0.0]
@@ -53,7 +53,7 @@ def test_dcg():
 
 def test_zero_ndcg():
     """
-    Tests for catalyst.utils.metrics.ndcg metric.
+    Tests for catalyst.metrics.ndcg metric.
     """
     y_pred = [6, 5, 4, 3, 2, 1, 0]
     y_true = [0, 0, 0, 0, 0, 0, 1]
@@ -69,7 +69,7 @@ def test_zero_ndcg():
 
 def test_sample_ndcg():
     """
-    Tests for catalyst.utils.metrics.ndcg metric.
+    Tests for catalyst.metrics.ndcg metric.
     """
     y_pred = [0.5, 0.2, 0.1]
     y_true = [1.0, 0.0, 1.0]

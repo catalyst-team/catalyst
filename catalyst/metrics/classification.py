@@ -27,6 +27,34 @@ def precision_recall_fbeta_support(
 
     Returns:
         tuple of precision, recall, fbeta_score
+
+    Examples:
+        >>> precision_recall_fbeta_support(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([0, 1, 2]),
+        >>>     beta=1,
+        >>> )
+        (
+            tensor([1., 1., 1.]),  # precision per class
+            tensor([1., 1., 1.]),  # recall per class
+            tensor([1., 1., 1.]),  # fbeta per class
+            tensor([1., 1., 1.]),  # support per class
+        )
+        >>> precision_recall_fbeta_support(
+        >>>     outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),
+        >>>     targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),
+        >>>     beta=1,
+        >>> )
+        (
+            tensor([0.5000, 0.5000]),  # precision per class
+            tensor([0.5000, 0.5000]),  # recall per class
+            tensor([0.5000, 0.5000]),  # fbeta per class
+            tensor([4., 4.]),          # support per class
+        )
     """
     tn, fp, fn, tp, support = get_multiclass_statistics(
         outputs=outputs,

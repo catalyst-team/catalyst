@@ -9,16 +9,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+- CVS Logger ([#1005](https://github.com/catalyst-team/catalyst/pull/1005))
 - ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
-    - a few docs 
+    - a few docs
+- ([#998](https://github.com/catalyst-team/catalyst/pull/998))
+    - ``reciprocal_rank`` metric 
+    - unified recsys metrics preprocessing 
+-  ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
+    - readme examples for all supported metrics under ``catalyst.metrics``
+    - ``wrap_metric_fn_with_activation`` for model outputs wrapping with activation
+    -  extra tests for metrics
 
 ### Changed
 
-
+- docs update ([#1000](https://github.com/catalyst-team/catalyst/pull/1000))
+- ``AMPOptimizerCallback`` and ``OptimizerCallback`` were merged ([#1007](https://github.com/catalyst-team/catalyst/pull/1007))
 - ([#1017](https://github.com/catalyst-team/catalyst/pull/1017))
     - fixed bug in `SchedulerCallback`
     - Log LRs and momentums for all param groups, not only for the first one
-
 - ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
     - ``tensorboard, ipython, matplotlib, pandas, scikit-learn`` moved to optional requirements
     - ``PerplexityMetricCallback`` moved to ``catalyst.callbacks`` from ``catalyst.contrib.callbacks``
@@ -29,6 +37,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
     - ``catalyst.utils``, ``catalyst.data.utils`` and ``catalyst.contrib.utils`` restructured
     - ``ReaderSpec`` renamed to ``IReader``
     - ``SupervisedExperiment`` renamed to ``AutoCallbackExperiment``
+- gain functions renamed for ``dcg``/``ndcg`` metrics ([#998](https://github.com/catalyst-team/catalyst/pull/998))
+- ([#1014](https://github.com/catalyst-team/catalyst/pull/1014))
+    - requirements respecification: ``catalyst[cv]``, ``catalyst[dev]``, ``catalyst[log]``, ``catalyst[ml]``, ``catalyst[nlp]``,``catalyst[tune]``
+    - settings respecification
+    - extra tests for settings
+    - contrib refactoring
 
 ### Removed
 
@@ -38,11 +52,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
     - ``catalyst.data.utils``
     - unnecessary ``catalyst.tools.meters``
     - todos for unnecessary docs
+- ([#1014](https://github.com/catalyst-team/catalyst/pull/1014))
+    - transformers-based contrib (too unstable)
+- ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
+    - ClasswiseIouCallback/ClasswiseJaccardCallback as deprecated on (should be refactored in future releases)
+
  
 
 ### Fixed
 
 - prevented modifying config during the experiment and runner initialization ([#1004](https://github.com/catalyst-team/catalyst/pull/1004))
+- a few test for RecSys MAP computation ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
 
 
 
@@ -63,6 +83,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - update Catalyst version to `20.10.1` for tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 - added link to dl-course ([#967](https://github.com/catalyst-team/catalyst/pull/967))
+- ``IRunner`` -> simplified ``IRunner`` ([#984](https://github.com/catalyst-team/catalyst/pull/984))
 - docs were restructured ([#985](https://github.com/catalyst-team/catalyst/pull/985))
 - `set_global_seed` moved from `utils.seed` to `utils.misc` ([#986](https://github.com/catalyst-team/catalyst/pull/986))
 
@@ -177,7 +198,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - kornia augmentations `BatchTransformCallback` ([#862](https://github.com/catalyst-team/catalyst/issues/862))
 - `average_precision` and `mean_average_precision` metrics ([#883](https://github.com/catalyst-team/catalyst/pull/883))
 - `MultiLabelAccuracyCallback`, `AveragePrecisionCallback` and `MeanAveragePrecisionCallback` callbacks ([#883](https://github.com/catalyst-team/catalyst/pull/883))
-- minimal examples for multi-class and milti-label classification ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+- minimal examples for multiclass and multilabel classification ([#883](https://github.com/catalyst-team/catalyst/pull/883))
 - experimental TPU support ([#893](https://github.com/catalyst-team/catalyst/pull/893))
 - add `Imagenette`, `Imagewoof`, and `Imagewang` datasets ([#902](https://github.com/catalyst-team/catalyst/pull/902))
 - `IMetricCallback`, `IBatchMetricCallback`, `ILoaderMetricCallback`, `BatchMetricCallback`, `LoaderMetricCallback` abstractions ([#897](https://github.com/catalyst-team/catalyst/pull/897))

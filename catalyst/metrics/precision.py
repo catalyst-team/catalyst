@@ -26,6 +26,13 @@ def average_precision(
     Returns:
         torch.Tensor: tensor of [K; ] shape,
         with average precision for K classes
+
+    Examples:
+        >>> average_precision(
+        >>>     outputs=torch.Tensor([0.1, 0.4, 0.35, 0.8]),
+        >>>     targets=torch.Tensor([0, 0, 1, 1]),
+        >>> )
+        tensor([0.8333])
     """
     # outputs - [bs; num_classes] with scores
     # targets - [bs; num_classes] with binary labels
@@ -89,6 +96,23 @@ def precision(
 
     Returns:
         Tensor:
+
+    Examples:
+        >>> precision(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([0, 1, 2]),
+        >>>     beta=1,
+        >>> )
+        tensor([1., 1., 1.])
+        >>> precision(
+        >>>     outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),
+        >>>     targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),
+        >>> )
+        tensor([0.5000, 0.5000]
     """
     precision_score, _, _, _, = precision_recall_fbeta_support(
         outputs=outputs,

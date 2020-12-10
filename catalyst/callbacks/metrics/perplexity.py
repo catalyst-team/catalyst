@@ -1,6 +1,14 @@
+from functools import partial
+
 from torch import nn
 
 from catalyst.callbacks.metric import BatchMetricCallback
+
+
+def _perplexity_metric(outputs, targets, criterion):
+    cross_entropy = criterion(outputs, targets).detach()
+    perplexity = 2 ** cross_entropy
+    return perplexity
 
 
 class PerplexityCallback(BatchMetricCallback):
@@ -16,6 +24,7 @@ class PerplexityCallback(BatchMetricCallback):
         output_key: str = "logits",
         prefix: str = "perplexity",
         ignore_index: int = None,
+        **kwargs,
     ):
         """
         Args:
@@ -29,28 +38,17 @@ class PerplexityCallback(BatchMetricCallback):
         self.cross_entropy_loss = nn.CrossEntropyLoss(
             ignore_index=self.ignore_index
         )
+        metric_fn = partial(
+            _perplexity_metric, criterion=self.cross_entropy_loss
+        )
+
         super().__init__(
-            metric_fn=self.metric_fn,
+            metric_fn=metric_fn,
             input_key=input_key,
             output_key=output_key,
             prefix=prefix,
+            **kwargs,
         )
-
-    def metric_fn(self, outputs, targets):
-        """Calculate perplexity
-
-        Args:
-            outputs: model output
-            targets: model targets
-
-        Returns:
-            computed perplexity metric
-        """
-        cross_entropy = (
-            self.cross_entropy_loss(outputs, targets).detach().cpu()
-        )
-        perplexity = 2 ** cross_entropy
-        return perplexity.item()
 
 
 # backward compatibility
