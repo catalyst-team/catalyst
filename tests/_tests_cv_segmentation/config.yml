@@ -80,9 +80,9 @@ stages:
 
       visualise:
         callback: DrawMasksCallback
-        image_key: "image"
-        gt_mask_key: "mask"
-        pred_mask_key: "logits"
+        input_image_key: "image"
+        input_mask_key: "mask"
+        output_key: "logits"
         summary_step: 300
 
       saver:
