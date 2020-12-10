@@ -205,7 +205,7 @@ def get_loaders_from_params(
         drop_last: ``drop_last`` parameter
             from ``torch.utils.data.DataLoader``
         per_gpu_scaling: boolean flag,
-            if ``True``, uses ``batch_size=batch_size*num_available_gpus``
+            if ``True``, scales batch_size in proportion to the number of GPUs
         loaders_params (Dict[str, Any]): additional loaders parameters
         samplers_params (Dict[str, Any]): additional sampler parameters
         initial_seed: initial seed for ``torch.utils.data.DataLoader``

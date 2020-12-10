@@ -41,7 +41,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     batch_size: 1  # KEYWORD, размер батча для всех стейджей
     num_workers: 1  # KEYWORD, количество параллельных процессов для DataLoader
     drop_last: False  # KEYWORD, параметр для DataLoader (по умолчанию False)
-    per_gpu_scaling: False  # KEYWORD, если True и режим работы не distributed, то увеличивает батчсайз и количество воркеров пропорционально количиству видеокарт
+    per_gpu_scaling: False  # KEYWORD, если True, то увеличивает батчсайз и количество воркеров пропорционально количиству видеокарт (для distributed увеличивает только батчсайз)
     loaders_params:  # KEYWORD, параметры для лоадеров, опционально
       # Например
       train:
