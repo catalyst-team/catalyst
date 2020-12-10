@@ -813,7 +813,7 @@ from <code class="docutils literal notranslate"><span class="pre">torch.utils.da
 <li><p><strong>drop_last</strong> – <code class="docutils literal notranslate"><span class="pre">drop_last</span></code> parameter
 from <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code></p></li>
 <li><p><strong>per_gpu_scaling</strong> – boolean flag,
-if <code class="docutils literal notranslate"><span class="pre">True</span></code>, uses <code class="docutils literal notranslate"><span class="pre">batch_size=batch_size*num_available_gpus</span></code></p></li>
+if <code class="docutils literal notranslate"><span class="pre">True</span></code>, scales batch_size in proportion to the number of GPUs</p></li>
 <li><p><strong>loaders_params</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – additional loaders parameters</p></li>
 <li><p><strong>samplers_params</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – additional sampler parameters</p></li>
 <li><p><strong>initial_seed</strong> – initial seed for <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
