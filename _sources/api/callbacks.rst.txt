@@ -262,6 +262,13 @@ InferMaskCallback
     :undoc-members:
     :show-inheritance:
 
+DrawMasksCallback
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.callbacks.draw_masks_callback
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 MixupCallback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.callbacks.mixup_callback
