@@ -16,7 +16,10 @@ assignees: Scitator, bagxi, Ditwoo
 
 
 ### Proposal
-<!-- A clear and concise description of what you want to happen. -->
+<!-- 
+A clear and concise description of what you want to happen.
+You could use minimal examples - https://github.com/catalyst-team/catalyst#minimal-examples. 
+-->
 
 
 ### Alternatives

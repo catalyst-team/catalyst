@@ -21,11 +21,11 @@ Steps to reproduce the behavior:
 
 
 #### Code sample
-<!-- Ideally attach a minimal code sample to reproduce the decried issue. 
-Minimal means having the shortest code but still preserving the bug. -->
-
-Use minimal examples [here](https://github.com/catalyst-team/catalyst#minimal-examples).
-
+<!-- 
+Ideally attach a minimal code sample to reproduce the decried issue. 
+Minimal means having the shortest code but still preserving the bug. 
+You could use minimal examples - https://github.com/catalyst-team/catalyst#minimal-examples.
+-->
 
 #### Screenshots
 <!-- If applicable, add screenshots to help explain your problem.  -->
