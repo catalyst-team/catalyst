@@ -27,34 +27,26 @@ def iou(
         IoU (Jaccard) score
 
     Examples:
+        >>> size = 4
+        >>> half_size = size // 2
+        >>> shape = (1, 1, size, size)
+        >>> empty = torch.zeros(shape)
+        >>> full = torch.ones(shape)
+        >>> left = torch.ones(shape)
+        >>> left[:, :, :, half_size:] = 0
+        >>> right = torch.ones(shape)
+        >>> right[:, :, :, :half_size] = 0
+        >>> top_left = torch.zeros(shape)
+        >>> top_left[:, :, :half_size, :half_size] = 1
+        >>> outputs = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
         >>> iou(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
-        >>>     ]),
+        >>>     outputs=outputs,
+        >>>     targets=targets,
+        >>>     class_dim=1,
         >>>     threshold=0.5,
         >>> )
-        tensor(1.0)
-        >>> iou(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 0],
-        >>>     ]),
-        >>>     threshold=0.5,
-        >>> )
-        tensor(0.6667)
+        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.66666])
     """
     if threshold is not None:
         outputs = (outputs > threshold).float()
