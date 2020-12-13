@@ -3,11 +3,7 @@ from catalyst.metrics import mrr
 
 
 class MRRCallback(MetricCallback):
-    """Calculates the AUC  per class for each loader.
-
-    .. note::
-        Currently, supports binary and multilabel cases.
-    """
+    """Calculates the MRR."""
 
     def __init__(
         self,
@@ -24,6 +20,11 @@ class MRRCallback(MetricCallback):
             output_key (str): output key to use for mrr calculation;
                 specifies our ``y_pred``
             prefix (str): name to display for mrr when printing
+            **kwargs: key-value params to pass to the metric
+
+        .. note::
+            For `**kwargs` info, please follow
+            `catalyst.metrics.mrr.mrr` docs
 
         """
         super().__init__(

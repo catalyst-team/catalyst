@@ -11,7 +11,6 @@ from catalyst.metrics.functional import (
 
 class AccuracyCallback(BatchMetricCallback):
     """Accuracy metric callback.
-
     Computes multiclass accuracy@topk for the specified values of `topk`.
 
     .. note::
@@ -42,6 +41,11 @@ class AccuracyCallback(BatchMetricCallback):
                 [1, 3, 5] - accuracy at 1, 3 and 5
             num_classes: number of classes to calculate ``topk_args``
                 if ``accuracy_args`` is None
+            **kwargs: key-value params to pass to the metric
+
+        .. note::
+            For `**kwargs` info, please follow
+            `catalyst.metrics.accuracy.accuracy` docs
         """
         topk_args = (
             topk_args or accuracy_args or get_default_topk_args(num_classes)
@@ -72,6 +76,7 @@ class MultiLabelAccuracyCallback(BatchMetricCallback):
         prefix: str = "multilabel_accuracy",
         activation: str = "Sigmoid",
         threshold: float = None,
+        **kwargs,
     ):
         """
         Args:
@@ -80,9 +85,14 @@ class MultiLabelAccuracyCallback(BatchMetricCallback):
             output_key: output key to use for accuracy calculation;
                 specifies our `y_pred`
             prefix: key for the metric's name
-            threshold: threshold for for model output
             activation: An torch.nn activation applied to the outputs.
                 Must be one of ``"none"``, ``"Sigmoid"``, or ``"Softmax"``
+            threshold: threshold for for model output
+            **kwargs: key-value params to pass to the metric
+
+        .. note::
+            For `**kwargs` info, please follow
+            `catalyst.metrics.accuracy.multilabel_accuracy` docs
         """
         super().__init__(
             prefix=prefix,
@@ -92,6 +102,7 @@ class MultiLabelAccuracyCallback(BatchMetricCallback):
             input_key=input_key,
             output_key=output_key,
             threshold=threshold,
+            **kwargs,
         )
 
 
