@@ -2,6 +2,7 @@
 # @TODO: code formatting issue for 20.07 release
 from functools import partial
 
+import torch
 from torch import nn
 
 from catalyst.metrics.functional import wrap_metric_fn_with_activation
@@ -35,7 +36,8 @@ class IoULoss(nn.Module):
 
     def forward(self, outputs, targets):
         """@TODO: Docs. Contribution is welcome."""
-        iou = self.loss_fn(outputs, targets)
+        per_class_iou = self.loss_fn(outputs, targets)  # [bs; num_classes]
+        iou = torch.mean(per_class_iou)
         return 1 - iou
 
 
