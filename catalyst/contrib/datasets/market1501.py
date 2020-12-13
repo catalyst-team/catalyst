@@ -6,7 +6,7 @@ import numpy as np
 import torch
 
 from catalyst.data import MetricLearningTrainDataset, QueryGalleryDataset
-from catalyst.data.cv.reader import imread
+from catalyst.contrib.utils.cv import imread
 
 
 class Market1501MLDataset(MetricLearningTrainDataset):
