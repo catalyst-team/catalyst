@@ -40,7 +40,7 @@ experiment:
   _target_: catalyst.dl.HydraConfigExperiment
 
 runner:
-  _target_: catalyst.dl.HydraSupervisedRunner
+  _target_: catalyst.dl.MultiSupervisedRunner
   model: null
   device: null
   models_keys:
