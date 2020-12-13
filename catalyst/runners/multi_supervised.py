@@ -3,22 +3,22 @@ import logging
 
 import torch
 
-from catalyst.experiments.hydra_config import HydraConfigExperiment
+from catalyst.experiments.auto import AutoCallbackExperiment
 from catalyst.runners.runner import Runner
 from catalyst.typing import Device, RunnerModel
 
 logger = logging.getLogger(__name__)
 
 
-class HydraSupervisedRunner(Runner):
-    """Runner for experiments with supervised model."""
+class MultiSupervisedRunner(Runner):
+    """Runner for experiments with supervised models."""
 
     def __init__(
         self,
         model: RunnerModel = None,
         device: Device = None,
         models_keys: Mapping[str, Any] = None,
-        experiment_fn: Callable = HydraConfigExperiment,
+        experiment_fn: Callable = AutoCallbackExperiment,
     ):
         """
 
@@ -196,4 +196,4 @@ class HydraSupervisedRunner(Runner):
         return output
 
 
-__all__ = ["HydraSupervisedRunner"]
+__all__ = ["MultiSupervisedRunner"]
