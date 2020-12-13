@@ -1,26 +1,29 @@
+from functools import partial
+
 import numpy as np
 
 import torch
 
 
-# @TODO:
-# - make it work in "per class" mode
-# - add extra tests
 def dice(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    eps: float = 1e-7,
+    class_dim: int = 1,
     threshold: float = None,
-) -> float:
+    eps: float = 1e-7,
+) -> torch.Tensor:
     """Computes the dice score.
 
     Args:
-        outputs:  a list of predicted elements
-            with shape [batch_size; num_classes; ...]
-        targets: a list of elements that are to be predicted
-            with shape [batch_size; num_classes; ...]
-        eps: epsilon
+        outputs: [N; K; ...] tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets:  binary [N; K; ...] tensort that encodes which of the K
+            classes are associated with the N-th input
+        class_dim: indicates class dimention (K) for
+            ``outputs`` and ``targets`` tensors (default = 1)
         threshold: threshold for outputs binarization
+        eps: epsilon to avoid zero division
 
     Returns:
         Dice score
@@ -58,8 +61,20 @@ def dice(
     if threshold is not None:
         outputs = (outputs > threshold).float()
 
-    intersection = torch.sum(targets * outputs)
-    union = torch.sum(targets) + torch.sum(outputs)
+    num_dims = len(outputs.shape)
+    assert num_dims > 2, "shape mismatch, please check the docs for more info"
+    assert (
+        outputs.shape == targets.shape
+    ), "shape mismatch, please check the docs for more info"
+    dims = list(range(num_dims))
+    # support negative index
+    if class_dim < 0:
+        class_dim = num_dims + class_dim
+    dims.pop(class_dim)
+    sum_fn = partial(torch.sum, dim=dims)
+
+    intersection = sum_fn(targets * outputs)
+    union = sum_fn(targets) + sum_fn(outputs)
     # this looks a bit awkward but `eps * (union == 0)` term
     # makes sure that if I and U are both 0, than Dice == 1
     # and if U != 0 and I == 0 the eps term in numerator is zeroed out
