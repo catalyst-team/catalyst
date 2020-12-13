@@ -11,6 +11,7 @@ from typing import (
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import logging
+import warnings
 
 import numpy as np
 
@@ -240,10 +241,11 @@ class ILoaderMetricCallback(IMetricCallback):
 
     def _check_completeness(self) -> None:
         """Check if callback allocated all the data from loader"""
-        assert self._cur_idx == self._storage_size, (
-            f"An error occurred during the accumulation process: expected "
-            f"to get {self._storage_size} elements, got {self._cur_idx}."
-        )
+        if self._cur_idx != self._storage_size:
+            warnings.warn(
+                f"Something wrong with accumulation process: expected "
+                f"to get {self._storage_size} elements, got {self._cur_idx}."
+            )
 
     def on_loader_end(self, runner: "IRunner"):
         """Computes loader-based metric.
@@ -263,7 +265,7 @@ class ILoaderMetricCallback(IMetricCallback):
             else input
         )
         output = (
-            {self.output: output["_data"]}
+            {self.output_key: output["_data"]}
             if list(output.keys()) == ["_data"]
             else output
         )
