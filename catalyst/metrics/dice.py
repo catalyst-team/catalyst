@@ -79,7 +79,9 @@ def dice(
     # makes sure that if I and U are both 0, than Dice == 1
     # and if U != 0 and I == 0 the eps term in numerator is zeroed out
     # i.e. (0 + eps) / (U - 0 + eps) doesn't happen
-    dice_score = (2 * intersection + eps * (union == 0)) / (union + eps)
+    dice_score = (2 * intersection + eps * (union == 0).float()) / (
+        union + eps
+    )
 
     return dice_score
 

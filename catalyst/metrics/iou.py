@@ -77,7 +77,7 @@ def iou(
     # makes sure that if I and U are both 0, than IoU == 1
     # and if U != 0 and I == 0 the eps term in numerator is zeroed out
     # i.e. (0 + eps) / (U - 0 + eps) doesn't happen
-    iou_score = (intersection + eps * (union == 0)) / (
+    iou_score = (intersection + eps * (union == 0).float()) / (
         union - intersection + eps
     )
 
