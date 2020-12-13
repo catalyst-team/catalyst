@@ -44,6 +44,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
     - settings respecification
     - extra tests for settings
     - contrib refactoring
+- iou and dice metrics moved to per-class computation ([#1031](https://github.com/catalyst-team/catalyst/pull/1031))
 
 ### Removed
 

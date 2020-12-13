@@ -33,6 +33,11 @@ class AveragePrecisionCallback(LoaderMetricCallback):
                 Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
+            **kwargs: key-value params to pass to the metric
+
+        .. note::
+            For `**kwargs` info, please follow
+            `catalyst.metrics.precision.average_precision` docs
         """
         metric_fn = wrap_metric_fn_with_activation(
             metric_fn=average_precision, activation=activation

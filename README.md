@@ -161,10 +161,12 @@ pip install -U catalyst
 <p>
 
 ```bash
-pip install catalyst[cv]         # installs CV-based catalyst
-pip install catalyst[nlp]        # installs NLP-based catalyst
+pip install catalyst[ml]         # installs ML-based Catalyst
+pip install catalyst[cv]         # installs CV-based Catalyst
+pip install catalyst[nlp]        # installs NLP-based Catalyst
+pip install catalyst[tune]       # installs Catalyst+Optuna
 pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
-# and master version installation
+# master version installation
 pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 ```
 </p>

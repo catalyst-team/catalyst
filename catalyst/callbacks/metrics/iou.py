@@ -9,19 +9,7 @@ from catalyst.metrics.iou import iou
 
 
 class IouCallback(BatchMetricCallback):
-    """IoU (Jaccard) metric callback.
-
-    Args:
-        input_key: input key to use for iou calculation
-            specifies our ``y_true``
-        output_key: output key to use for iou calculation;
-            specifies our ``y_pred``
-        prefix: key to store in logs
-        eps: epsilon to avoid zero division
-        threshold: threshold for outputs binarization
-        activation: An torch.nn activation applied to the outputs.
-            Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
-    """
+    """IoU (Jaccard) metric callback."""
 
     def __init__(
         self,
@@ -45,6 +33,11 @@ class IouCallback(BatchMetricCallback):
                 Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
+            **kwargs: key-value params to pass to the metric
+
+        .. note::
+            For `**kwargs` info, please follow
+            `catalyst.metrics.iou.iou` docs
         """
         metric_fn = wrap_metric_fn_with_activation(
             metric_fn=iou, activation=activation
