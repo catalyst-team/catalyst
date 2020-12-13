@@ -82,6 +82,10 @@ class HydraSupervisedRunner(Runner):
             else:
                 raise NotImplementedError()
 
+    def _prepare_inner_state(self, *args, **kwargs):
+        logdir = None if self.experiment is None else self.experiment.logdir
+        super()._prepare_inner_state(*args, logdir=logdir, **kwargs)
+
     def _handle_device(self, batch: Mapping[str, Any]):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 2
