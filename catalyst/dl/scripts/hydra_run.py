@@ -5,10 +5,13 @@ from omegaconf import DictConfig
 
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.hydra_config import prepare_config
-from catalyst.utils.hydra_scripts import distributed_cmd_run
-from catalyst.utils.hydra_sys import dump_environment
 from catalyst.utils.misc import set_global_seed
-from catalyst.utils.scripts import dump_code, import_module
+from catalyst.utils.scripts import (
+    distributed_cmd_run,
+    dump_code,
+    import_module,
+)
+from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import prepare_cudnn
 
 logger = logging.getLogger(__name__)

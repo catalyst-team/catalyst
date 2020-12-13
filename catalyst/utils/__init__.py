@@ -127,11 +127,5 @@ if IS_HYDRA_AVAILABLE:
     from catalyst.utils.hydra_config import (
         prepare_config as hydra_prepare_config,
     )
-    from catalyst.utils.hydra_scripts import (
-        distributed_cmd_run as hydra_distributed_cmd_run,
-    )
-    from catalyst.utils.hydra_sys import (
-        dump_environment as hydra_dump_environment,
-    )
 
 from catalyst.contrib.utils import *
