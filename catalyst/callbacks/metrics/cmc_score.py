@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, TYPE_CHECKING, Union
+from typing import Dict, Iterable, TYPE_CHECKING
 from collections import defaultdict
 
 import torch
@@ -60,14 +60,12 @@ class CMCScoreCallback(LoaderMetricCallback):
             metric_fn=cmc_score,
             prefix=prefix,
         )
-        self.embedding_key = embeddings_key
-        self.label_key = labels_key
+        self.embeddings_key = embeddings_key
+        self.labels_key = labels_key
         self.is_query_key = is_query_key
         self.topk_args = topk_args
 
-    def _compute_metric(
-        self, output: Dict, input: Dict
-    ) -> Dict[str, float]:
+    def _compute_metric(self, output: Dict, input: Dict) -> Dict[str, float]:
         """
         Prepare outputs and compute CMC score for valid loader.
 
@@ -81,11 +79,11 @@ class CMCScoreCallback(LoaderMetricCallback):
         is_query = input[self.is_query_key]
         is_query = is_query.type(TORCH_BOOL)
 
-        query_labels = input[self.label_key][is_query]
-        gallery_labels = input[self.label_key][~is_query]
+        query_labels = input[self.labels_key][is_query]
+        gallery_labels = input[self.labels_key][~is_query]
 
-        query_embeddings = output[self.embedding_key][is_query]
-        gallery_embeddings = output[self.embedding_key][~is_query]
+        query_embeddings = output[self.embeddings_key][is_query]
+        gallery_embeddings = output[self.embeddings_key][~is_query]
 
         conformity_matrix = (
             gallery_labels == query_labels.reshape(-1, 1)
@@ -158,9 +156,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
         self.is_query_key = is_query_key
         self.topk_args = topk_args
 
-    def _compute_metric(
-        self, output: Dict, input: Dict
-    ) -> Dict[str, float]:
+    def _compute_metric(self, output: Dict, input: Dict) -> Dict[str, float]:
         """
         Prepare outputs and compute CMC score for valid loader.
 
