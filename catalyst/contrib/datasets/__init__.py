@@ -8,6 +8,10 @@ from catalyst.contrib.datasets.mnist import (
     MnistQGDataset,
     MNIST,
 )
+from catalyst.contrib.datasets.market1501 import (
+    Market1501MLDataset,
+    Market1501QGDataset,
+)
 
 from catalyst.contrib.datasets.movielens import MovieLens
 
