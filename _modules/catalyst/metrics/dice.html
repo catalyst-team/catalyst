@@ -190,15 +190,10 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&amp;sk=2aff824412e2f653587a30cd853b030c">Catalyst 102 — Core Trinity</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification / Segmentation</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AE / VAE</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP / DDP / TPU</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Core</span></p>
@@ -317,73 +312,82 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.metrics.dice</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
 
-<span class="c1"># @TODO:</span>
-<span class="c1"># - make it work in &quot;per class&quot; mode</span>
-<span class="c1"># - add extra tests</span>
 <div class="viewcode-block" id="dice"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.dice.dice">[docs]</a><span class="k">def</span> <span class="nf">dice</span><span class="p">(</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
     <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
-    <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">,</span>
+    <span class="n">class_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
     <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-7</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Computes the dice score.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        outputs:  a list of predicted elements</span>
-<span class="sd">            with shape [batch_size; num_classes; ...]</span>
-<span class="sd">        targets: a list of elements that are to be predicted</span>
-<span class="sd">            with shape [batch_size; num_classes; ...]</span>
-<span class="sd">        eps: epsilon</span>
+<span class="sd">        outputs: [N; K; ...] tensor that for each of the N examples</span>
+<span class="sd">            indicates the probability of the example belonging to each of</span>
+<span class="sd">            the K classes, according to the model.</span>
+<span class="sd">        targets:  binary [N; K; ...] tensort that encodes which of the K</span>
+<span class="sd">            classes are associated with the N-th input</span>
+<span class="sd">        class_dim: indicates class dimention (K) for</span>
+<span class="sd">            ``outputs`` and ``targets`` tensors (default = 1)</span>
 <span class="sd">        threshold: threshold for outputs binarization</span>
+<span class="sd">        eps: epsilon to avoid zero division</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Dice score</span>
 
 <span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; size = 4</span>
+<span class="sd">        &gt;&gt;&gt; half_size = size // 2</span>
+<span class="sd">        &gt;&gt;&gt; shape = (1, 1, size, size)</span>
+<span class="sd">        &gt;&gt;&gt; empty = torch.zeros(shape)</span>
+<span class="sd">        &gt;&gt;&gt; full = torch.ones(shape)</span>
+<span class="sd">        &gt;&gt;&gt; left = torch.ones(shape)</span>
+<span class="sd">        &gt;&gt;&gt; left[:, :, :, half_size:] = 0</span>
+<span class="sd">        &gt;&gt;&gt; right = torch.ones(shape)</span>
+<span class="sd">        &gt;&gt;&gt; right[:, :, :, :half_size] = 0</span>
+<span class="sd">        &gt;&gt;&gt; top_left = torch.zeros(shape)</span>
+<span class="sd">        &gt;&gt;&gt; top_left[:, :, :half_size, :half_size] = 1</span>
+<span class="sd">        &gt;&gt;&gt; pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)</span>
+<span class="sd">        &gt;&gt;&gt; targets = torch.cat([full, right, empty, full, left, left], dim=1)</span>
 <span class="sd">        &gt;&gt;&gt; dice(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
+<span class="sd">        &gt;&gt;&gt;     outputs=pred,</span>
+<span class="sd">        &gt;&gt;&gt;     targets=targets,</span>
+<span class="sd">        &gt;&gt;&gt;     class_dim=1,</span>
 <span class="sd">        &gt;&gt;&gt;     threshold=0.5,</span>
 <span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor(1.0)</span>
-<span class="sd">        &gt;&gt;&gt; dice(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 0, 0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     threshold=0.5,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor(0.8000)</span>
+<span class="sd">        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.66666])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">threshold</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">outputs</span> <span class="o">=</span> <span class="p">(</span><span class="n">outputs</span> <span class="o">&gt;</span> <span class="n">threshold</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
 
-    <span class="n">intersection</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">targets</span> <span class="o">*</span> <span class="n">outputs</span><span class="p">)</span>
-    <span class="n">union</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">+</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
+    <span class="n">num_dims</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">num_dims</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;shape mismatch, please check the docs for more info&quot;</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="n">outputs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">targets</span><span class="o">.</span><span class="n">shape</span>
+    <span class="p">),</span> <span class="s2">&quot;shape mismatch, please check the docs for more info&quot;</span>
+    <span class="n">dims</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_dims</span><span class="p">))</span>
+    <span class="c1"># support negative index</span>
+    <span class="k">if</span> <span class="n">class_dim</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">class_dim</span> <span class="o">=</span> <span class="n">num_dims</span> <span class="o">+</span> <span class="n">class_dim</span>
+    <span class="n">dims</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">class_dim</span><span class="p">)</span>
+    <span class="n">sum_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dims</span><span class="p">)</span>
+
+    <span class="n">intersection</span> <span class="o">=</span> <span class="n">sum_fn</span><span class="p">(</span><span class="n">targets</span> <span class="o">*</span> <span class="n">outputs</span><span class="p">)</span>
+    <span class="n">union</span> <span class="o">=</span> <span class="n">sum_fn</span><span class="p">(</span><span class="n">targets</span><span class="p">)</span> <span class="o">+</span> <span class="n">sum_fn</span><span class="p">(</span><span class="n">outputs</span><span class="p">)</span>
     <span class="c1"># this looks a bit awkward but `eps * (union == 0)` term</span>
     <span class="c1"># makes sure that if I and U are both 0, than Dice == 1</span>
     <span class="c1"># and if U != 0 and I == 0 the eps term in numerator is zeroed out</span>
     <span class="c1"># i.e. (0 + eps) / (U - 0 + eps) doesn&#39;t happen</span>
-    <span class="n">dice_score</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">intersection</span> <span class="o">+</span> <span class="n">eps</span> <span class="o">*</span> <span class="p">(</span><span class="n">union</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">union</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span>
+    <span class="n">dice_score</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">intersection</span> <span class="o">+</span> <span class="n">eps</span> <span class="o">*</span> <span class="p">(</span><span class="n">union</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">union</span> <span class="o">+</span> <span class="n">eps</span>
+    <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">dice_score</span></div>
 

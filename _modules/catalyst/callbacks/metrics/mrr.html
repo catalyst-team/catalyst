@@ -190,15 +190,10 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&amp;sk=2aff824412e2f653587a30cd853b030c">Catalyst 102 — Core Trinity</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification / Segmentation</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AE / VAE</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP / DDP / TPU</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Core</span></p>
@@ -322,11 +317,7 @@
 
 
 <div class="viewcode-block" id="MRRCallback"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.callbacks.metrics.mrr.MRRCallback">[docs]</a><span class="k">class</span> <span class="nc">MRRCallback</span><span class="p">(</span><span class="n">MetricCallback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Calculates the AUC  per class for each loader.</span>
-
-<span class="sd">    .. note::</span>
-<span class="sd">        Currently, supports binary and multilabel cases.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Calculates the MRR.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MRRCallback.__init__"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.callbacks.metrics.mrr.MRRCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -343,6 +334,11 @@
 <span class="sd">            output_key (str): output key to use for mrr calculation;</span>
 <span class="sd">                specifies our ``y_pred``</span>
 <span class="sd">            prefix (str): name to display for mrr when printing</span>
+<span class="sd">            **kwargs: key-value params to pass to the metric</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            For `**kwargs` info, please follow</span>
+<span class="sd">            `catalyst.metrics.mrr.mrr` docs</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>

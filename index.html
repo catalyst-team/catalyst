@@ -191,15 +191,10 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&amp;sk=2aff824412e2f653587a30cd853b030c">Catalyst 102 — Core Trinity</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification / Segmentation</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AE / VAE</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP / DDP / TPU</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Core</span></p>
@@ -401,17 +396,13 @@ Break the cycle - use the <a class="reference external" href="https://github.com
 <h3>Step by step guide<a class="headerlink" href="#step-by-step-guide" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
 <li><p>Start with <a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a> introduction.</p></li>
-<li><p>Go through <a class="reference external" href="https://github.com/Scitator/kittylyst">Kittylyst</a> if you would like to dive into the core design concepts of the framework.</p></li>
 <li><p>Check <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">minimal examples</a>.</p></li>
 <li><p>Try <a class="reference external" href="https://github.com/catalyst-team/catalyst#tutorials">notebook tutorials with Google Colab</a>.</p></li>
 <li><p>Read <a class="reference external" href="https://github.com/catalyst-team/catalyst#blogposts">blogposts</a> with use-cases and guides.</p></li>
 <li><p>Learn machine learning with our <a class="reference external" href="https://github.com/catalyst-team/dl-course">“Deep Learning with Catalyst” course</a>.</p></li>
-<li><p>Or go directly to advanced  <a class="reference external" href="https://github.com/catalyst-team/classification">classification</a>, <a class="reference external" href="https://github.com/catalyst-team/detection">detection</a> and <a class="reference external" href="https://github.com/catalyst-team/segmentation">segmentation</a> pipelines.</p></li>
-<li><p>Want more? See <a class="reference external" href="https://github.com/catalyst-team/alchemy">Alchemy</a> and <a class="reference external" href="https://github.com/catalyst-team/reaction">Reaction</a> packages.</p></li>
-<li><p>RL fan? Please follow <a class="reference external" href="https://github.com/catalyst-team/catalyst-rl">Catalyst.RL repo</a>.</p></li>
 <li><p>If you would like to contribute to the project, follow our <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">contribution guidelines</a>.</p></li>
 <li><p>If you want to support the project, feel free to donate on <a class="reference external" href="https://patreon.com/catalyst_team">patreon page</a> or <a class="reference external" href="https://github.com/catalyst-team/catalyst#user-feedback">write us</a> with your proposals.</p></li>
-<li><p>Finally, do not forget to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for collaboration.</p></li>
+<li><p>And do not forget to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for collaboration.</p></li>
 </ol>
 </div>
 </div>
@@ -428,10 +419,12 @@ and other features without the boilerplate.</p>
 </pre></div>
 </div>
 <p>More specific with additional requirements:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install catalyst<span class="o">[</span>cv<span class="o">]</span>         <span class="c1"># installs CV-based catalyst</span>
-pip install catalyst<span class="o">[</span>nlp<span class="o">]</span>        <span class="c1"># installs NLP-based catalyst</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install catalyst<span class="o">[</span>ml<span class="o">]</span>         <span class="c1"># installs ML-based Catalyst</span>
+pip install catalyst<span class="o">[</span>cv<span class="o">]</span>         <span class="c1"># installs CV-based Catalyst</span>
+pip install catalyst<span class="o">[</span>nlp<span class="o">]</span>        <span class="c1"># installs NLP-based Catalyst</span>
+pip install catalyst<span class="o">[</span>tune<span class="o">]</span>       <span class="c1"># installs Catalyst+Optuna</span>
 pip install catalyst<span class="o">[</span>ecosystem<span class="o">]</span>  <span class="c1"># installs Catalyst.Ecosystem</span>
-<span class="c1"># and master version installation</span>
+<span class="c1"># master version installation</span>
 pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 </pre></div>
 </div>
