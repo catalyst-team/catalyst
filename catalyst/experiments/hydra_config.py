@@ -5,39 +5,21 @@ import logging
 import os
 
 import hydra
-from omegaconf import DictConfig, ListConfig, OmegaConf
+from omegaconf import DictConfig, OmegaConf
 
 import torch
-from torch import nn
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.dataset import Dataset
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data.sampler import Sampler
 
-from catalyst.callbacks.batch_overfit import BatchOverfitCallback
-from catalyst.callbacks.checkpoint import CheckpointCallback
-from catalyst.callbacks.criterion import CriterionCallback
-from catalyst.callbacks.early_stop import CheckRunCallback
-from catalyst.callbacks.exception import ExceptionCallback
-from catalyst.callbacks.logging import (
-    ConsoleLogger,
-    TensorboardLogger,
-    VerboseLogger,
-)
-from catalyst.callbacks.metric import MetricManagerCallback
-from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
-from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
-from catalyst.callbacks.timer import TimerCallback
-from catalyst.callbacks.validation import ValidationManagerCallback
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
-from catalyst.core.functional import check_callback_isinstance
 from catalyst.data.sampler import DistributedSamplerWrapper
+import catalyst.experiments.functional as F
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
-from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import set_global_seed
-from catalyst.utils.torch import any2device, get_device, process_model_params
 
 logger = logging.getLogger(__name__)
 
@@ -134,56 +116,39 @@ class HydraConfigExperiment(IExperiment):
         name: str,
         params: DictConfig,
     ) -> Optimizer:
+        # lr linear scaling
+        lr_scaling_params = params.pop("lr_linear_scaling", None)
+        if lr_scaling_params:
+            assert (
+                "datasets" in self._config.stages[stage]
+            ), "stages config must contain 'datasets' key"
+            assert "train" in self._config.stages[stage]["datasets"], (
+                "datasets config must contain 'train' "
+                "dataset for lr linear scaling"
+            )
+            data_params = dict(self._config.stages[stage]["datasets"]["train"])
+            batch_size = data_params.get("batch_size")
+            per_gpu_scaling = data_params.get("per_gpu_scaling", False)
+            lr, lr_scaling = F.do_lr_linear_scaling(
+                lr_scaling_params=lr_scaling_params,
+                batch_size=batch_size,
+                per_gpu_scaling=per_gpu_scaling,
+            )
+            params["lr"] = lr
+        else:
+            lr_scaling = 1.0
         # getting layer-wise parameters
         layerwise_params = params.pop("layerwise_params", OrderedDict())
         no_bias_weight_decay = params.pop("no_bias_weight_decay", True)
-        # linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf
-        lr_scaling_params = params.pop("lr_linear_scaling", None)
-        if lr_scaling_params:
-            data_params = dict(self._config.stages[stage]["data_params"])
-            batch_size = data_params.get("batch_size")
-            per_gpu_scaling = data_params.get("per_gpu_scaling", False)
-            distributed_rank = get_rank()
-            distributed = distributed_rank > -1
-            if per_gpu_scaling and not distributed:
-                num_gpus = max(1, torch.cuda.device_count())
-                batch_size *= num_gpus
-            base_lr = lr_scaling_params.get("lr")
-            base_batch_size = lr_scaling_params.get("base_batch_size", 256)
-            lr_scaling = batch_size / base_batch_size
-            params["lr"] = base_lr * lr_scaling  # scale default lr
-        else:
-            lr_scaling = 1.0
         # getting model parameters
-        model_keys = params.pop("models", None)
-        if model_keys is None:
-            assert isinstance(
-                models, nn.Module
-            ), "model is key-value, but optimizer has no specified model"
-            model_params = process_model_params(
-                models, layerwise_params, no_bias_weight_decay, lr_scaling
-            )
-        elif isinstance(model_keys, str):
-            model_params = process_model_params(
-                models[model_keys],
-                layerwise_params,
-                no_bias_weight_decay,
-                lr_scaling,
-            )
-        elif isinstance(model_keys, (list, tuple, ListConfig)):
-            model_params = []
-            for model_key_el in model_keys:
-                model_params_el = process_model_params(
-                    models[model_key_el],
-                    layerwise_params,
-                    no_bias_weight_decay,
-                    lr_scaling,
-                )
-                model_params.extend(model_params_el)
-        else:
-            raise ValueError(
-                f"unknown type of model_params {type(model_keys)}"
-            )
+        models_keys = params.pop("models", None)
+        model_params = F.get_model_parameters(
+            models=models,
+            models_keys=models_keys,
+            layerwise_params=layerwise_params,
+            no_bias_weight_decay=no_bias_weight_decay,
+            lr_scaling=lr_scaling,
+        )
         # getting load-from-previous-stage flag
         load_from_previous_stage = params.pop(
             "load_from_previous_stage", False
@@ -195,24 +160,13 @@ class HydraConfigExperiment(IExperiment):
         # load from previous stage
         if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
-            checkpoint = load_checkpoint(checkpoint_path)
-            dict2load = optimizer
-            if name is not None:
-                dict2load = {name: optimizer}
-            unpack_checkpoint(checkpoint, optimizer=dict2load)
-            # move optimizer to device
-            device = get_device()
-            for param in model_params:
-                param = param["params"][0]
-                optimizer_state = optimizer.state[param]
-                for state_key, state_value in optimizer_state.items():
-                    optimizer_state[state_key] = any2device(
-                        state_value, device
-                    )
-            # update optimizer params
-            for key, value in params.items():
-                for optimizer_param_group in optimizer.param_groups:
-                    optimizer_param_group[key] = value
+            optimizer = F.load_optimizer_from_checkpoint(
+                optimizer,
+                checkpoint_path=checkpoint_path,
+                checkpoint_optimizer_key=name,
+                model_parameters=model_params,
+                optimizer_params=params,
+            )
 
         return optimizer
 
@@ -436,37 +390,6 @@ class HydraConfigExperiment(IExperiment):
         callback = callback_class(**params)
         return callback
 
-    @staticmethod
-    def _process_callbacks(
-        callbacks: Dict[str, Callback], stage_index: int = None
-    ) -> None:
-        """
-        Iterate over each of the callbacks and update
-        appropriate parameters required for success
-        run of config experiment.
-
-        Arguments:
-            callbacks (Dict[str, Callback]): finalized order of callbacks.
-            stage_index (int): number of a current stage
-
-        """
-        if stage_index is None:
-            stage_index = -float("inf")
-        for callback in callbacks.values():
-            # NOTE: in experiments with multiple stages need to omit
-            #       loading of a best model state for the first stage
-            #       but for the other stages by default should
-            #       load best state of a model
-            # @TODO: move this logic to ``CheckpointCallback``
-            if isinstance(callback, CheckpointCallback) and stage_index > 0:
-                if callback.load_on_stage_start is None:
-                    callback.load_on_stage_start = "best"
-                if (
-                    isinstance(callback.load_on_stage_start, dict)
-                    and "model" not in callback.load_on_stage_start
-                ):
-                    callback.load_on_stage_start["model"] = "best"
-
     def get_callbacks(self, stage: str) -> Dict[str, Callback]:
         """
         Returns callbacks for a given stage.
@@ -487,64 +410,23 @@ class HydraConfigExperiment(IExperiment):
             for name, callback_params in callbacks_params.items()
         }
 
-        default_callbacks = []
-
-        optimizer_cls = OptimizerCallback
-
-        if self._verbose:
-            default_callbacks.append(("_verbose", None, VerboseLogger))
-        if self._check_time:
-            default_callbacks.append(("_timer", None, TimerCallback))
-        if self._check_run:
-            default_callbacks.append(("_check", None, CheckRunCallback))
-        if self._overfit:
-            default_callbacks.append(("_overfit", None, BatchOverfitCallback))
-
-        if not stage.startswith("infer"):
-            default_callbacks.append(("_metrics", None, MetricManagerCallback))
-            default_callbacks.append(
-                ("_validation", None, ValidationManagerCallback)
-            )
-            default_callbacks.append(("_console", None, ConsoleLogger))
-
-            if self.logdir is not None:
-                default_callbacks.append(("_saver", None, CheckpointCallback))
-                default_callbacks.append(
-                    ("_tensorboard", None, TensorboardLogger)
-                )
-
-            if self._config.stages[stage].get("criterion_params", {}):
-                default_callbacks.append(
-                    ("_criterion", None, CriterionCallback)
-                )
-            if self._config.stages[stage].get("optimizer_params", {}):
-                default_callbacks.append(
-                    ("_optimizer", IOptimizerCallback, optimizer_cls)
-                )
-            if self._config.stages[stage].get("scheduler_params", {}):
-                default_callbacks.append(
-                    ("_scheduler", ISchedulerCallback, SchedulerCallback)
-                )
-
-        default_callbacks.append(("_exception", None, ExceptionCallback))
-
-        for (
-            callback_name,
-            callback_interface,
-            callback_fn,
-        ) in default_callbacks:
-            callback_interface = callback_interface or callback_fn
-            is_already_present = any(
-                check_callback_isinstance(x, callback_interface)
-                for x in callbacks.values()
-            )
-            if not is_already_present:
-                callbacks[callback_name] = callback_fn()
+        callbacks = F.add_default_callbacks(
+            callbacks,
+            verbose=self._verbose,
+            check_time=self._check_time,
+            check_run=self._check_run,
+            overfit=self._overfit,
+            is_infer=stage.startswith("infer"),
+            is_logger=self.logdir is not None,
+            is_criterion=self._config.stages[stage].get("criterions", {}),
+            is_optimizer=self._config.stages[stage].get("optimizers", {}),
+            is_scheduler=self._config.stages[stage].get("schedulers", {}),
+        )
 
         # NOTE: stage should be in self._config.stages
         #       othervise will be raised ValueError
         stage_index = list(self._config.stages.keys()).index(stage)
-        self._process_callbacks(callbacks, stage_index)
+        F.process_callbacks(callbacks, stage_index)
 
         return callbacks
 
