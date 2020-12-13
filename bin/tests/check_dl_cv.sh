@@ -609,7 +609,7 @@ EXPDIR=./tests/_tests_cv_classification_hydra
 LOGDIR=./tests/logs/_tests_cv_classification_hydra
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --hydra \
   --config-dir ${EXPDIR} \
@@ -634,7 +634,7 @@ assert metrics['train.2']['loss'] < 3.3
 """
 
 if [[ "$USE_DDP" != "1" ]]; then
-    PYTHONPATH=./examples:./catalyst:${PYTHONPATH} \
+    PYTHONPATH=./examples:.:${PYTHONPATH} \
       python catalyst/dl/scripts/run.py \
       --hydra \
       --config-dir ${EXPDIR} \
