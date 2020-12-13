@@ -32,7 +32,7 @@ def build_args(parser: ArgumentParser):
         help="path to config/configs",
         metavar="CONFIG_PATH",
         dest="configs",
-        required=not IS_HYDRA_AVAILABLE,
+        required=False,
     )
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)

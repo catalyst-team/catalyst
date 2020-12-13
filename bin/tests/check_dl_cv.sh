@@ -605,6 +605,8 @@ rm -rf ./tests/logs/_tests_cv_segmentation
 
 ################################  pipeline 23  ################################
 echo 'pipeline 23'
+python3 -m pip install hydra-core
+
 EXPDIR=./tests/_tests_cv_classification_hydra
 LOGDIR=./tests/logs/_tests_cv_classification_hydra
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
@@ -657,6 +659,8 @@ assert data.shape == (10000, 10)
 fi
 
 rm -rf ${LOGDIR}
+
+python3 -m pip uninstall -y hydra-core
 
 
 ################################  pipeline 99  ################################
