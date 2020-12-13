@@ -40,10 +40,10 @@ def dice(
         >>> right[:, :, :, :half_size] = 0
         >>> top_left = torch.zeros(shape)
         >>> top_left[:, :, :half_size, :half_size] = 1
-        >>> model = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
         >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
         >>> dice(
-        >>>     outputs=model,
+        >>>     outputs=pred,
         >>>     targets=targets,
         >>>     class_dim=1,
         >>>     threshold=0.5,
