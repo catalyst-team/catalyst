@@ -1,6 +1,3 @@
-"""
-F1 score.
-"""
 from typing import Optional, Union
 
 import torch

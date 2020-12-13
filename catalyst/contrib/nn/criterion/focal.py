@@ -68,7 +68,7 @@ class FocalLossBinary(_Loss):
 
 
 class FocalLossMultiClass(FocalLossBinary):
-    """Compute focal loss for multi-class problem.
+    """Compute focal loss for multiclass problem.
     Ignores targets having -1 label.
 
     It has been proposed in `Focal Loss for Dense Object Detection`_ paper.
@@ -114,7 +114,7 @@ class FocalLossMultiClass(FocalLossBinary):
 
 # @TODO: check
 # class FocalLossMultiLabel(_Loss):
-#     """Compute focal loss for multi-label problem.
+#     """Compute focal loss for multilabel problem.
 #     Ignores targets having -1 label.
 #
 #     It has been proposed in `Focal Loss for Dense Object Detection`_ paper.

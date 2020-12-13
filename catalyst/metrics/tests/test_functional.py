@@ -4,6 +4,7 @@ import pytest
 import torch
 
 from catalyst.metrics.functional import (
+    check_consistent_length,
     get_binary_statistics,
     get_multiclass_statistics,
     get_multilabel_statistics,
@@ -155,3 +156,18 @@ def test_get_multilabel_statistics(
     assert torch.allclose(torch.tensor(fn_true).to(fn), fn)
     assert torch.allclose(torch.tensor(tp_true).to(tp), tp)
     assert torch.allclose(torch.tensor(support_true).to(support), support)
+
+
+@pytest.mark.parametrize(
+    ["outputs", "targets"],
+    [
+        pytest.param(
+            torch.tensor([[4.0, 2.0, 3.0, 1.0], [1.0, 2.0, 3.0, 4.0]]),
+            torch.tensor([[0, 0, 1.0, 1.0, 1.0], [0, 0, 1.0, 1.0, 1.0]]),
+        ),
+    ],
+)
+def test_check_consistent_length(outputs, targets):
+    with pytest.raises(ValueError) as execinfo:
+        check_consistent_length(outputs, targets)
+    assert str(execinfo.value) == "Inconsistent numbers of samples"

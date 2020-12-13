@@ -72,7 +72,7 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
     Keeps track of global true positives, false positives, and false negatives
     for each epoch and calculates precision, recall, and F1-score based on
     those metrics. Currently, this meter works for binary cases only, please
-    use multiple instances of this class for multi-label cases.
+    use multiple instances of this class for multilabel cases.
     """
 
     def __init__(self, threshold=0.5):

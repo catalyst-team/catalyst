@@ -1,37 +1,60 @@
-"""
-Dice metric.
-"""
-
 import numpy as np
 
 import torch
 
-from catalyst.utils.torch import get_activation_fn
 
-
+# @TODO:
+# - make it work in "per class" mode
+# - add extra tests
 def dice(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     eps: float = 1e-7,
     threshold: float = None,
-    activation: str = "Sigmoid",
-):
-    """Computes the dice metric.
+) -> float:
+    """Computes the dice score.
 
     Args:
         outputs:  a list of predicted elements
+            with shape [batch_size; num_classes; ...]
         targets: a list of elements that are to be predicted
+            with shape [batch_size; num_classes; ...]
         eps: epsilon
         threshold: threshold for outputs binarization
-        activation: An torch.nn activation applied to the outputs.
-            Must be one of ["none", "Sigmoid", "Softmax2d"]
 
     Returns:
-        float:  Dice score
-    """
-    activation_fn = get_activation_fn(activation)
-    outputs = activation_fn(outputs)
+        Dice score
 
+    Examples:
+        >>> dice(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor(1.0)
+        >>> dice(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 0],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor(0.8000)
+    """
     if threshold is not None:
         outputs = (outputs > threshold).float()
 
@@ -41,11 +64,12 @@ def dice(
     # makes sure that if I and U are both 0, than Dice == 1
     # and if U != 0 and I == 0 the eps term in numerator is zeroed out
     # i.e. (0 + eps) / (U - 0 + eps) doesn't happen
-    output_dice = (2 * intersection + eps * (union == 0)) / (union + eps)
+    dice_score = (2 * intersection + eps * (union == 0)) / (union + eps)
 
-    return output_dice
+    return dice_score
 
 
+# @TODO: remove
 def calculate_dice(
     true_positives: np.array,
     false_positives: np.array,

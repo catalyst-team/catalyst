@@ -216,7 +216,7 @@ runner.train(
 
 
 <details>
-<summary>ML - multi-class classification</summary>
+<summary>ML - multiclass classification</summary>
 <p>
 
 ```python
@@ -258,7 +258,7 @@ runner.train(
 
 
 <details>
-<summary>ML - multi-label classification</summary>
+<summary>ML - multilabel classification</summary>
 <p>
 
 ```python
@@ -759,7 +759,7 @@ runner.train(
 </details>
 
 <details>
-<summary>ML - multi-class classification (fp16 training version)</summary>
+<summary>ML - multiclass classification (fp16 training version)</summary>
 <p>
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)
@@ -804,7 +804,7 @@ runner.train(
 </details>
 
 <details>
-<summary>ML - multi-class classification (advanced fp16 training version)</summary>
+<summary>ML - multiclass classification (advanced fp16 training version)</summary>
 <p>
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)
@@ -976,7 +976,7 @@ utils.distributed_cmd_run(train)
 </details>
 
 <details>
-<summary>ML - multi-class classification (TPU version)</summary>
+<summary>ML - multiclass classification (TPU version)</summary>
 <p>
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)

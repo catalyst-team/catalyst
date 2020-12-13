@@ -90,9 +90,9 @@ NDCG
     :undoc-members:
     :show-inheritance:
 
-Precision
+DCG
 ------------------------
-.. automodule:: catalyst.metrics.precision
+.. automodule:: catalyst.metrics.dcg
     :members:
     :undoc-members:
     :show-inheritance:

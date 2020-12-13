@@ -1,4 +1,5 @@
 from typing import Callable, Dict, Union
+import copy
 from importlib.util import module_from_spec, spec_from_file_location
 import os
 import pathlib
@@ -56,13 +57,14 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
     Returns:
         Experiment, Runner, Config for Config API usage.
     """
+    copy_config = copy.deepcopy(config)
     if not isinstance(expdir, pathlib.Path):
         expdir = pathlib.Path(expdir)
     m = import_module(expdir)
     experiment_fn = getattr(m, "Experiment", None)
     runner_fn = getattr(m, "Runner", None)
 
-    experiment_params = config.get("experiment_params", {})
+    experiment_params = copy_config.get("experiment_params", {})
     experiment_from_config = experiment_params.pop("experiment", None)
     assert any(
         x is None for x in (experiment_fn, experiment_from_config)
@@ -70,7 +72,7 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
     if experiment_fn is None and experiment_from_config is not None:
         experiment_fn = EXPERIMENTS.get(experiment_from_config)
 
-    runner_params = config.get("runner_params", {})
+    runner_params = copy_config.get("runner_params", {})
     runner_from_config = runner_params.pop("runner", None)
     assert any(
         x is None for x in (runner_fn, runner_from_config)
@@ -78,7 +80,7 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
     if runner_fn is None and runner_from_config is not None:
         runner_fn = RUNNERS.get(runner_from_config)
 
-    experiment = experiment_fn(config)
+    experiment = experiment_fn(copy_config)
     runner = runner_fn(**runner_params)
 
     return experiment, runner, config
