@@ -46,13 +46,22 @@ def _patch_forward(model):
         else tensor
     )
 
-    model.forward = lambda *args, old_fwd=model.forward, input_caster=input_caster_lambda, output_caster=output_caster_lambda, **kwargs: apex.amp._initialize.applier(
-        old_fwd(
-            *apex.amp._initialize.applier(args, input_caster),
-            **apex.amp._initialize.applier(kwargs, input_caster),
-        ),
-        output_caster,
-    )
+    def new_fwd(
+        *args,
+        old_fwd=model.forward,
+        input_caster=input_caster_lambda,
+        output_caster=output_caster_lambda,
+        **kwargs,
+    ):
+        return apex.amp._initialize.applier(
+            old_fwd(
+                *apex.amp._initialize.applier(args, input_caster),
+                **apex.amp._initialize.applier(kwargs, input_caster),
+            ),
+            output_caster,
+        )
+
+    model.forward = new_fwd
     return model
 
 
