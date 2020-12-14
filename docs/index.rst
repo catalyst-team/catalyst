@@ -92,17 +92,13 @@ Getting started
 Step by step guide
 ~~~~~~~~~~~~~~~~~~~~~~
 1. Start with `Catalyst 101 — Accelerated PyTorch`_ introduction.
-2. Go through `Kittylyst`_ if you would like to dive into the core design concepts of the framework.
-3. Check `minimal examples`_.
-4. Try `notebook tutorials with Google Colab`_.
-5. Read `blogposts`_ with use-cases and guides.
-6. Learn machine learning with our `"Deep Learning with Catalyst" course`_.
-7. Or go directly to advanced  `classification`_, `detection`_ and `segmentation`_ pipelines.
-8. Want more? See `Alchemy`_ and `Reaction`_ packages.
-9. RL fan? Please follow `Catalyst.RL repo`_.
-10. If you would like to contribute to the project, follow our `contribution guidelines`_.
-11. If you want to support the project, feel free to donate on `patreon page`_ or `write us`_ with your proposals.
-12. Finally, do not forget to `join our slack`_ for collaboration.
+2. Check `minimal examples`_.
+3. Try `notebook tutorials with Google Colab`_.
+4. Read `blogposts`_ with use-cases and guides.
+5. Learn machine learning with our `"Deep Learning with Catalyst" course`_.
+6. If you would like to contribute to the project, follow our `contribution guidelines`_.
+7. If you want to support the project, feel free to donate on `patreon page`_ or `write us`_ with your proposals.
+8. And do not forget to `join our slack`_ for collaboration.
 
 .. _`Catalyst 101 — Accelerated PyTorch`: https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff
 .. _`Kittylyst`: https://github.com/Scitator/kittylyst
@@ -143,10 +139,12 @@ More specific with additional requirements:
 
 .. code:: bash
 
-    pip install catalyst[cv]         # installs CV-based catalyst
-    pip install catalyst[nlp]        # installs NLP-based catalyst
+    pip install catalyst[ml]         # installs ML-based Catalyst
+    pip install catalyst[cv]         # installs CV-based Catalyst
+    pip install catalyst[nlp]        # installs NLP-based Catalyst
+    pip install catalyst[tune]       # installs Catalyst+Optuna
     pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
-    # and master version installation
+    # master version installation
     pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 
 
@@ -206,22 +204,12 @@ Indices and tables
     Minimal examples <https://github.com/catalyst-team/catalyst#minimal-examples>
     getting_started/migrating_from_other
     Catalyst 101 — Accelerated PyTorch <https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff>
-
+    Catalyst 102 — Core Trinity <https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&sk=2aff824412e2f653587a30cd853b030c>
 
 .. toctree::
     :caption: Tutorials
     :maxdepth: 2
     :hidden:
-
-    ML - Linear Regression <https://github.com/catalyst-team/catalyst#minimal-examples>
-
-    CV - Classification / Segmentation <https://github.com/catalyst-team/catalyst#minimal-examples>
-    CV - AE / VAE <https://github.com/catalyst-team/catalyst#minimal-examples>
-    CV - GAN <https://github.com/catalyst-team/catalyst#minimal-examples>
-
-    Engine - AMP / DDP / TPU <https://github.com/catalyst-team/catalyst#minimal-examples>
-
-    AutoML - Catalyst with Optuna <https://github.com/catalyst-team/catalyst#minimal-examples>
 
     tutorials/ddp
 

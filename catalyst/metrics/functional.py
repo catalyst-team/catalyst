@@ -444,6 +444,7 @@ def wrap_class_metric2dict(
         output = {
             key: value.item() for key, value in zip(output_class_args, output)
         }
+        output[""] = mean_stats
         output["/mean"] = mean_stats
         return output
 

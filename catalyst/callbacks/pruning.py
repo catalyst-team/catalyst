@@ -29,33 +29,6 @@ class PruningCallback(Callback):
 
     This callback is designed to prune network parameters
     during and/or after training.
-
-    Args:
-        pruning_fn: function from torch.nn.utils.prune module
-            or your based on BasePruningMethod. Can be string e.g.
-            `"l1_unstructured"`. See pytorch docs for more details.
-        keys_to_prune: list of strings. Determines
-            which tensor in modules will be pruned.
-        amount: quantity of parameters to prune.
-            If float, should be between 0.0 and 1.0 and
-            represent the fraction of parameters to prune.
-            If int, it represents the absolute number
-            of parameters to prune.
-        prune_on_epoch_end: bool flag determines call or not
-            to call pruning_fn on epoch end.
-        prune_on_stage_end: bool flag determines call or not
-            to call pruning_fn on stage end.
-        remove_reparametrization_on_stage_end: if True then all
-            reparametrization pre-hooks and tensors with mask
-            will be removed on stage end.
-        reinitialize_after_pruning: if True then will reinitialize model
-            after pruning. (Lottery Ticket Hypothesis)
-        layers_to_prune: list of strings - module names to be pruned.
-            If None provided then will try to prune every module in
-            model.
-        dim: if you are using structured pruning method you need
-            to specify dimension.
-        l_norm: if you are using ln_structured you need to specify l_norm.
     """
 
     def __init__(
@@ -71,7 +44,35 @@ class PruningCallback(Callback):
         dim: Optional[int] = None,
         l_norm: Optional[int] = None,
     ) -> None:
-        """Init method for pruning callback"""
+        """Init method for pruning callback
+
+        Args:
+            pruning_fn: function from torch.nn.utils.prune module
+                or your based on BasePruningMethod. Can be string e.g.
+                `"l1_unstructured"`. See pytorch docs for more details.
+            keys_to_prune: list of strings. Determines
+                which tensor in modules will be pruned.
+            amount: quantity of parameters to prune.
+                If float, should be between 0.0 and 1.0 and
+                represent the fraction of parameters to prune.
+                If int, it represents the absolute number
+                of parameters to prune.
+            prune_on_epoch_end: bool flag determines call or not
+                to call pruning_fn on epoch end.
+            prune_on_stage_end: bool flag determines call or not
+                to call pruning_fn on stage end.
+            remove_reparametrization_on_stage_end: if True then all
+                reparametrization pre-hooks and tensors with mask
+                will be removed on stage end.
+            reinitialize_after_pruning: if True then will reinitialize model
+                after pruning. (Lottery Ticket Hypothesis)
+            layers_to_prune: list of strings - module names to be pruned.
+                If None provided then will try to prune every module in
+                model.
+            dim: if you are using structured pruning method you need
+                to specify dimension.
+            l_norm: if you are using ln_structured you need to specify l_norm.
+        """
         super().__init__(CallbackOrder.External)
         if isinstance(pruning_fn, str):
             if pruning_fn not in PRUNING_FN.keys():

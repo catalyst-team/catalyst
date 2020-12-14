@@ -31,6 +31,11 @@ class F1ScoreCallback(BatchMetricCallback):
                 Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
+            **kwargs: key-value params to pass to the metric
+
+        .. note::
+            For `**kwargs` info, please follow
+            `catalyst.metrics.f1_score.fbeta_score` docs
         """
         metric_fn = wrap_metric_fn_with_activation(
             metric_fn=fbeta_score, activation=activation

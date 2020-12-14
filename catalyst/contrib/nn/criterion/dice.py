@@ -36,7 +36,8 @@ class DiceLoss(nn.Module):
         Returns:
             computed loss
         """
-        dice = self.loss_fn(logits, targets)
+        per_class_dice = self.loss_fn(logits, targets)  # [bs; num_classes]
+        dice = torch.mean(per_class_dice)
         return 1 - dice
 
 
