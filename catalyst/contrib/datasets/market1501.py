@@ -5,8 +5,8 @@ import numpy as np
 
 import torch
 
+from catalyst.contrib.utils.cv.image import imread
 from catalyst.data import MetricLearningTrainDataset, QueryGalleryDataset
-from catalyst.utils import imread
 
 
 class Market1501MLDataset(MetricLearningTrainDataset):
@@ -156,7 +156,7 @@ class Market1501QGDataset(QueryGalleryDataset):
         Returns:
             images, their labels and ids of the cameras that made the photos
         """
-        file_names = list(data_dir.glob("*.jpg"))
+        file_names = list(data_dir.glob("[!-]*.jpg"))
         data = (
             torch.from_numpy(
                 np.array([imread(file_name) for file_name in file_names])
