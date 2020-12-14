@@ -31,14 +31,16 @@ def _patch_forward(model):
 
     input_caster_lambda = (
         lambda tensor: tensor.to(
-            apex.amp._amp_state.opt_properties.options["cast_model_type"]
+            apex.amp._amp_state.opt_properties.options[
+                "cast_model_type"
+            ]  # noqa: WPS437
         )
         if tensor.is_floating_point()
         else tensor
     )
     output_caster_lambda = (
         lambda tensor: tensor.to(
-            apex.amp._amp_state.opt_properties.options.get(
+            apex.amp._amp_state.opt_properties.options.get(  # noqa: WPS437
                 "cast_model_outputs", torch.float32
             )
         )
@@ -53,10 +55,14 @@ def _patch_forward(model):
         output_caster=output_caster_lambda,
         **kwargs,
     ):
-        return apex.amp._initialize.applier(
+        return apex.amp._initialize.applier(  # noqa: WPS437
             old_fwd(
-                *apex.amp._initialize.applier(args, input_caster),
-                **apex.amp._initialize.applier(kwargs, input_caster),
+                *apex.amp._initialize.applier(
+                    args, input_caster
+                ),  # noqa: WPS437
+                **apex.amp._initialize.applier(
+                    kwargs, input_caster
+                ),  # noqa: WPS437
             ),
             output_caster,
         )
