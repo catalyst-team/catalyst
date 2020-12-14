@@ -1,4 +1,4 @@
-from device import DeviceEngine
+from catalyst.engines.device import DeviceEngine
 
 import torch.nn as nn
 
