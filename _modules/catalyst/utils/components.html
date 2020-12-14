@@ -320,7 +320,14 @@
 <span class="kn">import</span> <span class="nn">torch.distributed</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">IS_XLA_AVAILABLE</span>
-<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Device</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
+<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Criterion</span><span class="p">,</span>
+    <span class="n">Device</span><span class="p">,</span>
+    <span class="n">Model</span><span class="p">,</span>
+    <span class="n">Optimizer</span><span class="p">,</span>
+    <span class="n">RunnerModel</span><span class="p">,</span>
+    <span class="n">Scheduler</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">check_amp_available</span><span class="p">,</span>
     <span class="n">check_apex_available</span><span class="p">,</span>
@@ -333,14 +340,84 @@
 <span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_device</span>
 
 
+<span class="k">def</span> <span class="nf">_patch_forward</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">apex</span>
+
+    <span class="n">input_caster_lambda</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">tensor</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+            <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_amp_state</span><span class="o">.</span><span class="n">opt_properties</span><span class="o">.</span><span class="n">options</span><span class="p">[</span>  <span class="c1"># noqa: WPS437</span>
+                <span class="s2">&quot;cast_model_type&quot;</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">is_floating_point</span><span class="p">()</span>
+        <span class="k">else</span> <span class="n">tensor</span>
+    <span class="p">)</span>
+    <span class="n">output_caster_lambda</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">tensor</span><span class="o">.</span><span class="n">to</span><span class="p">(</span>
+            <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_amp_state</span><span class="o">.</span><span class="n">opt_properties</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+                <span class="s2">&quot;cast_model_outputs&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">is_floating_point</span><span class="p">()</span>
+        <span class="k">else</span> <span class="n">tensor</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">new_fwd</span><span class="p">(</span>
+        <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+        <span class="n">old_fwd</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span>
+        <span class="n">input_caster</span><span class="o">=</span><span class="n">input_caster_lambda</span><span class="p">,</span>
+        <span class="n">output_caster</span><span class="o">=</span><span class="n">output_caster_lambda</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="k">return</span> <span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_initialize</span><span class="o">.</span><span class="n">applier</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+            <span class="n">old_fwd</span><span class="p">(</span>
+                <span class="o">*</span><span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_initialize</span><span class="o">.</span><span class="n">applier</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+                    <span class="n">args</span><span class="p">,</span> <span class="n">input_caster</span>
+                <span class="p">),</span>
+                <span class="o">**</span><span class="n">apex</span><span class="o">.</span><span class="n">amp</span><span class="o">.</span><span class="n">_initialize</span><span class="o">.</span><span class="n">applier</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+                    <span class="n">kwargs</span><span class="p">,</span> <span class="n">input_caster</span>
+                <span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">output_caster</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="n">model</span><span class="o">.</span><span class="n">forward</span> <span class="o">=</span> <span class="n">new_fwd</span>
+    <span class="k">return</span> <span class="n">model</span>
+
+
+<span class="c1"># apex issue https://github.com/deepset-ai/FARM/issues/210</span>
+<span class="c1"># solution: https://github.com/NVIDIA/apex/issues/503#issuecomment-566181771</span>
+<span class="k">def</span> <span class="nf">_wrap_into_data_parallel_with_apex</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span>
+<span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">initialize_apex</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">distributed_params</span>
+        <span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">_patch_forward</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">initialize_apex</span><span class="p">(</span>
+            <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">distributed_params</span>
+        <span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">(</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">_patch_forward</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span>
+
+
 <div class="viewcode-block" id="process_components"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.components.process_components">[docs]</a><span class="k">def</span> <span class="nf">process_components</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+    <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span><span class="p">,</span>
     <span class="n">criterion</span><span class="p">:</span> <span class="n">Criterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">scheduler</span><span class="p">:</span> <span class="n">Scheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">distributed_params</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">device</span><span class="p">:</span> <span class="n">Device</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Model</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">,</span> <span class="n">Device</span><span class="p">]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">RunnerModel</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">,</span> <span class="n">Device</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the processed model, criterion, optimizer, scheduler and device.</span>
 
@@ -428,33 +505,29 @@
             <span class="p">)</span>
     <span class="c1"># data parallel run (dp) (with apex support)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="c1"># apex issue https://github.com/deepset-ai/FARM/issues/210</span>
-        <span class="n">use_apex</span> <span class="o">=</span> <span class="p">(</span><span class="n">is_apex_enabled</span> <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="n">is_apex_enabled</span>
-            <span class="ow">and</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span>
-            <span class="ow">and</span> <span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;opt_level&quot;</span><span class="p">,</span> <span class="s2">&quot;O0&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;O1&quot;</span>
+        <span class="n">is_data_parallel</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="ow">and</span> <span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;cpu&quot;</span>
+            <span class="ow">and</span> <span class="n">device</span><span class="o">.</span><span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">use_apex</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span>
-            <span class="p">),</span> <span class="s2">&quot;Apex training is not available for KV model&quot;</span>
-
+        <span class="k">if</span> <span class="n">is_apex_enabled</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_data_parallel</span><span class="p">:</span>
             <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">initialize_apex</span><span class="p">(</span>
                 <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="n">distributed_params</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span>
-            <span class="ow">and</span> <span class="n">device</span><span class="o">.</span><span class="n">type</span> <span class="o">!=</span> <span class="s2">&quot;cpu&quot;</span>
-            <span class="ow">and</span> <span class="n">device</span><span class="o">.</span><span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span>
-        <span class="p">):</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">is_apex_enabled</span> <span class="ow">and</span> <span class="n">is_data_parallel</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
                 <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
                 <span class="n">model</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="n">is_apex_enabled</span> <span class="ow">and</span> <span class="n">is_data_parallel</span><span class="p">:</span>
+            <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">_wrap_into_data_parallel_with_apex</span><span class="p">(</span>
+                <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">distributed_params</span>
+            <span class="p">)</span>
 
     <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 
