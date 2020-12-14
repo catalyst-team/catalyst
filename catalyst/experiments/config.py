@@ -9,7 +9,13 @@ from torch.utils.data import DataLoader
 from catalyst.contrib.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
-import catalyst.experiments.functional as F
+from catalyst.experiments.functional import (
+    add_default_callbacks,
+    do_lr_linear_scaling,
+    get_model_parameters,
+    load_optimizer_from_checkpoint,
+    process_callbacks,
+)
 from catalyst.registry import (
     CALLBACKS,
     CRITERIONS,
@@ -235,7 +241,7 @@ class ConfigExperiment(IExperiment):
             data_params = dict(self.stages_config[stage]["data_params"])
             batch_size = data_params.get("batch_size")
             per_gpu_scaling = data_params.get("per_gpu_scaling", False)
-            lr, lr_scaling = F.do_lr_linear_scaling(
+            lr, lr_scaling = do_lr_linear_scaling(
                 lr_scaling_params=lr_scaling_params,
                 batch_size=batch_size,
                 per_gpu_scaling=per_gpu_scaling,
@@ -248,7 +254,7 @@ class ConfigExperiment(IExperiment):
         no_bias_weight_decay = params.pop("no_bias_weight_decay", True)
         # getting model parameters
         model_key = params.pop("_model", None)
-        model_params = F.get_model_parameters(
+        model_params = get_model_parameters(
             models=model,
             models_keys=model_key,
             layerwise_params=layerwise_params,
@@ -265,7 +271,7 @@ class ConfigExperiment(IExperiment):
         # load from previous stage
         if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
-            optimizer = F.load_optimizer_from_checkpoint(
+            optimizer = load_optimizer_from_checkpoint(
                 optimizer,
                 checkpoint_path=checkpoint_path,
                 checkpoint_optimizer_key=optimizer_key,
@@ -443,7 +449,7 @@ class ConfigExperiment(IExperiment):
             callback = self._get_callback(**callback_params)
             callbacks[key] = callback
 
-        callbacks = F.add_default_callbacks(
+        callbacks = add_default_callbacks(
             callbacks,
             verbose=self._verbose,
             check_time=self._check_time,
@@ -459,7 +465,7 @@ class ConfigExperiment(IExperiment):
         # NOTE: stage should be in self._config.stages
         #       othervise will be raised ValueError
         stage_index = list(self.stages_config.keys()).index(stage)
-        F.process_callbacks(callbacks, stage_index)
+        process_callbacks(callbacks, stage_index)
 
         return callbacks
 

@@ -16,7 +16,13 @@ from torch.utils.data.sampler import Sampler
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
 from catalyst.data.sampler import DistributedSamplerWrapper
-import catalyst.experiments.functional as F
+from catalyst.experiments.functional import (
+    add_default_callbacks,
+    do_lr_linear_scaling,
+    get_model_parameters,
+    load_optimizer_from_checkpoint,
+    process_callbacks,
+)
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import set_global_seed
@@ -129,7 +135,7 @@ class HydraConfigExperiment(IExperiment):
             data_params = dict(self._config.stages[stage]["datasets"]["train"])
             batch_size = data_params.get("batch_size")
             per_gpu_scaling = data_params.get("per_gpu_scaling", False)
-            lr, lr_scaling = F.do_lr_linear_scaling(
+            lr, lr_scaling = do_lr_linear_scaling(
                 lr_scaling_params=lr_scaling_params,
                 batch_size=batch_size,
                 per_gpu_scaling=per_gpu_scaling,
@@ -142,7 +148,7 @@ class HydraConfigExperiment(IExperiment):
         no_bias_weight_decay = params.pop("no_bias_weight_decay", True)
         # getting model parameters
         models_keys = params.pop("models", None)
-        model_params = F.get_model_parameters(
+        model_params = get_model_parameters(
             models=models,
             models_keys=models_keys,
             layerwise_params=layerwise_params,
@@ -160,7 +166,7 @@ class HydraConfigExperiment(IExperiment):
         # load from previous stage
         if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
-            optimizer = F.load_optimizer_from_checkpoint(
+            optimizer = load_optimizer_from_checkpoint(
                 optimizer,
                 checkpoint_path=checkpoint_path,
                 checkpoint_optimizer_key=name,
@@ -410,7 +416,7 @@ class HydraConfigExperiment(IExperiment):
             for name, callback_params in callbacks_params.items()
         }
 
-        callbacks = F.add_default_callbacks(
+        callbacks = add_default_callbacks(
             callbacks,
             verbose=self._verbose,
             check_time=self._check_time,
@@ -426,7 +432,7 @@ class HydraConfigExperiment(IExperiment):
         # NOTE: stage should be in self._config.stages
         #       othervise will be raised ValueError
         stage_index = list(self._config.stages.keys()).index(stage)
-        F.process_callbacks(callbacks, stage_index)
+        process_callbacks(callbacks, stage_index)
 
         return callbacks
 
