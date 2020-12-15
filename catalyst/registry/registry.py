@@ -91,7 +91,7 @@ class Registry:
 
             name_key = next(iter(common_keys))
             name, subregistry = self._prepare_name_subregistry(
-                kwargs[name_key]
+                kwargs[name_key], subregistry=self._registries.get(name_key)
             )
             kwargs[name_key] = name
 
