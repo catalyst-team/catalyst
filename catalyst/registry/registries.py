@@ -1,6 +1,7 @@
 import logging
 
-from catalyst.registry.registry import Registry
+from catalyst.registry.subregistry import SubRegistry as Registry
+from catalyst.registry.registry import Registry as MegaRegistry
 from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
@@ -58,9 +59,13 @@ def _transforms_loader(r: Registry):
             raise ex
 
 
-TRANSFORM = Registry("transform")
-TRANSFORM.late_add(_transforms_loader)
-Transform = TRANSFORM.add
+# TRANSFORM = Registry("transform")
+# TRANSFORM.late_add(_transforms_loader)
+# Transform = TRANSFORM.add
+MegaRegistry_ = MegaRegistry()
+MegaRegistry_['transform'].late_add(_transforms_loader)
+TRANSFORM = MegaRegistry_['transform']
+Transform = MegaRegistry_['transform'].add
 
 
 def _samplers_loader(r: Registry):
@@ -77,9 +82,12 @@ def _samplers_loader(r: Registry):
     r.add_from_module(sampler)
 
 
-SAMPLER = Registry("sampler")
-SAMPLER.late_add(_samplers_loader)
-Sampler = SAMPLER.add
+# SAMPLER = Registry("sampler")
+# SAMPLER.late_add(_samplers_loader)
+# Sampler = SAMPLER.add
+MegaRegistry_['sampler'].late_add(_samplers_loader)
+SAMPLER = MegaRegistry_['sampler']
+Sampler = MegaRegistry_['sampler'].add
 
 
 class _GradClipperWrap:
@@ -98,9 +106,11 @@ def _grad_clip_loader(r: Registry):
     r.add_from_module(m)
 
 
-# @TODO: why func? should be renamed
-GRAD_CLIPPER = Registry("func", default_meta_factory=_GradClipperWrap)
-GRAD_CLIPPER.late_add(_grad_clip_loader)
+# # @TODO: why func? should be renamed
+# GRAD_CLIPPER = Registry("func", default_meta_factory=_GradClipperWrap)
+# GRAD_CLIPPER.late_add(_grad_clip_loader)
+MegaRegistry_.add_subregistry('func', default_meta_factory=_GradClipperWrap).late_add(_grad_clip_loader)
+GRAD_CLIPPER = MegaRegistry_['func']
 
 
 def _modules_loader(r: Registry):
@@ -109,9 +119,12 @@ def _modules_loader(r: Registry):
     r.add_from_module(m)
 
 
-MODULE = Registry("module")
-MODULE.late_add(_modules_loader)
-Module = MODULE.add
+# MODULE = Registry("module")
+# MODULE.late_add(_modules_loader)
+# Module = MODULE.add
+MegaRegistry_['module'].late_add(_modules_loader)
+MODULE = MegaRegistry_['module']
+Module = MegaRegistry_['module'].add
 
 
 def _model_loader(r: Registry):
@@ -133,9 +146,12 @@ def _model_loader(r: Registry):
             raise ex
 
 
-MODEL = Registry("model")
-MODEL.late_add(_model_loader)
-Model = MODEL.add
+# MODEL = Registry("model")
+# MODEL.late_add(_model_loader)
+# Model = MODEL.add
+MegaRegistry_['model'].late_add(_model_loader)
+MODEL = MegaRegistry_['model']
+Model = MegaRegistry_['model'].add
 
 
 def _criterion_loader(r: Registry):
@@ -144,9 +160,12 @@ def _criterion_loader(r: Registry):
     r.add_from_module(m)
 
 
-CRITERION = Registry("criterion")
-CRITERION.late_add(_criterion_loader)
-Criterion = CRITERION.add
+# CRITERION = Registry("criterion")
+# CRITERION.late_add(_criterion_loader)
+# Criterion = CRITERION.add
+MegaRegistry_['criterion'].late_add(_criterion_loader)
+CRITERION = MegaRegistry_['criterion']
+Criterion = MegaRegistry_['criterion'].add
 
 
 def _optimizers_loader(r: Registry):
@@ -155,9 +174,12 @@ def _optimizers_loader(r: Registry):
     r.add_from_module(m)
 
 
-OPTIMIZER = Registry("optimizer")
-OPTIMIZER.late_add(_optimizers_loader)
-Optimizer = OPTIMIZER.add
+# OPTIMIZER = Registry("optimizer")
+# OPTIMIZER.late_add(_optimizers_loader)
+# Optimizer = OPTIMIZER.add
+MegaRegistry_['optimizer'].late_add(_optimizers_loader)
+OPTIMIZER = MegaRegistry_['optimizer']
+Optimizer = MegaRegistry_['optimizer'].add
 
 
 def _schedulers_loader(r: Registry):
@@ -166,9 +188,12 @@ def _schedulers_loader(r: Registry):
     r.add_from_module(m)
 
 
-SCHEDULER = Registry("scheduler")
-SCHEDULER.late_add(_schedulers_loader)
-Scheduler = SCHEDULER.add
+# SCHEDULER = Registry("scheduler")
+# SCHEDULER.late_add(_schedulers_loader)
+# Scheduler = SCHEDULER.add
+MegaRegistry_['scheduler'].late_add(_schedulers_loader)
+SCHEDULER = MegaRegistry_['scheduler']
+Scheduler = MegaRegistry_['scheduler'].add
 
 
 def _experiments_loader(r: Registry):
@@ -183,9 +208,12 @@ def _experiments_loader(r: Registry):
     r.add_from_module(m)
 
 
-EXPERIMENT = Registry("experiment")
-EXPERIMENT.late_add(_experiments_loader)
-Experiment = EXPERIMENT.add
+# EXPERIMENT = Registry("experiment")
+# EXPERIMENT.late_add(_experiments_loader)
+# Experiment = EXPERIMENT.add
+MegaRegistry_['experiment'].late_add(_experiments_loader)
+EXPERIMENT = MegaRegistry_['experiment']
+Experiment = MegaRegistry_['experiment'].add
 
 
 def _runners_loader(r: Registry):
@@ -199,9 +227,12 @@ def _runners_loader(r: Registry):
     r.add_from_module(m)
 
 
-RUNNER = Registry("runner")
-RUNNER.late_add(_runners_loader)
-Runner = RUNNER.add
+# RUNNER = Registry("runner")
+# RUNNER.late_add(_runners_loader)
+# Runner = RUNNER.add
+MegaRegistry_['runner'].late_add(_runners_loader)
+RUNNER = MegaRegistry_['runner']
+Runner = MegaRegistry_['runner'].add
 
 
 def _callbacks_loader(r: Registry):
@@ -215,9 +246,12 @@ def _callbacks_loader(r: Registry):
     r.add_from_module(m)
 
 
-CALLBACK = Registry("callback")
-CALLBACK.late_add(_callbacks_loader)
-Callback = CALLBACK.add
+# CALLBACK = Registry("callback")
+# CALLBACK.late_add(_callbacks_loader)
+# Callback = CALLBACK.add
+MegaRegistry_['callback'].late_add(_callbacks_loader)
+CALLBACK = MegaRegistry_['callback']
+Callback = MegaRegistry_['callback'].add
 
 
 # backward compatibility
