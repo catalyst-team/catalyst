@@ -25,7 +25,7 @@ from catalyst.contrib.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import check_callback_isinstance
-from catalyst.registry import CALLBACKS, REGISTRY
+from catalyst.registry import CALLBACKS, OPTIMIZERS, REGISTRY
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.distributed import get_rank
@@ -295,7 +295,7 @@ class ConfigExperiment(IExperiment):
             "load_from_previous_stage", False
         )
         optimizer_key = params.pop("optimizer_key", None)
-        optimizer = REGISTRY.get_from_params(**params, params=model_params)
+        optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
 
         if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
