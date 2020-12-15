@@ -61,6 +61,7 @@ def run_train_with_engine():
         model=_model_fn,
         loaders={"train": loader, "valid": loader},
         criterion=nn.MSELoss,
+        main_metric="loss",
         engine=DeviceEngine("cpu"),
     )
     runner.run_experiment(exp)
