@@ -260,4 +260,5 @@ __all__ = [
     "Transform",
     "TRANSFORM",
     "TRANSFORMS",
+    "REGISTRY",
 ]

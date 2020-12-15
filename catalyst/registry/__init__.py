@@ -1,4 +1,4 @@
-from catalyst.registry.registry import Registry, RegistryException
+from catalyst.registry.registry import Registry
 from catalyst.registry.registries import (
     Callback,
     CALLBACK,
@@ -20,6 +20,7 @@ from catalyst.registry.registries import (
     Optimizer,
     OPTIMIZER,
     OPTIMIZERS,
+    REGISTRY,
     Runner,
     RUNNER,
     RUNNERS,
@@ -33,10 +34,13 @@ from catalyst.registry.registries import (
     TRANSFORM,
     TRANSFORMS,
 )
+from catalyst.registry.subregistry import SubRegistry, RegistryException
 
 __all__ = [
     "Registry",
+    "SubRegistry",
     "RegistryException",
+    "REGISTRY",
     "Callback",
     "CALLBACK",
     "CALLBACKS",
