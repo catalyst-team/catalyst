@@ -1,6 +1,6 @@
-from catalyst.engines.device import DeviceEngine
-
 import torch.nn as nn
+
+from catalyst.engines.device import DeviceEngine
 
 
 class DistributedDeviceEngine(DeviceEngine):

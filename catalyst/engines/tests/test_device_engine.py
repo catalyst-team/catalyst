@@ -2,11 +2,11 @@ from pytest import mark
 
 import torch
 import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks import CriterionCallback
-from catalyst.engines import DeviceEngine
 from catalyst.dl import SupervisedRunner
+from catalyst.engines import DeviceEngine
 from catalyst.experiments import Experiment
 from catalyst.settings import IS_CUDA_AVAILABLE
 
