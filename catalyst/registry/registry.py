@@ -80,7 +80,7 @@ class Registry:
         )
 
     def get_from_params(self, *, meta_factory=None, **kwargs):
-        subregistry_name = kwargs.pop("subregistry")
+        subregistry_name = kwargs.pop("subregistry", None)
         if subregistry_name:
             subregistry = self._registries[subregistry_name]
         else:
