@@ -7,6 +7,8 @@ import torch
 from torch import Tensor
 from torch.nn import functional as F
 
+from catalyst.utils.torch import get_activation_fn
+
 # @TODO:
 # after full classification metrics re-implementation, make a reference to
 # https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/metrics
@@ -81,12 +83,42 @@ def process_multiclass_components(
     return outputs, targets, num_classes
 
 
+def process_recsys_components(
+    outputs: torch.Tensor, targets: torch.Tensor
+) -> torch.Tensor:
+    """
+    General pre-processing for calculation recsys metrics
+
+    Args:
+        outputs (torch.Tensor):
+            Tensor weith predicted score
+            size: [batch_size, slate_length]
+            model outputs, logits
+        targets (torch.Tensor):
+            Binary tensor with ground truth.
+            1 means the item is relevant
+            for the user and 0 not relevant
+            size: [batch_szie, slate_length]
+            ground truth, labels
+
+    Returns:
+        targets_sorted_by_outputs (torch.Tensor):
+            targets tensor sorted by outputs
+    """
+    check_consistent_length(outputs, targets)
+    outputs_order = torch.argsort(outputs, descending=True, dim=-1)
+    targets_sorted_by_outputs = torch.gather(
+        targets, dim=-1, index=outputs_order
+    )
+    return targets_sorted_by_outputs
+
+
 def process_multilabel_components(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     weights: Optional[torch.Tensor] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-    """General preprocessing for multi-label-based metrics.
+    """General preprocessing for multilabel-based metrics.
 
     Args:
         outputs: NxK tensor that for each of the N examples
@@ -121,7 +153,7 @@ def process_multilabel_components(
 
     if targets.dim() == 1:
         if outputs.shape[1] > 1:
-            # multi-class case
+            # multiclass case
             num_classes = outputs.shape[1]
             targets = F.one_hot(targets, num_classes).float()
         else:
@@ -190,7 +222,7 @@ def get_multiclass_statistics(
     """
     Computes the number of true negative, false positive,
     false negative, true negative and support
-    for a multi-class classification problem.
+    for a multiclass classification problem.
 
     Args:
         outputs: estimated targets as predicted by a model
@@ -246,7 +278,7 @@ def get_multilabel_statistics(
     """
     Computes the number of true negative, false positive,
     false negative, true negative and support
-    for a multi-label classification problem.
+    for a multilabel classification problem.
 
     Args:
         outputs: estimated targets as predicted by a model
@@ -338,6 +370,52 @@ def get_default_topk_args(num_classes: int) -> Sequence[int]:
     return result
 
 
+def check_consistent_length(*tensors):
+    """Check that all arrays have consistent first dimensions.
+    Checks whether all objects in arrays have the same shape or length.
+
+    Args:
+        tensors : list or tensors of input objects.
+            Objects that will be checked for consistent length.
+
+    Raises:
+        ValueError: "Inconsistent numbers of samples"
+
+    """
+    lengths = [tensor.size(0) * tensor.size(1) for tensor in tensors]
+    uniques = np.unique(lengths)
+    if len(uniques) > 1:
+        raise ValueError("Inconsistent numbers of samples")
+
+
+def wrap_metric_fn_with_activation(
+    metric_fn: Callable, activation: str = None,
+):
+    """Wraps model outputs for ``metric_fn` with specified ``activation``.
+
+    Args:
+        metric_fn: metric function to compute
+        activation: activation name to use
+
+    Returns:
+        wrapped metric function with wrapped model outputs
+
+    .. note::
+        Works only with ``metric_fn`` like
+        ``metric_fn(outputs, targets, *args, **kwargs)``.
+    """
+    activation_fn = get_activation_fn(activation)
+
+    def wrapped_metric_fn(
+        outputs: torch.Tensor, targets: torch.Tensor, *args, **kwargs
+    ):
+        outputs = activation_fn(outputs)
+        output = metric_fn(outputs, targets, *args, **kwargs)
+        return output
+
+    return wrapped_metric_fn
+
+
 def wrap_class_metric2dict(
     metric_fn: Callable, class_args: Sequence[str] = None
 ) -> Callable:
@@ -366,6 +444,7 @@ def wrap_class_metric2dict(
         output = {
             key: value.item() for key, value in zip(output_class_args, output)
         }
+        output[""] = mean_stats
         output["/mean"] = mean_stats
         return output
 
@@ -374,7 +453,7 @@ def wrap_class_metric2dict(
 
 def wrap_topk_metric2dict(
     metric_fn: Callable, topk_args: Sequence[int]
-) -> Callable:
+) -> Callable:  # noqa: DAR401
     """
     Logging wrapper for metrics with
     Sequence[Union[torch.Tensor, int, float, Dict]] output.
@@ -415,11 +494,14 @@ def wrap_topk_metric2dict(
 
 
 __all__ = [
+    "check_consistent_length",
     "process_multilabel_components",
+    "process_recsys_components",
     "get_binary_statistics",
     "get_multiclass_statistics",
     "get_multilabel_statistics",
     "get_default_topk_args",
+    "wrap_metric_fn_with_activation",
     "wrap_topk_metric2dict",
     "wrap_class_metric2dict",
 ]

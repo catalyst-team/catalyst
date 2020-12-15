@@ -1,3 +1,6 @@
+ipython
+scipy
 matplotlib
 pandas>=0.22
 scikit-learn>=0.20
+GitPython>=3.1.1

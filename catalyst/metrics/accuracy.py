@@ -1,8 +1,3 @@
-"""
-Various accuracy metrics:
-    * :func:`accuracy`
-    * :func:`multi_label_accuracy`
-"""
 from typing import Optional, Sequence, Union
 
 import numpy as np
@@ -20,7 +15,7 @@ def accuracy(
     activation: Optional[str] = None,
 ) -> Sequence[torch.Tensor]:
     """
-    Computes multi-class accuracy@topk for the specified values of `topk`.
+    Computes multiclass accuracy@topk for the specified values of `topk`.
 
     Args:
         outputs: model outputs, logits
@@ -32,6 +27,46 @@ def accuracy(
 
     Returns:
         list with computed accuracy@topk
+
+    Example:
+        >>> accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([0, 1, 2]),
+        >>> )
+        [tensor([1.])]
+        >>> accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 1, 0],
+        >>>     ]),
+        >>>     targets=torch.tensor([0, 1, 2]),
+        >>> )
+        [tensor([0.6667])]
+        >>> accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([0, 1, 2]),
+        >>>     topk=[1, 3],
+        >>> )
+        [tensor([1.]), tensor([1.])]
+        >>> accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 1, 0],
+        >>>     ]),
+        >>>     targets=torch.tensor([0, 1, 2]),
+        >>>     topk=[1, 3],
+        >>> )
+        [tensor([0.6667]), tensor([1.])]
     """
     activation_fn = get_activation_fn(activation)
     outputs = activation_fn(outputs)
@@ -43,7 +78,7 @@ def accuracy(
         # binary accuracy
         pred = outputs.t()
     else:
-        # multi-class accuracy
+        # multiclass accuracy
         _, pred = outputs.topk(max_k, 1, True, True)  # noqa: WPS425
         pred = pred.t()
     correct = pred.eq(targets.long().view(1, -1).expand_as(pred))
@@ -57,14 +92,13 @@ def accuracy(
     return output
 
 
-def multi_label_accuracy(
+def multilabel_accuracy(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     threshold: Union[float, torch.Tensor],
-    activation: Optional[str] = None,
 ) -> torch.Tensor:
     """
-    Computes multi-label accuracy for the specified activation and threshold.
+    Computes multilabel accuracy for the specified activation and threshold.
 
     Args:
         outputs: NxK tensor that for each of the N examples
@@ -75,16 +109,51 @@ def multi_label_accuracy(
             (eg: a row [0, 1, 0, 1] indicates that the example is
             associated with classes 2 and 4)
         threshold: threshold for for model output
-        activation: activation to use for model output
 
     Returns:
-        computed multi-label accuracy
+        computed multilabel accuracy
+
+    Example:
+        >>> multilabel_accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0],
+        >>>         [0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0],
+        >>>         [0, 1],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor([1.])
+        >>> multilabel_accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1.0, 0.0],
+        >>>         [0.6, 1.0],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0],
+        >>>         [0, 1],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor(0.7500)
+        >>> multilabel_accuracy(
+        >>>     outputs=torch.tensor([
+        >>>         [1.0, 0.0],
+        >>>         [0.4, 1.0],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1, 0],
+        >>>         [0, 1],
+        >>>     ]),
+        >>>     threshold=0.5,
+        >>> )
+        tensor(1.0)
     """
     outputs, targets, _ = process_multilabel_components(
         outputs=outputs, targets=targets
     )
-    activation_fn = get_activation_fn(activation)
-    outputs = activation_fn(outputs)
 
     outputs = (outputs > threshold).long()
     output = (targets.long() == outputs.long()).sum().float() / np.prod(
@@ -93,4 +162,4 @@ def multi_label_accuracy(
     return output
 
 
-__all__ = ["accuracy", "multi_label_accuracy"]
+__all__ = ["accuracy", "multilabel_accuracy"]

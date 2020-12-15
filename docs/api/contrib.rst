@@ -183,6 +183,13 @@ CosFace and AdaCos
     :undoc-members:
     :show-inheritance:
 
+CurricularFace
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+.. automodule:: catalyst.contrib.nn.modules.curricularface
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Last-Mean-Average-Attention (LAMA)-Pooling
 """"""""""""""""""""""""""""""""""""""""""
 .. automodule:: catalyst.contrib.nn.modules.lama

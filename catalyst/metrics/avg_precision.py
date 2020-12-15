@@ -1,13 +1,15 @@
 """
 MAP metric.
 """
-from typing import Dict, List
+from typing import List
 
 import torch
 
+from catalyst.metrics.functional import process_recsys_components
+
 
 def avg_precision(
-    outputs: torch.Tensor, targets: torch.Tensor, k=10
+    outputs: torch.Tensor, targets: torch.Tensor
 ) -> torch.Tensor:
     """
     Calculate the Average Precision for RecSys.
@@ -31,7 +33,7 @@ def avg_precision(
 
     Args:
         outputs (torch.Tensor):
-            Tensor weith predicted score
+            Tensor with predicted score
             size: [batch_size, slate_length]
             model outputs, logits
         targets (torch.Tensor):
@@ -40,40 +42,44 @@ def avg_precision(
             and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
-        k (int):
-            The position to compute the truncated AP,
-            must be positive
 
     Returns:
-        result (torch.Tensor):
+        ap_score (torch.Tensor):
             The map score for each batch.
             size: [batch_size, 1]
+
+    Examples:
+        >>> avg_precision(
+        >>>     outputs=torch.tensor([
+        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
+        >>>         [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+        >>>     ]),
+        >>> )
+        tensor([0.6222, 0.4429])
     """
-    k = min(outputs.size(1), k)
-    _, indices_for_sort = outputs.sort(descending=True, dim=-1)
-    targets_sorted_by_outputs = torch.gather(
-        targets, dim=-1, index=indices_for_sort
-    )
+    targets_sort_by_outputs = process_recsys_components(outputs, targets)
+    precisions = torch.zeros_like(targets_sort_by_outputs)
 
-    targets_sorted_by_outputs_topk = targets_sorted_by_outputs[:, :k]
-    precisions = torch.zeros_like(targets_sorted_by_outputs_topk)
-
-    for index in range(k):
+    for index in range(outputs.size(1)):
         precisions[:, index] = torch.sum(
-            targets_sorted_by_outputs_topk[:, : (index + 1)], dim=1
+            targets_sort_by_outputs[:, : (index + 1)], dim=1
         ) / float(index + 1)
 
-    only_relevant_precision = precisions * targets_sorted_by_outputs_topk
-    ap = only_relevant_precision.sum(dim=1) / (
+    only_relevant_precision = precisions * targets_sort_by_outputs
+    ap_score = only_relevant_precision.sum(dim=1) / (
         (only_relevant_precision != 0).sum(dim=1)
     )
-    ap[torch.isnan(ap)] = 0
-    return ap
+    ap_score[torch.isnan(ap_score)] = 0
+    return ap_score
 
 
 def mean_avg_precision(
-    outputs: torch.Tensor, targets: torch.Tensor, top_k: List[int]
-) -> Dict[str, int]:
+    outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]
+) -> List[torch.Tensor]:
     """
     Calculate the mean average precision (MAP) for RecSys.
     The metrics calculate the mean of the AP across all batches
@@ -83,7 +89,7 @@ def mean_avg_precision(
 
     Args:
         outputs (torch.Tensor):
-            Tensor weith predicted score
+            Tensor with predicted score
             size: [batch_size, slate_length]
             model outputs, logits
         targets (torch.Tensor):
@@ -92,19 +98,35 @@ def mean_avg_precision(
             and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
-        top_k (List[int]):
+        topk (List[int]):
             List of parameter for evaluation
             topK items
 
     Returns:
-        result (Dict[str, int]):
+        map_at_k (Tuple[float]):
             The map score for every k.
-            size: [len(top_k), 1]
+            size: len(top_k)
+
+    Examples:
+        >>> mean_avg_precision(
+        >>>     outputs=torch.tensor([
+        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>     ]),
+        >>>     targets=torch.tensor([
+        >>>         [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
+        >>>         [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+        >>>     ]),
+        >>>     topk=[10],
+        >>> )
+        [tensor(0.5325)]
     """
-    map_k_tuple = tuple(
-        torch.mean(avg_precision(outputs, targets, k)).item() for k in top_k
-    )
-    return map_k_tuple
+    results = []
+    for k in topk:
+        k = min(outputs.size(1), k)
+        results.append(torch.mean(avg_precision(outputs, targets)[:k]))
+
+    return results
 
 
 __all__ = ["mean_avg_precision", "avg_precision"]

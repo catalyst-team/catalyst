@@ -3,29 +3,44 @@ from collections import OrderedDict
 import logging
 
 from catalyst.__version__ import __version__
-from catalyst.dl.scripts import quantize, run, swa, trace
+from catalyst.dl.scripts import run, swa, trace
 from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
-COMMANDS = OrderedDict(
-    [("quantize", quantize), ("run", run), ("swa", swa), ("trace", trace)]
-)
+COMMANDS = OrderedDict([("run", run), ("swa", swa), ("trace", trace)])
 
-if SETTINGS.IS_OPTUNA_AVAILABLE:
+
+if SETTINGS.IS_QUANTIZATION_AVAILABLE:
+    from catalyst.dl.scripts import quantize
+
+    COMMANDS["quantize"] = quantize
+
+try:
+    import optuna  # noqa: F401
     from catalyst.dl.scripts import tune
 
     COMMANDS["tune"] = tune
+except ImportError as ex:
+    if SETTINGS.optuna_required:
+        logger.warning(
+            "catalyst[tune] requirements are not available, to install them,"
+            " run `pip install catalyst[tune]`."
+        )
+        raise ex
 
 try:
+    from git import Repo as repo  # noqa: N813 F401
+    from prompt_toolkit import prompt  # noqa: F401
+
     from catalyst.dl.scripts import init
 
     COMMANDS["init"] = init
 except ImportError as ex:
-    if SETTINGS.ipython_required:
+    if SETTINGS.ml_required:
         logger.warning(
-            "ipython not available, to install ipython,"
-            " run `pip install ipython`."
+            "catalyst[ml] requirements are not available, to install them,"
+            " run `pip install catalyst[ml]`."
         )
         raise ex
 
