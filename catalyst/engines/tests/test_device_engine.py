@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 
+from catalyst.callbacks import CriterionCallback
 from catalyst.engines import DeviceEngine
 from catalyst.dl import SupervisedRunner
 from catalyst.experiments import Experiment
@@ -63,6 +64,7 @@ def run_train_with_engine():
         criterion=nn.MSELoss,
         main_metric="loss",
         engine=DeviceEngine("cpu"),
+        callbacks=[CriterionCallback()],
     )
     runner.run_experiment(exp)
 
