@@ -361,7 +361,9 @@ class ConfigExperiment(IExperiment):
     ) -> Union[Scheduler, Dict[str, Scheduler]]:
         optimizer_key = params.pop("_optimizer", None)
         optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
-        scheduler = REGISTRY.get_from_params(**params, optimizer=optimizer)
+        scheduler = REGISTRY.get_from_params(
+            subregistry="scheduler", **params, optimizer=optimizer
+        )
 
         return scheduler
 
