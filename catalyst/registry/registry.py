@@ -80,20 +80,19 @@ class Registry:
         )
 
     def get_from_params(self, *, meta_factory=None, **kwargs):
-        subregistry_name = kwargs.pop("subregistry", None)
-        if subregistry_name:
-            subregistry = self._registries[subregistry_name]
-        else:
+        name_key = kwargs.pop("subregistry", None)
+        if not name_key:
             common_keys = set(self._registries.keys()) & set(kwargs.keys())
 
             if len(common_keys) != 1:
                 raise RegistryException("Please, specify registry to use")
 
             name_key = next(iter(common_keys))
-            name, subregistry = self._prepare_name_subregistry(
-                kwargs[name_key], subregistry=name_key
-            )
-            kwargs[name_key] = name
+
+        name, subregistry = self._prepare_name_subregistry(
+            kwargs[name_key], subregistry=name_key
+        )
+        kwargs[name_key] = name
 
         return subregistry.get_from_params(meta_factory=meta_factory, **kwargs)
 

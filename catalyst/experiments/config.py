@@ -474,7 +474,7 @@ class ConfigExperiment(IExperiment):
     @staticmethod
     def _get_callback(**params):
         wrapper_params = params.pop("_wrapper", None)
-        callback = CALLBACKS.get_from_params(**params)
+        callback = REGISTRY.get_from_params(subregistry="callback", **params)
         if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
             callback = ConfigExperiment._get_callback(  # noqa: WPS437
