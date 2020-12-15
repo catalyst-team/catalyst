@@ -3,7 +3,7 @@ import os
 from omegaconf import DictConfig, OmegaConf
 
 
-def prepare_config(cfg: DictConfig) -> DictConfig:
+def prepare_hydra_config(cfg: DictConfig) -> DictConfig:
     """
     Prepare config. Add required parameters.
 
@@ -49,4 +49,4 @@ def prepare_config(cfg: DictConfig) -> DictConfig:
     return cfg
 
 
-__all__ = ["prepare_config"]
+__all__ = ["prepare_hydra_config"]

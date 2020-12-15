@@ -124,8 +124,6 @@ if IS_QUANTIZATION_AVAILABLE:
 from catalyst.settings import IS_HYDRA_AVAILABLE
 
 if IS_HYDRA_AVAILABLE:
-    from catalyst.utils.hydra_config import (
-        prepare_config as hydra_prepare_config,
-    )
+    from catalyst.utils.hydra_config import prepare_hydra_config
 
 from catalyst.contrib.utils import *

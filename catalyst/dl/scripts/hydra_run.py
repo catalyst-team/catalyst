@@ -4,7 +4,7 @@ import hydra
 from omegaconf import DictConfig
 
 from catalyst.utils.distributed import get_rank
-from catalyst.utils.hydra_config import prepare_config
+from catalyst.utils.hydra_config import prepare_hydra_config
 from catalyst.utils.misc import set_global_seed
 from catalyst.utils.scripts import (
     distributed_cmd_run,
@@ -44,7 +44,7 @@ def main(cfg: DictConfig):
         cfg: (DictConfig) configuration
 
     """
-    cfg = prepare_config(cfg)
+    cfg = prepare_hydra_config(cfg)
     distributed_cmd_run(main_worker, cfg.args.distributed, cfg)
 
 
