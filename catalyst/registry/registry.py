@@ -6,7 +6,7 @@ from catalyst.registry.subregistry import SubRegistry, RegistryException, LateAd
 
 class Registry:
     def __init__(self):
-        self._registries: Dict[str, SubRegistry] = collections.defaultdict(lambda x: SubRegistry(x))
+        self._registries: Dict[str, SubRegistry] = {}
 
     def _prepare_name_subregistry(self, name: str, subregistry: Optional[str] = None) -> Tuple[str, SubRegistry]:
         if ':' in name:
@@ -29,7 +29,12 @@ class Registry:
         return sum(len(value) for key, value in self._registries.items())
 
     def __getitem__(self, key: str) -> SubRegistry:
-        return self._registries[key]
+        if key not in self._registries:
+            self._registries[key] = SubRegistry(key)
+
+        subregistry = self._registries[key]
+
+        return subregistry
 
     def __setitem__(self, key: str, value: SubRegistry):
         if key in self._registries and self._registries[key].all():
