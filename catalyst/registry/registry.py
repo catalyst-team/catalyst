@@ -90,12 +90,16 @@ class Registry:
 
             subregistry = next(iter(common_keys))
 
-        name, registry = self._prepare_name_subregistry(
-            kwargs.get(subregistry), subregistry=subregistry
-        )
-        kwargs[subregistry] = name
+        name = kwargs.get(subregistry)
+        if name:
+            name, registry = self._prepare_name_subregistry(
+                name=name, subregistry=subregistry
+            )
+            kwargs[subregistry] = name
 
-        return registry.get_from_params(meta_factory=meta_factory, **kwargs)
+            return registry.get_from_params(
+                meta_factory=meta_factory, **kwargs
+            )
 
     def __len__(self) -> int:
         return sum(len(value) for key, value in self._registries.items())
