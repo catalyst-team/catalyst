@@ -95,7 +95,7 @@ class Registry:
             )
             kwargs[name_key] = name
 
-        subregistry.get_from_params(meta_factory=meta_factory, **kwargs)
+        return subregistry.get_from_params(meta_factory=meta_factory, **kwargs)
 
     def __len__(self) -> int:
         return sum(len(value) for key, value in self._registries.items())
