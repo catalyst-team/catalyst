@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Mapping, Optional, Tuple, Union
 
 from catalyst.registry.subregistry import (
     Factory,
@@ -37,9 +37,9 @@ class Registry:
         if key not in self._registries:
             self._registries[key] = SubRegistry(key)
 
-        subregistry = self._registries[key]
+        registry = self._registries[key]
 
-        return subregistry
+        return registry
 
     def add_subregistry(self, key: str, **kwargs):
         new_subregistry = SubRegistry(default_name_key=key, **kwargs)
@@ -53,16 +53,16 @@ class Registry:
     def add_from_module(
         self, key: str, module, prefix: Union[str, List[str]] = None
     ) -> None:
-        subregistry = self.get_subregistry(key)
-        return subregistry.add_from_module(module=module, prefix=prefix)
+        registry = self.get_subregistry(key)
+        return registry.add_from_module(module=module, prefix=prefix)
 
     def get(
         self, name: str, subregistry: Optional[str] = None
     ) -> Optional[Factory]:
-        name, subregistry = self._prepare_name_subregistry(
+        name, registry = self._prepare_name_subregistry(
             name=name, subregistry=subregistry
         )
-        return subregistry.get(name)
+        return registry.get(name)
 
     def get_instance(
         self,
@@ -72,29 +72,30 @@ class Registry:
         meta_factory=None,
         **kwargs,
     ):
-        name, subregistry = self._prepare_name_subregistry(
+        name, registry = self._prepare_name_subregistry(
             name=name, subregistry=subregistry
         )
-        return subregistry.get_instance(
+        return registry.get_instance(
             name, *args, meta_factory=meta_factory, **kwargs
         )
 
-    def get_from_params(self, *, meta_factory=None, **kwargs):
-        name_key = kwargs.pop("subregistry", None)
-        if not name_key:
+    def get_from_params(
+        self, *, subregistry: Optional[str] = None, meta_factory=None, **kwargs
+    ) -> Union[Any, Tuple[Any, Mapping[str, Any]]]:
+        if not subregistry:
             common_keys = set(self._registries.keys()) & set(kwargs.keys())
 
             if len(common_keys) != 1:
                 raise RegistryException("Please, specify registry to use")
 
-            name_key = next(iter(common_keys))
+            subregistry = next(iter(common_keys))
 
-        name, subregistry = self._prepare_name_subregistry(
-            kwargs[name_key], subregistry=name_key
+        name, registry = self._prepare_name_subregistry(
+            kwargs[subregistry], subregistry=subregistry
         )
-        kwargs[name_key] = name
+        kwargs[subregistry] = name
 
-        return subregistry.get_from_params(meta_factory=meta_factory, **kwargs)
+        return registry.get_from_params(meta_factory=meta_factory, **kwargs)
 
     def __len__(self) -> int:
         return sum(len(value) for key, value in self._registries.items())
