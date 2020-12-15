@@ -1,13 +1,15 @@
 import logging
 
-from catalyst.registry.subregistry import SubRegistry as Registry
-from catalyst.registry.registry import Registry as MegaRegistry
+from catalyst.registry.registry import Registry
+from catalyst.registry.subregistry import SubRegistry
 from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
+REGISTRY = Registry()
 
-def _transforms_loader(r: Registry):
+
+def _transforms_loader(r: SubRegistry):
     from torch.jit.frontend import UnsupportedNodeError
 
     from catalyst.contrib.data.cv.transforms import torch as t
@@ -59,13 +61,7 @@ def _transforms_loader(r: Registry):
             raise ex
 
 
-# TRANSFORM = Registry("transform")
-# TRANSFORM.late_add(_transforms_loader)
-# Transform = TRANSFORM.add
-MegaRegistry_ = MegaRegistry()
-MegaRegistry_['transform'].late_add(_transforms_loader)
-TRANSFORM = MegaRegistry_['transform']
-Transform = MegaRegistry_['transform'].add
+REGISTRY.late_add("transform", _transforms_loader)
 
 
 def _samplers_loader(r: Registry):
@@ -82,12 +78,7 @@ def _samplers_loader(r: Registry):
     r.add_from_module(sampler)
 
 
-# SAMPLER = Registry("sampler")
-# SAMPLER.late_add(_samplers_loader)
-# Sampler = SAMPLER.add
-MegaRegistry_['sampler'].late_add(_samplers_loader)
-SAMPLER = MegaRegistry_['sampler']
-Sampler = MegaRegistry_['sampler'].add
+REGISTRY.late_add("sampler", _samplers_loader)
 
 
 class _GradClipperWrap:
@@ -107,10 +98,8 @@ def _grad_clip_loader(r: Registry):
 
 
 # # @TODO: why func? should be renamed
-# GRAD_CLIPPER = Registry("func", default_meta_factory=_GradClipperWrap)
-# GRAD_CLIPPER.late_add(_grad_clip_loader)
-MegaRegistry_.add_subregistry('func', default_meta_factory=_GradClipperWrap).late_add(_grad_clip_loader)
-GRAD_CLIPPER = MegaRegistry_['func']
+REGISTRY.add_subregistry("func", default_meta_factory=_GradClipperWrap)
+REGISTRY.late_add("func", _grad_clip_loader)
 
 
 def _modules_loader(r: Registry):
@@ -119,12 +108,7 @@ def _modules_loader(r: Registry):
     r.add_from_module(m)
 
 
-# MODULE = Registry("module")
-# MODULE.late_add(_modules_loader)
-# Module = MODULE.add
-MegaRegistry_['module'].late_add(_modules_loader)
-MODULE = MegaRegistry_['module']
-Module = MegaRegistry_['module'].add
+REGISTRY.late_add("module", _modules_loader)
 
 
 def _model_loader(r: Registry):
@@ -146,12 +130,7 @@ def _model_loader(r: Registry):
             raise ex
 
 
-# MODEL = Registry("model")
-# MODEL.late_add(_model_loader)
-# Model = MODEL.add
-MegaRegistry_['model'].late_add(_model_loader)
-MODEL = MegaRegistry_['model']
-Model = MegaRegistry_['model'].add
+REGISTRY.late_add("model", _model_loader)
 
 
 def _criterion_loader(r: Registry):
@@ -160,12 +139,7 @@ def _criterion_loader(r: Registry):
     r.add_from_module(m)
 
 
-# CRITERION = Registry("criterion")
-# CRITERION.late_add(_criterion_loader)
-# Criterion = CRITERION.add
-MegaRegistry_['criterion'].late_add(_criterion_loader)
-CRITERION = MegaRegistry_['criterion']
-Criterion = MegaRegistry_['criterion'].add
+REGISTRY.late_add("criterion", _criterion_loader)
 
 
 def _optimizers_loader(r: Registry):
@@ -174,12 +148,7 @@ def _optimizers_loader(r: Registry):
     r.add_from_module(m)
 
 
-# OPTIMIZER = Registry("optimizer")
-# OPTIMIZER.late_add(_optimizers_loader)
-# Optimizer = OPTIMIZER.add
-MegaRegistry_['optimizer'].late_add(_optimizers_loader)
-OPTIMIZER = MegaRegistry_['optimizer']
-Optimizer = MegaRegistry_['optimizer'].add
+REGISTRY.late_add("optimizer", _optimizers_loader)
 
 
 def _schedulers_loader(r: Registry):
@@ -188,12 +157,7 @@ def _schedulers_loader(r: Registry):
     r.add_from_module(m)
 
 
-# SCHEDULER = Registry("scheduler")
-# SCHEDULER.late_add(_schedulers_loader)
-# Scheduler = SCHEDULER.add
-MegaRegistry_['scheduler'].late_add(_schedulers_loader)
-SCHEDULER = MegaRegistry_['scheduler']
-Scheduler = MegaRegistry_['scheduler'].add
+REGISTRY.late_add("scheduler", _schedulers_loader)
 
 
 def _experiments_loader(r: Registry):
@@ -208,12 +172,7 @@ def _experiments_loader(r: Registry):
     r.add_from_module(m)
 
 
-# EXPERIMENT = Registry("experiment")
-# EXPERIMENT.late_add(_experiments_loader)
-# Experiment = EXPERIMENT.add
-MegaRegistry_['experiment'].late_add(_experiments_loader)
-EXPERIMENT = MegaRegistry_['experiment']
-Experiment = MegaRegistry_['experiment'].add
+REGISTRY.late_add("experiment", _experiments_loader)
 
 
 def _runners_loader(r: Registry):
@@ -227,12 +186,7 @@ def _runners_loader(r: Registry):
     r.add_from_module(m)
 
 
-# RUNNER = Registry("runner")
-# RUNNER.late_add(_runners_loader)
-# Runner = RUNNER.add
-MegaRegistry_['runner'].late_add(_runners_loader)
-RUNNER = MegaRegistry_['runner']
-Runner = MegaRegistry_['runner'].add
+REGISTRY.late_add("runner", _runners_loader)
 
 
 def _callbacks_loader(r: Registry):
@@ -246,26 +200,31 @@ def _callbacks_loader(r: Registry):
     r.add_from_module(m)
 
 
-# CALLBACK = Registry("callback")
-# CALLBACK.late_add(_callbacks_loader)
-# Callback = CALLBACK.add
-MegaRegistry_['callback'].late_add(_callbacks_loader)
-CALLBACK = MegaRegistry_['callback']
-Callback = MegaRegistry_['callback'].add
+REGISTRY.late_add("callback", _callbacks_loader)
 
 
 # backward compatibility
-CALLBACKS = CALLBACK
-CRITERIONS = CRITERION
-EXPERIMENTS = EXPERIMENT
-GRAD_CLIPPERS = GRAD_CLIPPER
-MODELS = MODEL
-MODULES = MODULE
-OPTIMIZERS = OPTIMIZER
-RUNNERS = RUNNER
-SAMPLERS = SAMPLER
-SCHEDULERS = SCHEDULER
-TRANSFORMS = TRANSFORM
+CALLBACKS = CALLBACK = REGISTRY["callback"]
+Callback = REGISTRY["callback"].add
+CRITERIONS = CRITERION = REGISTRY["criterion"]
+Criterion = REGISTRY["criterion"].add
+EXPERIMENTS = EXPERIMENT = REGISTRY["experiment"]
+Experiment = REGISTRY["experiment"].add
+GRAD_CLIPPERS = GRAD_CLIPPER = REGISTRY["func"]
+MODELS = MODEL = REGISTRY["model"]
+Model = REGISTRY["model"].add
+MODULES = MODULE = REGISTRY["module"]
+Module = REGISTRY["module"].add
+OPTIMIZERS = OPTIMIZER = REGISTRY["optimizer"]
+Optimizer = REGISTRY["optimizer"].add
+RUNNERS = RUNNER = REGISTRY["runner"]
+Runner = REGISTRY["runner"].add
+SAMPLERS = SAMPLER = REGISTRY["sampler"]
+Sampler = REGISTRY["sampler"].add
+SCHEDULERS = SCHEDULER = REGISTRY["scheduler"]
+Scheduler = REGISTRY["scheduler"].add
+TRANSFORMS = TRANSFORM = REGISTRY["transform"]
+Transform = REGISTRY["transform"].add
 
 
 __all__ = [
