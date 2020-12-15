@@ -25,14 +25,7 @@ from catalyst.contrib.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import check_callback_isinstance
-from catalyst.registry import (
-    CALLBACKS,
-    CRITERIONS,
-    MODELS,
-    OPTIMIZERS,
-    SCHEDULERS,
-    TRANSFORMS,
-)
+from catalyst.registry import CALLBACKS, REGISTRY
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.distributed import get_rank
@@ -207,7 +200,7 @@ class ConfigExperiment(IExperiment):
                 )
             model = nn.ModuleDict(model)
         else:
-            model = MODELS.get_from_params(**params)
+            model = REGISTRY.get_from_params(**params)
         return model
 
     def get_model(self, stage: str):
@@ -229,7 +222,7 @@ class ConfigExperiment(IExperiment):
                     **key_params
                 )
         else:
-            criterion = CRITERIONS.get_from_params(**params)
+            criterion = REGISTRY.get_from_params(**params)
             if criterion is not None and torch.cuda.is_available():
                 criterion = criterion.cuda()
         return criterion
@@ -302,7 +295,7 @@ class ConfigExperiment(IExperiment):
             "load_from_previous_stage", False
         )
         optimizer_key = params.pop("optimizer_key", None)
-        optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
+        optimizer = REGISTRY.get_from_params(**params, params=model_params)
 
         if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
@@ -368,7 +361,7 @@ class ConfigExperiment(IExperiment):
     ) -> Union[Scheduler, Dict[str, Scheduler]]:
         optimizer_key = params.pop("_optimizer", None)
         optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
-        scheduler = SCHEDULERS.get_from_params(**params, optimizer=optimizer)
+        scheduler = REGISTRY.get_from_params(**params, optimizer=optimizer)
 
         return scheduler
 
@@ -423,7 +416,7 @@ class ConfigExperiment(IExperiment):
                 ]
                 params.update(transforms=transforms_composition)
 
-            transform = TRANSFORMS.get_from_params(**params)
+            transform = REGISTRY.get_from_params(**params)
 
         return transform
 
