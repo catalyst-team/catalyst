@@ -49,8 +49,8 @@ class DummyModel(nn.Module):
         return self.layers(batch)
 
 
-def _model_fn(in_features, out_features):
-    return DummyModel(in_features, out_features)
+def _model_fn():
+    return DummyModel(4, 1)
 
 
 def run_train_with_engine():
@@ -58,8 +58,9 @@ def run_train_with_engine():
     loader = DataLoader(dataset, batch_size=4)
     runner = SupervisedRunner()
     exp = Experiment(
-        model=_model_fn(dataset.features_dim, dataset.out_dim),
+        model=_model_fn,
         loaders={"train": loader, "valid": loader},
+        criterion=nn.MSELoss,
         engine=DeviceEngine("cpu"),
     )
     runner.run_experiment(exp)
