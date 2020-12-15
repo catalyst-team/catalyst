@@ -222,7 +222,9 @@ class ConfigExperiment(IExperiment):
                     **key_params
                 )
         else:
-            criterion = REGISTRY.get_from_params(**params)
+            criterion = REGISTRY.get_from_params(
+                subregistry="criterion", **params
+            )
             if criterion is not None and torch.cuda.is_available():
                 criterion = criterion.cuda()
         return criterion
