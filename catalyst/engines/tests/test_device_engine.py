@@ -1,3 +1,5 @@
+from pytest import mark
+
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
@@ -6,6 +8,9 @@ from catalyst.callbacks import CriterionCallback
 from catalyst.engines import DeviceEngine
 from catalyst.dl import SupervisedRunner
 from catalyst.experiments import Experiment
+from catalyst.settings import IS_CUDA_AVAILABLE
+
+NUM_CUDA_DEVICES = torch.cuda.device_count()
 
 
 class DummyDataset(Dataset):
@@ -54,7 +59,7 @@ def _model_fn():
     return DummyModel(4, 1)
 
 
-def run_train_with_engine():
+def run_train_with_device(device):
     dataset = DummyDataset(10)
     loader = DataLoader(dataset, batch_size=4)
     runner = SupervisedRunner()
@@ -63,11 +68,24 @@ def run_train_with_engine():
         loaders={"train": loader, "valid": loader},
         criterion=nn.MSELoss,
         main_metric="loss",
-        engine=DeviceEngine("cpu"),
         callbacks=[CriterionCallback()],
+        engine=DeviceEngine(device),
     )
     runner.run_experiment(exp)
 
 
-def test_work_with_engine():
-    run_train_with_engine()
+def test_engine_with_cpu():
+    run_train_with_device("cpu")
+
+
+@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+def test_engine_with_cuda():
+    run_train_with_device("cuda")
+
+
+@mark.skipif(
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
+)
+def test_engine_with_another_cuda_device():
+    run_train_with_device("cuda:1")
