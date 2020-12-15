@@ -90,9 +90,12 @@ class Registry:
 
             subregistry = next(iter(common_keys))
 
-        name, registry = self._prepare_name_subregistry(
-            kwargs[subregistry], subregistry=subregistry
-        )
+        try:
+            name, registry = self._prepare_name_subregistry(
+                kwargs[subregistry], subregistry=subregistry
+            )
+        except KeyError:
+            raise Exception(f'{subregistry}: {kwargs}')
         kwargs[subregistry] = name
 
         return registry.get_from_params(meta_factory=meta_factory, **kwargs)
