@@ -33,6 +33,14 @@ class Registry:
 
         return name, self._registries[subregistry]
 
+    def get_subregistry(self, key: str) -> SubRegistry:
+        if key not in self._registries:
+            self._registries[key] = SubRegistry(key)
+
+        subregistry = self._registries[key]
+
+        return subregistry
+
     def add_subregistry(self, key: str, **kwargs):
         new_subregistry = SubRegistry(default_name_key=key, **kwargs)
         self[key] = new_subregistry
@@ -40,14 +48,13 @@ class Registry:
         return new_subregistry
 
     def late_add(self, key: str, cb: LateAddCallbak):
-        return self._registries[key].late_add(cb)
+        return self.get_subregistry(key).late_add(cb)
 
     def add_from_module(
         self, key: str, module, prefix: Union[str, List[str]] = None
     ) -> None:
-        return self._registries[key].add_from_module(
-            module=module, prefix=prefix
-        )
+        subregistry = self.get_subregistry(key)
+        return subregistry.add_from_module(module=module, prefix=prefix)
 
     def get(
         self, name: str, subregistry: Optional[str] = None
@@ -94,12 +101,7 @@ class Registry:
         return sum(len(value) for key, value in self._registries.items())
 
     def __getitem__(self, key: str) -> SubRegistry:
-        if key not in self._registries:
-            self._registries[key] = SubRegistry(key)
-
-        subregistry = self._registries[key]
-
-        return subregistry
+        return self._registries.get(key)
 
     def __setitem__(self, key: str, value: SubRegistry):
         if key in self._registries and self._registries[key].all():
