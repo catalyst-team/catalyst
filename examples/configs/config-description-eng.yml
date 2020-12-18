@@ -41,7 +41,7 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
     batch_size: 1  # KEYWORD, batch size for all the stages
     num_workers: 1  # KEYWORD, Number of parallel processes for DataLoader
     drop_last: False  # KEYWORD, parameter for DataLoader (Default is False)
-    per_gpu_scaling: False  # KEYWORD, if True and the working mode are not distributed, it increases the batch size and the number of workers in proportion to the number of GPUs
+    per_gpu_scaling: False  # KEYWORD, if True it increases the batch size and the number of workers in proportion to the number of GPUs (for distributed increases only batch_size)
     loaders_params:  # KEYWORD, parameters for loaders, optional
       # Example
       train:

@@ -44,7 +44,7 @@ class MeterMetricsCallback(Callback):
                 If None, defaults to indices for each class, starting from 0.
             num_classes: Number of classes; must be > 1
             activation: An torch.nn activation applied to the logits.
-                Must be one of ['none', 'Sigmoid', 'Softmax2d']
+                Must be one of ['none', 'Sigmoid', 'Softmax']
         """
         super().__init__(CallbackOrder.metric)
         self.metric_names = metric_names

@@ -2,9 +2,11 @@
 # @TODO: code formatting issue for 20.07 release
 from functools import partial
 
+import torch
 from torch import nn
 
-from catalyst import metrics
+from catalyst.metrics.functional import wrap_metric_fn_with_activation
+from catalyst.metrics.iou import iou
 
 
 class IoULoss(nn.Module):
@@ -24,16 +26,18 @@ class IoULoss(nn.Module):
             eps: epsilon to avoid zero division
             threshold: threshold for outputs binarization
             activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
         """
         super().__init__()
-        self.metric_fn = partial(
-            metrics.iou, eps=eps, threshold=threshold, activation=activation
+        metric_fn = wrap_metric_fn_with_activation(
+            metric_fn=iou, activation=activation
         )
+        self.loss_fn = partial(metric_fn, eps=eps, threshold=threshold)
 
     def forward(self, outputs, targets):
         """@TODO: Docs. Contribution is welcome."""
-        iou = self.metric_fn(outputs, targets)
+        per_class_iou = self.loss_fn(outputs, targets)  # [bs; num_classes]
+        iou = torch.mean(per_class_iou)
         return 1 - iou
 
 
@@ -55,7 +59,7 @@ class BCEIoULoss(nn.Module):
             eps: epsilon to avoid zero division
             threshold: threshold for outputs binarization
             activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
             reduction: Specifies the reduction to apply
                 to the output of BCE
         """
