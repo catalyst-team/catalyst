@@ -1,5 +1,4 @@
 from typing import Dict, Iterable, TYPE_CHECKING
-from collections import defaultdict
 
 import torch
 
@@ -89,7 +88,7 @@ class CMCScoreCallback(LoaderMetricCallback):
             gallery_labels == query_labels.reshape(-1, 1)
         ).type(TORCH_BOOL)
 
-        metric = defaultdict(float)
+        metric = {}
         for k in self.topk_args:
             metric[f"{k:02}"] = self.metric(
                 query_embeddings=query_embeddings,
@@ -119,7 +118,7 @@ class CMCScoreCallback(LoaderMetricCallback):
 
 
 class ReidCMCScoreCallback(LoaderMetricCallback):
-    """Cumulative Matching Characteristics callback."""
+    """Cumulative Matching Characteristics callback for reid task."""
 
     def __init__(
         self,
@@ -131,7 +130,10 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
         topk_args: Iterable[int] = (1,),
     ):
         """
-        Init callback params.
+        This callback was designed to count cumulative matching
+        characteristics for reid tasks. It implements cross-camera evaluation
+        logic: for each query photo ignores all the gallery photos of the
+        same person that was taken from the same camera.
 
         Args:
             embeddings_key: key of embeddings in runner's output dict
@@ -203,7 +205,7 @@ class ReidCMCScoreCallback(LoaderMetricCallback):
                 "in gallery."
             )
 
-        metric = defaultdict(float)
+        metric = {}
         for k in self.topk_args:
             metric[f"{k:02}"] = self.metric(
                 query_embeddings=query_embeddings,

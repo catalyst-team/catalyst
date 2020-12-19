@@ -69,68 +69,6 @@ TEST_DATA_LESS_BIG = (
     for i in range(1, 101, 10)
 )
 
-TEST_DATA_SIMPLE_MASKED = (
-    (
-        torch.tensor(
-            [[1, 1, 0, 0], [1, 0, 0, 0], [0, 1, 1, 1], [0, 0, 1, 1],]
-        ).float(),
-        torch.tensor([[1, 1, 1, 0], [1, 1, 1, 1], [0, 1, 1, 0],]).float(),
-        torch.tensor(
-            [
-                [True, False, False],
-                [True, False, False],
-                [False, True, True],
-                [False, True, True],
-            ]
-        ),
-        torch.tensor(
-            [
-                [False, True, True],
-                [True, True, True],
-                [True, False, True],
-                [True, True, True],
-            ]
-        ),
-        1,
-        0.75,
-    ),
-    (
-        torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 1],]).float(),
-        torch.tensor([[0, 1, 0], [0, 0, 1], [1, 0, 1],]).float(),
-        torch.tensor(
-            [
-                [False, False, True],
-                [True, False, False],
-                [False, True, False],
-                [False, False, True],
-            ]
-        ),
-        torch.tensor(
-            [
-                [True, True, True],
-                [False, True, True],
-                [True, False, True],
-                [True, True, False],
-            ]
-        ),
-        1,
-        0.25,
-    ),
-)
-
-TEST_MASK_SIMPLE = (
-    (
-        torch.rand(size=(query_size, 32)).float(),
-        torch.rand(size=(gallery_size, 32)).float(),
-        torch.randint(low=0, high=2, size=(query_size, gallery_size)).bool(),
-        torch.ones(size=(query_size, gallery_size)).bool(),
-        k,
-    )
-    for query_size, gallery_size, k in zip(
-        list(range(10, 20)), list(range(25, 35)), list(range(1, 11))
-    )
-)
-
 
 @pytest.mark.parametrize(
     "distance_matrix,conformity_matrix,topk,expected", TEST_DATA_SIMPLE
@@ -174,8 +112,64 @@ def test_metric_greater(distance_matrix, conformity_matrix, topk, expected):
 
 
 @pytest.mark.parametrize(
-    "query_embeddings,gallery_embeddings,conformity_matrix,mask,topk,expected",
-    TEST_DATA_SIMPLE_MASKED,
+    (
+        "query_embeddings",
+        "gallery_embeddings",
+        "conformity_matrix",
+        "mask",
+        "topk",
+        "expected",
+    ),
+    (
+        (
+            torch.tensor(
+                [[1, 1, 0, 0], [1, 0, 0, 0], [0, 1, 1, 1], [0, 0, 1, 1],]
+            ).float(),
+            torch.tensor([[1, 1, 1, 0], [1, 1, 1, 1], [0, 1, 1, 0],]).float(),
+            torch.tensor(
+                [
+                    [True, False, False],
+                    [True, False, False],
+                    [False, True, True],
+                    [False, True, True],
+                ]
+            ),
+            torch.tensor(
+                [
+                    [False, True, True],
+                    [True, True, True],
+                    [True, False, True],
+                    [True, True, True],
+                ]
+            ),
+            1,
+            0.75,
+        ),
+        (
+            torch.tensor(
+                [[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 1],]
+            ).float(),
+            torch.tensor([[0, 1, 0], [0, 0, 1], [1, 0, 1],]).float(),
+            torch.tensor(
+                [
+                    [False, False, True],
+                    [True, False, False],
+                    [False, True, False],
+                    [False, False, True],
+                ]
+            ),
+            torch.tensor(
+                [
+                    [True, True, True],
+                    [False, True, True],
+                    [True, False, True],
+                    [True, True, False],
+                ]
+            ),
+            1,
+            0.25,
+        ),
+    ),
 )
 def test_masked_cmc_score(
     query_embeddings,
@@ -196,11 +190,30 @@ def test_masked_cmc_score(
 
 
 @pytest.mark.parametrize(
-    "query_embeddings,gallery_embeddings,conformity_matrix,mask,topk",
-    TEST_MASK_SIMPLE,
+    (
+        "query_embeddings",
+        "gallery_embeddings",
+        "conformity_matrix",
+        "mask",
+        "topk",
+    ),
+    (
+        (
+            torch.rand(size=(query_size, 32)).float(),
+            torch.rand(size=(gallery_size, 32)).float(),
+            torch.randint(
+                low=0, high=2, size=(query_size, gallery_size)
+            ).bool(),
+            torch.ones(size=(query_size, gallery_size)).bool(),
+            k,
+        )
+        for query_size, gallery_size, k in zip(
+            list(range(10, 20)), list(range(25, 35)), list(range(1, 11))
+        )
+    ),
 )
 def test_masked_score(
-    query_embeddings, gallery_embeddings, conformity_matrix, mask, topk
+    query_embeddings, gallery_embeddings, conformity_matrix, mask, topk,
 ):
     masked_score = masked_cmc_score(
         query_embeddings=query_embeddings,

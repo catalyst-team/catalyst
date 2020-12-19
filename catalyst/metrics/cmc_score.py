@@ -86,11 +86,12 @@ def masked_cmc_score(
     """
     if not available_samples[conformity_matrix == 0].all():
         raise ValueError(
-            "In reid case we suppose that all the pids that are not "
-            "the same with query pid should be available while model "
-            "scoring. It seems you have a gallery sample that should be "
-            "available in reid context marked as unavailable "
-            "according to the available samples mask."
+            "There is something wrong with available_samples matrix.\n"
+            "If we calculate masked_cmc_score for person pid_i, we should "
+            "take into account all the photos of people other than pid_i; "
+            "it means that all of them should be available according to "
+            "available_samples matrix.\n"
+            "It seems that it's not so for your one."
         )
     distances = torch.cdist(query_embeddings, gallery_embeddings)
     distances[~available_samples] = float("inf")

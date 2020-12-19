@@ -13,6 +13,9 @@ class Market1501MLDataset(MetricLearningTrainDataset):
     """
     Market1501 train dataset. This dataset should be used for training
     stage of the metric learning pipeline.
+
+    .. _Scalable Person Re-identification\: A Benchmark:
+        https://www.cv-foundation.org/openaccess/content_iccv_2015/papers/Zheng_Scalable_Person_Re-Identification_ICCV_2015_paper.pdf
     """
 
     def __init__(
@@ -45,6 +48,7 @@ class Market1501MLDataset(MetricLearningTrainDataset):
             images for training and their labels
         """
         file_names = list(data_dir.glob("*.jpg"))
+        # read images, data shape is (dataset_len, c, h, w)
         data = (
             torch.from_numpy(
                 np.array([imread(file_name) for file_name in file_names])
@@ -156,7 +160,10 @@ class Market1501QGDataset(QueryGalleryDataset):
         Returns:
             images, their labels and ids of the cameras that made the photos
         """
+        # Gallery dataset contains good, junk and distractor images;
+        # junk ones (marked as -1) should be neglected during evaluation.
         file_names = list(data_dir.glob("[!-]*.jpg"))
+        # read images, data shape is (dataset_len, c, h, w)
         data = (
             torch.from_numpy(
                 np.array([imread(file_name) for file_name in file_names])

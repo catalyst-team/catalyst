@@ -185,7 +185,7 @@ class ILoaderMetricCallback(IMetricCallback):
 
         self.input: Optional[Dict[str, Iterable[Any]]] = None
         self.output: Optional[Dict[str, Iterable[Any]]] = None
-        self._storage_size: int = 0
+        self._storage_size: Optional[int] = None
         self._cur_idx: int = 0
 
     def on_loader_start(self, runner: "IRunner"):
