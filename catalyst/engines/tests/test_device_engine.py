@@ -1,3 +1,5 @@
+# flake: noqa
+
 from pytest import mark
 
 import torch
@@ -5,6 +7,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks import CriterionCallback
+from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.dl import SupervisedRunner
 from catalyst.engines import DeviceEngine
 from catalyst.experiments import Experiment
@@ -59,16 +62,26 @@ def _model_fn():
     return DummyModel(4, 1)
 
 
+class DeviceCheckCallback(Callback):
+    def __init__(self, assert_device: str):
+        super().__init__(order=CallbackOrder.internal)
+        self.device = torch.device(assert_device)
+
+    def on_stage_start(self, runner: "IRunner"):
+        model_device = next(runner.model.parameters()).device
+        assert model_device == self.device
+
+
 def run_train_with_device(device):
     dataset = DummyDataset(10)
     loader = DataLoader(dataset, batch_size=4)
     runner = SupervisedRunner()
     exp = Experiment(
         model=_model_fn,
+        criterion=nn.MSELoss(),
         loaders={"train": loader, "valid": loader},
-        criterion=nn.MSELoss,
         main_metric="loss",
-        callbacks=[CriterionCallback()],
+        callbacks=[CriterionCallback(), DeviceCheckCallback(device)],
         engine=DeviceEngine(device),
     )
     runner.run_experiment(exp)
@@ -80,7 +93,7 @@ def test_engine_with_cpu():
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_engine_with_cuda():
-    run_train_with_device("cuda")
+    run_train_with_device("cuda:0")
 
 
 @mark.skipif(

@@ -1,3 +1,5 @@
+# flake: noqa
+
 import os
 
 from pytest import mark

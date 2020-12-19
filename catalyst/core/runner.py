@@ -856,18 +856,24 @@ class IStageBasedRunner(IRunner):
         # self.loaders = loaders
 
         set_global_seed(self.experiment.initial_seed)
+
+        engine = self.experiment.engine
         model = self.experiment.get_model(self.stage)
+        model = engine.to_device(model)
+
+        device = engine.device
         criterion = self.experiment.get_criterion(self.stage)
         optimizer = self.experiment.get_optimizer(self.stage, model)
         scheduler = self.experiment.get_scheduler(self.stage, optimizer)
-        model, criterion, optimizer, scheduler, device = process_components(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            distributed_params=self.experiment.distributed_params,
-            device=self.device,
-        )
+
+        # model, criterion, optimizer, scheduler, device = process_components(
+        #     model=model,
+        #     criterion=criterion,
+        #     optimizer=optimizer,
+        #     scheduler=scheduler,
+        #     distributed_params=self.experiment.distributed_params,
+        #     device=self.device,
+        # )
 
         set_global_seed(self.experiment.initial_seed)
         callbacks = self.experiment.get_callbacks(self.stage)

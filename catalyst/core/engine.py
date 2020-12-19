@@ -1,8 +1,9 @@
 # flake8: noqa
 
-from typing import Any, Callable, List, Mapping
+from typing import Any, Callable, List, Mapping, Union
 from abc import ABC, abstractmethod
 
+import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.optim.lr_scheduler as lr_scheduler
@@ -22,23 +23,13 @@ class IEngine(ABC, ICallback):
     - ddp (torch, etc)
     """
 
-    # taken for runner
-    def process_model(self, model: nn.Module) -> nn.Module:
+    @abstractmethod
+    def to_device(
+        self, obj: Union[torch.Tensor, nn.Module]
+    ) -> Union[torch.Tensor, nn.Module]:
         pass
 
-    def process_criterion(self, criterion: nn.Module) -> nn.Module:
-        pass
-
-    def process_optimizer(
-        self, optimizer: optim.Optimizer, model: nn.Module
-    ) -> optim.Optimizer:
-        pass
-
-    def process_scheduler(
-        self, scheduler: nn.Module, optimizer: optim.Optimizer
-    ) -> nn.Module:
-        pass
-
+    # @abstractmethod
     def process_components(self):
         pass
 
@@ -50,9 +41,11 @@ class IEngine(ABC, ICallback):
     def sync_metric(self) -> None:
         pass
 
+    @abstractmethod
     def save_checkpoint(self) -> None:
         pass
 
+    @abstractmethod
     def load_checkpoint(self) -> None:
         pass
 

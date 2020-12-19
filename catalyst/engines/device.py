@@ -1,4 +1,4 @@
-from typing import Any, Mapping
+from typing import Any, Mapping, Union
 
 import torch
 import torch.nn as nn
@@ -12,27 +12,13 @@ class DeviceEngine(IEngine):
     def __init__(self, device: str = "cpu"):
         self.device = device
 
-    def process_model(self, model_fn: callable):
-        model = model_fn() if callable(model_fn) else model_fn
-        return model.to(self.device)
+    def __repr__(self) -> str:
+        return f"DeviceEngine(device='{self.device}')"
 
-    def process_criterion(self, criterion_fn: callable):
-        criterion = criterion_fn() if callable(criterion_fn) else criterion_fn
-        return criterion.to(self.device)
-
-    def process_optimizer(self, optimizer_fn: callable, model: nn.Module):
-        optimizer = (
-            optimizer_fn(model.parameters())
-            if callable(optimizer_fn)
-            else optimizer_fn
-        )
-        return optimizer
-
-    def process_scheduler(self, scheduler_fn: callable, optimizer: nn.Module):
-        scheduler = (
-            scheduler_fn(optimizer) if callable(scheduler_fn) else scheduler_fn
-        )
-        return scheduler
+    def to_device(
+        self, obj: Union[torch.Tensor, nn.Module]
+    ) -> Union[torch.Tensor, nn.Module]:
+        return obj.to(self.device)
 
     def handle_device(self, batch: Mapping[str, Any]):
         if isinstance(batch, torch.Tensor):

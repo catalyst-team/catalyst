@@ -249,21 +249,38 @@ class Experiment(IExperiment):
         stage_params = {**default_params, **self._stage_kwargs}
         return stage_params
 
+    @property
+    def engine(self):
+        return self._engine
+
     def get_model(self, stage: str) -> Model:
         """Returns the model for a given stage."""
-        return self._engine.process_model(self._model)
+        # TODO: force user to return model from this method
+        model = self._model() if callable(self._model) else self._model
+        return self._engine.to_device(model)
 
     def get_criterion(self, stage: str) -> Criterion:
         """Returns the criterion for a given stage."""
-        return self._engine.process_criterion(self._criterion)
+        # TODO: force user to return criterion from this method
+        return self._criterion
 
     def get_optimizer(self, stage: str, model: nn.Module) -> Optimizer:
         """Returns the optimizer for a given stage."""
-        return self._engine.process_optimizer(self._optimizer, model)
+        # TODO: force user to return optimizer from this method
+        return (
+            self._optimizer(model.parameters())
+            if callable(self._optimizer)
+            else self._optimizer
+        )
 
     def get_scheduler(self, stage: str, optimizer=None) -> Scheduler:
         """Returns the scheduler for a given stage."""
-        return self._engine.process_scheduler(self._scheduler, optimizer)
+        # TODO: force user to return scheduler from this method
+        return (
+            self._scheduler(optimizer)
+            if callable(self._scheduler)
+            else self._scheduler
+        )
 
     def get_loaders(
         self, stage: str, epoch: int = None,

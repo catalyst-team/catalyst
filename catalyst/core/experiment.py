@@ -5,6 +5,7 @@ from collections import OrderedDict
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.core.callback import Callback
+from catalyst.core.engine import IEngine
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 
 
@@ -28,6 +29,11 @@ class IExperiment(ABC):
         - :py:mod:`catalyst.experiments.config.ConfigExperiment`
         - :py:mod:`catalyst.experiments.supervised.SupervisedExperiment`
     """
+
+    @property
+    @abstractmethod
+    def engine(self) -> IEngine:
+        pass
 
     @property
     @abstractmethod
