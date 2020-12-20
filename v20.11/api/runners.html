@@ -1,0 +1,1082 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Runners &mdash; Catalyst 20.11 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Settings" href="settings.html" />
+    <link rel="prev" title="Registry" href="registry.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Alchemy</span>
+                  <p>Experiments logging & visualization</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
+                  <span class=dropdown-title>Catalyst</span>
+                  <p>Accelerated deep learning R&D</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Reaction</span>
+                  <p>Convenient deep learning models serving</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
+                  <span class=dropdown-title>Codestyle</span>
+                  <p>Joint R&D codestyle</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Classification</span>
+                  <p>Image classification pipeline with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
+                  <span class=dropdown-title>Detection</span>
+                  <p>Object detection pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Segmentation</span>
+                  <p>Image semantic segmentation pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification / Segmentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AE / VAE</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP / DDP / TPU</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
+</ul>
+<p class="caption"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">[WIP] Finetuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/stages.html">[WIP] Multi-stage experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">[WIP] Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="experiments.html">Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="registry.html">Registry</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="typing.html">Typing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+      <li>Runners</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/api/runners.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <div class="section" id="runners">
+<h1>Runners<a class="headerlink" href="#runners" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#module-catalyst.runners.runner" id="id1">Runner</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.runners.supervised" id="id2">SupervisedRunner</a></p></li>
+</ul>
+</div>
+<span class="target" id="module-catalyst.runners"></span><dl class="class">
+<dt id="catalyst.runners.Runner">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.runners.</code><code class="sig-name descname">Runner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">experiment_fn: Callable = &lt;class 'catalyst.experiments.experiment.Experiment'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.Runner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.runner.IStageBasedRunner" title="catalyst.core.runner.IStageBasedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner.IStageBasedRunner</span></code></a></p>
+<p>Deep Learning Runner for supervised, unsupervised, gan, etc runs.</p>
+<dl class="method">
+<dt id="catalyst.runners.Runner.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">experiment_fn: Callable = &lt;class 'catalyst.experiments.experiment.Experiment'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.Runner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Torch model object</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
+<li><p><strong>experiment_fn</strong> – callable function,
+which defines default experiment type to use
+during <code class="docutils literal notranslate"><span class="pre">.train</span></code> and <code class="docutils literal notranslate"><span class="pre">.infer</span></code> methods.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.Runner.infer">
+<code class="sig-name descname">infer</code><span class="sig-paren">(</span><em class="sig-param">*, model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, logdir: str = None, resume: str = None, verbose: bool = False, stage_kwargs: Dict = None, fp16: Union[Dict, bool] = None, check: bool = False, timeit: bool = False, initial_seed: int = 42, state_kwargs: Dict = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.infer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.Runner.infer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts the inference stage of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – model for inference</p></li>
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="typing.html#catalyst.typing.Dataset" title="catalyst.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
+for training, validation or inference
+used for Loaders automatic creation
+preferred way for distributed training setup</p></li>
+<li><p><strong>loaders</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>DataLoader</em><em>]</em>) – dictionary
+with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
+for training, validation or inference</p></li>
+<li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>resume</strong> – path to checkpoint to use for resume</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite>, it displays the status of the training
+to the console.</p></li>
+<li><p><strong>stage_kwargs</strong> – additional stage params</p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
+See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
+if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
+<li><p><strong>check</strong> – if True, then only checks that pipeline is working
+(3 epochs only)</p></li>
+<li><p><strong>timeit</strong> – if True, computes the execution time
+of training process and displays it to the console.</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
+<li><p><strong>state_kwargs</strong> – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – if both <cite>resume</cite> and <cite>CheckpointCallback</cite>
+    already exist</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.Runner.predict_batch">
+<code class="sig-name descname">predict_batch</code><span class="sig-paren">(</span><em class="sig-param">batch: Mapping[str, Any], **kwargs</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.predict_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.Runner.predict_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run model inference on specified data batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – dictionary with data batches
+from DataLoader.</p></li>
+<li><p><strong>**kwargs</strong> – additional kwargs to pass to the model</p></li>
+</ul>
+</dd>
+</dl>
+<p># noqa: DAR202
+:returns: model output dictionary
+:rtype: Mapping[str, Any]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – if not implemented yet</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.Runner.predict_loader">
+<code class="sig-name descname">predict_loader</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">loader: torch.utils.data.dataloader.DataLoader</em>, <em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">resume: str = None</em>, <em class="sig-param">fp16: Union[Dict</em>, <em class="sig-param">bool] = None</em>, <em class="sig-param">initial_seed: int = 42</em><span class="sig-paren">)</span> &#x2192; Generator<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.predict_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.Runner.predict_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs model inference on PyTorch Dataloader and returns
+python generator with model predictions from <cite>runner.predict_batch</cite>.
+Cleans up the experiment info to avoid possible collisions.
+Sets <cite>is_train_loader</cite> and <cite>is_valid_loader</cite> to <cite>False</cite> while
+keeping <cite>is_infer_loader</cite> as True. Moves model to evaluation mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loader</strong> – loader to predict</p></li>
+<li><p><strong>model</strong> – model to use for prediction</p></li>
+<li><p><strong>resume</strong> – path to checkpoint to resume</p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – fp16 usage flag</p></li>
+<li><p><strong>initial_seed</strong> – seed to use before prediction</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p>bathes with model predictions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.Runner.trace">
+<code class="sig-name descname">trace</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">batch: Any = None</em>, <em class="sig-param">logdir: str = None</em>, <em class="sig-param">loader: torch.utils.data.dataloader.DataLoader = None</em>, <em class="sig-param">method_name: str = 'forward'</em>, <em class="sig-param">mode: str = 'eval'</em>, <em class="sig-param">requires_grad: bool = False</em>, <em class="sig-param">fp16: Union[Dict</em>, <em class="sig-param">bool] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = 'cpu'</em>, <em class="sig-param">predict_params: dict = None</em><span class="sig-paren">)</span> &#x2192; torch.jit._script.ScriptModule<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.Runner.trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traces model using Torch Jit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – model to trace</p></li>
+<li><p><strong>batch</strong> – batch to forward through the model to trace</p></li>
+<li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – If specified,
+the result will be written to the directory</p></li>
+<li><p><strong>loader</strong> (<em>DataLoader</em><em>, </em><em>optional</em>) – if batch is not specified, the batch
+will be <code class="docutils literal notranslate"><span class="pre">next(iter(loader))</span></code></p></li>
+<li><p><strong>method_name</strong> – model’s method name that will be traced</p></li>
+<li><p><strong>mode</strong> – <code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code></p></li>
+<li><p><strong>requires_grad</strong> – flag to trace with gradients</p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets
+tracing params to FP16</p></li>
+<li><p><strong>device</strong> – Torch device or a string</p></li>
+<li><p><strong>predict_params</strong> – additional parameters for model forward</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>traced model</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ScriptModule</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if <cite>batch</cite> and <cite>loader</cite> are Nones</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.Runner.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">*, model: torch.nn.modules.module.Module, criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, logdir: str = None, resume: str = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, fp16: Union[Dict, bool] = None, distributed: bool = False, check: bool = False, overfit: bool = False, timeit: bool = False, load_best_on_end: bool = False, initial_seed: int = 42, state_kwargs: Dict = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.Runner.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts the train stage of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – model to train</p></li>
+<li><p><strong>criterion</strong> – criterion function for training</p></li>
+<li><p><strong>optimizer</strong> – optimizer for training</p></li>
+<li><p><strong>scheduler</strong> – scheduler for training</p></li>
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="typing.html#catalyst.typing.Dataset" title="catalyst.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
+for training, validation or inference
+used for Loaders automatic creation
+preferred way for distributed training setup</p></li>
+<li><p><strong>loaders</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>DataLoader</em><em>]</em>) – dictionary
+with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
+for training, validation or inference</p></li>
+<li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>resume</strong> – path to checkpoint for model</p></li>
+<li><p><strong>num_epochs</strong> – number of training epochs</p></li>
+<li><p><strong>valid_loader</strong> – loader name used to calculate
+the metrics and save the checkpoints. For example,
+you can pass <cite>train</cite> and then
+the metrics will be taken from <cite>train</cite> loader.</p></li>
+<li><p><strong>main_metric</strong> – the key to the name of the metric
+by which the checkpoints will be selected.</p></li>
+<li><p><strong>minimize_metric</strong> – flag to indicate whether
+the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite>, it displays the status of the training
+to the console.</p></li>
+<li><p><strong>stage_kwargs</strong> – additional params for stage</p></li>
+<li><p><strong>checkpoint_data</strong> – additional data to save in checkpoint,
+for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
+See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
+if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
+<li><p><strong>distributed</strong> – if <cite>True</cite> will start training
+in distributed mode.
+Note: Works only with python scripts. No jupyter support.</p></li>
+<li><p><strong>check</strong> – if True, then only checks that pipeline is working
+(3 epochs only with 3 batches per loader)</p></li>
+<li><p><strong>overfit</strong> – if True, then takes only one batch per loader
+for model overfitting, for advance usage please check
+<code class="docutils literal notranslate"><span class="pre">BatchOverfitCallback</span></code></p></li>
+<li><p><strong>timeit</strong> – if True, computes the execution time
+of training process and displays it to the console.</p></li>
+<li><p><strong>load_best_on_end</strong> – if True, Runner will load
+best checkpoint state (model, optimizer, etc)
+according to validation metrics. Requires specified <code class="docutils literal notranslate"><span class="pre">logdir</span></code>.</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
+<li><p><strong>state_kwargs</strong> – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – if both <cite>resume</cite> and <cite>CheckpointCallback</cite>
+    already exist</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.runners.SupervisedRunner">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.runners.</code><code class="sig-name descname">SupervisedRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em>, <em class="sig-param">experiment_fn: Callable = &lt;class 'catalyst.experiments.supervised.SupervisedExperiment'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/supervised.html#SupervisedRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.SupervisedRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.runners.runner.Runner" title="catalyst.runners.runner.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.runners.runner.Runner</span></code></a></p>
+<p>Runner for experiments with supervised model.</p>
+<dl class="method">
+<dt id="catalyst.runners.SupervisedRunner.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em>, <em class="sig-param">experiment_fn: Callable = &lt;class 'catalyst.experiments.supervised.SupervisedExperiment'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/supervised.html#SupervisedRunner.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.SupervisedRunner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Torch model object</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
+<li><p><strong>input_key</strong> – Key in batch dict mapping for model input</p></li>
+<li><p><strong>output_key</strong> – Key in output dict model output
+will be stored under</p></li>
+<li><p><strong>input_target_key</strong> – Key in batch dict mapping for target</p></li>
+<li><p><strong>experiment_fn</strong> – callable function,
+which defines default experiment type to use
+during <code class="docutils literal notranslate"><span class="pre">.train</span></code> and <code class="docutils literal notranslate"><span class="pre">.infer</span></code> methods.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.SupervisedRunner.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">batch: Mapping[str, Any], **kwargs</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/runners/supervised.html#SupervisedRunner.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.SupervisedRunner.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward method for your Runner.
+Should not be called directly outside of runner.
+If your model has specific interface, override this method to use it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – dictionary with data batches
+from DataLoaders.</p></li>
+<li><p><strong>**kwargs</strong> – additional parameters to pass to the model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict with model output batch</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.SupervisedRunner.predict_batch">
+<code class="sig-name descname">predict_batch</code><span class="sig-paren">(</span><em class="sig-param">batch: Mapping[str, Any], **kwargs</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/runners/supervised.html#SupervisedRunner.predict_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.SupervisedRunner.predict_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run model inference on specified data batch.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You should not override this method. If you need specific model
+call, override forward() method</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – dictionary with data batches
+from DataLoader.</p></li>
+<li><p><strong>**kwargs</strong> – additional kwargs to pass to the model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>model output dictionary</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Mapping[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="module-catalyst.runners.runner">
+<span id="runner"></span><h2><a class="toc-backref" href="#id1">Runner</a><a class="headerlink" href="#module-catalyst.runners.runner" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.runners.runner.Runner">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.runners.runner.</code><code class="sig-name descname">Runner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">experiment_fn: Callable = &lt;class 'catalyst.experiments.experiment.Experiment'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.runner.IStageBasedRunner" title="catalyst.core.runner.IStageBasedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner.IStageBasedRunner</span></code></a></p>
+<p>Deep Learning Runner for supervised, unsupervised, gan, etc runs.</p>
+<dl class="method">
+<dt id="catalyst.runners.runner.Runner.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">experiment_fn: Callable = &lt;class 'catalyst.experiments.experiment.Experiment'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Torch model object</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
+<li><p><strong>experiment_fn</strong> – callable function,
+which defines default experiment type to use
+during <code class="docutils literal notranslate"><span class="pre">.train</span></code> and <code class="docutils literal notranslate"><span class="pre">.infer</span></code> methods.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.runner.Runner.infer">
+<code class="sig-name descname">infer</code><span class="sig-paren">(</span><em class="sig-param">*, model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, logdir: str = None, resume: str = None, verbose: bool = False, stage_kwargs: Dict = None, fp16: Union[Dict, bool] = None, check: bool = False, timeit: bool = False, initial_seed: int = 42, state_kwargs: Dict = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.infer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.infer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts the inference stage of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – model for inference</p></li>
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="typing.html#catalyst.typing.Dataset" title="catalyst.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
+for training, validation or inference
+used for Loaders automatic creation
+preferred way for distributed training setup</p></li>
+<li><p><strong>loaders</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>DataLoader</em><em>]</em>) – dictionary
+with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
+for training, validation or inference</p></li>
+<li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>resume</strong> – path to checkpoint to use for resume</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite>, it displays the status of the training
+to the console.</p></li>
+<li><p><strong>stage_kwargs</strong> – additional stage params</p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
+See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
+if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
+<li><p><strong>check</strong> – if True, then only checks that pipeline is working
+(3 epochs only)</p></li>
+<li><p><strong>timeit</strong> – if True, computes the execution time
+of training process and displays it to the console.</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
+<li><p><strong>state_kwargs</strong> – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – if both <cite>resume</cite> and <cite>CheckpointCallback</cite>
+    already exist</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.runner.Runner.predict_batch">
+<code class="sig-name descname">predict_batch</code><span class="sig-paren">(</span><em class="sig-param">batch: Mapping[str, Any], **kwargs</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.predict_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.predict_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run model inference on specified data batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – dictionary with data batches
+from DataLoader.</p></li>
+<li><p><strong>**kwargs</strong> – additional kwargs to pass to the model</p></li>
+</ul>
+</dd>
+</dl>
+<p># noqa: DAR202
+:returns: model output dictionary
+:rtype: Mapping[str, Any]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>NotImplementedError</strong> – if not implemented yet</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.runner.Runner.predict_loader">
+<code class="sig-name descname">predict_loader</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">loader: torch.utils.data.dataloader.DataLoader</em>, <em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">resume: str = None</em>, <em class="sig-param">fp16: Union[Dict</em>, <em class="sig-param">bool] = None</em>, <em class="sig-param">initial_seed: int = 42</em><span class="sig-paren">)</span> &#x2192; Generator<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.predict_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.predict_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs model inference on PyTorch Dataloader and returns
+python generator with model predictions from <cite>runner.predict_batch</cite>.
+Cleans up the experiment info to avoid possible collisions.
+Sets <cite>is_train_loader</cite> and <cite>is_valid_loader</cite> to <cite>False</cite> while
+keeping <cite>is_infer_loader</cite> as True. Moves model to evaluation mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loader</strong> – loader to predict</p></li>
+<li><p><strong>model</strong> – model to use for prediction</p></li>
+<li><p><strong>resume</strong> – path to checkpoint to resume</p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – fp16 usage flag</p></li>
+<li><p><strong>initial_seed</strong> – seed to use before prediction</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p>bathes with model predictions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.runner.Runner.trace">
+<code class="sig-name descname">trace</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">model: torch.nn.modules.module.Module = None</em>, <em class="sig-param">batch: Any = None</em>, <em class="sig-param">logdir: str = None</em>, <em class="sig-param">loader: torch.utils.data.dataloader.DataLoader = None</em>, <em class="sig-param">method_name: str = 'forward'</em>, <em class="sig-param">mode: str = 'eval'</em>, <em class="sig-param">requires_grad: bool = False</em>, <em class="sig-param">fp16: Union[Dict</em>, <em class="sig-param">bool] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = 'cpu'</em>, <em class="sig-param">predict_params: dict = None</em><span class="sig-paren">)</span> &#x2192; torch.jit._script.ScriptModule<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.trace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Traces model using Torch Jit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – model to trace</p></li>
+<li><p><strong>batch</strong> – batch to forward through the model to trace</p></li>
+<li><p><strong>logdir</strong> (<em>str</em><em>, </em><em>optional</em>) – If specified,
+the result will be written to the directory</p></li>
+<li><p><strong>loader</strong> (<em>DataLoader</em><em>, </em><em>optional</em>) – if batch is not specified, the batch
+will be <code class="docutils literal notranslate"><span class="pre">next(iter(loader))</span></code></p></li>
+<li><p><strong>method_name</strong> – model’s method name that will be traced</p></li>
+<li><p><strong>mode</strong> – <code class="docutils literal notranslate"><span class="pre">train</span></code> or <code class="docutils literal notranslate"><span class="pre">eval</span></code></p></li>
+<li><p><strong>requires_grad</strong> – flag to trace with gradients</p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets
+tracing params to FP16</p></li>
+<li><p><strong>device</strong> – Torch device or a string</p></li>
+<li><p><strong>predict_params</strong> – additional parameters for model forward</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>traced model</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ScriptModule</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if <cite>batch</cite> and <cite>loader</cite> are Nones</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.runner.Runner.train">
+<code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param">*, model: torch.nn.modules.module.Module, criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[List[Callback], OrderedDict[str, Callback]] = None, logdir: str = None, resume: str = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, fp16: Union[Dict, bool] = None, distributed: bool = False, check: bool = False, overfit: bool = False, timeit: bool = False, load_best_on_end: bool = False, initial_seed: int = 42, state_kwargs: Dict = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts the train stage of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – model to train</p></li>
+<li><p><strong>criterion</strong> – criterion function for training</p></li>
+<li><p><strong>optimizer</strong> – optimizer for training</p></li>
+<li><p><strong>scheduler</strong> – scheduler for training</p></li>
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="typing.html#catalyst.typing.Dataset" title="catalyst.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
+for training, validation or inference
+used for Loaders automatic creation
+preferred way for distributed training setup</p></li>
+<li><p><strong>loaders</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>DataLoader</em><em>]</em>) – dictionary
+with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
+for training, validation or inference</p></li>
+<li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>resume</strong> – path to checkpoint for model</p></li>
+<li><p><strong>num_epochs</strong> – number of training epochs</p></li>
+<li><p><strong>valid_loader</strong> – loader name used to calculate
+the metrics and save the checkpoints. For example,
+you can pass <cite>train</cite> and then
+the metrics will be taken from <cite>train</cite> loader.</p></li>
+<li><p><strong>main_metric</strong> – the key to the name of the metric
+by which the checkpoints will be selected.</p></li>
+<li><p><strong>minimize_metric</strong> – flag to indicate whether
+the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite>, it displays the status of the training
+to the console.</p></li>
+<li><p><strong>stage_kwargs</strong> – additional params for stage</p></li>
+<li><p><strong>checkpoint_data</strong> – additional data to save in checkpoint,
+for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
+<li><p><strong>fp16</strong> (<em>Union</em><em>[</em><em>Dict</em><em>, </em><em>bool</em><em>]</em>) – If not None, then sets training to FP16.
+See <a class="reference external" href="https://nvidia.github.io/apex/amp.html#properties">https://nvidia.github.io/apex/amp.html#properties</a>
+if fp16=True, params by default will be <code class="docutils literal notranslate"><span class="pre">{&quot;opt_level&quot;:</span> <span class="pre">&quot;O1&quot;}</span></code></p></li>
+<li><p><strong>distributed</strong> – if <cite>True</cite> will start training
+in distributed mode.
+Note: Works only with python scripts. No jupyter support.</p></li>
+<li><p><strong>check</strong> – if True, then only checks that pipeline is working
+(3 epochs only with 3 batches per loader)</p></li>
+<li><p><strong>overfit</strong> – if True, then takes only one batch per loader
+for model overfitting, for advance usage please check
+<code class="docutils literal notranslate"><span class="pre">BatchOverfitCallback</span></code></p></li>
+<li><p><strong>timeit</strong> – if True, computes the execution time
+of training process and displays it to the console.</p></li>
+<li><p><strong>load_best_on_end</strong> – if True, Runner will load
+best checkpoint state (model, optimizer, etc)
+according to validation metrics. Requires specified <code class="docutils literal notranslate"><span class="pre">logdir</span></code>.</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
+<li><p><strong>state_kwargs</strong> – deprecated, use <cite>stage_kwargs</cite> instead</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – if both <cite>resume</cite> and <cite>CheckpointCallback</cite>
+    already exist</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.runners.supervised">
+<span id="supervisedrunner"></span><h2><a class="toc-backref" href="#id2">SupervisedRunner</a><a class="headerlink" href="#module-catalyst.runners.supervised" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.runners.supervised.SupervisedRunner">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.runners.supervised.</code><code class="sig-name descname">SupervisedRunner</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em>, <em class="sig-param">experiment_fn: Callable = &lt;class 'catalyst.experiments.supervised.SupervisedExperiment'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/supervised.html#SupervisedRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.supervised.SupervisedRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.runners.runner.Runner" title="catalyst.runners.runner.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.runners.runner.Runner</span></code></a></p>
+<p>Runner for experiments with supervised model.</p>
+<dl class="method">
+<dt id="catalyst.runners.supervised.SupervisedRunner.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: Union[torch.nn.modules.module.Module</em>, <em class="sig-param">Dict[str</em>, <em class="sig-param">torch.nn.modules.module.Module]] = None</em>, <em class="sig-param">device: Union[str</em>, <em class="sig-param">torch.device] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">input_target_key: str = 'targets'</em>, <em class="sig-param">experiment_fn: Callable = &lt;class 'catalyst.experiments.supervised.SupervisedExperiment'&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/supervised.html#SupervisedRunner.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.supervised.SupervisedRunner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Torch model object</p></li>
+<li><p><strong>device</strong> – Torch device</p></li>
+<li><p><strong>input_key</strong> – Key in batch dict mapping for model input</p></li>
+<li><p><strong>output_key</strong> – Key in output dict model output
+will be stored under</p></li>
+<li><p><strong>input_target_key</strong> – Key in batch dict mapping for target</p></li>
+<li><p><strong>experiment_fn</strong> – callable function,
+which defines default experiment type to use
+during <code class="docutils literal notranslate"><span class="pre">.train</span></code> and <code class="docutils literal notranslate"><span class="pre">.infer</span></code> methods.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.supervised.SupervisedRunner.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">batch: Mapping[str, Any], **kwargs</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/runners/supervised.html#SupervisedRunner.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.supervised.SupervisedRunner.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward method for your Runner.
+Should not be called directly outside of runner.
+If your model has specific interface, override this method to use it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – dictionary with data batches
+from DataLoaders.</p></li>
+<li><p><strong>**kwargs</strong> – additional parameters to pass to the model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict with model output batch</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.supervised.SupervisedRunner.predict_batch">
+<code class="sig-name descname">predict_batch</code><span class="sig-paren">(</span><em class="sig-param">batch: Mapping[str, Any], **kwargs</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/runners/supervised.html#SupervisedRunner.predict_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.supervised.SupervisedRunner.predict_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run model inference on specified data batch.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You should not override this method. If you need specific model
+call, override forward() method</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – dictionary with data batches
+from DataLoader.</p></li>
+<li><p><strong>**kwargs</strong> – additional kwargs to pass to the model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>model output dictionary</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Mapping[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+             </article>
+             
+            </div>
+            <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="settings.html" class="btn btn-neutral float-right" title="Settings" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+      
+      
+        <a href="registry.html" class="btn btn-neutral" title="Registry" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+      
+    </div>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              <ul>
+<li><a class="reference internal" href="#">Runners</a><ul>
+<li><a class="reference internal" href="#module-catalyst.runners.runner">Runner</a></li>
+<li><a class="reference internal" href="#module-catalyst.runners.supervised">SupervisedRunner</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+         <script type="text/javascript" src="../_static/jquery.js"></script>
+         <script type="text/javascript" src="../_static/underscore.js"></script>
+         <script type="text/javascript" src="../_static/doctools.js"></script>
+         <script type="text/javascript" src="../_static/language_data.js"></script>
+         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>

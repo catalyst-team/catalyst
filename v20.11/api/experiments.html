@@ -1,0 +1,1216 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Experiments &mdash; Catalyst 20.11 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Metrics" href="metrics.html" />
+    <link rel="prev" title="Data" href="data.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Alchemy</span>
+                  <p>Experiments logging & visualization</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
+                  <span class=dropdown-title>Catalyst</span>
+                  <p>Accelerated deep learning R&D</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Reaction</span>
+                  <p>Convenient deep learning models serving</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
+                  <span class=dropdown-title>Codestyle</span>
+                  <p>Joint R&D codestyle</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Classification</span>
+                  <p>Image classification pipeline with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
+                  <span class=dropdown-title>Detection</span>
+                  <p>Object detection pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Segmentation</span>
+                  <p>Image semantic segmentation pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.11</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification / Segmentation</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AE / VAE</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP / DDP / TPU</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
+</ul>
+<p class="caption"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">[WIP] Finetuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/stages.html">[WIP] Multi-stage experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">[WIP] Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="registry.html">Registry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">Settings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="typing.html">Typing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+      <li>Experiments</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/api/experiments.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <div class="section" id="experiments">
+<h1>Experiments<a class="headerlink" href="#experiments" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#module-catalyst.experiments.config" id="id1">ConfigExperiment</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.experiments.experiment" id="id2">Experiment</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.experiments.supervised" id="id3">SupervisedExperiment</a></p></li>
+</ul>
+</div>
+<span class="target" id="module-catalyst.experiments"></span><dl class="class">
+<dt id="catalyst.experiments.ConfigExperiment">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.</code><code class="sig-name descname">ConfigExperiment</code><span class="sig-paren">(</span><em class="sig-param">config: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.ConfigExperiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.experiment.IExperiment" title="catalyst.core.experiment.IExperiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment</span></code></a></p>
+<p>Experiment created from a configuration file.</p>
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">config: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> – dictionary with parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.distributed_params">
+<em class="property">property </em><code class="sig-name descname">distributed_params</code><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.distributed_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dict with the parameters for distributed and FP16 methond.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.get_callbacks">
+<code class="sig-name descname">get_callbacks</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[Callback]<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the callbacks for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.get_criterion">
+<code class="sig-name descname">get_criterion</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.get_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the criterion for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.get_loaders">
+<code class="sig-name descname">get_loaders</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">epoch: int = None</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_loaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.get_loaders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the loaders for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.get_model">
+<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the model for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.get_optimizer">
+<code class="sig-name descname">get_optimizer</code><span class="sig-paren">(</span><em class="sig-param">stage: str, model: Union[torch.nn.modules.module.Module, Dict[str, torch.nn.modules.module.Module]]</em><span class="sig-paren">)</span> &#x2192; Union[torch.optim.optimizer.Optimizer, Dict[str, torch.optim.optimizer.Optimizer]]<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.get_optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the optimizer for a given stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stage</strong> – stage name</p></li>
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>Model</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Model</em><em>]</em><em>]</em>) – model or a dict of models</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>optimizer for selected stage</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.get_scheduler">
+<code class="sig-name descname">get_scheduler</code><span class="sig-paren">(</span><em class="sig-param">stage: str, optimizer: Union[torch.optim.optimizer.Optimizer, Dict[str, torch.optim.optimizer.Optimizer]]</em><span class="sig-paren">)</span> &#x2192; Union[torch.optim.lr_scheduler._LRScheduler, Dict[str, torch.optim.lr_scheduler._LRScheduler]]<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.get_scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the scheduler for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.get_stage_params">
+<code class="sig-name descname">get_stage_params</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_stage_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.get_stage_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the state parameters for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.get_transforms">
+<code class="sig-name descname">get_transforms</code><span class="sig-paren">(</span><em class="sig-param">stage: str = None</em>, <em class="sig-param">dataset: str = None</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_transforms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.get_transforms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns transform for a given stage and dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stage</strong> – stage name</p></li>
+<li><p><strong>dataset</strong> – dataset name (e.g. “train”, “valid”),
+will be used only if the value of <cite>_key_value`</cite> is <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>transform function</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.hparams">
+<em class="property">property </em><code class="sig-name descname">hparams</code><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.hparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyperparameters</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.initial_seed">
+<em class="property">property </em><code class="sig-name descname">initial_seed</code><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.initial_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s initial seed value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.logdir">
+<em class="property">property </em><code class="sig-name descname">logdir</code><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.logdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to the directory where the experiment logs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.stages">
+<em class="property">property </em><code class="sig-name descname">stages</code><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.stages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s stage names.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.ConfigExperiment.trial">
+<em class="property">property </em><code class="sig-name descname">trial</code><a class="headerlink" href="#catalyst.experiments.ConfigExperiment.trial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyperparameter trial for current experiment.
+Could be usefull for Optuna/HyperOpt/Ray.tune
+hyperparameters optimizers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>trial</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">trial</span>
+<span class="go">optuna.trial._trial.Trial  # Optuna variant</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.experiments.Experiment">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, trial: Any = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_time: bool = False, check_run: bool = False, overfit: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.Experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.experiment.IExperiment" title="catalyst.core.experiment.IExperiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment</span></code></a></p>
+<p>One-staged experiment, you can use it to declare experiments in code.</p>
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, trial: Any = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_time: bool = False, check_run: bool = False, overfit: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.Experiment.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – model</p></li>
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="typing.html#catalyst.typing.Dataset" title="catalyst.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
+for training, validation or inference
+used for Loaders automatic creation
+preferred way for distributed training setup</p></li>
+<li><p><strong>loaders</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>DataLoader</em><em>]</em>) – dictionary
+with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
+for training, validation or inference</p></li>
+<li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>stage</strong> – current stage</p></li>
+<li><p><strong>criterion</strong> – criterion function</p></li>
+<li><p><strong>optimizer</strong> – optimizer</p></li>
+<li><p><strong>scheduler</strong> – scheduler</p></li>
+<li><p><strong>trial</strong> – hyperparameters optimization trial.
+Used for integrations with Optuna/HyperOpt/Ray.tune.</p></li>
+<li><p><strong>num_epochs</strong> – number of experiment’s epochs</p></li>
+<li><p><strong>valid_loader</strong> – loader name used to calculate
+the metrics and save the checkpoints. For example,
+you can pass <cite>train</cite> and then
+the metrics will be taken from <cite>train</cite> loader.</p></li>
+<li><p><strong>main_metric</strong> – the key to the name of the metric
+by which the checkpoints will be selected.</p></li>
+<li><p><strong>minimize_metric</strong> – flag to indicate whether
+the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
+<li><p><strong>verbose</strong> – if True, it displays the status of the training
+to the console.</p></li>
+<li><p><strong>check_time</strong> – if True, computes the execution time
+of training process and displays it to the console.</p></li>
+<li><p><strong>check_run</strong> – if True, we run only 3 batches per loader
+and 3 epochs per stage to check pipeline correctness</p></li>
+<li><p><strong>overfit</strong> – if True, then takes only one batch per loader
+for model overfitting, for advance usage please check
+<code class="docutils literal notranslate"><span class="pre">BatchOverfitCallback</span></code></p></li>
+<li><p><strong>stage_kwargs</strong> – additional stage params</p></li>
+<li><p><strong>checkpoint_data</strong> – additional data to save in checkpoint,
+for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
+<li><p><strong>distributed_params</strong> – dictionary with the parameters
+for distributed and FP16 method</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.distributed_params">
+<em class="property">property </em><code class="sig-name descname">distributed_params</code><a class="headerlink" href="#catalyst.experiments.Experiment.distributed_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dict with the parameters for distributed and FP16 method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.get_callbacks">
+<code class="sig-name descname">get_callbacks</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Callback]<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.Experiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the callbacks for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.get_criterion">
+<code class="sig-name descname">get_criterion</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.Experiment.get_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the criterion for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.get_loaders">
+<code class="sig-name descname">get_loaders</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">epoch: int = None</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_loaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.Experiment.get_loaders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the loaders for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.get_model">
+<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.Experiment.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the model for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.get_optimizer">
+<code class="sig-name descname">get_optimizer</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">model: torch.nn.modules.module.Module</em><span class="sig-paren">)</span> &#x2192; torch.optim.optimizer.Optimizer<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.Experiment.get_optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the optimizer for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.get_scheduler">
+<code class="sig-name descname">get_scheduler</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">optimizer=None</em><span class="sig-paren">)</span> &#x2192; torch.optim.lr_scheduler._LRScheduler<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.Experiment.get_scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the scheduler for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.get_stage_params">
+<code class="sig-name descname">get_stage_params</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_stage_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.Experiment.get_stage_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the state parameters for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.hparams">
+<em class="property">property </em><code class="sig-name descname">hparams</code><a class="headerlink" href="#catalyst.experiments.Experiment.hparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyper parameters</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.initial_seed">
+<em class="property">property </em><code class="sig-name descname">initial_seed</code><a class="headerlink" href="#catalyst.experiments.Experiment.initial_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s initial seed value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.logdir">
+<em class="property">property </em><code class="sig-name descname">logdir</code><a class="headerlink" href="#catalyst.experiments.Experiment.logdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to the directory where the experiment logs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.stages">
+<em class="property">property </em><code class="sig-name descname">stages</code><a class="headerlink" href="#catalyst.experiments.Experiment.stages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s stage names (array with one value).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.Experiment.trial">
+<em class="property">property </em><code class="sig-name descname">trial</code><a class="headerlink" href="#catalyst.experiments.Experiment.trial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyperparameter trial for current experiment.
+Could be usefull for Optuna/HyperOpt/Ray.tune
+hyperparameters optimizers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>trial</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">trial</span>
+<span class="go">optuna.trial._trial.Trial  # Optuna variant</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="catalyst.experiments.SupervisedExperiment">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.</code><code class="sig-name descname">SupervisedExperiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, trial: Any = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_time: bool = False, check_run: bool = False, overfit: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/supervised.html#SupervisedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.SupervisedExperiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.experiments.experiment.Experiment" title="catalyst.experiments.experiment.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.experiments.experiment.Experiment</span></code></a></p>
+<p>Supervised experiment.</p>
+<p>The main difference with Experiment that it will
+add several callbacks by default if you haven’t.</p>
+<dl class="simple">
+<dt>Here are list of callbacks by default:</dt><dd><dl class="simple">
+<dt>CriterionCallback:</dt><dd><p>measures loss with specified <code class="docutils literal notranslate"><span class="pre">criterion</span></code>.</p>
+</dd>
+<dt>OptimizerCallback:</dt><dd><p>abstraction over <code class="docutils literal notranslate"><span class="pre">optimizer</span></code> step.</p>
+</dd>
+<dt>SchedulerCallback:</dt><dd><p>only in case if you provided scheduler to your experiment does
+<cite>lr_scheduler.step</cite></p>
+</dd>
+<dt>CheckpointCallback:</dt><dd><p>saves model and optimizer state each epoch callback to save/restore
+your model/criterion/optimizer/metrics.</p>
+</dd>
+<dt>ConsoleLogger:</dt><dd><p>translates <code class="docutils literal notranslate"><span class="pre">runner.*_metrics</span></code> to console and text file.</p>
+</dd>
+<dt>TensorboardLogger:</dt><dd><p>writes <code class="docutils literal notranslate"><span class="pre">runner.*_metrics</span></code> to tensorboard.</p>
+</dd>
+<dt>RaiseExceptionCallback:</dt><dd><p>will raise exception if needed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="catalyst.experiments.SupervisedExperiment.get_callbacks">
+<code class="sig-name descname">get_callbacks</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Callback]<a class="reference internal" href="../_modules/catalyst/experiments/supervised.html#SupervisedExperiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.SupervisedExperiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override of <code class="docutils literal notranslate"><span class="pre">BaseExperiment.get_callbacks</span></code> method.
+Will add several of callbacks by default in case they missed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – name of stage. It should start with <cite>infer</cite> if you
+don’t need default callbacks, as they required only for
+training stages.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Ordered dictionary of callbacks</dt><dd><p>for experiment</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">Callback</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="module-catalyst.experiments.config">
+<span id="configexperiment"></span><h2><a class="toc-backref" href="#id1">ConfigExperiment</a><a class="headerlink" href="#module-catalyst.experiments.config" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.experiments.config.ConfigExperiment">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.config.</code><code class="sig-name descname">ConfigExperiment</code><span class="sig-paren">(</span><em class="sig-param">config: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.experiment.IExperiment" title="catalyst.core.experiment.IExperiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment</span></code></a></p>
+<p>Experiment created from a configuration file.</p>
+<dl class="attribute">
+<dt id="catalyst.experiments.config.ConfigExperiment.STAGE_KEYWORDS">
+<code class="sig-name descname">STAGE_KEYWORDS</code><em class="property"> = ['criterion_params', 'optimizer_params', 'scheduler_params', 'data_params', 'transform_params', 'stage_params', 'callbacks_params']</em><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.STAGE_KEYWORDS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">config: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> – dictionary with parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.distributed_params">
+<em class="property">property </em><code class="sig-name descname">distributed_params</code><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.distributed_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dict with the parameters for distributed and FP16 methond.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.get_callbacks">
+<code class="sig-name descname">get_callbacks</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[Callback]<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the callbacks for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.get_criterion">
+<code class="sig-name descname">get_criterion</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.get_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the criterion for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.get_loaders">
+<code class="sig-name descname">get_loaders</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">epoch: int = None</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_loaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.get_loaders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the loaders for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.get_model">
+<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the model for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.get_optimizer">
+<code class="sig-name descname">get_optimizer</code><span class="sig-paren">(</span><em class="sig-param">stage: str, model: Union[torch.nn.modules.module.Module, Dict[str, torch.nn.modules.module.Module]]</em><span class="sig-paren">)</span> &#x2192; Union[torch.optim.optimizer.Optimizer, Dict[str, torch.optim.optimizer.Optimizer]]<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.get_optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the optimizer for a given stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stage</strong> – stage name</p></li>
+<li><p><strong>model</strong> (<em>Union</em><em>[</em><em>Model</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Model</em><em>]</em><em>]</em>) – model or a dict of models</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>optimizer for selected stage</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.get_scheduler">
+<code class="sig-name descname">get_scheduler</code><span class="sig-paren">(</span><em class="sig-param">stage: str, optimizer: Union[torch.optim.optimizer.Optimizer, Dict[str, torch.optim.optimizer.Optimizer]]</em><span class="sig-paren">)</span> &#x2192; Union[torch.optim.lr_scheduler._LRScheduler, Dict[str, torch.optim.lr_scheduler._LRScheduler]]<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.get_scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the scheduler for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.get_stage_params">
+<code class="sig-name descname">get_stage_params</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_stage_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.get_stage_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the state parameters for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.get_transforms">
+<code class="sig-name descname">get_transforms</code><span class="sig-paren">(</span><em class="sig-param">stage: str = None</em>, <em class="sig-param">dataset: str = None</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment.get_transforms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.get_transforms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns transform for a given stage and dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stage</strong> – stage name</p></li>
+<li><p><strong>dataset</strong> – dataset name (e.g. “train”, “valid”),
+will be used only if the value of <cite>_key_value`</cite> is <code class="docutils literal notranslate"><span class="pre">True</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>transform function</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.hparams">
+<em class="property">property </em><code class="sig-name descname">hparams</code><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.hparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyperparameters</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.initial_seed">
+<em class="property">property </em><code class="sig-name descname">initial_seed</code><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.initial_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s initial seed value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.logdir">
+<em class="property">property </em><code class="sig-name descname">logdir</code><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.logdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to the directory where the experiment logs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.stages">
+<em class="property">property </em><code class="sig-name descname">stages</code><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.stages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s stage names.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.config.ConfigExperiment.trial">
+<em class="property">property </em><code class="sig-name descname">trial</code><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment.trial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyperparameter trial for current experiment.
+Could be usefull for Optuna/HyperOpt/Ray.tune
+hyperparameters optimizers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>trial</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">trial</span>
+<span class="go">optuna.trial._trial.Trial  # Optuna variant</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.experiments.experiment">
+<span id="experiment"></span><h2><a class="toc-backref" href="#id2">Experiment</a><a class="headerlink" href="#module-catalyst.experiments.experiment" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.experiments.experiment.Experiment">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.experiment.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, trial: Any = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_time: bool = False, check_run: bool = False, overfit: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.experiment.Experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.experiment.IExperiment" title="catalyst.core.experiment.IExperiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.experiment.IExperiment</span></code></a></p>
+<p>One-staged experiment, you can use it to declare experiments in code.</p>
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, trial: Any = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_time: bool = False, check_run: bool = False, overfit: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – model</p></li>
+<li><p><strong>datasets</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><a class="reference internal" href="typing.html#catalyst.typing.Dataset" title="catalyst.typing.Dataset"><em>Dataset</em></a><em>, </em><em>Dict</em><em>, </em><em>Any</em><em>]</em><em>]</em>) – dictionary
+with one or several  <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code>
+for training, validation or inference
+used for Loaders automatic creation
+preferred way for distributed training setup</p></li>
+<li><p><strong>loaders</strong> (<em>OrderedDict</em><em>[</em><em>str</em><em>, </em><em>DataLoader</em><em>]</em>) – dictionary
+with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
+for training, validation or inference</p></li>
+<li><p><strong>callbacks</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>, </em><em>OrderedDict</em><em>[</em><em>str</em><em>, </em><a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><em>Callback</em></a><em>]</em><em>]</em>) – list or dictionary with Catalyst callbacks</p></li>
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>stage</strong> – current stage</p></li>
+<li><p><strong>criterion</strong> – criterion function</p></li>
+<li><p><strong>optimizer</strong> – optimizer</p></li>
+<li><p><strong>scheduler</strong> – scheduler</p></li>
+<li><p><strong>trial</strong> – hyperparameters optimization trial.
+Used for integrations with Optuna/HyperOpt/Ray.tune.</p></li>
+<li><p><strong>num_epochs</strong> – number of experiment’s epochs</p></li>
+<li><p><strong>valid_loader</strong> – loader name used to calculate
+the metrics and save the checkpoints. For example,
+you can pass <cite>train</cite> and then
+the metrics will be taken from <cite>train</cite> loader.</p></li>
+<li><p><strong>main_metric</strong> – the key to the name of the metric
+by which the checkpoints will be selected.</p></li>
+<li><p><strong>minimize_metric</strong> – flag to indicate whether
+the <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> should be minimized.</p></li>
+<li><p><strong>verbose</strong> – if True, it displays the status of the training
+to the console.</p></li>
+<li><p><strong>check_time</strong> – if True, computes the execution time
+of training process and displays it to the console.</p></li>
+<li><p><strong>check_run</strong> – if True, we run only 3 batches per loader
+and 3 epochs per stage to check pipeline correctness</p></li>
+<li><p><strong>overfit</strong> – if True, then takes only one batch per loader
+for model overfitting, for advance usage please check
+<code class="docutils literal notranslate"><span class="pre">BatchOverfitCallback</span></code></p></li>
+<li><p><strong>stage_kwargs</strong> – additional stage params</p></li>
+<li><p><strong>checkpoint_data</strong> – additional data to save in checkpoint,
+for example: <code class="docutils literal notranslate"><span class="pre">class_names</span></code>, <code class="docutils literal notranslate"><span class="pre">date_of_training</span></code>, etc</p></li>
+<li><p><strong>distributed_params</strong> – dictionary with the parameters
+for distributed and FP16 method</p></li>
+<li><p><strong>initial_seed</strong> – experiment’s initial seed value</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.distributed_params">
+<em class="property">property </em><code class="sig-name descname">distributed_params</code><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.distributed_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dict with the parameters for distributed and FP16 method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.get_callbacks">
+<code class="sig-name descname">get_callbacks</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Callback]<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the callbacks for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.get_criterion">
+<code class="sig-name descname">get_criterion</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_criterion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.get_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the criterion for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.get_loaders">
+<code class="sig-name descname">get_loaders</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">epoch: int = None</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_loaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.get_loaders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the loaders for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.get_model">
+<code class="sig-name descname">get_model</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the model for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.get_optimizer">
+<code class="sig-name descname">get_optimizer</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">model: torch.nn.modules.module.Module</em><span class="sig-paren">)</span> &#x2192; torch.optim.optimizer.Optimizer<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_optimizer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.get_optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the optimizer for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.get_scheduler">
+<code class="sig-name descname">get_scheduler</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em>, <em class="sig-param">optimizer=None</em><span class="sig-paren">)</span> &#x2192; torch.optim.lr_scheduler._LRScheduler<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.get_scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the scheduler for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.get_stage_params">
+<code class="sig-name descname">get_stage_params</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; Mapping[str, Any]<a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment.get_stage_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.get_stage_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the state parameters for a given stage.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.hparams">
+<em class="property">property </em><code class="sig-name descname">hparams</code><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.hparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyper parameters</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.initial_seed">
+<em class="property">property </em><code class="sig-name descname">initial_seed</code><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.initial_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s initial seed value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.logdir">
+<em class="property">property </em><code class="sig-name descname">logdir</code><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.logdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to the directory where the experiment logs.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.stages">
+<em class="property">property </em><code class="sig-name descname">stages</code><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.stages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s stage names (array with one value).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.experiments.experiment.Experiment.trial">
+<em class="property">property </em><code class="sig-name descname">trial</code><a class="headerlink" href="#catalyst.experiments.experiment.Experiment.trial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyperparameter trial for current experiment.
+Could be usefull for Optuna/HyperOpt/Ray.tune
+hyperparameters optimizers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>trial</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">experiment</span><span class="o">.</span><span class="n">trial</span>
+<span class="go">optuna.trial._trial.Trial  # Optuna variant</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.experiments.supervised">
+<span id="supervisedexperiment"></span><h2><a class="toc-backref" href="#id3">SupervisedExperiment</a><a class="headerlink" href="#module-catalyst.experiments.supervised" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.experiments.supervised.SupervisedExperiment">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.supervised.</code><code class="sig-name descname">SupervisedExperiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, trial: Any = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_time: bool = False, check_run: bool = False, overfit: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/supervised.html#SupervisedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.supervised.SupervisedExperiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.experiments.experiment.Experiment" title="catalyst.experiments.experiment.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.experiments.experiment.Experiment</span></code></a></p>
+<p>Supervised experiment.</p>
+<p>The main difference with Experiment that it will
+add several callbacks by default if you haven’t.</p>
+<dl class="simple">
+<dt>Here are list of callbacks by default:</dt><dd><dl class="simple">
+<dt>CriterionCallback:</dt><dd><p>measures loss with specified <code class="docutils literal notranslate"><span class="pre">criterion</span></code>.</p>
+</dd>
+<dt>OptimizerCallback:</dt><dd><p>abstraction over <code class="docutils literal notranslate"><span class="pre">optimizer</span></code> step.</p>
+</dd>
+<dt>SchedulerCallback:</dt><dd><p>only in case if you provided scheduler to your experiment does
+<cite>lr_scheduler.step</cite></p>
+</dd>
+<dt>CheckpointCallback:</dt><dd><p>saves model and optimizer state each epoch callback to save/restore
+your model/criterion/optimizer/metrics.</p>
+</dd>
+<dt>ConsoleLogger:</dt><dd><p>translates <code class="docutils literal notranslate"><span class="pre">runner.*_metrics</span></code> to console and text file.</p>
+</dd>
+<dt>TensorboardLogger:</dt><dd><p>writes <code class="docutils literal notranslate"><span class="pre">runner.*_metrics</span></code> to tensorboard.</p>
+</dd>
+<dt>RaiseExceptionCallback:</dt><dd><p>will raise exception if needed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="catalyst.experiments.supervised.SupervisedExperiment.get_callbacks">
+<code class="sig-name descname">get_callbacks</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Callback]<a class="reference internal" href="../_modules/catalyst/experiments/supervised.html#SupervisedExperiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.supervised.SupervisedExperiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override of <code class="docutils literal notranslate"><span class="pre">BaseExperiment.get_callbacks</span></code> method.
+Will add several of callbacks by default in case they missed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – name of stage. It should start with <cite>infer</cite> if you
+don’t need default callbacks, as they required only for
+training stages.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Ordered dictionary of callbacks</dt><dd><p>for experiment</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">Callback</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+             </article>
+             
+            </div>
+            <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="metrics.html" class="btn btn-neutral float-right" title="Metrics" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+      
+      
+        <a href="data.html" class="btn btn-neutral" title="Data" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+      
+    </div>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              <ul>
+<li><a class="reference internal" href="#">Experiments</a><ul>
+<li><a class="reference internal" href="#module-catalyst.experiments.config">ConfigExperiment</a></li>
+<li><a class="reference internal" href="#module-catalyst.experiments.experiment">Experiment</a></li>
+<li><a class="reference internal" href="#module-catalyst.experiments.supervised">SupervisedExperiment</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+         <script type="text/javascript" src="../_static/jquery.js"></script>
+         <script type="text/javascript" src="../_static/underscore.js"></script>
+         <script type="text/javascript" src="../_static/doctools.js"></script>
+         <script type="text/javascript" src="../_static/language_data.js"></script>
+         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
