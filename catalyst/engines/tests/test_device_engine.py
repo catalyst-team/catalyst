@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.callbacks import OptimizerCallback, CriterionCallback
+from catalyst.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.dl import SupervisedRunner
 from catalyst.engines import DeviceEngine
