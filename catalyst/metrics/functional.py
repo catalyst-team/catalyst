@@ -1,5 +1,6 @@
 from typing import Callable, Dict, Optional, Sequence, Tuple
 from functools import partial
+import logging
 
 import numpy as np
 
@@ -13,6 +14,8 @@ from catalyst.utils.torch import get_activation_fn
 # after full classification metrics re-implementation, make a reference to
 # https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/metrics
 # as a baseline
+
+logger = logging.getLogger(__name__)
 
 
 def process_multiclass_components(
@@ -417,7 +420,9 @@ def wrap_metric_fn_with_activation(
 
 
 def wrap_class_metric2dict(
-    metric_fn: Callable, class_args: Sequence[str] = None
+    metric_fn: Callable,
+    log_per_class: bool = False,
+    class_args: Sequence[str] = None,
 ) -> Callable:
     """# noqa: D202
     Logging wrapper for metrics with torch.Tensor output
@@ -427,26 +432,44 @@ def wrap_class_metric2dict(
 
     Args:
         metric_fn: metric function to compute
-        class_args: class names for logging.
+        log_per_class: boolean flag to log per class metrics,
+            or use mean/macro statistics otherwise
+        class_args: class names for logging,
             default: None - class indexes will be used.
 
     Returns:
         wrapped metric function with List[Dict] output
     """
+    if log_per_class is False and class_args is not None:
+        logger.warning(
+            "``log_per_class`` is disabled, but ``class_args`` are not None"
+            "check the experiment conditions."
+        )
 
-    def class_metric_with_dict_output(*args, **kwargs):
-        output = metric_fn(*args, **kwargs)
-        num_classes = len(output)
-        output_class_args = class_args or [
-            f"/class_{i:02}" for i in range(num_classes)
-        ]
-        mean_stats = torch.mean(output).item()
-        output = {
-            key: value.item() for key, value in zip(output_class_args, output)
-        }
-        output[""] = mean_stats
-        output["/mean"] = mean_stats
-        return output
+    if log_per_class:
+
+        def class_metric_with_dict_output(*args, **kwargs):
+            output = metric_fn(*args, **kwargs)
+            num_classes = len(output)
+            output_class_args = class_args or [
+                f"/class_{i:02}" for i in range(num_classes)
+            ]
+            mean_stats = torch.mean(output).item()
+            output = {
+                key: value.item()
+                for key, value in zip(output_class_args, output)
+            }
+            output[""] = mean_stats
+            output["/mean"] = mean_stats
+            return output
+
+    else:
+
+        def class_metric_with_dict_output(*args, **kwargs):
+            output = metric_fn(*args, **kwargs)
+            mean_stats = torch.mean(output).item()
+            output = {"": mean_stats}
+            return output
 
     return class_metric_with_dict_output
 

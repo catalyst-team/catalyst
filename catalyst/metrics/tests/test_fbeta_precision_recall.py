@@ -61,11 +61,11 @@ def test_precision_recall_fbeta_support_binary(
     (
         precision_score,
         recall_score,
-        fbeta_score_ev,
+        fbeta_score_value,
         support,
     ) = precision_recall_fbeta_support(outputs=outputs, targets=targets)
 
     assert torch.isclose(precision_score[1], torch.tensor(precision_true))
     assert torch.isclose(recall_score[1], torch.tensor(recall_true))
-    assert torch.isclose(fbeta_score_ev[1], torch.tensor(fbeta_true))
+    assert torch.isclose(fbeta_score_value[1], torch.tensor(fbeta_true))
     assert support[1] == support_true

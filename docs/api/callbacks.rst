@@ -191,16 +191,23 @@ Perplexity
     :undoc-members:
     :show-inheritance:
 
-Global precision, recall and F1-score
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.ppv_tpr_f1
+Precision
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.callbacks.metrics.precision
     :members:
     :undoc-members:
     :show-inheritance:
 
-Precision
+Recall
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.precision
+.. automodule:: catalyst.callbacks.metrics.recall
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Global precision, recall and F1-score
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.callbacks.metrics.ppv_tpr_f1
     :members:
     :undoc-members:
     :show-inheritance:
