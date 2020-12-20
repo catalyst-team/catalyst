@@ -21,6 +21,7 @@ class AUCCallback(LoaderMetricCallback):
         output_key: str = "logits",
         prefix: str = "auc",
         activation: str = "Sigmoid",
+        per_class: bool = False,
         class_args: List[str] = None,
         **kwargs,
     ):
@@ -31,21 +32,25 @@ class AUCCallback(LoaderMetricCallback):
             output_key: output key to use for auc calculation;
                 specifies our ``y_pred``.
             prefix: key for the metric's name
-            multiplier: scale factor for the metric.
             activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
+            per_class: boolean flag to log per class metrics,
+                or use mean/macro statistics otherwise
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
             **kwargs: key-value params to pass to the metric
 
         .. note::
-            For `**kwargs` info, please follow
-            `catalyst.metrics.auc.auc` docs
+            For ``**kwargs`` info, please follow
+            ``catalyst.callbacks.metric.LoaderMetricCallback`` and
+            ``catalyst.metrics.auc.auc`` docs
         """
         metric_fn = wrap_metric_fn_with_activation(
             metric_fn=auc, activation=activation
         )
-        metric_fn = wrap_class_metric2dict(metric_fn, class_args=class_args)
+        metric_fn = wrap_class_metric2dict(
+            metric_fn, per_class=per_class, class_args=class_args
+        )
         super().__init__(
             prefix=prefix,
             metric_fn=metric_fn,

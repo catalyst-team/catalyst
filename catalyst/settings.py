@@ -47,6 +47,13 @@ try:
 except ModuleNotFoundError:
     IS_OPTUNA_AVAILABLE = False
 
+try:
+    import hydra  # noqa: F401
+
+    IS_HYDRA_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_HYDRA_AVAILABLE = False
+
 
 class Settings(FrozenClass):
     """Catalyst settings."""
@@ -86,6 +93,8 @@ class Settings(FrozenClass):
         use_pyarrow: bool = False,
         telegram_logger_token: Optional[str] = None,
         telegram_logger_chat_id: Optional[str] = None,
+        # HYDRA
+        hydra_required: Optional[bool] = False,
     ):
         # [catalyst]
         self.cv_required: bool = cv_required
@@ -158,6 +167,9 @@ class Settings(FrozenClass):
         self.use_pyarrow: bool = use_pyarrow
         self.telegram_logger_token: str = telegram_logger_token
         self.telegram_logger_chat_id: str = telegram_logger_chat_id
+
+        # [catalyst-hydra]
+        self.hydra_required: bool = hydra_required
 
         # [catalyst-global]
         # stages
@@ -386,6 +398,7 @@ setattr(  # noqa: B010
 )
 setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_OPTUNA_AVAILABLE", IS_OPTUNA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_HYDRA_AVAILABLE", IS_HYDRA_AVAILABLE)  # noqa: B010
 
 
 __all__ = [
@@ -398,4 +411,5 @@ __all__ = [
     "IS_GIT_AVAILABLE",
     "IS_QUANTIZATION_AVAILABLE",
     "IS_OPTUNA_AVAILABLE",
+    "IS_HYDRA_AVAILABLE",
 ]

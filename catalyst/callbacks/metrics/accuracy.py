@@ -44,8 +44,9 @@ class AccuracyCallback(BatchMetricCallback):
             **kwargs: key-value params to pass to the metric
 
         .. note::
-            For `**kwargs` info, please follow
-            `catalyst.metrics.accuracy.accuracy` docs
+            For ``**kwargs`` info, please follow
+            ``catalyst.callbacks.metric.BatchMetricCallback`` and
+            ``catalyst.metrics.accuracy.accuracy`` docs
         """
         topk_args = (
             topk_args or accuracy_args or get_default_topk_args(num_classes)
@@ -91,8 +92,9 @@ class MultiLabelAccuracyCallback(BatchMetricCallback):
             **kwargs: key-value params to pass to the metric
 
         .. note::
-            For `**kwargs` info, please follow
-            `catalyst.metrics.accuracy.multilabel_accuracy` docs
+            For ``**kwargs`` info, please follow
+            ``catalyst.callbacks.metric.BatchMetricCallback`` and
+            ``catalyst.metrics.accuracy.multilabel_accuracy`` docs
         """
         super().__init__(
             prefix=prefix,
