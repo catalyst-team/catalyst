@@ -1642,7 +1642,7 @@ with passed <cite>topk</cite> argument.</p>
 
 <dl class="function">
 <dt id="catalyst.metrics.functional.wrap_class_metric2dict">
-<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">wrap_class_metric2dict</code><span class="sig-paren">(</span><em class="sig-param">metric_fn: Callable</em>, <em class="sig-param">class_args: Sequence[str] = None</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#wrap_class_metric2dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.wrap_class_metric2dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">wrap_class_metric2dict</code><span class="sig-paren">(</span><em class="sig-param">metric_fn: Callable</em>, <em class="sig-param">per_class: bool = False</em>, <em class="sig-param">class_args: Sequence[str] = None</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#wrap_class_metric2dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.wrap_class_metric2dict" title="Permalink to this definition">¶</a></dt>
 <dd><p># noqa: D202
 Logging wrapper for metrics with torch.Tensor output
 and [num_classes] shape.
@@ -1652,7 +1652,9 @@ with passed <cite>class</cite> argument.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>metric_fn</strong> – metric function to compute</p></li>
-<li><p><strong>class_args</strong> – class names for logging.
+<li><p><strong>per_class</strong> – boolean flag to log per class metrics,
+or use mean/macro statistics otherwise</p></li>
+<li><p><strong>class_args</strong> – class names for logging,
 default: None - class indexes will be used.</p></li>
 </ul>
 </dd>

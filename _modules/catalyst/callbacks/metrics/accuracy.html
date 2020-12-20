@@ -358,8 +358,9 @@
 <span class="sd">            **kwargs: key-value params to pass to the metric</span>
 
 <span class="sd">        .. note::</span>
-<span class="sd">            For `**kwargs` info, please follow</span>
-<span class="sd">            `catalyst.metrics.accuracy.accuracy` docs</span>
+<span class="sd">            For ``**kwargs`` info, please follow</span>
+<span class="sd">            ``catalyst.callbacks.metric.BatchMetricCallback`` and</span>
+<span class="sd">            ``catalyst.metrics.accuracy.accuracy`` docs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">topk_args</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">topk_args</span> <span class="ow">or</span> <span class="n">accuracy_args</span> <span class="ow">or</span> <span class="n">get_default_topk_args</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
@@ -405,8 +406,9 @@
 <span class="sd">            **kwargs: key-value params to pass to the metric</span>
 
 <span class="sd">        .. note::</span>
-<span class="sd">            For `**kwargs` info, please follow</span>
-<span class="sd">            `catalyst.metrics.accuracy.multilabel_accuracy` docs</span>
+<span class="sd">            For ``**kwargs`` info, please follow</span>
+<span class="sd">            ``catalyst.callbacks.metric.BatchMetricCallback`` and</span>
+<span class="sd">            ``catalyst.metrics.accuracy.multilabel_accuracy`` docs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
             <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>

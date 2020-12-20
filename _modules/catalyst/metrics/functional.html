@@ -314,6 +314,7 @@
   <h1>Source code for catalyst.metrics.functional</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
@@ -327,6 +328,8 @@
 <span class="c1"># after full classification metrics re-implementation, make a reference to</span>
 <span class="c1"># https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/metrics</span>
 <span class="c1"># as a baseline</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">process_multiclass_components</span><span class="p">(</span>
@@ -731,7 +734,9 @@
 
 
 <div class="viewcode-block" id="wrap_class_metric2dict"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics.functional.wrap_class_metric2dict">[docs]</a><span class="k">def</span> <span class="nf">wrap_class_metric2dict</span><span class="p">(</span>
-    <span class="n">metric_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">class_args</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">metric_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+    <span class="n">per_class</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">class_args</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;# noqa: D202</span>
 <span class="sd">    Logging wrapper for metrics with torch.Tensor output</span>
@@ -741,26 +746,44 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        metric_fn: metric function to compute</span>
-<span class="sd">        class_args: class names for logging.</span>
+<span class="sd">        per_class: boolean flag to log per class metrics,</span>
+<span class="sd">            or use mean/macro statistics otherwise</span>
+<span class="sd">        class_args: class names for logging,</span>
 <span class="sd">            default: None - class indexes will be used.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        wrapped metric function with List[Dict] output</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">per_class</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">class_args</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="s2">&quot;``per_class`` is disabled, but ``class_args`` are not None&quot;</span>
+            <span class="s2">&quot;check the experiment conditions.&quot;</span>
+        <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">class_metric_with_dict_output</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="n">metric_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
-        <span class="n">output_class_args</span> <span class="o">=</span> <span class="n">class_args</span> <span class="ow">or</span> <span class="p">[</span>
-            <span class="sa">f</span><span class="s2">&quot;/class_</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
-        <span class="p">]</span>
-        <span class="n">mean_stats</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
-        <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">output_class_args</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
-        <span class="p">}</span>
-        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_stats</span>
-        <span class="n">output</span><span class="p">[</span><span class="s2">&quot;/mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_stats</span>
-        <span class="k">return</span> <span class="n">output</span>
+    <span class="k">if</span> <span class="n">per_class</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">class_metric_with_dict_output</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">metric_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+            <span class="n">output_class_args</span> <span class="o">=</span> <span class="n">class_args</span> <span class="ow">or</span> <span class="p">[</span>
+                <span class="sa">f</span><span class="s2">&quot;/class_</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">02</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_classes</span><span class="p">)</span>
+            <span class="p">]</span>
+            <span class="n">mean_stats</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">value</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">output_class_args</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_stats</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">&quot;/mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mean_stats</span>
+            <span class="k">return</span> <span class="n">output</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="k">def</span> <span class="nf">class_metric_with_dict_output</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">metric_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">mean_stats</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;&quot;</span><span class="p">:</span> <span class="n">mean_stats</span><span class="p">}</span>
+            <span class="k">return</span> <span class="n">output</span>
 
     <span class="k">return</span> <span class="n">class_metric_with_dict_output</span></div>
 
