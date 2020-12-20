@@ -11,7 +11,7 @@ from typing import (
 from collections import OrderedDict
 import warnings
 
-from torch import nn
+from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
@@ -256,7 +256,11 @@ class Experiment(IExperiment):
     def get_model(self, stage: str) -> Model:
         """Returns the model for a given stage."""
         # TODO: force user to return model from this method
-        model = self._model() if callable(self._model) else self._model
+        model = (
+            self._model()
+            if callable(self._model) and not isinstance(self._model, nn.Module)
+            else self._model
+        )
         return self._engine.to_device(model)
 
     def get_criterion(self, stage: str) -> Criterion:
@@ -270,6 +274,7 @@ class Experiment(IExperiment):
         return (
             self._optimizer(model.parameters())
             if callable(self._optimizer)
+            and not isinstance(self._optimizer, optim.Optimizer)
             else self._optimizer
         )
 
