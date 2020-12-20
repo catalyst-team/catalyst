@@ -25,6 +25,7 @@ from catalyst.contrib.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import check_callback_isinstance
+from catalyst.engines import DeviceEngine, IEngine
 from catalyst.registry import (
     CALLBACKS,
     CRITERIONS,
@@ -33,6 +34,7 @@ from catalyst.registry import (
     SCHEDULERS,
     TRANSFORMS,
 )
+from catalyst.settings import SETTINGS
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.distributed import get_rank
@@ -77,6 +79,14 @@ class ConfigExperiment(IExperiment):
             "overfit", False
         )
 
+        default_engine = DeviceEngine(
+            "cuda:0" if SETTINGS.IS_CUDA_AVAILABLE else "cpu"
+        )
+        # TODO: load engine from config
+        self._engine: IEngine = DeviceEngine(
+            self._config.get("engine", "cpu")
+        ) or default_engine
+
         self._prepare_logdir()
 
         self._config["stages"]["stage_params"] = merge_dicts(
@@ -90,6 +100,10 @@ class ConfigExperiment(IExperiment):
         self.stages_config: Dict = self._get_stages_config(
             self._config["stages"]
         )
+
+    @property
+    def engine(self):
+        return self._engine
 
     def _get_logdir(self, config: Dict) -> str:
         timestamp = get_utcnow_time()
@@ -314,7 +328,7 @@ class ConfigExperiment(IExperiment):
             unpack_checkpoint(checkpoint, optimizer=dict2load)
 
             # move optimizer to device
-            device = get_device()
+            device = self._engine.device
             for param in model_params:
                 param = param["params"][0]
                 optimizer_state = optimizer.state[param]
