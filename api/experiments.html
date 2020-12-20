@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Experiments &mdash; Catalyst 20.10.1 documentation</title>
+  <title>Experiments &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -192,30 +192,44 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&amp;sk=2aff824412e2f653587a30cd853b030c">Catalyst 102 — Core Trinity</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Segmentation</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - DDP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - TPU</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">[WIP] Finetuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/stages.html">[WIP] Multi-stage experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">[WIP] Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/how_to_start.html">How to start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/codestyle.html">Codestyle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/contributors.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -309,9 +323,9 @@
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#module-catalyst.experiments.config" id="id1">ConfigExperiment</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.experiments.experiment" id="id2">Experiment</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.experiments.supervised" id="id3">SupervisedExperiment</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.experiments.auto" id="id1">AutoCallbackExperiment</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.experiments.config" id="id2">ConfigExperiment</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.experiments.experiment" id="id3">Experiment</a></p></li>
 </ul>
 </div>
 <span class="target" id="module-catalyst.experiments"></span><dl class="class">
@@ -603,10 +617,10 @@ hyperparameters optimizers.</p>
 </dd></dl>
 
 <dl class="class">
-<dt id="catalyst.experiments.SupervisedExperiment">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.</code><code class="sig-name descname">SupervisedExperiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, trial: Any = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_time: bool = False, check_run: bool = False, overfit: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/supervised.html#SupervisedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.SupervisedExperiment" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.experiments.AutoCallbackExperiment">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.</code><code class="sig-name descname">AutoCallbackExperiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, trial: Any = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_time: bool = False, check_run: bool = False, overfit: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/auto.html#AutoCallbackExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.AutoCallbackExperiment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.experiments.experiment.Experiment" title="catalyst.experiments.experiment.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.experiments.experiment.Experiment</span></code></a></p>
-<p>Supervised experiment.</p>
+<p>Auto-optimized experiment.</p>
 <p>The main difference with Experiment that it will
 add several callbacks by default if you haven’t.</p>
 <dl class="simple">
@@ -631,8 +645,8 @@ your model/criterion/optimizer/metrics.</p>
 </dd>
 </dl>
 <dl class="method">
-<dt id="catalyst.experiments.SupervisedExperiment.get_callbacks">
-<code class="sig-name descname">get_callbacks</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Callback]<a class="reference internal" href="../_modules/catalyst/experiments/supervised.html#SupervisedExperiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.SupervisedExperiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.experiments.AutoCallbackExperiment.get_callbacks">
+<code class="sig-name descname">get_callbacks</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Callback]<a class="reference internal" href="../_modules/catalyst/experiments/auto.html#AutoCallbackExperiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.AutoCallbackExperiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override of <code class="docutils literal notranslate"><span class="pre">BaseExperiment.get_callbacks</span></code> method.
 Will add several of callbacks by default in case they missed.</p>
 <dl class="field-list simple">
@@ -656,8 +670,65 @@ training stages.</p>
 
 </dd></dl>
 
+<div class="section" id="module-catalyst.experiments.auto">
+<span id="autocallbackexperiment"></span><h2><a class="toc-backref" href="#id1">AutoCallbackExperiment</a><a class="headerlink" href="#module-catalyst.experiments.auto" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.experiments.auto.AutoCallbackExperiment">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.auto.</code><code class="sig-name descname">AutoCallbackExperiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, trial: Any = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_time: bool = False, check_run: bool = False, overfit: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/auto.html#AutoCallbackExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.auto.AutoCallbackExperiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.experiments.experiment.Experiment" title="catalyst.experiments.experiment.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.experiments.experiment.Experiment</span></code></a></p>
+<p>Auto-optimized experiment.</p>
+<p>The main difference with Experiment that it will
+add several callbacks by default if you haven’t.</p>
+<dl class="simple">
+<dt>Here are list of callbacks by default:</dt><dd><dl class="simple">
+<dt>CriterionCallback:</dt><dd><p>measures loss with specified <code class="docutils literal notranslate"><span class="pre">criterion</span></code>.</p>
+</dd>
+<dt>OptimizerCallback:</dt><dd><p>abstraction over <code class="docutils literal notranslate"><span class="pre">optimizer</span></code> step.</p>
+</dd>
+<dt>SchedulerCallback:</dt><dd><p>only in case if you provided scheduler to your experiment does
+<cite>lr_scheduler.step</cite></p>
+</dd>
+<dt>CheckpointCallback:</dt><dd><p>saves model and optimizer state each epoch callback to save/restore
+your model/criterion/optimizer/metrics.</p>
+</dd>
+<dt>ConsoleLogger:</dt><dd><p>translates <code class="docutils literal notranslate"><span class="pre">runner.*_metrics</span></code> to console and text file.</p>
+</dd>
+<dt>TensorboardLogger:</dt><dd><p>writes <code class="docutils literal notranslate"><span class="pre">runner.*_metrics</span></code> to tensorboard.</p>
+</dd>
+<dt>RaiseExceptionCallback:</dt><dd><p>will raise exception if needed.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="method">
+<dt id="catalyst.experiments.auto.AutoCallbackExperiment.get_callbacks">
+<code class="sig-name descname">get_callbacks</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Callback]<a class="reference internal" href="../_modules/catalyst/experiments/auto.html#AutoCallbackExperiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.auto.AutoCallbackExperiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override of <code class="docutils literal notranslate"><span class="pre">BaseExperiment.get_callbacks</span></code> method.
+Will add several of callbacks by default in case they missed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – name of stage. It should start with <cite>infer</cite> if you
+don’t need default callbacks, as they required only for
+training stages.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>Ordered dictionary of callbacks</dt><dd><p>for experiment</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">Callback</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-catalyst.experiments.config">
-<span id="configexperiment"></span><h2><a class="toc-backref" href="#id1">ConfigExperiment</a><a class="headerlink" href="#module-catalyst.experiments.config" title="Permalink to this headline">¶</a></h2>
+<span id="configexperiment"></span><h2><a class="toc-backref" href="#id2">ConfigExperiment</a><a class="headerlink" href="#module-catalyst.experiments.config" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.experiments.config.ConfigExperiment">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.config.</code><code class="sig-name descname">ConfigExperiment</code><span class="sig-paren">(</span><em class="sig-param">config: Dict</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/config.html#ConfigExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.config.ConfigExperiment" title="Permalink to this definition">¶</a></dt>
@@ -804,7 +875,7 @@ hyperparameters optimizers.</p>
 
 </div>
 <div class="section" id="module-catalyst.experiments.experiment">
-<span id="experiment"></span><h2><a class="toc-backref" href="#id2">Experiment</a><a class="headerlink" href="#module-catalyst.experiments.experiment" title="Permalink to this headline">¶</a></h2>
+<span id="experiment"></span><h2><a class="toc-backref" href="#id3">Experiment</a><a class="headerlink" href="#module-catalyst.experiments.experiment" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.experiments.experiment.Experiment">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.experiment.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, trial: Any = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_time: bool = False, check_run: bool = False, overfit: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/experiment.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.experiment.Experiment" title="Permalink to this definition">¶</a></dt>
@@ -955,63 +1026,6 @@ hyperparameters optimizers.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.experiments.supervised">
-<span id="supervisedexperiment"></span><h2><a class="toc-backref" href="#id3">SupervisedExperiment</a><a class="headerlink" href="#module-catalyst.experiments.supervised" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="catalyst.experiments.supervised.SupervisedExperiment">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.experiments.supervised.</code><code class="sig-name descname">SupervisedExperiment</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, datasets: OrderedDict[str, Union[Dataset, Dict, Any]] = None, loaders: OrderedDict[str, DataLoader] = None, callbacks: Union[OrderedDict[str, Callback], List[Callback]] = None, logdir: str = None, stage: str = 'train', criterion: torch.nn.modules.module.Module = None, optimizer: torch.optim.optimizer.Optimizer = None, scheduler: torch.optim.lr_scheduler._LRScheduler = None, trial: Any = None, num_epochs: int = 1, valid_loader: str = 'valid', main_metric: str = 'loss', minimize_metric: bool = True, verbose: bool = False, check_time: bool = False, check_run: bool = False, overfit: bool = False, stage_kwargs: Dict = None, checkpoint_data: Dict = None, distributed_params: Dict = None, initial_seed: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/experiments/supervised.html#SupervisedExperiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.supervised.SupervisedExperiment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.experiments.experiment.Experiment" title="catalyst.experiments.experiment.Experiment"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.experiments.experiment.Experiment</span></code></a></p>
-<p>Supervised experiment.</p>
-<p>The main difference with Experiment that it will
-add several callbacks by default if you haven’t.</p>
-<dl class="simple">
-<dt>Here are list of callbacks by default:</dt><dd><dl class="simple">
-<dt>CriterionCallback:</dt><dd><p>measures loss with specified <code class="docutils literal notranslate"><span class="pre">criterion</span></code>.</p>
-</dd>
-<dt>OptimizerCallback:</dt><dd><p>abstraction over <code class="docutils literal notranslate"><span class="pre">optimizer</span></code> step.</p>
-</dd>
-<dt>SchedulerCallback:</dt><dd><p>only in case if you provided scheduler to your experiment does
-<cite>lr_scheduler.step</cite></p>
-</dd>
-<dt>CheckpointCallback:</dt><dd><p>saves model and optimizer state each epoch callback to save/restore
-your model/criterion/optimizer/metrics.</p>
-</dd>
-<dt>ConsoleLogger:</dt><dd><p>translates <code class="docutils literal notranslate"><span class="pre">runner.*_metrics</span></code> to console and text file.</p>
-</dd>
-<dt>TensorboardLogger:</dt><dd><p>writes <code class="docutils literal notranslate"><span class="pre">runner.*_metrics</span></code> to tensorboard.</p>
-</dd>
-<dt>RaiseExceptionCallback:</dt><dd><p>will raise exception if needed.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<dl class="method">
-<dt id="catalyst.experiments.supervised.SupervisedExperiment.get_callbacks">
-<code class="sig-name descname">get_callbacks</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Callback]<a class="reference internal" href="../_modules/catalyst/experiments/supervised.html#SupervisedExperiment.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.experiments.supervised.SupervisedExperiment.get_callbacks" title="Permalink to this definition">¶</a></dt>
-<dd><p>Override of <code class="docutils literal notranslate"><span class="pre">BaseExperiment.get_callbacks</span></code> method.
-Will add several of callbacks by default in case they missed.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>stage</strong> – name of stage. It should start with <cite>infer</cite> if you
-don’t need default callbacks, as they required only for
-training stages.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>Ordered dictionary of callbacks</dt><dd><p>for experiment</p>
-</dd>
-</dl>
-</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>OrderedDict[str, <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback">Callback</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
 </div>
 
 
@@ -1054,9 +1068,9 @@ training stages.</p>
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
 <li><a class="reference internal" href="#">Experiments</a><ul>
+<li><a class="reference internal" href="#module-catalyst.experiments.auto">AutoCallbackExperiment</a></li>
 <li><a class="reference internal" href="#module-catalyst.experiments.config">ConfigExperiment</a></li>
 <li><a class="reference internal" href="#module-catalyst.experiments.experiment">Experiment</a></li>
-<li><a class="reference internal" href="#module-catalyst.experiments.supervised">SupervisedExperiment</a></li>
 </ul>
 </li>
 </ul>

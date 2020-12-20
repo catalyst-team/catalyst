@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Catalyst &mdash; Catalyst 20.10.1 documentation</title>
+  <title>Catalyst &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -156,7 +156,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -191,30 +191,44 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&amp;sk=2aff824412e2f653587a30cd853b030c">Catalyst 102 — Core Trinity</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Segmentation</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - DDP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - TPU</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="core/experiment.html">Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/slurm.html">Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/tpu.html">TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/finetuning.html">[WIP] Finetuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/stages.html">[WIP] Multi-stage experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/config_api.html">[WIP] Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq/optuna.html">Optuna integration</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="contributing/how_to_start.html">How to start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing/codestyle.html">Codestyle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="contributing/contributors.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
@@ -305,8 +319,8 @@
   <div class="section" id="catalyst">
 <h1>Catalyst<a class="headerlink" href="#catalyst" title="Permalink to this headline">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/catalyst-team/catalyst"><img alt="Catalyst logo" src="https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png" /></a>
-<div class="section" id="pytorch-framework-for-deep-learning-research-and-development">
-<h2>PyTorch framework for Deep Learning research and development.<a class="headerlink" href="#pytorch-framework-for-deep-learning-research-and-development" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pytorch-framework-for-deep-learning-r-d">
+<h2>PyTorch framework for Deep Learning R&amp;D.<a class="headerlink" href="#pytorch-framework-for-deep-learning-r-d" title="Permalink to this headline">¶</a></h2>
 <p>It focuses on reproducibility, rapid experimentation, and codebase reuse
 so you can <strong>create</strong> something new rather than write another regular train loop.
 Break the cycle - use the <a class="reference external" href="https://github.com/catalyst-team/catalyst">Catalyst</a>!</p>
@@ -382,17 +396,13 @@ Break the cycle - use the <a class="reference external" href="https://github.com
 <h3>Step by step guide<a class="headerlink" href="#step-by-step-guide" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
 <li><p>Start with <a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a> introduction.</p></li>
-<li><p>Go through <a class="reference external" href="https://github.com/Scitator/kittylyst">Kittylyst</a> if you would like to dive into the core design concepts of the framework.</p></li>
 <li><p>Check <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">minimal examples</a>.</p></li>
 <li><p>Try <a class="reference external" href="https://github.com/catalyst-team/catalyst#tutorials">notebook tutorials with Google Colab</a>.</p></li>
 <li><p>Read <a class="reference external" href="https://github.com/catalyst-team/catalyst#blogposts">blogposts</a> with use-cases and guides.</p></li>
 <li><p>Learn machine learning with our <a class="reference external" href="https://github.com/catalyst-team/dl-course">“Deep Learning with Catalyst” course</a>.</p></li>
-<li><p>Or go directly to advanced  <a class="reference external" href="https://github.com/catalyst-team/classification">classification</a>, <a class="reference external" href="https://github.com/catalyst-team/detection">detection</a> and <a class="reference external" href="https://github.com/catalyst-team/segmentation">segmentation</a> pipelines.</p></li>
-<li><p>Want more? See <a class="reference external" href="https://github.com/catalyst-team/alchemy">Alchemy</a> and <a class="reference external" href="https://github.com/catalyst-team/reaction">Reaction</a> packages.</p></li>
-<li><p>RL fan? Please follow <a class="reference external" href="https://github.com/catalyst-team/catalyst-rl">Catalyst.RL repo</a>.</p></li>
 <li><p>If you would like to contribute to the project, follow our <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">contribution guidelines</a>.</p></li>
 <li><p>If you want to support the project, feel free to donate on <a class="reference external" href="https://patreon.com/catalyst_team">patreon page</a> or <a class="reference external" href="https://github.com/catalyst-team/catalyst#user-feedback">write us</a> with your proposals.</p></li>
-<li><p>Finally, do not forget to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for collaboration.</p></li>
+<li><p>And do not forget to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for collaboration.</p></li>
 </ol>
 </div>
 </div>
@@ -409,10 +419,12 @@ and other features without the boilerplate.</p>
 </pre></div>
 </div>
 <p>More specific with additional requirements:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install catalyst<span class="o">[</span>cv<span class="o">]</span>         <span class="c1"># installs CV-based catalyst</span>
-pip install catalyst<span class="o">[</span>nlp<span class="o">]</span>        <span class="c1"># installs NLP-based catalyst</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install catalyst<span class="o">[</span>ml<span class="o">]</span>         <span class="c1"># installs ML-based Catalyst</span>
+pip install catalyst<span class="o">[</span>cv<span class="o">]</span>         <span class="c1"># installs CV-based Catalyst</span>
+pip install catalyst<span class="o">[</span>nlp<span class="o">]</span>        <span class="c1"># installs NLP-based Catalyst</span>
+pip install catalyst<span class="o">[</span>tune<span class="o">]</span>       <span class="c1"># installs Catalyst+Optuna</span>
 pip install catalyst<span class="o">[</span>ecosystem<span class="o">]</span>  <span class="c1"># installs Catalyst.Ecosystem</span>
-<span class="c1"># and master version installation</span>
+<span class="c1"># master version installation</span>
 pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 </pre></div>
 </div>
@@ -464,6 +476,8 @@ best practices for your deep learning research.</p>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/callbacks.html">Callbacks</a><ul>
@@ -494,8 +508,10 @@ best practices for your deep learning research.</p>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks.metrics.f1_score">F1 score</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks.metrics.iou">IOU</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks.metrics.mrr">MRR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks.metrics.ppv_tpr_f1">Global precision, recall and F1-score</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks.metrics.perplexity">Perplexity</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks.metrics.precision">Precision</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks.metrics.recall">Recall</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks.metrics.ppv_tpr_f1">Global precision, recall and F1-score</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks">Contrib</a><ul>
@@ -504,13 +520,12 @@ best practices for your deep learning research.</p>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.cutmix_callback">CutmixCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.gradnorm_logger">GradNormLogger</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.inference_callback">InferCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.knn_metric">KNNMetricCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.kornia_transform">BatchTransformCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.mask_inference">InferMaskCallback</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.draw_masks_callback">DrawMasksCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.mixup_callback">MixupCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.neptune_logger">NeptuneLogger</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.optuna_callback">OptunaCallback</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.perplexity_metric">PerplexityMetricCallback</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.telegram_logger">TelegramLogger</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/callbacks.html#module-catalyst.contrib.callbacks.wandb_logger">WandbLogger</a></li>
 </ul>
@@ -522,7 +537,6 @@ best practices for your deep learning research.</p>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets.mnist">MNIST</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets.movielens">MovieLens</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#computer-vision">Computer Vision</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets.cv.fastai">ImageClassificationDataset</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets.cv.imagenette">Imagenette</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets.cv.imagewoof">Imagewoof</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.datasets.cv.imagewang">Imagewang</a></li>
@@ -551,6 +565,7 @@ best practices for your deep learning research.</p>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.modules.arcmargin">Arc Margin Product</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.modules.common">Common modules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.modules.cosface">CosFace and AdaCos</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.modules.curricularface">CurricularFace</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.modules.lama">Last-Mean-Average-Attention (LAMA)-Pooling</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.modules.pooling">Pooling</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#module-catalyst.contrib.nn.modules.rms_norm">RMSNorm</a></li>
@@ -584,6 +599,7 @@ best practices for your deep learning research.</p>
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="api/contrib.html#scripts">Scripts</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/core.html">Core</a><ul>
@@ -593,16 +609,11 @@ best practices for your deep learning research.</p>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/core.html#callback">Callback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/core.html#scripts">Scripts</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/data.html">Data</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#scripts">Scripts</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#augmentors">Augmentors</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#augmentor">Augmentor</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#augmentorcompose">AugmentorCompose</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#augmentorkeys">AugmentorKeys</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data">Main</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/data.html#collate-functions">Collate Functions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/data.html#filteringcollatefn">FilteringCollateFn</a></li>
 </ul>
@@ -633,55 +644,52 @@ best practices for your deep learning research.</p>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/data.html#loader">Loader</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/data.html#batchlimitloaderwrapper">BatchLimitLoaderWrapper</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#readers">Readers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#readerspec">ReaderSpec</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#scalarreader">ScalarReader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#lambdareader">LambdaReader</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#readercompose">ReaderCompose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#batchprefetchloaderwrapper">BatchPrefetchLoaderWrapper</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/data.html#samplers">Samplers</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/data.html#balancebatchsampler">BalanceBatchSampler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/data.html#balanceclasssampler">BalanceClassSampler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/data.html#distributedsamplerwrapper">DistributedSamplerWrapper</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#dynamicbalanceclasssampler">DynamicBalanceClassSampler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/data.html#dynamiclenbatchsampler">DynamicLenBatchSampler</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/data.html#miniepochsampler">MiniEpochSampler</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#computer-vision-extensions">Computer Vision Extensions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#id1">Dataset</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/data.html#imagefolderdataset">ImageFolderDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.contrib.data">Contrib</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#augmentors">Augmentors</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#augmentor">Augmentor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#augmentorcompose">AugmentorCompose</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#augmentorkeys">AugmentorKeys</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#mixins">Mixins</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#readers">Readers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#ireader">IReader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#imagereader-cv">ImageReader (CV)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#lambdareader">LambdaReader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#maskreader-cv">MaskReader (CV)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#scalarreader">ScalarReader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#readercompose">ReaderCompose</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#mixins-cv">Mixins (CV)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/data.html#blurmixin">BlurMixin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/data.html#flaremixin">FlareMixin</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/data.html#rotatemixin">RotateMixin</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#id2">Readers</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/data.html#imagereader">ImageReader</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/data.html#maskreader">MaskReader</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#transforms">Transforms</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/data.html#tensortoimage">TensorToImage</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/data.html#imagetotensor">ImageToTensor</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#transforms-cv">Transforms (CV)</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="api/data.html#compose">Compose</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#imagetotensor">ImageToTensor</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/data.html#normalize">Normalize</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/data.html#totensor">ToTensor</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/data.html#oneofperbatch">OneOfPerBatch</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/data.html#oneofpersample">OneOfPerSample</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#tensortoimage">TensorToImage</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#totensor">ToTensor</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="api/data.html#module-catalyst.data.nlp">Natural Language Processing Extensions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/data.html#datasets">Datasets</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="api/data.html#languagemodelingdataset">LanguageModelingDataset</a></li>
-<li class="toctree-l4"><a class="reference internal" href="api/data.html#textclassificationdataset">TextClassificationDataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/data.html#datasets-cv">Datasets (CV)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="api/data.html#imagefolderdataset">ImageFolderDataset</a></li>
 </ul>
 </li>
 </ul>
@@ -689,9 +697,9 @@ best practices for your deep learning research.</p>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/experiments.html">Experiments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api/experiments.html#module-catalyst.experiments.auto">AutoCallbackExperiment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/experiments.html#module-catalyst.experiments.config">ConfigExperiment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/experiments.html#module-catalyst.experiments.experiment">Experiment</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/experiments.html#module-catalyst.experiments.supervised">SupervisedExperiment</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api/metrics.html">Metrics</a><ul>
@@ -701,9 +709,13 @@ best practices for your deep learning research.</p>
 <li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.dice">Dice</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.f1_score">F1 score</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.focal">Focal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.hitrate">Hitrate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.iou">IoU</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.mrr">MRR</a></li>
-<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.precision">Precision</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.avg_precision">MAP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.ndcg">NDCG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.dcg">DCG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.recall">Recall</a></li>
 <li class="toctree-l2"><a class="reference internal" href="api/metrics.html#module-catalyst.metrics.functional">Functional</a></li>
 </ul>
 </li>
@@ -730,14 +742,8 @@ best practices for your deep learning research.</p>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/tools.html#meters">Meters</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="api/tools.html#module-catalyst.tools.meters.meter">Meter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/tools.html#module-catalyst.tools.meters.apmeter">AP Meter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/tools.html#module-catalyst.tools.meters.aucmeter">AUC Meter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/tools.html#module-catalyst.tools.meters.averagevaluemeter">Average Value Meter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/tools.html#module-catalyst.tools.meters.classerrormeter">Class Error Meter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/tools.html#module-catalyst.tools.meters.confusionmeter">Confusion Meter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/tools.html#module-catalyst.tools.meters.mapmeter">Map Meter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/tools.html#module-catalyst.tools.meters.movingaveragevaluemeter">Moving Average Value Meter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/tools.html#module-catalyst.tools.meters.msemeter">MSE Meter</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/tools.html#module-catalyst.tools.meters.ppv_tpr_f1_meter">Precision-Recall-F1 Meter</a></li>
 </ul>
 </li>
@@ -750,35 +756,28 @@ best practices for your deep learning research.</p>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.components">Components</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.config">Config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.distributed">Distributed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.hash">Hash</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.initialization">Initialization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.loaders">Loaders</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.misc">Misc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.numpy">Numpy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.parser">Parser</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.pipelines">Pipelines</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.pruning">Pruning</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.quantization">Quantization</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.scripts">Scripts</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.seed">Seed</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.swa">Stochastic Weights Averaging (SWA)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.sys">Sys</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.torch">Torch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.tracing">Tracing</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.utils.wizard">Wizard</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils">Contrib</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.argparse">Argparse</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.compression">Compression</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.confusion_matrix">Confusion Matrix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.dataset">Dataset</a></li>
-<li class="toctree-l3"><a class="reference internal" href="api/utils.html#id1">Misc</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.pandas">Pandas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.parallel">Parallel</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.plotly">Plotly</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.serialization">Serialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/utils.html#id1">Torch</a></li>
 <li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.visualization">Visualization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.wizard">Wizard</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api/utils.html#module-catalyst.contrib.utils.cv">Computer Vision</a><ul>
@@ -835,7 +834,7 @@ best practices for your deep learning research.</p>
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
 <li><a class="reference internal" href="#">Catalyst</a><ul>
-<li><a class="reference internal" href="#pytorch-framework-for-deep-learning-research-and-development">PyTorch framework for Deep Learning research and development.</a></li>
+<li><a class="reference internal" href="#pytorch-framework-for-deep-learning-r-d">PyTorch framework for Deep Learning R&amp;D.</a></li>
 <li><a class="reference internal" href="#getting-started">Getting started</a><ul>
 <li><a class="reference internal" href="#step-by-step-guide">Step by step guide</a></li>
 </ul>

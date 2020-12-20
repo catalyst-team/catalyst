@@ -49,7 +49,7 @@ Let's define **what** we are experimenting with:
 
 Step 4 - Accelerate it with Catalyst
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Let's define **how** we are running the experiment:
+Let's define **how** we are running the experiment (in pure PyTorch):
 
 .. code-block:: python
 

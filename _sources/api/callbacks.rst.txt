@@ -184,9 +184,9 @@ MRR
     :undoc-members:
     :show-inheritance:
 
-Global precision, recall and F1-score
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.ppv_tpr_f1
+Perplexity
+~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.callbacks.metrics.perplexity
     :members:
     :undoc-members:
     :show-inheritance:
@@ -194,6 +194,20 @@ Global precision, recall and F1-score
 Precision
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.callbacks.metrics.precision
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Recall
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.callbacks.metrics.recall
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Global precision, recall and F1-score
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.callbacks.metrics.ppv_tpr_f1
     :members:
     :undoc-members:
     :show-inheritance:
@@ -241,13 +255,6 @@ InferCallback
     :undoc-members:
     :show-inheritance:
 
-KNNMetricCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.knn_metric
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 BatchTransformCallback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.callbacks.kornia_transform
@@ -258,6 +265,13 @@ BatchTransformCallback
 InferMaskCallback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.callbacks.mask_inference
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+DrawMasksCallback
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.callbacks.draw_masks_callback
     :members:
     :undoc-members:
     :show-inheritance:
@@ -279,13 +293,6 @@ NeptuneLogger
 OptunaCallback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.callbacks.optuna_callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-PerplexityMetricCallback
-~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.perplexity_metric
     :members:
     :undoc-members:
     :show-inheritance:

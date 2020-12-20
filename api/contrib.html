@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Contrib &mdash; Catalyst 20.10.1 documentation</title>
+  <title>Contrib &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -192,30 +192,44 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&amp;sk=2aff824412e2f653587a30cd853b030c">Catalyst 102 — Core Trinity</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Segmentation</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - DDP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - TPU</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">[WIP] Finetuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/stages.html">[WIP] Multi-stage experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">[WIP] Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/how_to_start.html">How to start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/codestyle.html">Codestyle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/contributors.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -315,38 +329,38 @@
 <li><p><a class="reference internal" href="#module-catalyst.contrib.datasets.movielens" id="id20">MovieLens</a></p></li>
 <li><p><a class="reference internal" href="#computer-vision" id="id21">Computer Vision</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.datasets.cv.fastai" id="id22">ImageClassificationDataset</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.datasets.cv.imagenette" id="id23">Imagenette</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.datasets.cv.imagewoof" id="id24">Imagewoof</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.datasets.cv.imagewang" id="id25">Imagewang</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.datasets.cv.imagenette" id="id22">Imagenette</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.datasets.cv.imagewoof" id="id23">Imagewoof</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.datasets.cv.imagewang" id="id24">Imagewang</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#nn" id="id26">NN</a></p>
+<li><p><a class="reference internal" href="#nn" id="id25">NN</a></p>
 <ul>
-<li><p><a class="reference internal" href="#criterion" id="id27">Criterion</a></p>
+<li><p><a class="reference internal" href="#criterion" id="id26">Criterion</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.ce" id="id28">Cross entropy</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.circle" id="id29">Circle</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.contrastive" id="id30">Contrastive</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.dice" id="id31">Dice</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.focal" id="id32">Focal</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.gan" id="id33">GAN</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.huber" id="id34">Huber</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.iou" id="id35">IOU</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.lovasz" id="id36">Lovasz</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.margin" id="id37">Margin</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.triplet" id="id38">Triplet</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.wing" id="id39">Wing</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.ce" id="id27">Cross entropy</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.circle" id="id28">Circle</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.contrastive" id="id29">Contrastive</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.dice" id="id30">Dice</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.focal" id="id31">Focal</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.gan" id="id32">GAN</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.huber" id="id33">Huber</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.iou" id="id34">IOU</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.lovasz" id="id35">Lovasz</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.margin" id="id36">Margin</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.triplet" id="id37">Triplet</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.criterion.wing" id="id38">Wing</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#modules" id="id40">Modules</a></p>
+<li><p><a class="reference internal" href="#modules" id="id39">Modules</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcface" id="id41">ArcFace and SubCenterArcFace</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcmargin" id="id42">Arc Margin Product</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.common" id="id43">Common modules</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.cosface" id="id44">CosFace and AdaCos</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcface" id="id40">ArcFace and SubCenterArcFace</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcmargin" id="id41">Arc Margin Product</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.common" id="id42">Common modules</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.cosface" id="id43">CosFace and AdaCos</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.curricularface" id="id44">CurricularFace</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.lama" id="id45">Last-Mean-Average-Attention (LAMA)-Pooling</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.pooling" id="id46">Pooling</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.nn.modules.rms_norm" id="id47">RMSNorm</a></p></li>
@@ -384,9 +398,10 @@
 </li>
 </ul>
 </li>
+<li><p><a class="reference internal" href="#scripts" id="id66">Scripts</a></p></li>
 </ul>
 </div>
-<div class="section" id="module-catalyst.contrib.datasets">
+<span class="target" id="module-catalyst.contrib"></span><div class="section" id="module-catalyst.contrib.datasets">
 <span id="datasets"></span><h2><a class="toc-backref" href="#id18">Datasets</a><a class="headerlink" href="#module-catalyst.contrib.datasets" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.contrib.datasets.mnist">
 <span id="mnist"></span><h3><a class="toc-backref" href="#id19">MNIST</a><a class="headerlink" href="#module-catalyst.contrib.datasets.mnist" title="Permalink to this headline">¶</a></h3>
@@ -672,73 +687,12 @@ the interaction matrix</p></li>
 </div>
 <div class="section" id="computer-vision">
 <h3><a class="toc-backref" href="#id21">Computer Vision</a><a class="headerlink" href="#computer-vision" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="module-catalyst.contrib.datasets.cv.fastai">
-<span id="imageclassificationdataset"></span><h4><a class="toc-backref" href="#id22">ImageClassificationDataset</a><a class="headerlink" href="#module-catalyst.contrib.datasets.cv.fastai" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
-<dt id="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.cv.fastai.</code><code class="sig-name descname">ImageClassificationDataset</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/cv/fastai.html#ImageClassificationDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="data.html#catalyst.data.cv.dataset.ImageFolderDataset" title="catalyst.data.cv.dataset.ImageFolderDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.cv.dataset.ImageFolderDataset</span></code></a></p>
-<p>Base class for datasets with the following structure:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>path/to/dataset/
-<span class="p">|</span>-- train/
-<span class="p">|</span>   <span class="p">|</span>-- class1/  <span class="c1"># folder of N images</span>
-<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- train_image11
-<span class="p">|</span>   <span class="p">|</span>   <span class="p">|</span>-- train_image12
-<span class="p">|</span>   <span class="p">|</span>   ...
-<span class="p">|</span>   <span class="p">|</span>   <span class="sb">`</span>-- train_image1N
-<span class="p">|</span>   ...
-<span class="p">|</span>   <span class="sb">`</span>-- classM/  <span class="c1"># folder of K images</span>
-<span class="p">|</span>       <span class="p">|</span>-- train_imageM1
-<span class="p">|</span>       <span class="p">|</span>-- train_imageM2
-<span class="p">|</span>       ...
-<span class="p">|</span>       <span class="sb">`</span>-- train_imageMK
-<span class="sb">`</span>-- val/
-    <span class="p">|</span>-- class1/  <span class="c1"># folder of P images</span>
-    <span class="p">|</span>   <span class="p">|</span>-- val_image11
-    <span class="p">|</span>   <span class="p">|</span>-- val_image12
-    <span class="p">|</span>   ...
-    <span class="p">|</span>   <span class="sb">`</span>-- val_image1P
-    ...
-    <span class="sb">`</span>-- classM/  <span class="c1"># folder of T images</span>
-        <span class="p">|</span>-- val_imageT1
-        <span class="p">|</span>-- val_imageT2
-        ...
-        <span class="sb">`</span>-- val_imageMT
-</pre></div>
-</div>
-<dl class="method">
-<dt id="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/cv/fastai.html#ImageClassificationDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method for the <code class="docutils literal notranslate"><span class="pre">ImageClassificationDataset</span></code> class.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>root</strong> – root directory of dataset</p></li>
-<li><p><strong>train</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, creates dataset from <code class="docutils literal notranslate"><span class="pre">train/</span></code>
-subfolder, otherwise from <code class="docutils literal notranslate"><span class="pre">val/</span></code></p></li>
-<li><p><strong>download</strong> – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, downloads the dataset from
-the internet and puts it in root directory. If dataset
-is already downloaded, it is not downloaded again</p></li>
-<li><p><strong>**kwargs</strong> – </p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset.resources">
-<code class="sig-name descname">resources</code><em class="property"> = None</em><a class="headerlink" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset.resources" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-</div>
 <div class="section" id="module-catalyst.contrib.datasets.cv.imagenette">
-<span id="imagenette"></span><h4><a class="toc-backref" href="#id23">Imagenette</a><a class="headerlink" href="#module-catalyst.contrib.datasets.cv.imagenette" title="Permalink to this headline">¶</a></h4>
+<span id="imagenette"></span><h4><a class="toc-backref" href="#id22">Imagenette</a><a class="headerlink" href="#module-catalyst.contrib.datasets.cv.imagenette" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.datasets.cv.imagenette.Imagenette">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.cv.imagenette.</code><code class="sig-name descname">Imagenette</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/cv/imagenette.html#Imagenette"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.cv.imagenette.Imagenette" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset" title="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.functional.ImageClassificationDataset</span></code></p>
 <p><a class="reference external" href="https://github.com/fastai/imagenette#imagenette-1">Imagenette</a> Dataset.</p>
 <dl class="attribute">
 <dt id="catalyst.contrib.datasets.cv.imagenette.Imagenette.name">
@@ -755,7 +709,7 @@ is already downloaded, it is not downloaded again</p></li>
 <dl class="class">
 <dt id="catalyst.contrib.datasets.cv.imagenette.Imagenette160">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.cv.imagenette.</code><code class="sig-name descname">Imagenette160</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/cv/imagenette.html#Imagenette160"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.cv.imagenette.Imagenette160" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset" title="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.functional.ImageClassificationDataset</span></code></p>
 <p><a class="reference external" href="https://github.com/fastai/imagenette#imagenette-1">Imagenette</a> Dataset
 with images resized so that the shortest size is 160 px.</p>
 <dl class="attribute">
@@ -773,7 +727,7 @@ with images resized so that the shortest size is 160 px.</p>
 <dl class="class">
 <dt id="catalyst.contrib.datasets.cv.imagenette.Imagenette320">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.cv.imagenette.</code><code class="sig-name descname">Imagenette320</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/cv/imagenette.html#Imagenette320"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.cv.imagenette.Imagenette320" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset" title="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.functional.ImageClassificationDataset</span></code></p>
 <p><a class="reference external" href="https://github.com/fastai/imagenette#imagenette-1">Imagenette</a> Dataset
 with images resized so that the shortest size is 320 px.</p>
 <dl class="attribute">
@@ -790,11 +744,11 @@ with images resized so that the shortest size is 320 px.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.datasets.cv.imagewoof">
-<span id="imagewoof"></span><h4><a class="toc-backref" href="#id24">Imagewoof</a><a class="headerlink" href="#module-catalyst.contrib.datasets.cv.imagewoof" title="Permalink to this headline">¶</a></h4>
+<span id="imagewoof"></span><h4><a class="toc-backref" href="#id23">Imagewoof</a><a class="headerlink" href="#module-catalyst.contrib.datasets.cv.imagewoof" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.datasets.cv.imagewoof.Imagewoof">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.cv.imagewoof.</code><code class="sig-name descname">Imagewoof</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/cv/imagewoof.html#Imagewoof"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.cv.imagewoof.Imagewoof" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset" title="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.functional.ImageClassificationDataset</span></code></p>
 <p><a class="reference external" href="https://github.com/fastai/imagenette#imagewoof">Imagewoof</a> Dataset.</p>
 <dl class="attribute">
 <dt id="catalyst.contrib.datasets.cv.imagewoof.Imagewoof.name">
@@ -811,7 +765,7 @@ with images resized so that the shortest size is 320 px.</p>
 <dl class="class">
 <dt id="catalyst.contrib.datasets.cv.imagewoof.Imagewoof160">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.cv.imagewoof.</code><code class="sig-name descname">Imagewoof160</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/cv/imagewoof.html#Imagewoof160"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.cv.imagewoof.Imagewoof160" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset" title="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.functional.ImageClassificationDataset</span></code></p>
 <p><a class="reference external" href="https://github.com/fastai/imagenette#imagewoof">Imagewoof</a> Dataset
 with images resized so that the shortest size is 160 px.</p>
 <dl class="attribute">
@@ -829,7 +783,7 @@ with images resized so that the shortest size is 160 px.</p>
 <dl class="class">
 <dt id="catalyst.contrib.datasets.cv.imagewoof.Imagewoof320">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.cv.imagewoof.</code><code class="sig-name descname">Imagewoof320</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/cv/imagewoof.html#Imagewoof320"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.cv.imagewoof.Imagewoof320" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset" title="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.functional.ImageClassificationDataset</span></code></p>
 <p><a class="reference external" href="https://github.com/fastai/imagenette#imagewoof">Imagewoof</a> Dataset
 with images resized so that the shortest size is 320 px.</p>
 <dl class="attribute">
@@ -846,11 +800,11 @@ with images resized so that the shortest size is 320 px.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.datasets.cv.imagewang">
-<span id="imagewang"></span><h4><a class="toc-backref" href="#id25">Imagewang</a><a class="headerlink" href="#module-catalyst.contrib.datasets.cv.imagewang" title="Permalink to this headline">¶</a></h4>
+<span id="imagewang"></span><h4><a class="toc-backref" href="#id24">Imagewang</a><a class="headerlink" href="#module-catalyst.contrib.datasets.cv.imagewang" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.datasets.cv.imagewang.Imagewang">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.cv.imagewang.</code><code class="sig-name descname">Imagewang</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/cv/imagewang.html#Imagewang"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.cv.imagewang.Imagewang" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset" title="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.functional.ImageClassificationDataset</span></code></p>
 <p><a class="reference external" href="https://github.com/fastai/imagenette#image%E7%BD%91">Imagewang</a> Dataset.</p>
 <dl class="attribute">
 <dt id="catalyst.contrib.datasets.cv.imagewang.Imagewang.name">
@@ -867,7 +821,7 @@ with images resized so that the shortest size is 320 px.</p>
 <dl class="class">
 <dt id="catalyst.contrib.datasets.cv.imagewang.Imagewang160">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.cv.imagewang.</code><code class="sig-name descname">Imagewang160</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/cv/imagewang.html#Imagewang160"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.cv.imagewang.Imagewang160" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset" title="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.functional.ImageClassificationDataset</span></code></p>
 <p><a class="reference external" href="https://github.com/fastai/imagenette#image%E7%BD%91">Imagewang</a> Dataset
 with images resized so that the shortest size is 160 px.</p>
 <dl class="attribute">
@@ -885,7 +839,7 @@ with images resized so that the shortest size is 160 px.</p>
 <dl class="class">
 <dt id="catalyst.contrib.datasets.cv.imagewang.Imagewang320">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.datasets.cv.imagewang.</code><code class="sig-name descname">Imagewang320</code><span class="sig-paren">(</span><em class="sig-param">root: str</em>, <em class="sig-param">train: bool = True</em>, <em class="sig-param">download: bool = False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/datasets/cv/imagewang.html#Imagewang320"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.datasets.cv.imagewang.Imagewang320" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset" title="catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.fastai.ImageClassificationDataset</span></code></a></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.datasets.cv.functional.ImageClassificationDataset</span></code></p>
 <p><a class="reference external" href="https://github.com/fastai/imagenette#image%E7%BD%91">Imagewang</a> Dataset
 with images resized so that the shortest size is 320 px.</p>
 <dl class="attribute">
@@ -904,12 +858,12 @@ with images resized so that the shortest size is 320 px.</p>
 </div>
 </div>
 <div class="section" id="nn">
-<h2><a class="toc-backref" href="#id26">NN</a><a class="headerlink" href="#nn" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id25">NN</a><a class="headerlink" href="#nn" title="Permalink to this headline">¶</a></h2>
 <p>Extensions for <code class="docutils literal notranslate"><span class="pre">torch.nn</span></code></p>
 <div class="section" id="criterion">
-<h3><a class="toc-backref" href="#id27">Criterion</a><a class="headerlink" href="#criterion" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id26">Criterion</a><a class="headerlink" href="#criterion" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-catalyst.contrib.nn.criterion.ce">
-<span id="cross-entropy"></span><h4><a class="toc-backref" href="#id28">Cross entropy</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.ce" title="Permalink to this headline">¶</a></h4>
+<span id="cross-entropy"></span><h4><a class="toc-backref" href="#id27">Cross entropy</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.ce" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.ce.MaskCrossEntropyLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.ce.</code><code class="sig-name descname">MaskCrossEntropyLoss</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/ce.html#MaskCrossEntropyLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.ce.MaskCrossEntropyLoss" title="Permalink to this definition">¶</a></dt>
@@ -1018,7 +972,7 @@ values of a vector correspond to class index</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.circle">
-<span id="circle"></span><h4><a class="toc-backref" href="#id29">Circle</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.circle" title="Permalink to this headline">¶</a></h4>
+<span id="circle"></span><h4><a class="toc-backref" href="#id28">Circle</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.circle" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.circle.CircleLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.circle.</code><code class="sig-name descname">CircleLoss</code><span class="sig-paren">(</span><em class="sig-param">margin: float</em>, <em class="sig-param">gamma: float</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/circle.html#CircleLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.circle.CircleLoss" title="Permalink to this definition">¶</a></dt>
@@ -1075,7 +1029,7 @@ of Pair Similarity Optimization</a> paper.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.contrastive">
-<span id="contrastive"></span><h4><a class="toc-backref" href="#id30">Contrastive</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.contrastive" title="Permalink to this headline">¶</a></h4>
+<span id="contrastive"></span><h4><a class="toc-backref" href="#id29">Contrastive</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.contrastive" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.contrastive.</code><code class="sig-name descname">ContrastiveEmbeddingLoss</code><span class="sig-paren">(</span><em class="sig-param">margin=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/contrastive.html#ContrastiveEmbeddingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.contrastive.ContrastiveEmbeddingLoss" title="Permalink to this definition">¶</a></dt>
@@ -1205,7 +1159,7 @@ by Learning an Invariant Mapping</a>.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.dice">
-<span id="dice"></span><h4><a class="toc-backref" href="#id31">Dice</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.dice" title="Permalink to this headline">¶</a></h4>
+<span id="dice"></span><h4><a class="toc-backref" href="#id30">Dice</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.dice" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.dice.BCEDiceLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.dice.</code><code class="sig-name descname">BCEDiceLoss</code><span class="sig-paren">(</span><em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em>, <em class="sig-param">bce_weight: float = 0.5</em>, <em class="sig-param">dice_weight: float = 0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/dice.html#BCEDiceLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.dice.BCEDiceLoss" title="Permalink to this definition">¶</a></dt>
@@ -1257,7 +1211,7 @@ by Learning an Invariant Mapping</a>.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.focal">
-<span id="focal"></span><h4><a class="toc-backref" href="#id32">Focal</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.focal" title="Permalink to this headline">¶</a></h4>
+<span id="focal"></span><h4><a class="toc-backref" href="#id31">Focal</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.focal" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.focal.FocalLossBinary">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.focal.</code><code class="sig-name descname">FocalLossBinary</code><span class="sig-paren">(</span><em class="sig-param">ignore: int = None</em>, <em class="sig-param">reduced: bool = False</em>, <em class="sig-param">gamma: float = 2.0</em>, <em class="sig-param">alpha: float = 0.25</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/focal.html#FocalLossBinary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.focal.FocalLossBinary" title="Permalink to this definition">¶</a></dt>
@@ -1293,7 +1247,7 @@ by Learning an Invariant Mapping</a>.</p>
 <dt id="catalyst.contrib.nn.criterion.focal.FocalLossMultiClass">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.focal.</code><code class="sig-name descname">FocalLossMultiClass</code><span class="sig-paren">(</span><em class="sig-param">ignore: int = None</em>, <em class="sig-param">reduced: bool = False</em>, <em class="sig-param">gamma: float = 2.0</em>, <em class="sig-param">alpha: float = 0.25</em>, <em class="sig-param">threshold: float = 0.5</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/focal.html#FocalLossMultiClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.focal.FocalLossMultiClass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.nn.criterion.focal.FocalLossBinary" title="catalyst.contrib.nn.criterion.focal.FocalLossBinary"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.nn.criterion.focal.FocalLossBinary</span></code></a></p>
-<p>Compute focal loss for multi-class problem.
+<p>Compute focal loss for multiclass problem.
 Ignores targets having -1 label.</p>
 <p>It has been proposed in <a class="reference external" href="https://arxiv.org/abs/1708.02002">Focal Loss for Dense Object Detection</a> paper.</p>
 <p>&#64;TODO: Docs (add <cite>Example</cite>). Contribution is welcome.</p>
@@ -1317,7 +1271,7 @@ Ignores targets having -1 label.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.gan">
-<span id="gan"></span><h4><a class="toc-backref" href="#id33">GAN</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.gan" title="Permalink to this headline">¶</a></h4>
+<span id="gan"></span><h4><a class="toc-backref" href="#id32">GAN</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.gan" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.gan.MeanOutputLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.gan.</code><code class="sig-name descname">MeanOutputLoss</code><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/gan.html#MeanOutputLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.gan.MeanOutputLoss" title="Permalink to this definition">¶</a></dt>
@@ -1353,7 +1307,7 @@ Ignores targets having -1 label.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.huber">
-<span id="huber"></span><h4><a class="toc-backref" href="#id34">Huber</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.huber" title="Permalink to this headline">¶</a></h4>
+<span id="huber"></span><h4><a class="toc-backref" href="#id33">Huber</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.huber" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.huber.HuberLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.huber.</code><code class="sig-name descname">HuberLoss</code><span class="sig-paren">(</span><em class="sig-param">clip_delta=1.0</em>, <em class="sig-param">reduction='mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/huber.html#HuberLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.huber.HuberLoss" title="Permalink to this definition">¶</a></dt>
@@ -1375,7 +1329,7 @@ Ignores targets having -1 label.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.iou">
-<span id="iou"></span><h4><a class="toc-backref" href="#id35">IOU</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.iou" title="Permalink to this headline">¶</a></h4>
+<span id="iou"></span><h4><a class="toc-backref" href="#id34">IOU</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.iou" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.iou.IoULoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.iou.</code><code class="sig-name descname">IoULoss</code><span class="sig-paren">(</span><em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/iou.html#IoULoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.iou.IoULoss" title="Permalink to this definition">¶</a></dt>
@@ -1391,7 +1345,7 @@ Ignores targets having -1 label.</p>
 <li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
 <li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
 <li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
-Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax2d'</span></code></p></li>
+Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax'</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -1420,7 +1374,7 @@ Must be one of <code class="docutils literal notranslate"><span class="pre">'non
 <li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
 <li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
 <li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
-Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax2d'</span></code></p></li>
+Must be one of <code class="docutils literal notranslate"><span class="pre">'none'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Sigmoid'</span></code>, <code class="docutils literal notranslate"><span class="pre">'Softmax'</span></code></p></li>
 <li><p><strong>reduction</strong> – Specifies the reduction to apply
 to the output of BCE</p></li>
 </ul>
@@ -1438,7 +1392,7 @@ to the output of BCE</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.lovasz">
-<span id="lovasz"></span><h4><a class="toc-backref" href="#id36">Lovasz</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.lovasz" title="Permalink to this headline">¶</a></h4>
+<span id="lovasz"></span><h4><a class="toc-backref" href="#id35">Lovasz</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.lovasz" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.lovasz.LovaszLossBinary">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.lovasz.</code><code class="sig-name descname">LovaszLossBinary</code><span class="sig-paren">(</span><em class="sig-param">per_image=False</em>, <em class="sig-param">ignore=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/lovasz.html#LovaszLossBinary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.lovasz.LovaszLossBinary" title="Permalink to this definition">¶</a></dt>
@@ -1474,7 +1428,7 @@ in neural networks</a>.</p>
 <dt id="catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiClass">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.lovasz.</code><code class="sig-name descname">LovaszLossMultiClass</code><span class="sig-paren">(</span><em class="sig-param">per_image=False</em>, <em class="sig-param">ignore=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/lovasz.html#LovaszLossMultiClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiClass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.loss._Loss</span></code></p>
-<p>Creates a criterion that optimizes a multi-class Lovasz loss.</p>
+<p>Creates a criterion that optimizes a multiclass Lovasz loss.</p>
 <p>It has been proposed in <a class="reference external" href="https://arxiv.org/abs/1705.08790">The Lovasz-Softmax loss: A tractable surrogate
 for the optimization of the intersection-over-union measure
 in neural networks</a>.</p>
@@ -1505,7 +1459,7 @@ in neural networks</a>.</p>
 <dt id="catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiLabel">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.lovasz.</code><code class="sig-name descname">LovaszLossMultiLabel</code><span class="sig-paren">(</span><em class="sig-param">per_image=False</em>, <em class="sig-param">ignore=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/lovasz.html#LovaszLossMultiLabel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.lovasz.LovaszLossMultiLabel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.loss._Loss</span></code></p>
-<p>Creates a criterion that optimizes a multi-label Lovasz loss.</p>
+<p>Creates a criterion that optimizes a multilabel Lovasz loss.</p>
 <p>It has been proposed in <a class="reference external" href="https://arxiv.org/abs/1705.08790">The Lovasz-Softmax loss: A tractable surrogate
 for the optimization of the intersection-over-union measure
 in neural networks</a>.</p>
@@ -1534,7 +1488,7 @@ in neural networks</a>.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.margin">
-<span id="margin"></span><h4><a class="toc-backref" href="#id37">Margin</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.margin" title="Permalink to this headline">¶</a></h4>
+<span id="margin"></span><h4><a class="toc-backref" href="#id36">Margin</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.margin" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.margin.MarginLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.margin.</code><code class="sig-name descname">MarginLoss</code><span class="sig-paren">(</span><em class="sig-param">alpha: float = 0.2</em>, <em class="sig-param">beta: float = 1.0</em>, <em class="sig-param">skip_labels: Union[int</em>, <em class="sig-param">List[int]] = -1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/margin.html#MarginLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.margin.MarginLoss" title="Permalink to this definition">¶</a></dt>
@@ -1576,7 +1530,7 @@ in neural networks</a>.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.triplet">
-<span id="triplet"></span><h4><a class="toc-backref" href="#id38">Triplet</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.triplet" title="Permalink to this headline">¶</a></h4>
+<span id="triplet"></span><h4><a class="toc-backref" href="#id37">Triplet</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.triplet" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.triplet.TripletLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.triplet.</code><code class="sig-name descname">TripletLoss</code><span class="sig-paren">(</span><em class="sig-param">margin: float = 0.3</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/triplet.html#TripletLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.triplet.TripletLoss" title="Permalink to this definition">¶</a></dt>
@@ -1719,7 +1673,7 @@ default TripletMargingLoss from PyTorch.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.criterion.wing">
-<span id="wing"></span><h4><a class="toc-backref" href="#id39">Wing</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.wing" title="Permalink to this headline">¶</a></h4>
+<span id="wing"></span><h4><a class="toc-backref" href="#id38">Wing</a><a class="headerlink" href="#module-catalyst.contrib.nn.criterion.wing" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.criterion.wing.WingLoss">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.criterion.wing.</code><code class="sig-name descname">WingLoss</code><span class="sig-paren">(</span><em class="sig-param">width: int = 5</em>, <em class="sig-param">curvature: float = 0.5</em>, <em class="sig-param">reduction: str = 'mean'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/criterion/wing.html#WingLoss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.criterion.wing.WingLoss" title="Permalink to this definition">¶</a></dt>
@@ -1756,9 +1710,9 @@ with Convolutional Neural Networks</a>.</p>
 </div>
 </div>
 <div class="section" id="modules">
-<h3><a class="toc-backref" href="#id40">Modules</a><a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id39">Modules</a><a class="headerlink" href="#modules" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="module-catalyst.contrib.nn.modules.arcface">
-<span id="arcface-and-subcenterarcface"></span><h4><a class="toc-backref" href="#id41">ArcFace and SubCenterArcFace</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcface" title="Permalink to this headline">¶</a></h4>
+<span id="arcface-and-subcenterarcface"></span><h4><a class="toc-backref" href="#id40">ArcFace and SubCenterArcFace</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcface" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.arcface.ArcFace">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.arcface.</code><code class="sig-name descname">ArcFace</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em>, <em class="sig-param">s: float = 64.0</em>, <em class="sig-param">m: float = 0.5</em>, <em class="sig-param">eps: float = 1e-06</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/arcface.html#ArcFace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.arcface.ArcFace" title="Permalink to this definition">¶</a></dt>
@@ -1891,7 +1845,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.modules.arcmargin">
-<span id="arc-margin-product"></span><h4><a class="toc-backref" href="#id42">Arc Margin Product</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcmargin" title="Permalink to this headline">¶</a></h4>
+<span id="arc-margin-product"></span><h4><a class="toc-backref" href="#id41">Arc Margin Product</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.arcmargin" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.arcmargin.ArcMarginProduct">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.arcmargin.</code><code class="sig-name descname">ArcMarginProduct</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/arcmargin.html#ArcMarginProduct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.arcmargin.ArcMarginProduct" title="Permalink to this definition">¶</a></dt>
@@ -1946,7 +1900,7 @@ where <code class="docutils literal notranslate"><span class="pre">C</span></cod
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.modules.common">
-<span id="common-modules"></span><h4><a class="toc-backref" href="#id43">Common modules</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.common" title="Permalink to this headline">¶</a></h4>
+<span id="common-modules"></span><h4><a class="toc-backref" href="#id42">Common modules</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.common" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.common.Flatten">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.common.</code><code class="sig-name descname">Flatten</code><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/common.html#Flatten"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.common.Flatten" title="Permalink to this definition">¶</a></dt>
@@ -2041,7 +1995,7 @@ Default: 0.1.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.nn.modules.cosface">
-<span id="cosface-and-adacos"></span><h4><a class="toc-backref" href="#id44">CosFace and AdaCos</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.cosface" title="Permalink to this headline">¶</a></h4>
+<span id="cosface-and-adacos"></span><h4><a class="toc-backref" href="#id43">CosFace and AdaCos</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.cosface" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.nn.modules.cosface.CosFace">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.cosface.</code><code class="sig-name descname">CosFace</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em>, <em class="sig-param">s: float = 64.0</em>, <em class="sig-param">m: float = 0.35</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/cosface.html#CosFace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.cosface.CosFace" title="Permalink to this definition">¶</a></dt>
@@ -2161,6 +2115,71 @@ expected shapes <code class="docutils literal notranslate"><span class="pre">B</
 <dd class="field-even"><p>tensor (logits) with shapes <code class="docutils literal notranslate"><span class="pre">BxC</span></code>
 where <code class="docutils literal notranslate"><span class="pre">C</span></code> is a number of classes
 (out_features).</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.contrib.nn.modules.curricularface">
+<span id="curricularface"></span><h4><a class="toc-backref" href="#id44">CurricularFace</a><a class="headerlink" href="#module-catalyst.contrib.nn.modules.curricularface" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.nn.modules.curricularface.CurricularFace">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.nn.modules.curricularface.</code><code class="sig-name descname">CurricularFace</code><span class="sig-paren">(</span><em class="sig-param">in_features: int</em>, <em class="sig-param">out_features: int</em>, <em class="sig-param">s: float = 64.0</em>, <em class="sig-param">m: float = 0.5</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/curricularface.html#CurricularFace"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.curricularface.CurricularFace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<p>Implementation of
+<a class="reference external" href="https://arxiv.org/abs/2004.00288">CurricularFace: Adaptive Curriculum Learning        Loss for Deep Face Recognition</a>.</p>
+<p>Official <a class="reference external" href="https://github.com/HuangYG123/CurricularFace">pytorch implementation</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_features</strong> – size of each input sample.</p></li>
+<li><p><strong>out_features</strong> – size of each output sample.</p></li>
+<li><p><strong>s</strong> – norm of input feature.
+Default: <code class="docutils literal notranslate"><span class="pre">64.0</span></code>.</p></li>
+<li><p><strong>m</strong> – margin.
+Default: <code class="docutils literal notranslate"><span class="pre">0.5</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Shape:</dt><dd><ul class="simple">
+<li><p>Input: <span class="math notranslate nohighlight">\((batch, H_{in})\)</span> where
+<span class="math notranslate nohighlight">\(H_{in} = in\_features\)</span>.</p></li>
+<li><p>Output: <span class="math notranslate nohighlight">\((batch, H_{out})\)</span> where
+<span class="math notranslate nohighlight">\(H_{out} = out\_features\)</span>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">layer</span> <span class="o">=</span> <span class="n">CurricularFace</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">1.31</span><span class="p">,</span> <span class="n">m</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrosEntropyLoss</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">embedding</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">target</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span><span class="o">.</span><span class="n">random_</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">layer</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="catalyst.contrib.nn.modules.curricularface.CurricularFace.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">label: torch.LongTensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/curricularface.html#CurricularFace.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.curricularface.CurricularFace.forward" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input</strong> – input features,
+expected shapes <code class="docutils literal notranslate"><span class="pre">BxF</span></code> where <code class="docutils literal notranslate"><span class="pre">B</span></code>
+is batch dimension and <code class="docutils literal notranslate"><span class="pre">F</span></code> is an
+input feature dimension.</p></li>
+<li><p><strong>label</strong> – target classes,
+expected shapes <code class="docutils literal notranslate"><span class="pre">B</span></code> where
+<code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tensor (logits) with shapes <code class="docutils literal notranslate"><span class="pre">BxC</span></code>
+where <code class="docutils literal notranslate"><span class="pre">C</span></code> is a number of classes.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3423,6 +3442,75 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 </div>
 </div>
 </div>
+<div class="section" id="scripts">
+<h2><a class="toc-backref" href="#id66">Scripts</a><a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
+<p>You can use contrib scripts with <cite>catalyst-contrib</cite> in your terminal.
+For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-contrib tag2label --help
+</pre></div>
+</div>
+<span class="target" id="module-catalyst.contrib.__main__"></span><p>Catalyst-contrib scripts.</p>
+<p class="rubric">Examples</p>
+<p>1.  <strong>process-images</strong> reads raw data and outputs
+preprocessed resized images</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-contrib process-images <span class="se">\\</span>
+    --in-dir /path/to/raw/data/ <span class="se">\\</span>
+    --out-dir<span class="o">=</span>./data/dataset <span class="se">\\</span>
+    --num-workers<span class="o">=</span><span class="m">6</span> <span class="se">\\</span>
+    --max-size<span class="o">=</span><span class="m">224</span> <span class="se">\\</span>
+    --extension<span class="o">=</span>png <span class="se">\\</span>
+    --clear-exif <span class="se">\\</span>
+    --grayscale <span class="se">\\</span>
+    --expand-dims
+</pre></div>
+</div>
+<p>2. <strong>tag2label</strong> prepares a dataset to json like
+<cite>{“class_id”:  class_column_from_dataset}</cite></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-contrib tag2label <span class="se">\\</span>
+    --in-dir<span class="o">=</span>./data/dataset <span class="se">\\</span>
+    --out-dataset<span class="o">=</span>./data/dataset_raw.csv <span class="se">\\</span>
+    --out-labeling<span class="o">=</span>./data/tag2cls.json
+</pre></div>
+</div>
+<p>3. <strong>check-images</strong> checks images in your data
+to be non-broken and writes a flag:
+<cite>true</cite> if image opened without an error and <cite>false</cite> otherwise</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-contrib check-images <span class="se">\\</span>
+    --in-csv<span class="o">=</span>./data/dataset_raw.csv <span class="se">\\</span>
+    --img-rootpath<span class="o">=</span>./data/dataset <span class="se">\\</span>
+    --img-col<span class="o">=</span><span class="s2">&quot;tag&quot;</span> <span class="se">\\</span>
+    --out-csv<span class="o">=</span>./data/dataset_checked.csv <span class="se">\\</span>
+    --n-cpu<span class="o">=</span><span class="m">4</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p><strong>split-dataframe</strong> split your dataset into train/valid folds</p></li>
+</ol>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-contrib split-dataframe <span class="se">\\</span>
+    --in-csv<span class="o">=</span>./data/dataset_raw.csv <span class="se">\\</span>
+    --tag2class<span class="o">=</span>./data/tag2cls.json <span class="se">\\</span>
+    --tag-column<span class="o">=</span>tag <span class="se">\\</span>
+    --class-column<span class="o">=</span>class <span class="se">\\</span>
+    --n-folds<span class="o">=</span><span class="m">5</span> <span class="se">\\</span>
+    --train-folds<span class="o">=</span><span class="m">0</span>,1,2,3 <span class="se">\\</span>
+    --out-csv<span class="o">=</span>./data/dataset.csv
+</pre></div>
+</div>
+<p>5. <strong>image2embedding</strong> embeds images from your csv
+or image directory with specified neural net architecture</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-contrib image2embedding <span class="se">\\</span>
+    --in-csv<span class="o">=</span>./data/input.csv <span class="se">\\</span>
+    --img-col<span class="o">=</span><span class="s2">&quot;filename&quot;</span> <span class="se">\\</span>
+    --img-size<span class="o">=</span><span class="m">64</span> <span class="se">\\</span>
+    --out-npy<span class="o">=</span>./embeddings.npy <span class="se">\\</span>
+    --arch<span class="o">=</span>resnet34 <span class="se">\\</span>
+    --pooling<span class="o">=</span>GlobalMaxPool2d <span class="se">\\</span>
+    --batch-size<span class="o">=</span><span class="m">8</span> <span class="se">\\</span>
+    --num-workers<span class="o">=</span><span class="m">16</span> <span class="se">\\</span>
+    --verbose
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -3469,7 +3557,6 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 <li><a class="reference internal" href="#module-catalyst.contrib.datasets.mnist">MNIST</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.datasets.movielens">MovieLens</a></li>
 <li><a class="reference internal" href="#computer-vision">Computer Vision</a><ul>
-<li><a class="reference internal" href="#module-catalyst.contrib.datasets.cv.fastai">ImageClassificationDataset</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.datasets.cv.imagenette">Imagenette</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.datasets.cv.imagewoof">Imagewoof</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.datasets.cv.imagewang">Imagewang</a></li>
@@ -3498,6 +3585,7 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 <li><a class="reference internal" href="#module-catalyst.contrib.nn.modules.arcmargin">Arc Margin Product</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.nn.modules.common">Common modules</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.nn.modules.cosface">CosFace and AdaCos</a></li>
+<li><a class="reference internal" href="#module-catalyst.contrib.nn.modules.curricularface">CurricularFace</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.nn.modules.lama">Last-Mean-Average-Attention (LAMA)-Pooling</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.nn.modules.pooling">Pooling</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.nn.modules.rms_norm">RMSNorm</a></li>
@@ -3531,6 +3619,7 @@ Cannot be set together with <code class="docutils literal notranslate"><span cla
 </li>
 </ul>
 </li>
+<li><a class="reference internal" href="#scripts">Scripts</a></li>
 </ul>
 </li>
 </ul>

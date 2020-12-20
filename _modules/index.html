@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview: module code &mdash; Catalyst 20.10.1 documentation</title>
+  <title>Overview: module code &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -190,30 +190,44 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&amp;sk=2aff824412e2f653587a30cd853b030c">Catalyst 102 — Core Trinity</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Segmentation</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - DDP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - TPU</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">[WIP] Finetuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/stages.html">[WIP] Multi-stage experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">[WIP] Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/how_to_start.html">How to start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/codestyle.html">Codestyle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/contributors.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
@@ -311,8 +325,10 @@
 <li><a href="catalyst/callbacks/metrics/f1_score.html">catalyst.callbacks.metrics.f1_score</a></li>
 <li><a href="catalyst/callbacks/metrics/iou.html">catalyst.callbacks.metrics.iou</a></li>
 <li><a href="catalyst/callbacks/metrics/mrr.html">catalyst.callbacks.metrics.mrr</a></li>
+<li><a href="catalyst/callbacks/metrics/perplexity.html">catalyst.callbacks.metrics.perplexity</a></li>
 <li><a href="catalyst/callbacks/metrics/ppv_tpr_f1.html">catalyst.callbacks.metrics.ppv_tpr_f1</a></li>
 <li><a href="catalyst/callbacks/metrics/precision.html">catalyst.callbacks.metrics.precision</a></li>
+<li><a href="catalyst/callbacks/metrics/recall.html">catalyst.callbacks.metrics.recall</a></li>
 <li><a href="catalyst/callbacks/optimizer.html">catalyst.callbacks.optimizer</a></li>
 <li><a href="catalyst/callbacks/periodic_loader.html">catalyst.callbacks.periodic_loader</a></li>
 <li><a href="catalyst/callbacks/pruning.html">catalyst.callbacks.pruning</a></li>
@@ -324,18 +340,26 @@
 <li><a href="catalyst/contrib/callbacks/alchemy_logger.html">catalyst.contrib.callbacks.alchemy_logger</a></li>
 <li><a href="catalyst/contrib/callbacks/confusion_matrix_logger.html">catalyst.contrib.callbacks.confusion_matrix_logger</a></li>
 <li><a href="catalyst/contrib/callbacks/cutmix_callback.html">catalyst.contrib.callbacks.cutmix_callback</a></li>
+<li><a href="catalyst/contrib/callbacks/draw_masks_callback.html">catalyst.contrib.callbacks.draw_masks_callback</a></li>
 <li><a href="catalyst/contrib/callbacks/gradnorm_logger.html">catalyst.contrib.callbacks.gradnorm_logger</a></li>
 <li><a href="catalyst/contrib/callbacks/inference_callback.html">catalyst.contrib.callbacks.inference_callback</a></li>
-<li><a href="catalyst/contrib/callbacks/knn_metric.html">catalyst.contrib.callbacks.knn_metric</a></li>
 <li><a href="catalyst/contrib/callbacks/kornia_transform.html">catalyst.contrib.callbacks.kornia_transform</a></li>
 <li><a href="catalyst/contrib/callbacks/mask_inference.html">catalyst.contrib.callbacks.mask_inference</a></li>
 <li><a href="catalyst/contrib/callbacks/mixup_callback.html">catalyst.contrib.callbacks.mixup_callback</a></li>
 <li><a href="catalyst/contrib/callbacks/neptune_logger.html">catalyst.contrib.callbacks.neptune_logger</a></li>
 <li><a href="catalyst/contrib/callbacks/optuna_callback.html">catalyst.contrib.callbacks.optuna_callback</a></li>
-<li><a href="catalyst/contrib/callbacks/perplexity_metric.html">catalyst.contrib.callbacks.perplexity_metric</a></li>
 <li><a href="catalyst/contrib/callbacks/telegram_logger.html">catalyst.contrib.callbacks.telegram_logger</a></li>
 <li><a href="catalyst/contrib/callbacks/wandb_logger.html">catalyst.contrib.callbacks.wandb_logger</a></li>
-<li><a href="catalyst/contrib/datasets/cv/fastai.html">catalyst.contrib.datasets.cv.fastai</a></li>
+<li><a href="catalyst/contrib/data/augmentor.html">catalyst.contrib.data.augmentor</a></li>
+<li><a href="catalyst/contrib/data/cv/dataset.html">catalyst.contrib.data.cv.dataset</a></li>
+<li><a href="catalyst/contrib/data/cv/mixins/blur.html">catalyst.contrib.data.cv.mixins.blur</a></li>
+<li><a href="catalyst/contrib/data/cv/mixins/flare.html">catalyst.contrib.data.cv.mixins.flare</a></li>
+<li><a href="catalyst/contrib/data/cv/mixins/rotate.html">catalyst.contrib.data.cv.mixins.rotate</a></li>
+<li><a href="catalyst/contrib/data/cv/reader.html">catalyst.contrib.data.cv.reader</a></li>
+<li><a href="catalyst/contrib/data/cv/transforms/albumentations.html">catalyst.contrib.data.cv.transforms.albumentations</a></li>
+<li><a href="catalyst/contrib/data/cv/transforms/kornia.html">catalyst.contrib.data.cv.transforms.kornia</a></li>
+<li><a href="catalyst/contrib/data/cv/transforms/torch.html">catalyst.contrib.data.cv.transforms.torch</a></li>
+<li><a href="catalyst/contrib/data/reader.html">catalyst.contrib.data.reader</a></li>
 <li><a href="catalyst/contrib/datasets/cv/imagenette.html">catalyst.contrib.datasets.cv.imagenette</a></li>
 <li><a href="catalyst/contrib/datasets/cv/imagewang.html">catalyst.contrib.datasets.cv.imagewang</a></li>
 <li><a href="catalyst/contrib/datasets/cv/imagewoof.html">catalyst.contrib.datasets.cv.imagewoof</a></li>
@@ -361,6 +385,7 @@
 <li><a href="catalyst/contrib/nn/modules/arcmargin.html">catalyst.contrib.nn.modules.arcmargin</a></li>
 <li><a href="catalyst/contrib/nn/modules/common.html">catalyst.contrib.nn.modules.common</a></li>
 <li><a href="catalyst/contrib/nn/modules/cosface.html">catalyst.contrib.nn.modules.cosface</a></li>
+<li><a href="catalyst/contrib/nn/modules/curricularface.html">catalyst.contrib.nn.modules.curricularface</a></li>
 <li><a href="catalyst/contrib/nn/modules/lama.html">catalyst.contrib.nn.modules.lama</a></li>
 <li><a href="catalyst/contrib/nn/modules/pooling.html">catalyst.contrib.nn.modules.pooling</a></li>
 <li><a href="catalyst/contrib/nn/modules/rms_norm.html">catalyst.contrib.nn.modules.rms_norm</a></li>
@@ -376,89 +401,68 @@
 <li><a href="catalyst/contrib/nn/schedulers/base.html">catalyst.contrib.nn.schedulers.base</a></li>
 <li><a href="catalyst/contrib/nn/schedulers/onecycle.html">catalyst.contrib.nn.schedulers.onecycle</a></li>
 <li><a href="catalyst/contrib/tools/tensorboard.html">catalyst.contrib.tools.tensorboard</a></li>
-<li><a href="catalyst/contrib/utils/argparse.html">catalyst.contrib.utils.argparse</a></li>
-<li><a href="catalyst/contrib/utils/confusion_matrix.html">catalyst.contrib.utils.confusion_matrix</a></li>
 <li><a href="catalyst/contrib/utils/cv/image.html">catalyst.contrib.utils.cv.image</a></li>
 <li><a href="catalyst/contrib/utils/cv/tensor.html">catalyst.contrib.utils.cv.tensor</a></li>
-<li><a href="catalyst/contrib/utils/dataset.html">catalyst.contrib.utils.dataset</a></li>
-<li><a href="catalyst/contrib/utils/misc.html">catalyst.contrib.utils.misc</a></li>
 <li><a href="catalyst/contrib/utils/nlp/text.html">catalyst.contrib.utils.nlp.text</a></li>
 <li><a href="catalyst/contrib/utils/pandas.html">catalyst.contrib.utils.pandas</a></li>
 <li><a href="catalyst/contrib/utils/parallel.html">catalyst.contrib.utils.parallel</a></li>
 <li><a href="catalyst/contrib/utils/plotly.html">catalyst.contrib.utils.plotly</a></li>
 <li><a href="catalyst/contrib/utils/serialization.html">catalyst.contrib.utils.serialization</a></li>
+<li><a href="catalyst/contrib/utils/torch_extra.html">catalyst.contrib.utils.torch_extra</a></li>
 <li><a href="catalyst/contrib/utils/visualization.html">catalyst.contrib.utils.visualization</a></li>
+<li><a href="catalyst/contrib/utils/wizard.html">catalyst.contrib.utils.wizard</a></li>
 <li><a href="catalyst/core/callback.html">catalyst.core.callback</a></li>
 <li><a href="catalyst/core/experiment.html">catalyst.core.experiment</a></li>
 <li><a href="catalyst/core/legacy.html">catalyst.core.legacy</a></li>
 <li><a href="catalyst/core/runner.html">catalyst.core.runner</a></li>
-<li><a href="catalyst/data/augmentor.html">catalyst.data.augmentor</a></li>
 <li><a href="catalyst/data/collate_fn.html">catalyst.data.collate_fn</a></li>
-<li><a href="catalyst/data/cv/dataset.html">catalyst.data.cv.dataset</a></li>
-<li><a href="catalyst/data/cv/mixins/blur.html">catalyst.data.cv.mixins.blur</a></li>
-<li><a href="catalyst/data/cv/mixins/flare.html">catalyst.data.cv.mixins.flare</a></li>
-<li><a href="catalyst/data/cv/mixins/rotate.html">catalyst.data.cv.mixins.rotate</a></li>
-<li><a href="catalyst/data/cv/reader.html">catalyst.data.cv.reader</a></li>
-<li><a href="catalyst/data/cv/transforms/albumentations.html">catalyst.data.cv.transforms.albumentations</a></li>
-<li><a href="catalyst/data/cv/transforms/kornia.html">catalyst.data.cv.transforms.kornia</a></li>
-<li><a href="catalyst/data/cv/transforms/torch.html">catalyst.data.cv.transforms.torch</a></li>
 <li><a href="catalyst/data/dataset/metric_learning.html">catalyst.data.dataset.metric_learning</a></li>
 <li><a href="catalyst/data/dataset/torch.html">catalyst.data.dataset.torch</a></li>
 <li><a href="catalyst/data/loader.html">catalyst.data.loader</a></li>
-<li><a href="catalyst/data/nlp/dataset/language_modeling.html">catalyst.data.nlp.dataset.language_modeling</a></li>
-<li><a href="catalyst/data/nlp/dataset/text_classification.html">catalyst.data.nlp.dataset.text_classification</a></li>
-<li><a href="catalyst/data/reader.html">catalyst.data.reader</a></li>
 <li><a href="catalyst/data/sampler.html">catalyst.data.sampler</a></li>
 <li><a href="catalyst/data/sampler_inbatch.html">catalyst.data.sampler_inbatch</a></li>
+<li><a href="catalyst/experiments/auto.html">catalyst.experiments.auto</a></li>
 <li><a href="catalyst/experiments/config.html">catalyst.experiments.config</a></li>
 <li><a href="catalyst/experiments/experiment.html">catalyst.experiments.experiment</a></li>
-<li><a href="catalyst/experiments/supervised.html">catalyst.experiments.supervised</a></li>
 <li><a href="catalyst/metrics/accuracy.html">catalyst.metrics.accuracy</a></li>
 <li><a href="catalyst/metrics/auc.html">catalyst.metrics.auc</a></li>
+<li><a href="catalyst/metrics/avg_precision.html">catalyst.metrics.avg_precision</a></li>
 <li><a href="catalyst/metrics/cmc_score.html">catalyst.metrics.cmc_score</a></li>
 <li><a href="catalyst/metrics/dice.html">catalyst.metrics.dice</a></li>
 <li><a href="catalyst/metrics/f1_score.html">catalyst.metrics.f1_score</a></li>
 <li><a href="catalyst/metrics/focal.html">catalyst.metrics.focal</a></li>
 <li><a href="catalyst/metrics/functional.html">catalyst.metrics.functional</a></li>
+<li><a href="catalyst/metrics/hitrate.html">catalyst.metrics.hitrate</a></li>
 <li><a href="catalyst/metrics/iou.html">catalyst.metrics.iou</a></li>
 <li><a href="catalyst/metrics/mrr.html">catalyst.metrics.mrr</a></li>
-<li><a href="catalyst/metrics/precision.html">catalyst.metrics.precision</a></li>
+<li><a href="catalyst/metrics/ndcg.html">catalyst.metrics.ndcg</a></li>
+<li><a href="catalyst/metrics/recall.html">catalyst.metrics.recall</a></li>
 <li><a href="catalyst/registry/registry.html">catalyst.registry.registry</a></li>
+<li><a href="catalyst/runners/multi_supervised.html">catalyst.runners.multi_supervised</a></li>
 <li><a href="catalyst/runners/runner.html">catalyst.runners.runner</a></li>
 <li><a href="catalyst/runners/supervised.html">catalyst.runners.supervised</a></li>
 <li><a href="catalyst/settings.html">catalyst.settings</a></li>
 <li><a href="catalyst/tools/frozen_class.html">catalyst.tools.frozen_class</a></li>
-<li><a href="catalyst/tools/meters/apmeter.html">catalyst.tools.meters.apmeter</a></li>
-<li><a href="catalyst/tools/meters/aucmeter.html">catalyst.tools.meters.aucmeter</a></li>
 <li><a href="catalyst/tools/meters/averagevaluemeter.html">catalyst.tools.meters.averagevaluemeter</a></li>
-<li><a href="catalyst/tools/meters/classerrormeter.html">catalyst.tools.meters.classerrormeter</a></li>
 <li><a href="catalyst/tools/meters/confusionmeter.html">catalyst.tools.meters.confusionmeter</a></li>
-<li><a href="catalyst/tools/meters/mapmeter.html">catalyst.tools.meters.mapmeter</a></li>
 <li><a href="catalyst/tools/meters/meter.html">catalyst.tools.meters.meter</a></li>
-<li><a href="catalyst/tools/meters/movingaveragevaluemeter.html">catalyst.tools.meters.movingaveragevaluemeter</a></li>
-<li><a href="catalyst/tools/meters/msemeter.html">catalyst.tools.meters.msemeter</a></li>
 <li><a href="catalyst/tools/meters/ppv_tpr_f1_meter.html">catalyst.tools.meters.ppv_tpr_f1_meter</a></li>
 <li><a href="catalyst/tools/time_manager.html">catalyst.tools.time_manager</a></li>
 <li><a href="catalyst/utils/checkpoint.html">catalyst.utils.checkpoint</a></li>
 <li><a href="catalyst/utils/components.html">catalyst.utils.components</a></li>
 <li><a href="catalyst/utils/config.html">catalyst.utils.config</a></li>
 <li><a href="catalyst/utils/distributed.html">catalyst.utils.distributed</a></li>
-<li><a href="catalyst/utils/hash.html">catalyst.utils.hash</a></li>
-<li><a href="catalyst/utils/initialization.html">catalyst.utils.initialization</a></li>
 <li><a href="catalyst/utils/loaders.html">catalyst.utils.loaders</a></li>
 <li><a href="catalyst/utils/misc.html">catalyst.utils.misc</a></li>
 <li><a href="catalyst/utils/numpy.html">catalyst.utils.numpy</a></li>
 <li><a href="catalyst/utils/parser.html">catalyst.utils.parser</a></li>
-<li><a href="catalyst/utils/pipelines.html">catalyst.utils.pipelines</a></li>
 <li><a href="catalyst/utils/pruning.html">catalyst.utils.pruning</a></li>
 <li><a href="catalyst/utils/quantization.html">catalyst.utils.quantization</a></li>
 <li><a href="catalyst/utils/scripts.html">catalyst.utils.scripts</a></li>
-<li><a href="catalyst/utils/seed.html">catalyst.utils.seed</a></li>
 <li><a href="catalyst/utils/swa.html">catalyst.utils.swa</a></li>
 <li><a href="catalyst/utils/sys.html">catalyst.utils.sys</a></li>
 <li><a href="catalyst/utils/torch.html">catalyst.utils.torch</a></li>
 <li><a href="catalyst/utils/tracing.html">catalyst.utils.tracing</a></li>
-<li><a href="catalyst/utils/wizard.html">catalyst.utils.wizard</a></li>
 <li><a href="torch/nn/modules/module.html">torch.nn.modules.module</a></li>
 <li><a href="torch/optim/lr_scheduler.html">torch.optim.lr_scheduler</a></li>
 <li><a href="torch/optim/optimizer.html">torch.optim.optimizer</a></li>

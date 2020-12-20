@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Metrics &mdash; Catalyst 20.10.1 documentation</title>
+  <title>Metrics &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -192,30 +192,44 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&amp;sk=2aff824412e2f653587a30cd853b030c">Catalyst 102 — Core Trinity</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Segmentation</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - DDP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - TPU</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">[WIP] Finetuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/stages.html">[WIP] Multi-stage experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">[WIP] Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/how_to_start.html">How to start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/codestyle.html">Codestyle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/contributors.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -315,25 +329,22 @@
 <li><p><a class="reference internal" href="#module-catalyst.metrics.dice" id="id4">Dice</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.metrics.f1_score" id="id5">F1 score</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.metrics.focal" id="id6">Focal</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.iou" id="id7">IoU</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.mrr" id="id8">MRR</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.precision" id="id9">Precision</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.metrics.functional" id="id10">Functional</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.hitrate" id="id7">Hitrate</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.iou" id="id8">IoU</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.mrr" id="id9">MRR</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.avg_precision" id="id10">MAP</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.ndcg" id="id11">NDCG</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.dcg" id="id12">DCG</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.recall" id="id13">Recall</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.metrics.functional" id="id14">Functional</a></p></li>
 </ul>
 </div>
 <span class="target" id="module-catalyst.metrics"></span><div class="section" id="module-catalyst.metrics.accuracy">
 <span id="accuracy"></span><h2><a class="toc-backref" href="#id1">Accuracy</a><a class="headerlink" href="#module-catalyst.metrics.accuracy" title="Permalink to this headline">¶</a></h2>
-<dl class="simple">
-<dt>Various accuracy metrics:</dt><dd><ul class="simple">
-<li><p><a class="reference internal" href="#catalyst.metrics.accuracy.accuracy" title="catalyst.metrics.accuracy.accuracy"><code class="xref py py-func docutils literal notranslate"><span class="pre">accuracy()</span></code></a></p></li>
-<li><p><a class="reference internal" href="#catalyst.metrics.accuracy.multi_label_accuracy" title="catalyst.metrics.accuracy.multi_label_accuracy"><code class="xref py py-func docutils literal notranslate"><span class="pre">multi_label_accuracy()</span></code></a></p></li>
-</ul>
-</dd>
-</dl>
 <dl class="function">
 <dt id="catalyst.metrics.accuracy.accuracy">
 <code class="sig-prename descclassname">catalyst.metrics.accuracy.</code><code class="sig-name descname">accuracy</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">topk: Sequence[int] = (1</em>, <em class="sig-param">)</em>, <em class="sig-param">activation: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; Sequence[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/accuracy.html#accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.accuracy.accuracy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes multi-class <a class="reference external" href="mailto:accuracy&#37;&#52;&#48;topk">accuracy<span>&#64;</span>topk</a> for the specified values of <cite>topk</cite>.</p>
+<dd><p>Computes multiclass <a class="reference external" href="mailto:accuracy&#37;&#52;&#48;topk">accuracy<span>&#64;</span>topk</a> for the specified values of <cite>topk</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -349,12 +360,53 @@ with shape [bs; 1]</p></li>
 <dd class="field-even"><p>list with computed <a class="reference external" href="mailto:accuracy&#37;&#52;&#48;topk">accuracy<span>&#64;</span>topk</a></p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">[tensor([1.])]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">[tensor([0.6667])]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">[tensor([1.]), tensor([1.])]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">[tensor([0.6667]), tensor([1.])]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.metrics.accuracy.multi_label_accuracy">
-<code class="sig-prename descclassname">catalyst.metrics.accuracy.</code><code class="sig-name descname">multi_label_accuracy</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, threshold: Union[float, torch.Tensor], activation: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/accuracy.html#multi_label_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.accuracy.multi_label_accuracy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes multi-label accuracy for the specified activation and threshold.</p>
+<dt id="catalyst.metrics.accuracy.multilabel_accuracy">
+<code class="sig-prename descclassname">catalyst.metrics.accuracy.</code><code class="sig-name descname">multilabel_accuracy</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, threshold: Union[float, torch.Tensor]</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/accuracy.html#multilabel_accuracy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.accuracy.multilabel_accuracy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes multilabel accuracy for the specified activation and threshold.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -366,13 +418,51 @@ classes are associated with the N-th input
 (eg: a row [0, 1, 0, 1] indicates that the example is
 associated with classes 2 and 4)</p></li>
 <li><p><strong>threshold</strong> – threshold for for model output</p></li>
-<li><p><strong>activation</strong> – activation to use for model output</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>computed multi-label accuracy</p>
+<dd class="field-even"><p>computed multilabel accuracy</p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">multilabel_accuracy</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([1.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">multilabel_accuracy</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor(0.7500)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">multilabel_accuracy</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor(1.0)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -385,8 +475,8 @@ associated with classes 2 and 4)</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> – [bs; num_classes] estimated scores from a model.</p></li>
-<li><p><strong>targets</strong> – [bs; num_classes] ground truth (correct) target values.</p></li>
+<li><p><strong>outputs</strong> – [data_len; num_classes] estimated scores from a model.</p></li>
+<li><p><strong>targets</strong> – [data_len; num_classes] ground truth (correct) target values.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -396,6 +486,47 @@ associated with classes 2 and 4)</p></li>
 <dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
+<p class="rubric">Example</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">auc</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([1., 1.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">auc</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.9</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.8</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.7</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.6</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.4</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.3</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([0.7500])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -445,29 +576,51 @@ and 0 otherwise</p></li>
 </div>
 <div class="section" id="module-catalyst.metrics.dice">
 <span id="dice"></span><h2><a class="toc-backref" href="#id4">Dice</a><a class="headerlink" href="#module-catalyst.metrics.dice" title="Permalink to this headline">¶</a></h2>
-<p>Dice metric.</p>
 <dl class="function">
 <dt id="catalyst.metrics.dice.dice">
-<code class="sig-prename descclassname">catalyst.metrics.dice.</code><code class="sig-name descname">dice</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/dice.html#dice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.dice.dice" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the dice metric.</p>
+<code class="sig-prename descclassname">catalyst.metrics.dice.</code><code class="sig-name descname">dice</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">eps: float = 1e-07</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/dice.html#dice"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.dice.dice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the dice score.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> – a list of predicted elements</p></li>
-<li><p><strong>targets</strong> – a list of elements that are to be predicted</p></li>
-<li><p><strong>eps</strong> – epsilon</p></li>
+<li><p><strong>outputs</strong> – [N; K; …] tensor that for each of the N examples
+indicates the probability of the example belonging to each of
+the K classes, according to the model.</p></li>
+<li><p><strong>targets</strong> – binary [N; K; …] tensort that encodes which of the K
+classes are associated with the N-th input</p></li>
+<li><p><strong>class_dim</strong> – indicates class dimention (K) for
+<code class="docutils literal notranslate"><span class="pre">outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code> tensors (default = 1)</p></li>
 <li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
-Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
+<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>Dice score</p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">half_size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">empty</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top_left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">full</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dice</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.66666])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -497,7 +650,6 @@ Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
 </div>
 <div class="section" id="module-catalyst.metrics.f1_score">
 <span id="f1-score"></span><h2><a class="toc-backref" href="#id5">F1 score</a><a class="headerlink" href="#module-catalyst.metrics.f1_score" title="Permalink to this headline">¶</a></h2>
-<p>F1 score.</p>
 <dl class="function">
 <dt id="catalyst.metrics.f1_score.f1_score">
 <code class="sig-prename descclassname">catalyst.metrics.f1_score.</code><code class="sig-name descname">f1_score</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">argmax_dim: int = -1</em>, <em class="sig-param">num_classes: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[float, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/f1_score.html#f1_score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.f1_score.f1_score" title="Permalink to this definition">¶</a></dt>
@@ -624,73 +776,25 @@ Default: “mean”</p></li>
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.metrics.iou">
-<span id="iou"></span><h2><a class="toc-backref" href="#id7">IoU</a><a class="headerlink" href="#module-catalyst.metrics.iou" title="Permalink to this headline">¶</a></h2>
-<p>IoU metric. Jaccard metric refers to IoU here, same functionality.</p>
-<dl class="function">
-<dt id="catalyst.metrics.iou.iou">
-<code class="sig-prename descclassname">catalyst.metrics.iou.</code><code class="sig-name descname">iou</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">classes: List[str] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/iou.html#iou"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.iou.iou" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> – A list of predicted elements</p></li>
-<li><p><strong>targets</strong> – A list of elements that are to be predicted</p></li>
-<li><p><strong>classes</strong> – if classes are specified
-we reduce across all dims except channels</p></li>
-<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
-Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
+<div class="section" id="module-catalyst.metrics.hitrate">
+<span id="hitrate"></span><h2><a class="toc-backref" href="#id7">Hitrate</a><a class="headerlink" href="#module-catalyst.metrics.hitrate" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt>Hitrate metric:</dt><dd><ul class="simple">
+<li><p><a class="reference internal" href="#catalyst.metrics.hitrate.hitrate" title="catalyst.metrics.hitrate.hitrate"><code class="xref py py-func docutils literal notranslate"><span class="pre">hitrate()</span></code></a></p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>IoU (Jaccard) score(s)</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Union[float, List[float]]</p>
-</dd>
 </dl>
-</dd></dl>
-
 <dl class="function">
-<dt id="catalyst.metrics.iou.jaccard">
-<code class="sig-prename descclassname">catalyst.metrics.iou.</code><code class="sig-name descname">jaccard</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">classes: List[str] = None</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">activation: str = 'Sigmoid'</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="headerlink" href="#catalyst.metrics.iou.jaccard" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> – A list of predicted elements</p></li>
-<li><p><strong>targets</strong> – A list of elements that are to be predicted</p></li>
-<li><p><strong>classes</strong> – if classes are specified
-we reduce across all dims except channels</p></li>
-<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
-<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
-<li><p><strong>activation</strong> – An torch.nn activation applied to the outputs.
-Must be one of [“none”, “Sigmoid”, “Softmax2d”]</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>IoU (Jaccard) score(s)</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Union[float, List[float]]</p>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="module-catalyst.metrics.mrr">
-<span id="mrr"></span><h2><a class="toc-backref" href="#id8">MRR</a><a class="headerlink" href="#module-catalyst.metrics.mrr" title="Permalink to this headline">¶</a></h2>
-<p>MRR metric.</p>
-<dl class="function">
-<dt id="catalyst.metrics.mrr.mrr">
-<code class="sig-prename descclassname">catalyst.metrics.mrr.</code><code class="sig-name descname">mrr</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">k=100</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/mrr.html#mrr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.mrr.mrr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the Mean Reciprocal Rank (MRR)
-score given model ouptputs and targets
-User’s data aggreagtesd in batches.</p>
-<p>The MRR&#64;k is the mean overall user of the
-reciprocal rank, that is the rank of the highest
-ranked relevant item, if any in the top <em>k</em>, 0 otherwise.
-<a class="reference external" href="https://en.wikipedia.org/wiki/Mean_reciprocal_rank">https://en.wikipedia.org/wiki/Mean_reciprocal_rank</a></p>
+<dt id="catalyst.metrics.hitrate.hitrate">
+<code class="sig-prename descclassname">catalyst.metrics.hitrate.</code><code class="sig-name descname">hitrate</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/hitrate.html#hitrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.hitrate.hitrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the hit rate score given model outputs and targets.
+Hit-rate is a metric for evaluating ranking systems.
+Generate top-N recommendations and if one of the recommendation is
+actually what user has rated, you consider that a hit.
+By rate we mean any explicit form of user’s interactions.
+Add up all of the hits for all users and then divide by number of users</p>
+<p>Compute top-N recomendation for each user in the training stage
+and intentionally remove one of this items fro the training data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -702,51 +806,546 @@ model outputs, logits</p></li>
 for the user and 0 not relevant
 size: [batch_szie, slate_length]
 ground truth, labels</p></li>
-<li><p><strong>k</strong> (<em>int</em>) – Parameter fro evaluation on top-k items</p></li>
+<li><p><strong>topk</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – Parameter fro evaluation on top-k items</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The mrr score for each user.</p>
+<dd class="field-even"><p>the hit rate score</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>result (torch.Tensor)</p>
+<dd class="field-odd"><p>hitrate_at_k (List[torch.Tensor])</p>
 </dd>
 </dl>
 </dd></dl>
 
 </div>
-<div class="section" id="module-catalyst.metrics.precision">
-<span id="precision"></span><h2><a class="toc-backref" href="#id9">Precision</a><a class="headerlink" href="#module-catalyst.metrics.precision" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-catalyst.metrics.iou">
+<span id="iou"></span><h2><a class="toc-backref" href="#id8">IoU</a><a class="headerlink" href="#module-catalyst.metrics.iou" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
-<dt id="catalyst.metrics.precision.average_precision">
-<code class="sig-prename descclassname">catalyst.metrics.precision.</code><code class="sig-name descname">average_precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">weights: Optional[torch.Tensor] = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/precision.html#average_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.precision.average_precision" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the average precision.</p>
+<dt id="catalyst.metrics.iou.iou">
+<code class="sig-prename descclassname">catalyst.metrics.iou.</code><code class="sig-name descname">iou</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">eps: float = 1e-07</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/iou.html#iou"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.iou.iou" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the iou/jaccard score.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>outputs</strong> – NxK tensor that for each of the N examples
+<li><p><strong>outputs</strong> – [N; K; …] tensor that for each of the N examples
 indicates the probability of the example belonging to each of
 the K classes, according to the model.</p></li>
-<li><p><strong>targets</strong> – binary NxK tensort that encodes which of the K
-classes are associated with the N-th input
-(eg: a row [0, 1, 0, 1] indicates that the example is
-associated with classes 2 and 4)</p></li>
-<li><p><strong>weights</strong> – importance for each sample</p></li>
+<li><p><strong>targets</strong> – binary [N; K; …] tensort that encodes which of the K
+classes are associated with the N-th input</p></li>
+<li><p><strong>class_dim</strong> – indicates class dimention (K) for
+<code class="docutils literal notranslate"><span class="pre">outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code> tensors (default = 1)</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>tensor of [K; ] shape,
-with average precision for K classes</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>torch.Tensor</p>
+<dd class="field-even"><p>IoU (Jaccard) score</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">half_size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">empty</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top_left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">full</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iou</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
-<dt id="catalyst.metrics.precision.precision">
-<code class="sig-prename descclassname">catalyst.metrics.precision.</code><code class="sig-name descname">precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">argmax_dim: int = -1</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">num_classes: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[float, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/precision.html#precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.precision.precision" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.metrics.iou.jaccard">
+<code class="sig-prename descclassname">catalyst.metrics.iou.</code><code class="sig-name descname">jaccard</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">threshold: float = None</em>, <em class="sig-param">eps: float = 1e-07</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="headerlink" href="#catalyst.metrics.iou.jaccard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the iou/jaccard score.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – [N; K; …] tensor that for each of the N examples
+indicates the probability of the example belonging to each of
+the K classes, according to the model.</p></li>
+<li><p><strong>targets</strong> – binary [N; K; …] tensort that encodes which of the K
+classes are associated with the N-th input</p></li>
+<li><p><strong>class_dim</strong> – indicates class dimention (K) for
+<code class="docutils literal notranslate"><span class="pre">outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code> tensors (default = 1)</p></li>
+<li><p><strong>threshold</strong> – threshold for outputs binarization</p></li>
+<li><p><strong>eps</strong> – epsilon to avoid zero division</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>IoU (Jaccard) score</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">half_size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">empty</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top_left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">full</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iou</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.metrics.mrr">
+<span id="mrr"></span><h2><a class="toc-backref" href="#id9">MRR</a><a class="headerlink" href="#module-catalyst.metrics.mrr" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="catalyst.metrics.mrr.reciprocal_rank">
+<code class="sig-prename descclassname">catalyst.metrics.mrr.</code><code class="sig-name descname">reciprocal_rank</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">k: int</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/mrr.html#reciprocal_rank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.mrr.reciprocal_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the Reciprocal Rank (MRR)
+score given model outputs and targets
+Data aggregated in batches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – Tensor weith predicted score
+size: [batch_size, slate_length]
+model outputs, logits</p></li>
+<li><p><strong>targets</strong> – Binary tensor with ground truth.
+1 means the item is relevant
+and 0 if it’s not relevant
+size: [batch_size, slate_length]
+ground truth, labels</p></li>
+<li><p><strong>k</strong> – Parameter for evaluation on top-k items</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MRR score</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">reciprocal_rank</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([[0.], [1.]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reciprocal_rank</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([[0.5000], [1.0000]])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.metrics.mrr.mrr">
+<code class="sig-prename descclassname">catalyst.metrics.mrr.</code><code class="sig-name descname">mrr</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/mrr.html#mrr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.mrr.mrr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the Mean Reciprocal Rank (MRR)
+score given model outputs and targets
+Data aggregated in batches.</p>
+<p>The MRR&#64;k is the mean overall batch of the
+reciprocal rank, that is the rank of the highest
+ranked relevant item, if any in the top <em>k</em>, 0 otherwise.
+<a class="reference external" href="https://en.wikipedia.org/wiki/Mean_reciprocal_rank">https://en.wikipedia.org/wiki/Mean_reciprocal_rank</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – Tensor weith predicted score
+size: [batch_size, slate_length]
+model outputs, logits</p></li>
+<li><p><strong>targets</strong> – Binary tensor with ground truth.
+1 means the item is relevant
+and 0 if it’s not relevant
+size: [batch_szie, slate_length]
+ground truth, labels</p></li>
+<li><p><strong>topk</strong> – Parameter fro evaluation on top-k items</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>MRR score</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mrr</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">k</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">[tensor(0.5000), tensor(0.7500)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.metrics.avg_precision">
+<span id="map"></span><h2><a class="toc-backref" href="#id10">MAP</a><a class="headerlink" href="#module-catalyst.metrics.avg_precision" title="Permalink to this headline">¶</a></h2>
+<p>MAP metric.</p>
+<dl class="function">
+<dt id="catalyst.metrics.avg_precision.mean_avg_precision">
+<code class="sig-prename descclassname">catalyst.metrics.avg_precision.</code><code class="sig-name descname">mean_avg_precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/avg_precision.html#mean_avg_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.avg_precision.mean_avg_precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the mean average precision (MAP) for RecSys.
+The metrics calculate the mean of the AP across all batches</p>
+<p>MAP amplifies the interest in finding many
+relevant items for each query</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – Tensor with predicted score
+size: [batch_size, slate_length]
+model outputs, logits</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – Binary tensor with ground truth.
+1 means the item is relevant
+and 0 not relevant
+size: [batch_szie, slate_length]
+ground truth, labels</p></li>
+<li><p><strong>topk</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – List of parameter for evaluation
+topK items</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The map score for every k.
+size: len(top_k)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>map_at_k (Tuple[float])</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mean_avg_precision</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">[tensor(0.5325)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.metrics.avg_precision.avg_precision">
+<code class="sig-prename descclassname">catalyst.metrics.avg_precision.</code><code class="sig-name descname">avg_precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/avg_precision.html#avg_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.avg_precision.avg_precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the Average Precision for RecSys.
+The precision metric summarizes the fraction of relevant items
+out of the whole the recommendation list.</p>
+<p>To compute the precision at k set the threshold rank k,
+compute the percentage of relevant items in topK,
+ignoring the documents ranked lower than k.</p>
+<p>The average precision at k (AP at k) summarizes the average
+precision for relevant items up to the k-th one.
+Wikipedia entry for the Average precision</p>
+<p>&lt;<a class="reference external" href="https://en.wikipedia.org/w/index.php">https://en.wikipedia.org/w/index.php</a>?title=Information_retrieval&amp;
+oldid=793358396#Average_precision&gt;</p>
+<p>If a relevant document never gets retrieved,
+we assume the precision corresponding to that
+relevant doc to be zero</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – Tensor with predicted score
+size: [batch_size, slate_length]
+model outputs, logits</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – Binary tensor with ground truth.
+1 means the item is relevant
+and 0 not relevant
+size: [batch_szie, slate_length]
+ground truth, labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The map score for each batch.
+size: [batch_size, 1]</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ap_score (torch.Tensor)</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">avg_precision</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([0.6222, 0.4429])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.metrics.ndcg">
+<span id="ndcg"></span><h2><a class="toc-backref" href="#id11">NDCG</a><a class="headerlink" href="#module-catalyst.metrics.ndcg" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="catalyst.metrics.ndcg.dcg">
+<code class="sig-prename descclassname">catalyst.metrics.ndcg.</code><code class="sig-name descname">dcg</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">gain_function='exp_rank'</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/ndcg.html#dcg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.ndcg.dcg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes <a class="reference external" href="mailto:DCG&#37;&#52;&#48;topk">DCG<span>&#64;</span>topk</a> for the specified values of <cite>k</cite>.
+Graded relevance as a measure of  usefulness,
+or gain, from examining a set of items.
+Gain may be reduced at lower ranks.
+Reference:
+<a class="reference external" href="https://en.wikipedia.org/wiki/Discounted_cumulative_gain">https://en.wikipedia.org/wiki/Discounted_cumulative_gain</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – model outputs, logits
+with shape [batch_size; slate_length]</p></li>
+<li><p><strong>targets</strong> – ground truth, labels
+with shape [batch_size; slate_length]</p></li>
+<li><p><strong>gain_function</strong> – String indicates the gain function for the ground truth labels.
+Two options available:
+- <cite>exp_rank</cite>: torch.pow(2, x) - 1
+- <cite>linear_rank</cite>: x
+On the default, <cite>exp_rank</cite> is used
+to emphasize on retrieving the relevant documents.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The discounted gains tensor</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dcg_score (torch.Tensor)</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – gain function can be either <cite>pow_rank</cite> or <cite>rank</cite></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;linear_rank&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([[2.0000, 2.0000, 0.6309, 0.0000]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;linear_rank&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="go">tensor(4.6309)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([[3.0000, 1.8928, 0.5000, 0.0000]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="go">tensor(5.3928)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.metrics.ndcg.ndcg">
+<code class="sig-prename descclassname">catalyst.metrics.ndcg.</code><code class="sig-name descname">ndcg</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, topk: List[int], gain_function='exp_rank'</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/ndcg.html#ndcg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.ndcg.ndcg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes <a class="reference external" href="mailto:nDCG&#37;&#52;&#48;topk">nDCG<span>&#64;</span>topk</a> for the specified values of <cite>topk</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – model outputs, logits
+with shape [batch_size; slate_size]</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – ground truth, labels
+with shape [batch_size; slate_size]</p></li>
+<li><p><strong>gain_function</strong> – callable, gain function for the ground truth labels.
+Two options available:
+- <cite>exp_rank</cite>: torch.pow(2, x) - 1
+- <cite>linear_rank</cite>: x
+On the default, <cite>exp_rank</cite> is used
+to emphasize on retrieving the relevant documents.</p></li>
+<li><p><strong>topk</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – Parameter fro evaluation on top-k items</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with computed <a class="reference external" href="mailto:ndcg&#37;&#52;&#48;topk">ndcg<span>&#64;</span>topk</a></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>results (Tuple[float])</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ndcg</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">[tensor(0.6131)]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ndcg</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">[tensor(0.5000)]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="module-catalyst.metrics.dcg">
+<span id="dcg"></span><h2><a class="toc-backref" href="#id12">DCG</a><a class="headerlink" href="#module-catalyst.metrics.dcg" title="Permalink to this headline">¶</a></h2>
+<p>Computes <a class="reference external" href="mailto:DCG&#37;&#52;&#48;topk">DCG<span>&#64;</span>topk</a> for the specified values of <cite>k</cite>.
+Graded relevance as a measure of  usefulness,
+or gain, from examining a set of items.
+Gain may be reduced at lower ranks.
+Reference:
+<a class="reference external" href="https://en.wikipedia.org/wiki/Discounted_cumulative_gain">https://en.wikipedia.org/wiki/Discounted_cumulative_gain</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">param outputs</dt>
+<dd class="field-odd"><p>model outputs, logits
+with shape [batch_size; slate_length]</p>
+</dd>
+<dt class="field-even">param targets</dt>
+<dd class="field-even"><p>ground truth, labels
+with shape [batch_size; slate_length]</p>
+</dd>
+<dt class="field-odd">param gain_function</dt>
+<dd class="field-odd"><p>String indicates the gain function for the ground truth labels.
+Two options available:
+- <cite>exp_rank</cite>: torch.pow(2, x) - 1
+- <cite>linear_rank</cite>: x
+On the default, <cite>exp_rank</cite> is used
+to emphasize on retrieving the relevant documents.</p>
+</dd>
+<dt class="field-even">returns</dt>
+<dd class="field-even"><p>The discounted gains tensor</p>
+</dd>
+<dt class="field-odd">rtype</dt>
+<dd class="field-odd"><p>dcg_score (torch.Tensor)</p>
+</dd>
+<dt class="field-even">raises ValueError</dt>
+<dd class="field-even"><p>gain function can be either <cite>pow_rank</cite> or <cite>rank</cite></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;linear_rank&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([[2.0000, 2.0000, 0.6309, 0.0000]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;linear_rank&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="go">tensor(4.6309)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([[3.0000, 1.8928, 0.5000, 0.0000]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="go">tensor(5.3928)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="module-catalyst.metrics.recall">
+<span id="recall"></span><h2><a class="toc-backref" href="#id13">Recall</a><a class="headerlink" href="#module-catalyst.metrics.recall" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="catalyst.metrics.recall.recall">
+<code class="sig-prename descclassname">catalyst.metrics.recall.</code><code class="sig-name descname">recall</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">argmax_dim: int = -1</em>, <em class="sig-param">eps: float = 1e-07</em>, <em class="sig-param">num_classes: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Union[float, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/recall.html#recall"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.recall.recall" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multiclass precision metric.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -758,25 +1357,58 @@ with shape [bs; …, 1]</p></li>
 <li><p><strong>argmax_dim</strong> – int, that specifies dimension for argmax transformation
 in case of scores/probabilities in <code class="docutils literal notranslate"><span class="pre">outputs</span></code></p></li>
 <li><p><strong>eps</strong> – float. Epsilon to avoid zero division.</p></li>
-<li><p><strong>num_classes</strong> – int, that specifies number of classes if it known</p></li>
+<li><p><strong>num_classes</strong> – int, that specifies number of classes if it known.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
+<dd class="field-even"><p>recall for every class</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>Tensor</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recall</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([1., 1., 1.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">precision_recall_fbeta_support</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<span class="go">tensor([0.5000, 0.5000])</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
 <div class="section" id="module-catalyst.metrics.functional">
-<span id="functional"></span><h2><a class="toc-backref" href="#id10">Functional</a><a class="headerlink" href="#module-catalyst.metrics.functional" title="Permalink to this headline">¶</a></h2>
+<span id="functional"></span><h2><a class="toc-backref" href="#id14">Functional</a><a class="headerlink" href="#module-catalyst.metrics.functional" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="catalyst.metrics.functional.check_consistent_length">
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">check_consistent_length</code><span class="sig-paren">(</span><em class="sig-param">*tensors</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/functional.html#check_consistent_length"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.check_consistent_length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check that all arrays have consistent first dimensions.
+Checks whether all objects in arrays have the same shape or length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tensors</strong> – list or tensors of input objects.
+Objects that will be checked for consistent length.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – “Inconsistent numbers of samples”</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="function">
 <dt id="catalyst.metrics.functional.process_multilabel_components">
 <code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">process_multilabel_components</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">weights: Optional[torch.Tensor] = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#process_multilabel_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.process_multilabel_components" title="Permalink to this definition">¶</a></dt>
-<dd><p>General preprocessing for multi-label-based metrics.</p>
+<dd><p>General preprocessing for multilabel-based metrics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -793,6 +1425,32 @@ associated with classes 2 and 4)</p></li>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>processed <code class="docutils literal notranslate"><span class="pre">outputs</span></code> and <code class="docutils literal notranslate"><span class="pre">targets</span></code>
 with [batch_size; num_classes] shape</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.metrics.functional.process_recsys_components">
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">process_recsys_components</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#process_recsys_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.process_recsys_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>General pre-processing for calculation recsys metrics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> (<em>torch.Tensor</em>) – Tensor weith predicted score
+size: [batch_size, slate_length]
+model outputs, logits</p></li>
+<li><p><strong>targets</strong> (<em>torch.Tensor</em>) – Binary tensor with ground truth.
+1 means the item is relevant
+for the user and 0 not relevant
+size: [batch_szie, slate_length]
+ground truth, labels</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>targets tensor sorted by outputs</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>targets_sorted_by_outputs (torch.Tensor)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -834,7 +1492,7 @@ with shape [bs; …, 1]</p></li>
 <code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">get_multiclass_statistics</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">argmax_dim: int = -1</em>, <em class="sig-param">num_classes: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#get_multiclass_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.get_multiclass_statistics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the number of true negative, false positive,
 false negative, true negative and support
-for a multi-class classification problem.</p>
+for a multiclass classification problem.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -870,7 +1528,7 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 <code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">get_multilabel_statistics</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em><span class="sig-paren">)</span> &#x2192; Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#get_multilabel_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.get_multilabel_statistics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the number of true negative, false positive,
 false negative, true negative and support
-for a multi-label classification problem.</p>
+for a multilabel classification problem.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -941,6 +1599,28 @@ with shape [bs; …, 1]</p></li>
 </dd></dl>
 
 <dl class="function">
+<dt id="catalyst.metrics.functional.wrap_metric_fn_with_activation">
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">wrap_metric_fn_with_activation</code><span class="sig-paren">(</span><em class="sig-param">metric_fn: Callable</em>, <em class="sig-param">activation: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/functional.html#wrap_metric_fn_with_activation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.wrap_metric_fn_with_activation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps model outputs for <code class="docutils literal notranslate"><span class="pre">metric_fn`</span> <span class="pre">with</span> <span class="pre">specified</span> <span class="pre">``activation</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metric_fn</strong> – metric function to compute</p></li>
+<li><p><strong>activation</strong> – activation name to use</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>wrapped metric function with wrapped model outputs</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Works only with <code class="docutils literal notranslate"><span class="pre">metric_fn</span></code> like
+<code class="docutils literal notranslate"><span class="pre">metric_fn(outputs,</span> <span class="pre">targets,</span> <span class="pre">*args,</span> <span class="pre">**kwargs)</span></code>.</p>
+</div>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.metrics.functional.wrap_topk_metric2dict">
 <code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">wrap_topk_metric2dict</code><span class="sig-paren">(</span><em class="sig-param">metric_fn: Callable, topk_args: Sequence[int]</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#wrap_topk_metric2dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.wrap_topk_metric2dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Logging wrapper for metrics with
@@ -957,16 +1637,12 @@ with passed <cite>topk</cite> argument.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>wrapped metric function with List[Dict] output</p>
 </dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>NotImplementedError</strong> – if metrics returned values are out of
-    torch.Tensor, int, float, Dict union.</p>
-</dd>
 </dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="catalyst.metrics.functional.wrap_class_metric2dict">
-<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">wrap_class_metric2dict</code><span class="sig-paren">(</span><em class="sig-param">metric_fn: Callable</em>, <em class="sig-param">class_args: Sequence[str] = None</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#wrap_class_metric2dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.wrap_class_metric2dict" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.metrics.functional.</code><code class="sig-name descname">wrap_class_metric2dict</code><span class="sig-paren">(</span><em class="sig-param">metric_fn: Callable</em>, <em class="sig-param">per_class: bool = False</em>, <em class="sig-param">class_args: Sequence[str] = None</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../_modules/catalyst/metrics/functional.html#wrap_class_metric2dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional.wrap_class_metric2dict" title="Permalink to this definition">¶</a></dt>
 <dd><p># noqa: D202
 Logging wrapper for metrics with torch.Tensor output
 and [num_classes] shape.
@@ -976,7 +1652,9 @@ with passed <cite>class</cite> argument.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>metric_fn</strong> – metric function to compute</p></li>
-<li><p><strong>class_args</strong> – class names for logging.
+<li><p><strong>per_class</strong> – boolean flag to log per class metrics,
+or use mean/macro statistics otherwise</p></li>
+<li><p><strong>class_args</strong> – class names for logging,
 default: None - class indexes will be used.</p></li>
 </ul>
 </dd>
@@ -1035,9 +1713,13 @@ default: None - class indexes will be used.</p></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.dice">Dice</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.f1_score">F1 score</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.focal">Focal</a></li>
+<li><a class="reference internal" href="#module-catalyst.metrics.hitrate">Hitrate</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.iou">IoU</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.mrr">MRR</a></li>
-<li><a class="reference internal" href="#module-catalyst.metrics.precision">Precision</a></li>
+<li><a class="reference internal" href="#module-catalyst.metrics.avg_precision">MAP</a></li>
+<li><a class="reference internal" href="#module-catalyst.metrics.ndcg">NDCG</a></li>
+<li><a class="reference internal" href="#module-catalyst.metrics.dcg">DCG</a></li>
+<li><a class="reference internal" href="#module-catalyst.metrics.recall">Recall</a></li>
 <li><a class="reference internal" href="#module-catalyst.metrics.functional">Functional</a></li>
 </ul>
 </li>

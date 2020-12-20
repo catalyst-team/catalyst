@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Data &mdash; Catalyst 20.10.1 documentation</title>
+  <title>Data &mdash; Catalyst 20.12 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.10</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">20.12</a>
                 </div>
               
             
@@ -192,30 +192,44 @@
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&amp;sk=2aff824412e2f653587a30cd853b030c">Catalyst 102 — Core Trinity</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Tutorials</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - Linear Regression</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Classification</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Segmentation</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - Variational AutoEncoder</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV - GAN</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - AMP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - DDP</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Engine - TPU</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">AutoML - Catalyst with Optuna</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/experiment.html">Experiment</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">[WIP] Finetuning</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/stages.html">[WIP] Multi-stage experiments</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">[WIP] Config API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contributing guide</span></p>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/how_to_start.html">How to start</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/codestyle.html">Codestyle</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../contributing/contributors.html">Contributors</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul class="current">
@@ -310,260 +324,109 @@
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#scripts" id="id3">Scripts</a></p></li>
-<li><p><a class="reference internal" href="#augmentors" id="id4">Augmentors</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.data" id="id1">Main</a></p></li>
+<li><p><a class="reference internal" href="#collate-functions" id="id2">Collate Functions</a></p>
 <ul>
-<li><p><a class="reference internal" href="#augmentor" id="id5">Augmentor</a></p></li>
-<li><p><a class="reference internal" href="#augmentorcompose" id="id6">AugmentorCompose</a></p></li>
-<li><p><a class="reference internal" href="#augmentorkeys" id="id7">AugmentorKeys</a></p></li>
+<li><p><a class="reference internal" href="#filteringcollatefn" id="id3">FilteringCollateFn</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#collate-functions" id="id8">Collate Functions</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.data.dataset" id="id4">Dataset</a></p>
 <ul>
-<li><p><a class="reference internal" href="#filteringcollatefn" id="id9">FilteringCollateFn</a></p></li>
+<li><p><a class="reference internal" href="#pytorch-extensions" id="id5">PyTorch Extensions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#datasetfromsampler" id="id6">DatasetFromSampler</a></p></li>
+<li><p><a class="reference internal" href="#listdataset" id="id7">ListDataset</a></p></li>
+<li><p><a class="reference internal" href="#mergedataset" id="id8">MergeDataset</a></p></li>
+<li><p><a class="reference internal" href="#numpydataset" id="id9">NumpyDataset</a></p></li>
+<li><p><a class="reference internal" href="#pathsdataset" id="id10">PathsDataset</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#module-catalyst.data.dataset" id="id10">Dataset</a></p>
+<li><p><a class="reference internal" href="#metric-learning-datasets" id="id11">Metric Learning Datasets</a></p>
 <ul>
-<li><p><a class="reference internal" href="#pytorch-extensions" id="id11">PyTorch Extensions</a></p>
-<ul>
-<li><p><a class="reference internal" href="#datasetfromsampler" id="id12">DatasetFromSampler</a></p></li>
-<li><p><a class="reference internal" href="#listdataset" id="id13">ListDataset</a></p></li>
-<li><p><a class="reference internal" href="#mergedataset" id="id14">MergeDataset</a></p></li>
-<li><p><a class="reference internal" href="#numpydataset" id="id15">NumpyDataset</a></p></li>
-<li><p><a class="reference internal" href="#pathsdataset" id="id16">PathsDataset</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#metric-learning-datasets" id="id17">Metric Learning Datasets</a></p>
-<ul>
-<li><p><a class="reference internal" href="#metriclearningtraindataset" id="id18">MetricLearningTrainDataset</a></p></li>
-<li><p><a class="reference internal" href="#querygallerydataset" id="id19">QueryGalleryDataset</a></p></li>
+<li><p><a class="reference internal" href="#metriclearningtraindataset" id="id12">MetricLearningTrainDataset</a></p></li>
+<li><p><a class="reference internal" href="#querygallerydataset" id="id13">QueryGalleryDataset</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#in-batch-samplers" id="id20">In-batch Samplers</a></p>
+<li><p><a class="reference internal" href="#in-batch-samplers" id="id14">In-batch Samplers</a></p>
 <ul>
-<li><p><a class="reference internal" href="#iinbatchtripletsampler" id="id21">IInbatchTripletSampler</a></p></li>
-<li><p><a class="reference internal" href="#inbatchtripletssampler" id="id22">InBatchTripletsSampler</a></p></li>
-<li><p><a class="reference internal" href="#alltripletssampler" id="id23">AllTripletsSampler</a></p></li>
-<li><p><a class="reference internal" href="#hardtripletssampler" id="id24">HardTripletsSampler</a></p></li>
-<li><p><a class="reference internal" href="#hardclustersampler" id="id25">HardClusterSampler</a></p></li>
+<li><p><a class="reference internal" href="#iinbatchtripletsampler" id="id15">IInbatchTripletSampler</a></p></li>
+<li><p><a class="reference internal" href="#inbatchtripletssampler" id="id16">InBatchTripletsSampler</a></p></li>
+<li><p><a class="reference internal" href="#alltripletssampler" id="id17">AllTripletsSampler</a></p></li>
+<li><p><a class="reference internal" href="#hardtripletssampler" id="id18">HardTripletsSampler</a></p></li>
+<li><p><a class="reference internal" href="#hardclustersampler" id="id19">HardClusterSampler</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#loader" id="id26">Loader</a></p>
+<li><p><a class="reference internal" href="#loader" id="id20">Loader</a></p>
 <ul>
-<li><p><a class="reference internal" href="#batchlimitloaderwrapper" id="id27">BatchLimitLoaderWrapper</a></p></li>
+<li><p><a class="reference internal" href="#batchlimitloaderwrapper" id="id21">BatchLimitLoaderWrapper</a></p></li>
+<li><p><a class="reference internal" href="#batchprefetchloaderwrapper" id="id22">BatchPrefetchLoaderWrapper</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#readers" id="id28">Readers</a></p>
+<li><p><a class="reference internal" href="#samplers" id="id23">Samplers</a></p>
 <ul>
-<li><p><a class="reference internal" href="#readerspec" id="id29">ReaderSpec</a></p></li>
-<li><p><a class="reference internal" href="#scalarreader" id="id30">ScalarReader</a></p></li>
-<li><p><a class="reference internal" href="#lambdareader" id="id31">LambdaReader</a></p></li>
-<li><p><a class="reference internal" href="#readercompose" id="id32">ReaderCompose</a></p></li>
+<li><p><a class="reference internal" href="#balancebatchsampler" id="id24">BalanceBatchSampler</a></p></li>
+<li><p><a class="reference internal" href="#balanceclasssampler" id="id25">BalanceClassSampler</a></p></li>
+<li><p><a class="reference internal" href="#distributedsamplerwrapper" id="id26">DistributedSamplerWrapper</a></p></li>
+<li><p><a class="reference internal" href="#dynamicbalanceclasssampler" id="id27">DynamicBalanceClassSampler</a></p></li>
+<li><p><a class="reference internal" href="#dynamiclenbatchsampler" id="id28">DynamicLenBatchSampler</a></p></li>
+<li><p><a class="reference internal" href="#miniepochsampler" id="id29">MiniEpochSampler</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#samplers" id="id33">Samplers</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.data" id="id30">Contrib</a></p>
 <ul>
-<li><p><a class="reference internal" href="#balancebatchsampler" id="id34">BalanceBatchSampler</a></p></li>
-<li><p><a class="reference internal" href="#balanceclasssampler" id="id35">BalanceClassSampler</a></p></li>
-<li><p><a class="reference internal" href="#distributedsamplerwrapper" id="id36">DistributedSamplerWrapper</a></p></li>
-<li><p><a class="reference internal" href="#dynamiclenbatchsampler" id="id37">DynamicLenBatchSampler</a></p></li>
-<li><p><a class="reference internal" href="#miniepochsampler" id="id38">MiniEpochSampler</a></p></li>
+<li><p><a class="reference internal" href="#augmentors" id="id31">Augmentors</a></p>
+<ul>
+<li><p><a class="reference internal" href="#augmentor" id="id32">Augmentor</a></p></li>
+<li><p><a class="reference internal" href="#augmentorcompose" id="id33">AugmentorCompose</a></p></li>
+<li><p><a class="reference internal" href="#augmentorkeys" id="id34">AugmentorKeys</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#computer-vision-extensions" id="id39">Computer Vision Extensions</a></p>
+<li><p><a class="reference internal" href="#readers" id="id35">Readers</a></p>
 <ul>
-<li><p><a class="reference internal" href="#id1" id="id40">Dataset</a></p>
-<ul>
-<li><p><a class="reference internal" href="#imagefolderdataset" id="id41">ImageFolderDataset</a></p></li>
+<li><p><a class="reference internal" href="#ireader" id="id36">IReader</a></p></li>
+<li><p><a class="reference internal" href="#imagereader-cv" id="id37">ImageReader (CV)</a></p></li>
+<li><p><a class="reference internal" href="#lambdareader" id="id38">LambdaReader</a></p></li>
+<li><p><a class="reference internal" href="#maskreader-cv" id="id39">MaskReader (CV)</a></p></li>
+<li><p><a class="reference internal" href="#scalarreader" id="id40">ScalarReader</a></p></li>
+<li><p><a class="reference internal" href="#readercompose" id="id41">ReaderCompose</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#mixins" id="id42">Mixins</a></p>
+<li><p><a class="reference internal" href="#mixins-cv" id="id42">Mixins (CV)</a></p>
 <ul>
 <li><p><a class="reference internal" href="#blurmixin" id="id43">BlurMixin</a></p></li>
 <li><p><a class="reference internal" href="#flaremixin" id="id44">FlareMixin</a></p></li>
 <li><p><a class="reference internal" href="#rotatemixin" id="id45">RotateMixin</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#id2" id="id46">Readers</a></p>
+<li><p><a class="reference internal" href="#transforms-cv" id="id46">Transforms (CV)</a></p>
 <ul>
-<li><p><a class="reference internal" href="#imagereader" id="id47">ImageReader</a></p></li>
-<li><p><a class="reference internal" href="#maskreader" id="id48">MaskReader</a></p></li>
+<li><p><a class="reference internal" href="#compose" id="id47">Compose</a></p></li>
+<li><p><a class="reference internal" href="#imagetotensor" id="id48">ImageToTensor</a></p></li>
+<li><p><a class="reference internal" href="#normalize" id="id49">Normalize</a></p></li>
+<li><p><a class="reference internal" href="#oneofperbatch" id="id50">OneOfPerBatch</a></p></li>
+<li><p><a class="reference internal" href="#oneofpersample" id="id51">OneOfPerSample</a></p></li>
+<li><p><a class="reference internal" href="#tensortoimage" id="id52">TensorToImage</a></p></li>
+<li><p><a class="reference internal" href="#totensor" id="id53">ToTensor</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#transforms" id="id49">Transforms</a></p>
+<li><p><a class="reference internal" href="#datasets-cv" id="id54">Datasets (CV)</a></p>
 <ul>
-<li><p><a class="reference internal" href="#tensortoimage" id="id50">TensorToImage</a></p></li>
-<li><p><a class="reference internal" href="#imagetotensor" id="id51">ImageToTensor</a></p></li>
-<li><p><a class="reference internal" href="#compose" id="id52">Compose</a></p></li>
-<li><p><a class="reference internal" href="#normalize" id="id53">Normalize</a></p></li>
-<li><p><a class="reference internal" href="#totensor" id="id54">ToTensor</a></p></li>
-<li><p><a class="reference internal" href="#oneofperbatch" id="id55">OneOfPerBatch</a></p></li>
-<li><p><a class="reference internal" href="#oneofpersample" id="id56">OneOfPerSample</a></p></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#module-catalyst.data.nlp" id="id57">Natural Language Processing Extensions</a></p>
-<ul>
-<li><p><a class="reference internal" href="#datasets" id="id58">Datasets</a></p>
-<ul>
-<li><p><a class="reference internal" href="#languagemodelingdataset" id="id59">LanguageModelingDataset</a></p></li>
-<li><p><a class="reference internal" href="#textclassificationdataset" id="id60">TextClassificationDataset</a></p></li>
+<li><p><a class="reference internal" href="#imagefolderdataset" id="id55">ImageFolderDataset</a></p></li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 </div>
-<span class="target" id="module-catalyst.data"></span><div class="section" id="scripts">
-<h2><a class="toc-backref" href="#id3">Scripts</a><a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
-<p>You can use scripts typing <cite>catalyst-data</cite> in your terminal.
-For example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data tag2label --help
-</pre></div>
-</div>
-<span class="target" id="module-catalyst.data.__main__"></span><p>Catalyst-data scripts.</p>
-<p class="rubric">Examples</p>
-<p>1.  <strong>process-images</strong> reads raw data and outputs
-preprocessed resized images</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data process-images <span class="se">\\</span>
-    --in-dir /path/to/raw/data/ <span class="se">\\</span>
-    --out-dir<span class="o">=</span>./data/dataset <span class="se">\\</span>
-    --num-workers<span class="o">=</span><span class="m">6</span> <span class="se">\\</span>
-    --max-size<span class="o">=</span><span class="m">224</span> <span class="se">\\</span>
-    --extension<span class="o">=</span>png <span class="se">\\</span>
-    --clear-exif <span class="se">\\</span>
-    --grayscale <span class="se">\\</span>
-    --expand-dims
-</pre></div>
-</div>
-<p>2. <strong>tag2label</strong> prepares a dataset to json like
-<cite>{“class_id”:  class_column_from_dataset}</cite></p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data tag2label <span class="se">\\</span>
-    --in-dir<span class="o">=</span>./data/dataset <span class="se">\\</span>
-    --out-dataset<span class="o">=</span>./data/dataset_raw.csv <span class="se">\\</span>
-    --out-labeling<span class="o">=</span>./data/tag2cls.json
-</pre></div>
-</div>
-<p>3. <strong>check-images</strong> checks images in your data
-to be non-broken and writes a flag:
-<cite>true</cite> if image opened without an error and <cite>false</cite> otherwise</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data check-images <span class="se">\\</span>
-    --in-csv<span class="o">=</span>./data/dataset_raw.csv <span class="se">\\</span>
-    --img-rootpath<span class="o">=</span>./data/dataset <span class="se">\\</span>
-    --img-col<span class="o">=</span><span class="s2">&quot;tag&quot;</span> <span class="se">\\</span>
-    --out-csv<span class="o">=</span>./data/dataset_checked.csv <span class="se">\\</span>
-    --n-cpu<span class="o">=</span><span class="m">4</span>
-</pre></div>
-</div>
-<ol class="arabic simple" start="4">
-<li><p><strong>split-dataframe</strong> split your dataset into train/valid folds</p></li>
-</ol>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data split-dataframe <span class="se">\\</span>
-    --in-csv<span class="o">=</span>./data/dataset_raw.csv <span class="se">\\</span>
-    --tag2class<span class="o">=</span>./data/tag2cls.json <span class="se">\\</span>
-    --tag-column<span class="o">=</span>tag <span class="se">\\</span>
-    --class-column<span class="o">=</span>class <span class="se">\\</span>
-    --n-folds<span class="o">=</span><span class="m">5</span> <span class="se">\\</span>
-    --train-folds<span class="o">=</span><span class="m">0</span>,1,2,3 <span class="se">\\</span>
-    --out-csv<span class="o">=</span>./data/dataset.csv
-</pre></div>
-</div>
-<p>5. <strong>image2embedding</strong> embeds images from your csv
-or image directory with specified neural net architecture</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>$ catalyst-data image2embedding <span class="se">\\</span>
-    --in-csv<span class="o">=</span>./data/input.csv <span class="se">\\</span>
-    --img-col<span class="o">=</span><span class="s2">&quot;filename&quot;</span> <span class="se">\\</span>
-    --img-size<span class="o">=</span><span class="m">64</span> <span class="se">\\</span>
-    --out-npy<span class="o">=</span>./embeddings.npy <span class="se">\\</span>
-    --arch<span class="o">=</span>resnet34 <span class="se">\\</span>
-    --pooling<span class="o">=</span>GlobalMaxPool2d <span class="se">\\</span>
-    --batch-size<span class="o">=</span><span class="m">8</span> <span class="se">\\</span>
-    --num-workers<span class="o">=</span><span class="m">16</span> <span class="se">\\</span>
-    --verbose
-</pre></div>
-</div>
-</div>
-<div class="section" id="augmentors">
-<h2><a class="toc-backref" href="#id4">Augmentors</a><a class="headerlink" href="#augmentors" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="augmentor">
-<h3><a class="toc-backref" href="#id5">Augmentor</a><a class="headerlink" href="#augmentor" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.data.augmentor.Augmentor">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.augmentor.</code><code class="sig-name descname">Augmentor</code><span class="sig-paren">(</span><em class="sig-param">dict_key: str</em>, <em class="sig-param">augment_fn: Callable</em>, <em class="sig-param">input_key: str = None</em>, <em class="sig-param">output_key: str = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#Augmentor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.Augmentor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Augmentation abstraction to use with data dictionaries.</p>
-<dl class="method">
-<dt id="catalyst.data.augmentor.Augmentor.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">dict_key: str</em>, <em class="sig-param">augment_fn: Callable</em>, <em class="sig-param">input_key: str = None</em>, <em class="sig-param">output_key: str = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#Augmentor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.Augmentor.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Augmentation abstraction to use with data dictionaries.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dict_key</strong> – key to transform</p></li>
-<li><p><strong>augment_fn</strong> – augmentation function to use</p></li>
-<li><p><strong>input_key</strong> – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> input key</p></li>
-<li><p><strong>output_key</strong> – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> output key</p></li>
-<li><p><strong>**kwargs</strong> – default kwargs for augmentations function</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="augmentorcompose">
-<h3><a class="toc-backref" href="#id6">AugmentorCompose</a><a class="headerlink" href="#augmentorcompose" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.data.augmentor.AugmentorCompose">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.augmentor.</code><code class="sig-name descname">AugmentorCompose</code><span class="sig-paren">(</span><em class="sig-param">key2augment_fn: Dict[str, Callable]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#AugmentorCompose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.AugmentorCompose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compose augmentors.</p>
-<dl class="method">
-<dt id="catalyst.data.augmentor.AugmentorCompose.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">key2augment_fn: Dict[str, Callable]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#AugmentorCompose.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.AugmentorCompose.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key2augment_fn</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>]</em>) – mapping from input key
-to augmentation function to apply</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="augmentorkeys">
-<h3><a class="toc-backref" href="#id7">AugmentorKeys</a><a class="headerlink" href="#augmentorkeys" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.data.augmentor.AugmentorKeys">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.augmentor.</code><code class="sig-name descname">AugmentorKeys</code><span class="sig-paren">(</span><em class="sig-param">dict2fn_dict: Union[Dict[str, str], List[str]], augment_fn: Callable</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#AugmentorKeys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.AugmentorKeys" title="Permalink to this definition">¶</a></dt>
-<dd><p>Augmentation abstraction to match input and augmentations keys.</p>
-<dl class="method">
-<dt id="catalyst.data.augmentor.AugmentorKeys.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">dict2fn_dict: Union[Dict[str, str], List[str]], augment_fn: Callable</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/augmentor.html#AugmentorKeys.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.augmentor.AugmentorKeys.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dict2fn_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – keys matching dict
-<code class="docutils literal notranslate"><span class="pre">{input_key:</span> <span class="pre">augment_fn_key}</span></code>. For example:
-<code class="docutils literal notranslate"><span class="pre">{&quot;image&quot;:</span> <span class="pre">&quot;image&quot;,</span> <span class="pre">&quot;mask&quot;:</span> <span class="pre">&quot;mask&quot;}</span></code></p></li>
-<li><p><strong>augment_fn</strong> – augmentation function</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
+<div class="section" id="module-catalyst.data">
+<span id="main"></span><h2><a class="toc-backref" href="#id1">Main</a><a class="headerlink" href="#module-catalyst.data" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="collate-functions">
-<h2><a class="toc-backref" href="#id8">Collate Functions</a><a class="headerlink" href="#collate-functions" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id2">Collate Functions</a><a class="headerlink" href="#collate-functions" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="filteringcollatefn">
-<h3><a class="toc-backref" href="#id9">FilteringCollateFn</a><a class="headerlink" href="#filteringcollatefn" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id3">FilteringCollateFn</a><a class="headerlink" href="#filteringcollatefn" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.collate_fn.FilteringCollateFn">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.collate_fn.</code><code class="sig-name descname">FilteringCollateFn</code><span class="sig-paren">(</span><em class="sig-param">*keys</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/collate_fn.html#FilteringCollateFn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.collate_fn.FilteringCollateFn" title="Permalink to this definition">¶</a></dt>
@@ -600,11 +463,11 @@ converted to tensor and stacked</p>
 </div>
 </div>
 <div class="section" id="module-catalyst.data.dataset">
-<span id="dataset"></span><h2><a class="toc-backref" href="#id10">Dataset</a><a class="headerlink" href="#module-catalyst.data.dataset" title="Permalink to this headline">¶</a></h2>
+<span id="dataset"></span><h2><a class="toc-backref" href="#id4">Dataset</a><a class="headerlink" href="#module-catalyst.data.dataset" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="pytorch-extensions">
-<h3><a class="toc-backref" href="#id11">PyTorch Extensions</a><a class="headerlink" href="#pytorch-extensions" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id5">PyTorch Extensions</a><a class="headerlink" href="#pytorch-extensions" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="datasetfromsampler">
-<h4><a class="toc-backref" href="#id12">DatasetFromSampler</a><a class="headerlink" href="#datasetfromsampler" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id6">DatasetFromSampler</a><a class="headerlink" href="#datasetfromsampler" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.torch.DatasetFromSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.torch.</code><code class="sig-name descname">DatasetFromSampler</code><span class="sig-paren">(</span><em class="sig-param">sampler: torch.utils.data.sampler.Sampler</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset/torch.html#DatasetFromSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.torch.DatasetFromSampler" title="Permalink to this definition">¶</a></dt>
@@ -652,7 +515,7 @@ converted to tensor and stacked</p>
 
 </div>
 <div class="section" id="listdataset">
-<h4><a class="toc-backref" href="#id13">ListDataset</a><a class="headerlink" href="#listdataset" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id7">ListDataset</a><a class="headerlink" href="#listdataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.torch.ListDataset">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.torch.</code><code class="sig-name descname">ListDataset</code><span class="sig-paren">(</span><em class="sig-param">list_data: List[Dict], open_fn: Callable, dict_transform: Optional[Callable] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset/torch.html#ListDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.torch.ListDataset" title="Permalink to this definition">¶</a></dt>
@@ -709,7 +572,7 @@ transfer it to data, needed by your network
 
 </div>
 <div class="section" id="mergedataset">
-<h4><a class="toc-backref" href="#id14">MergeDataset</a><a class="headerlink" href="#mergedataset" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id8">MergeDataset</a><a class="headerlink" href="#mergedataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.torch.MergeDataset">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.torch.</code><code class="sig-name descname">MergeDataset</code><span class="sig-paren">(</span><em class="sig-param">*datasets: torch.utils.data.dataset.Dataset</em>, <em class="sig-param">dict_transform: Optional[Callable] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset/torch.html#MergeDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.torch.MergeDataset" title="Permalink to this definition">¶</a></dt>
@@ -763,7 +626,7 @@ transfer it to data, needed by your network
 
 </div>
 <div class="section" id="numpydataset">
-<h4><a class="toc-backref" href="#id15">NumpyDataset</a><a class="headerlink" href="#numpydataset" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id9">NumpyDataset</a><a class="headerlink" href="#numpydataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.torch.NumpyDataset">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.torch.</code><code class="sig-name descname">NumpyDataset</code><span class="sig-paren">(</span><em class="sig-param">numpy_data: numpy.ndarray</em>, <em class="sig-param">numpy_key: str = 'features'</em>, <em class="sig-param">dict_transform: Optional[Callable] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset/torch.html#NumpyDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.torch.NumpyDataset" title="Permalink to this definition">¶</a></dt>
@@ -817,7 +680,7 @@ transfer it to data, needed by your network
 
 </div>
 <div class="section" id="pathsdataset">
-<h4><a class="toc-backref" href="#id16">PathsDataset</a><a class="headerlink" href="#pathsdataset" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id10">PathsDataset</a><a class="headerlink" href="#pathsdataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.torch.PathsDataset">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.torch.</code><code class="sig-name descname">PathsDataset</code><span class="sig-paren">(</span><em class="sig-param">filenames: List[Union[str, pathlib.Path]], open_fn: Callable[dict, dict], label_fn: Callable[Union[str, pathlib.Path], Any], features_key: str = 'features', target_key: str = 'targets', **list_dataset_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/dataset/torch.html#PathsDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.torch.PathsDataset" title="Permalink to this definition">¶</a></dt>
@@ -864,9 +727,9 @@ parameters.</p></li>
 </div>
 </div>
 <div class="section" id="metric-learning-datasets">
-<h3><a class="toc-backref" href="#id17">Metric Learning Datasets</a><a class="headerlink" href="#metric-learning-datasets" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id11">Metric Learning Datasets</a><a class="headerlink" href="#metric-learning-datasets" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="metriclearningtraindataset">
-<h4><a class="toc-backref" href="#id18">MetricLearningTrainDataset</a><a class="headerlink" href="#metriclearningtraindataset" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id12">MetricLearningTrainDataset</a><a class="headerlink" href="#metriclearningtraindataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.metric_learning.MetricLearningTrainDataset">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.metric_learning.</code><code class="sig-name descname">MetricLearningTrainDataset</code><a class="reference internal" href="../_modules/catalyst/data/dataset/metric_learning.html#MetricLearningTrainDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.metric_learning.MetricLearningTrainDataset" title="Permalink to this definition">¶</a></dt>
@@ -891,7 +754,7 @@ based on these labels.</p>
 
 </div>
 <div class="section" id="querygallerydataset">
-<h4><a class="toc-backref" href="#id19">QueryGalleryDataset</a><a class="headerlink" href="#querygallerydataset" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id13">QueryGalleryDataset</a><a class="headerlink" href="#querygallerydataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.metric_learning.QueryGalleryDataset">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.dataset.metric_learning.</code><code class="sig-name descname">QueryGalleryDataset</code><a class="reference internal" href="../_modules/catalyst/data/dataset/metric_learning.html#QueryGalleryDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.dataset.metric_learning.QueryGalleryDataset" title="Permalink to this definition">¶</a></dt>
@@ -954,9 +817,9 @@ query size.</p>
 </div>
 </div>
 <div class="section" id="in-batch-samplers">
-<h2><a class="toc-backref" href="#id20">In-batch Samplers</a><a class="headerlink" href="#in-batch-samplers" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id14">In-batch Samplers</a><a class="headerlink" href="#in-batch-samplers" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="iinbatchtripletsampler">
-<h3><a class="toc-backref" href="#id21">IInbatchTripletSampler</a><a class="headerlink" href="#iinbatchtripletsampler" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id15">IInbatchTripletSampler</a><a class="headerlink" href="#iinbatchtripletsampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.IInbatchTripletSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.</code><code class="sig-name descname">IInbatchTripletSampler</code><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#IInbatchTripletSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.IInbatchTripletSampler" title="Permalink to this definition">¶</a></dt>
@@ -986,7 +849,7 @@ of shape (batch_size;)</p></li>
 
 </div>
 <div class="section" id="inbatchtripletssampler">
-<h3><a class="toc-backref" href="#id22">InBatchTripletsSampler</a><a class="headerlink" href="#inbatchtripletssampler" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id16">InBatchTripletsSampler</a><a class="headerlink" href="#inbatchtripletssampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.InBatchTripletsSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.</code><code class="sig-name descname">InBatchTripletsSampler</code><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#InBatchTripletsSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.InBatchTripletsSampler" title="Permalink to this definition">¶</a></dt>
@@ -1023,7 +886,7 @@ catalyst.data.sampler.BalanceBatchSampler</p>
 
 </div>
 <div class="section" id="alltripletssampler">
-<h3><a class="toc-backref" href="#id23">AllTripletsSampler</a><a class="headerlink" href="#alltripletssampler" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id17">AllTripletsSampler</a><a class="headerlink" href="#alltripletssampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.AllTripletsSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.</code><code class="sig-name descname">AllTripletsSampler</code><span class="sig-paren">(</span><em class="sig-param">max_output_triplets: int = 9223372036854775807</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#AllTripletsSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.AllTripletsSampler" title="Permalink to this definition">¶</a></dt>
@@ -1045,7 +908,7 @@ determined by this parameter.</p>
 
 </div>
 <div class="section" id="hardtripletssampler">
-<h3><a class="toc-backref" href="#id24">HardTripletsSampler</a><a class="headerlink" href="#hardtripletssampler" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id18">HardTripletsSampler</a><a class="headerlink" href="#hardtripletssampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.HardTripletsSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.</code><code class="sig-name descname">HardTripletsSampler</code><span class="sig-paren">(</span><em class="sig-param">norm_required: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#HardTripletsSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.HardTripletsSampler" title="Permalink to this definition">¶</a></dt>
@@ -1070,7 +933,7 @@ the hardest negative sample has the minimal distance to the anchor sample.</p>
 
 </div>
 <div class="section" id="hardclustersampler">
-<h3><a class="toc-backref" href="#id25">HardClusterSampler</a><a class="headerlink" href="#hardclustersampler" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id19">HardClusterSampler</a><a class="headerlink" href="#hardclustersampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.HardClusterSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.</code><code class="sig-name descname">HardClusterSampler</code><a class="reference internal" href="../_modules/catalyst/data/sampler_inbatch.html#HardClusterSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.HardClusterSampler" title="Permalink to this definition">¶</a></dt>
@@ -1103,9 +966,9 @@ k samples for each of p classes</p></li>
 </div>
 </div>
 <div class="section" id="loader">
-<h2><a class="toc-backref" href="#id26">Loader</a><a class="headerlink" href="#loader" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id20">Loader</a><a class="headerlink" href="#loader" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="batchlimitloaderwrapper">
-<h3><a class="toc-backref" href="#id27">BatchLimitLoaderWrapper</a><a class="headerlink" href="#batchlimitloaderwrapper" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id21">BatchLimitLoaderWrapper</a><a class="headerlink" href="#batchlimitloaderwrapper" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.loader.BatchLimitLoaderWrapper">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.loader.</code><code class="sig-name descname">BatchLimitLoaderWrapper</code><span class="sig-paren">(</span><em class="sig-param">loader: torch.utils.data.dataloader.DataLoader, num_batches: Union[int, float]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper" title="Permalink to this definition">¶</a></dt>
@@ -1141,27 +1004,6 @@ k samples for each of p classes</p></li>
 object. No <code class="docutils literal notranslate"><span class="pre">DataLoader</span></code>-specific code used.</p>
 </div>
 <dl class="method">
-<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__getattr__">
-<code class="sig-name descname">__getattr__</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__getattr__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__getattr__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets attribute by <code class="docutils literal notranslate"><span class="pre">key</span></code>.
-Firstly, looks at the <code class="docutils literal notranslate"><span class="pre">origin</span></code> for the appropriate <code class="docutils literal notranslate"><span class="pre">key</span></code>.
-If none founds - looks at the wrappers attributes.
-If could not found anything - raises <code class="docutils literal notranslate"><span class="pre">NotImplementedError</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>key</strong> – attribute key</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>attribute value</p>
-</dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>NotImplementedError</strong> – if could not find attribute in <code class="docutils literal notranslate"><span class="pre">origin</span></code>
-    or <code class="docutils literal notranslate"><span class="pre">wrapper</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">loader: torch.utils.data.dataloader.DataLoader, num_batches: Union[int, float]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Loader wrapper. Limits number of batches used per each iteration.</p>
@@ -1188,20 +1030,6 @@ or portion of iterator (float, should be in [0;1] range)</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__len__">
-<code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__len__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns length of the wrapper loader.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>length of the wrapper loader</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>int</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
 <dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__next__">
 <code class="sig-name descname">__next__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchLimitLoaderWrapper.__next__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__next__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Next batch.</p>
@@ -1212,180 +1040,115 @@ or portion of iterator (float, should be in [0;1] range)</p></li>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="catalyst.data.loader.BatchLimitLoaderWrapper.__weakref__">
-<code class="sig-name descname">__weakref__</code><a class="headerlink" href="#catalyst.data.loader.BatchLimitLoaderWrapper.__weakref__" title="Permalink to this definition">¶</a></dt>
-<dd><p>list of weak references to the object (if defined)</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>
-</div>
-<div class="section" id="readers">
-<h2><a class="toc-backref" href="#id28">Readers</a><a class="headerlink" href="#readers" title="Permalink to this headline">¶</a></h2>
-<p>Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
-For example open image by path, or read string and tokenize it.</p>
-<div class="section" id="readerspec">
-<h3><a class="toc-backref" href="#id29">ReaderSpec</a><a class="headerlink" href="#readerspec" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="batchprefetchloaderwrapper">
+<h3><a class="toc-backref" href="#id22">BatchPrefetchLoaderWrapper</a><a class="headerlink" href="#batchprefetchloaderwrapper" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="catalyst.data.reader.ReaderSpec">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">ReaderSpec</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ReaderSpec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ReaderSpec" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reader abstraction for all Readers.</p>
-<p>Applies a function to an element of your data.
-For example to a row from csv, or to an image, etc.</p>
-<p>All inherited classes have to implement <cite>__call__</cite>.</p>
+<dt id="catalyst.data.loader.BatchPrefetchLoaderWrapper">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.loader.</code><code class="sig-name descname">BatchPrefetchLoaderWrapper</code><span class="sig-paren">(</span><em class="sig-param">loader: torch.utils.data.dataloader.DataLoader</em>, <em class="sig-param">num_prefetches: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchPrefetchLoaderWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchPrefetchLoaderWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loader wrapper. Prefetches specified number of batches on the GPU.</p>
+<p>Base usage:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
+<span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">BatchPrefetchLoaderWrapper</span>
+
+<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">BatchPrefetchLoaderWrapper</span><span class="p">(</span><span class="n">loader</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Minimal working example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">metrics</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.cv</span> <span class="kn">import</span> <span class="n">ToTensor</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
+<span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">BatchPrefetchLoaderWrapper</span>
+
+<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">Runner</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">_handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="c1"># model train/valid step</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">accuracy01</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+            <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">:</span> <span class="n">accuracy01</span><span class="p">}</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
+            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+
+<span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">MNIST</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
+            <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()</span>
+        <span class="p">),</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">),</span>
+    <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">MNIST</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
+            <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()</span>
+        <span class="p">),</span>
+        <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">),</span>
+<span class="p">}</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">k</span><span class="p">:</span> <span class="n">BatchPrefetchLoaderWrapper</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">loaders</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span>
+<span class="c1"># model training</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">load_best_on_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <dl class="method">
-<dt id="catalyst.data.reader.ReaderSpec.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ReaderSpec.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ReaderSpec.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads a row from your annotations dict and transfer it to data,
-needed by your network for example open image by path,
-or read string and tokenize it.</p>
+<dt id="catalyst.data.loader.BatchPrefetchLoaderWrapper.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">loader: torch.utils.data.dataloader.DataLoader</em>, <em class="sig-param">num_prefetches: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchPrefetchLoaderWrapper.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchPrefetchLoaderWrapper.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loader wrapper. Prefetches specified number of batches on the GPU.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>element</strong> – elem in your dataset</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Data object used for your neural network</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.data.reader.ReaderSpec.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ReaderSpec.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ReaderSpec.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> – output key to use to store the result,
-default: <code class="docutils literal notranslate"><span class="pre">input_key</span></code></p></li>
+<li><p><strong>loader</strong> – torch dataloader.</p></li>
+<li><p><strong>num_prefetches</strong> – number of batches to prefetch on the GPU.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-</div>
-<div class="section" id="scalarreader">
-<h3><a class="toc-backref" href="#id30">ScalarReader</a><a class="headerlink" href="#scalarreader" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.data.reader.ScalarReader">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">ScalarReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">dtype: Type = &lt;class 'numpy.float32'&gt;</em>, <em class="sig-param">default_value: float = None</em>, <em class="sig-param">one_hot_classes: int = None</em>, <em class="sig-param">smoothing: float = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ScalarReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ScalarReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Numeric data reader abstraction.
-Reads a single float, int, str or other from data</p>
 <dl class="method">
-<dt id="catalyst.data.reader.ScalarReader.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ScalarReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ScalarReader.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads a row from your annotations dict and
-transfer it to a single value</p>
+<dt id="catalyst.data.loader.BatchPrefetchLoaderWrapper.__iter__">
+<code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/loader.html#BatchPrefetchLoaderWrapper.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.loader.BatchPrefetchLoaderWrapper.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterator.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>element</strong> – elem in your dataset</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Scalar value</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>dtype</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.data.reader.ScalarReader.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">dtype: Type = &lt;class 'numpy.float32'&gt;</em>, <em class="sig-param">default_value: float = None</em>, <em class="sig-param">one_hot_classes: int = None</em>, <em class="sig-param">smoothing: float = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ScalarReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ScalarReader.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> – output key to use to store the result,
-default: <code class="docutils literal notranslate"><span class="pre">input_key</span></code></p></li>
-<li><p><strong>dtype</strong> – datatype of scalar values to use</p></li>
-<li><p><strong>default_value</strong> – default value to use if something goes wrong</p></li>
-<li><p><strong>one_hot_classes</strong> – number of one-hot classes</p></li>
-<li><p><strong>smoothing</strong> (<em>float</em><em>, </em><em>optional</em>) – if specified applies label smoothing
-to one_hot classes</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="lambdareader">
-<h3><a class="toc-backref" href="#id31">LambdaReader</a><a class="headerlink" href="#lambdareader" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.data.reader.LambdaReader">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">LambdaReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">lambda_fn: Optional[Callable] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reader abstraction with an lambda encoders.
-Can read an elem from dataset and apply <cite>encode_fn</cite> function to it.</p>
-<dl class="method">
-<dt id="catalyst.data.reader.LambdaReader.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads a row from your annotations dict
-and applies <cite>encode_fn</cite> function.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>element</strong> – elem in your dataset.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Value after applying <cite>lambda_fn</cite> function</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.data.reader.LambdaReader.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">lambda_fn: Optional[Callable] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#LambdaReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.LambdaReader.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
-<li><p><strong>lambda_fn</strong> – encode function to use to prepare your data
-(for example convert chars/words/tokens to indices, etc)</p></li>
-<li><p><strong>kwargs</strong> – kwargs for encode function</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="readercompose">
-<h3><a class="toc-backref" href="#id32">ReaderCompose</a><a class="headerlink" href="#readercompose" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="catalyst.data.reader.ReaderCompose">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.reader.</code><code class="sig-name descname">ReaderCompose</code><span class="sig-paren">(</span><em class="sig-param">readers: List[catalyst.data.reader.ReaderSpec], mixins: list = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ReaderCompose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ReaderCompose" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstraction to compose several readers into one open function.</p>
-<dl class="method">
-<dt id="catalyst.data.reader.ReaderCompose.__call__">
-<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ReaderCompose.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ReaderCompose.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reads a row from your annotations dict
-and applies all readers and mixins</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>element</strong> – elem in your dataset.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Value after applying all readers and mixins</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.data.reader.ReaderCompose.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">readers: List[catalyst.data.reader.ReaderSpec], mixins: list = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/reader.html#ReaderCompose.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.reader.ReaderCompose.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>readers</strong> – list of reader to compose</p></li>
-<li><p><strong>mixins</strong> – list of mixins to use</p></li>
-</ul>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>iterator object</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1395,9 +1158,9 @@ and applies all readers and mixins</p>
 </div>
 </div>
 <div class="section" id="samplers">
-<h2><a class="toc-backref" href="#id33">Samplers</a><a class="headerlink" href="#samplers" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id23">Samplers</a><a class="headerlink" href="#samplers" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="balancebatchsampler">
-<h3><a class="toc-backref" href="#id34">BalanceBatchSampler</a><a class="headerlink" href="#balancebatchsampler" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id24">BalanceBatchSampler</a><a class="headerlink" href="#balancebatchsampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.BalanceBatchSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">BalanceBatchSampler</code><span class="sig-paren">(</span><em class="sig-param">labels: Union[List[int], numpy.ndarray], p: int, k: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceBatchSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceBatchSampler" title="Permalink to this definition">¶</a></dt>
@@ -1478,7 +1241,7 @@ number of batches in an epoch</p>
 
 </div>
 <div class="section" id="balanceclasssampler">
-<h3><a class="toc-backref" href="#id35">BalanceClassSampler</a><a class="headerlink" href="#balanceclasssampler" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id25">BalanceClassSampler</a><a class="headerlink" href="#balanceclasssampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.BalanceClassSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">BalanceClassSampler</code><span class="sig-paren">(</span><em class="sig-param">labels: List[int], mode: Union[str, int] = 'downsampling'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#BalanceClassSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.BalanceClassSampler" title="Permalink to this definition">¶</a></dt>
@@ -1522,7 +1285,7 @@ Must be one of [downsampling, upsampling]</p></li>
 
 </div>
 <div class="section" id="distributedsamplerwrapper">
-<h3><a class="toc-backref" href="#id36">DistributedSamplerWrapper</a><a class="headerlink" href="#distributedsamplerwrapper" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id26">DistributedSamplerWrapper</a><a class="headerlink" href="#distributedsamplerwrapper" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.DistributedSamplerWrapper">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">DistributedSamplerWrapper</code><span class="sig-paren">(</span><em class="sig-param">sampler</em>, <em class="sig-param">num_replicas: Optional[int] = None</em>, <em class="sig-param">rank: Optional[int] = None</em>, <em class="sig-param">shuffle: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#DistributedSamplerWrapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DistributedSamplerWrapper" title="Permalink to this definition">¶</a></dt>
@@ -1564,8 +1327,94 @@ sampler will shuffle the indices</p></li>
 </dd></dl>
 
 </div>
+<div class="section" id="dynamicbalanceclasssampler">
+<h3><a class="toc-backref" href="#id27">DynamicBalanceClassSampler</a><a class="headerlink" href="#dynamicbalanceclasssampler" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.data.sampler.DynamicBalanceClassSampler">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">DynamicBalanceClassSampler</code><span class="sig-paren">(</span><em class="sig-param">labels: List[Union[int, str]], exp_lambda: float = 0.9, start_epoch: int = 0, max_d: Optional[int] = None, mode: Union[str, int] = 'downsampling', ignore_warning: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#DynamicBalanceClassSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DynamicBalanceClassSampler" title="Permalink to this definition">¶</a></dt>
+<dd><p>This kind of sampler can be used for classification tasks with significant
+class imbalance.</p>
+<p>The idea of this sampler that we start with the original class distribution
+and gradually move to uniform class distribution like with downsampling.</p>
+<p>Let’s define :math: D_i = #C_i/ #C_min where :math: #C_i is a size of class
+i and :math: #C_min is a size of the rarest class, so :math: D_i define
+class distribution. Also define :math: g(n_epoch) is a exponential
+scheduler. On each epoch current :math: D_i  calculated as
+:math: current D_i  = D_i ^ g(n_epoch),
+after this data samples according this distribution.</p>
+<p class="rubric">Notes</p>
+<p>In the end of the training, epochs will contain only
+min_size_class * n_classes examples. So, possible it will not
+necessary to do validation on each epoch. For this reason use
+ControlFlowCallback.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">catalyst.data</span> <span class="kn">import</span> <span class="n">DynamicBalanceClassSampler</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch.utils</span> <span class="kn">import</span> <span class="n">data</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">features</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">100</span><span class="p">)))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">200</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sampler</span> <span class="o">=</span> <span class="n">DynamicBalanceClassSampler</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">labels</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">TensorDataset</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">loader</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dataloader</span><span class="o">.</span><span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">b_features</span><span class="p">,</span> <span class="n">b_labels</span> <span class="o">=</span> <span class="n">batch</span>
+</pre></div>
+</div>
+<p>Sampler was inspired by <a class="reference external" href="https://arxiv.org/abs/1901.06783">https://arxiv.org/abs/1901.06783</a></p>
+<dl class="method">
+<dt id="catalyst.data.sampler.DynamicBalanceClassSampler.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">labels: List[Union[int, str]], exp_lambda: float = 0.9, start_epoch: int = 0, max_d: Optional[int] = None, mode: Union[str, int] = 'downsampling', ignore_warning: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#DynamicBalanceClassSampler.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DynamicBalanceClassSampler.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>labels</strong> – list of labels for each elem in the dataset</p></li>
+<li><p><strong>exp_lambda</strong> – exponent figure for schedule</p></li>
+<li><p><strong>start_epoch</strong> – start epoch number, can be useful for multi-stage</p></li>
+<li><p><strong>experiments</strong> – </p></li>
+<li><p><strong>max_d</strong> – if not None, limit on the difference between the most</p></li>
+<li><p><strong>and the rarest classes</strong><strong>, </strong><strong>heuristic</strong> (<em>frequent</em>) – </p></li>
+<li><p><strong>mode</strong> – number of samples per class in the end of training. Must be</p></li>
+<li><p><strong>or number. Before change it</strong><strong>, </strong><strong>make sure that you</strong> (<em>&quot;downsampling&quot;</em>) – </p></li>
+<li><p><strong>how does it work</strong> (<em>understand</em>) – </p></li>
+<li><p><strong>ignore_warning</strong> – ignore warning about min class size</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.sampler.DynamicBalanceClassSampler.__iter__">
+<code class="sig-name descname">__iter__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Iterator[int]<a class="reference internal" href="../_modules/catalyst/data/sampler.html#DynamicBalanceClassSampler.__iter__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DynamicBalanceClassSampler.__iter__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Yields</dt>
+<dd class="field-odd"><p>indices of stratified sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.data.sampler.DynamicBalanceClassSampler.__len__">
+<code class="sig-name descname">__len__</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/data/sampler.html#DynamicBalanceClassSampler.__len__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DynamicBalanceClassSampler.__len__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>length of result sample</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="dynamiclenbatchsampler">
-<h3><a class="toc-backref" href="#id37">DynamicLenBatchSampler</a><a class="headerlink" href="#dynamiclenbatchsampler" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id28">DynamicLenBatchSampler</a><a class="headerlink" href="#dynamiclenbatchsampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.DynamicLenBatchSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">DynamicLenBatchSampler</code><span class="sig-paren">(</span><em class="sig-param">sampler: torch.utils.data.sampler.Sampler[int], batch_size: int, drop_last: bool</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#DynamicLenBatchSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.DynamicLenBatchSampler" title="Permalink to this definition">¶</a></dt>
@@ -1615,7 +1464,7 @@ Should be used with <cite>catalyst.utils.trim_tensors</cite>.</p>
 
 </div>
 <div class="section" id="miniepochsampler">
-<h3><a class="toc-backref" href="#id38">MiniEpochSampler</a><a class="headerlink" href="#miniepochsampler" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id29">MiniEpochSampler</a><a class="headerlink" href="#miniepochsampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.MiniEpochSampler">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.data.sampler.</code><code class="sig-name descname">MiniEpochSampler</code><span class="sig-paren">(</span><em class="sig-param">data_len: int</em>, <em class="sig-param">mini_epoch_len: int</em>, <em class="sig-param">drop_last: bool = False</em>, <em class="sig-param">shuffle: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/sampler.html#MiniEpochSampler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.sampler.MiniEpochSampler" title="Permalink to this definition">¶</a></dt>
@@ -1683,45 +1532,72 @@ The sampler will shuffle indices
 
 </div>
 </div>
-<div class="section" id="computer-vision-extensions">
-<h2><a class="toc-backref" href="#id39">Computer Vision Extensions</a><a class="headerlink" href="#computer-vision-extensions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id1">
-<h3><a class="toc-backref" href="#id40">Dataset</a><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="imagefolderdataset">
-<h4><a class="toc-backref" href="#id41">ImageFolderDataset</a><a class="headerlink" href="#imagefolderdataset" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="module-catalyst.contrib.data">
+<span id="contrib"></span><h2><a class="toc-backref" href="#id30">Contrib</a><a class="headerlink" href="#module-catalyst.contrib.data" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="augmentors">
+<h3><a class="toc-backref" href="#id31">Augmentors</a><a class="headerlink" href="#augmentors" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="augmentor">
+<h4><a class="toc-backref" href="#id32">Augmentor</a><a class="headerlink" href="#augmentor" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.data.cv.dataset.ImageFolderDataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.dataset.</code><code class="sig-name descname">ImageFolderDataset</code><span class="sig-paren">(</span><em class="sig-param">rootpath: str</em>, <em class="sig-param">target_key: str = 'targets'</em>, <em class="sig-param">dir2class: Optional[Mapping[str</em>, <em class="sig-param">int]] = None</em>, <em class="sig-param">dict_transform: Optional[Callable[Dict</em>, <em class="sig-param">Dict]] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/dataset.html#ImageFolderDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.dataset.ImageFolderDataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.data.dataset.torch.PathsDataset" title="catalyst.data.dataset.torch.PathsDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.dataset.torch.PathsDataset</span></code></a></p>
-<p>Dataset class that derives targets from samples filesystem paths.
-Dataset structure should be the following:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rootpat/
-<span class="p">|</span>-- class1/  <span class="c1"># folder of N images</span>
-<span class="p">|</span>   <span class="p">|</span>-- image11
-<span class="p">|</span>   <span class="p">|</span>-- image12
-<span class="p">|</span>   ...
-<span class="p">|</span>   <span class="sb">`</span>-- image1N
-...
-<span class="sb">`</span>-- classM/  <span class="c1"># folder of K images</span>
-    <span class="p">|</span>-- imageM1
-    <span class="p">|</span>-- imageM2
-    ...
-    <span class="sb">`</span>-- imageMK
-</pre></div>
-</div>
+<dt id="catalyst.contrib.data.augmentor.Augmentor">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.augmentor.</code><code class="sig-name descname">Augmentor</code><span class="sig-paren">(</span><em class="sig-param">dict_key: str</em>, <em class="sig-param">augment_fn: Callable</em>, <em class="sig-param">input_key: str = None</em>, <em class="sig-param">output_key: str = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/augmentor.html#Augmentor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.augmentor.Augmentor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Augmentation abstraction to use with data dictionaries.</p>
 <dl class="method">
-<dt id="catalyst.data.cv.dataset.ImageFolderDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">rootpath: str</em>, <em class="sig-param">target_key: str = 'targets'</em>, <em class="sig-param">dir2class: Optional[Mapping[str</em>, <em class="sig-param">int]] = None</em>, <em class="sig-param">dict_transform: Optional[Callable[Dict</em>, <em class="sig-param">Dict]] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/data/cv/dataset.html#ImageFolderDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.dataset.ImageFolderDataset.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method for the <a class="reference internal" href="#catalyst.data.cv.dataset.ImageFolderDataset" title="catalyst.data.cv.dataset.ImageFolderDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFolderDataset</span></code></a> class.</p>
+<dt id="catalyst.contrib.data.augmentor.Augmentor.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">dict_key: str</em>, <em class="sig-param">augment_fn: Callable</em>, <em class="sig-param">input_key: str = None</em>, <em class="sig-param">output_key: str = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/augmentor.html#Augmentor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.augmentor.Augmentor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Augmentation abstraction to use with data dictionaries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rootpath</strong> – root directory of dataset</p></li>
-<li><p><strong>target_key</strong> – key to use to store target label</p></li>
-<li><p><strong>dir2class</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – mapping from folder name
-to class index</p></li>
-<li><p><strong>dict_transform</strong> (<em>Callable</em><em>[</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>Dict</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – transforms
-to use on dict</p></li>
+<li><p><strong>dict_key</strong> – key to transform</p></li>
+<li><p><strong>augment_fn</strong> – augmentation function to use</p></li>
+<li><p><strong>input_key</strong> – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> input key</p></li>
+<li><p><strong>output_key</strong> – <code class="docutils literal notranslate"><span class="pre">augment_fn</span></code> output key</p></li>
+<li><p><strong>**kwargs</strong> – default kwargs for augmentations function</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="augmentorcompose">
+<h4><a class="toc-backref" href="#id33">AugmentorCompose</a><a class="headerlink" href="#augmentorcompose" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.data.augmentor.AugmentorCompose">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.augmentor.</code><code class="sig-name descname">AugmentorCompose</code><span class="sig-paren">(</span><em class="sig-param">key2augment_fn: Dict[str, Callable]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/augmentor.html#AugmentorCompose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.augmentor.AugmentorCompose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compose augmentors.</p>
+<dl class="method">
+<dt id="catalyst.contrib.data.augmentor.AugmentorCompose.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">key2augment_fn: Dict[str, Callable]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/augmentor.html#AugmentorCompose.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.augmentor.AugmentorCompose.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key2augment_fn</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Callable</em><em>]</em>) – mapping from input key
+to augmentation function to apply</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="augmentorkeys">
+<h4><a class="toc-backref" href="#id34">AugmentorKeys</a><a class="headerlink" href="#augmentorkeys" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.data.augmentor.AugmentorKeys">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.augmentor.</code><code class="sig-name descname">AugmentorKeys</code><span class="sig-paren">(</span><em class="sig-param">dict2fn_dict: Union[Dict[str, str], List[str]], augment_fn: Callable</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/augmentor.html#AugmentorKeys"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.augmentor.AugmentorKeys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Augmentation abstraction to match input and augmentations keys.</p>
+<dl class="method">
+<dt id="catalyst.contrib.data.augmentor.AugmentorKeys.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">dict2fn_dict: Union[Dict[str, str], List[str]], augment_fn: Callable</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/augmentor.html#AugmentorKeys.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.augmentor.AugmentorKeys.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dict2fn_dict</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>str</em><em>]</em>) – keys matching dict
+<code class="docutils literal notranslate"><span class="pre">{input_key:</span> <span class="pre">augment_fn_key}</span></code>. For example:
+<code class="docutils literal notranslate"><span class="pre">{&quot;image&quot;:</span> <span class="pre">&quot;image&quot;,</span> <span class="pre">&quot;mask&quot;:</span> <span class="pre">&quot;mask&quot;}</span></code></p></li>
+<li><p><strong>augment_fn</strong> – augmentation function</p></li>
 </ul>
 </dd>
 </dl>
@@ -1731,23 +1607,44 @@ to use on dict</p></li>
 
 </div>
 </div>
-<div class="section" id="mixins">
-<h3><a class="toc-backref" href="#id42">Mixins</a><a class="headerlink" href="#mixins" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="blurmixin">
-<h4><a class="toc-backref" href="#id43">BlurMixin</a><a class="headerlink" href="#blurmixin" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="readers">
+<h3><a class="toc-backref" href="#id35">Readers</a><a class="headerlink" href="#readers" title="Permalink to this headline">¶</a></h3>
+<p>Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
+For example open image by path, or read string and tokenize it.</p>
+<div class="section" id="ireader">
+<h4><a class="toc-backref" href="#id36">IReader</a><a class="headerlink" href="#ireader" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.data.cv.mixins.blur.BlurMixin">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.mixins.blur.</code><code class="sig-name descname">BlurMixin</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'blur_factor'</em>, <em class="sig-param">blur_min: int = 3</em>, <em class="sig-param">blur_max: int = 9</em>, <em class="sig-param">blur: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/mixins/blur.html#BlurMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.mixins.blur.BlurMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Calculates blur factor for augmented image.</p>
+<dt id="catalyst.contrib.data.reader.IReader">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.reader.</code><code class="sig-name descname">IReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#IReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.IReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reader abstraction for all Readers.</p>
+<p>Applies a function to an element of your data.
+For example to a row from csv, or to an image, etc.</p>
+<p>All inherited classes have to implement <cite>__call__</cite>.</p>
 <dl class="method">
-<dt id="catalyst.data.cv.mixins.blur.BlurMixin.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'blur_factor'</em>, <em class="sig-param">blur_min: int = 3</em>, <em class="sig-param">blur_max: int = 9</em>, <em class="sig-param">blur: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/mixins/blur.html#BlurMixin.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.mixins.blur.BlurMixin.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.reader.IReader.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#IReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.IReader.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict and transfer it to data,
+needed by your network for example open image by path,
+or read string and tokenize it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>element</strong> – elem in your dataset</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Data object used for your neural network</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.data.reader.IReader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#IReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.IReader.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result,
+default: <code class="docutils literal notranslate"><span class="pre">input_key</span></code></p></li>
 </ul>
 </dd>
 </dl>
@@ -1756,67 +1653,16 @@ to use on dict</p></li>
 </dd></dl>
 
 </div>
-<div class="section" id="flaremixin">
-<h4><a class="toc-backref" href="#id44">FlareMixin</a><a class="headerlink" href="#flaremixin" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="imagereader-cv">
+<h4><a class="toc-backref" href="#id37">ImageReader (CV)</a><a class="headerlink" href="#imagereader-cv" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.data.cv.mixins.flare.FlareMixin">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.mixins.flare.</code><code class="sig-name descname">FlareMixin</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'flare_factor'</em>, <em class="sig-param">sunflare_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/mixins/flare.html#FlareMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.mixins.flare.FlareMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Calculates flare factor for augmented image.</p>
-<dl class="method">
-<dt id="catalyst.data.cv.mixins.flare.FlareMixin.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'flare_factor'</em>, <em class="sig-param">sunflare_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/mixins/flare.html#FlareMixin.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.mixins.flare.FlareMixin.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
-<li><p><strong>sunflare_params</strong> – params to init
-<code class="docutils literal notranslate"><span class="pre">albumentations.RandomSunFlare</span></code></p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="rotatemixin">
-<h4><a class="toc-backref" href="#id45">RotateMixin</a><a class="headerlink" href="#rotatemixin" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
-<dt id="catalyst.data.cv.mixins.rotate.RotateMixin">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.mixins.rotate.</code><code class="sig-name descname">RotateMixin</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'rotation_factor'</em>, <em class="sig-param">targets_key: str = None</em>, <em class="sig-param">rotate_probability: float = 1.0</em>, <em class="sig-param">hflip_probability: float = 0.5</em>, <em class="sig-param">one_hot_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/mixins/rotate.html#RotateMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.mixins.rotate.RotateMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Calculates rotation factor for augmented image.</p>
-<dl class="method">
-<dt id="catalyst.data.cv.mixins.rotate.RotateMixin.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'rotation_factor'</em>, <em class="sig-param">targets_key: str = None</em>, <em class="sig-param">rotate_probability: float = 1.0</em>, <em class="sig-param">hflip_probability: float = 0.5</em>, <em class="sig-param">one_hot_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/mixins/rotate.html#RotateMixin.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.mixins.rotate.RotateMixin.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
-<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
-<div class="section" id="id2">
-<h3><a class="toc-backref" href="#id46">Readers</a><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="imagereader">
-<h4><a class="toc-backref" href="#id47">ImageReader</a><a class="headerlink" href="#imagereader" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
-<dt id="catalyst.data.cv.reader.ImageReader">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.reader.</code><code class="sig-name descname">ImageReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">rootpath: Optional[str] = None</em>, <em class="sig-param">grayscale: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/reader.html#ImageReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.reader.ImageReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.data.reader.ReaderSpec" title="catalyst.data.reader.ReaderSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.reader.ReaderSpec</span></code></a></p>
+<dt id="catalyst.contrib.data.cv.reader.ImageReader">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.reader.</code><code class="sig-name descname">ImageReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">rootpath: Optional[str] = None</em>, <em class="sig-param">grayscale: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/reader.html#ImageReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.reader.ImageReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.data.reader.IReader" title="catalyst.contrib.data.reader.IReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.data.reader.IReader</span></code></a></p>
 <p>Image reader abstraction. Reads images from a <code class="docutils literal notranslate"><span class="pre">csv</span></code> dataset.</p>
 <dl class="method">
-<dt id="catalyst.data.cv.reader.ImageReader.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">rootpath: Optional[str] = None</em>, <em class="sig-param">grayscale: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/reader.html#ImageReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.reader.ImageReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.cv.reader.ImageReader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">rootpath: Optional[str] = None</em>, <em class="sig-param">grayscale: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/reader.html#ImageReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.reader.ImageReader.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1835,16 +1681,57 @@ with grayscale images</p></li>
 </dd></dl>
 
 </div>
-<div class="section" id="maskreader">
-<h4><a class="toc-backref" href="#id48">MaskReader</a><a class="headerlink" href="#maskreader" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="lambdareader">
+<h4><a class="toc-backref" href="#id38">LambdaReader</a><a class="headerlink" href="#lambdareader" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.data.cv.reader.MaskReader">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.reader.</code><code class="sig-name descname">MaskReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str, output_key: Optional[str] = None, rootpath: Optional[str] = None, clip_range: Tuple[Union[int, float], Union[int, float]] = (0, 1)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/reader.html#MaskReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.reader.MaskReader" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.data.reader.ReaderSpec" title="catalyst.data.reader.ReaderSpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.reader.ReaderSpec</span></code></a></p>
+<dt id="catalyst.contrib.data.reader.LambdaReader">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.reader.</code><code class="sig-name descname">LambdaReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">lambda_fn: Optional[Callable] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#LambdaReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.LambdaReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reader abstraction with an lambda encoders.
+Can read an elem from dataset and apply <cite>encode_fn</cite> function to it.</p>
+<dl class="method">
+<dt id="catalyst.contrib.data.reader.LambdaReader.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#LambdaReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.LambdaReader.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict
+and applies <cite>encode_fn</cite> function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>element</strong> – elem in your dataset.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value after applying <cite>lambda_fn</cite> function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.data.reader.LambdaReader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">lambda_fn: Optional[Callable] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#LambdaReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.LambdaReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
+<li><p><strong>lambda_fn</strong> – encode function to use to prepare your data
+(for example convert chars/words/tokens to indices, etc)</p></li>
+<li><p><strong>kwargs</strong> – kwargs for encode function</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="maskreader-cv">
+<h4><a class="toc-backref" href="#id39">MaskReader (CV)</a><a class="headerlink" href="#maskreader-cv" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.data.cv.reader.MaskReader">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.reader.</code><code class="sig-name descname">MaskReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str, output_key: Optional[str] = None, rootpath: Optional[str] = None, clip_range: Tuple[Union[int, float], Union[int, float]] = (0, 1)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/reader.html#MaskReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.reader.MaskReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.contrib.data.reader.IReader" title="catalyst.contrib.data.reader.IReader"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.contrib.data.reader.IReader</span></code></a></p>
 <p>Mask reader abstraction. Reads masks from a <cite>csv</cite> dataset.</p>
 <dl class="method">
-<dt id="catalyst.data.cv.reader.MaskReader.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str, output_key: Optional[str] = None, rootpath: Optional[str] = None, clip_range: Tuple[Union[int, float], Union[int, float]] = (0, 1)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/reader.html#MaskReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.reader.MaskReader.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.cv.reader.MaskReader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str, output_key: Optional[str] = None, rootpath: Optional[str] = None, clip_range: Tuple[Union[int, float], Union[int, float]] = (0, 1)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/reader.html#MaskReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.reader.MaskReader.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1864,95 +1751,177 @@ to the interval edges</p></li>
 </dd></dl>
 
 </div>
-</div>
-<div class="section" id="transforms">
-<h3><a class="toc-backref" href="#id49">Transforms</a><a class="headerlink" href="#transforms" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="tensortoimage">
-<h4><a class="toc-backref" href="#id50">TensorToImage</a><a class="headerlink" href="#tensortoimage" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="scalarreader">
+<h4><a class="toc-backref" href="#id40">ScalarReader</a><a class="headerlink" href="#scalarreader" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.data.cv.transforms.albumentations.TensorToImage">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.transforms.albumentations.</code><code class="sig-name descname">TensorToImage</code><span class="sig-paren">(</span><em class="sig-param">denormalize: bool = False</em>, <em class="sig-param">move_channels_dim: bool = True</em>, <em class="sig-param">always_apply: bool = False</em>, <em class="sig-param">p: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/albumentations.html#TensorToImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.albumentations.TensorToImage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">albumentations.core.transforms_interface.ImageOnlyTransform</span></code></p>
-<p>Casts <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code> to <code class="docutils literal notranslate"><span class="pre">numpy.array</span></code>.</p>
+<dt id="catalyst.contrib.data.reader.ScalarReader">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.reader.</code><code class="sig-name descname">ScalarReader</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">dtype: Type = &lt;class 'numpy.float32'&gt;</em>, <em class="sig-param">default_value: float = None</em>, <em class="sig-param">one_hot_classes: int = None</em>, <em class="sig-param">smoothing: float = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#ScalarReader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.ScalarReader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Numeric data reader abstraction.
+Reads a single float, int, str or other from data</p>
 <dl class="method">
-<dt id="catalyst.data.cv.transforms.albumentations.TensorToImage.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">denormalize: bool = False</em>, <em class="sig-param">move_channels_dim: bool = True</em>, <em class="sig-param">always_apply: bool = False</em>, <em class="sig-param">p: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/albumentations.html#TensorToImage.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.albumentations.TensorToImage.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dt id="catalyst.contrib.data.reader.ScalarReader.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#ScalarReader.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.ScalarReader.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict and
+transfer it to a single value</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>denormalize</strong> – if True, multiply image(s) by ImageNet std and
-add ImageNet mean</p></li>
-<li><p><strong>move_channels_dim</strong> – if True, convert [B]xCxHxW tensor
-to [B]xHxWxC format</p></li>
-<li><p><strong>always_apply</strong> – need to apply this transform anyway</p></li>
-<li><p><strong>p</strong> – probability for this transform</p></li>
-</ul>
+<dd class="field-odd"><p><strong>element</strong> – elem in your dataset</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Scalar value</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dtype</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.data.cv.transforms.albumentations.TensorToImage.apply">
-<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param">img: torch.Tensor</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/albumentations.html#TensorToImage.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.albumentations.TensorToImage.apply" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply the transform to the image.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="imagetotensor">
-<h4><a class="toc-backref" href="#id51">ImageToTensor</a><a class="headerlink" href="#imagetotensor" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
-<dt id="catalyst.data.cv.transforms.albumentations.ImageToTensor">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.transforms.albumentations.</code><code class="sig-name descname">ImageToTensor</code><span class="sig-paren">(</span><em class="sig-param">move_channels_dim: bool = True</em>, <em class="sig-param">always_apply: bool = False</em>, <em class="sig-param">p: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/albumentations.html#ImageToTensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.albumentations.ImageToTensor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">albumentations.pytorch.transforms.ToTensorV2</span></code></p>
-<p>Casts <code class="docutils literal notranslate"><span class="pre">numpy.array</span></code> to <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>.</p>
-<dl class="method">
-<dt id="catalyst.data.cv.transforms.albumentations.ImageToTensor.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">move_channels_dim: bool = True</em>, <em class="sig-param">always_apply: bool = False</em>, <em class="sig-param">p: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/albumentations.html#ImageToTensor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.albumentations.ImageToTensor.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.reader.ScalarReader.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">output_key: Optional[str] = None</em>, <em class="sig-param">dtype: Type = &lt;class 'numpy.float32'&gt;</em>, <em class="sig-param">default_value: float = None</em>, <em class="sig-param">one_hot_classes: int = None</em>, <em class="sig-param">smoothing: float = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#ScalarReader.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.ScalarReader.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>move_channels_dim</strong> – if <code class="docutils literal notranslate"><span class="pre">False</span></code>, casts numpy array
-to <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>, but do not move channels dim</p></li>
-<li><p><strong>always_apply</strong> – need to apply this transform anyway</p></li>
-<li><p><strong>p</strong> – probability for this transform</p></li>
+<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result,
+default: <code class="docutils literal notranslate"><span class="pre">input_key</span></code></p></li>
+<li><p><strong>dtype</strong> – datatype of scalar values to use</p></li>
+<li><p><strong>default_value</strong> – default value to use if something goes wrong</p></li>
+<li><p><strong>one_hot_classes</strong> – number of one-hot classes</p></li>
+<li><p><strong>smoothing</strong> (<em>float</em><em>, </em><em>optional</em>) – if specified applies label smoothing
+to one_hot classes</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="readercompose">
+<h4><a class="toc-backref" href="#id41">ReaderCompose</a><a class="headerlink" href="#readercompose" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.data.reader.ReaderCompose">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.reader.</code><code class="sig-name descname">ReaderCompose</code><span class="sig-paren">(</span><em class="sig-param">readers: List[catalyst.contrib.data.reader.IReader], mixins: list = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#ReaderCompose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.ReaderCompose" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstraction to compose several readers into one open function.</p>
 <dl class="method">
-<dt id="catalyst.data.cv.transforms.albumentations.ImageToTensor.apply">
-<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param">img: numpy.ndarray</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/albumentations.html#ImageToTensor.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.albumentations.ImageToTensor.apply" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply the transform to the image.</p>
+<dt id="catalyst.contrib.data.reader.ReaderCompose.__call__">
+<code class="sig-name descname">__call__</code><span class="sig-paren">(</span><em class="sig-param">element</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#ReaderCompose.__call__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.ReaderCompose.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a row from your annotations dict
+and applies all readers and mixins</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>element</strong> – elem in your dataset.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Value after applying all readers and mixins</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.data.cv.transforms.albumentations.ImageToTensor.apply_to_mask">
-<code class="sig-name descname">apply_to_mask</code><span class="sig-paren">(</span><em class="sig-param">mask: numpy.ndarray</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/albumentations.html#ImageToTensor.apply_to_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.albumentations.ImageToTensor.apply_to_mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply the transform to the mask.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.data.cv.transforms.albumentations.ImageToTensor.get_transform_init_args_names">
-<code class="sig-name descname">get_transform_init_args_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/albumentations.html#ImageToTensor.get_transform_init_args_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.albumentations.ImageToTensor.get_transform_init_args_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get transform init args names.</p>
+<dt id="catalyst.contrib.data.reader.ReaderCompose.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">readers: List[catalyst.contrib.data.reader.IReader], mixins: list = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/reader.html#ReaderCompose.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.reader.ReaderCompose.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>readers</strong> – list of reader to compose</p></li>
+<li><p><strong>mixins</strong> – list of mixins to use</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 </div>
+</div>
+<div class="section" id="mixins-cv">
+<h3><a class="toc-backref" href="#id42">Mixins (CV)</a><a class="headerlink" href="#mixins-cv" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="blurmixin">
+<h4><a class="toc-backref" href="#id43">BlurMixin</a><a class="headerlink" href="#blurmixin" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.data.cv.mixins.blur.BlurMixin">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.mixins.blur.</code><code class="sig-name descname">BlurMixin</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'blur_factor'</em>, <em class="sig-param">blur_min: int = 3</em>, <em class="sig-param">blur_max: int = 9</em>, <em class="sig-param">blur: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/mixins/blur.html#BlurMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.mixins.blur.BlurMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Calculates blur factor for augmented image.</p>
+<dl class="method">
+<dt id="catalyst.contrib.data.cv.mixins.blur.BlurMixin.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'blur_factor'</em>, <em class="sig-param">blur_min: int = 3</em>, <em class="sig-param">blur_max: int = 9</em>, <em class="sig-param">blur: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/mixins/blur.html#BlurMixin.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.mixins.blur.BlurMixin.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="flaremixin">
+<h4><a class="toc-backref" href="#id44">FlareMixin</a><a class="headerlink" href="#flaremixin" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.data.cv.mixins.flare.FlareMixin">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.mixins.flare.</code><code class="sig-name descname">FlareMixin</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'flare_factor'</em>, <em class="sig-param">sunflare_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/mixins/flare.html#FlareMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.mixins.flare.FlareMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Calculates flare factor for augmented image.</p>
+<dl class="method">
+<dt id="catalyst.contrib.data.cv.mixins.flare.FlareMixin.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'flare_factor'</em>, <em class="sig-param">sunflare_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/mixins/flare.html#FlareMixin.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.mixins.flare.FlareMixin.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
+<li><p><strong>sunflare_params</strong> – params to init
+<code class="docutils literal notranslate"><span class="pre">albumentations.RandomSunFlare</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="rotatemixin">
+<h4><a class="toc-backref" href="#id45">RotateMixin</a><a class="headerlink" href="#rotatemixin" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.data.cv.mixins.rotate.RotateMixin">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.mixins.rotate.</code><code class="sig-name descname">RotateMixin</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'rotation_factor'</em>, <em class="sig-param">targets_key: str = None</em>, <em class="sig-param">rotate_probability: float = 1.0</em>, <em class="sig-param">hflip_probability: float = 0.5</em>, <em class="sig-param">one_hot_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/mixins/rotate.html#RotateMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.mixins.rotate.RotateMixin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Calculates rotation factor for augmented image.</p>
+<dl class="method">
+<dt id="catalyst.contrib.data.cv.mixins.rotate.RotateMixin.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">input_key: str = 'image'</em>, <em class="sig-param">output_key: str = 'rotation_factor'</em>, <em class="sig-param">targets_key: str = None</em>, <em class="sig-param">rotate_probability: float = 1.0</em>, <em class="sig-param">hflip_probability: float = 0.5</em>, <em class="sig-param">one_hot_classes: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/mixins/rotate.html#RotateMixin.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.mixins.rotate.RotateMixin.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> – input key to use from annotation dict</p></li>
+<li><p><strong>output_key</strong> – output key to use to store the result</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="transforms-cv">
+<h3><a class="toc-backref" href="#id46">Transforms (CV)</a><a class="headerlink" href="#transforms-cv" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="compose">
-<h4><a class="toc-backref" href="#id52">Compose</a><a class="headerlink" href="#compose" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id47">Compose</a><a class="headerlink" href="#compose" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.data.cv.transforms.torch.Compose">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.transforms.torch.</code><code class="sig-name descname">Compose</code><span class="sig-paren">(</span><em class="sig-param">transforms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/torch.html#Compose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.torch.Compose" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.cv.transforms.torch.Compose">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.transforms.torch.</code><code class="sig-name descname">Compose</code><span class="sig-paren">(</span><em class="sig-param">transforms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/torch.html#Compose"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.torch.Compose" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Composes several transforms together.</p>
 <dl class="method">
-<dt id="catalyst.data.cv.transforms.torch.Compose.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">transforms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/torch.html#Compose.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.torch.Compose.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.cv.transforms.torch.Compose.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">transforms</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/torch.html#Compose.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.torch.Compose.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>transforms</strong> – list of transforms to compose.</p>
@@ -1967,11 +1936,54 @@ to <code class="docutils literal notranslate"><span class="pre">torch.tensor</sp
 </dd></dl>
 
 </div>
-<div class="section" id="normalize">
-<h4><a class="toc-backref" href="#id53">Normalize</a><a class="headerlink" href="#normalize" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="imagetotensor">
+<h4><a class="toc-backref" href="#id48">ImageToTensor</a><a class="headerlink" href="#imagetotensor" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.data.cv.transforms.torch.Normalize">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.transforms.torch.</code><code class="sig-name descname">Normalize</code><span class="sig-paren">(</span><em class="sig-param">mean</em>, <em class="sig-param">std</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/torch.html#Normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.torch.Normalize" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.transforms.albumentations.</code><code class="sig-name descname">ImageToTensor</code><span class="sig-paren">(</span><em class="sig-param">move_channels_dim: bool = True</em>, <em class="sig-param">always_apply: bool = False</em>, <em class="sig-param">p: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/albumentations.html#ImageToTensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">albumentations.pytorch.transforms.ToTensorV2</span></code></p>
+<p>Casts <code class="docutils literal notranslate"><span class="pre">numpy.array</span></code> to <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>.</p>
+<dl class="method">
+<dt id="catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">move_channels_dim: bool = True</em>, <em class="sig-param">always_apply: bool = False</em>, <em class="sig-param">p: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/albumentations.html#ImageToTensor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>move_channels_dim</strong> – if <code class="docutils literal notranslate"><span class="pre">False</span></code>, casts numpy array
+to <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code>, but do not move channels dim</p></li>
+<li><p><strong>always_apply</strong> – need to apply this transform anyway</p></li>
+<li><p><strong>p</strong> – probability for this transform</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor.apply">
+<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param">img: numpy.ndarray</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/albumentations.html#ImageToTensor.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the transform to the image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor.apply_to_mask">
+<code class="sig-name descname">apply_to_mask</code><span class="sig-paren">(</span><em class="sig-param">mask: numpy.ndarray</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/albumentations.html#ImageToTensor.apply_to_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor.apply_to_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the transform to the mask.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor.get_transform_init_args_names">
+<code class="sig-name descname">get_transform_init_args_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; tuple<a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/albumentations.html#ImageToTensor.get_transform_init_args_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor.get_transform_init_args_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get transform init args names.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="normalize">
+<h4><a class="toc-backref" href="#id49">Normalize</a><a class="headerlink" href="#normalize" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.data.cv.transforms.torch.Normalize">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.transforms.torch.</code><code class="sig-name descname">Normalize</code><span class="sig-paren">(</span><em class="sig-param">mean</em>, <em class="sig-param">std</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/torch.html#Normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.torch.Normalize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Normalize a tensor image with mean and standard deviation.</p>
 <p>Given mean: <code class="docutils literal notranslate"><span class="pre">(mean[1],...,mean[n])</span></code> and std: <code class="docutils literal notranslate"><span class="pre">(std[1],..,std[n])</span></code>
@@ -1986,8 +1998,8 @@ for <code class="docutils literal notranslate"><span class="pre">n</span></code>
 </dl>
 </div>
 <dl class="method">
-<dt id="catalyst.data.cv.transforms.torch.Normalize.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">mean</em>, <em class="sig-param">std</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/torch.html#Normalize.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.torch.Normalize.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.cv.transforms.torch.Normalize.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">mean</em>, <em class="sig-param">std</em>, <em class="sig-param">inplace=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/torch.html#Normalize.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.torch.Normalize.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2002,31 +2014,17 @@ for <code class="docutils literal notranslate"><span class="pre">n</span></code>
 </dd></dl>
 
 </div>
-<div class="section" id="totensor">
-<h4><a class="toc-backref" href="#id54">ToTensor</a><a class="headerlink" href="#totensor" title="Permalink to this headline">¶</a></h4>
-<dl class="class">
-<dt id="catalyst.data.cv.transforms.torch.ToTensor">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.transforms.torch.</code><code class="sig-name descname">ToTensor</code><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/torch.html#ToTensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.torch.ToTensor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Convert a <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> to tensor.
-Converts numpy.ndarray (H x W x C) in the range [0, 255] to a
-torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
-if the numpy.ndarray has dtype = np.uint8
-In the other cases, tensors are returned without scaling.</p>
-</dd></dl>
-
-</div>
 <div class="section" id="oneofperbatch">
-<h4><a class="toc-backref" href="#id55">OneOfPerBatch</a><a class="headerlink" href="#oneofperbatch" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id50">OneOfPerBatch</a><a class="headerlink" href="#oneofperbatch" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.data.cv.transforms.kornia.OneOfPerBatch">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.transforms.kornia.</code><code class="sig-name descname">OneOfPerBatch</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerBatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerBatch" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.cv.transforms.kornia.OneOfPerBatch">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.transforms.kornia.</code><code class="sig-name descname">OneOfPerBatch</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/kornia.html#OneOfPerBatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.kornia.OneOfPerBatch" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Select one of tensor transforms and apply it batch-wise.</p>
 <dl class="method">
-<dt id="catalyst.data.cv.transforms.kornia.OneOfPerBatch.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerBatch.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerBatch.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method for the <a class="reference internal" href="#catalyst.data.cv.transforms.kornia.OneOfPerBatch" title="catalyst.data.cv.transforms.kornia.OneOfPerBatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneOfPerBatch</span></code></a> transform.</p>
+<dt id="catalyst.contrib.data.cv.transforms.kornia.OneOfPerBatch.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/kornia.html#OneOfPerBatch.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.kornia.OneOfPerBatch.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method for the <a class="reference internal" href="#catalyst.contrib.data.cv.transforms.kornia.OneOfPerBatch" title="catalyst.contrib.data.cv.transforms.kornia.OneOfPerBatch"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneOfPerBatch</span></code></a> transform.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>transforms</strong> – list of kornia transformations to compose.
@@ -2037,8 +2035,8 @@ Actually, any <code class="docutils literal notranslate"><span class="pre">nn.Mo
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.data.cv.transforms.kornia.OneOfPerBatch.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]], params: Optional[Dict[str, torch.Tensor]] = None, return_transform: Optional[bool] = None</em><span class="sig-paren">)</span> &#x2192; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerBatch.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerBatch.forward" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.cv.transforms.kornia.OneOfPerBatch.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]], params: Optional[Dict[str, torch.Tensor]] = None, return_transform: Optional[bool] = None</em><span class="sig-paren">)</span> &#x2192; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]<a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/kornia.html#OneOfPerBatch.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.kornia.OneOfPerBatch.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply transform.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2060,16 +2058,16 @@ please check kornia documentation</p></li>
 
 </div>
 <div class="section" id="oneofpersample">
-<h4><a class="toc-backref" href="#id56">OneOfPerSample</a><a class="headerlink" href="#oneofpersample" title="Permalink to this headline">¶</a></h4>
+<h4><a class="toc-backref" href="#id51">OneOfPerSample</a><a class="headerlink" href="#oneofpersample" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.data.cv.transforms.kornia.OneOfPerSample">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.cv.transforms.kornia.</code><code class="sig-name descname">OneOfPerSample</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerSample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerSample" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.cv.transforms.kornia.OneOfPerSample">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.transforms.kornia.</code><code class="sig-name descname">OneOfPerSample</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/kornia.html#OneOfPerSample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.kornia.OneOfPerSample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
 <p>Select one of tensor transforms to apply sample-wise.</p>
 <dl class="method">
-<dt id="catalyst.data.cv.transforms.kornia.OneOfPerSample.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerSample.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerSample.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Constructor method for the <a class="reference internal" href="#catalyst.data.cv.transforms.kornia.OneOfPerSample" title="catalyst.data.cv.transforms.kornia.OneOfPerSample"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneOfPerSample</span></code></a> transform.</p>
+<dt id="catalyst.contrib.data.cv.transforms.kornia.OneOfPerSample.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">transforms: Iterable[Union[kornia.augmentation.base.AugmentationBase2D, kornia.augmentation.base.AugmentationBase3D]]</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/kornia.html#OneOfPerSample.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.kornia.OneOfPerSample.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method for the <a class="reference internal" href="#catalyst.contrib.data.cv.transforms.kornia.OneOfPerSample" title="catalyst.contrib.data.cv.transforms.kornia.OneOfPerSample"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneOfPerSample</span></code></a> transform.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>transforms</strong> – list of kornia transformations to compose.
@@ -2080,8 +2078,8 @@ Actually, any <code class="docutils literal notranslate"><span class="pre">nn.Mo
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.data.cv.transforms.kornia.OneOfPerSample.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]], params: Optional[Dict[str, torch.Tensor]] = None, return_transform: Optional[bool] = None</em><span class="sig-paren">)</span> &#x2192; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]<a class="reference internal" href="../_modules/catalyst/data/cv/transforms/kornia.html#OneOfPerSample.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.cv.transforms.kornia.OneOfPerSample.forward" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.cv.transforms.kornia.OneOfPerSample.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]], params: Optional[Dict[str, torch.Tensor]] = None, return_transform: Optional[bool] = None</em><span class="sig-paren">)</span> &#x2192; Union[torch.Tensor, Tuple[torch.Tensor, torch.Tensor]]<a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/kornia.html#OneOfPerSample.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.kornia.OneOfPerSample.forward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply transform.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2102,66 +2100,91 @@ please check kornia documentation</p></li>
 </dd></dl>
 
 </div>
-</div>
-</div>
-<div class="section" id="module-catalyst.data.nlp">
-<span id="natural-language-processing-extensions"></span><h2><a class="toc-backref" href="#id57">Natural Language Processing Extensions</a><a class="headerlink" href="#module-catalyst.data.nlp" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="datasets">
-<h3><a class="toc-backref" href="#id58">Datasets</a><a class="headerlink" href="#datasets" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="languagemodelingdataset">
-<h4><a class="toc-backref" href="#id59">LanguageModelingDataset</a><a class="headerlink" href="#languagemodelingdataset" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="tensortoimage">
+<h4><a class="toc-backref" href="#id52">TensorToImage</a><a class="headerlink" href="#tensortoimage" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.data.nlp.dataset.language_modeling.LanguageModelingDataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.nlp.dataset.language_modeling.</code><code class="sig-name descname">LanguageModelingDataset</code><span class="sig-paren">(</span><em class="sig-param">texts: Iterable[str], tokenizer: Union[str, transformers.tokenization_utils.PreTrainedTokenizer], max_seq_length: int = None, sort: bool = True, lazy: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/nlp/dataset/language_modeling.html#LanguageModelingDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.nlp.dataset.language_modeling.LanguageModelingDataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
-<p>Dataset for (masked) language model task.
-Can sort sequnces for efficient padding.</p>
+<dt id="catalyst.contrib.data.cv.transforms.albumentations.TensorToImage">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.transforms.albumentations.</code><code class="sig-name descname">TensorToImage</code><span class="sig-paren">(</span><em class="sig-param">denormalize: bool = False</em>, <em class="sig-param">move_channels_dim: bool = True</em>, <em class="sig-param">always_apply: bool = False</em>, <em class="sig-param">p: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/albumentations.html#TensorToImage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.albumentations.TensorToImage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">albumentations.core.transforms_interface.ImageOnlyTransform</span></code></p>
+<p>Casts <code class="docutils literal notranslate"><span class="pre">torch.tensor</span></code> to <code class="docutils literal notranslate"><span class="pre">numpy.array</span></code>.</p>
 <dl class="method">
-<dt id="catalyst.data.nlp.dataset.language_modeling.LanguageModelingDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">texts: Iterable[str], tokenizer: Union[str, transformers.tokenization_utils.PreTrainedTokenizer], max_seq_length: int = None, sort: bool = True, lazy: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/nlp/dataset/language_modeling.html#LanguageModelingDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.nlp.dataset.language_modeling.LanguageModelingDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.contrib.data.cv.transforms.albumentations.TensorToImage.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">denormalize: bool = False</em>, <em class="sig-param">move_channels_dim: bool = True</em>, <em class="sig-param">always_apply: bool = False</em>, <em class="sig-param">p: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/albumentations.html#TensorToImage.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.albumentations.TensorToImage.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>texts</strong> – Iterable object with text</p></li>
-<li><p><strong>tokenizer</strong> (<em>str</em><em> or </em><em>tokenizer</em>) – pre trained
-huggingface tokenizer or model name</p></li>
-<li><p><strong>max_seq_length</strong> – max sequence length to tokenize</p></li>
-<li><p><strong>sort</strong> – If True then sort all sequences by length
-for efficient padding</p></li>
-<li><p><strong>lazy</strong> – If True then tokenize and encode sequence
-in __getitem__ method
-else will tokenize in __init__ also
-if set to true sorting is unavialible</p></li>
+<li><p><strong>denormalize</strong> – if True, multiply image(s) by ImageNet std and
+add ImageNet mean</p></li>
+<li><p><strong>move_channels_dim</strong> – if True, convert [B]xCxHxW tensor
+to [B]xHxWxC format</p></li>
+<li><p><strong>always_apply</strong> – need to apply this transform anyway</p></li>
+<li><p><strong>p</strong> – probability for this transform</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
+<dl class="method">
+<dt id="catalyst.contrib.data.cv.transforms.albumentations.TensorToImage.apply">
+<code class="sig-name descname">apply</code><span class="sig-paren">(</span><em class="sig-param">img: torch.Tensor</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/albumentations.html#TensorToImage.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.albumentations.TensorToImage.apply" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply the transform to the image.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
-<div class="section" id="textclassificationdataset">
-<h4><a class="toc-backref" href="#id60">TextClassificationDataset</a><a class="headerlink" href="#textclassificationdataset" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="totensor">
+<h4><a class="toc-backref" href="#id53">ToTensor</a><a class="headerlink" href="#totensor" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
-<dt id="catalyst.data.nlp.dataset.text_classification.TextClassificationDataset">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.data.nlp.dataset.text_classification.</code><code class="sig-name descname">TextClassificationDataset</code><span class="sig-paren">(</span><em class="sig-param">texts: List[str], labels: List[str] = None, label_dict: Mapping[str, int] = None, max_seq_length: int = 512, model_name: str = 'distilbert-base-uncased'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/nlp/dataset/text_classification.html#TextClassificationDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.nlp.dataset.text_classification.TextClassificationDataset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.utils.data.dataset.Dataset</span></code></p>
-<p>Wrapper around Torch Dataset to perform text classification.</p>
+<dt id="catalyst.contrib.data.cv.transforms.torch.ToTensor">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.transforms.torch.</code><code class="sig-name descname">ToTensor</code><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/transforms/torch.html#ToTensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.transforms.torch.ToTensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Convert a <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> to tensor.
+Converts numpy.ndarray (H x W x C) in the range [0, 255] to a
+torch.FloatTensor of shape (C x H x W) in the range [0.0, 1.0]
+if the numpy.ndarray has dtype = np.uint8
+In the other cases, tensors are returned without scaling.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="datasets-cv">
+<h3><a class="toc-backref" href="#id54">Datasets (CV)</a><a class="headerlink" href="#datasets-cv" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="imagefolderdataset">
+<h4><a class="toc-backref" href="#id55">ImageFolderDataset</a><a class="headerlink" href="#imagefolderdataset" title="Permalink to this headline">¶</a></h4>
+<dl class="class">
+<dt id="catalyst.contrib.data.cv.dataset.ImageFolderDataset">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.contrib.data.cv.dataset.</code><code class="sig-name descname">ImageFolderDataset</code><span class="sig-paren">(</span><em class="sig-param">rootpath: str</em>, <em class="sig-param">target_key: str = 'targets'</em>, <em class="sig-param">dir2class: Optional[Mapping[str</em>, <em class="sig-param">int]] = None</em>, <em class="sig-param">dict_transform: Optional[Callable[Dict</em>, <em class="sig-param">Dict]] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/data/cv/dataset.html#ImageFolderDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.dataset.ImageFolderDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.data.dataset.torch.PathsDataset" title="catalyst.data.dataset.torch.PathsDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.data.dataset.torch.PathsDataset</span></code></a></p>
+<p>Dataset class that derives targets from samples filesystem paths.
+Dataset structure should be the following:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>rootpat/
+<span class="p">|</span>-- class1/  <span class="c1"># folder of N images</span>
+<span class="p">|</span>   <span class="p">|</span>-- image11
+<span class="p">|</span>   <span class="p">|</span>-- image12
+<span class="p">|</span>   ...
+<span class="p">|</span>   <span class="sb">`</span>-- image1N
+...
+<span class="sb">`</span>-- classM/  <span class="c1"># folder of K images</span>
+    <span class="p">|</span>-- imageM1
+    <span class="p">|</span>-- imageM2
+    ...
+    <span class="sb">`</span>-- imageMK
+</pre></div>
+</div>
 <dl class="method">
-<dt id="catalyst.data.nlp.dataset.text_classification.TextClassificationDataset.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">texts: List[str], labels: List[str] = None, label_dict: Mapping[str, int] = None, max_seq_length: int = 512, model_name: str = 'distilbert-base-uncased'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/data/nlp/dataset/text_classification.html#TextClassificationDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.data.nlp.dataset.text_classification.TextClassificationDataset.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dt id="catalyst.contrib.data.cv.dataset.ImageFolderDataset.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">rootpath: str</em>, <em class="sig-param">target_key: str = 'targets'</em>, <em class="sig-param">dir2class: Optional[Mapping[str</em>, <em class="sig-param">int]] = None</em>, <em class="sig-param">dict_transform: Optional[Callable[Dict</em>, <em class="sig-param">Dict]] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/contrib/data/cv/dataset.html#ImageFolderDataset.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.data.cv.dataset.ImageFolderDataset.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor method for the <a class="reference internal" href="#catalyst.contrib.data.cv.dataset.ImageFolderDataset" title="catalyst.contrib.data.cv.dataset.ImageFolderDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">ImageFolderDataset</span></code></a> class.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>texts</strong> – a list with texts to classify or to train the
-classifier on</p></li>
-<li><p><strong>List</strong><strong>[</strong><strong>str</strong><strong>]</strong> (<em>labels</em>) – a list with classification labels (optional)</p></li>
-<li><p><strong>label_dict</strong> – a dictionary mapping class names to class ids,
-to be passed to the validation data (optional)</p></li>
-<li><p><strong>max_seq_length</strong> – maximal sequence length in tokens,
-texts will be stripped to this length</p></li>
-<li><p><strong>model_name</strong> – transformer model name, needed to perform
-appropriate tokenization</p></li>
+<li><p><strong>rootpath</strong> – root directory of dataset</p></li>
+<li><p><strong>target_key</strong> – key to use to store target label</p></li>
+<li><p><strong>dir2class</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – mapping from folder name
+to class index</p></li>
+<li><p><strong>dict_transform</strong> (<em>Callable</em><em>[</em><em>[</em><em>Dict</em><em>]</em><em>, </em><em>Dict</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – transforms
+to use on dict</p></li>
 </ul>
 </dd>
 </dl>
@@ -2214,13 +2237,7 @@ appropriate tokenization</p></li>
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
 <li><a class="reference internal" href="#">Data</a><ul>
-<li><a class="reference internal" href="#scripts">Scripts</a></li>
-<li><a class="reference internal" href="#augmentors">Augmentors</a><ul>
-<li><a class="reference internal" href="#augmentor">Augmentor</a></li>
-<li><a class="reference internal" href="#augmentorcompose">AugmentorCompose</a></li>
-<li><a class="reference internal" href="#augmentorkeys">AugmentorKeys</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#module-catalyst.data">Main</a></li>
 <li><a class="reference internal" href="#collate-functions">Collate Functions</a><ul>
 <li><a class="reference internal" href="#filteringcollatefn">FilteringCollateFn</a></li>
 </ul>
@@ -2251,55 +2268,52 @@ appropriate tokenization</p></li>
 </li>
 <li><a class="reference internal" href="#loader">Loader</a><ul>
 <li><a class="reference internal" href="#batchlimitloaderwrapper">BatchLimitLoaderWrapper</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#readers">Readers</a><ul>
-<li><a class="reference internal" href="#readerspec">ReaderSpec</a></li>
-<li><a class="reference internal" href="#scalarreader">ScalarReader</a></li>
-<li><a class="reference internal" href="#lambdareader">LambdaReader</a></li>
-<li><a class="reference internal" href="#readercompose">ReaderCompose</a></li>
+<li><a class="reference internal" href="#batchprefetchloaderwrapper">BatchPrefetchLoaderWrapper</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#samplers">Samplers</a><ul>
 <li><a class="reference internal" href="#balancebatchsampler">BalanceBatchSampler</a></li>
 <li><a class="reference internal" href="#balanceclasssampler">BalanceClassSampler</a></li>
 <li><a class="reference internal" href="#distributedsamplerwrapper">DistributedSamplerWrapper</a></li>
+<li><a class="reference internal" href="#dynamicbalanceclasssampler">DynamicBalanceClassSampler</a></li>
 <li><a class="reference internal" href="#dynamiclenbatchsampler">DynamicLenBatchSampler</a></li>
 <li><a class="reference internal" href="#miniepochsampler">MiniEpochSampler</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#computer-vision-extensions">Computer Vision Extensions</a><ul>
-<li><a class="reference internal" href="#id1">Dataset</a><ul>
-<li><a class="reference internal" href="#imagefolderdataset">ImageFolderDataset</a></li>
+<li><a class="reference internal" href="#module-catalyst.contrib.data">Contrib</a><ul>
+<li><a class="reference internal" href="#augmentors">Augmentors</a><ul>
+<li><a class="reference internal" href="#augmentor">Augmentor</a></li>
+<li><a class="reference internal" href="#augmentorcompose">AugmentorCompose</a></li>
+<li><a class="reference internal" href="#augmentorkeys">AugmentorKeys</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#mixins">Mixins</a><ul>
+<li><a class="reference internal" href="#readers">Readers</a><ul>
+<li><a class="reference internal" href="#ireader">IReader</a></li>
+<li><a class="reference internal" href="#imagereader-cv">ImageReader (CV)</a></li>
+<li><a class="reference internal" href="#lambdareader">LambdaReader</a></li>
+<li><a class="reference internal" href="#maskreader-cv">MaskReader (CV)</a></li>
+<li><a class="reference internal" href="#scalarreader">ScalarReader</a></li>
+<li><a class="reference internal" href="#readercompose">ReaderCompose</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mixins-cv">Mixins (CV)</a><ul>
 <li><a class="reference internal" href="#blurmixin">BlurMixin</a></li>
 <li><a class="reference internal" href="#flaremixin">FlareMixin</a></li>
 <li><a class="reference internal" href="#rotatemixin">RotateMixin</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#id2">Readers</a><ul>
-<li><a class="reference internal" href="#imagereader">ImageReader</a></li>
-<li><a class="reference internal" href="#maskreader">MaskReader</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#transforms">Transforms</a><ul>
-<li><a class="reference internal" href="#tensortoimage">TensorToImage</a></li>
-<li><a class="reference internal" href="#imagetotensor">ImageToTensor</a></li>
+<li><a class="reference internal" href="#transforms-cv">Transforms (CV)</a><ul>
 <li><a class="reference internal" href="#compose">Compose</a></li>
+<li><a class="reference internal" href="#imagetotensor">ImageToTensor</a></li>
 <li><a class="reference internal" href="#normalize">Normalize</a></li>
-<li><a class="reference internal" href="#totensor">ToTensor</a></li>
 <li><a class="reference internal" href="#oneofperbatch">OneOfPerBatch</a></li>
 <li><a class="reference internal" href="#oneofpersample">OneOfPerSample</a></li>
+<li><a class="reference internal" href="#tensortoimage">TensorToImage</a></li>
+<li><a class="reference internal" href="#totensor">ToTensor</a></li>
 </ul>
 </li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-catalyst.data.nlp">Natural Language Processing Extensions</a><ul>
-<li><a class="reference internal" href="#datasets">Datasets</a><ul>
-<li><a class="reference internal" href="#languagemodelingdataset">LanguageModelingDataset</a></li>
-<li><a class="reference internal" href="#textclassificationdataset">TextClassificationDataset</a></li>
+<li><a class="reference internal" href="#datasets-cv">Datasets (CV)</a><ul>
+<li><a class="reference internal" href="#imagefolderdataset">ImageFolderDataset</a></li>
 </ul>
 </li>
 </ul>
