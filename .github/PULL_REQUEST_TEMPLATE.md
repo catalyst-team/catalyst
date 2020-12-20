@@ -1,4 +1,4 @@
-## Before submitting
+## Before submitting (checklist)
 
 - [ ] Was this discussed/approved via a Github issue? (no need for typos and docs improvements)
 - [ ] Did you read the [contribution guide](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md)?

@@ -71,6 +71,9 @@ except UnsupportedNodeError as ex:
 try:
     import imageio
     from catalyst.contrib.callbacks.mask_inference import InferMaskCallback
+    from catalyst.contrib.callbacks.draw_masks_callback import (
+        DrawMasksCallback,
+    )
 except ModuleNotFoundError as ex:
     if SETTINGS.cv_required:
         logger.warning(

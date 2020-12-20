@@ -243,6 +243,9 @@ class BatchMetricCallback(IBatchMetricCallback):
             **metrics_kwargs: extra metric params
                 to pass for metric computation
         """
+        # @TODO:
+        # - add ~(transform: Callable = lambda x: x) for runner
+        # - add ~(transform: Callable = lambda x: x) for metrics output
         super().__init__(
             prefix=prefix,
             input_key=input_key,

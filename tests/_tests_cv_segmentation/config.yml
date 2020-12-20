@@ -78,5 +78,12 @@ stages:
         callback: IouCallback
         input_key: mask
 
+      visualise:
+        callback: DrawMasksCallback
+        input_image_key: "image"
+        input_mask_key: "mask"
+        output_key: "logits"
+        summary_step: 300
+
       saver:
         callback: CheckpointCallback

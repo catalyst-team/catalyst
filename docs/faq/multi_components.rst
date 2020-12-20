@@ -224,8 +224,8 @@ Multi-criterion example:
     optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
     # <--- multi-criterion setup --->
     criterion = {
-        "multi-class": torch.nn.CrossEntropyLoss(),
-        "multi-label": torch.nn.BCEWithLogitsLoss(),
+        "multiclass": torch.nn.CrossEntropyLoss(),
+        "multilabel": torch.nn.BCEWithLogitsLoss(),
     }
     # <--- multi-criterion setup --->
 
@@ -246,9 +246,9 @@ Multi-criterion example:
             y_hat = self.model(x.view(x.size(0), -1))
 
             # <--- multi-criterion usage --->
-            loss_multi_class = self.criterion["multi-class"](y_hat, y)
-            loss_multi_label = self.criterion["multi-label"](y_hat, F.one_hot(y, 10).to(torch.float32))
-            loss = loss_multi_class + loss_multi_label
+            loss_multiclass = self.criterion["multiclass"](y_hat, y)
+            loss_multilabel = self.criterion["multilabel"](y_hat, F.one_hot(y, 10).to(torch.float32))
+            loss = loss_multiclass + loss_multilabel
             # <--- multi-criterion usage --->
 
             accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
