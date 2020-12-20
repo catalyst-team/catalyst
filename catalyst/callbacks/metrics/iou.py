@@ -17,7 +17,7 @@ class IouCallback(BatchMetricCallback):
         output_key: str = "logits",
         prefix: str = "iou",
         activation: str = "Sigmoid",
-        log_per_class: bool = False,
+        per_class: bool = False,
         class_args: List[str] = None,
         **kwargs,
     ):
@@ -32,7 +32,7 @@ class IouCallback(BatchMetricCallback):
             threshold: threshold for outputs binarization
             activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
-            log_per_class: boolean flag to log per class metrics,
+            per_class: boolean flag to log per class metrics,
                 or use mean/macro statistics otherwise
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
@@ -47,7 +47,7 @@ class IouCallback(BatchMetricCallback):
             metric_fn=iou, activation=activation
         )
         metric_fn = wrap_class_metric2dict(
-            metric_fn, log_per_class=log_per_class, class_args=class_args
+            metric_fn, per_class=per_class, class_args=class_args
         )
         super().__init__(
             prefix=prefix,

@@ -421,7 +421,7 @@ def wrap_metric_fn_with_activation(
 
 def wrap_class_metric2dict(
     metric_fn: Callable,
-    log_per_class: bool = False,
+    per_class: bool = False,
     class_args: Sequence[str] = None,
 ) -> Callable:
     """# noqa: D202
@@ -432,7 +432,7 @@ def wrap_class_metric2dict(
 
     Args:
         metric_fn: metric function to compute
-        log_per_class: boolean flag to log per class metrics,
+        per_class: boolean flag to log per class metrics,
             or use mean/macro statistics otherwise
         class_args: class names for logging,
             default: None - class indexes will be used.
@@ -440,13 +440,13 @@ def wrap_class_metric2dict(
     Returns:
         wrapped metric function with List[Dict] output
     """
-    if log_per_class is False and class_args is not None:
+    if per_class is False and class_args is not None:
         logger.warning(
-            "``log_per_class`` is disabled, but ``class_args`` are not None"
+            "``per_class`` is disabled, but ``class_args`` are not None"
             "check the experiment conditions."
         )
 
-    if log_per_class:
+    if per_class:
 
         def class_metric_with_dict_output(*args, **kwargs):
             output = metric_fn(*args, **kwargs)

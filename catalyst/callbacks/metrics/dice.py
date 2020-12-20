@@ -27,7 +27,7 @@ class DiceCallback(BatchMetricCallback):
         output_key: str = "logits",
         prefix: str = "dice",
         activation: str = "Sigmoid",
-        log_per_class: bool = False,
+        per_class: bool = False,
         class_args: List[str] = None,
         **kwargs,
     ):
@@ -40,7 +40,7 @@ class DiceCallback(BatchMetricCallback):
             prefix: key to store in logs
             activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
-            log_per_class: boolean flag to log per class metrics,
+            per_class: boolean flag to log per class metrics,
                 or use mean/macro statistics otherwise
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
@@ -55,7 +55,7 @@ class DiceCallback(BatchMetricCallback):
             metric_fn=dice, activation=activation
         )
         metric_fn = wrap_class_metric2dict(
-            metric_fn, log_per_class=log_per_class, class_args=class_args
+            metric_fn, per_class=per_class, class_args=class_args
         )
         super().__init__(
             prefix=prefix,

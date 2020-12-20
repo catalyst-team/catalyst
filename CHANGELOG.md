@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 
-## [YY.MM.R] - YYYY-MM-DD
+## [20.12] - 2020-12-20
 
 ### Added
 
@@ -16,10 +16,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - ([#998](https://github.com/catalyst-team/catalyst/pull/998))
     - ``reciprocal_rank`` metric 
     - unified recsys metrics preprocessing 
--  ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
+-  ([#1018](https://github.com/catalyst-team/catalyst/pull/1018))
     - readme examples for all supported metrics under ``catalyst.metrics``
     - ``wrap_metric_fn_with_activation`` for model outputs wrapping with activation
     -  extra tests for metrics
+- ([#1039](https://github.com/catalyst-team/catalyst/pull/1039))
+    - ``per_class=False`` option for metrics callbacks
+    - ``PrecisionCallack``, ``RecallCallack`` for multiclass problems
+    - extra docs
 
 ### Changed
 
