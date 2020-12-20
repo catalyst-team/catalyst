@@ -160,7 +160,7 @@ class OptimizerCallback(IOptimizerCallback):
                 grad_clip_fn(group["params"])
 
         # optimize parameters
-        self._optimizer_step_fn()
+        self._optimizer_step_fn(optimizer)
 
     def on_stage_start(self, runner: "IRunner") -> None:
         """Resolve amp/apex settings, prepare optimizer and scaler
@@ -185,7 +185,7 @@ class OptimizerCallback(IOptimizerCallback):
         self._optimizer = get_attr(
             runner, key="optimizer", inner_key=self.optimizer_key
         )
-        self._optimizer_step_fn = runner._engine.optimizer_step
+        self._optimizer_step_fn = runner.experiment.engine.optimizer_step
         # # device based optimization step
         # if runner.device.type == "xla":
         #     self._optimizer_step_fn = self._optimizer_step_tpu

@@ -4,9 +4,10 @@ from pytest import mark
 
 import torch
 import torch.nn as nn
+import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.callbacks import CriterionCallback
+from catalyst.callbacks import OptimizerCallback, CriterionCallback
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.dl import SupervisedRunner
 from catalyst.engines import DeviceEngine
@@ -62,6 +63,10 @@ def _model_fn():
     return DummyModel(4, 1)
 
 
+def _optimizer_fn(parameters):
+    return optim.SGD(parameters, lr=1e-3)
+
+
 class DeviceCheckCallback(Callback):
     def __init__(self, assert_device: str):
         super().__init__(order=CallbackOrder.internal)
@@ -72,6 +77,26 @@ class DeviceCheckCallback(Callback):
         assert model_device == self.device
 
 
+class LossMinimizationCallback(Callback):
+    def __init__(self, key="loss"):
+        super().__init__(order=CallbackOrder.metric)
+        self.key = key
+        self.container = None
+
+    def on_epoch_start(self, runner: "IRunner"):
+        self.container = []
+
+    def on_batch_end(self, runner: "IRunner"):
+        self.container.append(runner.batch_metrics[self.key].item())
+
+    def on_epoch_end(self, runner: "IRunner"):
+        print(self.container)
+        assert all(
+            a >= b for a, b in zip(self.container[:-1], self.container[1:])
+        )
+        self.container = []
+
+
 def run_train_with_device(device):
     dataset = DummyDataset(10)
     loader = DataLoader(dataset, batch_size=4)
@@ -79,9 +104,15 @@ def run_train_with_device(device):
     exp = Experiment(
         model=_model_fn,
         criterion=nn.MSELoss(),
+        optimizer=_optimizer_fn,
         loaders={"train": loader, "valid": loader},
         main_metric="loss",
-        callbacks=[CriterionCallback(), DeviceCheckCallback(device)],
+        callbacks=[
+            CriterionCallback(),
+            OptimizerCallback(),
+            DeviceCheckCallback(device),
+            LossMinimizationCallback("loss"),
+        ],
         engine=DeviceEngine(device),
     )
     runner.run_experiment(exp)
