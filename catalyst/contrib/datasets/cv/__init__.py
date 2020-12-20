@@ -15,3 +15,7 @@ from catalyst.contrib.datasets.cv.imagewoof import (
     Imagewoof160,
     Imagewoof320,
 )
+from catalyst.contrib.datasets.cv.market1501 import (
+    Market1501MLDataset,
+    Market1501QGDataset,
+)

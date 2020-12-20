@@ -116,7 +116,7 @@ def test_metric_greater(distance_matrix, conformity_matrix, topk, expected):
         "query_embeddings",
         "gallery_embeddings",
         "conformity_matrix",
-        "mask",
+        "available_samples",
         "topk",
         "expected",
     ),
@@ -175,7 +175,7 @@ def test_masked_cmc_score(
     query_embeddings,
     gallery_embeddings,
     conformity_matrix,
-    mask,
+    available_samples,
     topk,
     expected,
 ):
@@ -183,7 +183,7 @@ def test_masked_cmc_score(
         query_embeddings=query_embeddings,
         gallery_embeddings=gallery_embeddings,
         conformity_matrix=conformity_matrix,
-        available_samples=mask,
+        available_samples=available_samples,
         topk=topk,
     )
     assert score == expected
@@ -194,7 +194,7 @@ def test_masked_cmc_score(
         "query_embeddings",
         "gallery_embeddings",
         "conformity_matrix",
-        "mask",
+        "available_samples",
         "topk",
     ),
     (
@@ -213,13 +213,21 @@ def test_masked_cmc_score(
     ),
 )
 def test_masked_score(
-    query_embeddings, gallery_embeddings, conformity_matrix, mask, topk,
-):
+    query_embeddings,
+    gallery_embeddings,
+    conformity_matrix,
+    available_samples,
+    topk,
+) -> None:
+    """
+    In this test we just check that masked_cmc_score is equal to cmc_score
+    when all the samples are available for for scoring.
+    """
     masked_score = masked_cmc_score(
         query_embeddings=query_embeddings,
         gallery_embeddings=gallery_embeddings,
         conformity_matrix=conformity_matrix,
-        available_samples=mask,
+        available_samples=available_samples,
         topk=topk,
     )
     score = cmc_score(
