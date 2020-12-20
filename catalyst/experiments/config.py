@@ -9,7 +9,6 @@ from torch.utils.data import DataLoader
 from catalyst.contrib.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
-
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.engines import DeviceEngine, IEngine
 from catalyst.experiments.functional import (
@@ -19,7 +18,6 @@ from catalyst.experiments.functional import (
     load_optimizer_from_checkpoint,
     process_callbacks,
 )
-
 from catalyst.registry import (
     CALLBACKS,
     CRITERIONS,
