@@ -320,25 +320,16 @@
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.batch_overfit</span> <span class="kn">import</span> <span class="n">BatchOverfitCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.checkpoint</span> <span class="kn">import</span> <span class="n">CheckpointCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.criterion</span> <span class="kn">import</span> <span class="n">CriterionCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.early_stop</span> <span class="kn">import</span> <span class="n">CheckRunCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.exception</span> <span class="kn">import</span> <span class="n">ExceptionCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.logging</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">ConsoleLogger</span><span class="p">,</span>
-    <span class="n">TensorboardLogger</span><span class="p">,</span>
-    <span class="n">VerboseLogger</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.metric</span> <span class="kn">import</span> <span class="n">MetricManagerCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.optimizer</span> <span class="kn">import</span> <span class="n">IOptimizerCallback</span><span class="p">,</span> <span class="n">OptimizerCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.scheduler</span> <span class="kn">import</span> <span class="n">ISchedulerCallback</span><span class="p">,</span> <span class="n">SchedulerCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.timer</span> <span class="kn">import</span> <span class="n">TimerCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.validation</span> <span class="kn">import</span> <span class="n">ValidationManagerCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.contrib.data.augmentor</span> <span class="kn">import</span> <span class="n">Augmentor</span><span class="p">,</span> <span class="n">AugmentorCompose</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.experiment</span> <span class="kn">import</span> <span class="n">IExperiment</span>
-<span class="kn">from</span> <span class="nn">catalyst.core.functional</span> <span class="kn">import</span> <span class="n">check_callback_isinstance</span>
+<span class="kn">from</span> <span class="nn">catalyst.experiments.functional</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">add_default_callbacks</span><span class="p">,</span>
+    <span class="n">do_lr_linear_scaling</span><span class="p">,</span>
+    <span class="n">get_model_parameters</span><span class="p">,</span>
+    <span class="n">load_optimizer_from_checkpoint</span><span class="p">,</span>
+    <span class="n">process_callbacks</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CALLBACKS</span><span class="p">,</span>
     <span class="n">CRITERIONS</span><span class="p">,</span>
@@ -348,11 +339,8 @@
     <span class="n">TRANSFORMS</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Criterion</span><span class="p">,</span> <span class="n">Model</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">,</span> <span class="n">Scheduler</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.checkpoint</span> <span class="kn">import</span> <span class="n">load_checkpoint</span><span class="p">,</span> <span class="n">unpack_checkpoint</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_rank</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.loaders</span> <span class="kn">import</span> <span class="n">get_loaders_from_params</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_short_hash</span><span class="p">,</span> <span class="n">get_utcnow_time</span><span class="p">,</span> <span class="n">merge_dicts</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">any2device</span><span class="p">,</span> <span class="n">get_device</span><span class="p">,</span> <span class="n">process_model_params</span>
 
 
 <div class="viewcode-block" id="ConfigExperiment"><a class="viewcode-back" href="../../../api/experiments.html#catalyst.experiments.ConfigExperiment">[docs]</a><span class="k">class</span> <span class="nc">ConfigExperiment</span><span class="p">(</span><span class="n">IExperiment</span><span class="p">):</span>
@@ -561,86 +549,49 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optimizer</span><span class="p">:</span>
         <span class="c1"># @TODO 1: refactoring; this method is too long</span>
         <span class="c1"># @TODO 2: load state dicts for schedulers &amp; criterion</span>
-        <span class="n">layerwise_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;layerwise_params&quot;</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">())</span>
-        <span class="n">no_bias_weight_decay</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;no_bias_weight_decay&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
-
-        <span class="c1"># linear scaling rule from https://arxiv.org/pdf/1706.02677.pdf</span>
+        <span class="c1"># lr linear scaling</span>
         <span class="n">lr_scaling_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;lr_linear_scaling&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">lr_scaling_params</span><span class="p">:</span>
             <span class="n">data_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">][</span><span class="s2">&quot;data_params&quot;</span><span class="p">])</span>
             <span class="n">batch_size</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">)</span>
             <span class="n">per_gpu_scaling</span> <span class="o">=</span> <span class="n">data_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;per_gpu_scaling&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-            <span class="n">distributed_rank</span> <span class="o">=</span> <span class="n">get_rank</span><span class="p">()</span>
-            <span class="n">distributed</span> <span class="o">=</span> <span class="n">distributed_rank</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
-            <span class="k">if</span> <span class="n">per_gpu_scaling</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">distributed</span><span class="p">:</span>
-                <span class="n">num_gpus</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">())</span>
-                <span class="n">batch_size</span> <span class="o">*=</span> <span class="n">num_gpus</span>
-
-            <span class="n">base_lr</span> <span class="o">=</span> <span class="n">lr_scaling_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lr&quot;</span><span class="p">)</span>
-            <span class="n">base_batch_size</span> <span class="o">=</span> <span class="n">lr_scaling_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;base_batch_size&quot;</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
-            <span class="n">lr_scaling</span> <span class="o">=</span> <span class="n">batch_size</span> <span class="o">/</span> <span class="n">base_batch_size</span>
-            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">base_lr</span> <span class="o">*</span> <span class="n">lr_scaling</span>  <span class="c1"># scale default lr</span>
+            <span class="n">lr</span><span class="p">,</span> <span class="n">lr_scaling</span> <span class="o">=</span> <span class="n">do_lr_linear_scaling</span><span class="p">(</span>
+                <span class="n">lr_scaling_params</span><span class="o">=</span><span class="n">lr_scaling_params</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+                <span class="n">per_gpu_scaling</span><span class="o">=</span><span class="n">per_gpu_scaling</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">lr_scaling</span> <span class="o">=</span> <span class="mf">1.0</span>
-
+        <span class="c1"># getting layer-wise parameters</span>
+        <span class="n">layerwise_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;layerwise_params&quot;</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">())</span>
+        <span class="n">no_bias_weight_decay</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;no_bias_weight_decay&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
         <span class="c1"># getting model parameters</span>
         <span class="n">model_key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_model&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">model_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-                <span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span>
-            <span class="p">),</span> <span class="s2">&quot;model is key-value, but optimizer has no specified model&quot;</span>
-            <span class="n">model_params</span> <span class="o">=</span> <span class="n">process_model_params</span><span class="p">(</span>
-                <span class="n">model</span><span class="p">,</span> <span class="n">layerwise_params</span><span class="p">,</span> <span class="n">no_bias_weight_decay</span><span class="p">,</span> <span class="n">lr_scaling</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">model_params</span> <span class="o">=</span> <span class="n">process_model_params</span><span class="p">(</span>
-                <span class="n">model</span><span class="p">[</span><span class="n">model_key</span><span class="p">],</span>
-                <span class="n">layerwise_params</span><span class="p">,</span>
-                <span class="n">no_bias_weight_decay</span><span class="p">,</span>
-                <span class="n">lr_scaling</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model_key</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
-            <span class="n">model_params</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">model_key_el</span> <span class="ow">in</span> <span class="n">model_key</span><span class="p">:</span>
-                <span class="n">model_params_el</span> <span class="o">=</span> <span class="n">process_model_params</span><span class="p">(</span>
-                    <span class="n">model</span><span class="p">[</span><span class="n">model_key_el</span><span class="p">],</span>
-                    <span class="n">layerwise_params</span><span class="p">,</span>
-                    <span class="n">no_bias_weight_decay</span><span class="p">,</span>
-                    <span class="n">lr_scaling</span><span class="p">,</span>
-                <span class="p">)</span>
-                <span class="n">model_params</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">model_params_el</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;unknown type of model_params&quot;</span><span class="p">)</span>
-
+        <span class="n">model_params</span> <span class="o">=</span> <span class="n">get_model_parameters</span><span class="p">(</span>
+            <span class="n">models</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">models_keys</span><span class="o">=</span><span class="n">model_key</span><span class="p">,</span>
+            <span class="n">layerwise_params</span><span class="o">=</span><span class="n">layerwise_params</span><span class="p">,</span>
+            <span class="n">no_bias_weight_decay</span><span class="o">=</span><span class="n">no_bias_weight_decay</span><span class="p">,</span>
+            <span class="n">lr_scaling</span><span class="o">=</span><span class="n">lr_scaling</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># getting load-from-previous-stage flag</span>
         <span class="n">load_from_previous_stage</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span>
             <span class="s2">&quot;load_from_previous_stage&quot;</span><span class="p">,</span> <span class="kc">False</span>
         <span class="p">)</span>
+        <span class="c1"># instantiate optimizer</span>
         <span class="n">optimizer_key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;optimizer_key&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">OPTIMIZERS</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">model_params</span><span class="p">)</span>
-
+        <span class="c1"># load from previous stage</span>
         <span class="k">if</span> <span class="n">load_from_previous_stage</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/checkpoints/best_full.pth&quot;</span>
-            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">load_checkpoint</span><span class="p">(</span><span class="n">checkpoint_path</span><span class="p">)</span>
-
-            <span class="n">dict2load</span> <span class="o">=</span> <span class="n">optimizer</span>
-            <span class="k">if</span> <span class="n">optimizer_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">dict2load</span> <span class="o">=</span> <span class="p">{</span><span class="n">optimizer_key</span><span class="p">:</span> <span class="n">optimizer</span><span class="p">}</span>
-            <span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">dict2load</span><span class="p">)</span>
-
-            <span class="c1"># move optimizer to device</span>
-            <span class="n">device</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">model_params</span><span class="p">:</span>
-                <span class="n">param</span> <span class="o">=</span> <span class="n">param</span><span class="p">[</span><span class="s2">&quot;params&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="n">optimizer_state</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">state</span><span class="p">[</span><span class="n">param</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">state_key</span><span class="p">,</span> <span class="n">state_value</span> <span class="ow">in</span> <span class="n">optimizer_state</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">optimizer_state</span><span class="p">[</span><span class="n">state_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">any2device</span><span class="p">(</span>
-                        <span class="n">state_value</span><span class="p">,</span> <span class="n">device</span>
-                    <span class="p">)</span>
-
-            <span class="c1"># update optimizer params</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">for</span> <span class="n">optimizer_param_group</span> <span class="ow">in</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">param_groups</span><span class="p">:</span>
-                    <span class="n">optimizer_param_group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">optimizer</span> <span class="o">=</span> <span class="n">load_optimizer_from_checkpoint</span><span class="p">(</span>
+                <span class="n">optimizer</span><span class="p">,</span>
+                <span class="n">checkpoint_path</span><span class="o">=</span><span class="n">checkpoint_path</span><span class="p">,</span>
+                <span class="n">checkpoint_optimizer_key</span><span class="o">=</span><span class="n">optimizer_key</span><span class="p">,</span>
+                <span class="n">model_parameters</span><span class="o">=</span><span class="n">model_params</span><span class="p">,</span>
+                <span class="n">optimizer_params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+            <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">optimizer</span>
 
@@ -801,36 +752,6 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">callback</span>
 
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_process_callbacks</span><span class="p">(</span>
-        <span class="n">callbacks</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">,</span> <span class="n">stage_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Iterate over each of the callbacks and update</span>
-<span class="sd">        appropriate parameters required for success</span>
-<span class="sd">        run of config experiment.</span>
-
-<span class="sd">        Arguments:</span>
-<span class="sd">            callbacks: finalized order of callbacks.</span>
-<span class="sd">            stage_index: number of a current stage</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">stage_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">stage_index</span> <span class="o">=</span> <span class="o">-</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="c1"># NOTE: in experiments with multiple stages need to omit</span>
-            <span class="c1">#       loading of a best model state for the first stage</span>
-            <span class="c1">#       but for the other stages by default should</span>
-            <span class="c1">#       load best state of a model</span>
-            <span class="c1"># @TODO: move this logic to ``CheckpointCallback``</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">)</span> <span class="ow">and</span> <span class="n">stage_index</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span>
-                    <span class="ow">and</span> <span class="s2">&quot;model&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span>
-                <span class="p">):</span>
-                    <span class="n">callback</span><span class="o">.</span><span class="n">load_on_stage_start</span><span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span>
-
 <div class="viewcode-block" id="ConfigExperiment.get_callbacks"><a class="viewcode-back" href="../../../api/experiments.html#catalyst.experiments.ConfigExperiment.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[Callback]&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the callbacks for a given stage.&quot;&quot;&quot;</span>
         <span class="n">callbacks_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
@@ -842,65 +763,23 @@
             <span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_callback</span><span class="p">(</span><span class="o">**</span><span class="n">callback_params</span><span class="p">)</span>
             <span class="n">callbacks</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback</span>
 
-        <span class="c1"># default_callbacks = [(Name, InterfaceClass, InstanceFactory)]</span>
-        <span class="n">default_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="n">add_default_callbacks</span><span class="p">(</span>
+            <span class="n">callbacks</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">,</span>
+            <span class="n">check_time</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_time</span><span class="p">,</span>
+            <span class="n">check_run</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_check_run</span><span class="p">,</span>
+            <span class="n">overfit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_overfit</span><span class="p">,</span>
+            <span class="n">is_infer</span><span class="o">=</span><span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">),</span>
+            <span class="n">is_logger</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">is_criterion</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;criterion_params&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+            <span class="n">is_optimizer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;optimizer_params&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+            <span class="n">is_scheduler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scheduler_params&quot;</span><span class="p">,</span> <span class="p">{}),</span>
+        <span class="p">)</span>
 
-        <span class="n">optimizer_cls</span> <span class="o">=</span> <span class="n">OptimizerCallback</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span>
-            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_verbose&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">VerboseLogger</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_time</span><span class="p">:</span>
-            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_timer&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">TimerCallback</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_run</span><span class="p">:</span>
-            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_check&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">CheckRunCallback</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overfit</span><span class="p">:</span>
-            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_overfit&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">BatchOverfitCallback</span><span class="p">))</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">stage</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">):</span>
-            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_metrics&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">MetricManagerCallback</span><span class="p">))</span>
-            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="p">(</span><span class="s2">&quot;_validation&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ValidationManagerCallback</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_console&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ConsoleLogger</span><span class="p">))</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_saver&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">))</span>
-                <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="p">(</span><span class="s2">&quot;_tensorboard&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">TensorboardLogger</span><span class="p">)</span>
-                <span class="p">)</span>
-
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;criterion_params&quot;</span><span class="p">,</span> <span class="p">{}):</span>
-                <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="p">(</span><span class="s2">&quot;_criterion&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">CriterionCallback</span><span class="p">)</span>
-                <span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;optimizer_params&quot;</span><span class="p">,</span> <span class="p">{}):</span>
-                <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="p">(</span><span class="s2">&quot;_optimizer&quot;</span><span class="p">,</span> <span class="n">IOptimizerCallback</span><span class="p">,</span> <span class="n">optimizer_cls</span><span class="p">)</span>
-                <span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scheduler_params&quot;</span><span class="p">,</span> <span class="p">{}):</span>
-                <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                    <span class="p">(</span><span class="s2">&quot;_scheduler&quot;</span><span class="p">,</span> <span class="n">ISchedulerCallback</span><span class="p">,</span> <span class="n">SchedulerCallback</span><span class="p">)</span>
-                <span class="p">)</span>
-
-        <span class="n">default_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s2">&quot;_exception&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ExceptionCallback</span><span class="p">))</span>
-
-        <span class="k">for</span> <span class="p">(</span>
-            <span class="n">callback_name</span><span class="p">,</span>
-            <span class="n">callback_interface</span><span class="p">,</span>
-            <span class="n">callback_fn</span><span class="p">,</span>
-        <span class="p">)</span> <span class="ow">in</span> <span class="n">default_callbacks</span><span class="p">:</span>
-            <span class="n">callback_interface</span> <span class="o">=</span> <span class="n">callback_interface</span> <span class="ow">or</span> <span class="n">callback_fn</span>
-            <span class="n">is_already_present</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
-                <span class="n">check_callback_isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_interface</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-            <span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_already_present</span><span class="p">:</span>
-                <span class="n">callbacks</span><span class="p">[</span><span class="n">callback_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback_fn</span><span class="p">()</span>
-
-        <span class="c1"># NOTE: stage should be in self.stages_config</span>
+        <span class="c1"># NOTE: stage should be in self._config.stages</span>
         <span class="c1">#       othervise will be raised ValueError</span>
         <span class="n">stage_index</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stages_config</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">stage</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">stage_index</span><span class="p">)</span>
+        <span class="n">process_callbacks</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">stage_index</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">callbacks</span></div></div>
 
