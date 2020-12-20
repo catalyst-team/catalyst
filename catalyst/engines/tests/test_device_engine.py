@@ -1,4 +1,5 @@
-# flake: noqa
+# flake8: noqa
+
 import shutil
 
 from pytest import mark
