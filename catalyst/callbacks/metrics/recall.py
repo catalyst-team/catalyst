@@ -5,18 +5,18 @@ from catalyst.metrics.functional import (
     wrap_class_metric2dict,
     wrap_metric_fn_with_activation,
 )
-from catalyst.metrics.iou import iou
+from catalyst.metrics.recall import recall
 
 
-class IouCallback(BatchMetricCallback):
-    """IoU (Jaccard) metric callback."""
+class RecallCallback(BatchMetricCallback):
+    """Recall score metric callback."""
 
     def __init__(
         self,
         input_key: str = "targets",
         output_key: str = "logits",
-        prefix: str = "iou",
-        activation: str = "Sigmoid",
+        prefix: str = "recall",
+        activation: str = "Softmax",
         per_class: bool = False,
         class_args: List[str] = None,
         **kwargs,
@@ -27,11 +27,9 @@ class IouCallback(BatchMetricCallback):
                 specifies our ``y_true``
             output_key: output key to use for iou calculation;
                 specifies our ``y_pred``
-            prefix: key to store in logs
-            eps: epsilon to avoid zero division
-            threshold: threshold for outputs binarization
+            prefix: key for the metric's name
             activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
+                Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
             per_class: boolean flag to log per class metrics,
                 or use mean/macro statistics otherwise
             class_args: class names to display in the logs.
@@ -41,10 +39,10 @@ class IouCallback(BatchMetricCallback):
         .. note::
             For ``**kwargs`` info, please follow
             ``catalyst.callbacks.metric.BatchMetricCallback`` and
-            ``catalyst.metrics.iou.iou`` docs
+            ``catalyst.metrics.recall.recall`` docs
         """
         metric_fn = wrap_metric_fn_with_activation(
-            metric_fn=iou, activation=activation
+            metric_fn=recall, activation=activation
         )
         metric_fn = wrap_class_metric2dict(
             metric_fn, per_class=per_class, class_args=class_args
@@ -58,10 +56,4 @@ class IouCallback(BatchMetricCallback):
         )
 
 
-JaccardCallback = IouCallback
-
-
-__all__ = [
-    "IouCallback",
-    "JaccardCallback",
-]
+__all__ = ["RecallCallback"]

@@ -557,7 +557,7 @@ class CustomRunner(dl.Runner):
         y_hat, x_ = self.model(x_noise)
 
         loss_clf = F.cross_entropy(y_hat, y)
-        iou = metrics.iou(x_, x)
+        iou = metrics.iou(x_, x).mean()
         loss_iou = 1 - iou
         loss = loss_clf + loss_iou
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
