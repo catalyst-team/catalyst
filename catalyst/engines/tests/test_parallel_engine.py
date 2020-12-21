@@ -103,7 +103,7 @@ class LossMinimizationCallback(Callback):
         self.container = []
 
 
-def run_train_with_experiment_device(device):
+def run_train_with_experiment_parallel_device():
     dataset = DummyDataset(10)
     loader = DataLoader(dataset, batch_size=4)
     runner = SupervisedRunner()
@@ -116,18 +116,18 @@ def run_train_with_experiment_device(device):
         callbacks=[
             CriterionCallback(),
             OptimizerCallback(),
-            DeviceCheckCallback(device),
-            LossMinimizationCallback("loss"),
+            # DeviceCheckCallback(device),
+            LossMinimizationCallback(),
         ],
-        engine=DataParallelEngine(device),
+        engine=DataParallelEngine(),
     )
     runner.run_experiment(exp)
 
 
-def run_train_with_config_experiment_device(device):
+def run_train_with_config_experiment_parallel_device():
     dataset = DummyDataset(10)
     runner = SupervisedRunner()
-    logdir = f"./test_{device}_engine"
+    logdir = f"./test_dp_engine"
     exp = ConfigExperiment(
         config={
             "model_params": {
@@ -135,7 +135,7 @@ def run_train_with_config_experiment_device(device):
                 "in_features": 4,
                 "out_features": 1,
             },
-            "engine": str(device),
+            "engine": "dp",
             "args": {"logdir": logdir},
             "stages": {
                 "data_params": {"batch_size": 4, "num_workers": 0},
@@ -146,12 +146,12 @@ def run_train_with_config_experiment_device(device):
                     "callbacks_params": {
                         "loss": {"callback": "CriterionCallback"},
                         "optimizer": {"callback": "OptimizerCallback"},
-                        "test_device": {
-                            "callback": "DeviceCheckCallback",
-                            "assert_device": str(device),
-                        },
+                        # "test_device": {
+                        #     "callback": "DeviceCheckCallback",
+                        #     "assert_device": str(device),
+                        # },
                         "test_loss_minimization": {
-                            "callback": "LossMinimizationCallback",
+                            "callback": "LossMinimizationCallback"
                         },
                     },
                 },
@@ -166,35 +166,11 @@ def run_train_with_config_experiment_device(device):
     shutil.rmtree(logdir, ignore_errors=True)
 
 
-def test_experiment_engine_with_cpu():
-    run_train_with_experiment_device("cpu")
-
-
-def test_config_experiment_engine_with_cpu():
-    run_train_with_config_experiment_device("cpu")
-
-
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_experiment_engine_with_cuda():
-    run_train_with_experiment_device("cuda:0")
+def test_experiment_parallel_engine_with_cuda():
+    run_train_with_experiment_parallel_device()
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_config_experiment_engine_with_cuda():
-    run_train_with_config_experiment_device("cuda:0")
-
-
-@mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
-)
-def test_experiment_engine_with_another_cuda_device():
-    run_train_with_experiment_device("cuda:1")
-
-
-@mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
-)
-def test_config_experiment_engine_with_another_cuda_device():
-    run_train_with_config_experiment_device("cuda:1")
+    run_train_with_config_experiment_parallel_device()

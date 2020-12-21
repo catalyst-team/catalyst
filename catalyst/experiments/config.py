@@ -10,7 +10,7 @@ from catalyst.contrib.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import check_callback_isinstance
-from catalyst.engines import process_engine, IEngine
+from catalyst.engines import IEngine, process_engine
 from catalyst.experiments.functional import (
     add_default_callbacks,
     do_lr_linear_scaling,
