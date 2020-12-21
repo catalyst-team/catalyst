@@ -94,7 +94,7 @@ def all_gather(data: Any) -> List[Any]:
     return data_list
 
 
-class DistributedDeviceEngine(DeviceEngine):
+class DistributedDataParallelEngine(DeviceEngine):
     def __init__(
         self,
         address: str = "localhost",

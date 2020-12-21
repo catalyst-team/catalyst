@@ -31,7 +31,7 @@ from catalyst.core.functional import (
     check_callback_isinstance,
     sort_callbacks_by_order,
 )
-from catalyst.engines import DeviceEngine, IEngine
+from catalyst.engines import engine_from_str, IEngine
 from catalyst.settings import SETTINGS
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.loaders import get_loaders_from_params
@@ -120,10 +120,7 @@ class Experiment(IExperiment):
             datasets is not None or loaders is not None
         ), "Please specify the data sources"
 
-        default_engine = DeviceEngine(
-            "cuda:0" if SETTINGS.IS_CUDA_AVAILABLE else "cpu"
-        )
-        self._engine: IEngine = engine or default_engine
+        self._engine: IEngine = engine_from_str(engine)
 
         self._model = model
         self._loaders, self._valid_loader = self._get_loaders(

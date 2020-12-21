@@ -10,6 +10,7 @@ from catalyst.tools.frozen_class import FrozenClass
 logger = logging.getLogger(__name__)
 
 IS_CUDA_AVAILABLE = torch.cuda.is_available()
+NUM_CUDA_DEVICES = torch.cuda.device_count()
 
 
 try:
@@ -397,6 +398,7 @@ setattr(  # noqa: B010
     SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE
 )
 setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
 setattr(SETTINGS, "IS_OPTUNA_AVAILABLE", IS_OPTUNA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_HYDRA_AVAILABLE", IS_HYDRA_AVAILABLE)  # noqa: B010
 

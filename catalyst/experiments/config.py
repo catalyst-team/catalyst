@@ -10,7 +10,7 @@ from catalyst.contrib.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import check_callback_isinstance
-from catalyst.engines import DeviceEngine, IEngine
+from catalyst.engines import engine_from_str, IEngine
 from catalyst.experiments.functional import (
     add_default_callbacks,
     do_lr_linear_scaling,
@@ -68,13 +68,9 @@ class ConfigExperiment(IExperiment):
             "overfit", False
         )
 
-        default_engine = DeviceEngine(
-            "cuda:0" if SETTINGS.IS_CUDA_AVAILABLE else "cpu"
-        )
-        # TODO: load engine from config
-        self._engine: IEngine = DeviceEngine(
+        self._engine: IEngine = engine_from_str(
             self._config.get("engine", "cpu")
-        ) or default_engine
+        )
 
         self._prepare_logdir()
 

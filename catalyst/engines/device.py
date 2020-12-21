@@ -16,9 +16,13 @@ class DeviceEngine(IEngine):
         return f"DeviceEngine(device='{self.device}')"
 
     def to_device(
-        self, obj: Union[torch.Tensor, nn.Module]
-    ) -> Union[torch.Tensor, nn.Module]:
-        return obj.to(self.device)
+        self, obj: Union[dict, torch.Tensor, nn.Module]
+    ) -> Union[dict, torch.Tensor, nn.Module]:
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                obj[k] = self.to_device(v)
+        else:
+            return obj.to(self.device)
 
     def handle_device(self, batch: Mapping[str, Any]):
         if isinstance(batch, torch.Tensor):
@@ -40,7 +44,7 @@ class DeviceEngine(IEngine):
     def load_checkpoint(
         self,
         file: str,
-        model: nn.Module,
+        model: Union[nn.Module, nn.DataParallel],
         optimizer: nn.Module = None,
         criterion=None,
         scheduler=None,
@@ -48,7 +52,10 @@ class DeviceEngine(IEngine):
         content = torch.load(file)
 
         if "model_state_dict" in content:
-            model.load_state_dict(content["model_state_dict"])
+            if isinstance(model, nn.DataParallel):
+                model.module.load_state_dict(content["model_state_dict"])
+            elif isinstance(model, nn.Module):
+                model.load_state_dict(content["model_state_dict"])
 
         if "optimizer_state_dict" in content and optimizer is not None:
             optimizer.load_state_dict(content["optimizer_state_dict"])

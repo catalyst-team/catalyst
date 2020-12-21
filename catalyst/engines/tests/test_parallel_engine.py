@@ -13,9 +13,11 @@ from catalyst import registry
 from catalyst.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.dl import SupervisedRunner
-from catalyst.engines import DeviceEngine
+from catalyst.engines import DataParallelEngine
 from catalyst.experiments import ConfigExperiment, Experiment
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_CUDA_AVAILABLE
+
+NUM_CUDA_DEVICES = torch.cuda.device_count()
 
 
 class DummyDataset(Dataset):
@@ -117,7 +119,7 @@ def run_train_with_experiment_device(device):
             DeviceCheckCallback(device),
             LossMinimizationCallback("loss"),
         ],
-        engine=DeviceEngine(device),
+        engine=DataParallelEngine(device),
     )
     runner.run_experiment(exp)
 

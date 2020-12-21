@@ -354,13 +354,17 @@ class Runner(IStageBasedRunner):
 
         self.experiment = None
         set_global_seed(initial_seed)
-        (model, _, _, _, device) = process_components(  # noqa: WPS122
-            model=self.model, distributed_params=fp16, device=self.device,
-        )
+
+        engine = self.experiment.engine
+        model = engine.to_device(self.model)
+
+        # (model, _, _, _, device) = process_components(  # noqa: WPS122
+        #     model=self.model, distributed_params=fp16, device=self.device,
+        # )
         self._prepare_inner_state(
             stage="infer",
             model=model,
-            device=device,
+            device=engine.device,
             is_train_loader=False,
             is_valid_loader=False,
             is_infer_loader=True,
