@@ -96,11 +96,11 @@ class Wizard:
 
         self.pipeline_path = Path("./")
         self.__before_export = {
-            "MODELS": registry.__dict__["MODELS"].all(),
-            "CRITERIONS": registry.__dict__["CRITERIONS"].all(),
-            "OPTIMIZERS": registry.__dict__["OPTIMIZERS"].all(),
-            "SCHEDULERS": registry.__dict__["SCHEDULERS"].all(),
-            "CALLBACKS": registry.__dict__["CALLBACKS"].all(),
+            "MODELS": registry.__dict__["MODEL"].all(),
+            "CRITERIONS": registry.__dict__["CRITERION"].all(),
+            "OPTIMIZERS": registry.__dict__["OPTIMIZER"].all(),
+            "SCHEDULERS": registry.__dict__["SCHEDULER"].all(),
+            "CALLBACKS": registry.__dict__["CALLBACK"].all(),
         }
 
     @staticmethod

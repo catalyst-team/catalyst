@@ -17,12 +17,12 @@ from catalyst.experiments.functional import (
     process_callbacks,
 )
 from catalyst.registry import (
-    CALLBACKS,
-    CRITERIONS,
-    MODELS,
-    OPTIMIZERS,
-    SCHEDULERS,
-    TRANSFORMS,
+    CALLBACK,
+    CRITERION,
+    MODEL,
+    OPTIMIZER,
+    SCHEDULER,
+    TRANSFORM,
 )
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.loaders import get_loaders_from_params
@@ -68,9 +68,6 @@ class ConfigExperiment(IExperiment):
         self._prepare_logdir()
 
         self._config["stages"]["stage_params"] = merge_dicts(
-            deepcopy(
-                self._config["stages"].get("state_params", {})
-            ),  # saved for backward compatibility
             deepcopy(self._config["stages"].get("stage_params", {})),
             deepcopy(self._config.get("args", {})),
             {"logdir": self._logdir},
@@ -103,36 +100,19 @@ class ConfigExperiment(IExperiment):
         stages_defaults = {}
         stages_config_out = OrderedDict()
         for key in self.STAGE_KEYWORDS:
-            if key == "stage_params":
-                # backward compatibility
-                stages_defaults[key] = merge_dicts(
-                    deepcopy(stages_config.get("state_params", {})),
-                    deepcopy(stages_config.get(key, {})),
-                )
-            else:
-                stages_defaults[key] = deepcopy(stages_config.get(key, {}))
+            stages_defaults[key] = deepcopy(stages_config.get(key, {}))
         for stage in stages_config:
             if (
                 stage in self.STAGE_KEYWORDS
-                or stage == "state_params"
                 or stages_config.get(stage) is None
             ):
                 continue
             stages_config_out[stage] = {}
             for key2 in self.STAGE_KEYWORDS:
-                if key2 == "stage_params":
-                    # backward compatibility
-                    stages_config_out[stage][key2] = merge_dicts(
-                        deepcopy(stages_defaults.get("state_params", {})),
-                        deepcopy(stages_defaults.get(key2, {})),
-                        deepcopy(stages_config[stage].get("state_params", {})),
-                        deepcopy(stages_config[stage].get(key2, {})),
-                    )
-                else:
-                    stages_config_out[stage][key2] = merge_dicts(
-                        deepcopy(stages_defaults.get(key2, {})),
-                        deepcopy(stages_config[stage].get(key2, {})),
-                    )
+                stages_config_out[stage][key2] = merge_dicts(
+                    deepcopy(stages_defaults.get(key2, {})),
+                    deepcopy(stages_config[stage].get(key2, {})),
+                )
 
         return stages_config_out
 
@@ -195,7 +175,7 @@ class ConfigExperiment(IExperiment):
                 )
             model = nn.ModuleDict(model)
         else:
-            model = MODELS.get_from_params(**params)
+            model = MODEL.get_from_params(**params)
         return model
 
     def get_model(self, stage: str):
@@ -217,7 +197,7 @@ class ConfigExperiment(IExperiment):
                     **key_params
                 )
         else:
-            criterion = CRITERIONS.get_from_params(**params)
+            criterion = CRITERION.get_from_params(**params)
             if criterion is not None and torch.cuda.is_available():
                 criterion = criterion.cuda()
         return criterion
@@ -267,7 +247,7 @@ class ConfigExperiment(IExperiment):
         )
         # instantiate optimizer
         optimizer_key = params.pop("optimizer_key", None)
-        optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
+        optimizer = OPTIMIZER.get_from_params(**params, params=model_params)
         # load from previous stage
         if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
@@ -319,7 +299,7 @@ class ConfigExperiment(IExperiment):
     ) -> Union[Scheduler, Dict[str, Scheduler]]:
         optimizer_key = params.pop("_optimizer", None)
         optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
-        scheduler = SCHEDULERS.get_from_params(**params, optimizer=optimizer)
+        scheduler = SCHEDULER.get_from_params(**params, optimizer=optimizer)
 
         return scheduler
 
@@ -374,7 +354,7 @@ class ConfigExperiment(IExperiment):
                 ]
                 params.update(transforms=transforms_composition)
 
-            transform = TRANSFORMS.get_from_params(**params)
+            transform = TRANSFORM.get_from_params(**params)
 
         return transform
 
@@ -430,7 +410,7 @@ class ConfigExperiment(IExperiment):
     @staticmethod
     def _get_callback(**params):
         wrapper_params = params.pop("_wrapper", None)
-        callback = CALLBACKS.get_from_params(**params)
+        callback = CALLBACK.get_from_params(**params)
         if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
             callback = ConfigExperiment._get_callback(  # noqa: WPS437

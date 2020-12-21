@@ -220,51 +220,26 @@ CALLBACK.late_add(_callbacks_loader)
 Callback = CALLBACK.add
 
 
-# backward compatibility
-CALLBACKS = CALLBACK
-CRITERIONS = CRITERION
-EXPERIMENTS = EXPERIMENT
-GRAD_CLIPPERS = GRAD_CLIPPER
-MODELS = MODEL
-MODULES = MODULE
-OPTIMIZERS = OPTIMIZER
-RUNNERS = RUNNER
-SAMPLERS = SAMPLER
-SCHEDULERS = SCHEDULER
-TRANSFORMS = TRANSFORM
-
-
 __all__ = [
     "Callback",
     "CALLBACK",
-    "CALLBACKS",
     "Criterion",
     "CRITERION",
-    "CRITERIONS",
     "Experiment",
     "EXPERIMENT",
-    "EXPERIMENTS",
     "GRAD_CLIPPER",
-    "GRAD_CLIPPERS",
     "Model",
     "MODEL",
-    "MODELS",
     "Module",
     "MODULE",
-    "MODULES",
     "Optimizer",
     "OPTIMIZER",
-    "OPTIMIZERS",
     "Runner",
     "RUNNER",
-    "RUNNERS",
     "Sampler",
     "SAMPLER",
-    "SAMPLERS",
     "Scheduler",
     "SCHEDULER",
-    "SCHEDULERS",
     "Transform",
     "TRANSFORM",
-    "TRANSFORMS",
 ]

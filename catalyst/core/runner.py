@@ -14,7 +14,6 @@ from catalyst.core.functional import (
     filter_callbacks_by_node,
     sort_callbacks_by_order,
 )
-from catalyst.core.legacy import IRunnerLegacy
 from catalyst.settings import SETTINGS
 from catalyst.typing import (
     Device,
@@ -47,7 +46,7 @@ class RunnerException(Exception):
         super().__init__(message)
 
 
-class IRunner(ABC, ICallback, IRunnerLegacy):
+class IRunner(ABC, ICallback):
     """
     An abstraction that knows how to run an experiment.
     It contains all the logic of **how** to run the experiment,

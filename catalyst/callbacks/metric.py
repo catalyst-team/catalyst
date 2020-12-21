@@ -504,16 +504,12 @@ class MetricManagerCallback(Callback):
             runner.epoch_metrics[f"{runner.loader_key}_{key}"] = value
 
 
-# backward compatibility
-MetricCallback = BatchMetricCallback
-
 __all__ = [
     "IMetricCallback",
     "IBatchMetricCallback",
     "ILoaderMetricCallback",
     "BatchMetricCallback",
     "LoaderMetricCallback",
-    "MetricCallback",
     "MetricAggregationCallback",
     "MetricManagerCallback",
 ]

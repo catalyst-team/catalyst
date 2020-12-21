@@ -33,7 +33,6 @@ from catalyst.callbacks.metric import (
     ILoaderMetricCallback,
     BatchMetricCallback,
     LoaderMetricCallback,
-    MetricCallback,
     MetricAggregationCallback,
     MetricManagerCallback,
 )
@@ -49,7 +48,7 @@ from catalyst.callbacks.scheduler import (
     LRFinder,
 )
 from catalyst.callbacks.timer import TimerCallback
-from catalyst.callbacks.tracing import TracingCallback, TracerCallback
+from catalyst.callbacks.tracing import TracingCallback
 from catalyst.callbacks.validation import ValidationManagerCallback
 
 from catalyst.callbacks.metrics import *
