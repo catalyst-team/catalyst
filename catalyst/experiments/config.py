@@ -10,7 +10,7 @@ from catalyst.contrib.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import check_callback_isinstance
-from catalyst.engines import engine_from_str, IEngine
+from catalyst.engines import process_engine, IEngine
 from catalyst.experiments.functional import (
     add_default_callbacks,
     do_lr_linear_scaling,
@@ -68,7 +68,7 @@ class ConfigExperiment(IExperiment):
             "overfit", False
         )
 
-        self._engine: IEngine = engine_from_str(
+        self._engine: IEngine = process_engine(
             self._config.get("engine", "cpu")
         )
 

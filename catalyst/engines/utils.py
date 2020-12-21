@@ -8,7 +8,7 @@ from catalyst.engines.parallel import DataParallelEngine
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 
-def engine_from_str(engine: Union[str, IEngine, None]) -> IEngine:
+def process_engine(engine: Union[str, IEngine, None]) -> IEngine:
     if isinstance(engine, IEngine):
         return engine
 

@@ -8,27 +8,27 @@ from catalyst.engines import (
     DataParallelEngine,
     DeviceEngine,
     DistributedDataParallelEngine,
-    engine_from_str,
+    process_engine,
 )
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 
 def test_engine_from_str_on_cpu():
-    actual = engine_from_str("cpu")
+    actual = process_engine("cpu")
     assert isinstance(actual, DeviceEngine)
     assert actual.device == "cpu"
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_engine_from_str_on_cuda():
-    actual = engine_from_str("cuda")
+    actual = process_engine("cuda")
     assert isinstance(actual, DeviceEngine)
     assert actual.device == "cuda:0"
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_engine_from_str_on_cuda_0():
-    actual = engine_from_str("cuda:0")
+    actual = process_engine("cuda:0")
     assert isinstance(actual, DeviceEngine)
     assert actual.device == "cuda:0"
 
@@ -38,7 +38,7 @@ def test_engine_from_str_on_cuda_0():
     reason="Number of CUDA devices is less than 2",
 )
 def test_engine_from_str_on_cuda_1():
-    actual = engine_from_str("cuda:1")
+    actual = process_engine("cuda:1")
     assert isinstance(actual, DeviceEngine)
     assert actual.device == "cuda:1"
 
