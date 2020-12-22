@@ -1,34 +1,62 @@
-from typing import Callable, List, Optional, Union
+from typing import Optional, Tuple
 from functools import partial
 
 import torch
-
-from catalyst.utils.torch import get_activation_fn
 
 
 def _get_segmentation_stats(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    class_dim: Optional[int] = None,
+    class_dim: int = 1,
     threshold: float = None,
-    activation: str = "Sigmoid",
-) -> List[torch.Tensor]:
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+    """
+    Computes true positive, false positive, false negative
+    for a multilabel segmentation problem.
+
+    Args:
+        outputs: [N; K; ...] tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets:  binary [N; K; ...] tensor that encodes which of the K
+            classes are associated with the N-th input
+        class_dim: indicates class dimention (K) for
+            ``outputs`` and ``targets`` tensors (default = 1)
+        threshold: threshold for outputs binarization
+
+    Returns: segmentation stats
+
+    Examples:
+        >>> size = 4
+        >>> half_size = size // 2
+        >>> shape = (1, 1, size, size)
+        >>> empty = torch.zeros(shape)
+        >>> full = torch.ones(shape)
+        >>> left = torch.ones(shape)
+        >>> left[:, :, :, half_size:] = 0
+        >>> right = torch.ones(shape)
+        >>> right[:, :, :, :half_size] = 0
+        >>> top_left = torch.zeros(shape)
+        >>> top_left[:, :, :half_size, :half_size] = 1
+        >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
+        >>> _get_segmentation_stats(
+        >>>                         outputs=pred,
+        >>>                         targets=targets,
+        >>>                         class_dim=1,
+        >>>                         threshold=0.5,
+        >>> )
+        (tensor([ 0.,  0.,  0., 16.,  8.,  4.]),
+        tensor([0., 8., 0., 0., 0., 0.]),
+        tensor([16.,  8.,  0.,  0.,  0.,  4.]))
+    """
     assert outputs.shape == targets.shape, (
         f"targets(shape {targets.shape})"
-        f" and outputs(shape {outputs.shape})\
-        must have the same shape"
+        f" and outputs(shape {outputs.shape}) must have the same shape"
     )
-
-    activation_fn = get_activation_fn(activation)
-    outputs = activation_fn(outputs)
-
     if threshold is not None:
         outputs = (outputs > threshold).float()
 
-    if class_dim is None:
-        outputs = outputs.unsqueeze(0)
-        targets = targets.unsqueeze(0)
-        class_dim = 0
     n_dims = len(outputs.shape)
     dims = list(range(n_dims))
     # support negative index
@@ -38,140 +66,128 @@ def _get_segmentation_stats(
 
     sum_per_class = partial(torch.sum, dim=dims)
 
-    class_intersection = sum_per_class(outputs * targets)
+    tp = sum_per_class(outputs * targets)
     class_union = sum_per_class(outputs) + sum_per_class(targets)
-    class_union -= class_intersection
-    class_fp = sum_per_class(outputs * (1 - targets))
-    class_fn = sum_per_class(targets * (1 - outputs))
-    return class_intersection, class_union, class_fp, class_fn
-
-
-def _get_region_metrics(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    metric_function: Callable,
-    class_dim=None,
-    threshold: float = None,
-    activation: str = "Sigmoid",
-    mode: Union[str, List[float]] = "macro",
-    weights: Optional[List[float]] = None,
-) -> torch.Tensor:
-    """
-    Calculate region based metric
-
-    Args:
-        outputs: predicted elements
-        targets: elements that are to be predicted
-        metric_function: function that get segmentation statistics and
-        calculate metric
-        class_dim: class dim, if input is [batch_size, n_classes, H, W] you
-        should make class_dim=1
-        threshold: threshold for outputs binarization
-        activation: An torch.nn activation applied to the outputs.Must be one
-        of ["none", "Sigmoid", "Softmax2d"]
-        mode: class summation strategy. Must be one of ["macro", "micro",
-        "weighted"]
-        weights: class weights(for mode="weighted")
-
-    Returns: score
-    """
-    assert mode in ["macro", "micro", "weighted"]
-    segmentation_stats = _get_segmentation_stats(
-        outputs=outputs,
-        targets=targets,
-        class_dim=class_dim,
-        threshold=threshold,
-        activation=activation,
-    )
-    if mode == "macro":
-        segmentation_stat = [torch.sum(stats) for stats in segmentation_stats]
-        score = metric_function(segmentation_stat)
-        return score
-
-    n_classes = len(segmentation_stats[0])
-    if mode == "micro":
-        weights = [1.0 / n_classes] * n_classes
-    else:
-        assert len(weights) == n_classes
-    score = 0
-    for weight, class_idx in zip(weights, range(n_classes)):
-        segmentation_stat = [stats[class_idx] for stats in segmentation_stats]
-        score += metric_function(segmentation_stat) * weight
-    return score
-
-
-def _iou(
-    segmentation_stats: List[torch.Tensor], eps: float = 1e-7
-) -> torch.Tensor:
-    intersection, union, _, _ = segmentation_stats
-    iou_score = (intersection + eps * (union == 0)) / (union + eps)
-    return iou_score
-
-
-def _dice(segmentation_stats: List[torch.Tensor], eps: float = 1e-7):
-    intersection, union, _, _ = segmentation_stats
-    dice_score = (2 * intersection + eps * (union == 0)) / (union + eps)
-    return dice_score
-
-
-def _trevsky(
-    segmentation_stats: List[torch.Tensor],
-    alpha: float,
-    beta: float,
-    eps: float = 1e-7,
-):
-    intersection, _, fp, fn = segmentation_stats
-    trevsky_score = intersection / (
-        intersection + fn * alpha + beta * fp + eps
-    )
-    return trevsky_score
+    class_union -= tp
+    fp = sum_per_class(outputs * (1 - targets))
+    fn = sum_per_class(targets * (1 - outputs))
+    return tp, fp, fn
 
 
 def iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    class_dim=None,
+    class_dim: int = 1,
     threshold: float = None,
-    activation: str = "Sigmoid",
-    mode: Union[str, List[float]] = "macro",
-    weights: Optional[List[float]] = None,
     eps: float = 1e-7,
-):
-    metric_function = partial(_iou, eps=eps)
-    score = _get_region_metrics(
+) -> torch.Tensor:
+    """
+    Computes the iou/jaccard score,
+    iou score = intersection / union = tp / (tp + fp + fn)
+
+    Args:
+        outputs: [N; K; ...] tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets:  binary [N; K; ...] tensor that encodes which of the K
+            classes are associated with the N-th input
+        class_dim: indicates class dimention (K) for
+            ``outputs`` and ``targets`` tensors (default = 1)
+        threshold: threshold for outputs binarization
+        eps: epsilon to avoid zero division
+
+    Returns:
+        IoU (Jaccard) score for each class
+
+    Examples:
+        >>> size = 4
+        >>> half_size = size // 2
+        >>> shape = (1, 1, size, size)
+        >>> empty = torch.zeros(shape)
+        >>> full = torch.ones(shape)
+        >>> left = torch.ones(shape)
+        >>> left[:, :, :, half_size:] = 0
+        >>> right = torch.ones(shape)
+        >>> right[:, :, :, :half_size] = 0
+        >>> top_left = torch.zeros(shape)
+        >>> top_left[:, :, :half_size, :half_size] = 1
+        >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
+        >>> iou(
+        >>>     outputs=pred,
+        >>>     targets=targets,
+        >>>     class_dim=1,
+        >>>     threshold=0.5,
+        >>> )
+        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])
+    """
+    tp, fp, fn = _get_segmentation_stats(
         outputs=outputs,
         targets=targets,
-        metric_function=metric_function,
         class_dim=class_dim,
         threshold=threshold,
-        activation=activation,
-        mode=mode,
-        weights=weights,
     )
+    union = tp + fp + fn
+    score = (tp + eps * (union == 0).float()) / (tp + fp + fn + eps)
     return score
 
 
 def dice(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    class_dim=None,
+    class_dim: int = 1,
     threshold: float = None,
-    activation: str = "Sigmoid",
-    mode: Union[str, List[float]] = "macro",
-    weights: Optional[List[float]] = None,
     eps: float = 1e-7,
-):
-    metric_function = partial(_dice, eps=eps)
-    score = _get_region_metrics(
+) -> torch.Tensor:
+    """
+    Computes the dice score,
+    dice score = 2 * intersection / (intersection + union)) = \
+    = 2 * tp / (2 * tp + fp + fn)
+
+    Args:
+        outputs: [N; K; ...] tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets:  binary [N; K; ...] tensor that encodes which of the K
+            classes are associated with the N-th input
+        class_dim: indicates class dimention (K) for
+            ``outputs`` and ``targets`` tensors (default = 1)
+        threshold: threshold for outputs binarization
+        eps: epsilon to avoid zero division
+
+    Returns:
+        Dice score for each class
+
+    Examples:
+        >>> size = 4
+        >>> half_size = size // 2
+        >>> shape = (1, 1, size, size)
+        >>> empty = torch.zeros(shape)
+        >>> full = torch.ones(shape)
+        >>> left = torch.ones(shape)
+        >>> left[:, :, :, half_size:] = 0
+        >>> right = torch.ones(shape)
+        >>> right[:, :, :, :half_size] = 0
+        >>> top_left = torch.zeros(shape)
+        >>> top_left[:, :, :half_size, :half_size] = 1
+        >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
+        >>> dice(
+        >>>      outputs=pred,
+        >>>      targets=targets,
+        >>>      class_dim=1,
+        >>>      threshold=0.5,
+        >>> )
+        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.6667])
+    """
+    tp, fp, fn = _get_segmentation_stats(
         outputs=outputs,
         targets=targets,
-        metric_function=metric_function,
         class_dim=class_dim,
         threshold=threshold,
-        activation=activation,
-        mode=mode,
-        weights=weights,
     )
+    union = tp + fp + fn
+    score = (2 * tp + eps * (union == 0).float()) / (2 * tp + fp + fn + eps)
     return score
 
 
@@ -180,25 +196,66 @@ def trevsky(
     targets: torch.Tensor,
     alpha: float,
     beta: Optional[float] = None,
-    class_dim=None,
+    class_dim: int = 1,
     threshold: float = None,
-    activation: str = "Sigmoid",
-    mode: Union[str, List[float]] = "macro",
-    weights: Optional[List[float]] = None,
     eps: float = 1e-7,
-):
-    assert 0 < alpha < 1
+) -> torch.Tensor:
+    """
+    Computes the trevsky score,
+    trevsky score = tp / (tp + fp * beta + fn * alpha)
+
+    Args:
+        outputs: [N; K; ...] tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets:  binary [N; K; ...] tensor that encodes which of the K
+            classes are associated with the N-th input
+        alpha: false negative coefficient, bigger alpha bigger penalty for
+            false negative. Must be in (0, 1)
+        beta: false positive coefficient, bigger alpha bigger penalty for false
+            positive. Must be in (0, 1), if None beta = (1 - alpha)
+        class_dim: indicates class dimention (K) for
+            ``outputs`` and ``targets`` tensors (default = 1)
+        threshold: threshold for outputs binarization
+        eps: epsilon to avoid zero division
+
+    Returns:
+        Trevsky score for each class
+
+    Examples:
+        >>> size = 4
+        >>> half_size = size // 2
+        >>> shape = (1, 1, size, size)
+        >>> empty = torch.zeros(shape)
+        >>> full = torch.ones(shape)
+        >>> left = torch.ones(shape)
+        >>> left[:, :, :, half_size:] = 0
+        >>> right = torch.ones(shape)
+        >>> right[:, :, :, :half_size] = 0
+        >>> top_left = torch.zeros(shape)
+        >>> top_left[:, :, :half_size, :half_size] = 1
+        >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
+        >>> trevsky(
+        >>>         outputs=pred,
+        >>>         targets=targets,
+        >>>         alpha=0.2,
+        >>>         class_dim=1,
+        >>>         threshold=0.5,
+        >>> )
+        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.8333])
+    """
+    assert 0 < alpha < 1  # I am not sure about this
     if beta is None:
         beta = 1 - alpha
-    metric_function = partial(_dice, alpha=alpha, beta=beta, eps=eps)
-    score = _get_region_metrics(
+    tp, fp, fn = _get_segmentation_stats(
         outputs=outputs,
         targets=targets,
-        metric_function=metric_function,
         class_dim=class_dim,
         threshold=threshold,
-        activation=activation,
-        mode=mode,
-        weights=weights,
+    )
+    union = tp + fp + fn
+    score = (tp + eps * (union == 0).float()) / (
+        tp + fp * beta + fn * alpha + eps
     )
     return score
