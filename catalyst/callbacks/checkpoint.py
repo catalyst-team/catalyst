@@ -223,11 +223,7 @@ class BaseCheckpointCallback(ICheckpointCallback):
         if not is_exception(exception):
             return
 
-        if runner.device.type == "xla":
-            from torch_xla.core.xla_model import save
-        else:
-            from torch import save
-
+        save = runner.experiment.engine.save_fn
         try:
             checkpoint = _pack_runner(runner)
             suffix = self._get_checkpoint_suffix(checkpoint)
@@ -563,11 +559,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             runner: current runner
         """
-        if runner.device.type == "xla":
-            from torch_xla.core.xla_model import save
-        else:
-            from torch import save
-        self._save_fn = save
+        self._save_fn = runner.experiment.engine.save_fn
 
         if getattr(runner, "resume", None) is not None:
             self.resume = runner.resume

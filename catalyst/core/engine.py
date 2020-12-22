@@ -55,3 +55,8 @@ class IEngine(ABC, ICallback):
     def optimizer_step(self, optimizer: optim.Optimizer) -> None:
         """Do one optimization step."""
         optimizer.step()
+
+    @property
+    @abstractmethod
+    def save_fn(self):
+        pass

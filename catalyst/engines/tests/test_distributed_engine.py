@@ -1,90 +1,153 @@
 # flake8: noqa
 
+
 import os
+import shutil
 
 from pytest import mark
 
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
+import torch.nn as nn
+import torch.optim as optim
+from torch.utils.data import DataLoader, Dataset
+from torch.utils.data.distributed import DistributedSampler
 
-from catalyst.engines.distributed import all_gather, mean_reduce, sum_reduce
-from catalyst.settings import IS_CUDA_AVAILABLE
+from catalyst import registry
+from catalyst.callbacks import CriterionCallback, OptimizerCallback
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.dl import SupervisedRunner
+from catalyst.engines import DistributedDataParallelEngine
+from catalyst.experiments import ConfigExperiment, Experiment
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-CUDA_DEVICE_COUNT = torch.cuda.device_count()
-if CUDA_DEVICE_COUNT > 1:
+if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 
 
-def _setup(rank: int, world_size: int, backend: str = "gloo") -> None:
-    os.environ["MASTER_ADDR"] = "localhost"
-    os.environ["MASTER_PORT"] = "12345"
-    dist.init_process_group("gloo", rank=rank, world_size=world_size)
+class DummyDataset(Dataset):
+    """
+    Dummy dataset.
+    """
+
+    features_dim: int = 4
+    out_dim: int = 1
+
+    def __init__(self, num_records: int):
+        self.num_records = num_records
+
+    def __len__(self):
+        """
+        Returns:
+            dataset's length.
+        """
+        return self.num_records
+
+    def __getitem__(self, idx: int):
+        """
+        Args:
+            idx: index of sample
+
+        Returns:
+            dummy features and targets vector
+        """
+        x = torch.ones(self.features_dim, dtype=torch.float)
+        y = torch.ones(self.out_dim, dtype=torch.float)
+        return x, y
 
 
-def _cleanup() -> None:
-    dist.destroy_process_group()
+@registry.Model
+class DummyModel(nn.Module):
+    def __init__(self, in_features, out_features):
+        super().__init__()
+        self.in_features = in_features
+        self.out_features = out_features
+        self.layers = nn.Linear(in_features, out_features)
+
+    def forward(self, batch):
+        return self.layers(batch)
 
 
-def _sum_reduce(rank: int, world_size: int) -> None:
-    _setup(rank, world_size)
-
-    to_sreduce = torch.tensor(rank + 1, dtype=torch.float).to(rank)
-    actual = sum_reduce(to_sreduce)
-
-    assert actual == torch.tensor(
-        (world_size * (world_size + 1)) // 2, dtype=torch.float
-    ).to(rank)
-
-    _cleanup()
+def _model_fn():
+    return DummyModel(4, 1)
 
 
-def _mean_reduce(rank: int, world_size: int) -> None:
-    _setup(rank, world_size)
-
-    to_sreduce = torch.tensor(rank + 1, dtype=torch.float).to(rank)
-    actual = mean_reduce(to_sreduce, world_size)
-
-    assert actual == torch.tensor(
-        ((world_size + 1) / 2), dtype=torch.float
-    ).to(rank)
-
-    _cleanup()
+def _optimizer_fn(parameters):
+    return optim.SGD(parameters, lr=1e-3)
 
 
-def _all_gather(rank, world_size):
-    _setup(rank, world_size)
+@registry.Callback
+class DeviceCheckCallback(Callback):
+    def __init__(self, assert_device: str):
+        super().__init__(order=CallbackOrder.internal)
+        self.device = torch.device(assert_device)
 
-    to_gather = torch.ones(3, dtype=torch.int) * (rank + 1)  # use cpu tensors
-    actual = all_gather(to_gather)
-    actual = torch.cat(actual)
+    def on_stage_start(self, runner: "IRunner"):
+        model_device = next(runner.model.parameters()).device
+        assert model_device == self.device
 
-    expected = torch.cat(
-        [torch.ones(3, dtype=torch.int) * (i + 1) for i in range(world_size)]
+
+@registry.Callback
+class LossMinimizationCallback(Callback):
+    def __init__(self, key="loss"):
+        super().__init__(order=CallbackOrder.metric)
+        self.key = key
+        self.container = None
+
+    def on_epoch_start(self, runner: "IRunner"):
+        self.container = []
+
+    def on_batch_end(self, runner: "IRunner"):
+        self.container.append(runner.batch_metrics[self.key].item())
+
+    def on_epoch_end(self, runner: "IRunner"):
+        print(self.container)
+        assert all(
+            a >= b for a, b in zip(self.container[:-1], self.container[1:])
+        )
+        self.container = []
+
+
+def run_train_with_experiment_distributed_parallel_device(rank, world_size):
+    logdir = "./test_ddp_engine"
+    dataset = DummyDataset(10)
+    sampler = DistributedSampler(dataset, world_size, rank)
+    loader = DataLoader(dataset, batch_size=4, sampler=sampler)
+    runner = SupervisedRunner(device=rank)
+    engine = DistributedDataParallelEngine(rank, world_size)
+    exp = Experiment(
+        model=_model_fn,
+        criterion=nn.MSELoss(),
+        optimizer=_optimizer_fn,
+        loaders={"train": loader, "valid": loader},
+        main_metric="loss",
+        callbacks=[
+            CriterionCallback(),
+            OptimizerCallback(),
+            # DeviceCheckCallback(device),
+            LossMinimizationCallback(),
+        ],
+        logdir=logdir,
+        engine=engine,
     )
-
-    assert torch.all(actual.eq(expected))
-
-    _cleanup()
+    # CORE
+    engine.setup_experiment()
+    runner.run_experiment(exp)
+    engine.cleanup()
+    shutil.rmtree(logdir, ignore_errors=True)
 
 
 def _run_test(fn, world_size):
     mp.spawn(fn, args=(world_size,), nprocs=world_size, join=True)
 
 
-@mark.skipif(CUDA_DEVICE_COUNT < 2, reason="need at least 2 cuda devices")
-def test_sum_reduce():
-    n_gpus = torch.cuda.device_count()
-    _run_test(_sum_reduce, n_gpus)
-
-
-@mark.skipif(CUDA_DEVICE_COUNT < 2, reason="need at least 2 cuda devices")
-def test_mean_reduce():
-    n_gpus = torch.cuda.device_count()
-    _run_test(_mean_reduce, n_gpus)
-
-
-@mark.skipif(CUDA_DEVICE_COUNT < 2, reason="need at least 2 cuda devices")
-def test_all_gather():
-    n_gpus = torch.cuda.device_count()
-    _run_test(_all_gather, n_gpus)
+@mark.skipif(
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
+)
+def test_experiment_distributed_parallel_engine_with_cuda():
+    _run_test(
+        run_train_with_experiment_distributed_parallel_device,
+        NUM_CUDA_DEVICES,
+    )

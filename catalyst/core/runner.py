@@ -533,6 +533,7 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
 
         self._model = model
 
+    # TODO: remove device property or use device from engine device
     @property
     def device(self) -> Device:
         """Returns the runner's device instance."""
@@ -549,7 +550,8 @@ class IRunner(ABC, ICallback, IRunnerLegacy):
         Raises:
             TypeError: if `value` is out of `torch.device`, `str` or `None`
         """
-        if isinstance(value, torch.device):
+        # self._device = self.experiment.engine.device
+        if isinstance(value, torch.device) or isinstance(value, int):
             self._device = value
         elif isinstance(value, str):
             self._device = torch.device(value)
