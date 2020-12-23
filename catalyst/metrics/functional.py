@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Optional, Sequence, Tuple
+from typing import Callable, Dict, List, Optional, Sequence, Tuple
 from functools import partial
 
 import numpy as np
@@ -493,6 +493,37 @@ def wrap_topk_metric2dict(
     return topk_metric_with_dict_output
 
 
+def get_aggregated_metric(per_class_metric: torch.Tensor,
+                          mode: str = 'mean',
+                          weights: List[float] = None) -> torch.Tensor:
+    # May be it is better to do if as wrap for function?
+    """
+    Aggregate class metrics
+
+    Args:
+        per_class_metric: score for each class
+        mode: class summation strategy. Must be one of ["mean", "sum", "weighted"]
+        weights: class weights(for mode="weighted")
+
+    Returns: aggregated metric
+    ToDo Example
+    """
+    assert mode in ['mean', 'sum', 'weighted']
+    if mode == 'mean':
+        return torch.mean(per_class_metric)
+    if mode == 'sum':
+        return torch.sum(per_class_metric)
+    assert weights is not None, 'weights must not be None if mode = weighted'
+    n_classes = len(per_class_metric[0])
+    assert n_classes == len(weights), f'the number of weights {len(weights)}' \
+                                      f' must be equal to the number of' \
+                                      f' classes {n_classes}'
+    weighted_metric = 0
+    for metric, weight, class_idx in zip(per_class_metric, weights):
+        weighted_metric += metric * weight
+    return weighted_metric
+
+
 __all__ = [
     "check_consistent_length",
     "process_multilabel_components",
@@ -504,4 +535,5 @@ __all__ = [
     "wrap_metric_fn_with_activation",
     "wrap_topk_metric2dict",
     "wrap_class_metric2dict",
+    "get_aggregated_metric"
 ]
