@@ -10,7 +10,7 @@ from torchvision.models import ResNet
 
 from catalyst import utils
 from catalyst.contrib.nn.modules import Flatten
-from catalyst.registry import MODULE
+from catalyst.registry import REGISTRY
 
 
 class ResnetEncoder(nn.Module):
@@ -61,7 +61,7 @@ class ResnetEncoder(nn.Module):
 
         if pooling is not None:
             pooling_kwargs = pooling_kwargs or {}
-            pooling_layer_fn = MODULE.get(pooling)
+            pooling_layer_fn = REGISTRY.get(pooling)
             pooling_layer = (
                 pooling_layer_fn(
                     in_features=resnet.fc.in_features, **pooling_kwargs

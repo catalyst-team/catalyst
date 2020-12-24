@@ -1,5 +1,5 @@
 model_params:
-  model: SimpleNet
+  name: SimpleNet
 
 runner_params:
   input_key: &input_key image
@@ -18,12 +18,12 @@ stages:
     _key_value: True
 
     train: &transform
-      transform: A.Compose
+      name: A.Compose
       transforms:
-        - transform: A.Normalize
+        - name: A.Normalize
           mean: [0.1307]
           std: [0.3081]
-        - transform: catalyst.ImageToTensor
+        - name: catalyst.ImageToTensor
     valid: *transform
 
   stage_params:
@@ -31,10 +31,10 @@ stages:
     minimize_metric: False
 
   criterion_params:
-      criterion: CrossEntropyLoss
+      name: CrossEntropyLoss
 
   optimizer_params:
-    optimizer: Adam
+    name: Adam
     lr: 0.001
     weight_decay: 0.0001
 
@@ -43,7 +43,7 @@ stages:
       num_epochs: &num_epochs 100
 
     scheduler_params:
-      scheduler: OneCycleLRWithWarmup
+      name: OneCycleLRWithWarmup
       num_steps: *num_epochs
       lr_range: [0.005, 0.00005]
       warmup_steps: 1
@@ -51,16 +51,16 @@ stages:
 
     callbacks_params:
       loss:
-        callback: MixupCallback
+        name: MixupCallback
         fields: [*input_key]
       optimizer:
-        callback: OptimizerCallback
+        name: OptimizerCallback
       accuracy:
-        callback: AccuracyCallback
+        name: AccuracyCallback
         accuracy_args: [1, 3, 5]
       scheduler:
-        callback: SchedulerCallback
+        name: SchedulerCallback
         reduced_metric: *reduced_metric
       saver:
-        callback: CheckpointCallback
+        name: CheckpointCallback
         save_n_best: 3

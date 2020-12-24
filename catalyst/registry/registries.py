@@ -1,7 +1,6 @@
 import logging
 
 from catalyst.registry.registry import Registry
-from catalyst.registry.subregistry import SubRegistry
 from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
@@ -9,7 +8,7 @@ logger = logging.getLogger(__name__)
 REGISTRY = Registry()
 
 
-def _transforms_loader(r: SubRegistry):
+def _transforms_loader(r: Registry):
     from torch.jit.frontend import UnsupportedNodeError
 
     from catalyst.contrib.data.cv.transforms import torch as t
@@ -61,7 +60,7 @@ def _transforms_loader(r: SubRegistry):
             raise ex
 
 
-REGISTRY.late_add("transform", _transforms_loader)
+REGISTRY.late_add(_transforms_loader)
 
 
 def _samplers_loader(r: Registry):
@@ -78,7 +77,7 @@ def _samplers_loader(r: Registry):
     r.add_from_module(sampler)
 
 
-REGISTRY.late_add("sampler", _samplers_loader)
+REGISTRY.late_add(_samplers_loader)
 
 
 class _GradClipperWrap:
@@ -97,9 +96,7 @@ def _grad_clip_loader(r: Registry):
     r.add_from_module(m)
 
 
-# # @TODO: why func? should be renamed
-REGISTRY.add_subregistry("func", default_meta_factory=_GradClipperWrap)
-REGISTRY.late_add("func", _grad_clip_loader)
+REGISTRY.late_add(_grad_clip_loader)
 
 
 def _modules_loader(r: Registry):
@@ -108,7 +105,7 @@ def _modules_loader(r: Registry):
     r.add_from_module(m)
 
 
-REGISTRY.late_add("module", _modules_loader)
+REGISTRY.late_add(_modules_loader)
 
 
 def _model_loader(r: Registry):
@@ -130,7 +127,7 @@ def _model_loader(r: Registry):
             raise ex
 
 
-REGISTRY.late_add("model", _model_loader)
+REGISTRY.late_add(_model_loader)
 
 
 def _criterion_loader(r: Registry):
@@ -139,7 +136,7 @@ def _criterion_loader(r: Registry):
     r.add_from_module(m)
 
 
-REGISTRY.late_add("criterion", _criterion_loader)
+REGISTRY.late_add(_criterion_loader)
 
 
 def _optimizers_loader(r: Registry):
@@ -148,7 +145,7 @@ def _optimizers_loader(r: Registry):
     r.add_from_module(m)
 
 
-REGISTRY.late_add("optimizer", _optimizers_loader)
+REGISTRY.late_add(_optimizers_loader)
 
 
 def _schedulers_loader(r: Registry):
@@ -157,7 +154,7 @@ def _schedulers_loader(r: Registry):
     r.add_from_module(m)
 
 
-REGISTRY.late_add("scheduler", _schedulers_loader)
+REGISTRY.late_add(_schedulers_loader)
 
 
 def _experiments_loader(r: Registry):
@@ -172,7 +169,7 @@ def _experiments_loader(r: Registry):
     r.add_from_module(m)
 
 
-REGISTRY.late_add("experiment", _experiments_loader)
+REGISTRY.late_add(_experiments_loader)
 
 
 def _runners_loader(r: Registry):
@@ -186,7 +183,7 @@ def _runners_loader(r: Registry):
     r.add_from_module(m)
 
 
-REGISTRY.late_add("runner", _runners_loader)
+REGISTRY.late_add(_runners_loader)
 
 
 def _callbacks_loader(r: Registry):
@@ -200,65 +197,7 @@ def _callbacks_loader(r: Registry):
     r.add_from_module(m)
 
 
-REGISTRY.late_add("callback", _callbacks_loader)
+REGISTRY.late_add(_callbacks_loader)
 
 
-# backward compatibility
-CALLBACKS = CALLBACK = REGISTRY["callback"]
-Callback = REGISTRY["callback"].add
-CRITERIONS = CRITERION = REGISTRY["criterion"]
-Criterion = REGISTRY["criterion"].add
-EXPERIMENTS = EXPERIMENT = REGISTRY["experiment"]
-Experiment = REGISTRY["experiment"].add
-GRAD_CLIPPERS = GRAD_CLIPPER = REGISTRY["func"]
-MODELS = MODEL = REGISTRY["model"]
-Model = REGISTRY["model"].add
-MODULES = MODULE = REGISTRY["module"]
-Module = REGISTRY["module"].add
-OPTIMIZERS = OPTIMIZER = REGISTRY["optimizer"]
-Optimizer = REGISTRY["optimizer"].add
-RUNNERS = RUNNER = REGISTRY["runner"]
-Runner = REGISTRY["runner"].add
-SAMPLERS = SAMPLER = REGISTRY["sampler"]
-Sampler = REGISTRY["sampler"].add
-SCHEDULERS = SCHEDULER = REGISTRY["scheduler"]
-Scheduler = REGISTRY["scheduler"].add
-TRANSFORMS = TRANSFORM = REGISTRY["transform"]
-Transform = REGISTRY["transform"].add
-
-
-__all__ = [
-    "Callback",
-    "CALLBACK",
-    "CALLBACKS",
-    "Criterion",
-    "CRITERION",
-    "CRITERIONS",
-    "Experiment",
-    "EXPERIMENT",
-    "EXPERIMENTS",
-    "GRAD_CLIPPER",
-    "GRAD_CLIPPERS",
-    "Model",
-    "MODEL",
-    "MODELS",
-    "Module",
-    "MODULE",
-    "MODULES",
-    "Optimizer",
-    "OPTIMIZER",
-    "OPTIMIZERS",
-    "Runner",
-    "RUNNER",
-    "RUNNERS",
-    "Sampler",
-    "SAMPLER",
-    "SAMPLERS",
-    "Scheduler",
-    "SCHEDULER",
-    "SCHEDULERS",
-    "Transform",
-    "TRANSFORM",
-    "TRANSFORMS",
-    "REGISTRY",
-]
+__all__ = ["REGISTRY"]

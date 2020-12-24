@@ -200,7 +200,7 @@ class ConfigExperiment(IExperiment):
                 )
             model = nn.ModuleDict(model)
         else:
-            model = REGISTRY.get_from_params(subregistry="model", **params)
+            model = REGISTRY.get_from_params(**params)
         return model
 
     def get_model(self, stage: str):
@@ -222,9 +222,7 @@ class ConfigExperiment(IExperiment):
                     **key_params
                 )
         else:
-            criterion = REGISTRY.get_from_params(
-                subregistry="criterion", **params
-            )
+            criterion = REGISTRY.get_from_params(**params)
             if criterion is not None and torch.cuda.is_available():
                 criterion = criterion.cuda()
         return criterion
@@ -297,9 +295,7 @@ class ConfigExperiment(IExperiment):
             "load_from_previous_stage", False
         )
         optimizer_key = params.pop("optimizer_key", None)
-        optimizer = REGISTRY.get_from_params(
-            subregistry="optimizer", **params, params=model_params
-        )
+        optimizer = REGISTRY.get_from_params(**params, params=model_params)
 
         if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
@@ -365,9 +361,7 @@ class ConfigExperiment(IExperiment):
     ) -> Union[Scheduler, Dict[str, Scheduler]]:
         optimizer_key = params.pop("_optimizer", None)
         optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
-        scheduler = REGISTRY.get_from_params(
-            subregistry="scheduler", **params, optimizer=optimizer
-        )
+        scheduler = REGISTRY.get_from_params(**params, optimizer=optimizer)
 
         return scheduler
 
@@ -422,9 +416,7 @@ class ConfigExperiment(IExperiment):
                 ]
                 params.update(transforms=transforms_composition)
 
-            transform = REGISTRY.get_from_params(
-                subregistry="transform", **params
-            )
+            transform = REGISTRY.get_from_params(**params)
 
         return transform
 
@@ -480,7 +472,7 @@ class ConfigExperiment(IExperiment):
     @staticmethod
     def _get_callback(**params):
         wrapper_params = params.pop("_wrapper", None)
-        callback = REGISTRY.get_from_params(subregistry="callback", **params)
+        callback = REGISTRY.get_from_params(**params)
         if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
             callback = ConfigExperiment._get_callback(  # noqa: WPS437

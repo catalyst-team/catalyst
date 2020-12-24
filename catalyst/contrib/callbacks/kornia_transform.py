@@ -4,7 +4,7 @@ import torch
 from torch import nn
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.registry import TRANSFORMS
+from catalyst.registry import REGISTRY
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -143,7 +143,7 @@ class BatchTransformCallback(Callback):
                 element of the sequence must contain ``'transform'`` key with
                 an augmentation name as a value. Please note that in this case
                 to use custom augmentation you should add it to the
-                `TRANSFORMS` registry first.
+                `REGISTRY` registry first.
             input_key (Union[str, int]): key in batch dict
                 mapping to transform, e.g. `'image'`
             additional_input_key (Optional[Union[str, int]]): key of an
@@ -176,7 +176,7 @@ class BatchTransformCallback(Callback):
         transforms: Sequence[nn.Module] = [
             item
             if isinstance(item, nn.Module)
-            else TRANSFORMS.get_from_params(**item)
+            else REGISTRY.get_from_params(**item)
             for item in transform
         ]
         assert all(

@@ -1,5 +1,5 @@
 model_params:
-  model: SimpleNet
+  name: SimpleNet
 
 args:
   expdir: "_tests_cv_classification"
@@ -22,10 +22,10 @@ stages:
     minimize_metric: False
 
   criterion_params:
-      criterion: CrossEntropyLoss
+      name: CrossEntropyLoss
 
   optimizer_params:
-    optimizer: Adam
+    name: Adam
     lr: 0.001
     weight_decay: 0.0001
 
@@ -35,18 +35,18 @@ stages:
 
     callbacks_params:
       loss:
-        callback: CriterionCallback
+        name: CriterionCallback
       optimizer:
-        callback: OptimizerCallback
+        name: OptimizerCallback
       accuracy:
-        callback: AccuracyCallback
+        name: AccuracyCallback
         accuracy_args: [1, 3, 5]
       saver:
-        callback: CheckpointCallback
+        name: CheckpointCallback
         save_n_best: 3
         load_on_stage_end: best
       fast_run:
-        callback: CheckRunCallback
+        name: CheckRunCallback
         num_epoch_steps: *num_epochs
 
   stage2:
@@ -55,16 +55,16 @@ stages:
 
     callbacks_params:
       loss:
-        callback: CriterionCallback
+        name: CriterionCallback
       optimizer:
-        callback: OptimizerCallback
+        name: OptimizerCallback
       accuracy:
-        callback: AccuracyCallback
+        name: AccuracyCallback
         accuracy_args: [1, 3, 5]
       saver:
-        callback: CheckpointCallback
+        name: CheckpointCallback
         save_n_best: 3
         load_on_stage_end: last
       fast_run:
-        callback: CheckRunCallback
+        name: CheckRunCallback
         num_epoch_steps: *num_epochs

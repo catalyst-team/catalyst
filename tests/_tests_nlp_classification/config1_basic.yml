@@ -5,7 +5,7 @@ runner_params:
   input_key: ["features", "attention_mask"]
 
 model_params:
-  model: BertClassifier
+  name: BertClassifier
   pretrained_model_name: distilbert-base-uncased
   num_classes: 6
 
@@ -34,27 +34,27 @@ stages:
 
   # loss function for the classification task
   criterion_params:
-    criterion: CrossEntropyLoss
+    name: CrossEntropyLoss
 
   # scheduler controls learning rate during training
   scheduler_params:
-    scheduler: ReduceLROnPlateau
+    name: ReduceLROnPlateau
 
   # callbacks serve to calculate loss and metric,
   # update model weights, save checkpoint etc.
   callbacks_params:
     loss:
-      callback: CriterionCallback
+      name: CriterionCallback
     accuracy:
-      callback: AccuracyCallback
+      name: AccuracyCallback
     optimizer:
-      callback: OptimizerCallback
+      name: OptimizerCallback
       accumulation_steps: 4
     scheduler:
-      callback: SchedulerCallback
+      name: SchedulerCallback
       reduced_metric: *reduced_metric
     saver:
-      callback: CheckpointCallback
+      name: CheckpointCallback
       save_n_best: 3
 
   # params specific for stage 1 called "train_val"
@@ -65,5 +65,5 @@ stages:
     # optimizer params are specific only for this stage
     # in principle, we can define another stage with other optim params
     optimizer_params:
-      optimizer: Adam
+      name: Adam
       lr: 0.00005
