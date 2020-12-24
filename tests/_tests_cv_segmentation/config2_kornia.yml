@@ -56,12 +56,9 @@ stages:
           loaders: train
         name: BatchTransformCallback
         transform:
-          - name: kornia.RandomHorizontalFlip
-            p: 1.0
-          - name: kornia.RandomVerticalFlip
-            p: 1.0
+          - name: kornia.RandomErasing
+            p: 0.2
         input_key: image
-        additional_input_key: mask
       loss_dice:
         name: CriterionCallback
         input_key: mask
