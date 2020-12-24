@@ -50,15 +50,15 @@ stages:
       num_epochs: 3
 
     callbacks_params:
-      # train_augmentations:
-      #   _wrapper:
-      #     name: ControlFlowCallback
-      #     loaders: train
-      #   name: BatchTransformCallback
-      #   name:
-      #     - name: kornia.RandomHorizontalFlip
-      #   input_key: image
-      #   additional_input_key: mask
+      train_augmentations:
+        _wrapper:
+          name: ControlFlowCallback
+          loaders: train
+        name: BatchTransformCallback
+        transform:
+          - name: kornia.RandomHorizontalFlip
+        input_key: image
+        additional_input_key: mask
       loss_dice:
         name: CriterionCallback
         input_key: mask
