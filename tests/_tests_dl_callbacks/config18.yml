@@ -44,7 +44,7 @@ stages:
       saver:
         name: CheckpointCallback
         load_on_stage_start:
-          name: ./tests/logs/_tests_dl_callbacks/for_resume/checkpoints/best.pth
+          model: ./tests/logs/_tests_dl_callbacks/for_resume/checkpoints/best.pth
           optimizer: ./tests/logs/_tests_dl_callbacks/for_resume/checkpoints/last_full.pth
       fast_run:
         name: CheckRunCallback

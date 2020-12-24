@@ -55,7 +55,7 @@ stages:
           name: ControlFlowCallback
           loaders: train
         name: BatchTransformCallback
-        name:
+        transform:
           - name: kornia.RandomHorizontalFlip
         input_key: image
         additional_input_key: mask

@@ -21,7 +21,7 @@ stages:
     num_workers: 1
     samplers_params:
       train:
-        sampler: MiniEpochSampler
+        name: MiniEpochSampler
         data_len: 50000
         mini_epoch_len: 35000
         drop_last: True

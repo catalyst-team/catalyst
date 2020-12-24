@@ -51,7 +51,7 @@ stages:
           name: ControlFlowCallback
           loaders: train
         name: BatchTransformCallback
-        name:
+        transform:
           - name: kornia.RandomHorizontalFlip
             p: 1.0
           - name: kornia.RandomVerticalFlip

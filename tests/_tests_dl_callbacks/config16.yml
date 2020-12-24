@@ -86,7 +86,7 @@ stages:
         save_n_best: 3
         load_on_stage_start:
           optimizer: best
-          name: last
+          scheduler: last
       fast_run:
         name: CheckRunCallback
         num_epoch_steps: *num_epochs

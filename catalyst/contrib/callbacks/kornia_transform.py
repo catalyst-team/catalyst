@@ -99,10 +99,10 @@ class BatchTransformCallback(Callback):
           ...
           train_transforms:
             _wrapper:
-              callback: ControlFlowCallback
+              name: ControlFlowCallback
               loaders: train
-            callback: BatchTransformCallback
-            transforms:
+            name: BatchTransformCallback
+            transform:
               - transform: kornia.RandomAffine
                 degrees: [-15, 20]
                 scale: [0.75, 1.25]

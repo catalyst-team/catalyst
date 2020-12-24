@@ -52,7 +52,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     samplers_params:  # KEYWORD, параметры sampler для каждого лоадера, такое же API, как в loaders_params
       # Пример
       train:  # только для train лоадера
-        sampler: MiniEpochSampler  # KEYWORD, имя для sampler
+        name: MiniEpochSampler  # KEYWORD, имя для sampler
         # на этом уровне могут лежать параметры для __init__ данного sampler, например
         data_len: 50000  # Пример
         mini_epoch_len: 40000  # Пример
