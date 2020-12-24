@@ -1,0 +1,73 @@
+vals:
+  dataset_root: './data'
+  infer_batch_size: 64
+  infer_num_workers: 0
+
+  out_dir: "./"
+  out_prefix: "predictions"
+
+args:
+  expdir: './tests/_tests_cv_classification_hydra'
+  logdir: "./tests/logs/_tests_cv_classification_hydra"
+  resume: null
+  autoresume: null
+  seed: ${vals.seed}
+  distributed: False
+  apex: False
+  amp: False
+  verbose: False
+  timeit: False
+  check: False
+  overfit: False
+  deterministic: False
+  benchmark: False
+
+experiment:
+  _target_: catalyst.dl.HydraConfigExperiment
+
+runner:
+  _target_: catalyst.dl.MultiSupervisedRunner
+  model: null
+  device: null
+  models_keys:
+    simplenet:
+      input_key: null
+      output_key: null
+      target_key: null
+
+models:
+  simplenet:
+    _target_: _tests_cv_classification_hydra.SimpleNet
+
+stages:
+  infer:
+    params:
+      num_epochs: 1
+
+    datasets:
+      infer:
+        _target_: catalyst.contrib.datasets.MNIST
+        root: ${vals.dataset_root}
+        train: False
+        download: True
+
+    loaders:
+      infer:
+        batch_size: ${vals.infer_batch_size}
+        num_workers: ${vals.infer_num_workers}
+
+    transforms:
+      infer:
+        _target_: _tests_cv_classification_hydra.simple_transform
+
+    callbacks:
+      loader:
+        _target_: catalyst.dl.CheckpointCallback
+      infer:
+        _target_: catalyst.dl.InferCallback
+        out_dir: ${vals.out_dir}
+        out_prefix: ${vals.out_prefix}
+
+hydra:
+  run:
+    dir: ${args.logdir}
