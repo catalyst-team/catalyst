@@ -482,19 +482,21 @@
 <span class="sd">        Args:</span>
 <span class="sd">            runner(IRunner): current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">runner</span><span class="o">.</span><span class="n">experiment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="s2">&quot;amp&quot;</span><span class="p">,</span> <span class="kc">False</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">experiment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;amp&quot;</span><span class="p">,</span> <span class="kc">False</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">use_amp</span> <span class="o">=</span> <span class="kc">False</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_apex</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">runner</span><span class="o">.</span><span class="n">experiment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">use_apex</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-                <span class="s2">&quot;apex&quot;</span><span class="p">,</span> <span class="kc">False</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">use_apex</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_apex</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">experiment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">use_apex</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">distributed_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;apex&quot;</span><span class="p">,</span> <span class="kc">False</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">use_apex</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">get_attr</span><span class="p">(</span>
             <span class="n">runner</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">optimizer_key</span>
