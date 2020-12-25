@@ -113,4 +113,4 @@ def calculate_dice(
     return dice_metric
 
 
-__all__ = ["dice", "calculate_dice"]
+__all__ = ["calculate_dice"]

@@ -76,6 +76,6 @@ def iou(
     return iou_score
 
 
-jaccard = iou
-
-__all__ = ["iou", "jaccard"]
+# jaccard = iou
+#
+# __all__ = ["iou", "jaccard"]

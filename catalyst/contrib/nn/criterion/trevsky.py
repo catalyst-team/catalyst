@@ -1,13 +1,12 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
+from typing import List, Optional
 from functools import partial
-from typing import Optional, List
 
 import torch
 from torch import nn
 
 from catalyst.metrics.functional import wrap_metric_fn_with_activation
-from catalyst.metrics.functional import get_aggregated_metric
 from catalyst.metrics.region_base_metrics import trevsky
 
 
@@ -17,10 +16,10 @@ class TrevskyLoss(nn.Module):
     def __init__(
         self,
         alpha: float,
+        beta: Optional[float] = None,
         class_dim: int = 1,
         activation: str = "Sigmoid",
-        beta: Optional[float] = None,
-        mode: str = 'mean',
+        mode: str = "micro",
         weights: List[float] = None,
         eps: float = 1e-7,
     ):
@@ -28,39 +27,43 @@ class TrevskyLoss(nn.Module):
         Args:
             alpha: false negative coefficient, bigger alpha bigger penalty for
                 false negative. Must be in (0, 1)
+            beta: false positive coefficient, bigger alpha bigger penalty for
+                false positive. Must be in (0, 1), if None beta = (1 - alpha)
             class_dim: indicates class dimention (K) for
                 ``outputs`` and ``targets`` tensors (default = 1)
             activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
-            beta: false positive coefficient, bigger alpha bigger penalty for
-                false positive. Must be in (0, 1), if None beta = (1 - alpha)
-            mode: class summation strategy. Must be one of
-                ["mean", "sum", "weighted"]
+            mode: class summation strategy. Must be one of ['micro', 'macro',
+                'weighted']. If mode='micro', classes are ignored, and metric
+                are calculated generally. If mode='macro', metric are
+                calculated separately and than are averaged over all classes.
+                If mode='weighted', metric are calculated separately and than
+                summed over all classes with weights.
             weights: class weights(for mode="weighted")
             eps: epsilon to avoid zero division
         """
         super().__init__()
-        self.mode = mode
-        self.weights = weights
+        assert mode in ["micro", "macro", "weighted"]
         metric_fn = wrap_metric_fn_with_activation(
             metric_fn=trevsky, activation=activation
         )
-        self.loss_fn = partial(metric_fn,
-                               eps=eps,
-                               alpha=alpha,
-                               beta=beta,
-                               class_dim=class_dim,
-                               threshold=None)
+        self.loss_fn = partial(
+            metric_fn,
+            eps=eps,
+            alpha=alpha,
+            beta=beta,
+            class_dim=class_dim,
+            threshold=None,
+            mode=mode,
+            weights=weights,
+        )
 
-    def forward(self,
-                outputs: torch.Tensor,
-                targets: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> torch.Tensor:
         """Calculates loss between ``logits`` and ``target`` tensors."""
-        per_class_trevsky = self.loss_fn(outputs, targets)  # [bs; num_classes]
-        score = get_aggregated_metric(per_class_trevsky,
-                                      mode=self.mode,
-                                      weights=self.weights)
-        return 1 - score
+        trevsky = self.loss_fn(outputs, targets)  # [bs; num_classes]
+        return 1 - trevsky
 
 
 __all__ = ["TrevskyLoss"]

@@ -1,10 +1,10 @@
-from typing import Optional, Tuple
+from typing import Callable, List, Optional, Tuple
 from functools import partial
 
 import torch
 
 
-def _get_segmentation_stats(
+def get_segmentation_statistics(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     class_dim: int = 1,
@@ -24,7 +24,8 @@ def _get_segmentation_stats(
             ``outputs`` and ``targets`` tensors (default = 1)
         threshold: threshold for outputs binarization
 
-    Returns: segmentation stats
+    Returns:
+        Segmentation stats
 
     Examples:
         >>> size = 4
@@ -40,7 +41,7 @@ def _get_segmentation_stats(
         >>> top_left[:, :, :half_size, :half_size] = 1
         >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
         >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
-        >>> _get_segmentation_stats(
+        >>> get_segmentation_statistics(
         >>>                         outputs=pred,
         >>>                         targets=targets,
         >>>                         class_dim=1,
@@ -74,11 +75,106 @@ def _get_segmentation_stats(
     return tp, fp, fn
 
 
+def _get_region_based_metrics(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    metric_function: Callable,
+    class_dim=None,
+    threshold: float = None,
+    mode: str = "micro",
+    weights: Optional[List[float]] = None,
+) -> torch.Tensor:
+    """
+    Get aggregated metric
+
+    Args:
+        outputs: [N; K; ...] tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets:  binary [N; K; ...] tensor that encodes which of the K
+            classes are associated with the N-th input
+        class_dim: indicates class dimention (K) for
+            ``outputs`` and ``targets`` tensors (default = 1), if
+            mode = "micro" means nothing
+        threshold: threshold for outputs binarization
+        mode: class summation strategy. Must be one of ['micro', 'macro',
+            'weighted', 'separately']. If mode='micro', classes are ignored,
+             and metric are calculated generally. If mode='macro', metric are
+             calculated separately and than are averaged over all classes. If
+             mode='weighted', metric are calculated separately and than summed
+             over all classes with weights. If mode='separately', metric are
+             calculated separately for all classes
+        weights: class weights(for mode="weighted")
+
+    Returns:
+        Metric
+
+    """
+    assert mode in ["micro", "macro", "weighted", "separately"]
+    segmentation_stats = get_segmentation_statistics(
+        outputs=outputs,
+        targets=targets,
+        class_dim=class_dim,
+        threshold=threshold,
+    )
+    if mode == "micro":
+        segmentation_stats = [torch.sum(stats) for stats in segmentation_stats]
+        metric = metric_function(*segmentation_stats)
+
+    metrics_per_class = metric_function(*segmentation_stats)
+
+    if mode == "macro":
+        metric = torch.mean(metrics_per_class)
+
+    if mode == "weighted":
+        assert len(weights) == len(segmentation_stats[0])
+        metrics = torch.tensor(weights) * metrics_per_class
+        metric = torch.sum(metrics)
+
+    if mode == "separately":
+        metric = metrics_per_class
+
+    return metric
+
+
+def _iou(
+    tp: torch.Tensor, fp: torch.Tensor, fn: torch.Tensor, eps: float = 1e-7
+) -> torch.Tensor:
+    union = tp + fp + fn
+    score = (tp + eps * (union == 0).float()) / (tp + fp + fn + eps)
+    return score
+
+
+def _dice(
+    tp: torch.Tensor, fp: torch.Tensor, fn: torch.Tensor, eps: float = 1e-7
+) -> torch.Tensor:
+    union = tp + fp + fn
+    score = (2 * tp + eps * (union == 0).float()) / (2 * tp + fp + fn + eps)
+    return score
+
+
+def _trevsky(
+    tp: torch.Tensor,
+    fp: torch.Tensor,
+    fn: torch.Tensor,
+    alpha: float,
+    beta: float,
+    eps: float = 1e-7,
+) -> torch.Tensor:
+    union = tp + fp + fn
+    score = (tp + eps * (union == 0).float()) / (
+        tp + fp * beta + fn * alpha + eps
+    )
+    return score
+
+
 def iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     class_dim: int = 1,
     threshold: float = None,
+    mode: str = "micro",
+    weights: Optional[List[float]] = None,
     eps: float = 1e-7,
 ) -> torch.Tensor:
     """
@@ -92,12 +188,22 @@ def iou(
         targets:  binary [N; K; ...] tensor that encodes which of the K
             classes are associated with the N-th input
         class_dim: indicates class dimention (K) for
-            ``outputs`` and ``targets`` tensors (default = 1)
+            ``outputs`` and ``targets`` tensors (default = 1), if
+            mode = "micro" means nothing
         threshold: threshold for outputs binarization
+        mode: class summation strategy. Must be one of ['micro', 'macro',
+            'weighted', 'separately']. If mode='micro', classes are ignored,
+             and metric are calculated generally. If mode='macro', metric are
+             calculated separately and than are averaged over all classes. If
+             mode='weighted', metric are calculated separately and than summed
+             over all classes with weights. If mode='separately', metric are
+             calculated separately for all classes
+        weights: class weights(for mode="weighted")
         eps: epsilon to avoid zero division
 
     Returns:
-        IoU (Jaccard) score for each class
+        IoU (Jaccard) score for each class(if mode='weighted') or
+        aggregated IOU
 
     Examples:
         >>> size = 4
@@ -118,17 +224,20 @@ def iou(
         >>>     targets=targets,
         >>>     class_dim=1,
         >>>     threshold=0.5,
+        >>>     mode='separately'
         >>> )
         tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])
     """
-    tp, fp, fn = _get_segmentation_stats(
+    metric_function = partial(_iou, eps=eps)
+    score = _get_region_based_metrics(
         outputs=outputs,
         targets=targets,
+        metric_function=metric_function,
         class_dim=class_dim,
         threshold=threshold,
+        mode=mode,
+        weights=weights,
     )
-    union = tp + fp + fn
-    score = (tp + eps * (union == 0).float()) / (tp + fp + fn + eps)
     return score
 
 
@@ -137,6 +246,8 @@ def dice(
     targets: torch.Tensor,
     class_dim: int = 1,
     threshold: float = None,
+    mode: str = "micro",
+    weights: Optional[List[float]] = None,
     eps: float = 1e-7,
 ) -> torch.Tensor:
     """
@@ -151,12 +262,21 @@ def dice(
         targets:  binary [N; K; ...] tensor that encodes which of the K
             classes are associated with the N-th input
         class_dim: indicates class dimention (K) for
-            ``outputs`` and ``targets`` tensors (default = 1)
+            ``outputs`` and ``targets`` tensors (default = 1), if
+            mode = "micro" means nothing
         threshold: threshold for outputs binarization
+        mode: class summation strategy. Must be one of ['micro', 'macro',
+            'weighted', 'separately']. If mode='micro', classes are ignored,
+             and metric are calculated generally. If mode='macro', metric are
+             calculated separately and than are averaged over all classes. If
+             mode='weighted', metric are calculated separately and than summed
+             over all classes with weights. If mode='separately', metric are
+             calculated separately for all classes
+        weights: class weights(for mode="weighted")
         eps: epsilon to avoid zero division
 
     Returns:
-        Dice score for each class
+        Dice score for each class(if mode='weighted') or aggregated Dice
 
     Examples:
         >>> size = 4
@@ -177,17 +297,20 @@ def dice(
         >>>      targets=targets,
         >>>      class_dim=1,
         >>>      threshold=0.5,
+        >>>      mode='separately'
         >>> )
         tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.6667])
     """
-    tp, fp, fn = _get_segmentation_stats(
+    metric_function = partial(_dice, eps=eps)
+    score = _get_region_based_metrics(
         outputs=outputs,
         targets=targets,
+        metric_function=metric_function,
         class_dim=class_dim,
         threshold=threshold,
+        mode=mode,
+        weights=weights,
     )
-    union = tp + fp + fn
-    score = (2 * tp + eps * (union == 0).float()) / (2 * tp + fp + fn + eps)
     return score
 
 
@@ -198,6 +321,8 @@ def trevsky(
     beta: Optional[float] = None,
     class_dim: int = 1,
     threshold: float = None,
+    mode: str = "micro",
+    weights: Optional[List[float]] = None,
     eps: float = 1e-7,
 ) -> torch.Tensor:
     """
@@ -217,10 +342,18 @@ def trevsky(
         class_dim: indicates class dimention (K) for
             ``outputs`` and ``targets`` tensors (default = 1)
         threshold: threshold for outputs binarization
+        mode: class summation strategy. Must be one of ['micro', 'macro',
+            'weighted', 'separately']. If mode='micro', classes are ignored,
+             and metric are calculated generally. If mode='macro', metric are
+             calculated separately and than are averaged over all classes. If
+             mode='weighted', metric are calculated separately and than summed
+             over all classes with weights. If mode='separately', metric are
+             calculated separately for all classes
+        weights: class weights(for mode="weighted")
         eps: epsilon to avoid zero division
 
     Returns:
-        Trevsky score for each class
+        Trevsky score for each class(if mode='weighted') or aggregated score
 
     Examples:
         >>> size = 4
@@ -242,20 +375,26 @@ def trevsky(
         >>>         alpha=0.2,
         >>>         class_dim=1,
         >>>         threshold=0.5,
+        >>>         mode='separately'
         >>> )
         tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.8333])
     """
     assert 0 < alpha < 1  # I am not sure about this
     if beta is None:
         beta = 1 - alpha
-    tp, fp, fn = _get_segmentation_stats(
+    metric_function = partial(_trevsky, alpha=alpha, beta=beta, eps=eps)
+    score = _get_region_based_metrics(
         outputs=outputs,
         targets=targets,
+        metric_function=metric_function,
         class_dim=class_dim,
         threshold=threshold,
-    )
-    union = tp + fp + fn
-    score = (tp + eps * (union == 0).float()) / (
-        tp + fp * beta + fn * alpha + eps
+        mode=mode,
+        weights=weights,
     )
     return score
+
+
+jaccard = iou
+
+__all__ = ["iou", "jaccard", "dice", "trevsky"]
