@@ -1,6 +1,6 @@
 model_params:
-  name: smp.Unet
-  encoder_name: resnext50_32x4d
+  _target_:  smp.Unet
+  encoder_name/key: resnext50_32x4d
   classes: 1
 
 runner_params:
@@ -29,14 +29,14 @@ stages:
     _key_value: True
 
     dice:
-      name: DiceLoss
+      _target_:  DiceLoss
     iou:
-      name: IoULoss
+      _target_:  IoULoss
     bce:
-      name: BCEWithLogitsLoss
+      _target_:  BCEWithLogitsLoss
 
   optimizer_params:
-    name: Adam
+    _target_:  Adam
     layerwise_params:
       "encoder*":
         lr: 0.0005
@@ -52,40 +52,40 @@ stages:
     callbacks_params:
       train_augmentations:
         _wrapper:
-          name: ControlFlowCallback
+          _target_:  ControlFlowCallback
           loaders: train
-        name: BatchTransformCallback
+        _target_:  BatchTransformCallback
         transform:
-          - name: kornia.RandomErasing
+          - _target_:  kornia.RandomErasing
             p: 0.2
         input_key: image
       loss_dice:
-        name: CriterionCallback
+        _target_:  CriterionCallback
         input_key: mask
         prefix: loss_dice
         criterion_key: dice
       loss_iou:
-        name: CriterionCallback
+        _target_:  CriterionCallback
         input_key: mask
         prefix: loss_iou
         criterion_key: iou
       loss_bce:
-        name: CriterionCallback
+        _target_:  CriterionCallback
         input_key: mask
         prefix: loss_bce
         criterion_key: bce
       loss_aggregator:
-        name: MetricAggregationCallback
+        _target_:  MetricAggregationCallback
         prefix: loss
         mode: weighted_sum
         metrics: {"loss_dice": 1.0, "loss_iou": 1.0, "loss_bce": 0.8}
 
       dice:
-        name: DiceCallback
+        _target_:  DiceCallback
         input_key: mask
       iou:
-        name: IouCallback
+        _target_:  IouCallback
         input_key: mask
 
       saver:
-        name: CheckpointCallback
+        _target_:  CheckpointCallback

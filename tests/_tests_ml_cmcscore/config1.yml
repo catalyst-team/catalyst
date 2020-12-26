@@ -1,5 +1,5 @@
 model_params:
-  name: Net
+  _target_:  Net
 
 args:
   expdir: "_tests_ml_cmcscore"
@@ -18,18 +18,18 @@ stages:
       num_workers: 0
 
     criterion_params:
-      name: TripletLoss
+      _target_:  TripletLoss
     optimizer_params:
-      name: Adam
+      _target_:  Adam
       lr: 0.001
       weight_decay: 0.0001
 
     callbacks_params:
       cmc:
         _wrapper:
-          name: ControlFlowCallback
+          _target_:  ControlFlowCallback
           loaders: valid_query_gallery
-        name: CMCScoreCallback
+        _target_:  CMCScoreCallback
         topk_args:
           - 1
           - 5

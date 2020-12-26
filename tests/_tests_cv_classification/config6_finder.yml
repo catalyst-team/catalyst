@@ -1,5 +1,5 @@
 model_params:
-  name: SimpleNet
+  _target_:  SimpleNet
 
 args:
   expdir: "cv_classification"
@@ -12,10 +12,10 @@ stages:
     num_workers: 0
 
   criterion_params:
-      name: CrossEntropyLoss
+      _target_:  CrossEntropyLoss
 
   optimizer_params:
-    name: Adam
+    _target_:  Adam
     lr: 0.001
     weight_decay: 0.0001
 
@@ -25,10 +25,10 @@ stages:
 
     callbacks_params:
       loss:
-        name: CriterionCallback
+        _target_:  CriterionCallback
       optimizer:
-        name: OptimizerCallback
+        _target_:  OptimizerCallback
       finder:
-        name: LRFinder
+        _target_:  LRFinder
         final_lr: 0.1
         num_steps: 1000

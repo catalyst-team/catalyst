@@ -1,5 +1,5 @@
 model_params:
-  name: Model
+  _target_: Model
   # here can lay model params **kwargs
 
 args:
@@ -17,27 +17,27 @@ stages:
     minimize_metric: True  # Change if you change `main_metric`
 
   criterion_params:
-    name: CrossEntropyLoss # CHANGE ME
+    _target_: CrossEntropyLoss # CHANGE ME
 
   scheduler_params:
-    name: MultiStepLR # CHANGE ME
+    _target_: MultiStepLR # CHANGE ME
     milestones: [10]
     gamma: 0.3
 
   callbacks_params:
     loss:
-      name: CriterionCallback
+      _target_: CriterionCallback
     optimizer:
-      name: OptimizerCallback
+      _target_: OptimizerCallback
     scheduler:
-      name: SchedulerCallback
+      _target_: SchedulerCallback
       reduced_metric: *reduced_metric
     saver:
-      name: CheckpointCallback
+      _target_: CheckpointCallback
 
   stage1:
 
     optimizer_params:
-      name: Adam # CHANGE ME
+      _target_: Adam # CHANGE ME
       lr: 0.001
       weight_decay: 0.0001

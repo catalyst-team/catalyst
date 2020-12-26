@@ -14,6 +14,7 @@ from typing import (
     Union,
 )
 import collections
+import functools
 import inspect
 import warnings
 
@@ -24,18 +25,8 @@ MetaFactory = Callable[[Factory, Tuple, Mapping], Any]
 
 def _default_meta_factory(factory: Factory, args: Tuple, kwargs: Mapping):
     if inspect.isfunction(factory):
-        return _FuncWrap(factory, args, kwargs)
+        return functools.partial(factory, *args, **kwargs)
     return factory(*args, **kwargs)
-
-
-class _FuncWrap:
-    def __init__(self, fn: Callable, args: tuple, kwargs: dict):
-        self.fn = fn
-        self.args = args
-        self.kwargs = kwargs
-
-    def __call__(self, x: Any) -> Any:
-        self.fn(x, *self.args, **self.kwargs)
 
 
 class RegistryException(Exception):
@@ -277,7 +268,7 @@ class Registry(collections.MutableMapping):
         Returns:
             result of calling ``instantiate_fn(factory, **config)``
         """
-        name = kwargs.pop("name", None)
+        name = kwargs.pop("_target_", None)
         if name:
             return self.get_instance(name, meta_factory=meta_factory, **kwargs)
 

@@ -5,8 +5,8 @@ runner_params:
   input_key: ["features", "attention_mask"]
 
 model_params:
-  name: BertClassifier
-  pretrained_model_name: distilbert-base-uncased
+  _target_:  BertClassifier
+  pretrained_model_name/key: distilbert-base-uncased
   num_classes: 6
 
 args:
@@ -22,8 +22,8 @@ stages:
     batch_size: 24
     num_workers: 1
     path_to_data: './tests/_tests_nlp_classification/input'
-    train_filename: "train.csv"
-    valid_filename: "valid.csv"
+    train_filename/key: "train.csv"
+    valid_filename/key: "valid.csv"
     text_field: "text"
     label_field: "label"
     max_sequence_length: 512
@@ -34,27 +34,27 @@ stages:
 
   # loss function for the classification task
   criterion_params:
-    name: CrossEntropyLoss
+    _target_:  CrossEntropyLoss
 
   # scheduler controls learning rate during training
   scheduler_params:
-    name: ReduceLROnPlateau
+    _target_:  ReduceLROnPlateau
 
   # callbacks serve to calculate loss and metric,
   # update model weights, save checkpoint etc.
   callbacks_params:
     loss:
-      name: CriterionCallback
+      _target_:  CriterionCallback
     accuracy:
-      name: AccuracyCallback
+      _target_:  AccuracyCallback
     optimizer:
-      name: OptimizerCallback
+      _target_:  OptimizerCallback
       accumulation_steps: 4
     scheduler:
-      name: SchedulerCallback
+      _target_:  SchedulerCallback
       reduced_metric: *reduced_metric
     saver:
-      name: CheckpointCallback
+      _target_:  CheckpointCallback
       save_n_best: 3
 
   # params specific for stage 1 called "train_val"
@@ -65,5 +65,5 @@ stages:
     # optimizer params are specific only for this stage
     # in principle, we can define another stage with other optim params
     optimizer_params:
-      name: Adam
+      _target_:  Adam
       lr: 0.00005

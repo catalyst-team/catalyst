@@ -7,7 +7,7 @@ from catalyst.registry.tests.registery_foo import foo
 
 def test_add_function():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
 
     r.add(foo)
 
@@ -16,7 +16,7 @@ def test_add_function():
 
 def test_add_function_name_override():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
 
     r.add(foo, name="bar")
 
@@ -25,7 +25,7 @@ def test_add_function_name_override():
 
 def test_add_lambda_fail():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
 
     with pytest.raises(RegistryException):
         r.add(lambda x: x)
@@ -33,7 +33,7 @@ def test_add_lambda_fail():
 
 def test_add_lambda_override():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
 
     r.add(lambda x: x, name="bar")
 
@@ -42,7 +42,7 @@ def test_add_lambda_override():
 
 def test_fail_multiple_with_name():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
 
     with pytest.raises(RegistryException):
         r.add(foo, foo, name="bar")
@@ -50,7 +50,7 @@ def test_fail_multiple_with_name():
 
 def test_fail_double_add_different():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
     r.add(foo)
 
     with pytest.raises(RegistryException):
@@ -63,7 +63,7 @@ def test_fail_double_add_different():
 
 def test_double_add_same_nofail():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
     r.add(foo)
     # It's ok to add same twice, forced by python relative import
     # implementation
@@ -73,27 +73,27 @@ def test_double_add_same_nofail():
 
 def test_instantiations():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
 
     r.add(foo)
 
-    res = r.get_instance("foo", 1, 2)
+    res = r.get_instance("foo", 1, 2)()
     assert res == {"a": 1, "b": 2}
 
-    res = r.get_instance("foo", 1, b=2)
+    res = r.get_instance("foo", 1, b=2)()
     assert res == {"a": 1, "b": 2}
 
-    res = r.get_instance("foo", a=1, b=2)
+    res = r.get_instance("foo", a=1, b=2)()
     assert res == {"a": 1, "b": 2}
 
 
 def test_from_config():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("obj")
+    r = Registry()
 
     r.add(foo)
 
-    res = r.get_from_params(**{"obj": "foo", "a": 1, "b": 2})
+    res = r.get_from_params(**{"_target_": "foo", "a": 1, "b": 2})()
     assert res == {"a": 1, "b": 2}
 
     res = r.get_from_params(**{})
@@ -109,31 +109,31 @@ def test_meta_factory():
     def meta_factory2(fn, args, kwargs):
         return 1
 
-    r = Registry("obj", meta_factory1)
+    r = Registry(meta_factory1)
     r.add(foo)
 
-    res = r.get_from_params(**{"obj": "foo"})
+    res = r.get_from_params(**{"_target_": "foo"})
     assert res == foo
 
-    res = r.get_from_params(**{"obj": "foo"}, meta_factory=meta_factory2)
+    res = r.get_from_params(**{"_target_": "foo"}, meta_factory=meta_factory2)
     assert res == 1
 
 
 def test_fail_instantiation():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
 
     r.add(foo)
 
-    with pytest.raises(RegistryException) as e_ifo:
-        r.get_instance("foo", c=1)
+    with pytest.raises((RegistryException, TypeError)) as e_ifo:
+        r.get_instance("foo", c=1)()
 
     assert hasattr(e_ifo.value, "__cause__")
 
 
 def test_decorator():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
 
     @r.add
     def bar():
@@ -144,7 +144,7 @@ def test_decorator():
 
 def test_kwargs():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
 
     r.add(bar=foo)
 
@@ -153,7 +153,7 @@ def test_kwargs():
 
 def test_add_module():
     """@TODO: Docs. Contribution is welcome."""
-    r = Registry("")
+    r = Registry()
 
     r.add_from_module(module)
 

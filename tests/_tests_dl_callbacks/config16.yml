@@ -1,5 +1,5 @@
 model_params:
-  name: SimpleNet
+  _target_:  SimpleNet
 
 args:
   expdir: "_tests_cv_classification"
@@ -22,10 +22,10 @@ stages:
     minimize_metric: False
 
   criterion_params:
-      name: CrossEntropyLoss
+      _target_:  CrossEntropyLoss
 
   optimizer_params:
-    name: Adam
+    _target_:  Adam
     lr: 0.001
     weight_decay: 0.0001
 
@@ -35,17 +35,17 @@ stages:
 
     callbacks_params:
       loss:
-        name: CriterionCallback
+        _target_:  CriterionCallback
       optimizer:
-        name: OptimizerCallback
+        _target_:  OptimizerCallback
       accuracy:
-        name: AccuracyCallback
+        _target_:  AccuracyCallback
         accuracy_args: [1, 3, 5]
       saver:
-        name: CheckpointCallback
+        _target_:  CheckpointCallback
         save_n_best: 1
       fast_run:
-        name: CheckRunCallback
+        _target_:  CheckRunCallback
         num_epoch_steps: *num_epochs
 
   stage2:
@@ -54,19 +54,19 @@ stages:
 
     callbacks_params:
       loss:
-        name: CriterionCallback
+        _target_:  CriterionCallback
       optimizer:
-        name: OptimizerCallback
+        _target_:  OptimizerCallback
       accuracy:
-        name: AccuracyCallback
+        _target_:  AccuracyCallback
         accuracy_args: [1, 3, 5]
       saver:
-        name: CheckpointCallback
+        _target_:  CheckpointCallback
         save_n_best: 2
         load_on_stage_start:
           optimizer: last
       fast_run:
-        name: CheckRunCallback
+        _target_:  CheckRunCallback
         num_epoch_steps: *num_epochs
 
   stage3:
@@ -75,18 +75,18 @@ stages:
 
     callbacks_params:
       loss:
-        name: CriterionCallback
+        _target_:  CriterionCallback
       optimizer:
-        name: OptimizerCallback
+        _target_:  OptimizerCallback
       accuracy:
-        name: AccuracyCallback
+        _target_:  AccuracyCallback
         accuracy_args: [1, 3, 5]
       saver:
-        name: CheckpointCallback
+        _target_:  CheckpointCallback
         save_n_best: 3
         load_on_stage_start:
           optimizer: best
           scheduler: last
       fast_run:
-        name: CheckRunCallback
+        _target_:  CheckRunCallback
         num_epoch_steps: *num_epochs
