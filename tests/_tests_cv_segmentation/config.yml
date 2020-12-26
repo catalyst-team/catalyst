@@ -1,6 +1,6 @@
 model_params:
   _target_:  smp.Unet
-  encoder_name/key: resnext50_32x4d
+  encoder_name: resnext50_32x4d
   classes: 1
 
 runner_params:
