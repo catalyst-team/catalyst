@@ -557,7 +557,7 @@ class CustomRunner(dl.Runner):
         y_hat, x_ = self.model(x_noise)
 
         loss_clf = F.cross_entropy(y_hat, y)
-        iou = metrics.iou(x_, x)
+        iou = metrics.iou(x_, x).mean()
         loss_iou = 1 - iou
         loss = loss_clf + loss_iou
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
@@ -1143,6 +1143,8 @@ best practices for your deep learning research.
 ### Docs
 
 - [master](https://catalyst-team.github.io/catalyst/)
+- [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
+- [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
 - [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
 - [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
 - [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)

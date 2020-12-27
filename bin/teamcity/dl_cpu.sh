@@ -8,4 +8,4 @@ bash ./bin/teamcity/dl_.sh
 # bash ./bin/teamcity/dl_apex.sh
 
 ###################################  CPU ######################################
-USE_APEX="0" CUDA_VISIBLE_DEVICES="" bash ./bin/tests/check_dl_all.sh
+USE_AMP="0" USE_APEX="0" CUDA_VISIBLE_DEVICES="" bash ./bin/tests/check_dl_all.sh

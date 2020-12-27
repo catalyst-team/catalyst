@@ -1,0 +1,131 @@
+vals:
+  dataset_root: './data'
+  train_batch_size: 64
+  train_num_workers: 1
+  valid_batch_size: 32
+  valid_num_workers: 0
+  infer_batch_size: 64
+  infer_num_workers: 0
+
+  optimizer:
+    target: torch.optim.Adam
+    lr: 0.001
+    weight_decay: 0.0001
+
+  num_epochs: 100
+
+  scheduler:
+    target: catalyst.contrib.nn.OneCycleLRWithWarmup
+    warmup_steps: 1
+    lr_range: [ 0.005, 0.00005 ]
+    momentum_range: [ 0.85, 0.95 ]
+
+args:
+  expdir: './tests/_tests_cv_classification_hydra'
+  logdir: "./tests/logs/_tests_cv_classification_hydra"
+  resume: null
+  autoresume: null
+  seed: ${vals.seed}
+  distributed: False
+  apex: False
+  amp: False
+  verbose: False
+  timeit: False
+  check: False
+  overfit: False
+  deterministic: False
+  benchmark: False
+
+experiment:
+  _target_: catalyst.dl.HydraConfigExperiment
+
+runner:
+  _target_: catalyst.dl.MultiSupervisedRunner
+  model: null
+  device: null
+  models_keys:
+    simplenet:
+      input_key: null
+      output_key: null
+      target_key: null
+
+models:
+  simplenet:
+    _target_: _tests_cv_classification_hydra.SimpleNet
+
+stages:
+  train:
+    params:
+      main_metric: accuracy01
+      minimize_metric: False
+      num_epochs: ${vals.num_epochs}
+      valid_loader: valid
+
+    datasets:
+      train:
+        _target_: catalyst.contrib.datasets.MNIST
+        root: ${vals.dataset_root}
+        train: True
+        download: True
+      valid:
+        _target_: catalyst.contrib.datasets.MNIST
+        root: ${vals.dataset_root}
+        train: False
+        download: True
+
+    loaders:
+      train:
+        batch_size: ${vals.train_batch_size}
+        num_workers: ${vals.train_num_workers}
+      valid:
+        batch_size: ${vals.valid_batch_size}
+        num_workers: ${vals.valid_num_workers}
+
+    transforms:
+      train:
+        _target_: _tests_cv_classification_hydra.simple_transform
+      valid:
+        _target_: _tests_cv_classification_hydra.simple_transform
+
+    criterions:
+      criterion:
+        _target_: torch.nn.CrossEntropyLoss
+
+    optimizers:
+      adam:
+        _target_: ${vals.optimizer.target}
+        models:
+          - simplenet
+        lr: ${vals.optimizer.lr}
+        weight_decay: ${vals.optimizer.weight_decay}
+
+    schedulers:
+      one_cycle_lr_with_warmup:
+        _target_: ${vals.scheduler.target}
+        optimizer: adam
+        num_steps: ${vals.num_epochs}
+        warmup_steps: ${vals.scheduler.warmup_steps}
+        lr_range: ${vals.scheduler.lr_range}
+        momentum_range: ${vals.scheduler.momentum_range}
+
+    callbacks:
+      loss:
+        _target_: catalyst.dl.CriterionCallback
+        criterion_key: criterion
+      optimizer:
+        _target_: catalyst.dl.OptimizerCallback
+        optimizer_key: adam
+      accuracy:
+        _target_: catalyst.dl.AccuracyCallback
+        accuracy_args: [ 1, 3, 5 ]
+      scheduler:
+        _target_: catalyst.dl.SchedulerCallback
+        scheduler_key: one_cycle_lr_with_warmup
+        reduced_metric: accuracy01
+      saver:
+        _target_: catalyst.dl.CheckpointCallback
+        save_n_best: 3
+
+hydra:
+  run:
+    dir: ${args.logdir}
