@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Type, Union
 import argparse
 from base64 import urlsafe_b64encode
 import collections
@@ -13,6 +13,8 @@ import shutil
 
 import numpy as np
 from packaging.version import parse, Version
+
+import torch
 
 
 def boolean_flag(
@@ -540,6 +542,23 @@ def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
     else:  # could be very slow
         inds = [i for i, el in enumerate(it) if el == value]
     return inds
+
+
+def _get_torch2numpy_dtype_mapping() -> Dict[Type, Type]:
+    torch2numpy_dtype_dict = {
+        torch.bool: bool,
+        torch.uint8: np.uint8,
+        torch.int8: np.int8,
+        torch.int16: np.int16,
+        torch.int32: np.int32,
+        torch.int64: np.int64,
+        torch.float16: np.float16,
+        torch.float32: np.float32,
+        torch.float64: np.float64,
+        torch.complex64: np.complex64,
+        torch.complex128: np.complex128,
+    }
+    return torch2numpy_dtype_dict
 
 
 __all__ = [

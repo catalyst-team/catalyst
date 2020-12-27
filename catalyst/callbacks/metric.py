@@ -20,7 +20,10 @@ import torch
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.tools.meters.averagevaluemeter import AverageValueMeter
 from catalyst.utils.distributed import get_distributed_mean
-from catalyst.utils.misc import get_dictkey_auto_fn
+from catalyst.utils.misc import (
+    _get_torch2numpy_dtype_mapping,
+    get_dictkey_auto_fn,
+)
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -187,6 +190,7 @@ class ILoaderMetricCallback(IMetricCallback):
         self.output: Optional[Dict[str, Iterable[Any]]] = None
         self._storage_size: Optional[int] = None
         self._cur_idx: int = 0
+        self._torch2numpy_dtype_dict = _get_torch2numpy_dtype_mapping()
 
     def on_loader_start(self, runner: "IRunner"):
         """Reinitialises internal storage."""
@@ -205,10 +209,16 @@ class ILoaderMetricCallback(IMetricCallback):
             if isinstance(data, dict):
                 for key, value in data.items():
                     field_shape = (self._storage_size, *value.shape[1:])
-                    storage[key] = np.empty(shape=field_shape)
+                    storage[key] = np.empty(
+                        shape=field_shape,
+                        dtype=self._torch2numpy_dtype_dict[value.dtype],
+                    )
             else:
                 field_shape = (self._storage_size, *data.shape[1:])
-                storage["_data"] = np.empty(shape=field_shape)
+                storage["_data"] = np.empty(
+                    shape=field_shape,
+                    dtype=self._torch2numpy_dtype_dict[data.dtype],
+                )
         self._cur_idx = 0
 
     def on_batch_end(self, runner: "IRunner") -> None:
@@ -225,14 +235,14 @@ class ILoaderMetricCallback(IMetricCallback):
             if isinstance(data, dict):
                 for key, value in data.items():
                     value_shape = value.shape[0]
-                    storage[key][
-                        self._cur_idx : self._cur_idx + value_shape,
-                    ][:] = (value.detach().cpu().numpy())
+                    storage[key][self._cur_idx : self._cur_idx + value_shape,][
+                        :
+                    ] = (value.detach().cpu().numpy())
             else:
                 value_shape = len(data)
-                storage["_data"][
-                    self._cur_idx : self._cur_idx + value_shape,
-                ][:] = (data.detach().cpu().numpy())
+                storage["_data"][self._cur_idx : self._cur_idx + value_shape,][
+                    :
+                ] = (data.detach().cpu().numpy())
         self._cur_idx += value_shape
 
     def _check_completeness(self) -> None:
