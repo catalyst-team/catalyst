@@ -193,17 +193,13 @@ class ILoaderMetricCallback(IMetricCallback):
         self.input = defaultdict(lambda: np.ndarray(0))
         self.output = defaultdict(lambda: np.ndarray(0))
 
-    def on_batch_start(self, runner: "IRunner"):
+    def _allocate_memory(self, runner: "IRunner"):
         """Allocate memory for data accumulation"""
         output = self._get_output(runner.output, self.output_key)
         input = self._get_input(runner.input, self.input_key)
 
         dataset = runner.loaders[runner.loader_key].dataset
         self._storage_size = len(dataset)
-
-        is_first_batch = not (self.input and self.output)
-        if not is_first_batch:
-            return
 
         for data, storage in zip((input, output), (self.input, self.output)):
             if isinstance(data, dict):
@@ -221,6 +217,10 @@ class ILoaderMetricCallback(IMetricCallback):
 
     def on_batch_end(self, runner: "IRunner") -> None:
         """Stores new input/output for the metric computation."""
+        is_first_batch = not (self.input and self.output)
+        if is_first_batch:
+            self._allocate_memory(runner=runner)
+
         output = self._get_output(runner.output, self.output_key)
         input = self._get_input(runner.input, self.input_key)
 
