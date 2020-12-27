@@ -193,7 +193,7 @@ class ILoaderMetricCallback(IMetricCallback):
         self.input = defaultdict(lambda: np.ndarray(0))
         self.output = defaultdict(lambda: np.ndarray(0))
 
-    def _allocate_memory(self, runner: "IRunner"):
+    def _allocate_memory(self, runner: "IRunner") -> None:
         """Allocate memory for data accumulation"""
         output = self._get_output(runner.output, self.output_key)
         input = self._get_input(runner.input, self.input_key)
@@ -204,15 +204,11 @@ class ILoaderMetricCallback(IMetricCallback):
         for data, storage in zip((input, output), (self.input, self.output)):
             if isinstance(data, dict):
                 for key, value in data.items():
-                    value_shape = value.shape
-                    field_shape = (
-                        (self._storage_size, value_shape[1])
-                        if len(value_shape) > 1
-                        else (self._storage_size,)
-                    )
+                    field_shape = (self._storage_size, *value.shape[1:])
                     storage[key] = np.empty(shape=field_shape)
             else:
-                storage["_data"] = np.empty(shape=(self._storage_size,))
+                field_shape = (self._storage_size, *data.shape[1:])
+                storage["_data"] = np.empty(shape=field_shape)
         self._cur_idx = 0
 
     def on_batch_end(self, runner: "IRunner") -> None:
@@ -230,13 +226,13 @@ class ILoaderMetricCallback(IMetricCallback):
                 for key, value in data.items():
                     value_shape = value.shape[0]
                     storage[key][
-                        self._cur_idx : self._cur_idx + value_shape
-                    ] = (value.detach().cpu().numpy())
+                        self._cur_idx : self._cur_idx + value_shape,
+                    ][:] = (value.detach().cpu().numpy())
             else:
                 value_shape = len(data)
                 storage["_data"][
-                    self._cur_idx : self._cur_idx + value_shape
-                ] = (data.detach().cpu().numpy())
+                    self._cur_idx : self._cur_idx + value_shape,
+                ][:] = (data.detach().cpu().numpy())
         self._cur_idx += value_shape
 
     def _check_completeness(self) -> None:
