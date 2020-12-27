@@ -544,7 +544,7 @@ def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
     return inds
 
 
-def _get_torch2numpy_dtype_mapping() -> Dict[Type, Type]:
+def get_torch2numpy_dtype_mapping() -> Dict[Type, Type]:
     torch2numpy_dtype_dict = {
         torch.bool: bool,
         torch.uint8: np.uint8,
@@ -582,4 +582,5 @@ __all__ = [
     "make_tuple",
     "pairwise",
     "find_value_ids",
+    "get_torch2numpy_dtype_mapping",
 ]

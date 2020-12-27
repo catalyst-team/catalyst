@@ -21,8 +21,8 @@ from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.tools.meters.averagevaluemeter import AverageValueMeter
 from catalyst.utils.distributed import get_distributed_mean
 from catalyst.utils.misc import (
-    _get_torch2numpy_dtype_mapping,
     get_dictkey_auto_fn,
+    get_torch2numpy_dtype_mapping,
 )
 
 if TYPE_CHECKING:
@@ -190,7 +190,7 @@ class ILoaderMetricCallback(IMetricCallback):
         self.output: Optional[Dict[str, Iterable[Any]]] = None
         self._storage_size: Optional[int] = None
         self._cur_idx: int = 0
-        self._torch2numpy_dtype_dict = _get_torch2numpy_dtype_mapping()
+        self._torch2numpy_dtype_dict = get_torch2numpy_dtype_mapping()
 
     def on_loader_start(self, runner: "IRunner"):
         """Reinitialises internal storage."""
