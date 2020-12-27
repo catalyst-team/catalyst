@@ -83,7 +83,6 @@ def test_accumulation_no_kv(generate_no_kv_datasets) -> None:
         loader = DataLoader(dataset=dataset, shuffle=False, batch_size=32)
         loaders = {"train": loader, "valid": loader}
 
-        # model, criterion, optimizer, scheduler
         model = DummyModel(output_dim=n_classes)
         criterion = BCEWithLogitsLoss()
         optimizer = Adam(model.parameters())
@@ -118,7 +117,6 @@ def test_accumulation_kv(generate_kv_datasets) -> None:
         loader = DataLoader(dataset=dataset, shuffle=False, batch_size=32)
         loaders = {"train": loader, "valid": loader}
 
-        # model, criterion, optimizer, scheduler
         model = DummyModel(output_dim=n_classes)
         criterion = BCEWithLogitsLoss()
         optimizer = Adam(model.parameters())
