@@ -1,5 +1,3 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import List, Optional
 from functools import partial
 
@@ -62,8 +60,8 @@ class TrevskyLoss(nn.Module):
         self, outputs: torch.Tensor, targets: torch.Tensor
     ) -> torch.Tensor:
         """Calculates loss between ``logits`` and ``target`` tensors."""
-        trevsky = self.loss_fn(outputs, targets)  # [bs; num_classes]
-        return 1 - trevsky
+        trevsky_score = self.loss_fn(outputs, targets)
+        return 1 - trevsky_score
 
 
 __all__ = ["TrevskyLoss"]

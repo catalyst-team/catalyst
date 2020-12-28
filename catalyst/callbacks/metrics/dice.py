@@ -1,4 +1,5 @@
 from typing import List, TYPE_CHECKING
+from functools import partial
 
 import numpy as np
 
@@ -8,11 +9,12 @@ from catalyst.contrib.utils.torch_extra import (
     calculate_tp_fp_fn,
 )
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.metrics.dice import calculate_dice, dice
+from catalyst.metrics.dice import calculate_dice
 from catalyst.metrics.functional import (
     wrap_class_metric2dict,
     wrap_metric_fn_with_activation,
 )
+from catalyst.metrics.region_base_metrics import dice
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -28,6 +30,8 @@ class DiceCallback(BatchMetricCallback):
         prefix: str = "dice",
         activation: str = "Sigmoid",
         class_args: List[str] = None,
+        class_dim: int = 1,
+        threshold: float = None,
         **kwargs,
     ):
         """
@@ -41,14 +45,20 @@ class DiceCallback(BatchMetricCallback):
                 Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
+            class_dim: indicates class dimention (K) for
+                ``outputs`` and ``targets`` tensors (default = 1)
+            threshold: threshold for outputs binarization
             **kwargs: key-value params to pass to the metric
 
         .. note::
             For `**kwargs` info, please follow
             `catalyst.metrics.dice.dice` docs
         """
+        metric_fn = partial(
+            dice, mode="separately", threshold=threshold, class_dim=class_dim
+        )
         metric_fn = wrap_metric_fn_with_activation(
-            metric_fn=dice, activation=activation
+            metric_fn=metric_fn, activation=activation
         )
         metric_fn = wrap_class_metric2dict(metric_fn, class_args=class_args)
         super().__init__(
