@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import logging
@@ -309,9 +309,11 @@ class MetricAggregationCallback(Callback):
         prefix: str,
         metrics: Union[str, List[str], Dict[str, float]] = None,
         mode: str = "mean",
+        aggregation_function: Optional[Callable] = None,
         scope: str = "batch",
         multiplier: float = 1.0,
     ) -> None:
+        # ToDo Example with aggregation_function
         """
         Args:
             prefix: new key for aggregated metric.
@@ -320,6 +322,13 @@ class MetricAggregationCallback(Callback):
                 for ``weighted_sum`` aggregation it must be a Dict[str, float].
             mode: function for aggregation.
                 Must be either ``sum``, ``mean`` or ``weighted_sum``.
+            aggregation_function: user's function to aggregate metrics(only for
+                ``custom`` mode), this function must get dict of metrics and
+                runner and return aggregated metric. It can be useful for
+                complicated fine tuning with different losses that depends on
+                epochs and loader or something also
+            scope: type of metric. Must be either ``batch``, ``loader`` or
+                ``epoch``
             multiplier: scale factor for the aggregated metric.
         """
         super().__init__(
@@ -341,6 +350,13 @@ class MetricAggregationCallback(Callback):
                     "For `weighted_sum` or `weighted_mean` mode "
                     "the metrics must be specified "
                     "and must be a dict"
+                )
+        elif mode == "custom":
+            if aggregation_function is None:
+                raise ValueError(
+                    "For `custom`"
+                    "the aggregation_function must be specified "
+                    "and must be a callable"
                 )
         else:
             raise NotImplementedError(
@@ -373,6 +389,8 @@ class MetricAggregationCallback(Callback):
             self.aggregation_fn = (
                 lambda x: torch.mean(torch.stack(x)) * multiplier
             )
+        elif mode == "custom":
+            self.aggregation_fn = aggregation_function
 
     def _preprocess(self, metrics: Any) -> List[float]:
         if self.metrics is not None:
@@ -386,9 +404,12 @@ class MetricAggregationCallback(Callback):
             result = list(metrics.values())
         return result
 
-    def _process_metrics(self, metrics: Dict):
-        metrics_processed = self._preprocess(metrics)
-        metric_aggregated = self.aggregation_fn(metrics_processed)
+    def _process_metrics(self, metrics: Dict, runner: "IRunner"):
+        if self.mode == "custom":
+            metric_aggregated = self.aggregation_fn(metrics, runner)
+        else:
+            metrics_processed = self._preprocess(metrics)
+            metric_aggregated = self.aggregation_fn(metrics_processed)
         metrics[self.prefix] = metric_aggregated
 
     def on_batch_end(self, runner: "IRunner") -> None:
@@ -398,7 +419,7 @@ class MetricAggregationCallback(Callback):
             runner: current runner
         """
         if self.scope == "batch":
-            self._process_metrics(runner.batch_metrics)
+            self._process_metrics(runner.batch_metrics, runner)
 
     def on_loader_end(self, runner: "IRunner"):
         """Computes the metric and add it to the loader metrics.
@@ -407,7 +428,7 @@ class MetricAggregationCallback(Callback):
             runner: current runner
         """
         if self.scope == "loader":
-            self._process_metrics(runner.loader_metrics)
+            self._process_metrics(runner.loader_metrics, runner)
 
     def on_epoch_end(self, runner: "IRunner"):
         """Computes the metric and add it to the epoch metrics.
@@ -416,7 +437,7 @@ class MetricAggregationCallback(Callback):
             runner: current runner
         """
         if self.scope == "epoch":
-            self._process_metrics(runner.epoch_metrics)
+            self._process_metrics(runner.epoch_metrics, runner)
 
 
 class MetricManagerCallback(Callback):
