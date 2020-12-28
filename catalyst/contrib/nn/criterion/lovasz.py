@@ -140,7 +140,7 @@ def _flatten_probabilities(probabilities, targets, ignore=None):
 
 
 def _lovasz_softmax_flat(probabilities, targets, classes="present"):
-    """The multi-class Lovasz-Softmax loss.
+    """The multiclass Lovasz-Softmax loss.
 
     Args:
         probabilities: [P, C]
@@ -177,7 +177,7 @@ def _lovasz_softmax_flat(probabilities, targets, classes="present"):
 def _lovasz_softmax(
     probabilities, targets, classes="present", per_image=False, ignore=None
 ):
-    """The multi-class Lovasz-Softmax loss.
+    """The multiclass Lovasz-Softmax loss.
 
     Args:
         probabilities: [B, C, H, W]
@@ -246,7 +246,7 @@ class LovaszLossBinary(_Loss):
 
 
 class LovaszLossMultiClass(_Loss):
-    """Creates a criterion that optimizes a multi-class Lovasz loss.
+    """Creates a criterion that optimizes a multiclass Lovasz loss.
 
     It has been proposed in `The Lovasz-Softmax loss: A tractable surrogate
     for the optimization of the intersection-over-union measure
@@ -279,7 +279,7 @@ class LovaszLossMultiClass(_Loss):
 
 
 class LovaszLossMultiLabel(_Loss):
-    """Creates a criterion that optimizes a multi-label Lovasz loss.
+    """Creates a criterion that optimizes a multilabel Lovasz loss.
 
     It has been proposed in `The Lovasz-Softmax loss: A tractable surrogate
     for the optimization of the intersection-over-union measure

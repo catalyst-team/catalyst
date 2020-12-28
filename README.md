@@ -107,17 +107,13 @@ traced_model = runner.trace(loader=loaders["valid"])
 
 ### Step by step guide
 1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction. 
-1. Go through [Kittylyst](https://github.com/Scitator/kittylyst) if you would like to dive into the core design concepts of the framework.
 1. Check [minimal examples](#minimal-examples).
 1. Try [notebook tutorials with Google Colab](#tutorials).
 1. Read [blogposts](#blogposts) with use-cases and guides.
-1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://github.com/catalyst-team/dl-course).
-1. Or go directly to advanced  [classification](https://github.com/catalyst-team/classification), [detection](https://github.com/catalyst-team/detection) or [segmentation](https://github.com/catalyst-team/segmentation) pipelines with Config API. 
-1. Want more? See [Alchemy](https://github.com/catalyst-team/alchemy) and [Reaction](https://github.com/catalyst-team/reaction) packages.
-1. RL fan? Please follow [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl).
+1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://github.com/catalyst-team/dl-course). 
 1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
 1. If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
-1. **Finally, do not forget to [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for collaboration**.
+1. **And do not forget to [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for collaboration**.
 
 
 ## Table of Contents
@@ -161,10 +157,12 @@ pip install -U catalyst
 <p>
 
 ```bash
-pip install catalyst[cv]         # installs CV-based catalyst
-pip install catalyst[nlp]        # installs NLP-based catalyst
+pip install catalyst[ml]         # installs ML-based Catalyst
+pip install catalyst[cv]         # installs CV-based Catalyst
+pip install catalyst[nlp]        # installs NLP-based Catalyst
+pip install catalyst[tune]       # installs Catalyst+Optuna
 pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
-# and master version installation
+# master version installation
 pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 ```
 </p>
@@ -216,7 +214,7 @@ runner.train(
 
 
 <details>
-<summary>ML - multi-class classification</summary>
+<summary>ML - multiclass classification</summary>
 <p>
 
 ```python
@@ -258,7 +256,7 @@ runner.train(
 
 
 <details>
-<summary>ML - multi-label classification</summary>
+<summary>ML - multilabel classification</summary>
 <p>
 
 ```python
@@ -559,7 +557,7 @@ class CustomRunner(dl.Runner):
         y_hat, x_ = self.model(x_noise)
 
         loss_clf = F.cross_entropy(y_hat, y)
-        iou = metrics.iou(x_, x)
+        iou = metrics.iou(x_, x).mean()
         loss_iou = 1 - iou
         loss = loss_clf + loss_iou
         accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
@@ -759,7 +757,7 @@ runner.train(
 </details>
 
 <details>
-<summary>ML - multi-class classification (fp16 training version)</summary>
+<summary>ML - multiclass classification (fp16 training version)</summary>
 <p>
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)
@@ -804,7 +802,7 @@ runner.train(
 </details>
 
 <details>
-<summary>ML - multi-class classification (advanced fp16 training version)</summary>
+<summary>ML - multiclass classification (advanced fp16 training version)</summary>
 <p>
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)
@@ -976,7 +974,7 @@ utils.distributed_cmd_run(train)
 </details>
 
 <details>
-<summary>ML - multi-class classification (TPU version)</summary>
+<summary>ML - multiclass classification (TPU version)</summary>
 <p>
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)
@@ -1145,6 +1143,8 @@ best practices for your deep learning research.
 ### Docs
 
 - [master](https://catalyst-team.github.io/catalyst/)
+- [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
+- [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
 - [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
 - [20.09](https://catalyst-team.github.io/catalyst/v20.09/index.html)
 - [20.08.2](https://catalyst-team.github.io/catalyst/v20.08.2/index.html)
@@ -1187,6 +1187,7 @@ best practices for your deep learning research.
 - [Implementation of paper "Filter Response Normalization Layer: Eliminating Batch Dependence in the Training of Deep Neural Networks"](https://github.com/yukkyo/PyTorch-FilterResponseNormalizationLayer)
 - [Implementation of paper "Utterance-level Aggregation For Speaker Recognition In The Wild"](https://github.com/ptJexio/Speaker-Recognition)
 - [Implementation of paper "Looking to Listen at the Cocktail Party: A Speaker-Independent Audio-Visual Model for Speech Separation"](https://github.com/vitrioil/Speech-Separation)
+- [Implementation of paper "ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks"](https://github.com/leverxgroup/esrgan)
 
 #### Tools and pipelines
 - [Catalyst.RL](https://github.com/Scitator/catalyst-rl-framework) – A Distributed Framework for Reproducible RL Research by [Scitator](https://github.com/Scitator)

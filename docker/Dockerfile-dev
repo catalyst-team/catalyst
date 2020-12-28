@@ -32,6 +32,7 @@ RUN pip install -r /workspace/requirements.txt --no-cache-dir \
     && pip install -r /workspace/requirements-log.txt --no-cache-dir \
     && pip install -r /workspace/requirements-ml.txt --no-cache-dir \
     && pip install -r /workspace/requirements-nlp.txt --no-cache-dir \
-    && pip install -r /workspace/requirements-tune.txt --no-cache-dir
+    && pip install -r /workspace/requirements-tune.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-hydra.txt --no-cache-dir
 
 WORKDIR /workspace

@@ -1,64 +1,79 @@
-"""
-IoU metric. Jaccard metric refers to IoU here, same functionality.
-"""
-
-from typing import List
 from functools import partial
 
 import torch
-
-from catalyst.utils.torch import get_activation_fn
 
 
 def iou(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    # values are discarded, only None check
-    # used for compatibility with BatchMetricCallback
-    classes: List[str] = None,
-    eps: float = 1e-7,
+    class_dim: int = 1,
     threshold: float = None,
-    activation: str = "Sigmoid",
+    eps: float = 1e-7,
 ) -> torch.Tensor:
-    """
+    """Computes the iou/jaccard score.
+
     Args:
-        outputs: A list of predicted elements
-        targets:  A list of elements that are to be predicted
-        classes: if classes are specified
-            we reduce across all dims except channels
-        eps: epsilon to avoid zero division
+        outputs: [N; K; ...] tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets:  binary [N; K; ...] tensort that encodes which of the K
+            classes are associated with the N-th input
+        class_dim: indicates class dimention (K) for
+            ``outputs`` and ``targets`` tensors (default = 1)
         threshold: threshold for outputs binarization
-        activation: An torch.nn activation applied to the outputs.
-            Must be one of ["none", "Sigmoid", "Softmax2d"]
+        eps: epsilon to avoid zero division
 
     Returns:
-        Union[float, List[float]]: IoU (Jaccard) score(s)
-    """
-    activation_fn = get_activation_fn(activation)
-    outputs = activation_fn(outputs)
+        IoU (Jaccard) score
 
+    Examples:
+        >>> size = 4
+        >>> half_size = size // 2
+        >>> shape = (1, 1, size, size)
+        >>> empty = torch.zeros(shape)
+        >>> full = torch.ones(shape)
+        >>> left = torch.ones(shape)
+        >>> left[:, :, :, half_size:] = 0
+        >>> right = torch.ones(shape)
+        >>> right[:, :, :, :half_size] = 0
+        >>> top_left = torch.zeros(shape)
+        >>> top_left[:, :, :half_size, :half_size] = 1
+        >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
+        >>> iou(
+        >>>     outputs=pred,
+        >>>     targets=targets,
+        >>>     class_dim=1,
+        >>>     threshold=0.5,
+        >>> )
+        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])
+    """
     if threshold is not None:
         outputs = (outputs > threshold).float()
 
-    # TODO: fix classes issue
-    # ! fix backward compatibility
-    if classes is not None:
-        # if classes are specified we reduce across all dims except channels
-        sum_strategy = partial(torch.sum, dim=[0, 2, 3])
-    else:
-        sum_strategy = torch.sum
+    num_dims = len(outputs.shape)
+    assert num_dims > 2, "shape mismatch, please check the docs for more info"
+    assert (
+        outputs.shape == targets.shape
+    ), "shape mismatch, please check the docs for more info"
+    dims = list(range(num_dims))
+    # support negative index
+    if class_dim < 0:
+        class_dim = num_dims + class_dim
+    dims.pop(class_dim)
+    sum_fn = partial(torch.sum, dim=dims)
 
-    intersection = sum_strategy(targets * outputs)
-    union = sum_strategy(targets) + sum_strategy(outputs)
+    intersection = sum_fn(targets * outputs)
+    union = sum_fn(targets) + sum_fn(outputs)
     # this looks a bit awkward but `eps * (union == 0)` term
     # makes sure that if I and U are both 0, than IoU == 1
     # and if U != 0 and I == 0 the eps term in numerator is zeroed out
     # i.e. (0 + eps) / (U - 0 + eps) doesn't happen
-    output_iou = (intersection + eps * (union == 0)) / (
+    iou_score = (intersection + eps * (union == 0).float()) / (
         union - intersection + eps
     )
 
-    return output_iou
+    return iou_score
 
 
 jaccard = iou
