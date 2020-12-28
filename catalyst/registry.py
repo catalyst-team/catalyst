@@ -1,7 +1,7 @@
 import logging
 
-from catalyst.tools import registry
 from catalyst.settings import SETTINGS
+from catalyst.tools import registry
 
 logger = logging.getLogger(__name__)
 
