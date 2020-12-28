@@ -29,6 +29,7 @@ class DiceCallback(BatchMetricCallback):
         output_key: str = "logits",
         prefix: str = "dice",
         activation: str = "Sigmoid",
+        per_class: bool = False,
         class_args: List[str] = None,
         class_dim: int = 1,
         threshold: float = None,
@@ -43,6 +44,8 @@ class DiceCallback(BatchMetricCallback):
             prefix: key to store in logs
             activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
+            per_class: boolean flag to log per class metrics,
+                or use mean/macro statistics otherwise
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
             class_dim: indicates class dimention (K) for
@@ -51,8 +54,9 @@ class DiceCallback(BatchMetricCallback):
             **kwargs: key-value params to pass to the metric
 
         .. note::
-            For `**kwargs` info, please follow
-            `catalyst.metrics.dice.dice` docs
+            For ``**kwargs`` info, please follow
+            ``catalyst.callbacks.metric.BatchMetricCallback`` and
+            ``catalyst.metrics.dice.dice`` docs
         """
         metric_fn = partial(
             dice, mode="separately", threshold=threshold, class_dim=class_dim
@@ -60,7 +64,9 @@ class DiceCallback(BatchMetricCallback):
         metric_fn = wrap_metric_fn_with_activation(
             metric_fn=metric_fn, activation=activation
         )
-        metric_fn = wrap_class_metric2dict(metric_fn, class_args=class_args)
+        metric_fn = wrap_class_metric2dict(
+            metric_fn, per_class=per_class, class_args=class_args
+        )
         super().__init__(
             prefix=prefix,
             metric_fn=metric_fn,

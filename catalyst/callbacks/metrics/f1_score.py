@@ -17,6 +17,7 @@ class F1ScoreCallback(BatchMetricCallback):
         output_key: str = "logits",
         prefix: str = "f1_score",
         activation: str = "Softmax",
+        per_class: bool = False,
         class_args: List[str] = None,
         **kwargs,
     ):
@@ -29,18 +30,23 @@ class F1ScoreCallback(BatchMetricCallback):
             prefix: key for the metric's name
             activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
+            per_class: boolean flag to log per class metrics,
+                or use mean/macro statistics otherwise
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
             **kwargs: key-value params to pass to the metric
 
         .. note::
-            For `**kwargs` info, please follow
-            `catalyst.metrics.f1_score.fbeta_score` docs
+            For ``**kwargs`` info, please follow
+            ``catalyst.callbacks.metric.BatchMetricCallback`` and
+            ``catalyst.metrics.f1_score.fbeta_score`` docs
         """
         metric_fn = wrap_metric_fn_with_activation(
             metric_fn=fbeta_score, activation=activation
         )
-        metric_fn = wrap_class_metric2dict(metric_fn, class_args=class_args)
+        metric_fn = wrap_class_metric2dict(
+            metric_fn, per_class=per_class, class_args=class_args
+        )
         super().__init__(
             prefix=prefix,
             metric_fn=metric_fn,

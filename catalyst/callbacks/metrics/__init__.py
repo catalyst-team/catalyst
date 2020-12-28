@@ -26,4 +26,8 @@ from catalyst.callbacks.metrics.perplexity import (
 from catalyst.callbacks.metrics.ppv_tpr_f1 import (
     PrecisionRecallF1ScoreCallback,
 )
-from catalyst.callbacks.metrics.precision import AveragePrecisionCallback
+from catalyst.callbacks.metrics.precision import (
+    AveragePrecisionCallback,
+    PrecisionCallback,
+)
+from catalyst.callbacks.metrics.recall import RecallCallback

@@ -18,6 +18,7 @@ class IouCallback(BatchMetricCallback):
         output_key: str = "logits",
         prefix: str = "iou",
         activation: str = "Sigmoid",
+        per_class: bool = False,
         class_args: List[str] = None,
         class_dim: int = 1,
         threshold: float = None,
@@ -32,6 +33,8 @@ class IouCallback(BatchMetricCallback):
             prefix: key to store in logs
             activation: An torch.nn activation applied to the outputs.
                 Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
+            per_class: boolean flag to log per class metrics,
+                or use mean/macro statistics otherwise
             class_args: class names to display in the logs.
                 If None, defaults to indices for each class, starting from 0
             class_dim: indicates class dimention (K) for
@@ -40,8 +43,14 @@ class IouCallback(BatchMetricCallback):
             **kwargs: key-value params to pass to the metric
 
         .. note::
+<<<<<<< HEAD
             For `**kwargs` info, please follow
             `catalyst.metrics.region_base_metrics.iou` docs
+=======
+            For ``**kwargs`` info, please follow
+            ``catalyst.callbacks.metric.BatchMetricCallback`` and
+            ``catalyst.metrics.iou.iou`` docs
+>>>>>>> original_C/master
         """
         metric_fn = partial(
             iou, mode="separately", threshold=threshold, class_dim=class_dim
@@ -49,7 +58,9 @@ class IouCallback(BatchMetricCallback):
         metric_fn = wrap_metric_fn_with_activation(
             metric_fn=metric_fn, activation=activation
         )
-        metric_fn = wrap_class_metric2dict(metric_fn, class_args=class_args)
+        metric_fn = wrap_class_metric2dict(
+            metric_fn, per_class=per_class, class_args=class_args
+        )
         super().__init__(
             prefix=prefix,
             metric_fn=metric_fn,
