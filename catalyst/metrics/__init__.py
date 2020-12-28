@@ -20,11 +20,11 @@ from catalyst.metrics.avg_precision import (
     mean_avg_precision,
 )
 from catalyst.metrics.cmc_score import cmc_score, cmc_score_count
-from catalyst.metrics.dice import dice, calculate_dice
+from catalyst.metrics.dice import calculate_dice  # ToDO remove it
 from catalyst.metrics.f1_score import f1_score, fbeta_score
 from catalyst.metrics.focal import sigmoid_focal_loss, reduced_focal_loss
 from catalyst.metrics.hitrate import hitrate
-from catalyst.metrics.iou import iou, jaccard
+from catalyst.metrics.region_base_metrics import iou, jaccard, trevsky, dice
 from catalyst.metrics.mrr import reciprocal_rank, mrr
 from catalyst.metrics.ndcg import dcg, ndcg
 from catalyst.metrics.precision import average_precision, precision
