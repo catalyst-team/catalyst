@@ -166,19 +166,21 @@ class OptimizerCallback(IOptimizerCallback):
         Args:
             runner(IRunner): current runner
         """
-        if self.use_amp is None and runner.experiment is not None:
-            self.use_amp = runner.experiment.distributed_params.get(
-                "amp", False
-            )
-        else:
-            self.use_amp = False
+        if self.use_amp is None:
+            if runner.experiment is not None:
+                self.use_amp = runner.experiment.distributed_params.get(
+                    "amp", False
+                )
+            else:
+                self.use_amp = False
 
-        if self.use_apex is None and runner.experiment is not None:
-            self.use_apex = runner.experiment.distributed_params.get(
-                "apex", False
-            )
-        else:
-            self.use_apex = False
+        if self.use_apex is None:
+            if runner.experiment is not None:
+                self.use_apex = runner.experiment.distributed_params.get(
+                    "apex", False
+                )
+            else:
+                self.use_apex = False
 
         self._optimizer = get_attr(
             runner, key="optimizer", inner_key=self.optimizer_key
