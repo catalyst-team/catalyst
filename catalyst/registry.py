@@ -1,14 +1,15 @@
 import logging
 
-from catalyst.registry.registry import Registry
+from catalyst.tools import registry
 from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
-REGISTRY = Registry()
+REGISTRY = registry.Registry()
+Registry = REGISTRY.add
 
 
-def _transforms_loader(r: Registry):
+def _transforms_loader(r: registry.Registry):
     from torch.jit.frontend import UnsupportedNodeError
 
     from catalyst.contrib.data.cv.transforms import torch as t
@@ -63,7 +64,7 @@ def _transforms_loader(r: Registry):
 REGISTRY.late_add(_transforms_loader)
 
 
-def _samplers_loader(r: Registry):
+def _samplers_loader(r: registry.Registry):
     from torch.utils.data import sampler as s
 
     factories = {
@@ -90,7 +91,7 @@ class _GradClipperWrap:
         self.fn(x, *self.args, **self.kwargs)
 
 
-def _grad_clip_loader(r: Registry):
+def _grad_clip_loader(r: registry.Registry):
     from torch.nn.utils import clip_grad as m
 
     r.add_from_module(m)
@@ -99,7 +100,7 @@ def _grad_clip_loader(r: Registry):
 REGISTRY.late_add(_grad_clip_loader)
 
 
-def _modules_loader(r: Registry):
+def _modules_loader(r: registry.Registry):
     from catalyst.contrib.nn import modules as m
 
     r.add_from_module(m)
@@ -108,7 +109,7 @@ def _modules_loader(r: Registry):
 REGISTRY.late_add(_modules_loader)
 
 
-def _model_loader(r: Registry):
+def _model_loader(r: registry.Registry):
     from catalyst.contrib import models as m
 
     r.add_from_module(m)
@@ -130,7 +131,7 @@ def _model_loader(r: Registry):
 REGISTRY.late_add(_model_loader)
 
 
-def _criterion_loader(r: Registry):
+def _criterion_loader(r: registry.Registry):
     from catalyst.contrib.nn import criterion as m
 
     r.add_from_module(m)
@@ -139,7 +140,7 @@ def _criterion_loader(r: Registry):
 REGISTRY.late_add(_criterion_loader)
 
 
-def _optimizers_loader(r: Registry):
+def _optimizers_loader(r: registry.Registry):
     from catalyst.contrib.nn import optimizers as m
 
     r.add_from_module(m)
@@ -148,7 +149,7 @@ def _optimizers_loader(r: Registry):
 REGISTRY.late_add(_optimizers_loader)
 
 
-def _schedulers_loader(r: Registry):
+def _schedulers_loader(r: registry.Registry):
     from catalyst.contrib.nn import schedulers as m
 
     r.add_from_module(m)
@@ -157,7 +158,7 @@ def _schedulers_loader(r: Registry):
 REGISTRY.late_add(_schedulers_loader)
 
 
-def _experiments_loader(r: Registry):
+def _experiments_loader(r: registry.Registry):
     from catalyst.core.experiment import IExperiment
 
     r.add(IExperiment)
@@ -172,7 +173,7 @@ def _experiments_loader(r: Registry):
 REGISTRY.late_add(_experiments_loader)
 
 
-def _runners_loader(r: Registry):
+def _runners_loader(r: registry.Registry):
     from catalyst.core.runner import IRunner, IStageBasedRunner
 
     r.add(IRunner)
@@ -186,7 +187,7 @@ def _runners_loader(r: Registry):
 REGISTRY.late_add(_runners_loader)
 
 
-def _callbacks_loader(r: Registry):
+def _callbacks_loader(r: registry.Registry):
     from catalyst.core.callback import Callback, CallbackWrapper
 
     r.add(Callback)
