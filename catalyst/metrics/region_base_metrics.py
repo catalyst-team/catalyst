@@ -78,7 +78,7 @@ def get_segmentation_statistics(
 def _get_region_based_metrics(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    metric_function: Callable,
+    metric_fn: Callable,
     class_dim=None,
     threshold: float = None,
     mode: str = "micro",
@@ -93,16 +93,17 @@ def _get_region_based_metrics(
             the K classes, according to the model.
         targets:  binary [N; K; ...] tensor that encodes which of the K
             classes are associated with the N-th input
+        metric_fn: metric function, that get statistics and return score
         class_dim: indicates class dimention (K) for
             ``outputs`` and ``targets`` tensors (default = 1), if
             mode = "micro" means nothing
         threshold: threshold for outputs binarization
         mode: class summation strategy. Must be one of ['micro', 'macro',
-            'weighted', 'separately']. If mode='micro', classes are ignored,
+            'weighted', 'per-class']. If mode='micro', classes are ignored,
              and metric are calculated generally. If mode='macro', metric are
-             calculated separately and than are averaged over all classes. If
-             mode='weighted', metric are calculated separately and than summed
-             over all classes with weights. If mode='separately', metric are
+             calculated per-class and than are averaged over all classes. If
+             mode='weighted', metric are calculated per-class and than summed
+             over all classes with weights. If mode='per-class', metric are
              calculated separately for all classes
         weights: class weights(for mode="weighted")
 
@@ -110,7 +111,7 @@ def _get_region_based_metrics(
         Metric
 
     """
-    assert mode in ["micro", "macro", "weighted", "separately"]
+    assert mode in ["micro", "macro", "weighted", "per-class"]
     segmentation_stats = get_segmentation_statistics(
         outputs=outputs,
         targets=targets,
@@ -119,19 +120,17 @@ def _get_region_based_metrics(
     )
     if mode == "micro":
         segmentation_stats = [torch.sum(stats) for stats in segmentation_stats]
-        metric = metric_function(*segmentation_stats)
+        metric = metric_fn(*segmentation_stats)
 
-    metrics_per_class = metric_function(*segmentation_stats)
+    metrics_per_class = metric_fn(*segmentation_stats)
 
     if mode == "macro":
         metric = torch.mean(metrics_per_class)
-
-    if mode == "weighted":
+    elif mode == "weighted":
         assert len(weights) == len(segmentation_stats[0])
         metrics = torch.tensor(weights) * metrics_per_class
         metric = torch.sum(metrics)
-
-    if mode == "separately":
+    elif mode == "per-class":
         metric = metrics_per_class
 
     return metric
@@ -192,11 +191,11 @@ def iou(
             mode = "micro" means nothing
         threshold: threshold for outputs binarization
         mode: class summation strategy. Must be one of ['micro', 'macro',
-            'weighted', 'separately']. If mode='micro', classes are ignored,
+            'weighted', 'per-class']. If mode='micro', classes are ignored,
              and metric are calculated generally. If mode='macro', metric are
-             calculated separately and than are averaged over all classes. If
-             mode='weighted', metric are calculated separately and than summed
-             over all classes with weights. If mode='separately', metric are
+             calculated per-class and than are averaged over all classes. If
+             mode='weighted', metric are calculated per-class and than summed
+             over all classes with weights. If mode='per-class', metric are
              calculated separately for all classes
         weights: class weights(for mode="weighted")
         eps: epsilon to avoid zero division
@@ -228,11 +227,11 @@ def iou(
         >>> )
         tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])
     """
-    metric_function = partial(_iou, eps=eps)
+    metric_fn = partial(_iou, eps=eps)
     score = _get_region_based_metrics(
         outputs=outputs,
         targets=targets,
-        metric_function=metric_function,
+        metric_fn=metric_fn,
         class_dim=class_dim,
         threshold=threshold,
         mode=mode,
@@ -266,11 +265,11 @@ def dice(
             mode = "micro" means nothing
         threshold: threshold for outputs binarization
         mode: class summation strategy. Must be one of ['micro', 'macro',
-            'weighted', 'separately']. If mode='micro', classes are ignored,
+            'weighted', 'per-class']. If mode='micro', classes are ignored,
              and metric are calculated generally. If mode='macro', metric are
-             calculated separately and than are averaged over all classes. If
-             mode='weighted', metric are calculated separately and than summed
-             over all classes with weights. If mode='separately', metric are
+             calculated per-class and than are averaged over all classes. If
+             mode='weighted', metric are calculated per-class and than summed
+             over all classes with weights. If mode='per-class', metric are
              calculated separately for all classes
         weights: class weights(for mode="weighted")
         eps: epsilon to avoid zero division
@@ -301,11 +300,11 @@ def dice(
         >>> )
         tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.6667])
     """
-    metric_function = partial(_dice, eps=eps)
+    metric_fn = partial(_dice, eps=eps)
     score = _get_region_based_metrics(
         outputs=outputs,
         targets=targets,
-        metric_function=metric_function,
+        metric_fn=metric_fn,
         class_dim=class_dim,
         threshold=threshold,
         mode=mode,
@@ -343,11 +342,11 @@ def trevsky(
             ``outputs`` and ``targets`` tensors (default = 1)
         threshold: threshold for outputs binarization
         mode: class summation strategy. Must be one of ['micro', 'macro',
-            'weighted', 'separately']. If mode='micro', classes are ignored,
+            'weighted', 'per-class']. If mode='micro', classes are ignored,
              and metric are calculated generally. If mode='macro', metric are
-             calculated separately and than are averaged over all classes. If
-             mode='weighted', metric are calculated separately and than summed
-             over all classes with weights. If mode='separately', metric are
+             calculated per-class and than are averaged over all classes. If
+             mode='weighted', metric are calculated per-class and than summed
+             over all classes with weights. If mode='per-class', metric are
              calculated separately for all classes
         weights: class weights(for mode="weighted")
         eps: epsilon to avoid zero division
@@ -382,11 +381,11 @@ def trevsky(
     assert 0 < alpha < 1  # I am not sure about this
     if beta is None:
         beta = 1 - alpha
-    metric_function = partial(_trevsky, alpha=alpha, beta=beta, eps=eps)
+    metric_fn = partial(_trevsky, alpha=alpha, beta=beta, eps=eps)
     score = _get_region_based_metrics(
         outputs=outputs,
         targets=targets,
-        metric_function=metric_function,
+        metric_fn=metric_fn,
         class_dim=class_dim,
         threshold=threshold,
         mode=mode,

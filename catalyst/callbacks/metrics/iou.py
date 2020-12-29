@@ -43,17 +43,12 @@ class IouCallback(BatchMetricCallback):
             **kwargs: key-value params to pass to the metric
 
         .. note::
-<<<<<<< HEAD
             For `**kwargs` info, please follow
-            `catalyst.metrics.region_base_metrics.iou` docs
-=======
-            For ``**kwargs`` info, please follow
-            ``catalyst.callbacks.metric.BatchMetricCallback`` and
-            ``catalyst.metrics.iou.iou`` docs
->>>>>>> original_C/master
+            ``catalyst.metrics.region_base_metrics.iou`` and
+            ``catalyst.callbacks.metric.BatchMetricCallback`` docs
         """
         metric_fn = partial(
-            iou, mode="separately", threshold=threshold, class_dim=class_dim
+            iou, mode="per-class", threshold=threshold, class_dim=class_dim
         )
         metric_fn = wrap_metric_fn_with_activation(
             metric_fn=metric_fn, activation=activation
@@ -73,7 +68,7 @@ class IouCallback(BatchMetricCallback):
 JaccardCallback = IouCallback
 
 
-# __all__ = [
-#     "IouCallback",
-#     "JaccardCallback",
-# ]
+__all__ = [
+    "IouCallback",
+    "JaccardCallback",
+]

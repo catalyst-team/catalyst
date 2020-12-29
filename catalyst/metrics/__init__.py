@@ -20,7 +20,6 @@ from catalyst.metrics.avg_precision import (
     mean_avg_precision,
 )
 from catalyst.metrics.cmc_score import cmc_score, cmc_score_count
-from catalyst.metrics.dice import calculate_dice  # ToDO remove it
 from catalyst.metrics.f1_score import f1_score, fbeta_score
 from catalyst.metrics.focal import sigmoid_focal_loss, reduced_focal_loss
 from catalyst.metrics.hitrate import hitrate

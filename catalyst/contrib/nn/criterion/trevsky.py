@@ -64,4 +64,39 @@ class TrevskyLoss(nn.Module):
         return 1 - trevsky_score
 
 
-__all__ = ["TrevskyLoss"]
+class FocalTrevskyLoss(nn.Module):
+    def __init__(
+            self,
+            alpha: float,
+            beta: Optional[float] = None,
+            gamma: float = 4/3,
+            class_dim: int = 1,
+            activation: str = "Sigmoid",
+            mode: str = "micro",
+            weights: List[float] = None,
+            eps: float = 1e-7,
+    ):
+        super().__init__()
+        self.gamma = gamma
+        self.trevsky_loss = TrevskyLoss(alpha=alpha,
+                                        beta=beta,
+                                        class_dim=class_dim,
+                                        activation=activation,
+                                        mode=mode,
+                                        weights=weights,
+                                        eps=eps)
+
+    def forward(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> torch.Tensor:
+        """Calculates loss between ``logits`` and ``target`` tensors."""
+        loss = 0
+        for output_sample, target_sample in zip(outputs, targets):
+            output_sample = torch.unsqueeze(output_sample, dim=0)
+            target_sample = torch.unsqueeze(target_sample, dim=0)
+            sample_loss = self.trevsky_loss(output_sample, target_sample)
+            loss += (sample_loss ** self.gamma)
+        return loss
+
+
+__all__ = ["TrevskyLoss", "FocalTrevskyLoss"]

@@ -33,8 +33,8 @@ class IoULoss(nn.Module):
             mode: class summation strategy. Must be one of ['micro', 'macro',
                 'weighted']. If mode='micro', classes are ignored, and metric
                 are calculated generally. If mode='macro', metric are
-                calculated separately and than are averaged over all classes.
-                If mode='weighted', metric are calculated separately and than
+                calculated per-class and than are averaged over all classes.
+                If mode='weighted', metric are calculated per-class and than
                 summed over all classes with weights.
             weights: class weights(for mode="weighted")
             eps: epsilon to avoid zero division
@@ -61,38 +61,4 @@ class IoULoss(nn.Module):
         return 1 - iou_score
 
 
-class BCEIoULoss(nn.Module):
-    """The Intersection over union (Jaccard) with BCE loss.
-
-    @TODO: Docs. Contribution is welcome.
-    """
-
-    def __init__(
-        self,
-        eps: float = 1e-7,
-        threshold: float = None,
-        activation: str = "Sigmoid",
-        reduction: str = "mean",
-    ):
-        """
-        Args:
-            eps: epsilon to avoid zero division
-            threshold: threshold for outputs binarization
-            activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
-            reduction: Specifies the reduction to apply
-                to the output of BCE
-        """
-        super().__init__()
-        self.bce_loss = nn.BCEWithLogitsLoss(reduction=reduction)
-        self.iou_loss = IoULoss(eps, threshold, activation)
-
-    def forward(self, outputs, targets):
-        """@TODO: Docs. Contribution is welcome."""
-        iou = self.iou_loss.forward(outputs, targets)
-        bce = self.bce_loss(outputs, targets)
-        loss = iou + bce
-        return loss
-
-
-__all__ = ["IoULoss", "BCEIoULoss"]
+__all__ = ["IoULoss"]
