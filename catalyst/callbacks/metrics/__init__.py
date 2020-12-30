@@ -8,9 +8,7 @@ from catalyst.callbacks.metrics.auc import AUCCallback
 from catalyst.callbacks.metrics.cmc_score import CMCScoreCallback
 
 from catalyst.callbacks.metrics.dice import (
-    DiceCallback,
-    MultiClassDiceMetricCallback,
-    MulticlassDiceMetricCallback,
+    DiceCallback
 )
 
 from catalyst.callbacks.metrics.f1_score import F1ScoreCallback
