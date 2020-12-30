@@ -5,10 +5,12 @@ import torch
 import torch.nn as nn
 
 from catalyst.contrib.nn.modules import (
+    AdaCos,
     ArcFace,
     CosFace,
     CurricularFace,
     SoftMax,
+    SubCenterArcFace,
 )
 
 
@@ -59,6 +61,37 @@ def test_softmax():
     expected = features @ weight.T + bias
     actual = layer(torch.from_numpy(features)).detach().numpy()
     assert np.allclose(expected, actual)
+
+
+def _check_layer(layer):
+    embedding = torch.randn(3, 5, requires_grad=True)
+    target = torch.empty(3, dtype=torch.long).random_(10)
+
+    output = layer(embedding, target)
+    assert output.shape == (3, 10)
+
+    output = layer(embedding)
+    assert output.shape == (3, 10)
+
+
+def test_arcface_iference_mode():
+    _check_layer(ArcFace(5, 10, s=1.31, m=0.5))
+
+
+def test_subcenter_arcface_iference_mode():
+    _check_layer(SubCenterArcFace(5, 10, s=1.31, m=0.35, k=2))
+
+
+def test_cosface_iference_mode():
+    _check_layer(CosFace(5, 10, s=1.31, m=0.1))
+
+
+def test_adacos_iference_mode():
+    _check_layer(AdaCos(5, 10))
+
+
+def test_curricularface_iference_mode():
+    _check_layer(CurricularFace(5, 10, s=1.31, m=0.5))
 
 
 def test_arcface_with_cross_entropy_loss():
