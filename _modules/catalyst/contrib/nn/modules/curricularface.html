@@ -393,7 +393,7 @@
         <span class="k">return</span> <span class="n">rep</span>
 
 <div class="viewcode-block" id="CurricularFace.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.modules.curricularface.CurricularFace.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -404,6 +404,9 @@
 <span class="sd">            label: target classes,</span>
 <span class="sd">                expected shapes ``B`` where</span>
 <span class="sd">                ``B`` is batch dimension.</span>
+<span class="sd">                If `None` then will be returned</span>
+<span class="sd">                projection on centroids.</span>
+<span class="sd">                Default is `None`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tensor (logits) with shapes ``BxC``</span>
@@ -413,6 +416,9 @@
             <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="nb">input</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">cos_theta</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># for numerical stability</span>
+
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cos_theta</span>
 
         <span class="n">target_logit</span> <span class="o">=</span> <span class="n">cos_theta</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">input</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">label</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span>
             <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span>

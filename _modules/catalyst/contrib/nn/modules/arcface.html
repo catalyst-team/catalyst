@@ -388,7 +388,7 @@
         <span class="k">return</span> <span class="n">rep</span>
 
 <div class="viewcode-block" id="ArcFace.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.modules.arcface.ArcFace.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -399,6 +399,9 @@
 <span class="sd">            target: target classes,</span>
 <span class="sd">                expected shapes ``B`` where</span>
 <span class="sd">                ``B`` is batch dimension.</span>
+<span class="sd">                If `None` then will be returned</span>
+<span class="sd">                projection on centroids.</span>
+<span class="sd">                Default is `None`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tensor (logits) with shapes ``BxC``</span>
@@ -406,6 +409,10 @@
 <span class="sd">            (out_features).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="nb">input</span><span class="p">),</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cos_theta</span>
+
         <span class="n">theta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">cos_theta</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
         <span class="p">)</span>
@@ -501,7 +508,7 @@
         <span class="k">return</span> <span class="n">rep</span>
 
 <div class="viewcode-block" id="SubCenterArcFace.forward"><a class="viewcode-back" href="../../../../../api/contrib.html#catalyst.contrib.nn.modules.arcface.SubCenterArcFace.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">label</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">target</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">LongTensor</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Args:</span>
@@ -509,29 +516,32 @@
 <span class="sd">                expected shapes ``BxF`` where ``B``</span>
 <span class="sd">                is batch dimension and ``F`` is an</span>
 <span class="sd">                input feature dimension.</span>
-<span class="sd">            label: target classes,</span>
+<span class="sd">            target: target classes,</span>
 <span class="sd">                expected shapes ``B`` where</span>
 <span class="sd">                ``B`` is batch dimension.</span>
+<span class="sd">                If `None` then will be returned</span>
+<span class="sd">                projection on centroids.</span>
+<span class="sd">                Default is `None`.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            tensor (logits) with shapes ``BxC``</span>
 <span class="sd">            where ``C`` is a number of classes.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span>
-            <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="o">*</span><span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span>  <span class="c1"># k*b*f</span>
-            <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
-            <span class="p">),</span>  <span class="c1"># normalize in_features dim   # k*f*c</span>
+        <span class="n">feats</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="o">*</span><span class="nb">input</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
         <span class="p">)</span>  <span class="c1"># k*b*f</span>
+        <span class="n">wght</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># k*f*c</span>
+        <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">bmm</span><span class="p">(</span><span class="n">feats</span><span class="p">,</span> <span class="n">wght</span><span class="p">)</span>  <span class="c1"># k*b*f</span>
         <span class="n">cos_theta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cos_theta</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># b*f</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">acos</span><span class="p">(</span>
             <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">cos_theta</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span>
         <span class="p">)</span>
 
+        <span class="k">if</span> <span class="n">target</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">cos_theta</span>
+
         <span class="n">one_hot</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">cos_theta</span><span class="p">)</span>
-        <span class="n">one_hot</span><span class="o">.</span><span class="n">scatter_</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">one_hot</span><span class="o">.</span><span class="n">scatter_</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">target</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">long</span><span class="p">(),</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="n">selected</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
             <span class="n">theta</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">one_hot</span><span class="p">),</span> <span class="n">one_hot</span>

@@ -1754,7 +1754,7 @@ Default: <code class="docutils literal notranslate"><span class="pre">1e-6</span
 </div>
 <dl class="method">
 <dt id="catalyst.contrib.nn.modules.arcface.ArcFace.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">target: torch.LongTensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/arcface.html#ArcFace.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.arcface.ArcFace.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">target: torch.LongTensor = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/arcface.html#ArcFace.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.arcface.ArcFace.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1764,7 +1764,10 @@ is batch dimension and <code class="docutils literal notranslate"><span class="p
 input feature dimension.</p></li>
 <li><p><strong>target</strong> – target classes,
 expected shapes <code class="docutils literal notranslate"><span class="pre">B</span></code> where
-<code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.</p></li>
+<code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.
+If <cite>None</cite> then will be returned
+projection on centroids.
+Default is <cite>None</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1821,7 +1824,7 @@ Default: <code class="docutils literal notranslate"><span class="pre">1e-6</span
 </div>
 <dl class="method">
 <dt id="catalyst.contrib.nn.modules.arcface.SubCenterArcFace.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">label: torch.LongTensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/arcface.html#SubCenterArcFace.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.arcface.SubCenterArcFace.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">target: torch.LongTensor = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/arcface.html#SubCenterArcFace.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.arcface.SubCenterArcFace.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1829,9 +1832,12 @@ Default: <code class="docutils literal notranslate"><span class="pre">1e-6</span
 expected shapes <code class="docutils literal notranslate"><span class="pre">BxF</span></code> where <code class="docutils literal notranslate"><span class="pre">B</span></code>
 is batch dimension and <code class="docutils literal notranslate"><span class="pre">F</span></code> is an
 input feature dimension.</p></li>
-<li><p><strong>label</strong> – target classes,
+<li><p><strong>target</strong> – target classes,
 expected shapes <code class="docutils literal notranslate"><span class="pre">B</span></code> where
-<code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.</p></li>
+<code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.
+If <cite>None</cite> then will be returned
+projection on centroids.
+Default is <cite>None</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2035,7 +2041,7 @@ Default: <code class="docutils literal notranslate"><span class="pre">0.35</span
 </div>
 <dl class="method">
 <dt id="catalyst.contrib.nn.modules.cosface.CosFace.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">target: torch.LongTensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/cosface.html#CosFace.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.cosface.CosFace.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">target: torch.LongTensor = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/cosface.html#CosFace.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.cosface.CosFace.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2045,7 +2051,10 @@ is batch dimension and <code class="docutils literal notranslate"><span class="p
 input feature dimension.</p></li>
 <li><p><strong>target</strong> – target classes,
 expected shapes <code class="docutils literal notranslate"><span class="pre">B</span></code> where
-<code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.</p></li>
+<code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.
+If <cite>None</cite> then will be returned
+projection on centroids.
+Default is <cite>None</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2098,7 +2107,7 @@ Default: <code class="docutils literal notranslate"><span class="pre">1e-6</span
 </div>
 <dl class="method">
 <dt id="catalyst.contrib.nn.modules.cosface.AdaCos.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">target: torch.LongTensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/cosface.html#AdaCos.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.cosface.AdaCos.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">target: torch.LongTensor = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/cosface.html#AdaCos.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.cosface.AdaCos.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2108,7 +2117,10 @@ is batch dimension and <code class="docutils literal notranslate"><span class="p
 input feature dimension.</p></li>
 <li><p><strong>target</strong> – target classes,
 expected shapes <code class="docutils literal notranslate"><span class="pre">B</span></code> where
-<code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.</p></li>
+<code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.
+If <cite>None</cite> then will be returned
+projection on centroids.
+Default is <cite>None</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2164,7 +2176,7 @@ Default: <code class="docutils literal notranslate"><span class="pre">0.5</span>
 </div>
 <dl class="method">
 <dt id="catalyst.contrib.nn.modules.curricularface.CurricularFace.forward">
-<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">label: torch.LongTensor</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/curricularface.html#CurricularFace.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.curricularface.CurricularFace.forward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">input: torch.Tensor</em>, <em class="sig-param">label: torch.LongTensor = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/contrib/nn/modules/curricularface.html#CurricularFace.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.nn.modules.curricularface.CurricularFace.forward" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2174,7 +2186,10 @@ is batch dimension and <code class="docutils literal notranslate"><span class="p
 input feature dimension.</p></li>
 <li><p><strong>label</strong> – target classes,
 expected shapes <code class="docutils literal notranslate"><span class="pre">B</span></code> where
-<code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.</p></li>
+<code class="docutils literal notranslate"><span class="pre">B</span></code> is batch dimension.
+If <cite>None</cite> then will be returned
+projection on centroids.
+Default is <cite>None</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
