@@ -72,7 +72,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.python-version }}-${{ matrix.requirements }}-pip-
 
-      - name: set minimal dependencies
+      - name: show minimal dependencies
         if: matrix.requirements == 'minimal'
         run: |
           cat ./requirements/requirements.txt
@@ -82,7 +82,7 @@ jobs:
       - name: install dependencies
         run: |
           # python -m pip install --upgrade --user pip
-          pip install -r ./requirements/requirements.txt -r ./tests/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-cv-tests.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
+          pip install --verbose --verbose --verbose -r ./requirements/requirements.txt -r ./tests/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-cv-tests.txt --quiet --find-links https://download.pytorch.org/whl/cpu/torch_stable.html --upgrade-strategy only-if-needed
           python --version
           pip --version
           pip list
