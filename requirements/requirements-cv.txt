@@ -1,7 +1,7 @@
 albumentations>=0.4.3
-imageio
+imageio>=2.0.1
 kornia==0.4.1
 opencv-python-headless
-scikit-image>=0.14.1
+scikit-image>=0.14.2
 segmentation-models-pytorch>=0.1.0
 torchvision>=0.3.0
