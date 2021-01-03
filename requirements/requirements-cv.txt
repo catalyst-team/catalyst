@@ -1,5 +1,5 @@
 albumentations>=0.4.3
-imageio>=2.3.0
+imageio>=2.0.1
 kornia==0.4.1
 opencv-python-headless
 scikit-image>=0.14.2
