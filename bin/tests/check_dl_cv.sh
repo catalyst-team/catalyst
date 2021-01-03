@@ -611,7 +611,7 @@ EXPDIR=./tests/_tests_cv_classification_hydra
 LOGDIR=./tests/logs/_tests_cv_classification_hydra
 LOGFILE=${LOGDIR}/checkpoints/_metrics.json
 
-HYDRA_FULL_ERROR=1 PYTHONPATH=./examples:.:${PYTHONPATH} \
+PYTHONPATH=./examples:.:${PYTHONPATH} \
   python catalyst/dl/scripts/run.py \
   --hydra \
   --config-dir ${EXPDIR} \
