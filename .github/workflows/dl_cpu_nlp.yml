@@ -56,6 +56,7 @@ jobs:
           python -c "req = open('./requirements/requirements-cv.txt').read().replace('>', '=') ; open('./requirements/requirements-cv.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-nlp.txt').read().replace('>', '=') ; open('./requirements/requirements-nlp.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-nlp-tests.txt').read().replace('>', '=') ; open('./requirements/requirements-nlp-tests.txt', 'w').write(req)"
+          sed -i '/kornia==.*/d' ./requirements/requirements-cv.txt
 
       # https://github.com/actions/cache/blob/master/examples.md
       # Note: This uses an internal pip API and may not always work
