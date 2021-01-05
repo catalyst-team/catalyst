@@ -19,7 +19,7 @@ from catalyst.callbacks import (
 from catalyst.experiments import ConfigExperiment
 
 DEFAULT_MINIMAL_CONFIG = {  # noqa: WPS407
-    "model_params": {"model": "SomeModel"},
+    "model_params": {"_target_": "SomeModel"},
     "stages": {"data_params": {"num_workers": 0}, "train": {}},
     "args": {"logdir": "./logdir"},
 }
@@ -58,9 +58,9 @@ class SomeScheduler(torch.nn.Module):
         super().__init__()
 
 
-registry.MODEL.add(SomeModel)
-registry.OPTIMIZER.add(SomeOptimizer)
-registry.SCHEDULER.add(SomeScheduler)
+registry.REGISTRY.add(SomeModel)
+registry.REGISTRY.add(SomeOptimizer)
+registry.REGISTRY.add(SomeScheduler)
 
 
 def _test_callbacks(test_callbacks, exp, stage="train"):
@@ -117,9 +117,9 @@ def test_defaults_criterion_optimizer_scheduler():
     callbacks["_scheduler"] = SchedulerCallback
 
     config = DEFAULT_MINIMAL_CONFIG.copy()
-    config["stages"]["criterion_params"] = {"criterion": "BCEWithLogitsLoss"}
-    config["stages"]["optimizer_params"] = {"optimizer": "SomeOptimizer"}
-    config["stages"]["scheduler_params"] = {"scheduler": "SomeScheduler"}
+    config["stages"]["criterion_params"] = {"_target_": "BCEWithLogitsLoss"}
+    config["stages"]["optimizer_params"] = {"_target_": "SomeOptimizer"}
+    config["stages"]["scheduler_params"] = {"_target_": "SomeScheduler"}
     exp = ConfigExperiment(config=config)
 
     assert exp.initial_seed == 42
@@ -148,13 +148,13 @@ def test_when_callback_defined():
     callbacks["my_scheduler"] = SchedulerCallback
 
     config = DEFAULT_MINIMAL_CONFIG.copy()
-    config["stages"]["criterion_params"] = {"criterion": "BCEWithLogitsLoss"}
-    config["stages"]["optimizer_params"] = {"optimizer": "SomeOptimizer"}
-    config["stages"]["scheduler_params"] = {"scheduler": "SomeScheduler"}
+    config["stages"]["criterion_params"] = {"_target_": "BCEWithLogitsLoss"}
+    config["stages"]["optimizer_params"] = {"_target_": "SomeOptimizer"}
+    config["stages"]["scheduler_params"] = {"_target_": "SomeScheduler"}
     config["stages"]["callbacks_params"] = {
-        "my_criterion": {"callback": "CriterionCallback"},
-        "my_optimizer": {"callback": "OptimizerCallback"},
-        "my_scheduler": {"callback": "SchedulerCallback"},
+        "my_criterion": {"_target_": "CriterionCallback"},
+        "my_optimizer": {"_target_": "OptimizerCallback"},
+        "my_scheduler": {"_target_": "SchedulerCallback"},
     }
     exp = ConfigExperiment(config=config)
     _test_callbacks(callbacks, exp)

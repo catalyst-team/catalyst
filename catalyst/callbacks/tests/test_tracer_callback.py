@@ -17,12 +17,12 @@ from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.registry import Model
+from catalyst.registry import REGISTRY
 from catalyst.runners.supervised import SupervisedRunner
 from catalyst.utils import get_device, get_trace_name
 
 
-@Model
+@REGISTRY.add
 class _TracedNet(nn.Module):
     """
     Simple model for the testing.

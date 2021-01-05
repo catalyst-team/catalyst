@@ -16,14 +16,7 @@ from catalyst.experiments.functional import (
     load_optimizer_from_checkpoint,
     process_callbacks,
 )
-from catalyst.registry import (
-    CALLBACKS,
-    CRITERIONS,
-    MODELS,
-    OPTIMIZERS,
-    SCHEDULERS,
-    TRANSFORMS,
-)
+from catalyst.registry import REGISTRY
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.loaders import get_loaders_from_params
 from catalyst.utils.misc import get_short_hash, get_utcnow_time, merge_dicts
@@ -195,7 +188,7 @@ class ConfigExperiment(IExperiment):
                 )
             model = nn.ModuleDict(model)
         else:
-            model = MODELS.get_from_params(**params)
+            model = REGISTRY.get_from_params(**params)
         return model
 
     def get_model(self, stage: str):
@@ -217,7 +210,7 @@ class ConfigExperiment(IExperiment):
                     **key_params
                 )
         else:
-            criterion = CRITERIONS.get_from_params(**params)
+            criterion = REGISTRY.get_from_params(**params)
             if criterion is not None and torch.cuda.is_available():
                 criterion = criterion.cuda()
         return criterion
@@ -267,7 +260,8 @@ class ConfigExperiment(IExperiment):
         )
         # instantiate optimizer
         optimizer_key = params.pop("optimizer_key", None)
-        optimizer = OPTIMIZERS.get_from_params(**params, params=model_params)
+        optimizer = REGISTRY.get_from_params(**params, params=model_params)
+
         # load from previous stage
         if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
@@ -319,7 +313,7 @@ class ConfigExperiment(IExperiment):
     ) -> Union[Scheduler, Dict[str, Scheduler]]:
         optimizer_key = params.pop("_optimizer", None)
         optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
-        scheduler = SCHEDULERS.get_from_params(**params, optimizer=optimizer)
+        scheduler = REGISTRY.get_from_params(**params, optimizer=optimizer)
 
         return scheduler
 
@@ -374,7 +368,7 @@ class ConfigExperiment(IExperiment):
                 ]
                 params.update(transforms=transforms_composition)
 
-            transform = TRANSFORMS.get_from_params(**params)
+            transform = REGISTRY.get_from_params(**params)
 
         return transform
 
@@ -430,7 +424,7 @@ class ConfigExperiment(IExperiment):
     @staticmethod
     def _get_callback(**params):
         wrapper_params = params.pop("_wrapper", None)
-        callback = CALLBACKS.get_from_params(**params)
+        callback = REGISTRY.get_from_params(**params)
         if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
             callback = ConfigExperiment._get_callback(  # noqa: WPS437

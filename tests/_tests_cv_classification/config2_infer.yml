@@ -1,5 +1,5 @@
 model_params:
-  model: SimpleNet
+  _target_:  SimpleNet
 
 args:
   expdir: "_tests_cv_classification"
@@ -17,6 +17,6 @@ stages:
 
     callbacks_params:
       loader:
-        callback: CheckpointCallback
+        _target_:  CheckpointCallback
       infer:
-        callback: InferCallback
+        _target_:  InferCallback

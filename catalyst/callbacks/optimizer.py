@@ -4,8 +4,8 @@ import warnings
 
 import torch
 
-from catalyst import registry
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.registry import REGISTRY
 from catalyst.typing import Optimizer
 from catalyst.utils.misc import get_attr, maybe_recursive_call
 from catalyst.utils.torch import get_optimizer_momentum
@@ -107,9 +107,7 @@ class OptimizerCallback(IOptimizerCallback):
         self.scaler = None
 
         grad_clip_params: dict = grad_clip_params or {}
-        self.grad_clip_fn = registry.GRAD_CLIPPER.get_from_params(
-            **grad_clip_params
-        )
+        self.grad_clip_fn = REGISTRY.get_from_params(**grad_clip_params)
 
         self.decouple_weight_decay = decouple_weight_decay
         self._optimizer_wds: List = None
