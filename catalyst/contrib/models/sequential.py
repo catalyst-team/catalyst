@@ -9,7 +9,7 @@ import torch
 from torch import nn
 
 from catalyst import utils
-from catalyst.registry import MODULE
+from catalyst.registry import REGISTRY
 
 
 def _process_additional_params(params, layers):
@@ -21,13 +21,13 @@ def _process_additional_params(params, layers):
 
 
 def _layer_fn(layer_fn, f_in, f_out, **kwargs):
-    layer_fn = MODULE.get_if_str(layer_fn)
+    layer_fn = REGISTRY.get_if_str(layer_fn)
     layer_fn = layer_fn(f_in, f_out, **kwargs)
     return layer_fn
 
 
 def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
-    normalization_fn = MODULE.get_if_str(normalization_fn)
+    normalization_fn = REGISTRY.get_if_str(normalization_fn)
     normalization_fn = (
         normalization_fn(f_out, **kwargs)
         if normalization_fn is not None
@@ -37,13 +37,13 @@ def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
 
 
 def _dropout_fn(dropout_fn, f_in, f_out, **kwargs):
-    dropout_fn = MODULE.get_if_str(dropout_fn)
+    dropout_fn = REGISTRY.get_if_str(dropout_fn)
     dropout_fn = dropout_fn(**kwargs) if dropout_fn is not None else None
     return dropout_fn
 
 
 def _activation_fn(activation_fn, f_in, f_out, **kwargs):
-    activation_fn = MODULE.get_if_str(activation_fn)
+    activation_fn = REGISTRY.get_if_str(activation_fn)
     activation_fn = (
         activation_fn(**kwargs) if activation_fn is not None else None
     )

@@ -2,10 +2,10 @@
 from torch import nn
 from torch.nn import functional as F
 
-from catalyst.registry import Model
+from catalyst.registry import REGISTRY
 
 
-@Model
+@REGISTRY.add
 class SimpleNet(nn.Module):
     """Docs? Contribution is welcome"""
 

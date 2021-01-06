@@ -5,4 +5,4 @@ from catalyst import registry
 from .experiment import Experiment
 from .model import SimpleNet
 
-registry.Model(SimpleNet)
+registry.REGISTRY.add(SimpleNet)

@@ -16,10 +16,10 @@ from catalyst.contrib.datasets import MNIST
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.dl import SupervisedRunner
-from catalyst.registry import Model
+from catalyst.registry import REGISTRY
 
 
-@Model
+@REGISTRY.add
 class _SimpleNet(nn.Module):
     def __init__(self, input_shape: Tuple[int]):
         super().__init__()

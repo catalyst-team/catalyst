@@ -14,6 +14,7 @@ from typing import (
     Union,
 )
 import collections
+import functools
 import inspect
 import warnings
 
@@ -23,6 +24,8 @@ MetaFactory = Callable[[Factory, Tuple, Mapping], Any]
 
 
 def _default_meta_factory(factory: Factory, args: Tuple, kwargs: Mapping):
+    if inspect.isfunction(factory):
+        return functools.partial(factory, *args, **kwargs)
     return factory(*args, **kwargs)
 
 
@@ -45,19 +48,14 @@ class Registry(collections.MutableMapping):
     """
 
     def __init__(
-        self,
-        default_name_key: str,
-        default_meta_factory: MetaFactory = _default_meta_factory,
+        self, default_meta_factory: MetaFactory = _default_meta_factory
     ):
         """
         Args:
-            default_name_key: Default key containing factory name when
-                creating from config
             default_meta_factory: default object
                 that calls factory. Optional. Default just calls factory.
         """
         self.meta_factory = default_meta_factory
-        self._name_key = default_name_key
         self._factories: Dict[str, Factory] = {}
         self._late_add_callbacks: List[LateAddCallbak] = []
 
@@ -270,7 +268,7 @@ class Registry(collections.MutableMapping):
         Returns:
             result of calling ``instantiate_fn(factory, **config)``
         """
-        name = kwargs.pop(self._name_key, None)
+        name = kwargs.pop("_target_", None)
         if name:
             return self.get_instance(name, meta_factory=meta_factory, **kwargs)
 

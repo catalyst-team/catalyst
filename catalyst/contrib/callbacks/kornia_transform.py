@@ -1,10 +1,9 @@
-from typing import Dict, Optional, Sequence, Tuple, TYPE_CHECKING, Union
+from typing import Optional, Sequence, TYPE_CHECKING, Union
 
-import torch
 from torch import nn
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.registry import TRANSFORM
+from catalyst.registry import REGISTRY
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -99,10 +98,10 @@ class BatchTransformCallback(Callback):
           ...
           train_transforms:
             _wrapper:
-              callback: ControlFlowCallback
+              name: ControlFlowCallback
               loaders: train
-            callback: BatchTransformCallback
-            transforms:
+            name: BatchTransformCallback
+            transform:
               - transform: kornia.RandomAffine
                 degrees: [-15, 20]
                 scale: [0.75, 1.25]
@@ -113,7 +112,6 @@ class BatchTransformCallback(Callback):
                 saturation: 0.1
                 return_transform: false
             input_key: image
-            additional_input_key: mask
           ...
 
     .. _`Kornia: an Open Source Differentiable Computer Vision Library
@@ -124,9 +122,7 @@ class BatchTransformCallback(Callback):
         self,
         transform: Sequence[Union[dict, nn.Module]],
         input_key: Union[str, int] = "image",
-        additional_input_key: Optional[str] = None,
         output_key: Optional[Union[str, int]] = None,
-        additional_output_key: Optional[str] = None,
     ) -> None:
         """Constructor method for the :class:`BatchTransformCallback` callback.
 
@@ -143,40 +139,21 @@ class BatchTransformCallback(Callback):
                 element of the sequence must contain ``'transform'`` key with
                 an augmentation name as a value. Please note that in this case
                 to use custom augmentation you should add it to the
-                `TRANSFORMS` registry first.
+                `REGISTRY` registry first.
             input_key (Union[str, int]): key in batch dict
                 mapping to transform, e.g. `'image'`
-            additional_input_key (Optional[Union[str, int]]): key of an
-                additional target in batch dict mapping to transform,
-                e.g. `'mask'`
             output_key: key to use to store the result
                 of the transform, defaults to `input_key` if not provided
-            additional_output_key: key to use to store
-                the result of additional target transformation,
-                defaults to `additional_input_key` if not provided
         """
         super().__init__(order=CallbackOrder.Internal, node=CallbackNode.all)
 
         self.input_key = input_key
-        self.additional_input = additional_input_key
-        self._process_input = (
-            self._process_input_tuple
-            if self.additional_input is not None
-            else self._process_input_tensor
-        )
-
-        self.output_key = output_key or input_key
-        self.additional_output = additional_output_key or self.additional_input
-        self._process_output = (
-            self._process_output_tuple
-            if self.additional_output is not None
-            else self._process_output_tensor
-        )
+        self.output_key = output_key or self.input_key
 
         transforms: Sequence[nn.Module] = [
             item
             if isinstance(item, nn.Module)
-            else TRANSFORM.get_from_params(**item)
+            else REGISTRY.get_from_params(**item)
             for item in transform
         ]
         assert all(
@@ -185,35 +162,15 @@ class BatchTransformCallback(Callback):
 
         self.transform = nn.Sequential(*transforms)
 
-    def _process_input_tensor(self, input_: dict) -> torch.Tensor:
-        return input_[self.input_key]
-
-    def _process_input_tuple(
-        self, input_: dict
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        return input_[self.input_key], input_[self.additional_input]
-
-    def _process_output_tensor(
-        self, runner: "IRunner", batch: Tuple[torch.Tensor, torch.Tensor]
-    ) -> Dict[str, torch.Tensor]:
-        runner.input[self.output_key] = batch
-
-    def _process_output_tuple(
-        self, runner: "IRunner", batch: Tuple[torch.Tensor, torch.Tensor]
-    ) -> None:
-        out_t, additional_t = batch
-        dict_ = {self.output_key: out_t, self.additional_output: additional_t}
-        runner.input.update(dict_)
-
     def on_batch_start(self, runner: "IRunner") -> None:
         """Apply transforms.
 
         Args:
             runner: сurrent runner
         """
-        in_batch = self._process_input(runner.input)
-        out_batch = self.transform(in_batch)
-        self._process_output(runner, out_batch)
+        input_batch = runner.input[self.input_key]
+        output_batch = self.transform(input_batch)
+        runner.input[self.output_key] = output_batch
 
 
 __all__ = ["BatchTransformCallback"]

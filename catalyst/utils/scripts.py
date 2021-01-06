@@ -11,7 +11,7 @@ import warnings
 import torch
 import torch.distributed
 
-from catalyst.registry import EXPERIMENT, RUNNER
+from catalyst.registry import REGISTRY
 from catalyst.utils.distributed import (
     get_distributed_env,
     get_distributed_params,
@@ -70,7 +70,7 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
         x is None for x in (experiment_fn, experiment_from_config)
     ), "Experiment is set both in code and config."
     if experiment_fn is None and experiment_from_config is not None:
-        experiment_fn = EXPERIMENT.get(experiment_from_config)
+        experiment_fn = REGISTRY.get(experiment_from_config)
 
     runner_params = copy_config.get("runner_params", {})
     runner_from_config = runner_params.pop("runner", None)
@@ -78,7 +78,7 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
         x is None for x in (runner_fn, runner_from_config)
     ), "Runner is set both in code and config."
     if runner_fn is None and runner_from_config is not None:
-        runner_fn = RUNNER.get(runner_from_config)
+        runner_fn = REGISTRY.get(runner_from_config)
 
     experiment = experiment_fn(copy_config)
     runner = runner_fn(**runner_params)
