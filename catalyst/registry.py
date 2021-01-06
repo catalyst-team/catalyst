@@ -200,5 +200,4 @@ def _callbacks_loader(r: registry.Registry):
 
 REGISTRY.late_add(_callbacks_loader)
 
-
 __all__ = ["REGISTRY"]

@@ -346,7 +346,6 @@ class ConfigExperiment(IExperiment):
                     for transform_params in params["transforms"]
                 ]
                 params.update(transforms=transforms_composition)
-
             transform = REGISTRY.get_from_params(**params)
 
         return transform
