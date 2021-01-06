@@ -128,7 +128,8 @@ def _get_region_based_metrics(
         metric = torch.mean(metrics_per_class)
     elif mode == "weighted":
         assert len(weights) == len(segmentation_stats[0])
-        metrics = torch.tensor(weights) * metrics_per_class
+        device = metrics_per_class.device
+        metrics = torch.tensor(weights).to(device) * metrics_per_class
         metric = torch.sum(metrics)
     elif mode == "per-class":
         metric = metrics_per_class
