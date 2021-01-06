@@ -13,4 +13,3 @@ from catalyst.core.callback import (
     CallbackScope,
     CallbackWrapper,
 )
-from catalyst.core.state import State

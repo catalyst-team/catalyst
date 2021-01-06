@@ -61,9 +61,6 @@ class ConfigExperiment(IExperiment):
         self._prepare_logdir()
 
         self._config["stages"]["stage_params"] = merge_dicts(
-            deepcopy(
-                self._config["stages"].get("state_params", {})
-            ),  # saved for backward compatibility
             deepcopy(self._config["stages"].get("stage_params", {})),
             deepcopy(self._config.get("args", {})),
             {"logdir": self._logdir},
@@ -96,36 +93,19 @@ class ConfigExperiment(IExperiment):
         stages_defaults = {}
         stages_config_out = OrderedDict()
         for key in self.STAGE_KEYWORDS:
-            if key == "stage_params":
-                # backward compatibility
-                stages_defaults[key] = merge_dicts(
-                    deepcopy(stages_config.get("state_params", {})),
-                    deepcopy(stages_config.get(key, {})),
-                )
-            else:
-                stages_defaults[key] = deepcopy(stages_config.get(key, {}))
+            stages_defaults[key] = deepcopy(stages_config.get(key, {}))
         for stage in stages_config:
             if (
                 stage in self.STAGE_KEYWORDS
-                or stage == "state_params"
                 or stages_config.get(stage) is None
             ):
                 continue
             stages_config_out[stage] = {}
             for key2 in self.STAGE_KEYWORDS:
-                if key2 == "stage_params":
-                    # backward compatibility
-                    stages_config_out[stage][key2] = merge_dicts(
-                        deepcopy(stages_defaults.get("state_params", {})),
-                        deepcopy(stages_defaults.get(key2, {})),
-                        deepcopy(stages_config[stage].get("state_params", {})),
-                        deepcopy(stages_config[stage].get(key2, {})),
-                    )
-                else:
-                    stages_config_out[stage][key2] = merge_dicts(
-                        deepcopy(stages_defaults.get(key2, {})),
-                        deepcopy(stages_config[stage].get(key2, {})),
-                    )
+                stages_config_out[stage][key2] = merge_dicts(
+                    deepcopy(stages_defaults.get(key2, {})),
+                    deepcopy(stages_config[stage].get(key2, {})),
+                )
 
         return stages_config_out
 
@@ -261,7 +241,6 @@ class ConfigExperiment(IExperiment):
         # instantiate optimizer
         optimizer_key = params.pop("optimizer_key", None)
         optimizer = REGISTRY.get_from_params(**params, params=model_params)
-
         # load from previous stage
         if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
