@@ -1,16 +1,15 @@
+from typing import List, TYPE_CHECKING
+from functools import partial
+
 import numpy as np
 
+from catalyst.callbacks.metric import BatchMetricCallback
 from catalyst.contrib.utils.torch_extra import (
     calculate_confusion_matrix_from_tensors,
     calculate_tp_fp_fn,
 )
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.metrics.calculate_dice import calculate_dice
-
-from typing import List, TYPE_CHECKING
-from functools import partial
-
-from catalyst.callbacks.metric import BatchMetricCallback
 from catalyst.metrics.functional import (
     wrap_class_metric2dict,
     wrap_metric_fn_with_activation,
@@ -115,7 +114,9 @@ class MultiClassDiceMetricCallback(Callback):
         self.confusion_matrix = None
 
     def on_batch_end(self, runner: "IRunner"):
-        """Records the confusion matrix at the end of each batch.
+        """
+        Records the confusion matrix at the end of each batch.
+
         Args:
             runner: current runner
         """
@@ -132,7 +133,9 @@ class MultiClassDiceMetricCallback(Callback):
             self.confusion_matrix += confusion_matrix
 
     def on_loader_end(self, runner: "IRunner"):
-        """Logs dice scores to the ``loader_metrics``.
+        """
+        Logs dice scores to the ``loader_metrics``.
+
         Args:
             runner: current runner
         """

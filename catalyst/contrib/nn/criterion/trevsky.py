@@ -14,6 +14,7 @@ class TrevskyLoss(nn.Module):
     TrevskyIndex = TP / (TP + alpha * FN + betta * FP)
     TrevskyLoss = 1 - TrevskyIndex
     """
+
     def __init__(
         self,
         alpha: float,
@@ -73,16 +74,17 @@ class FocalTrevskyLoss(nn.Module):
     TrevskyIndex = TP / (TP + alpha * FN + betta * FP)
     FocalTrevskyLoss = (1 - TrevskyIndex)^gamma
     """
+
     def __init__(
-            self,
-            alpha: float,
-            beta: Optional[float] = None,
-            gamma: float = 4/3,
-            class_dim: int = 1,
-            activation: str = "Sigmoid",
-            mode: str = "micro",
-            weights: List[float] = None,
-            eps: float = 1e-7,
+        self,
+        alpha: float,
+        beta: Optional[float] = None,
+        gamma: float = 4 / 3,
+        class_dim: int = 1,
+        activation: str = "Sigmoid",
+        mode: str = "micro",
+        weights: List[float] = None,
+        eps: float = 1e-7,
     ):
         """
         Args:
@@ -107,13 +109,15 @@ class FocalTrevskyLoss(nn.Module):
         """
         super().__init__()
         self.gamma = gamma
-        self.trevsky_loss = TrevskyLoss(alpha=alpha,
-                                        beta=beta,
-                                        class_dim=class_dim,
-                                        activation=activation,
-                                        mode=mode,
-                                        weights=weights,
-                                        eps=eps)
+        self.trevsky_loss = TrevskyLoss(
+            alpha=alpha,
+            beta=beta,
+            class_dim=class_dim,
+            activation=activation,
+            mode=mode,
+            weights=weights,
+            eps=eps,
+        )
 
     def forward(
         self, outputs: torch.Tensor, targets: torch.Tensor
@@ -124,7 +128,7 @@ class FocalTrevskyLoss(nn.Module):
             output_sample = torch.unsqueeze(output_sample, dim=0)
             target_sample = torch.unsqueeze(target_sample, dim=0)
             sample_loss = self.trevsky_loss(output_sample, target_sample)
-            loss += (sample_loss ** self.gamma)
+            loss += sample_loss ** self.gamma
         return loss
 
 

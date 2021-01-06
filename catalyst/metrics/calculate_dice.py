@@ -8,12 +8,15 @@ def calculate_dice(
 ) -> np.array:
     """
     Calculate list of Dice coefficients.
+
     Args:
         true_positives: true positives numpy tensor
         false_positives: false positives numpy tensor
         false_negatives: false negatives numpy tensor
+
     Returns:
         np.array: dice score
+
     Raises:
         ValueError: if `dice` is out of [0; 1] bounds
     """
