@@ -65,7 +65,7 @@ class Experiment(IExperiment):
         overfit: bool = False,
         stage_kwargs: Dict = None,
         checkpoint_data: Dict = None,
-        distributed_params: Dict = None,
+        engine_params: Dict = None,
         initial_seed: int = 42,
         engine: str = None,
     ):
@@ -110,7 +110,7 @@ class Experiment(IExperiment):
             stage_kwargs: additional stage params
             checkpoint_data: additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
-            distributed_params: dictionary with the parameters
+            engine_params: dictionary with the parameters
                 for distributed and FP16 method
             initial_seed: experiment's initial seed value
             engine: engine to use, if ``None`` then will be used
@@ -150,7 +150,7 @@ class Experiment(IExperiment):
         self._overfit = overfit
         self._stage_kwargs = stage_kwargs or {}
         self._checkpoint_data = checkpoint_data or {}
-        self._distributed_params = distributed_params or {}
+        self._engine_params = engine_params or {}
 
     @property
     def initial_seed(self) -> int:
@@ -202,9 +202,9 @@ class Experiment(IExperiment):
         return self._trial
 
     @property
-    def distributed_params(self) -> Dict:
+    def engine_params(self) -> Dict:
         """Dict with the parameters for distributed and FP16 method."""
-        return self._distributed_params
+        return self._engine_params
 
     @staticmethod
     def _get_loaders(

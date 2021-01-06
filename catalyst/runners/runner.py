@@ -207,7 +207,7 @@ class Runner(IStageBasedRunner):
             overfit=overfit,
             stage_kwargs=stage_kwargs or state_kwargs,
             checkpoint_data=checkpoint_data,
-            distributed_params=fp16,
+            engine_params=fp16,
             initial_seed=initial_seed,
         )
         self.experiment = experiment
@@ -287,7 +287,7 @@ class Runner(IStageBasedRunner):
             check_time=timeit,
             check_run=check,
             stage_kwargs=stage_kwargs or state_kwargs,
-            distributed_params=fp16,
+            engine_params=fp16,
             initial_seed=initial_seed,
         )
         self.run_experiment(experiment)
@@ -359,7 +359,7 @@ class Runner(IStageBasedRunner):
         model = engine.to_device(self.model)
 
         # (model, _, _, _, device) = process_components(  # noqa: WPS122
-        #     model=self.model, distributed_params=fp16, device=self.device,
+        #     model=self.model, engine_params=fp16, device=self.device,
         # )
         self._prepare_inner_state(
             stage="infer",

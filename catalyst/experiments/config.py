@@ -152,9 +152,9 @@ class ConfigExperiment(IExperiment):
         return self._trial
 
     @property
-    def distributed_params(self) -> Dict:
+    def engine_params(self) -> Dict:
         """Dict with the parameters for distributed and FP16 methond."""
-        return self._config.get("distributed_params", {})
+        return self._config.get("engine_params", {})
 
     @property
     def stages(self) -> List[str]:
@@ -445,7 +445,7 @@ class ConfigExperiment(IExperiment):
         )
 
         # NOTE: stage should be in self._config.stages
-        #       othervise will be raised ValueError
+        #       otherwise will be raised ValueError
         stage_index = list(self.stages_config.keys()).index(stage)
         process_callbacks(callbacks, stage_index)
 

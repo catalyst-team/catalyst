@@ -4,7 +4,7 @@ from catalyst.core.engine import IEngine
 from catalyst.engines.device import DeviceEngine
 from catalyst.engines.parallel import DataParallelEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
-from catalyst.engines.utils import process_engine
+from catalyst.engines.functional import process_engine
 
 
 __all__ = [

@@ -14,7 +14,7 @@ from catalyst.engines import (
     DistributedDataParallelEngine,
     process_engine,
 )
-from catalyst.engines.utils import all_gather, mean_reduce, sum_reduce
+from catalyst.engines.functional import all_gather, mean_reduce, sum_reduce
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 if NUM_CUDA_DEVICES > 1:

@@ -74,17 +74,17 @@ def assert_fp16_available() -> None:
     )
 
 
-def initialize_apex(model, optimizer=None, **distributed_params):
+def initialize_apex(model, optimizer=None, **engine_params):
     """
     Prepares model and optimizer for work with Nvidia Apex.
 
     Args:
         model: torch model
         optimizer: torch optimizer
-        **distributed_params: extra params for ``apex.amp.initialize``
+        **engine_params: extra params for ``apex.amp.initialize``
 
     Returns:
-        model and optimiezer, wrapped with Nvidia Apex initialization
+        model and optimizer, wrapped with Nvidia Apex initialization
     """
     import apex
 
@@ -92,9 +92,9 @@ def initialize_apex(model, optimizer=None, **distributed_params):
         apex.amp.initialize, ["models", "optimizers"]
     )
     amp_params["opt_level"] = "O0"
-    for dp in distributed_params:
+    for dp in engine_params:
         if dp in amp_params:
-            amp_params[dp] = distributed_params[dp]
+            amp_params[dp] = engine_params[dp]
 
     # NVIDIA apex support only:
     #  model: nn.Module or list of modules
@@ -180,6 +180,7 @@ def get_distributed_mean(value: Union[float, torch.Tensor]):
     return value
 
 
+# TODO: rename
 def get_slurm_params():
     """Return slurm params for experiment run.
 
@@ -198,6 +199,7 @@ def get_slurm_params():
     return cur_node_idx, num_nodes, master_node, master_port
 
 
+# TODO: rename
 def get_distributed_params():
     """Returns distributed params for experiment run.
 

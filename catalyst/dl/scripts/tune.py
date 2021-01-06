@@ -135,8 +135,8 @@ def main_worker(args, unknown_args):
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)
 
-    config.setdefault("distributed_params", {})["apex"] = args.apex
-    config.setdefault("distributed_params", {})["amp"] = args.amp
+    config.setdefault("engine_params", {})["apex"] = args.apex
+    config.setdefault("engine_params", {})["amp"] = args.amp
     expdir = Path(args.expdir)
 
     # optuna objective

@@ -872,7 +872,7 @@ class IStageBasedRunner(IRunner):
         #     criterion=criterion,
         #     optimizer=optimizer,
         #     scheduler=scheduler,
-        #     distributed_params=self.experiment.distributed_params,
+        #     engine_params=self.experiment.engine_params,
         #     device=self.device,
         # )
 

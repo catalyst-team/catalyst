@@ -32,11 +32,6 @@ class IExperiment(ABC):
 
     @property
     @abstractmethod
-    def engine(self) -> IEngine:
-        pass
-
-    @property
-    @abstractmethod
     def initial_seed(self) -> int:
         """
         Experiment's initial seed, used to setup `global seed`
@@ -99,7 +94,13 @@ class IExperiment(ABC):
 
     @property
     @abstractmethod
-    def distributed_params(self) -> Dict:
+    def engine(self) -> IEngine:
+        # @TODO: not sure if we need it here
+        pass
+
+    @property
+    @abstractmethod
+    def engine_params(self) -> Dict:
         """
         Dictionary with the parameters for distributed
         and half-precision training.
@@ -113,7 +114,7 @@ class IExperiment(ABC):
 
         Example::
 
-            >>> experiment.distributed_params
+            >>> experiment.engine_params
             {"opt_level": "O1", "syncbn": True}  # Apex variant
         """
         pass

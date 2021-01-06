@@ -74,19 +74,19 @@ def _patch_forward(model):
 # apex issue https://github.com/deepset-ai/FARM/issues/210
 # solution: https://github.com/NVIDIA/apex/issues/503#issuecomment-566181771
 def _wrap_into_data_parallel_with_apex(
-    model: RunnerModel, optimizer: Optimizer, distributed_params: Dict
+    model: RunnerModel, optimizer: Optimizer, engine_params: Dict
 ):
     if isinstance(model, nn.Module):
         model = nn.Sequential(model)
         model, optimizer = initialize_apex(
-            model, optimizer, **distributed_params
+            model, optimizer, **engine_params
         )
         model = torch.nn.DataParallel(model[0])
         model = _patch_forward(model)
     elif isinstance(model, dict):
         model = {k: nn.Sequential(v) for k, v in model.items()}
         model, optimizer = initialize_apex(
-            model, optimizer, **distributed_params
+            model, optimizer, **engine_params
         )
         model = {k: nn.DataParallel(v[0]) for k, v in model.items()}
         model = {k: _patch_forward(v) for k, v in model.items()}
@@ -101,7 +101,7 @@ def process_components(
     criterion: Criterion = None,
     optimizer: Optimizer = None,
     scheduler: Scheduler = None,
-    distributed_params: Dict = None,
+    engine_params: Dict = None,
     device: Device = None,
 ) -> Tuple[RunnerModel, Criterion, Optimizer, Scheduler, Device]:
     """
@@ -112,7 +112,7 @@ def process_components(
         criterion: criterion function
         optimizer: optimizer
         scheduler: scheduler
-        distributed_params (dict, optional): dict with the parameters
+        engine_params (dict, optional): dict with the parameters
             for distributed and FP16 method
         device (Device, optional): device
 
@@ -126,9 +126,9 @@ def process_components(
         NotImplementedError: if model is not nn.Module or dict for multi-gpu,
             nn.ModuleDict for DataParallel not implemented yet
     """
-    distributed_params = distributed_params or {}
-    distributed_params = copy.deepcopy(distributed_params)
-    distributed_params.update(get_distributed_params())
+    engine_params = engine_params or {}
+    engine_params = copy.deepcopy(engine_params)
+    engine_params.update(get_distributed_params())
 
     if device is None and IS_XLA_AVAILABLE:
         raise ValueError(
@@ -144,11 +144,11 @@ def process_components(
         device = torch.device(device)
 
     is_apex_enabled = (
-        distributed_params.get("apex", False) and check_apex_available()
+            engine_params.get("apex", False) and check_apex_available()
     )
 
     is_amp_enabled = (
-        distributed_params.get("amp", False) and check_amp_available()
+            engine_params.get("amp", False) and check_amp_available()
     )
 
     if is_apex_enabled and is_amp_enabled:
@@ -166,11 +166,11 @@ def process_components(
             model, nn.Module
         ), "Distributed training is not available for KV model"
 
-        local_rank = distributed_params.pop("local_rank", 0) or 0
+        local_rank = engine_params.pop("local_rank", 0) or 0
         device = f"cuda:{local_rank}"
         model = maybe_recursive_call(model, "to", device=device)
 
-        syncbn = distributed_params.pop("syncbn", False)
+        syncbn = engine_params.pop("syncbn", False)
 
         if is_apex_enabled:
             import apex
@@ -179,7 +179,7 @@ def process_components(
                 model = apex.parallel.convert_syncbn_model(model)
 
             model, optimizer = initialize_apex(
-                model, optimizer, **distributed_params
+                model, optimizer, **engine_params
             )
             model = apex.parallel.DistributedDataParallel(model)
         else:
@@ -199,7 +199,7 @@ def process_components(
 
         if is_apex_enabled and not is_data_parallel:
             model, optimizer = initialize_apex(
-                model, optimizer, **distributed_params
+                model, optimizer, **engine_params
             )
 
         elif not is_apex_enabled and is_data_parallel:
@@ -212,7 +212,7 @@ def process_components(
 
         elif is_apex_enabled and is_data_parallel:
             model, optimizer = _wrap_into_data_parallel_with_apex(
-                model, optimizer, distributed_params
+                model, optimizer, engine_params
             )
 
     model: Model = maybe_recursive_call(model, "to", device=device)

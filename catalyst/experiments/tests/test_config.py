@@ -93,7 +93,7 @@ def test_defaults():
     assert exp.initial_seed == 42
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
-    assert exp.distributed_params == {}
+    assert exp.engine_params == {}
     assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
@@ -125,7 +125,7 @@ def test_defaults_criterion_optimizer_scheduler():
     assert exp.initial_seed == 42
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
-    assert exp.distributed_params == {}
+    assert exp.engine_params == {}
     assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
