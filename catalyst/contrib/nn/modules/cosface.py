@@ -68,7 +68,7 @@ class CosFace(nn.Module):
         return rep
 
     def forward(
-        self, input: torch.Tensor, target: torch.LongTensor
+        self, input: torch.Tensor, target: torch.LongTensor = None
     ) -> torch.Tensor:
         """
         Args:
@@ -79,6 +79,9 @@ class CosFace(nn.Module):
             target: target classes,
                 expected shapes ``B`` where
                 ``B`` is batch dimension.
+                If `None` then will be returned
+                projection on centroids.
+                Default is `None`.
 
         Returns:
             tensor (logits) with shapes ``BxC``
@@ -87,6 +90,9 @@ class CosFace(nn.Module):
         """
         cosine = F.linear(F.normalize(input), F.normalize(self.weight))
         phi = cosine - self.m
+
+        if target is None:
+            return cosine
 
         one_hot = torch.zeros_like(cosine)
         one_hot.scatter_(1, target.view(-1, 1).long(), 1)
@@ -162,7 +168,7 @@ class AdaCos(nn.Module):
         return rep
 
     def forward(
-        self, input: torch.Tensor, target: torch.LongTensor
+        self, input: torch.Tensor, target: torch.LongTensor = None
     ) -> torch.Tensor:
         """
         Args:
@@ -173,6 +179,9 @@ class AdaCos(nn.Module):
             target: target classes,
                 expected shapes ``B`` where
                 ``B`` is batch dimension.
+                If `None` then will be returned
+                projection on centroids.
+                Default is `None`.
 
         Returns:
             tensor (logits) with shapes ``BxC``
@@ -183,6 +192,9 @@ class AdaCos(nn.Module):
         theta = torch.acos(
             torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
         )
+
+        if target is None:
+            return cos_theta
 
         one_hot = torch.zeros_like(cos_theta)
         one_hot.scatter_(1, target.view(-1, 1).long(), 1)

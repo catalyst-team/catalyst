@@ -74,7 +74,7 @@ class ArcFace(nn.Module):
         return rep
 
     def forward(
-        self, input: torch.Tensor, target: torch.LongTensor
+        self, input: torch.Tensor, target: torch.LongTensor = None
     ) -> torch.Tensor:
         """
         Args:
@@ -85,6 +85,9 @@ class ArcFace(nn.Module):
             target: target classes,
                 expected shapes ``B`` where
                 ``B`` is batch dimension.
+                If `None` then will be returned
+                projection on centroids.
+                Default is `None`.
 
         Returns:
             tensor (logits) with shapes ``BxC``
@@ -92,6 +95,10 @@ class ArcFace(nn.Module):
             (out_features).
         """
         cos_theta = F.linear(F.normalize(input), F.normalize(self.weight))
+
+        if target is None:
+            return cos_theta
+
         theta = torch.acos(
             torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
         )
@@ -187,7 +194,7 @@ class SubCenterArcFace(nn.Module):
         return rep
 
     def forward(
-        self, input: torch.Tensor, label: torch.LongTensor
+        self, input: torch.Tensor, target: torch.LongTensor = None
     ) -> torch.Tensor:
         """
         Args:
@@ -195,29 +202,32 @@ class SubCenterArcFace(nn.Module):
                 expected shapes ``BxF`` where ``B``
                 is batch dimension and ``F`` is an
                 input feature dimension.
-            label: target classes,
+            target: target classes,
                 expected shapes ``B`` where
                 ``B`` is batch dimension.
+                If `None` then will be returned
+                projection on centroids.
+                Default is `None`.
 
         Returns:
             tensor (logits) with shapes ``BxC``
             where ``C`` is a number of classes.
         """
-        cos_theta = torch.bmm(
-            F.normalize(input)
-            .unsqueeze(0)
-            .expand(self.k, *input.shape),  # k*b*f
-            F.normalize(
-                self.weight, dim=1
-            ),  # normalize in_features dim   # k*f*c
+        feats = (
+            F.normalize(input).unsqueeze(0).expand(self.k, *input.shape)
         )  # k*b*f
+        wght = F.normalize(self.weight, dim=1)  # k*f*c
+        cos_theta = torch.bmm(feats, wght)  # k*b*f
         cos_theta = torch.max(cos_theta, dim=0)[0]  # b*f
         theta = torch.acos(
             torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
         )
 
+        if target is None:
+            return cos_theta
+
         one_hot = torch.zeros_like(cos_theta)
-        one_hot.scatter_(1, label.view(-1, 1).long(), 1)
+        one_hot.scatter_(1, target.view(-1, 1).long(), 1)
 
         selected = torch.where(
             theta > self.threshold, torch.zeros_like(one_hot), one_hot

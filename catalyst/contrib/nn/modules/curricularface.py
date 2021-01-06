@@ -79,7 +79,7 @@ class CurricularFace(nn.Module):
         return rep
 
     def forward(
-        self, input: torch.Tensor, label: torch.LongTensor
+        self, input: torch.Tensor, label: torch.LongTensor = None
     ) -> torch.Tensor:
         """
         Args:
@@ -90,6 +90,9 @@ class CurricularFace(nn.Module):
             label: target classes,
                 expected shapes ``B`` where
                 ``B`` is batch dimension.
+                If `None` then will be returned
+                projection on centroids.
+                Default is `None`.
 
         Returns:
             tensor (logits) with shapes ``BxC``
@@ -99,6 +102,9 @@ class CurricularFace(nn.Module):
             F.normalize(input), F.normalize(self.weight, dim=0)
         )
         cos_theta = cos_theta.clamp(-1, 1)  # for numerical stability
+
+        if label is None:
+            return cos_theta
 
         target_logit = cos_theta[torch.arange(0, input.size(0)), label].view(
             -1, 1
