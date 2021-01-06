@@ -5,6 +5,8 @@ from abc import ABC, abstractmethod
 # origin:
 # https://github.com/catalyst-team/catalyst/blob/master/catalyst/tools/meters/meter.py
 class IMetric(ABC):
+    """Interface for all Metrics."""
+
     def __init__(self, compute_on_call: bool = True):
         """Interface for all Metrics.
 
@@ -26,10 +28,14 @@ class IMetric(ABC):
 
     @abstractmethod
     def update(self, *args, **kwargs) -> None:
-        """Updates the metric's state using the passed data.
+        """Updates the metrics state using the passed data.
 
         By default, this is called at the end of each batch
         (`on_batch_end` event).
+
+        Args:
+            *args: some args :)
+            **kwargs: some kwargs ;)
         """
         pass
 
@@ -41,16 +47,34 @@ class IMetric(ABC):
         (`on_loader_end` event).
 
         Returns:
-            Any: it's better to return dict-like
-
-        Raises:
-            NotImplementedError: raised when the metric cannot be computed.
+            Any: computed value, # noqa: DAR202
+            it's better to return key-value
         """
         pass
 
     @abstractmethod
-    def get_dict_value(self) -> Dict:
+    def compute_key_value(self) -> Dict:
+        """Computes the metric based on it's accumulated state.
+
+        By default, this is called at the end of each loader
+        (`on_loader_end` event).
+
+        Returns:
+            Dict: computed value in key-value format.  # noqa: DAR202
+        """
         pass
 
     def __call__(self, *args, **kwargs) -> Any:
-        pass
+        """Computes the metric based on it's accumulated state.
+
+        By default, this is called at the end of each batch
+        (`on_batch_end` event).
+        Returns computed value if `compute_on_call=True`.
+
+        Returns:
+            Any: computed value, it's better to return key-value.
+        """
+        self.update(*args, **kwargs)
+        if self.compute_on_call:
+            # here should be some engine stuff with tensor sync
+            return self.compute()
