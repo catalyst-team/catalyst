@@ -24,6 +24,7 @@ from catalyst.metrics.f1_score import f1_score, fbeta_score
 from catalyst.metrics.focal import sigmoid_focal_loss, reduced_focal_loss
 from catalyst.metrics.hitrate import hitrate
 from catalyst.metrics.region_base_metrics import iou, jaccard, trevsky, dice
+from catalyst.metrics.calculate_dice import calculate_dice
 from catalyst.metrics.mrr import reciprocal_rank, mrr
 from catalyst.metrics.ndcg import dcg, ndcg
 from catalyst.metrics.precision import average_precision, precision

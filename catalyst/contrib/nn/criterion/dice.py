@@ -1,4 +1,3 @@
-# flake8: noqa
 from typing import List
 from functools import partial
 
