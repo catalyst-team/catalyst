@@ -7,7 +7,7 @@ shared:  # Пример
 model_params:  # REQUIRED KEYWORD, параметры модели (моделей)
   _key_value: False  # KEYWORD, если True, то моделей может быть несколько и тогда их нужно обернуть еще в key-value
 
-  model: ModelName  # REQUIRED KEYWORD Имя класса. Сам класс будет сконструирован в registry по этому имени
+  _target_: ModelName  # REQUIRED KEYWORD Имя класса. Сам класс будет сконструирован в registry по этому имени
   # на этом уровне могут лежать параметры для __init__ данной модели, например
   arch: resnet18  # благодаря этому ключу модель будет создана так `ModelName(arch=resnet18)`
 
@@ -52,7 +52,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     samplers_params:  # KEYWORD, параметры sampler для каждого лоадера, такое же API, как в loaders_params
       # Пример
       train:  # только для train лоадера
-        sampler: MiniEpochSampler  # KEYWORD, имя для sampler
+        _target_: MiniEpochSampler  # KEYWORD, имя для sampler
         # на этом уровне могут лежать параметры для __init__ данного sampler, например
         data_len: 50000  # Пример
         mini_epoch_len: 40000  # Пример
@@ -68,10 +68,10 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     train:  # трансформация только для train датасета
       _key_value: False  # KEYWORD, если False, то трансформация будет применяться сразу ко всему data-sample
 
-      transform: A.Compose  # KEYWORD, имя трансформации
+      _target_: A.Compose  # KEYWORD, имя трансформации
       # на этом уровне могут лежать параметры для __init__ данного transform, например
       transforms:  # KEYWORD, список трансформаций (нужно обернуть еще в key-value) который будет передан как параметр
-        - transform: SomeTransform  # Пример
+        - _target_: SomeTransform  # Пример
           param1: value1  # Пример
           param2: value2  # Пример
 
@@ -79,9 +79,9 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
       _key_value: True  # KEYWORD, если True, то для каждого key-value в data-sample можно определить свои трансформации и тогда их нужно обернуть еще в key-value, note: трансформации будут применяться отдельно для каждого key-value в data-sample
 
       image:
-        transform: A.Compose
+        _target_: A.Compose
         transforms:
-          - transform: SomeTransform
+          - _target_: SomeTransform
             param: value
 
     infer: *transform  # трансформация только для infer датасета
@@ -99,7 +99,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
   criterion_params:  # REQUIRED KEYWORD, параметры для лосс-функции
     _key_value: False  # KEYWORD, если True, то лосс-функций может быть несколько и тогда их нужно обернуть еще в key-value
 
-    criterion: BCEWithLogitsLoss  # REQUIRED KEYWORD, имя лосс функции
+    _target_: BCEWithLogitsLoss  # REQUIRED KEYWORD, имя лосс функции
     # на этом уровне могут лежать параметры для __init__ данной лосс-функции, например
     reduction: sum
 
@@ -116,7 +116,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
       lr: 0.001
       base_batch_size: 64  # KEYWORD, размер базового батча
 
-    optimizer: Adam  # REQUIRED KEYWORD, имя оптимизатора
+    _target_: Adam  # REQUIRED KEYWORD, имя оптимизатора
     # на этом уровне могут лежать параметры для __init__ данного оптимизатора, например
     lr: 0.003
     weight_decay: 0.0001
@@ -124,7 +124,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
   scheduler_params:  # REQUIRED KEYWORD, параметры для lr-scheduler
     _key_value: False  # KEYWORD, если True, то lr-scheduler может быть несколько и тогда их нужно обернуть еще в key-value
 
-    scheduler: StepLR  # REQUIRED KEYWORD, имя lr-scheduler
+    _target_: StepLR  # REQUIRED KEYWORD, имя lr-scheduler
     # на этом уровне могут лежать параметры для __init__ данного lr-scheduler, например
     step_size: 10
     gamma: 0.3
@@ -136,15 +136,15 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     callbacks_params:  # REQUIRED KEYWORD, самая важная часть, тут записываются все коллбеки для данного стейджа
     # коллбеки записываются через key-value
       loss:
-        callback: CriterionCallback  # KEYWORD имя коллбека
+        _target_: CriterionCallback  # KEYWORD имя коллбека
       optimizer:
-        callback: OptimizerCallback
+        _target_: OptimizerCallback
       scheduler:
-        callback: SchedulerCallback
+        _target_: SchedulerCallback
         # для любого коллбека на этом уровне лежат его параметры
         reduced_metric: *main_metric
       saver:
-        callback: CheckpointCallback
+        _target_: CheckpointCallback
         save_n_best: 3
 
   finetune:  # Пример второго стейджа обучения, тут мы можем изменить наши параметры
@@ -153,7 +153,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
 
     optimizer_params:  # Пример, переопределенного оптимизатора
       load_from_previous_stage: True  # KEYWORD, флаг, который говорит, что нужно загрузить статистики с прошлой стадии
-      optimizer: Adam
+      _target_: Adam
       lr: 0.001
 
   # стейджей может быть любое количество

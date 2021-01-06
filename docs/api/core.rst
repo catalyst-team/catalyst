@@ -49,14 +49,6 @@ Runner
     :show-inheritance:
 
 
-RunnerLegacy
-~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.legacy.IRunnerLegacy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 Callback
 ----------------------
 .. autoclass:: catalyst.core.callback.CallbackNode

@@ -51,7 +51,4 @@ class PerplexityCallback(BatchMetricCallback):
         )
 
 
-# backward compatibility
-PerplexityMetricCallback = PerplexityCallback
-
-__all__ = ["PerplexityCallback", "PerplexityMetricCallback"]
+__all__ = ["PerplexityCallback"]

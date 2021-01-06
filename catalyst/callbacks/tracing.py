@@ -163,7 +163,4 @@ class TracingCallback(Callback):
             self._trace(runner)
 
 
-# backward compatibility
-TracerCallback = TracingCallback
-
-__all__ = ["TracingCallback", "TracerCallback"]
+__all__ = ["TracingCallback"]

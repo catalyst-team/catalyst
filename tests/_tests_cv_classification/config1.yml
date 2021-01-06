@@ -1,5 +1,5 @@
 model_params:
-  model: SimpleNet
+  _target_:  SimpleNet
 
 args:
   expdir: "_tests_cv_classification"
@@ -22,10 +22,10 @@ stages:
     minimize_metric: False
 
   criterion_params:
-      criterion: CrossEntropyLoss
+      _target_:  CrossEntropyLoss
 
   optimizer_params:
-    optimizer: Adam
+    _target_:  Adam
     lr: 0.001
     weight_decay: 0.0001
 
@@ -34,7 +34,7 @@ stages:
       num_epochs: &num_epochs 100
 
     scheduler_params:
-      scheduler: OneCycleLRWithWarmup
+      _target_:  OneCycleLRWithWarmup
       num_steps: *num_epochs
       warmup_steps: 1
       lr_range: [0.005, 0.00005]
@@ -42,24 +42,24 @@ stages:
 
     callbacks_params:
       loss:
-        callback: CriterionCallback
+        _target_:  CriterionCallback
       optimizer:
-        callback: OptimizerCallback
+        _target_:  OptimizerCallback
       accuracy:
-        callback: AccuracyCallback
+        _target_:  AccuracyCallback
         accuracy_args: [1, 3, 5]
       auc:
-        callback: AUCCallback
+        _target_:  AUCCallback
       fscore:
-        callback: F1ScoreCallback
+        _target_:  F1ScoreCallback
       perplexity:
-        callback: PerplexityCallback
+        _target_:  PerplexityCallback
 #      ppv_tpr_f1:
-#        callback: PrecisionRecallF1ScoreCallback
+#        _target_:  PrecisionRecallF1ScoreCallback
 #        num_classes: 10
       scheduler:
-        callback: SchedulerCallback
+        _target_:  SchedulerCallback
         reduced_metric: *reduced_metric
       saver:
-        callback: CheckpointCallback
+        _target_:  CheckpointCallback
         save_n_best: 3

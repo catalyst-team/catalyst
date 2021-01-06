@@ -22,6 +22,13 @@ Frozen Class
     :undoc-members:
     :show-inheritance:
 
+Registry
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.tools.registry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Time Manager
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.tools.time_manager
@@ -79,4 +86,3 @@ Precision-Recall-F1 Meter
     :members:
     :undoc-members:
     :show-inheritance:
-
