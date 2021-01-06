@@ -1,12 +1,15 @@
 import logging
 
-from catalyst.registry.registry import Registry
 from catalyst.settings import SETTINGS
+from catalyst.tools import registry
 
 logger = logging.getLogger(__name__)
 
+REGISTRY = registry.Registry()
+Registry = REGISTRY.add
 
-def _transforms_loader(r: Registry):
+
+def _transforms_loader(r: registry.Registry):
     from torch.jit.frontend import UnsupportedNodeError
 
     from catalyst.contrib.data.cv.transforms import torch as t
@@ -58,12 +61,10 @@ def _transforms_loader(r: Registry):
             raise ex
 
 
-TRANSFORM = Registry("transform")
-TRANSFORM.late_add(_transforms_loader)
-Transform = TRANSFORM.add
+REGISTRY.late_add(_transforms_loader)
 
 
-def _samplers_loader(r: Registry):
+def _samplers_loader(r: registry.Registry):
     from torch.utils.data import sampler as s
 
     factories = {
@@ -77,9 +78,7 @@ def _samplers_loader(r: Registry):
     r.add_from_module(sampler)
 
 
-SAMPLER = Registry("sampler")
-SAMPLER.late_add(_samplers_loader)
-Sampler = SAMPLER.add
+REGISTRY.late_add(_samplers_loader)
 
 
 class _GradClipperWrap:
@@ -92,29 +91,25 @@ class _GradClipperWrap:
         self.fn(x, *self.args, **self.kwargs)
 
 
-def _grad_clip_loader(r: Registry):
+def _grad_clip_loader(r: registry.Registry):
     from torch.nn.utils import clip_grad as m
 
     r.add_from_module(m)
 
 
-# @TODO: why func? should be renamed
-GRAD_CLIPPER = Registry("func", default_meta_factory=_GradClipperWrap)
-GRAD_CLIPPER.late_add(_grad_clip_loader)
+REGISTRY.late_add(_grad_clip_loader)
 
 
-def _modules_loader(r: Registry):
+def _modules_loader(r: registry.Registry):
     from catalyst.contrib.nn import modules as m
 
     r.add_from_module(m)
 
 
-MODULE = Registry("module")
-MODULE.late_add(_modules_loader)
-Module = MODULE.add
+REGISTRY.late_add(_modules_loader)
 
 
-def _model_loader(r: Registry):
+def _model_loader(r: registry.Registry):
     from catalyst.contrib import models as m
 
     r.add_from_module(m)
@@ -133,45 +128,37 @@ def _model_loader(r: Registry):
             raise ex
 
 
-MODEL = Registry("model")
-MODEL.late_add(_model_loader)
-Model = MODEL.add
+REGISTRY.late_add(_model_loader)
 
 
-def _criterion_loader(r: Registry):
+def _criterion_loader(r: registry.Registry):
     from catalyst.contrib.nn import criterion as m
 
     r.add_from_module(m)
 
 
-CRITERION = Registry("criterion")
-CRITERION.late_add(_criterion_loader)
-Criterion = CRITERION.add
+REGISTRY.late_add(_criterion_loader)
 
 
-def _optimizers_loader(r: Registry):
+def _optimizers_loader(r: registry.Registry):
     from catalyst.contrib.nn import optimizers as m
 
     r.add_from_module(m)
 
 
-OPTIMIZER = Registry("optimizer")
-OPTIMIZER.late_add(_optimizers_loader)
-Optimizer = OPTIMIZER.add
+REGISTRY.late_add(_optimizers_loader)
 
 
-def _schedulers_loader(r: Registry):
+def _schedulers_loader(r: registry.Registry):
     from catalyst.contrib.nn import schedulers as m
 
     r.add_from_module(m)
 
 
-SCHEDULER = Registry("scheduler")
-SCHEDULER.late_add(_schedulers_loader)
-Scheduler = SCHEDULER.add
+REGISTRY.late_add(_schedulers_loader)
 
 
-def _experiments_loader(r: Registry):
+def _experiments_loader(r: registry.Registry):
     from catalyst.core.experiment import IExperiment
 
     r.add(IExperiment)
@@ -183,12 +170,10 @@ def _experiments_loader(r: Registry):
     r.add_from_module(m)
 
 
-EXPERIMENT = Registry("experiment")
-EXPERIMENT.late_add(_experiments_loader)
-Experiment = EXPERIMENT.add
+REGISTRY.late_add(_experiments_loader)
 
 
-def _runners_loader(r: Registry):
+def _runners_loader(r: registry.Registry):
     from catalyst.core.runner import IRunner, IStageBasedRunner
 
     r.add(IRunner)
@@ -199,12 +184,10 @@ def _runners_loader(r: Registry):
     r.add_from_module(m)
 
 
-RUNNER = Registry("runner")
-RUNNER.late_add(_runners_loader)
-Runner = RUNNER.add
+REGISTRY.late_add(_runners_loader)
 
 
-def _callbacks_loader(r: Registry):
+def _callbacks_loader(r: registry.Registry):
     from catalyst.core.callback import Callback, CallbackWrapper
 
     r.add(Callback)
@@ -215,31 +198,6 @@ def _callbacks_loader(r: Registry):
     r.add_from_module(m)
 
 
-CALLBACK = Registry("callback")
-CALLBACK.late_add(_callbacks_loader)
-Callback = CALLBACK.add
+REGISTRY.late_add(_callbacks_loader)
 
-
-__all__ = [
-    "Callback",
-    "CALLBACK",
-    "Criterion",
-    "CRITERION",
-    "Experiment",
-    "EXPERIMENT",
-    "GRAD_CLIPPER",
-    "Model",
-    "MODEL",
-    "Module",
-    "MODULE",
-    "Optimizer",
-    "OPTIMIZER",
-    "Runner",
-    "RUNNER",
-    "Sampler",
-    "SAMPLER",
-    "Scheduler",
-    "SCHEDULER",
-    "Transform",
-    "TRANSFORM",
-]
+__all__ = ["REGISTRY"]

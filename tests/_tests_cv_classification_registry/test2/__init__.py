@@ -6,5 +6,5 @@ from catalyst.dl import SupervisedRunner as Runner
 
 from .model import SimpleNet
 
-registry.Model(SimpleNet)
-registry.EXPERIMENT.add_from_module(exp)
+registry.REGISTRY.add(SimpleNet)
+registry.REGISTRY.add_from_module(exp)

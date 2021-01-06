@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import DataLoader, Dataset, DistributedSampler
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
-from catalyst.registry import SAMPLER
+from catalyst.registry import REGISTRY
 from catalyst.utils.distributed import get_distributed_params, get_rank
 from catalyst.utils.misc import merge_dicts, set_global_seed
 
@@ -264,7 +264,7 @@ def get_loaders_from_params(
             else:
                 sampler = None
         else:
-            sampler = SAMPLER.get_from_params(**sampler_params)
+            sampler = REGISTRY.get_from_params(**sampler_params)
             if isinstance(datasource, dict) and "sampler" in datasource:
                 datasource.pop("sampler", None)
 

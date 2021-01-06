@@ -1,5 +1,5 @@
 model_params:
-  model: SimpleNet
+  _target_:  SimpleNet
 
 runner_params:
   input_key: image
@@ -15,18 +15,18 @@ stages:
     num_workers: 0
 
   transform_params:
-    transform: A.Compose
+    _target_:  A.Compose
     transforms:
-      - transform: A.Normalize
+      - _target_:  A.Normalize
         mean: [0.1307]
         std: [0.3081]
-      - transform: catalyst.ImageToTensor
+      - _target_:  catalyst.ImageToTensor
 
   criterion_params:
-      criterion: CrossEntropyLoss
+      _target_:  CrossEntropyLoss
 
   optimizer_params:
-    optimizer: Adam
+    _target_:  Adam
     lr: 0.001
     weight_decay: 0.0001
 
@@ -36,10 +36,10 @@ stages:
 
     callbacks_params:
       loss:
-        callback: CriterionCallback
+        _target_:  CriterionCallback
       optimizer:
-        callback: OptimizerCallback
+        _target_:  OptimizerCallback
       finder:
-        callback: LRFinder
+        _target_:  LRFinder
         final_lr: 0.1
         num_steps: 1000

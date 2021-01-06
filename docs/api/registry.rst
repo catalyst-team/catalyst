@@ -11,15 +11,7 @@ Registry
 Registry
 ----------------------
 
-.. automodule:: catalyst.registry.registry
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Registries
-----------------------
-
-.. automodule:: catalyst.registry.registries
+.. automodule:: catalyst.registry
     :members:
     :undoc-members:
     :show-inheritance:
