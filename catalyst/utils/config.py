@@ -10,7 +10,7 @@ import yaml
 logger = getLogger(__name__)
 
 
-class OrderedLoader(yaml.Loader):
+class OrderedLoader(yaml.SafeLoader):
     pass
 
 
@@ -99,7 +99,7 @@ def load_config(
                 config = json.loads(file, object_pairs_hook=object_pairs_hook)
 
         elif suffix in [".yml", ".yaml"]:
-            loader = OrderedLoader if ordered else yaml.Loader
+            loader = OrderedLoader if ordered else yaml.SafeLoader
             config = yaml.load(stream, loader)
 
     if config is None:
