@@ -309,11 +309,9 @@ class MetricAggregationCallback(Callback):
         prefix: str,
         metrics: Union[str, List[str], Dict[str, float]] = None,
         mode: str = "mean",
-        aggregation_function: Optional[Callable] = None,
         scope: str = "batch",
         multiplier: float = 1.0,
     ) -> None:
-        # ToDo Example with aggregation_function
         """
         Args:
             prefix: new key for aggregated metric.
@@ -321,15 +319,32 @@ class MetricAggregationCallback(Callback):
                 it aggregates only the values from the metric by these keys.
                 for ``weighted_sum`` aggregation it must be a Dict[str, float].
             mode: function for aggregation.
-                Must be either ``sum``, ``mean`` or ``weighted_sum``.
-            aggregation_function: user's function to aggregate metrics(only for
-                ``custom`` mode), this function must get dict of metrics and
-                runner and return aggregated metric. It can be useful for
-                complicated fine tuning with different losses that depends on
-                epochs and loader or something also
+                Must be either ``sum``, ``mean`` or ``weighted_sum`` or user's
+                function to aggregate metrics. This function must get dict of
+                metrics and runner and return aggregated metric. It can be
+                useful for complicated fine tuning with different losses that
+                depends on epochs and loader or something also
             scope: type of metric. Must be either ``batch``, ``loader`` or
                 ``epoch``
             multiplier: scale factor for the aggregated metric.
+
+        Examples:
+            Loss depends on epoch(Note that all loss functions that are used
+            in the aggregation function must be defined.)
+
+            >>> from catalyst.dl import MetricAggregationCallback
+            >>>
+            >>> def aggregation_function(metrics, runner):
+            >>>     epoch = runner.epoch
+            >>>     region_loss = metrics["loss_dice"] + metrics["loss_iou"]
+            >>>     bce_loss = metrics['loss_bce']
+            >>>     loss = 1 / epoch * bce_loss + epoch / 3 * region_loss
+            >>>     return loss
+            >>>
+            >>> MetricAggregationCallback(
+            >>>     mode=aggregation_function,
+            >>>     prefix='loss',
+            >>> )
         """
         super().__init__(
             order=CallbackOrder.metric_aggregation, node=CallbackNode.all
@@ -351,17 +366,10 @@ class MetricAggregationCallback(Callback):
                     "the metrics must be specified "
                     "and must be a dict"
                 )
-        elif mode == "custom":
-            if aggregation_function is None:
-                raise ValueError(
-                    "For `custom`"
-                    "the aggregation_function must be specified "
-                    "and must be a callable"
-                )
-        else:
+        elif not callable(mode):
             raise NotImplementedError(
                 "mode must be `sum`, `mean` "
-                "or `weighted_sum` or `weighted_mean`"
+                "or `weighted_sum` or `weighted_mean` or be Callable"
             )
 
         assert scope in ("batch", "loader", "epoch")
@@ -389,8 +397,8 @@ class MetricAggregationCallback(Callback):
             self.aggregation_fn = (
                 lambda x: torch.mean(torch.stack(x)) * multiplier
             )
-        elif mode == "custom":
-            self.aggregation_fn = aggregation_function
+        elif callable(mode):
+            self.aggregation_fn = mode
 
     def _preprocess(self, metrics: Any) -> List[float]:
         if self.metrics is not None:
@@ -405,7 +413,7 @@ class MetricAggregationCallback(Callback):
         return result
 
     def _process_metrics(self, metrics: Dict, runner: "IRunner"):
-        if self.mode == "custom":
+        if callable(self.mode):
             metric_aggregated = self.aggregation_fn(metrics, runner)
         else:
             metrics_processed = self._preprocess(metrics)
