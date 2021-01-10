@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict
 import logging
