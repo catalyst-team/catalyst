@@ -5,15 +5,7 @@ from catalyst.core.callback import Callback, CallbackNode, CallbackWrapper
 from catalyst.utils.distributed import get_rank
 
 
-def get_original_callback(callback: Callback) -> Callback:
-    """Get original callback (if it has wrapper)
-
-    Args:
-        callback: callback to unpack
-
-    Returns:
-        callback inside wrapper
-    """
+def _get_original_callback(callback: Callback) -> Callback:
     while isinstance(callback, CallbackWrapper):
         callback = callback.callback
     return callback
@@ -29,13 +21,13 @@ def check_callback_isinstance(callback: Callback, class_or_tuple) -> bool:
     Returns:
         bool: true if first object has the required type
     """
-    callback = get_original_callback(callback)
+    callback = _get_original_callback(callback)
     return isinstance(callback, class_or_tuple)
 
 
 def sort_callbacks_by_order(
     callbacks: Union[List, Dict, OrderedDict]
-) -> OrderedDict:
+) -> "OrderedDict[str, Callback]":
     """Creates an sequence of callbacks and sort them.
 
     Args:
@@ -101,6 +93,6 @@ def filter_callbacks_by_node(
 __all__ = [
     "sort_callbacks_by_order",
     "filter_callbacks_by_node",
-    "get_original_callback",
+    "_get_original_callback",
     "check_callback_isinstance",
 ]

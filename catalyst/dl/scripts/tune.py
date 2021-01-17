@@ -152,7 +152,7 @@ def main_worker(args, unknown_args):
             dump_environment(trial_config, experiment.logdir, args.configs)
             dump_code(args.expdir, experiment.logdir)
 
-        runner.run_experiment(experiment)
+        runner.run(experiment)
 
         return runner.best_valid_metrics[runner.main_metric]
 

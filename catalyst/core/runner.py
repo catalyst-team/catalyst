@@ -40,12 +40,7 @@ def _has_str_intersections(origin_string: str, strings: Tuple):
 class RunnerException(Exception):
     """Exception class for all runner errors."""
 
-    def __init__(self, message: str):
-        """
-        Args:
-            message: exception message
-        """
-        super().__init__(message)
+    pass
 
 
 class IRunner(ICallback, ILogger, ABC):
@@ -61,313 +56,23 @@ class IRunner(ICallback, ILogger, ABC):
             - :py:mod:`catalyst.core.experiment.IExperiment`
             - :py:mod:`catalyst.core.runner.IRunner`
             - :py:mod:`catalyst.core.callback.Callback`
-
-    Abstraction, please check out the implementations:
-
-        - :py:mod:`catalyst.runners.runner.Runner`
-        - :py:mod:`catalyst.runners.supervised.SupervisedRunner`
-
-
-    Runner section
-
-
-    **runner.model** - an instance of torch.nn.Module class, \
-    (should implement ``forward`` method); \
-    for example,
-    ::
-
-        runner.model = torch.nn.Linear(10, 10)
-
-    **runner.device** - an instance of torch.device (CPU, GPU, TPU); \
-    for example,
-    ::
-
-        runner.device = torch.device("cpu")
-
-
-    Experiment section
-
-
-    **runner.criterion** - an instance of torch.nn.Module class\
-    or torch.nn.modules.loss._Loss (should implement ``forward`` method); \
-    for example,
-    ::
-
-        runner.criterion = torch.nn.CrossEntropyLoss()
-
-    **runner.optimizer** - an instance of torch.optim.optimizer.Optimizer\
-    (should implement ``step`` method); \
-    for example,
-    ::
-
-        runner.optimizer = torch.optim.Adam()
-
-    **runner.scheduler** -
-    an instance of torch.optim.lr_scheduler._LRScheduler\
-    (should implement ``step`` method); \
-    for example,
-    ::
-
-        runner.scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau()
-
-    **runner.callbacks** -
-    ordered dictionary with Catalyst.Callback instances;\
-    for example,
-    ::
-
-        runner.callbacks = {
-            "accuracy": AccuracyCallback(),
-            "criterion": CriterionCallback(),
-            "optimizer": OptimizerCallback(),
-            "checkpointer": CheckpointCallback()
-        }
-
-
-    Dataflow section
-
-
-    **runner.loaders** - ordered dictionary with torch.DataLoaders; \
-    for example,
-    ::
-
-        runner.loaders = {
-            "train": MnistTrainLoader(),
-            "valid": MnistValidLoader()
-        }
-
-    .. note::
-        - "*train*" prefix is used for training loaders - \
-          metrics computations, backward pass, optimization
-        - "*valid*" prefix is used for validation loaders - \
-          metrics computations only
-        - "*infer*" prefix is used for inference loaders - \
-          dataset prediction
-
-    **runner.batch** - dictionary, \
-    containing batch of data from currents DataLoader \
-    and model output for current batch; \
-    for example,
-    ::
-
-        runner.input = {
-            "images": torch.Tensor(batch_size, c, h, w),
-            "targets": torch.Tensor(batch_size, 1),
-            "logits": torch.Tensor(batch_size, num_classes)
-        }
-
-
-    Metrics section
-
-
-    **runner.batch_metrics** - dictionary, flatten storage for batch metrics; \
-    for example,
-    ::
-
-        runner.batch_metrics = {"loss": ..., "accuracy": ..., "iou": ...}
-
-    **runner.loader_metrics** - dictionary with aggregated batch statistics \
-    for loader (mean over all batches) and global loader metrics, like AUC; \
-    for example,
-    ::
-
-        runner.loader_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
-
-    **runner.epoch_metrics** - dictionary with summarized metrics \
-    for different loaders and global epoch metrics, like lr, momentum; \
-    for example,
-    ::
-
-        runner.epoch_metrics = {
-            "train_loss": ..., "train_auc": ..., "valid_loss": ...,
-            "lr": ..., "momentum": ...,
-        }
-
-
-    Validation metrics section
-
-
-    **runner.main_metric** - string, containing name of metric of interest \
-    for optimization, validation and checkpointing during training
-
-    **runner.minimize_metric** - bool, indicator flag
-
-        - ``True`` if we need to minimize metric during training,\
-          like `Cross Entropy loss`
-        - ``False`` if we need to maximize metric during training, \
-          like `Accuracy` or `Intersection over Union`
-
-
-    Validation section
-
-
-    **runner.valid_loader** - string, name of validation loader \
-    for metric selection, validation and model checkpoining
-
-    **runner.valid_metrics** - dictionary with validation metrics\
-    for currect epoch; \
-    for example,
-    ::
-
-        runner.valid_metrics = {"loss": ..., "accuracy": ..., "auc": ...}
-
-    .. note::
-        subdictionary of epoch_metrics
-
-    **runner.is_best_valid** - bool, indicator flag
-
-        - ``True`` if this training epoch is best over all epochs
-        - ``False`` if not
-
-    **runner.best_valid_metrics** - dictionary with best validation metrics \
-    during whole training process
-
-
-    Distributed section
-
-
-    **runner.distributed_rank** - distributed rank of current worker
-
-    **runner.is_distributed_master** - bool, indicator flag
-
-        - ``True`` if is master node (runner.distributed_rank == 0)
-        - ``False`` if is worker node (runner.distributed_rank != 0)
-
-    **runner.is_distributed_worker** - bool, indicator flag
-
-        - ``True`` if is worker node (runner.distributed_rank > 0)
-        - ``False`` if is master node (runner.distributed_rank <= 0)
-
-
-    Experiment info section
-
-
-    **runner.global_sample_step** - int, numerical indicator, counter for all\
-    individual samples, that passes through our model during training,\
-    validation and inference stages
-
-    **runner.global_batch_step** - int, numerical indicator, counter for all
-    batches, that passes through our model during training, validation and\
-    inference stages
-
-    **runner.global_epoch** - int, numerical indicator,
-    counter for all epochs,\
-    that have passed during model training, validation and\
-    inference stages
-
-    **runner.verbose** - bool, indicator flag
-
-    **runner.is_check_run** - bool, indicator flag
-
-        - ``True`` if you want to check you pipeline and \
-          run only 2 batches per loader and 2 epochs per stage
-        - ``False`` (default) if you want to just the pipeline
-
-    **runner.need_early_stop** - bool, indicator flag \
-    used for EarlyStopping and CheckRun Callbacks
-
-        - ``True`` if we need to stop the training
-        - ``False`` (default) otherwise
-
-    **runner.need_exception_reraise** - bool, indicator flag
-
-        - ``True`` (default) if you want to show exception \
-          during pipeline and stop the training process
-        - ``False`` otherwise
-
-
-    Stage info section
-
-
-    **runner.stage** - string, current stage name,\
-    for example,
-    ::
-
-        runner.stage = "pretraining" / "training" / "finetuning" / etc
-
-    **runner.num_epochs** - int, maximum number of epochs, \
-    required for this stage
-
-    **runner.is_infer_stage** - bool, indicator flag
-
-        - ``True`` for inference stages
-        - ``False`` otherwise
-
-
-    Epoch info section
-
-
-    **runner.epoch** - int, numerical indicator for current stage epoch
-
-
-    Loader info section
-
-
-    **runner.loader_sample_step** - int, numerical indicator \
-    for number of samples passed through our model in current loader
-
-    **runner.loader_batch_step** - int, numerical indicator \
-    for batch index in current loader
-
-
-    **runner.loader_name** - string, current loader name\
-    for example,
-    ::
-
-        runner.loader_name = "train_dataset1" / "valid_data2" / "infer_golden"
-
-    **runner.loader_len** - int, maximum number of batches in current loader
-
-    **runner.loader_batch_size** - int, batch size parameter in current loader
-
-    **runner.is_train_loader** - bool, indicator flag
-
-        - ``True`` for training loaders
-        - ``False`` otherwise
-
-    **runner.is_valid_loader** - bool, indicator flag
-
-        - ``True`` for validation loaders
-        - ``False`` otherwise
-
-    **runner.is_infer_loader** - bool, indicator flag
-
-        - ``True`` for inference loaders
-        - ``False`` otherwise
-
-
-    Batch info section
-
-
-    **runner.batch_size** - int, length of the current batch
-
-    Logging section
-
-
-    **runner.logdir** - string, path to logging directory to save\
-    all logs, metrics, checkpoints and artifacts
-
-    Extra section
-
-
-    **runner.exception** - python Exception instance to raise (or not ;) )
-
     """
 
     def __init__(
         self,
         model: RunnerModel = None,
         engine: IEngine = None,
-        device: Device = None,
+        # device: Device = None,
     ):
         """
         Args:
             model: Torch model object
             engine: IEngine instance
-            device: Torch device object
+            # device: Torch device object
         """
         # the core
-        self._model: RunnerModel = model
-        self._device = None
+        self.model: RunnerModel = model
+        # self._device = device
         self.engine: IEngine = engine
         self.experiment: IExperiment = None
         self.trial: ITrial = None
@@ -389,8 +94,6 @@ class IRunner(ICallback, ILogger, ABC):
         self.batch_metrics: BATCH_METRICS = defaultdict(None)
         self.loader_metrics: LOADER_METRICS = defaultdict(None)
         self.epoch_metrics: EPOCH_METRICS = defaultdict(None)
-        # self.stage_metrics: Dict = defaultdict(None)
-        # self.experiment_metrics: Dict = defaultdict(None)
 
         # experiment info
         self.experiment_key: str = None
@@ -424,87 +127,6 @@ class IRunner(ICallback, ILogger, ABC):
         self.exception: Exception = None
         self.need_early_stop: bool = False
         self.need_exception_reraise: bool = True
-
-    @property
-    def model(self) -> Model:
-        """Returns the runner's model instance."""
-        return self._model
-
-    @model.setter
-    def model(self, value: Union[Model, Dict[str, Model]]):
-        """
-        Runner's model, useful for experiment tracing.
-
-        Args:
-            value (Union[Model, Dict[str, Model]]): new model.
-
-        Raises:
-            TypeError: if value is out of
-                `torch.nn.Module` or `Dict[str, torch.nn.Module]`
-        """
-        if isinstance(value, nn.Module):
-            model = value
-        elif isinstance(value, dict):
-            values_are_models = all(
-                isinstance(v, nn.Module) for v in value.values()
-            )
-            if not values_are_models:
-                raise TypeError(
-                    "Invalid dict value type, must be `torch.nn.Module`"
-                )
-
-            model = value
-        elif isinstance(value, type(None)):
-            model = None
-        else:
-            raise TypeError(
-                f"Invalid value type "
-                f"must be `torch.nn.Module` or `Dict[str, torch.nn.Module]` "
-                f"got '{type(value)}'"
-            )
-
-        if model is not None and self._device is not None:
-            model: Model = maybe_recursive_call(
-                model, "to", device=self._device
-            )
-
-        self._model = model
-
-    # TODO: remove device property or use device from engine device
-    @property
-    def device(self) -> Device:
-        """Returns the runner's device instance."""
-        return self._device
-
-    @device.setter
-    def device(self, value: Device):
-        """
-        Setter for the runner's device.
-
-        Args:
-            value: new torch device.
-
-        Raises:
-            TypeError: if `value` is out of `torch.device`, `str` or `None`
-        """
-        # self._device = self.experiment.engine.device
-        if isinstance(value, torch.device) or isinstance(value, int):
-            self._device = value
-        elif isinstance(value, str):
-            self._device = torch.device(value)
-        elif isinstance(value, type(None)):
-            self._device = None
-        else:
-            raise TypeError(
-                f"Invalid value type "
-                f"must be `str` or `torch.device` "
-                f"got '{type(value)}'"
-            )
-
-        if self._model is not None:
-            self._model = maybe_recursive_call(
-                self._model, "to", device=self._device or "cpu"
-            )
 
     def log_metrics(self, *args, **kwargs) -> None:
         for logger in self.loggers.values():
@@ -574,9 +196,6 @@ class IRunner(ICallback, ILogger, ABC):
 
         Args:
             runner: IRunner instance.
-
-        .. note::
-            This event work only on IRunner.
         """
         assert self.experiment is not None
         self.experiment_key = self.experiment.name
@@ -702,9 +321,6 @@ class IRunner(ICallback, ILogger, ABC):
 
         Args:
             runner: IRunner instance.
-
-        .. note::
-            This event work only on IRunner.
         """
         self.close_log()
 
@@ -791,7 +407,7 @@ class IRunner(ICallback, ILogger, ABC):
                 raise NotImplementedError()
         self._run_event("on_experiment_end")
 
-    def run_experiment(self, experiment: IExperiment = None) -> "IRunner":
+    def run(self, experiment: IExperiment = None) -> "IRunner":
         """
         Starts the experiment.
 
@@ -891,7 +507,7 @@ class IStageBasedRunner(IRunner):
         assert self.loaders is not None
         for loader_key, loader in self.loaders.items():
             if len(loader) == 0:
-                raise NotImplementedError(
+                raise RunnerException(
                     f"DataLoader with name {loader_key} is empty."
                 )
 

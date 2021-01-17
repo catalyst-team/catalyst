@@ -7,6 +7,7 @@ if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
 
+# @TODO: do we need it?
 class ExceptionCallback(Callback):
     """Handles python exceptions during run."""
 

@@ -211,7 +211,7 @@ class Runner(IStageBasedRunner):
             initial_seed=initial_seed,
         )
         self.experiment = experiment
-        distributed_cmd_run(self.run_experiment, distributed)
+        distributed_cmd_run(self.run, distributed)
 
     def infer(
         self,
@@ -290,7 +290,7 @@ class Runner(IStageBasedRunner):
             engine_params=fp16,
             initial_seed=initial_seed,
         )
-        self.run_experiment(experiment)
+        self.run(experiment)
 
     @torch.no_grad()
     def predict_batch(

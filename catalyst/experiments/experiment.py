@@ -158,9 +158,13 @@ class Experiment(IExperiment):
         return self._initial_seed
 
     @property
-    def logdir(self):
-        """Path to the directory where the experiment logs."""
-        return self._logdir
+    def name(self) -> str:
+        return "Experiment"
+
+    # @property
+    # def logdir(self):
+    #     """Path to the directory where the experiment logs."""
+    #     return self._logdir
 
     @property
     def stages(self) -> Iterable[str]:

@@ -133,7 +133,7 @@ def run_train_with_experiment_distributed_parallel_device(rank, world_size):
     )
     # CORE
     engine.setup_experiment()
-    runner.run_experiment(exp)
+    runner.run(exp)
     engine.cleanup()
     shutil.rmtree(logdir, ignore_errors=True)
 
@@ -182,7 +182,7 @@ def run_train_with_config_experiment_distributed_parallel_device(
     }
     # CORE
     # engine.setup_experiment()
-    runner.run_experiment(exp)
+    runner.run(exp)
     # engine.cleanup()
     shutil.rmtree(logdir, ignore_errors=True)
 

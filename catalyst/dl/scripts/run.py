@@ -130,7 +130,7 @@ def main_worker(args, unknown_args):
         dump_environment(config, experiment.logdir, args.configs)
         dump_code(args.expdir, experiment.logdir)
 
-    runner.run_experiment(experiment)
+    runner.run(experiment)
 
 
 def main(args, unknown_args):

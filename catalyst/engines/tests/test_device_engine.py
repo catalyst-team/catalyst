@@ -119,7 +119,7 @@ def run_train_with_experiment_device(device):
         ],
         engine=DeviceEngine(device),
     )
-    runner.run_experiment(exp)
+    runner.run(exp)
 
 
 def run_train_with_config_experiment_device(device):
@@ -160,7 +160,7 @@ def run_train_with_config_experiment_device(device):
         "train": dataset,
         "valid": dataset,
     }
-    runner.run_experiment(exp)
+    runner.run(exp)
     shutil.rmtree(logdir, ignore_errors=True)
 
 

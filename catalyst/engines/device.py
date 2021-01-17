@@ -15,13 +15,6 @@ class DeviceEngine(IEngine):
     def __repr__(self) -> str:
         return f"DeviceEngine(device='{self.device}')"
 
-    @property
-    def save_fn(self):
-        """Function to use for saving anything."""
-        # TODO: for XLA devices use
-        #   from torch_xla.core.xla_model import save
-        return torch.save
-
     def to_device(
         self, obj: Union[dict, torch.Tensor, nn.Module]
     ) -> Union[dict, torch.Tensor, nn.Module]:

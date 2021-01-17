@@ -32,7 +32,7 @@ def main_worker(cfg: DictConfig):
             hydra.utils.to_absolute_path(cfg.args.expdir), experiment.logdir
         )
 
-    runner.run_experiment(experiment)
+    runner.run(experiment)
 
 
 @hydra.main()
