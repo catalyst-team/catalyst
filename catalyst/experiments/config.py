@@ -110,7 +110,7 @@ class ConfigExperiment(IExperiment):
         return stages_config_out
 
     @property
-    def initial_seed(self) -> int:
+    def seed(self) -> int:
         """Experiment's initial seed value."""
         return self._initial_seed
 
@@ -393,7 +393,7 @@ class ConfigExperiment(IExperiment):
         data_params = dict(self.stages_config[stage]["data_params"])
         loaders = get_loaders_from_params(
             get_datasets_fn=self.get_datasets,
-            initial_seed=self.initial_seed,
+            initial_seed=self.seed,
             stage=stage,
             **data_params,
         )

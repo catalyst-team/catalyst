@@ -115,7 +115,7 @@ class SupervisedRunner(Runner):
         batch = super()._handle_device(batch)
         return batch
 
-    def _handle_batch(self, batch: Mapping[str, Any]) -> None:
+    def handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
         Inner method to handle specified data batch.
         Used to make a train/valid/infer stage during Experiment run.

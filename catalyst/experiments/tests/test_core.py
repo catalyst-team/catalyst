@@ -47,7 +47,7 @@ def test_defaults():
 
     exp = Experiment(model=model, loaders=loaders, valid_loader="train")
 
-    assert exp.initial_seed == 42
+    assert exp.seed == 42
     assert exp.logdir is None
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}

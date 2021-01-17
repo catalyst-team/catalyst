@@ -5,14 +5,10 @@ import numpy as np
 import torch
 
 from catalyst.metrics.functional import process_multilabel_components
-from catalyst.utils.torch import get_activation_fn
 
 
 def accuracy(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    topk: Sequence[int] = (1,),
-    activation: Optional[str] = None,
+    outputs: torch.Tensor, targets: torch.Tensor, topk: Sequence[int] = (1,),
 ) -> Sequence[torch.Tensor]:
     """
     Computes multiclass accuracy@topk for the specified values of `topk`.
@@ -68,9 +64,6 @@ def accuracy(
         >>> )
         [tensor([0.6667]), tensor([1.])]
     """
-    activation_fn = get_activation_fn(activation)
-    outputs = activation_fn(outputs)
-
     max_k = max(topk)
     batch_size = targets.size(0)
 

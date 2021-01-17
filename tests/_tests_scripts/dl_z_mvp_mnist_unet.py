@@ -29,7 +29,7 @@ class ClassifyUnet(nn.Module):
 
 
 class CustomRunner(dl.Runner):
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         x, y = batch
         x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
         y_hat, x_ = self.model(x_noise)

@@ -50,7 +50,7 @@ class HydraConfigExperiment(IExperiment):
         self._logdir: str = os.getcwd()
 
     @property
-    def initial_seed(self) -> int:
+    def seed(self) -> int:
         """Experiment's initial seed value."""
         return self._initial_seed
 

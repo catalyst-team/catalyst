@@ -1,101 +1,71 @@
-from typing import Any, Dict, Optional
-from abc import ABC, abstractmethod
+from typing import Dict
 
 import numpy as np
 
 
-# origin:
-# https://github.com/lanpa/tensorboardX/blob/master/tensorboardX/writer.py
-class ILogger(ABC):
-    """Interface for all Loggers."""
+class ILogger:
+    """An abstraction that syncs experiment run with monitoring tools."""
 
-    @property
-    def name(self) -> str:
-        """Returns corresponding logger name.
-
-        Returns:
-            name of the associated logger.  # noqa: DAR202
-
-        Raises:
-            NotImplementedError: if name was not specified.
-        """
-        raise NotImplementedError()
-
-    @property
-    def logdir(self) -> str:
-        """Returns corresponding logdir path.
-
-        Returns:
-            path to associated logdir.  # noqa: DAR202
-
-        Raises:
-            NotImplementedError: if logdir was not specified.
-        """
-        raise NotImplementedError()
-
-    @abstractmethod
-    def log_scalar(
-        self, value: float, name: str, step: Optional[int] = None,
-    ) -> None:
-        """Logs scalar.
-
-        Args:
-            value: scalar value.
-            name: scalar name.
-            step: experiment step.
-        """
-        pass
-
-    @abstractmethod
     def log_metrics(
-        self, metrics: Dict[str, float], step: Optional[int] = None,
+        self,
+        metrics: Dict[str, float],
+        scope: str = None,
+        # experiment info
+        experiment_key: str = None,
+        global_epoch_step: int = 0,
+        global_batch_step: int = 0,
+        global_sample_step: int = 0,
+        # stage info
+        stage_key: str = None,
+        stage_epoch_len: int = 0,
+        stage_epoch_step: int = 0,
+        stage_batch_step: int = 0,
+        stage_sample_step: int = 0,
+        # loader info
+        loader_key: str = None,
+        loader_batch_len: int = 0,
+        loader_batch_step: int = 0,
+        loader_sample_step: int = 0,
     ) -> None:
-        """Logs metrics.
-
-        Args:
-            metrics: key-value storage with metrics.
-            step: experiment step.
-        """
         pass
 
-    @abstractmethod
-    def log_histogram(
-        self, histogram: np.ndarray, step: Optional[int] = None,
-    ) -> None:
-        """Logs histogram.
-
-        Args:
-            histogram: numpy array with histogram, shape - ??
-            step: experiment step
-        """
-        pass
-
-    @abstractmethod
     def log_image(
-        self, image: np.ndarray, step: Optional[int] = None,
+        self,
+        image: np.ndarray,
+        scope: str = None,
+        # experiment info
+        experiment_key: str = None,
+        global_epoch_step: int = 0,
+        global_batch_step: int = 0,
+        global_sample_step: int = 0,
+        # stage info
+        stage_key: str = None,
+        stage_epoch_len: int = 0,
+        stage_epoch_step: int = 0,
+        stage_batch_step: int = 0,
+        stage_sample_step: int = 0,
+        # loader info
+        loader_key: str = None,
+        loader_batch_len: int = 0,
+        loader_batch_step: int = 0,
+        loader_sample_step: int = 0,
     ) -> None:
-        """Logs image.
-
-        Args:
-            image: numpy array with image, [h; w; 3/1]
-            step: experiment step
-        """
         pass
 
-    @abstractmethod
-    def log_graph(self, model: Any) -> None:
-        """Logs experiment model.
-
-        Args:
-            model: some model, for PyTorch – `nn.Module`.
-        """
+    def log_hparams(
+        self,
+        hparams: Dict,
+        scope: str = None,
+        # experiment info
+        experiment_key: str = None,
+    ) -> None:
         pass
 
-    @abstractmethod
-    def log_hparams(self, hparams: Dict) -> None:
-        """Logs experiment hyperparameters.
-
-        Args:
-            hparams: key-value experiment hyperparameters.
-        """
+    def flush_log(self) -> None:
         pass
+
+    def close_log(self) -> None:
+        pass
+
+
+__all__ = ["ILogger"]

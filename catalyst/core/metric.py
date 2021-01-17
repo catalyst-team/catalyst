@@ -2,8 +2,6 @@ from typing import Any, Dict
 from abc import ABC, abstractmethod
 
 
-# origin:
-# https://github.com/catalyst-team/catalyst/blob/master/catalyst/tools/meters/meter.py
 class IMetric(ABC):
     """Interface for all Metrics."""
 
@@ -78,3 +76,6 @@ class IMetric(ABC):
         if self.compute_on_call:
             # here should be some engine stuff with tensor sync
             return self.compute()
+
+
+__all__ = ["IMetric"]

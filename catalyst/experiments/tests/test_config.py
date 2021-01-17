@@ -90,7 +90,7 @@ def test_defaults():
     """
     exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG.copy())
 
-    assert exp.initial_seed == 42
+    assert exp.seed == 42
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}
@@ -122,7 +122,7 @@ def test_defaults_criterion_optimizer_scheduler():
     config["stages"]["scheduler_params"] = {"_target_": "SomeScheduler"}
     exp = ConfigExperiment(config=config)
 
-    assert exp.initial_seed == 42
+    assert exp.seed == 42
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
     assert exp.distributed_params == {}

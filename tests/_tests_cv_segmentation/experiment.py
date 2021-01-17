@@ -30,7 +30,7 @@ class Experiment(ConfigExperiment):
         train_indices, valid_indices = train_test_split(
             indices,
             test_size=valid_size,
-            random_state=self.initial_seed,
+            random_state=self.seed,
             shuffle=True,
         )
 

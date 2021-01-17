@@ -147,7 +147,7 @@ class Experiment(IExperiment):
         self._distributed_params = distributed_params or {}
 
     @property
-    def initial_seed(self) -> int:
+    def seed(self) -> int:
         """Experiment's initial seed value."""
         return self._initial_seed
 

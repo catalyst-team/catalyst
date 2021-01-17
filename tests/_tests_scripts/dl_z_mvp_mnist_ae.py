@@ -30,7 +30,7 @@ class ClassifyAE(torch.nn.Module):
 
 
 class CustomRunner(dl.Runner):
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         x, y = batch
         x = x.view(x.size(0), -1)
         y_hat, x_ = self.model(x)

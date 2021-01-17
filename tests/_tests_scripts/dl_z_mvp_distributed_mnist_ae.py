@@ -43,7 +43,7 @@ class CustomRunner(dl.Runner):
     Docs.
     """
 
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         """
         Docs.
         """

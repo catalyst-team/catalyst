@@ -15,7 +15,7 @@ LATENT_DIM = 128
 
 
 class CustomRunner(dl.Runner):
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         real_images, _ = batch
         batch_metrics = {}
 

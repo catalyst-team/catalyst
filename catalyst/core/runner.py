@@ -1,20 +1,21 @@
-from typing import Any, Dict, Mapping, Optional, Tuple, Union
+from typing import Any, Dict, Mapping, Tuple, Union
 from abc import ABC, abstractmethod
-from collections import defaultdict, OrderedDict
-from functools import lru_cache
-from pathlib import Path
+from collections import defaultdict
+from functools import lru_cache, partial
 
 import torch
 from torch import nn
 from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core.callback import Callback, CallbackScope, ICallback
+from catalyst.core.engine import IEngine
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import (
     filter_callbacks_by_node,
     sort_callbacks_by_order,
 )
-from catalyst.settings import SETTINGS
+from catalyst.core.logger import ILogger
+from catalyst.core.trial import ITrial
 from catalyst.typing import (
     Device,
     Model,
@@ -23,15 +24,16 @@ from catalyst.typing import (
     RunnerOptimizer,
     RunnerScheduler,
 )
-from catalyst.utils.components import process_components
-from catalyst.utils.distributed import get_rank
 from catalyst.utils.loaders import validate_loaders
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-from catalyst.utils.torch import any2device
+
+BATCH_METRICS = Dict[str, float]
+LOADER_METRICS = Dict[str, BATCH_METRICS]
+EPOCH_METRICS = Dict[str, LOADER_METRICS]
 
 
 @lru_cache(maxsize=42)
-def _is_substring(origin_string: str, strings: Tuple):
+def _has_str_intersections(origin_string: str, strings: Tuple):
     return any(x in origin_string for x in strings)
 
 
@@ -46,11 +48,12 @@ class RunnerException(Exception):
         super().__init__(message)
 
 
-class IRunner(ABC, ICallback):
+class IRunner(ICallback, ILogger, ABC):
     """
-    An abstraction that knows how to run an experiment.
-    It contains all the logic of **how** to run the experiment,
-    stages, epoch and batches.
+    An abstraction that knows **how** to run an experiment.
+    contains all the logic of how to run the experiment,
+    stages, epochs, loaders and batches.
+    Runner also contains full information about experiment runner.
 
     .. note::
         To learn more about Catalyst Core concepts, please check out
@@ -63,8 +66,6 @@ class IRunner(ABC, ICallback):
 
         - :py:mod:`catalyst.runners.runner.Runner`
         - :py:mod:`catalyst.runners.supervised.SupervisedRunner`
-
-    Runner also contains full information about experiment runner.
 
 
     Runner section
@@ -117,8 +118,8 @@ class IRunner(ABC, ICallback):
         runner.callbacks = {
             "accuracy": AccuracyCallback(),
             "criterion": CriterionCallback(),
-            "optim": OptimizerCallback(),
-            "saver": CheckpointCallback()
+            "optimizer": OptimizerCallback(),
+            "checkpointer": CheckpointCallback()
         }
 
 
@@ -142,22 +143,17 @@ class IRunner(ABC, ICallback):
         - "*infer*" prefix is used for inference loaders - \
           dataset prediction
 
-    **runner.input** - dictionary, \
-    containing batch of data from currents DataLoader; \
+    **runner.batch** - dictionary, \
+    containing batch of data from currents DataLoader \
+    and model output for current batch; \
     for example,
     ::
 
         runner.input = {
-            "images": np.ndarray(batch_size, c, h, w),
-            "targets": np.ndarray(batch_size, 1),
+            "images": torch.Tensor(batch_size, c, h, w),
+            "targets": torch.Tensor(batch_size, 1),
+            "logits": torch.Tensor(batch_size, num_classes)
         }
-
-    **runner.output** - dictionary, \
-    containing model output for current batch; \
-    for example,
-    ::
-
-        runner.output = {"logits": torch.Tensor(batch_size, num_classes)}
 
 
     Metrics section
@@ -358,134 +354,76 @@ class IRunner(ABC, ICallback):
     """
 
     def __init__(
-        self, model: RunnerModel = None, device: Device = None,
+        self,
+        model: RunnerModel = None,
+        engine: IEngine = None,
+        device: Device = None,
     ):
         """
         Args:
             model: Torch model object
-            device: Torch device
+            engine: IEngine instance
+            device: Torch device object
         """
+        # the core
+        self._model: RunnerModel = model
         self._device = None
-        self._model = None
+        self.engine: IEngine = engine
         self.experiment: IExperiment = None
-        self._prepare_inner_state(model=model, device=device)
-
-    def _prepare_inner_state(
-        self,
-        stage: str = SETTINGS.stage_infer_prefix,
-        device: Device = None,
-        model: RunnerModel = None,
-        criterion: RunnerCriterion = None,
-        optimizer: RunnerOptimizer = None,
-        scheduler: RunnerScheduler = None,
-        callbacks: Dict[str, "Callback"] = None,
-        loaders: Dict[str, "DataLoader"] = None,
-        logdir: str = None,
-        num_epochs: int = 1,
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
-        valid_loader: str = SETTINGS.loader_valid_prefix,
-        checkpoint_data: Dict = None,
-        is_check_run: bool = False,
-        verbose: bool = False,
-        **kwargs,
-    ):
-        # @TODO: move/split this method to callbacks group
-        # here should be only a small part of it
-        # main runner components: model and device to run
-        self.device: Device = device
-        self.model: RunnerModel = model
-
-        # experiment components,
-        # use `catalyst.core.IExperiment` to setup them
-        self.criterion: RunnerCriterion = criterion
-        self.optimizer: RunnerOptimizer = optimizer
-        self.scheduler: RunnerScheduler = scheduler
-        # and callbacks
-        self.callbacks: Dict[str, "Callback"] = callbacks or {}
-
+        self.trial: ITrial = None
         # the data
-        self.loader = None
-        self.loaders: OrderedDict[str, DataLoader] = loaders
-        # and the dataflow - model input, model output
-        self.input = None
-        self.output = None
+        self.loaders: Dict[str, DataLoader] = None
+        # the components
+        self.criterion: RunnerCriterion = None
+        self.optimizer: RunnerOptimizer = None
+        self.scheduler: RunnerScheduler = None
+        # the callbacks
+        self.callbacks: Dict[str, Callback] = {}
+        # the loggers
+        self.loggers: Dict[str, ILogger] = {}
 
-        # metrics flow - batch, loader, epoch metrics
-        # let's use flatten storage for batch metrics
-        # batch_metrics = {'loss': ..., 'accuracy': ..., 'iou': ...}
-        self.batch_metrics: Dict = defaultdict(None)
-        # just aggregated (aka mean over all batches)
-        # batch statistics for loader
-        # and global loader metrics, like AUC
-        # loader_metrics = {'loss': ..., 'accuracy': ..., `auc`: ...}
-        self.loader_metrics: Dict = defaultdict(None)
-        # summarized metrics for different loaders
-        # and global epoch metrics, like lr, momentum
-        # epoch_metrics = {
-        # 'train_loss': ..., 'train_auc': ..., 'valid_loss': ...,
-        # 'lr': ..., 'momentum': ...,
-        # }
-        self.epoch_metrics: Dict = defaultdict(None)
+        # the dataflow - model input/output and other batch tensors
+        self.batch: [Dict, torch.Tensor] = None
 
-        # metrics & validation
-        # @TODO: mote to validation callback
-        self.main_metric: str = main_metric
-        self.minimize_metric: bool = minimize_metric
+        # metrics flow - batch, loader and epoch metrics
+        self.batch_metrics: BATCH_METRICS = defaultdict(None)
+        self.loader_metrics: LOADER_METRICS = defaultdict(None)
+        self.epoch_metrics: EPOCH_METRICS = defaultdict(None)
+        # self.stage_metrics: Dict = defaultdict(None)
+        # self.experiment_metrics: Dict = defaultdict(None)
 
-        # validation
-        # @TODO: mote to validation callback
-        self.valid_loader: str = valid_loader
-        self.valid_metrics: Dict = defaultdict(None)
-        self.is_best_valid: bool = False
-        self.best_valid_metrics: Dict = defaultdict(None)
-
-        # distributed info
-        # @TODO: move to Engine
-        self.distributed_rank: int = get_rank()
-        self.is_distributed_master: bool = ~(self.distributed_rank > 0)
-        self.is_distributed_worker: bool = self.distributed_rank > 0
         # experiment info
-        self.global_sample_step: int = 0
+        self.experiment_key: str = None
+        self.global_epoch_step: int = 0
         self.global_batch_step: int = 0
-        self.global_epoch: int = 1
-        self.verbose: bool = verbose
-        self.is_check_run: bool = is_check_run
-        self.need_early_stop: bool = False
-        self.need_exception_reraise: bool = True
+        self.global_sample_step: int = 0
+
         # stage info
-        self.num_epochs: int = num_epochs
-        self.stage: str = stage
-        self.is_infer_stage: bool = self.stage.startswith(
-            SETTINGS.stage_infer_prefix
-        )
-        # epoch info
-        self.epoch: int = 1
+        self.stage_key: str = "infer"
+        self.is_infer_stage: bool = self.stage_key.startswith("infer")
+        self.stage_epoch_len: int = 0
+        self.stage_epoch_step: int = 0
+        self.stage_batch_step: int = 0
+        self.stage_sample_step: int = 0
+
         # loader info
-        self.loader_sample_step: int = 0
-        self.loader_batch_step: int = 0
+        self.loader: DataLoader = None
         self.loader_key: str = None
-        self.loader_len: int = 0
-        self.loader_batch_size = 0
         self.is_train_loader: bool = False
         self.is_valid_loader: bool = False
         self.is_infer_loader: bool = True
+        self.loader_batch_size: int = 0
+        self.loader_batch_len: int = 0
+        self.loader_batch_step: int = 0
+        self.loader_sample_step: int = 0
+
         # batch info
         self.batch_size: int = 0
 
-        # logging
-        # @TODO: mote to checkpoint callback
-        # self.expdir: Path = None
-        self.logdir: Path = Path(logdir) if logdir is not None else None
-        # extra checkpoint data for saving in checkpoint files
-        self.checkpoint_data: Dict = checkpoint_data or {}
-
         # extra
-        self.exception: Optional[Exception] = None
-
-        # kwargs
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+        self.exception: Exception = None
+        self.need_early_stop: bool = False
+        self.need_exception_reraise: bool = True
 
     @property
     def model(self) -> Model:
@@ -495,7 +433,7 @@ class IRunner(ABC, ICallback):
     @model.setter
     def model(self, value: Union[Model, Dict[str, Model]]):
         """
-        Setter for the runner's model, useful for experiment tracing.
+        Runner's model, useful for experiment tracing.
 
         Args:
             value (Union[Model, Dict[str, Model]]): new model.
@@ -566,6 +504,69 @@ class IRunner(ABC, ICallback):
                 self._model, "to", device=self._device or "cpu"
             )
 
+    def log_metrics(self, *args, **kwargs) -> None:
+        for logger in self.loggers.values():
+            logger.log_metrics(
+                *args,
+                **kwargs,
+                # experiment info
+                experiment_key=self.experiment_key,
+                global_sample_step=self.global_sample_step,
+                global_batch_step=self.global_batch_step,
+                global_epoch_step=self.global_epoch_step,
+                # stage info
+                stage_key=self.stage_key,
+                stage_epoch_len=self.stage_epoch_len,
+                stage_epoch_step=self.stage_epoch_step,
+                stage_batch_step=self.stage_batch_step,
+                stage_sample_step=self.stage_sample_step,
+                # loader info
+                loader_key=self.loader_key,
+                loader_batch_len=self.loader_batch_len,
+                loader_batch_step=self.loader_batch_step,
+                loader_sample_step=self.loader_sample_step,
+            )
+
+    def log_image(self, *args, **kwargs) -> None:
+        for logger in self.loggers.values():
+            logger.log_image(
+                *args,
+                **kwargs,
+                # experiment info
+                experiment_key=self.experiment_key,
+                global_sample_step=self.global_sample_step,
+                global_batch_step=self.global_batch_step,
+                global_epoch_step=self.global_epoch_step,
+                # stage info
+                stage_key=self.stage_key,
+                stage_epoch_len=self.stage_epoch_len,
+                stage_epoch_step=self.stage_epoch_step,
+                stage_batch_step=self.stage_batch_step,
+                stage_sample_step=self.stage_sample_step,
+                # loader info
+                loader_key=self.loader_key,
+                loader_batch_len=self.loader_batch_len,
+                loader_batch_step=self.loader_batch_step,
+                loader_sample_step=self.loader_sample_step,
+            )
+
+    def log_hparams(self, *args, **kwargs) -> None:
+        for logger in self.loggers.values():
+            logger.log_hparams(
+                *args,
+                **kwargs,
+                # experiment info
+                experiment_key=self.experiment_key,
+            )
+
+    def flush_log(self) -> None:
+        for logger in self.loggers.values():
+            logger.flush_log()
+
+    def close_log(self) -> None:
+        for logger in self.loggers.values():
+            logger.close_log()
+
     def on_experiment_start(self, runner: "IRunner"):
         """Event handler for experiment start.
 
@@ -576,8 +577,18 @@ class IRunner(ABC, ICallback):
             This event work only on IRunner.
         """
         assert self.experiment is not None
+        self.experiment_key = self.experiment.name
+        self.global_epoch_step: int = 0
+        self.global_batch_step: int = 0
+        self.global_sample_step: int = 0
+        self.exception: Exception = None
+        self.need_early_stop: bool = False
+        self.need_exception_reraise: bool = True
 
-        set_global_seed(self.experiment.initial_seed + self.global_epoch + 1)
+        self.trial = self.experiment.get_trial()
+        self.engine = self.experiment.get_engine()
+        self.loggers = self.experiment.get_loggers()
+        self.log_hparams(hparams=self.experiment.hparams)
 
     def on_stage_start(self, runner: "IRunner"):
         """Event handler for stage start.
@@ -585,9 +596,13 @@ class IRunner(ABC, ICallback):
         Args:
             runner: IRunner instance.
         """
-        assert self.stage is not None
-
-        set_global_seed(self.experiment.initial_seed + self.global_epoch + 1)
+        assert self.stage_key is not None
+        stage_params = self.experiment.get_stage_params(self.stage_key)
+        self.is_infer_stage: bool = self.stage_key.startswith("infer")
+        self.stage_epoch_len = stage_params["num_epochs"]
+        self.stage_epoch_step: int = 0
+        self.stage_batch_step: int = 0
+        self.stage_sample_step: int = 0
 
     def on_epoch_start(self, runner: "IRunner"):
         """Event handler for epoch start.
@@ -598,26 +613,9 @@ class IRunner(ABC, ICallback):
         Raises:
             RunnerException: if current DataLoader is empty.
         """
-        assert self.loaders is not None
-
-        for loader_key, loader in self.loaders.items():
-            if len(loader) == 0:
-                raise RunnerException(
-                    f"DataLoader with name {loader_key} is empty."
-                )
-
-        if not self.is_infer_stage:
-            assert self.valid_loader in self.loaders.keys(), (
-                f"'{self.valid_loader}' "
-                f"should be in provided loaders: {list(self.loaders.keys())}"
-            )
-        else:
-            assert not any(
-                x.startswith(SETTINGS.loader_train_prefix)
-                for x in self.loaders.keys()
-            ), "for inference no train loader should be passed"
-
-        set_global_seed(self.experiment.initial_seed + self.global_epoch + 1)
+        self.global_epoch_step += 1
+        self.stage_epoch_step += 1
+        self.epoch_metrics: Dict = defaultdict(None)
 
     def on_loader_start(self, runner: "IRunner"):
         """Event handler for loader start.
@@ -629,34 +627,18 @@ class IRunner(ABC, ICallback):
             RunnerException: if current DataLoader is empty.
         """
         assert self.loader is not None
+        self.is_train_loader: bool = self.loader_key.startswith("train")
+        self.is_valid_loader: bool = self.loader_key.startswith("valid")
+        self.is_infer_loader: bool = self.loader_key.startswith("infer")
+        self.loader_batch_size: int = 0
+        self.loader_batch_len: int = 0
+        self.loader_batch_step: int = 0
+        self.loader_sample_step: int = 0
+        self.loader_metrics: Dict = defaultdict(None)
 
-        self.loader_len = len(self.loader)
-        if self.loader_len == 0:
-            raise RunnerException(
-                f"DataLoader with name {self.loader_key} is empty."
-            )
-        self.loader_batch_size = (
-            self.loader.batch_sampler.batch_size
-            if self.loader.batch_sampler is not None
-            else self.loader.batch_size
-        )
-        self.loader_sample_step = 0
-
-        self.is_train_loader = self.loader_key.startswith(
-            SETTINGS.loader_train_prefix
-        )
-        self.is_valid_loader = self.loader_key.startswith(
-            SETTINGS.loader_valid_prefix
-        )
-        self.is_infer_loader = self.loader_key.startswith(
-            SETTINGS.loader_infer_prefix
-        )
         maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
-
         if isinstance(self.loader.sampler, DistributedSampler):
             self.loader.sampler.set_epoch(self.epoch)
-
-        set_global_seed(self.experiment.initial_seed + self.global_epoch + 1)
 
     def on_batch_start(self, runner: "IRunner"):
         """Event handler for batch start.
@@ -664,15 +646,20 @@ class IRunner(ABC, ICallback):
         Args:
             runner: IRunner instance.
         """
-        if isinstance(self.input, dict):
-            self.batch_size = len(next(iter(self.input.values())))
+        self.batch = self.engine.sync_device(tensor_or_module=self.batch)
+
+        if isinstance(self.batch, dict):
+            self.batch_size = len(next(iter(self.batch.values())))
         else:
-            self.batch_size = len(self.input[0])
+            self.batch_size = len(self.batch[0])
 
         self.global_batch_step += 1
-        # self.loader_batch_step += 1
+        self.stage_batch_step += 1
+        self.loader_batch_step += 1
         self.global_sample_step += self.batch_size
+        self.stage_sample_step += self.batch_size
         self.loader_sample_step += self.batch_size
+        self.batch_metrics: Dict = defaultdict(None)
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler for batch end.
@@ -680,7 +667,7 @@ class IRunner(ABC, ICallback):
         Args:
             runner: IRunner instance.
         """
-        pass
+        self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
         """Event handler for loader end.
@@ -688,7 +675,8 @@ class IRunner(ABC, ICallback):
         Args:
             runner: IRunner instance.
         """
-        pass
+        self.log_metrics(metrics=self.loader_metrics, scope="loader")
+        self.epoch_metrics[self.loader_key] = self.loader_metrics.copy()
 
     def on_epoch_end(self, runner: "IRunner"):
         """Event handler for epoch end.
@@ -696,8 +684,8 @@ class IRunner(ABC, ICallback):
         Args:
             runner: IRunner instance.
         """
-        self.global_epoch += 1
-        self.epoch += 1
+        self.log_metrics(metrics=self.epoch_metrics, scope="epoch")
+        self.flush_log()
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler for stage end.
@@ -705,7 +693,7 @@ class IRunner(ABC, ICallback):
         Args:
             runner: IRunner instance.
         """
-        pass
+        self.engine.deinit_components()
 
     def on_experiment_end(self, runner: "IRunner"):
         """Event handler for experiment end.
@@ -716,7 +704,7 @@ class IRunner(ABC, ICallback):
         .. note::
             This event work only on IRunner.
         """
-        pass
+        self.close_log()
 
     def on_exception(self, runner: "IRunner"):
         """Event handler for exception case.
@@ -725,19 +713,9 @@ class IRunner(ABC, ICallback):
             runner: IRunner instance.
 
         Raises:
-            exception: if during pipeline exception,
-                no handler we found into callbacks
+            exception: pipeline exception
         """
-        from catalyst.callbacks.exception import ExceptionCallback
-
-        def _exception_handler_check(callbacks: Union[OrderedDict, Dict]):
-            return callbacks is not None and any(
-                issubclass(x.__class__, ExceptionCallback)
-                for x in callbacks.values()
-            )
-
-        if not _exception_handler_check(getattr(self, "callbacks", None)):
-            raise self.exception
+        raise self.exception
 
     def _run_event(self, event: str) -> None:
         """Inner method to run specified event on Runners' callbacks.
@@ -750,19 +728,15 @@ class IRunner(ABC, ICallback):
             :py:mod:`catalyst.core.callback.Callback` documentation.
 
         """
-        # @TODO: how to remove self duplication? and does it really matter?
-        if _is_substring(event, ("start", "exception")):
+        if _has_str_intersections(event, ("_start",)):
             getattr(self, event)(self)
         for callback in self.callbacks.values():
             getattr(callback, event)(self)
-        if _is_substring(event, ("end",)):
+        if _has_str_intersections(event, ("_end", "_exception")):
             getattr(self, event)(self)
 
-    def _handle_device(self, batch: Mapping[str, Any]):
-        return any2device(batch, self.device)
-
     @abstractmethod
-    def _handle_batch(self, batch: Mapping[str, Any]) -> None:
+    def handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
         Inner method to handle specified data batch.
         Used to make a train/valid/infer stage during Experiment run.
@@ -774,15 +748,14 @@ class IRunner(ABC, ICallback):
         pass
 
     def _run_batch(self) -> None:
-        self.input = self._handle_device(batch=self.input)
         self._run_event("on_batch_start")
-        self._handle_batch(batch=self.input)
+        self.handle_batch(batch=self.batch)
         self._run_event("on_batch_end")
 
     def _run_loader(self) -> None:
         self._run_event("on_loader_start")
         with torch.set_grad_enabled(self.is_train_loader):
-            for self.loader_batch_step, self.input in enumerate(self.loader):
+            for self.loader_batch_step, self.batch in enumerate(self.loader):
                 self._run_batch()
                 if self.need_early_stop:
                     self.need_early_stop = False
@@ -797,7 +770,7 @@ class IRunner(ABC, ICallback):
 
     def _run_stage(self) -> None:
         self._run_event("on_stage_start")
-        while self.epoch < self.num_epochs + 1:
+        while self.stage_epoch_step < self.stage_epoch_len:
             self._run_epoch()
             if self.need_early_stop:
                 self.need_early_stop = False
@@ -806,8 +779,14 @@ class IRunner(ABC, ICallback):
 
     def _run_experiment(self) -> None:
         self._run_event("on_experiment_start")
-        for self.stage in self.experiment.stages:
-            self._run_stage()
+        for self.stage_key in self.experiment.stages:
+            if self.engine.rank < 0:
+                # single-device branch (cpu, gpu, dp)
+                self._run_stage()
+            else:
+                # ddp-device branch
+                # mp.spawn(self._run_stage, num_process=self.engine.world_size)
+                raise NotImplementedError()
         self._run_event("on_experiment_end")
 
     def run_experiment(self, experiment: IExperiment = None) -> "IRunner":
@@ -848,68 +827,87 @@ class IStageBasedRunner(IRunner):
             runner: IRunner instance.
         """
         super().on_stage_start(runner)
+        stage_params = self.experiment.get_stage_params(self.stage_key)
+        set_global_seed(self.experiment.seed)
 
-        set_global_seed(self.experiment.initial_seed)
-        loaders = self.experiment.get_loaders(stage=self.stage)
+        loaders = self.experiment.get_loaders(stage=self.stage_key)
         loaders = validate_loaders(loaders)
-        # self.loaders = loaders
+        self.loaders = loaders
 
-        set_global_seed(self.experiment.initial_seed)
-        model = self.experiment.get_model(self.stage)
-        criterion = self.experiment.get_criterion(self.stage)
-        optimizer = self.experiment.get_optimizer(self.stage, model)
-        scheduler = self.experiment.get_scheduler(self.stage, optimizer)
-        model, criterion, optimizer, scheduler, device = process_components(
-            model=model,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            distributed_params=self.experiment.distributed_params,
-            device=self.device,
+        migrate_model_from_previous_stage = stage_params.get(
+            "migrate_model_from_previous_stage", True
+        )
+        # some custom logic is possible here
+        if self.model is not None and migrate_model_from_previous_stage:
+            model_fn = lambda: self.model
+        else:
+            model_fn = partial(self.experiment.get_model, stage=self.stage_key)
+
+        # @TODO: we need a better approach here
+        (
+            self.model,
+            self.criterion,
+            self.optimizer,
+            self.scheduler,
+        ) = self.engine.init_components(
+            model_fn=model_fn,
+            criterion_fn=partial(
+                self.experiment.get_criterion, stage=self.stage_key
+            ),
+            optimizer_fn=partial(
+                self.experiment.get_optimizer, stage=self.stage_key
+            ),
+            scheduler_fn=partial(
+                self.experiment.get_scheduler, stage=self.stage_key
+            ),
         )
 
-        set_global_seed(self.experiment.initial_seed)
-        callbacks = self.experiment.get_callbacks(self.stage)
+        # @TODO: we could refactor here
+        migrate_callbacks_from_previous_stage = stage_params.get(
+            "migrate_callbacks_from_previous_stage", True
+        )
+        callbacks = self.experiment.get_callbacks(self.stage_key)
         callbacks = filter_callbacks_by_node(callbacks)
         callbacks = sort_callbacks_by_order(callbacks)
-
-        migrating_params = dict(**self.experiment.get_stage_params(self.stage))
-        migrate_from_previous_stage = migrating_params.get(
-            "migrate_from_previous_stage", True
-        )
-        if (
-            migrate_from_previous_stage
-            and getattr(self, "callbacks", None) is not None
-        ):
+        if migrate_callbacks_from_previous_stage:
             for key, value in self.callbacks.items():
                 if value.scope == CallbackScope.experiment:
                     callbacks[key] = value
-
         callbacks = sort_callbacks_by_order(callbacks)
+        self.callbacks = callbacks
 
-        if migrate_from_previous_stage:
-            migrating_params.update(
-                {
-                    "global_epoch": getattr(self, "global_epoch", 1),
-                    "global_batch_step": getattr(self, "global_batch_step", 0),
-                    "global_sample_step": getattr(
-                        self, "global_sample_step", 0
-                    ),
-                    "resume": getattr(self, "resume", None),
-                }
+    def on_epoch_start(self, runner: "IRunner"):
+        """Event handler for stage start.
+
+        Args:
+            runner: IRunner instance.
+
+        Raises:
+            RunnerException: if current DataLoader is empty.
+        """
+        super().on_epoch_start(runner)
+        assert self.loaders is not None
+        for loader_key, loader in self.loaders.items():
+            if len(loader) == 0:
+                raise NotImplementedError(
+                    f"DataLoader with name {loader_key} is empty."
+                )
+
+    def on_loader_start(self, runner: "IRunner"):
+        """Event handler for loader start.
+
+        Args:
+            runner: IRunner instance.
+
+        Raises:
+            RunnerException: if current DataLoader is empty.
+        """
+        super().on_loader_start(runner)
+        self.loader_batch_len = len(self.loader)
+        if self.loader_batch_len == 0:
+            raise NotImplementedError(
+                f"DataLoader with name {self.loader_key} is empty."
             )
-
-        self._prepare_inner_state(
-            stage=self.stage,
-            model=model,
-            device=device,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            callbacks=callbacks,
-            loaders=loaders,
-            **migrating_params,
-        )
 
 
 __all__ = ["IRunner", "IStageBasedRunner", "RunnerException"]
