@@ -10,8 +10,8 @@ from catalyst.engines.device import DeviceEngine
 class DistributedDataParallelEngine(DeviceEngine):
     def __init__(
         self,
-        rank: int,
-        world_size: int,
+        rank: int = 0,
+        world_size: int = 1,
         address: str = "localhost",
         port: str = "12345",
         backend: str = "nccl",
@@ -29,12 +29,12 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     def __repr__(self):
         return (
-            f"DistributedDeviceEngine(address={self.address},"
+            f"DistributedDataParallelEngine(address={self.address},"
             f"port={self.port},backend='{self.backend}',"
             f"rank={self.device},world_size={self.world_size})"
         )
 
-    def setup_experiment(self):
+    def init_process(self):
         """Initialize DDP variables and processes."""
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
@@ -42,7 +42,7 @@ class DistributedDataParallelEngine(DeviceEngine):
             self.backend, rank=self.device, world_size=self.world_size
         )
 
-    def cleanup(self):
+    def cleanup_process(self):
         dist.destroy_process_group()
 
     def sync_metric(self):

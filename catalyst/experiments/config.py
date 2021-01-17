@@ -60,9 +60,11 @@ class ConfigExperiment(IExperiment):
             "overfit", False
         )
 
-        self._engine: IEngine = process_engine(
-            self._config.get("engine", "cpu")
-        )
+        self._engine: IEngine = process_engine(self._config.get("engine"))
+        print(">" * 100)
+        print(self._config.get("engine"))
+        print(self._engine)
+        print(">" * 100)
 
         self._prepare_logdir()
 

@@ -21,6 +21,26 @@ if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 
 
+@mark.skipif(
+    not IS_CUDA_AVAILABLE or (NUM_CUDA_DEVICES != 1),
+    reason="CUDA device is not available",
+)
+def test_device_engine_from_none():
+    actual = process_engine(None)
+    assert isinstance(actual, DeviceEngine)
+    assert actual.device == "cuda"
+
+
+@mark.skipif(
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
+)
+def test_dp_engine_from_none():
+    actual = process_engine(None)
+    assert isinstance(actual, DataParallelEngine)
+    assert actual.device == f"cuda:{torch.cuda.current_device()}"
+
+
 def test_engine_from_str_on_cpu():
     actual = process_engine("cpu")
     assert isinstance(actual, DeviceEngine)
@@ -31,7 +51,7 @@ def test_engine_from_str_on_cpu():
 def test_engine_from_str_on_cuda():
     actual = process_engine("cuda")
     assert isinstance(actual, DeviceEngine)
-    assert actual.device == "cuda:0"
+    assert actual.device == "cuda"
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")

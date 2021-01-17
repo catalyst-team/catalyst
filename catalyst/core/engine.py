@@ -29,6 +29,14 @@ class IEngine(ABC, ICallback):
     ) -> Union[torch.Tensor, nn.Module]:
         pass
 
+    def init_process(self):
+        # init here process variables in DDP mode
+        pass
+
+    def cleanup_process(self):
+        # destroy process in DDP mode
+        pass
+
     # @abstractmethod
     def process_components(self):
         pass

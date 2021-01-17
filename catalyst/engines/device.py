@@ -28,8 +28,10 @@ class DeviceEngine(IEngine):
         if isinstance(obj, dict):
             for k, v in obj.items():
                 obj[k] = self.to_device(v)
-        else:
+        elif hasattr(obj, "to"):
             return obj.to(self.device)
+        else:
+            return obj
 
     def handle_device(self, batch: Mapping[str, Any]):
         if isinstance(batch, torch.Tensor):

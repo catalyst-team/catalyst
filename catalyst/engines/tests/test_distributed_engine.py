@@ -14,12 +14,12 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 from torch.utils.data.distributed import DistributedSampler
 
-from catalyst import registry
 from catalyst.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.dl import SupervisedRunner
 from catalyst.engines import DistributedDataParallelEngine
 from catalyst.experiments import ConfigExperiment, Experiment
+from catalyst.registry import REGISTRY
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 if NUM_CUDA_DEVICES > 1:
@@ -57,7 +57,7 @@ class DummyDataset(Dataset):
         return x, y
 
 
-@registry.Model
+@REGISTRY.add
 class DummyModel(nn.Module):
     def __init__(self, in_features, out_features):
         super().__init__()
@@ -77,7 +77,7 @@ def _optimizer_fn(parameters):
     return optim.SGD(parameters, lr=1e-3)
 
 
-@registry.Callback
+@REGISTRY.add
 class DeviceCheckCallback(Callback):
     def __init__(self, assert_device: str):
         super().__init__(order=CallbackOrder.internal)
@@ -88,7 +88,7 @@ class DeviceCheckCallback(Callback):
         assert model_device == self.device
 
 
-@registry.Callback
+@REGISTRY.add
 class LossMinimizationCallback(Callback):
     def __init__(self, key="loss"):
         super().__init__(order=CallbackOrder.metric)
@@ -109,13 +109,17 @@ class LossMinimizationCallback(Callback):
         self.container = []
 
 
-def run_train_with_experiment_distributed_parallel_device(rank, world_size):
+@mark.skipif(
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
+)
+def test_train_with_experiment_distributed_parallel_device():
     logdir = "./test_ddp_engine"
     dataset = DummyDataset(10)
-    sampler = DistributedSampler(dataset, world_size, rank)
-    loader = DataLoader(dataset, batch_size=4, sampler=sampler)
-    runner = SupervisedRunner(device=rank)
-    engine = DistributedDataParallelEngine(rank, world_size)
+    # sampler = DistributedSampler(dataset, world_size, rank)
+    loader = DataLoader(dataset, batch_size=4)  # , sampler=sampler)
+    runner = SupervisedRunner()
+    engine = DistributedDataParallelEngine()
     exp = Experiment(
         model=_model_fn,
         criterion=nn.MSELoss(),
@@ -131,25 +135,28 @@ def run_train_with_experiment_distributed_parallel_device(rank, world_size):
         logdir=logdir,
         engine=engine,
     )
-    # CORE
-    engine.setup_experiment()
     runner.run_experiment(exp)
-    engine.cleanup()
     shutil.rmtree(logdir, ignore_errors=True)
 
 
-def run_train_with_config_experiment_distributed_parallel_device(
-    rank, world_size
-):
-    logdir = "./test_config_ddp_engine"
+def _get_loaders(*args, **kwargs):
     dataset = DummyDataset(10)
-    sampler = DistributedSampler(dataset, world_size, rank)
-    loader = DataLoader(dataset, batch_size=4, sampler=sampler)
-    runner = SupervisedRunner(device=rank)
+    # sampler = DistributedSampler(dataset, world_size, rank)
+    loader = DataLoader(dataset, batch_size=4)  # , sampler=sampler)
+    return {"train": loader, "valid": loader}
+
+
+@mark.skipif(
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
+)
+def test_train_with_config_experiment_distributed_parallel_device():
+    logdir = "./test_config_ddp_engine"
+    runner = SupervisedRunner()
     exp = ConfigExperiment(
         config={
             "model_params": {
-                "model": "DummyModel",
+                "_target_": "DummyModel",
                 "in_features": 4,
                 "out_features": 1,
             },
@@ -157,60 +164,26 @@ def run_train_with_config_experiment_distributed_parallel_device(
             "args": {"logdir": logdir},
             "stages": {
                 "data_params": {"batch_size": 4, "num_workers": 0},
-                "criterion_params": {"criterion": "MSELoss"},
-                "optimizer_params": {"optimizer": "SGD", "lr": 1e-3},
+                "criterion_params": {"_target_": "MSELoss"},
+                "optimizer_params": {"_target_": "SGD", "lr": 1e-3},
                 "stage1": {
                     "stage_params": {"num_epochs": 2},
                     "callbacks_params": {
-                        "loss": {"callback": "CriterionCallback"},
-                        "optimizer": {"callback": "OptimizerCallback"},
+                        "loss": {"_target_": "CriterionCallback"},
+                        "optimizer": {"_target_": "OptimizerCallback"},
                         # "test_device": {
-                        #     "callback": "DeviceCheckCallback",
+                        #     "_target_": "DeviceCheckCallback",
                         #     "assert_device": str(device),
                         # },
                         "test_loss_minimization": {
-                            "callback": "LossMinimizationCallback"
+                            "_target_": "LossMinimizationCallback"
                         },
                     },
                 },
             },
         }
     )
-    exp.get_loaders = lambda *args, **kwargs: {
-        "train": loader,
-        "valid": loader,
-    }
+    exp.get_loaders = _get_loaders
     # CORE
-    # engine.setup_experiment()
     runner.run_experiment(exp)
-    # engine.cleanup()
     shutil.rmtree(logdir, ignore_errors=True)
-
-
-def _run_test(fn, world_size):
-    mp.spawn(fn, args=(world_size,), nprocs=world_size, join=True)
-
-
-@mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
-)
-def test_experiment_distributed_parallel_engine_with_cuda():
-    _run_test(
-        run_train_with_experiment_distributed_parallel_device,
-        NUM_CUDA_DEVICES,
-    )
-
-
-@mark.skip(
-    "Need to rewrite runner so all of the DDP initializations will be inside!"
-)
-@mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
-)
-def test_config_experiment_distributed_parallel_engine_with_cuda():
-    _run_test(
-        run_train_with_config_experiment_distributed_parallel_device,
-        NUM_CUDA_DEVICES,
-    )

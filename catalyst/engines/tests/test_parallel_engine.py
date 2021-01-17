@@ -9,12 +9,12 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst import registry
 from catalyst.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.dl import SupervisedRunner
 from catalyst.engines import DataParallelEngine
 from catalyst.experiments import ConfigExperiment, Experiment
+from catalyst.registry import REGISTRY
 from catalyst.settings import IS_CUDA_AVAILABLE
 
 NUM_CUDA_DEVICES = torch.cuda.device_count()
@@ -51,7 +51,7 @@ class DummyDataset(Dataset):
         return x, y
 
 
-@registry.Model
+@REGISTRY.add
 class DummyModel(nn.Module):
     def __init__(self, in_features, out_features):
         super().__init__()
@@ -71,7 +71,7 @@ def _optimizer_fn(parameters):
     return optim.SGD(parameters, lr=1e-3)
 
 
-@registry.Callback
+@REGISTRY.add
 class DeviceCheckCallback(Callback):
     def __init__(self, assert_device: str):
         super().__init__(order=CallbackOrder.internal)
@@ -82,7 +82,7 @@ class DeviceCheckCallback(Callback):
         assert model_device == self.device
 
 
-@registry.Callback
+@REGISTRY.add
 class LossMinimizationCallback(Callback):
     def __init__(self, key="loss"):
         super().__init__(order=CallbackOrder.metric)
@@ -131,7 +131,7 @@ def run_train_with_config_experiment_parallel_device():
     exp = ConfigExperiment(
         config={
             "model_params": {
-                "model": "DummyModel",
+                "_target_": "DummyModel",
                 "in_features": 4,
                 "out_features": 1,
             },
@@ -139,19 +139,19 @@ def run_train_with_config_experiment_parallel_device():
             "args": {"logdir": logdir},
             "stages": {
                 "data_params": {"batch_size": 4, "num_workers": 0},
-                "criterion_params": {"criterion": "MSELoss"},
-                "optimizer_params": {"optimizer": "SGD", "lr": 1e-3},
+                "criterion_params": {"_target_": "MSELoss"},
+                "optimizer_params": {"_target_": "SGD", "lr": 1e-3},
                 "stage1": {
                     "stage_params": {"num_epochs": 2},
                     "callbacks_params": {
-                        "loss": {"callback": "CriterionCallback"},
-                        "optimizer": {"callback": "OptimizerCallback"},
+                        "loss": {"_target_": "CriterionCallback"},
+                        "optimizer": {"_target_": "OptimizerCallback"},
                         # "test_device": {
-                        #     "callback": "DeviceCheckCallback",
+                        #     "_target_": "DeviceCheckCallback",
                         #     "assert_device": str(device),
                         # },
                         "test_loss_minimization": {
-                            "callback": "LossMinimizationCallback"
+                            "_target_": "LossMinimizationCallback"
                         },
                     },
                 },

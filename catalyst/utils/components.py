@@ -78,16 +78,12 @@ def _wrap_into_data_parallel_with_apex(
 ):
     if isinstance(model, nn.Module):
         model = nn.Sequential(model)
-        model, optimizer = initialize_apex(
-            model, optimizer, **engine_params
-        )
+        model, optimizer = initialize_apex(model, optimizer, **engine_params)
         model = torch.nn.DataParallel(model[0])
         model = _patch_forward(model)
     elif isinstance(model, dict):
         model = {k: nn.Sequential(v) for k, v in model.items()}
-        model, optimizer = initialize_apex(
-            model, optimizer, **engine_params
-        )
+        model, optimizer = initialize_apex(model, optimizer, **engine_params)
         model = {k: nn.DataParallel(v[0]) for k, v in model.items()}
         model = {k: _patch_forward(v) for k, v in model.items()}
     else:
@@ -144,12 +140,10 @@ def process_components(
         device = torch.device(device)
 
     is_apex_enabled = (
-            engine_params.get("apex", False) and check_apex_available()
+        engine_params.get("apex", False) and check_apex_available()
     )
 
-    is_amp_enabled = (
-            engine_params.get("amp", False) and check_amp_available()
-    )
+    is_amp_enabled = engine_params.get("amp", False) and check_amp_available()
 
     if is_apex_enabled and is_amp_enabled:
         raise ValueError(

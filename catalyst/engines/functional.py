@@ -12,39 +12,55 @@ from catalyst.engines.parallel import DataParallelEngine
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 
-def process_engine(engine: Union[str, IEngine, None]) -> IEngine:
+def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
     """Generate engine from string.
 
     Args:
-        engine: engine definition
+        engine (str or IEngine): engine definition,
+            if `None` then will be used default available device
+            (if there are two or more GPUs then will be returned
+            data parallel engine, otherwise device engine).
+            Default is `None`.
 
     Returns:
         IEngine object
     """
+    default_engine = DeviceEngine("cuda" if IS_CUDA_AVAILABLE else "cpu")
+    _engine = None
+
+    if engine is None:
+        if NUM_CUDA_DEVICES > 1:
+            _engine = DataParallelEngine()
+        else:
+            _engine = default_engine
+        return _engine
+
     if isinstance(engine, IEngine):
         return engine
 
-    if not engine:
-        # TODO: should be used ddp if have enough GPU (>2) ?
-        return DeviceEngine("cuda:0" if IS_CUDA_AVAILABLE else "cpu")
+    if isinstance(engine, str):
+        engine = engine.strip().lower()
 
-    if engine == "dp" and NUM_CUDA_DEVICES > 2:
-        return DataParallelEngine()
-    elif engine == "ddp" and NUM_CUDA_DEVICES > 2:
-        return DistributedDataParallelEngine()
+    if engine == "dp" and NUM_CUDA_DEVICES > 1:
+        _engine = DataParallelEngine()
+    elif engine == "ddp" and NUM_CUDA_DEVICES > 1:
+        _engine = DistributedDataParallelEngine()
     elif (
         engine == "cpu"
-        # TODO: probably fix pattern str
-        or re.match(r"cuda\:\d", str(engine))
+        or engine == "cuda"
+        or (
+            re.match(r"cuda\:\d", engine)
+            and int(engine.split(":")[1]) < torch.cuda.device_count()
+        )
     ):
-        return DeviceEngine(engine)
-    elif engine == "cuda":
-        return DeviceEngine("cuda:0")
+        _engine = DeviceEngine(engine)
     else:
-        # TODO: should be used ddp if have enough GPU (>2) ?
-        return DeviceEngine("cuda:0" if IS_CUDA_AVAILABLE else "cpu")
+        _engine = default_engine
 
-    raise ValueError(f"Unknown engine '{engine}'!")
+    if engine is None:
+        raise ValueError(f"Unknown engine '{engine}'!")
+
+    return _engine
 
 
 def sum_reduce(tensor: torch.Tensor) -> torch.Tensor:
