@@ -75,9 +75,9 @@ class OptimizerCallback(IOptimizerCallback):
                 running-on-a-single-xla-device>`_.
                 Default is ``True``.
             use_amp: whether to use native pytorch AMP, if None will be set
-                based on runner.experiment.distributed_params on stage start
+                based on runner.experiment.engine_params on stage start
             use_apex: whether to use apex, if None will be set
-                based on runner.experiment.distributed_params on stage start
+                based on runner.experiment.engine_params on stage start
 
         """
         super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
@@ -158,7 +158,7 @@ class OptimizerCallback(IOptimizerCallback):
                 grad_clip_fn(group["params"])
 
         # optimize parameters
-        self._optimizer_step_fn()
+        self._optimizer_step_fn(optimizer)
 
     def on_stage_start(self, runner: "IRunner") -> None:
         """Resolve amp/apex settings, prepare optimizer and scaler
@@ -168,7 +168,7 @@ class OptimizerCallback(IOptimizerCallback):
         """
         if self.use_amp is None:
             if runner.experiment is not None:
-                self.use_amp = runner.experiment.distributed_params.get(
+                self.use_amp = runner.experiment.engine_params.get(
                     "amp", False
                 )
             else:
@@ -176,7 +176,7 @@ class OptimizerCallback(IOptimizerCallback):
 
         if self.use_apex is None:
             if runner.experiment is not None:
-                self.use_apex = runner.experiment.distributed_params.get(
+                self.use_apex = runner.experiment.engine_params.get(
                     "apex", False
                 )
             else:
@@ -185,14 +185,14 @@ class OptimizerCallback(IOptimizerCallback):
         self._optimizer = get_attr(
             runner, key="optimizer", inner_key=self.optimizer_key
         )
-
-        # device based optimization step
-        if runner.device.type == "xla":
-            self._optimizer_step_fn = self._optimizer_step_tpu
-        elif self.use_amp:
-            self._optimizer_step_fn = self._optimizer_step_amp
-        else:
-            self._optimizer_step_fn = self._optimizer_step
+        self._optimizer_step_fn = runner.experiment.engine.optimizer_step
+        # # device based optimization step
+        # if runner.device.type == "xla":
+        #     self._optimizer_step_fn = self._optimizer_step_tpu
+        # elif self.use_amp:
+        #     self._optimizer_step_fn = self._optimizer_step_amp
+        # else:
+        #     self._optimizer_step_fn = self._optimizer_step
 
         if hasattr(self._optimizer, "_amp_stash") and not self.use_apex:
             warnings.warn(

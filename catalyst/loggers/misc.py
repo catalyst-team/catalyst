@@ -1,5 +1,6 @@
 from typing import Dict
 import os
+
 import numpy as np
 
 from catalyst.core.logger import ILogger

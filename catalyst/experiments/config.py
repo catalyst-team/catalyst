@@ -9,6 +9,8 @@ from torch.utils.data import DataLoader
 from catalyst.contrib.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
+from catalyst.core.functional import check_callback_isinstance
+from catalyst.engines import IEngine, process_engine
 from catalyst.experiments.functional import (
     add_default_callbacks,
     do_lr_linear_scaling,
@@ -58,6 +60,10 @@ class ConfigExperiment(IExperiment):
             "overfit", False
         )
 
+        self._engine: IEngine = process_engine(
+            self._config.get("engine", "cpu")
+        )
+
         self._prepare_logdir()
 
         self._config["stages"]["stage_params"] = merge_dicts(
@@ -68,6 +74,10 @@ class ConfigExperiment(IExperiment):
         self.stages_config: Dict = self._get_stages_config(
             self._config["stages"]
         )
+
+    @property
+    def engine(self):
+        return self._engine
 
     def _get_logdir(self, config: Dict) -> str:
         timestamp = get_utcnow_time()
@@ -142,9 +152,9 @@ class ConfigExperiment(IExperiment):
         return self._trial
 
     @property
-    def distributed_params(self) -> Dict:
+    def engine_params(self) -> Dict:
         """Dict with the parameters for distributed and FP16 methond."""
-        return self._config.get("distributed_params", {})
+        return self._config.get("engine_params", {})
 
     @property
     def stages(self) -> List[str]:
@@ -435,7 +445,7 @@ class ConfigExperiment(IExperiment):
         )
 
         # NOTE: stage should be in self._config.stages
-        #       othervise will be raised ValueError
+        #       otherwise will be raised ValueError
         stage_index = list(self.stages_config.keys()).index(stage)
         process_callbacks(callbacks, stage_index)
 

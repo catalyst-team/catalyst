@@ -70,9 +70,9 @@ class HydraConfigExperiment(IExperiment):
         return self._trial
 
     @property
-    def distributed_params(self) -> Dict:
+    def engine_params(self) -> Dict:
         """Dict with the parameters for distributed and FP16 methond."""
-        return self._config.distributed
+        return self._config.engine
 
     @property
     def stages(self) -> List[str]:

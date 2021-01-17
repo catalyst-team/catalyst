@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.core.callback import ICallback
+from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
 from catalyst.core.trial import ITrial

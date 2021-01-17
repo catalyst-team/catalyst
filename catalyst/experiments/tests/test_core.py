@@ -50,7 +50,7 @@ def test_defaults():
     assert exp.seed == 42
     assert exp.logdir is None
     assert exp.stages == ["train"]
-    assert exp.distributed_params == {}
+    assert exp.engine_params == {}
     assert exp.get_stage_params("") == {
         "logdir": None,
         "num_epochs": 1,

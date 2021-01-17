@@ -8,7 +8,7 @@ args:
   expdir: "cv_classification"
   logdir: "./logs/cv_classification"
 
-distributed_params:
+engine_params:
   opt_level: O1
   syncbn: True
 
