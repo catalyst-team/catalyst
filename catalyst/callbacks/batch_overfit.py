@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class BatchOverfitCallback(Callback):
-    """Callback for ovefitting loaders with specified number of batches.
+    """Callback to overfit loaders with specified number of batches.
     By default we use ``1`` batch for loader.
 
     For example, if you have ``train``, ``train_additional``,

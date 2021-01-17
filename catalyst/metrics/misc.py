@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
-from torch import Tensor
+import torch
 
 from catalyst.metrics.accuracy import accuracy
 from catalyst.metrics.auc import auc
@@ -135,7 +135,7 @@ class AverageMetric(IMetric):
 
 
 class AccuracyMetric(AverageMetric):
-    def update(self, logits: Tensor, targets: Tensor) -> None:
+    def update(self, logits: torch.Tensor, targets: torch.Tensor) -> None:
         value = accuracy(logits, targets)[0].item()
         super().update(value, len(targets))
 
@@ -154,12 +154,14 @@ class AUCMetric(IMetric):
         self.scores = []
         self.targets = []
 
-    def update(self, scores: Tensor, targets: Tensor) -> None:
-        self.scores.extend(scores.cpu().detach())
-        self.targets.extend(targets.cpu().detach())
+    def update(self, scores: torch.Tensor, targets: torch.Tensor) -> None:
+        self.scores.append(scores.cpu().detach())
+        self.targets.append(targets.cpu().detach())
 
     def compute(self) -> float:
-        score = roc_auc_score(y_true=self.targets, y_score=self.scores)
+        targets = torch.cat(self.targets)
+        scores = torch.cat(self.scores)
+        score = roc_auc_score(y_true=targets, y_score=scores)
         return score
 
     def compute_key_value(self) -> Dict[str, float]:

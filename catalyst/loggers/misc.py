@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict
 import os
 
 import numpy as np
@@ -108,7 +108,7 @@ class LogdirLogger(ILogger):
 
     def log_metrics(
         self,
-        metrics: Dict[str, float],
+        metrics: Dict[str, Any],
         scope: str = None,
         # experiment info
         experiment_key: str = None,

@@ -130,7 +130,10 @@ class PruningCallback(Callback):
         Args:
             runner: runner for your experiment
         """
-        if self.prune_on_epoch_end and runner.num_epochs != runner.epoch:
+        if (
+            self.prune_on_epoch_end
+            and runner.stage_epoch_step != runner.stage_epoch_len
+        ):
             prune_model(
                 model=runner.model,
                 pruning_fn=self.pruning_fn,

@@ -29,3 +29,11 @@ from catalyst.metrics.mrr import reciprocal_rank, mrr
 from catalyst.metrics.ndcg import dcg, ndcg
 from catalyst.metrics.precision import average_precision, precision
 from catalyst.metrics.recall import recall
+
+
+from catalyst.metrics.misc import (
+    IMetric,
+    AverageMetric,
+    AccuracyMetric,
+    AUCMetric,
+)

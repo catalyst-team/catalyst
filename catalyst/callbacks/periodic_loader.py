@@ -132,7 +132,7 @@ class PeriodicLoaderCallback(Callback):
         Raises:
             ValueError: if there are no loaders in epoch
         """
-        epoch_num = runner.epoch
+        epoch_num = runner.stage_epoch_step
         # loaders to use in current epoch
         epoch_loaders = OrderedDict()
         for name, loader in self.loaders.items():
