@@ -17,7 +17,6 @@ from catalyst.core.functional import (
     sort_callbacks_by_order,
 )
 from catalyst.engines.distributed import DistributedDataParallelEngine
-from catalyst.engines.functional import process_engine
 from catalyst.settings import SETTINGS
 from catalyst.typing import (
     Device,
