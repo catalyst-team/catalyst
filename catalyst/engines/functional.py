@@ -26,14 +26,14 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
         IEngine object
     """
     default_engine = DeviceEngine("cuda" if IS_CUDA_AVAILABLE else "cpu")
-    _engine = None
+    use_engine = None
 
     if engine is None:
         if NUM_CUDA_DEVICES > 1:
-            _engine = DataParallelEngine()
+            use_engine = DataParallelEngine()
         else:
-            _engine = default_engine
-        return _engine
+            use_engine = default_engine
+        return use_engine
 
     if isinstance(engine, IEngine):
         return engine
@@ -42,9 +42,9 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
         engine = engine.strip().lower()
 
     if engine == "dp" and NUM_CUDA_DEVICES > 1:
-        _engine = DataParallelEngine()
+        use_engine = DataParallelEngine()
     elif engine == "ddp" and NUM_CUDA_DEVICES > 1:
-        _engine = DistributedDataParallelEngine()
+        use_engine = DistributedDataParallelEngine()
     elif (
         engine == "cpu"
         or engine == "cuda"
@@ -53,14 +53,14 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
             and int(engine.split(":")[1]) < torch.cuda.device_count()
         )
     ):
-        _engine = DeviceEngine(engine)
+        use_engine = DeviceEngine(engine)
     else:
-        _engine = default_engine
+        use_engine = default_engine
 
     if engine is None:
         raise ValueError(f"Unknown engine '{engine}'!")
 
-    return _engine
+    return use_engine
 
 
 def sum_reduce(tensor: torch.Tensor) -> torch.Tensor:
