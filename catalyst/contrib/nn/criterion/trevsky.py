@@ -124,12 +124,13 @@ class FocalTrevskyLoss(nn.Module):
     ) -> torch.Tensor:
         """Calculates loss between ``logits`` and ``target`` tensors."""
         loss = 0
+        batch_size = len(outputs)
         for output_sample, target_sample in zip(outputs, targets):
             output_sample = torch.unsqueeze(output_sample, dim=0)
             target_sample = torch.unsqueeze(target_sample, dim=0)
             sample_loss = self.trevsky_loss(output_sample, target_sample)
             loss += sample_loss ** self.gamma
-        return loss
+        return loss / batch_size  # mean over batch
 
 
 __all__ = ["TrevskyLoss", "FocalTrevskyLoss"]
