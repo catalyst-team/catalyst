@@ -43,6 +43,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         )
 
     def cleanup_process(self):
+        """Clean DDP variables and processes."""
         dist.destroy_process_group()
 
     def sync_metric(self):
