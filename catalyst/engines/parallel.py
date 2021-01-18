@@ -11,7 +11,7 @@ class DataParallelEngine(DeviceEngine):
         super().__init__(f"cuda:{torch.cuda.current_device()}")
         self.device_count = torch.cuda.device_count()
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # noqa: D105
         return f"DataParallelEngine(device_count={self.device_count})"
 
     def to_device(

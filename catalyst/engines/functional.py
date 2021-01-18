@@ -16,10 +16,13 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
     """Generate engine from string.
 
     Args:
-        engine (str or IEngine): engine definition,
-            if `None` then will be used default available device
-            (if there are two or more GPUs then will be returned
-            data parallel engine, otherwise device engine).
+        engine (str or IEngine): engine definition.
+            If `None` then will be used default available device
+            - for two or move available GPUs will be returned
+            `DataParallelEngine`, otherwise will be returned
+            `DeviceEngine` with GPU or CPU.
+            If engine is an instance of `IEngine` then will be
+            returned the same object.
             Default is `None`.
 
     Returns:
@@ -56,9 +59,6 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
         use_engine = DeviceEngine(engine)
     else:
         use_engine = default_engine
-
-    if engine is None:
-        raise ValueError(f"Unknown engine '{engine}'!")
 
     return use_engine
 
@@ -97,14 +97,16 @@ def all_gather(data: Any) -> List[Any]:
 
     NOTE: if data on different devices then data in resulted list will
         be on the same devices.
-    Source: https://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128
+
+    Source: 
+        https://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128
 
     Args:
         data: any picklable object
 
     Returns:
         list of data gathered from each process.
-    """
+    """  # noqa: W501,W505
     if not dist.is_available() or not dist.is_initialized():
         world_size = 1
     else:
@@ -129,7 +131,7 @@ def all_gather(data: Any) -> List[Any]:
     # we pad the tensor because torch all_gather does not support
     # gathering tensors of different shapes
     tensor_list = []
-    for _ in size_list:
+    for _ in size_list:  # noqa: WPS122
         tensor_list.append(
             torch.empty((max_size,), dtype=torch.uint8, device="cuda")
         )

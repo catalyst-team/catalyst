@@ -10,9 +10,13 @@ class DeviceEngine(IEngine):
     """Single training device engine."""
 
     def __init__(self, device: str = "cpu"):
+        """
+        Args:
+            device (str, optional): use device, default is `"cpu"`.
+        """
         self.device = device
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # noqa: D105
         return f"DeviceEngine(device='{self.device}')"
 
     @property
@@ -23,27 +27,39 @@ class DeviceEngine(IEngine):
         return torch.save
 
     def to_device(
-        self, obj: Union[dict, torch.Tensor, nn.Module]
+        self, obj: Union[dict, list, tuple, torch.Tensor, nn.Module]
     ) -> Union[dict, torch.Tensor, nn.Module]:
+        """Move tensors/modules to engine device.
+
+        Args:
+            obj (torch.Tensor or nn.Module or dict/list/tuple):
+                object to move to device.
+
+        Returns:
+            torch.Tensor or nn.Module or dict/list/tuple where
+            objects moved to a train device.
+        """
         if isinstance(obj, dict):
-            for k, v in obj.items():
-                obj[k] = self.to_device(v)
+            return {key: self.to_device(value) for key, value in obj.items()}
+        if isinstance(obj, (list, tuple)):
+            return type(obj)(self.to_device(elem) for elem in obj)
         elif hasattr(obj, "to"):
             return obj.to(self.device)
         else:
             return obj
 
-    def handle_device(self, batch: Mapping[str, Any]):
-        if isinstance(batch, torch.Tensor):
-            return batch.to(self.device)
-        elif isinstance(batch, (tuple, list)):
-            return [self.handle_device(tensor) for tensor in batch]
-        elif isinstance(batch, dict):
-            return {
-                key: self.handle_device(tensor)
-                for key, tensor in batch.items()
-            }
-        return batch
+    def handle_device(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
+        """Move batch to a device.
+
+        Args:
+            batch (Mapping[str, Any]): data which should be moved
+                to a device.
+
+        Returns:
+            Mapping[str, Any] where each torch.Tensor object will
+            be on a training device.
+        """
+        return self.to_device(batch)
 
     def save_checkpoint(
         self, checkpoint_content: Mapping[str, Any], file: str

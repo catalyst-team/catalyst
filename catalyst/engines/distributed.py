@@ -27,7 +27,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         self.port = port
         self.backend = backend
 
-    def __repr__(self):
+    def __repr__(self):  # noqa: D105
         return (
             f"DistributedDataParallelEngine(address={self.address},"
             f"port={self.port},backend='{self.backend}',"
