@@ -100,8 +100,7 @@ class BatchOverfitCallback(Callback):
             self.loader_batches[loader] = num_batches
 
     def on_epoch_start(self, runner: "IRunner") -> None:
-        """
-        Wraps loaders for current epoch.
+        """Wraps loaders for current epoch.
         If number-of-batches for loader is not provided then the first batch
         from loader will be used for overfitting.
 
@@ -121,8 +120,7 @@ class BatchOverfitCallback(Callback):
         runner.loaders = epoch_loaders
 
     def on_epoch_end(self, runner: "IRunner"):
-        """
-        Unwraps loaders for current epoch.
+        """Unwraps loaders for current epoch.
 
         Args:
             runner: current runner

@@ -517,7 +517,7 @@
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.metrics.misc import IMetric
+from catalyst.metrics.misc import ILoaderMetric, IMetric
 
 
 class MetricCallback(Callback):
@@ -553,3 +553,19 @@ class MetricCallback(Callback):
 
     def on_loader_end(self, runner: "IRunner") -> None:
         runner.loader_metrics.update(self.metric.compute_key_value())
+
+
+class LoaderMetricCallback(MetricCallback):
+    def __init__(
+        self, metric: ILoaderMetric, outputs_key: str, targets_key: str
+    ):
+        super().__init__(
+            metric=metric,
+            outputs_key=outputs_key,
+            targets_key=targets_key,
+            compute_on_batch=False,
+        )
+
+    def on_loader_start(self, runner: "IRunner") -> None:
+        # @TODO: loader_sample_len - how could we get it?
+        self.metric.reset(loader_batch_len=runner.loader_batch_len)

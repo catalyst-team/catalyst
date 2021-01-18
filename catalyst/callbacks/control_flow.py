@@ -378,9 +378,13 @@ class ControlFlowCallback(CallbackWrapper):
         Args:
             runner: current runner
         """
-        stage = runner.stage
+        stage = runner.stage_key
         loader = runner.loader_key
-        epoch = runner.global_epoch if self.use_global_epochs else runner.epoch
+        epoch = (
+            runner.global_epoch_step
+            if self.use_global_epochs
+            else runner.stage_epoch_step
+        )
 
         if self.filter_fn is not None:
             self._is_enabled = self.filter_fn(stage, epoch, loader)

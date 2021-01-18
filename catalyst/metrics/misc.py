@@ -24,7 +24,7 @@ class IMetric(ABC):
         self.compute_on_call = compute_on_call
 
     @abstractmethod
-    def reset(self) -> None:
+    def reset(self, *args, **kwargs) -> None:
         """Resets the metric to it's initial state.
 
         By default, this is called at the start of each loader
@@ -84,6 +84,19 @@ class IMetric(ABC):
         if self.compute_on_call:
             # here should be some engine stuff with tensor sync
             return self.compute()
+
+
+class ILoaderMetric(IMetric):
+    """Interface for all Metrics."""
+
+    @abstractmethod
+    def reset(self, loader_batch_len) -> None:
+        """Resets the metric to it's initial state.
+
+        By default, this is called at the start of each loader
+        (`on_loader_start` event).
+        """
+        pass
 
 
 class AverageMetric(IMetric):

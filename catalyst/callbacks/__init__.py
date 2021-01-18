@@ -66,8 +66,8 @@ from catalyst.callbacks.timer import TimerCallback
 
 from catalyst.callbacks.misc import (
     VerboseCallback,
-    IMetricHandlerCallback,
-    TopNMetricHandlerCallback,
+    IEpochMetricHandlerCallback,
+    TopNEpochMetricHandlerCallback,
     CheckpointCallback,
 )
 
