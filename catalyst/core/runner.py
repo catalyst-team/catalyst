@@ -114,6 +114,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.is_infer_loader: bool = True
         self.loader_batch_size: int = 0
         self.loader_batch_len: int = 0
+        self.loader_sample_len: int = 0
         self.loader_batch_step: int = 0
         self.loader_sample_step: int = 0
 
@@ -144,6 +145,7 @@ class IRunner(ICallback, ILogger, ABC):
                 # loader info
                 loader_key=self.loader_key,
                 loader_batch_len=self.loader_batch_len,
+                loader_sample_len=self.loader_sample_len,
                 loader_batch_step=self.loader_batch_step,
                 loader_sample_step=self.loader_sample_step,
             )
@@ -167,6 +169,7 @@ class IRunner(ICallback, ILogger, ABC):
                 # loader info
                 loader_key=self.loader_key,
                 loader_batch_len=self.loader_batch_len,
+                loader_sample_len=self.loader_sample_len,
                 loader_batch_step=self.loader_batch_step,
                 loader_sample_step=self.loader_sample_step,
             )
@@ -248,8 +251,9 @@ class IRunner(ICallback, ILogger, ABC):
         self.is_train_loader: bool = self.loader_key.startswith("train")
         self.is_valid_loader: bool = self.loader_key.startswith("valid")
         self.is_infer_loader: bool = self.loader_key.startswith("infer")
-        self.loader_batch_size: int = 0
-        self.loader_batch_len: int = 0
+        self.loader_batch_size: int = self.loader.batch_size
+        self.loader_batch_len: int = len(self.loader)
+        self.loader_sample_len: int = len(self.loader.dataset)
         self.loader_batch_step: int = 0
         self.loader_sample_step: int = 0
         self.loader_metrics: Dict = defaultdict(None)

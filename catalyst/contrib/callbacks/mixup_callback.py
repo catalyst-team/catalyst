@@ -47,7 +47,7 @@ class MixupCallback(CriterionCallback):
         assert len(fields) > 0, "At least one field for MixupCallback is required"
         assert alpha >= 0, "alpha must be>=0"
 
-        super().__init__(input_key=input_key, output_key=output_key, **kwargs)
+        super().__init__(input_key=input_key, input_key=output_key, **kwargs)
 
         self.on_train_only = on_train_only
         self.fields = fields
@@ -60,7 +60,7 @@ class MixupCallback(CriterionCallback):
         if not self.is_needed:
             return super()._compute_loss_value(runner, criterion)
 
-        pred = runner.output[self.output_key]
+        pred = runner.output[self.input_key]
         y_a = runner.input[self.input_key]
         y_b = runner.input[self.input_key][self.index]
 

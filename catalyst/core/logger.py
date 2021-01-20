@@ -3,6 +3,7 @@ from typing import Dict
 import numpy as np
 
 
+# @TODO: could we just pass runner?
 class ILogger:
     """An abstraction that syncs experiment run with monitoring tools."""
 
@@ -24,6 +25,7 @@ class ILogger:
         # loader info
         loader_key: str = None,
         loader_batch_len: int = 0,
+        loader_sample_len: int = 0,
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
@@ -47,6 +49,7 @@ class ILogger:
         # loader info
         loader_key: str = None,
         loader_batch_len: int = 0,
+        loader_sample_len: int = 0,
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:

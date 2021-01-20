@@ -57,7 +57,7 @@ class CutmixCallback(CriterionCallback):
         if not self.is_needed:
             return super()._compute_loss_value(runner, criterion)
 
-        pred = runner.output[self.output_key]
+        pred = runner.output[self.input_key]
         y_a = runner.input[self.input_key]
         y_b = runner.input[self.input_key][self.index]
         loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(pred, y_b)

@@ -407,7 +407,7 @@ runner_out = runner.predict_loader(model=model, loader=loaders["valid"],)
 
 # In[ ]:
 
-next(runner_out)[runner.output_key].shape
+next(runner_out)[runner.input_key].shape
 
 # # Setup 10 - predict batch
 
@@ -426,6 +426,6 @@ runner_out = runner.predict_batch(runner_in)
 
 # In[ ]:
 
-runner_out[runner.output_key].shape
+runner_out[runner.input_key].shape
 
 # In[ ]:

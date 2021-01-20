@@ -119,9 +119,7 @@ class IEpochMetricHandlerCallback(Callback, IRunnerMetricHandler):
 
 
 class EarlyStoppingCallback(IEpochMetricHandlerCallback):
-    """Stage early stop based on metric.
-
-    """
+    """Stage early stop based on metric."""
 
     def __init__(
         self,
