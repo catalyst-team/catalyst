@@ -5,12 +5,16 @@ from functools import lru_cache, partial
 
 import torch
 from torch import nn
+import torch.distributed
+import torch.multiprocessing
 from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core.callback import Callback, CallbackScope, ICallback
 from catalyst.core.engine import IEngine
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import filter_callbacks_by_node, sort_callbacks_by_order
+from catalyst.engines.distributed import DistributedDataParallelEngine
+from catalyst.settings import SETTINGS
 from catalyst.core.logger import ILogger
 from catalyst.core.trial import ITrial
 from catalyst.typing import (
@@ -23,6 +27,11 @@ from catalyst.typing import (
 )
 from catalyst.utils.loaders import validate_loaders
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
+
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 BATCH_METRICS = Dict[str, float]
 LOADER_METRICS = Dict[str, BATCH_METRICS]
@@ -396,7 +405,17 @@ class IRunner(ICallback, ILogger, ABC):
                 break
         self._run_event("on_stage_end")
 
-    def _run_experiment(self) -> None:
+    def _run_experiment(self, rank=0, world_size=1) -> None:
+        # TODO: move this logic somewhere else
+        # NOTE: engine should be built elsewhere but not here
+        if isinstance(self.engine, DistributedDataParallelEngine):
+            self.engine.device = rank
+            self.engine.world_size = world_size
+
+        logger.warn(f"rank: {rank}")
+        logger.warn(f"world size: {world_size}")
+        logger.warn(f"engine: {self.engine}")
+
         self._run_event("on_experiment_start")
         for self.stage_key in self.experiment.stages:
             if self.engine.rank < 0:
@@ -407,6 +426,12 @@ class IRunner(ICallback, ILogger, ABC):
                 # mp.spawn(self._run_stage, num_process=self.engine.world_size)
                 raise NotImplementedError()
         self._run_event("on_experiment_end")
+
+    def _run_ddp_experiment(self) -> None:
+        world_size = torch.cuda.device_count()
+        torch.multiprocessing.spawn(
+            self._run_experiment, args=(world_size,), nprocs=world_size, join=True,
+        )
 
     def run(self, experiment: IExperiment = None) -> "IRunner":
         """
@@ -420,7 +445,10 @@ class IRunner(ICallback, ILogger, ABC):
         """
         self.experiment = experiment or self.experiment
         try:
-            self._run_experiment()
+            if isinstance(self.experiment.engine, DistributedDataParallelEngine):
+                self._run_ddp_experiment()
+            else:
+                self._run_experiment()
         except (Exception, KeyboardInterrupt) as ex:
             self.exception = ex
             self._run_event("on_exception")
@@ -517,6 +545,10 @@ class IStageBasedRunner(IRunner):
         self.loader_batch_len = len(self.loader)
         if self.loader_batch_len == 0:
             raise NotImplementedError(f"DataLoader with name {self.loader_key} is empty.")
+
+    def on_stage_end(self, runner: "IRunner") -> None:
+        # clean process if DDP training or do nothing
+        self.experiment.engine.cleanup_process()
 
 
 __all__ = ["IRunner", "IStageBasedRunner", "RunnerException"]

@@ -5,47 +5,6 @@ import re
 import torch
 import torch.distributed as dist
 
-from catalyst.core.engine import IEngine
-from catalyst.engines.device import DeviceEngine
-from catalyst.engines.distributed import DistributedDataParallelEngine
-from catalyst.engines.parallel import DataParallelEngine
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
-
-
-def process_engine(engine: Union[str, IEngine, None]) -> IEngine:
-    """Generate engine from string.
-
-    Args:
-        engine: engine definition
-
-    Returns:
-        IEngine object
-    """
-    if isinstance(engine, IEngine):
-        return engine
-
-    if not engine:
-        # TODO: should be used ddp if have enough GPU (>2) ?
-        return DeviceEngine("cuda:0" if IS_CUDA_AVAILABLE else "cpu")
-
-    if engine == "dp" and NUM_CUDA_DEVICES > 2:
-        return DataParallelEngine()
-    elif engine == "ddp" and NUM_CUDA_DEVICES > 2:
-        return DistributedDataParallelEngine()
-    elif (
-        engine == "cpu"
-        # TODO: probably fix pattern str
-        or re.match(r"cuda\:\d", str(engine))
-    ):
-        return DeviceEngine(engine)
-    elif engine == "cuda":
-        return DeviceEngine("cuda:0")
-    else:
-        # TODO: should be used ddp if have enough GPU (>2) ?
-        return DeviceEngine("cuda:0" if IS_CUDA_AVAILABLE else "cpu")
-
-    raise ValueError(f"Unknown engine '{engine}'!")
-
 
 def sum_reduce(tensor: torch.Tensor) -> torch.Tensor:
     """Reduce tensor to all processes and compute total (sum) value.
@@ -81,14 +40,16 @@ def all_gather(data: Any) -> List[Any]:
 
     NOTE: if data on different devices then data in resulted list will
         be on the same devices.
-    Source: https://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128
+
+    Source: 
+        https://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128
 
     Args:
         data: any picklable object
 
     Returns:
         list of data gathered from each process.
-    """
+    """  # noqa: W501,W505
     if not dist.is_available() or not dist.is_initialized():
         world_size = 1
     else:
@@ -113,8 +74,9 @@ def all_gather(data: Any) -> List[Any]:
     # we pad the tensor because torch all_gather does not support
     # gathering tensors of different shapes
     tensor_list = []
-    for _ in size_list:
+    for _ in size_list:  # noqa: WPS122
         tensor_list.append(torch.empty((max_size,), dtype=torch.uint8, device="cuda"))
+
     if local_size != max_size:
         padding = torch.empty(size=(max_size - local_size,), dtype=torch.uint8, device="cuda")
         tensor = torch.cat((tensor, padding), dim=0)

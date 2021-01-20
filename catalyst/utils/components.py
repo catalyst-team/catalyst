@@ -127,7 +127,6 @@ def process_components(
         device = torch.device(device)
 
     is_apex_enabled = engine_params.get("apex", False) and check_apex_available()
-
     is_amp_enabled = engine_params.get("amp", False) and check_amp_available()
 
     if is_apex_enabled and is_amp_enabled:

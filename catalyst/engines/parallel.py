@@ -11,8 +11,8 @@ class DataParallelEngine(DeviceEngine):
         super().__init__(f"cuda:{torch.cuda.current_device()}")
         self.device_count = torch.cuda.device_count()
 
-    def __repr__(self) -> str:
-        return f"DataParallelDeviceEngine(device_count={self.device_count})"
+    def __repr__(self) -> str:  # noqa: D105
+        return f"DataParallelEngine(device_count={self.device_count})"
 
     def to_device(
         self, obj: Union[dict, torch.Tensor, nn.Module]
@@ -28,6 +28,6 @@ class DataParallelEngine(DeviceEngine):
             return obj.to(self.device)
         # fmt: on
 
-    def save_checkpoint(self, checkpoint_content: Mapping[str, Any], file: str):
+    def save_checkpoint(self, checkpoint: Mapping[str, Any], path: str):
         # TODO: method for unpacking torch.nn.DataParallel
-        torch.save(checkpoint_content, file)
+        torch.save(checkpoint, path)

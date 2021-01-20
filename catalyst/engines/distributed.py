@@ -6,12 +6,14 @@ import torch.nn as nn
 
 from catalyst.engines.device import DeviceEngine
 
+# from catalyst.engines.functional import sum_reduce, mean_reduce
+
 
 class DistributedDataParallelEngine(DeviceEngine):
     def __init__(
         self,
-        rank: int,
-        world_size: int,
+        rank: int = 0,
+        world_size: int = 1,
         address: str = "localhost",
         port: str = "12345",
         backend: str = "nccl",
@@ -22,29 +24,60 @@ class DistributedDataParallelEngine(DeviceEngine):
             world_size: total number of processes in experiment
         """
         super().__init__(rank)
-        self.world_size = world_size
+        self._world_size = world_size
         self.address = address
         self.port = port
         self.backend = backend
 
-    def __repr__(self):
+    @property
+    def rank(self) -> int:
+        return self.device
+
+    @property
+    def world_size(self) -> int:
+        return self._world_size
+
+    def __repr__(self):  # noqa: D105
         return (
-            f"DistributedDeviceEngine(address={self.address},"
+            f"DistributedDataParallelEngine(address={self.address},"
             f"port={self.port},backend='{self.backend}',"
-            f"rank={self.device},world_size={self.world_size})"
+            f"rank={self.device},world_size={self._world_size})"
         )
 
-    def setup_experiment(self):
+    def init_process(self):
         """Initialize DDP variables and processes."""
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
         dist.init_process_group(self.backend, rank=self.device, world_size=self.world_size)
 
-    def cleanup(self):
+    def init_components(
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+    ):
+        self.init_process()
+        super().init_components(model_fn, criterion_fn, optimizer_fn, scheduler_fn)
+
+    def cleanup_process(self):
+        """Clean DDP variables and processes."""
         dist.destroy_process_group()
 
-    def sync_metric(self):
-        pass
+    def sync_metric(self, tensor, sync_type="mean"):
+        """Synchronize tensor.
+
+        Args:
+            tensor (torch.Tensor): tensor to sync across the processes.
+            sync_type (str): tensor synchronization type,
+                should be one of 'sum' or 'mean'.
+                Default is 'mean'.
+
+        Returns:
+            torch.Tensor with synchronized values.
+        """
+        if sync_type not in {"sum", "mean"}:
+            raise ValueError(f"Unknown sync_type '{sync_type}'")
+        if sync_type == "sum":
+            return sum_reduce(tensor)
+        else:
+            return mean_reduce(tensor, self.world_size)
 
     # TODO: maybe handle unpacking DataParallel to simple nn.Module
     def load_checkpoint(

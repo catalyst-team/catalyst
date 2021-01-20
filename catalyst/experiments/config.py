@@ -52,7 +52,7 @@ class ConfigExperiment(IExperiment):
         self._check_run: bool = self._config.get("args", {}).get("check", False)
         self._overfit: bool = self._config.get("args", {}).get("overfit", False)
 
-        self._engine: IEngine = process_engine(self._config.get("engine", "cpu"))
+        self._engine: IEngine = process_engine(self._config.get("engine"))
 
         self._prepare_logdir()
 
