@@ -37,11 +37,7 @@ class IEngine(ABC):
 
     @abstractmethod
     def init_components(
-        self,
-        model_fn=None,
-        criterion_fn=None,
-        optimizer_fn=None,
-        scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
         pass
 
@@ -52,12 +48,7 @@ class IEngine(ABC):
 
     @abstractmethod
     def pack_checkpoint(
-        self,
-        model=None,
-        criterion=None,
-        optimizer=None,
-        scheduler=None,
-        **kwargs,
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
         pass
 
@@ -110,11 +101,7 @@ class Engine(IEngine):
         return tensor
 
     def init_components(
-        self,
-        model_fn=None,
-        criterion_fn=None,
-        optimizer_fn=None,
-        scheduler_fn=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
         # setup backend
         model = model_fn()
@@ -129,12 +116,7 @@ class Engine(IEngine):
         pass
 
     def pack_checkpoint(
-        self,
-        model=None,
-        criterion=None,
-        optimizer=None,
-        scheduler=None,
-        **kwargs,
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
         return {
             "model": model,

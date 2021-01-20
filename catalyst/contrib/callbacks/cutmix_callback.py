@@ -1,7 +1,6 @@
 from typing import List, TYPE_CHECKING
 
 import numpy as np
-
 import torch
 
 from catalyst.callbacks.criterion import CriterionCallback
@@ -24,13 +23,7 @@ class CutmixCallback(CriterionCallback):
     .. _CutMix\: Regularization Strategy to Train Strong Classifiers with Localizable Features: https://arxiv.org/abs/1905.04899  # noqa: W605, E501, W505
     """
 
-    def __init__(
-        self,
-        fields: List[str] = ("features",),
-        alpha=1.0,
-        on_train_only=True,
-        **kwargs
-    ):
+    def __init__(self, fields: List[str] = ("features",), alpha=1.0, on_train_only=True, **kwargs):
         """
         Args:
             fields: list of features which must be affected.
@@ -39,9 +32,7 @@ class CutmixCallback(CriterionCallback):
                 So, if on_train_only is True, use a standard output/metric
                 for validation.
         """
-        assert (
-            len(fields) > 0
-        ), "At least one field for CutmixCallback is required"
+        assert len(fields) > 0, "At least one field for CutmixCallback is required"
         assert alpha >= 0, "alpha must be >=0"
 
         super().__init__(**kwargs)
@@ -69,9 +60,7 @@ class CutmixCallback(CriterionCallback):
         pred = runner.output[self.output_key]
         y_a = runner.input[self.input_key]
         y_b = runner.input[self.input_key][self.index]
-        loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(
-            pred, y_b
-        )
+        loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(pred, y_b)
         return loss
 
     def _rand_bbox(self, size, lam):
@@ -127,9 +116,7 @@ class CutmixCallback(CriterionCallback):
         self.index = torch.randperm(runner.input[self.fields[0]].shape[0])
         self.index.to(runner.device)
 
-        bbx1, bby1, bbx2, bby2 = self._rand_bbox(
-            runner.input[self.fields[0]].shape, self.lam
-        )
+        bbx1, bby1, bbx2, bby2 = self._rand_bbox(runner.input[self.fields[0]].shape, self.lam)
 
         for f in self.fields:
             runner.input[f][:, :, bbx1:bbx2, bby1:bby2] = runner.input[f][
@@ -139,10 +126,7 @@ class CutmixCallback(CriterionCallback):
         self.lam = 1 - (
             (bbx2 - bbx1)
             * (bby2 - bby1)
-            / (
-                runner.input[self.fields[0]].shape[-1]
-                * runner.input[self.fields[0]].shape[-2]
-            )
+            / (runner.input[self.fields[0]].shape[-1] * runner.input[self.fields[0]].shape[-2])
         )
 
 

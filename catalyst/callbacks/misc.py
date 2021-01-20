@@ -84,12 +84,8 @@ class IBatchMetricHandlerCallback(Callback, IRunnerMetricHandler):
     def __init__(
         self, metric_key: str, minimize: bool = True, min_delta: float = 1e-6,
     ):
-        Callback.__init__(
-            self, order=CallbackOrder.external, node=CallbackNode.all
-        )
-        IRunnerMetricHandler.__init__(
-            self, minimize=minimize, min_delta=min_delta
-        )
+        Callback.__init__(self, order=CallbackOrder.external, node=CallbackNode.all)
+        IRunnerMetricHandler.__init__(self, minimize=minimize, min_delta=min_delta)
         self.metric_key = metric_key
 
     def on_loader_start(self, runner: "IRunner") -> None:
@@ -106,18 +102,10 @@ class IBatchMetricHandlerCallback(Callback, IRunnerMetricHandler):
 
 class IEpochMetricHandlerCallback(Callback, IRunnerMetricHandler):
     def __init__(
-        self,
-        loader_key: str,
-        metric_key: str,
-        minimize: bool = True,
-        min_delta: float = 1e-6,
+        self, loader_key: str, metric_key: str, minimize: bool = True, min_delta: float = 1e-6,
     ):
-        Callback.__init__(
-            self, order=CallbackOrder.external, node=CallbackNode.all
-        )
-        IRunnerMetricHandler.__init__(
-            self, minimize=minimize, min_delta=min_delta
-        )
+        Callback.__init__(self, order=CallbackOrder.external, node=CallbackNode.all)
+        IRunnerMetricHandler.__init__(self, minimize=minimize, min_delta=min_delta)
         self.loader_key = loader_key
         self.metric_key = metric_key
 
@@ -158,10 +146,7 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
                 default value is ``1e-6``.
         """
         super().__init__(
-            loader_key=loader_key,
-            metric_key=metric_key,
-            minimize=minimize,
-            min_delta=min_delta,
+            loader_key=loader_key, metric_key=metric_key, minimize=minimize, min_delta=min_delta,
         )
         self.patience = patience
         self.num_no_improvement_epochs = 0
@@ -186,23 +171,16 @@ class TopNEpochMetricHandlerCallback(IEpochMetricHandlerCallback):
         save_n_best: int = 1,
     ):
         super().__init__(
-            loader_key=loader_key,
-            metric_key=metric_key,
-            minimize=minimize,
-            min_delta=min_delta,
+            loader_key=loader_key, metric_key=metric_key, minimize=minimize, min_delta=min_delta,
         )
         self.save_n_best = save_n_best
         self.top_best_metrics = []
 
     def handle_improvement(self, runner: "IRunner"):
-        self.top_best_metrics.append(
-            (self.best_score, runner.stage_epoch_step,)
-        )
+        self.top_best_metrics.append((self.best_score, runner.stage_epoch_step,))
 
         self.top_best_metrics = sorted(
-            self.top_best_metrics,
-            key=lambda x: x[0],
-            reverse=not self.minimize,
+            self.top_best_metrics, key=lambda x: x[0], reverse=not self.minimize,
         )
         if len(self.top_best_metrics) > self.save_n_best:
             self.top_best_metrics.pop(-1)

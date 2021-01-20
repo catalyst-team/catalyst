@@ -12,9 +12,7 @@ def test_reciprocal_rank():
     y_pred = [0.5, 0.2]
     y_true = [1.0, 0.0]
     k = 2
-    value = metrics.reciprocal_rank(
-        torch.Tensor([y_pred]), torch.Tensor([y_true]), k
-    )
+    value = metrics.reciprocal_rank(torch.Tensor([y_pred]), torch.Tensor([y_true]), k)
     assert value[0][0] == 1
 
     # check 1 simple case
@@ -22,9 +20,7 @@ def test_reciprocal_rank():
     y_true = [0.0, 1.0]
     k = 2
 
-    value = metrics.reciprocal_rank(
-        torch.Tensor([y_pred]), torch.Tensor([y_true]), k
-    )
+    value = metrics.reciprocal_rank(torch.Tensor([y_pred]), torch.Tensor([y_true]), k)
 
     assert value[0][0] == 0.5
 
@@ -33,9 +29,7 @@ def test_reciprocal_rank():
     y_true = [0.0, 1.0]
     k = 2
 
-    value = metrics.reciprocal_rank(
-        torch.Tensor([y_pred]), torch.Tensor([y_true]), k
-    )
+    value = metrics.reciprocal_rank(torch.Tensor([y_pred]), torch.Tensor([y_true]), k)
     assert value[0][0] == 1.0
 
     # check 3 test multiple users

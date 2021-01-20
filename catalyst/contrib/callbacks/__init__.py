@@ -111,22 +111,14 @@ logger = logging.getLogger(__name__)
 
 try:
     import optuna
-    from catalyst.contrib.callbacks.optuna_callback import (
-        OptunaPruningCallback,
-    )
+    from catalyst.contrib.callbacks.optuna_callback import OptunaPruningCallback
 except ModuleNotFoundError as ex:
     if SETTINGS.optuna_required:
-        logger.warning(
-            "optuna not available, to install optuna, "
-            "run `pip install optuna`."
-        )
+        logger.warning("optuna not available, to install optuna, " "run `pip install optuna`.")
         raise ex
 except ImportError as ex:
     if SETTINGS.optuna_required:
-        logger.warning(
-            "optuna not available, to install optuna, "
-            "run `pip install optuna`."
-        )
+        logger.warning("optuna not available, to install optuna, " "run `pip install optuna`.")
         raise ex
 
 # from catalyst.contrib.callbacks.telegram_logger import TelegramLogger

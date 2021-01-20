@@ -6,10 +6,7 @@ import torch
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.utils.misc import get_attr
-from catalyst.utils.torch import (
-    get_optimizer_momentum,
-    get_optimizer_momentum_list,
-)
+from catalyst.utils.torch import get_optimizer_momentum, get_optimizer_momentum_list
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -124,18 +121,12 @@ class SchedulerCallback(ISchedulerCallback):
         else:
             scheduler.step()
 
-        lr_list = [
-            param_group["lr"]
-            for param_group in scheduler.optimizer.param_groups
-        ]
+        lr_list = [param_group["lr"] for param_group in scheduler.optimizer.param_groups]
         momentum_list = get_optimizer_momentum_list(scheduler.optimizer)
         return lr_list, momentum_list
 
     def _update_lr_and_momentum_in_metrics_dict(
-        self,
-        metrics_dict: dict,
-        lr_list: List[float],
-        momentum_list: List[Union[float, None]],
+        self, metrics_dict: dict, lr_list: List[float], momentum_list: List[Union[float, None]],
     ):
         """Update learning rate and momentum in metrics_dict
         (consider only 0-th param group)
@@ -150,18 +141,12 @@ class SchedulerCallback(ISchedulerCallback):
         lr = lr_list[0]
         momentum = momentum_list[0]
 
-        lr_key = (
-            f"lr/{self.scheduler_key}"
-            if self.scheduler_key is not None
-            else "lr"
-        )
+        lr_key = f"lr/{self.scheduler_key}" if self.scheduler_key is not None else "lr"
         metrics_dict[lr_key] = lr
 
         if momentum is not None:
             momentum_key = (
-                f"momentum/{self.scheduler_key}"
-                if self.scheduler_key is not None
-                else "momentum"
+                f"momentum/{self.scheduler_key}" if self.scheduler_key is not None else "momentum"
             )
             metrics_dict[momentum_key] = momentum
 
@@ -171,9 +156,7 @@ class SchedulerCallback(ISchedulerCallback):
         Args:
             runner: current runner
         """
-        lr_list, momentum_list = self._scheduler_step(
-            scheduler=self._scheduler
-        )
+        lr_list, momentum_list = self._scheduler_step(scheduler=self._scheduler)
         # @TODO: return
         # self._update_lr_and_momentum_in_metrics_dict(
         #     runner.batch_metrics, lr_list, momentum_list
@@ -201,9 +184,7 @@ class SchedulerCallback(ISchedulerCallback):
             runner: current runner
         """
 
-        scheduler = get_attr(
-            runner, key="scheduler", inner_key=self.scheduler_key
-        )
+        scheduler = get_attr(runner, key="scheduler", inner_key=self.scheduler_key)
         assert scheduler is not None
         self._scheduler = scheduler
 
@@ -213,10 +194,7 @@ class SchedulerCallback(ISchedulerCallback):
             else:
                 self.mode = "epoch"
 
-        if (
-            isinstance(scheduler, OneCycleLRWithWarmup)
-            and self.mode == "batch"
-        ):
+        if isinstance(scheduler, OneCycleLRWithWarmup) and self.mode == "batch":
             scheduler.reset()
         assert self.mode is not None
 
@@ -232,8 +210,7 @@ class SchedulerCallback(ISchedulerCallback):
             and self.mode == "batch"
         ):
             self._scheduler.recalculate(
-                loader_len=runner.loader_batch_len,
-                current_step=runner.stage_batch_step,
+                loader_len=runner.loader_batch_len, current_step=runner.stage_batch_step,
             )
 
     def on_batch_end(self, runner: "IRunner") -> None:

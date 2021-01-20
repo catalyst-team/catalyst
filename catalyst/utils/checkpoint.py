@@ -11,11 +11,7 @@ from catalyst.utils.misc import maybe_recursive_call
 
 
 def pack_checkpoint(
-    model: nn.Module = None,
-    criterion: nn.Module = None,
-    optimizer=None,
-    scheduler=None,
-    **kwargs,
+    model: nn.Module = None, criterion: nn.Module = None, optimizer=None, scheduler=None, **kwargs,
 ):
     """
     Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
@@ -43,13 +39,10 @@ def pack_checkpoint(
             )
     else:
         model_module = get_nn_from_ddp_module(model)
-        checkpoint["model_state_dict"] = maybe_recursive_call(
-            model_module, "state_dict"
-        )
+        checkpoint["model_state_dict"] = maybe_recursive_call(model_module, "state_dict")
 
     for dict2save, name2save in zip(
-        [criterion, optimizer, scheduler],
-        ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
     ):
         if dict2save is None:
             continue
@@ -86,14 +79,11 @@ def unpack_checkpoint(
     if model is not None:
         model = get_nn_from_ddp_module(model)
         maybe_recursive_call(
-            model,
-            "load_state_dict",
-            recursive_args=checkpoint["model_state_dict"],
+            model, "load_state_dict", recursive_args=checkpoint["model_state_dict"],
         )
 
     for dict2load, name2load in zip(
-        [criterion, optimizer, scheduler],
-        ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
     ):
         if dict2load is None:
             continue
@@ -155,9 +145,7 @@ def load_checkpoint(filepath: str):
     Returns:
         checkpoint content
     """
-    checkpoint = torch.load(
-        filepath, map_location=lambda storage, loc: storage
-    )
+    checkpoint = torch.load(filepath, map_location=lambda storage, loc: storage)
     return checkpoint
 
 

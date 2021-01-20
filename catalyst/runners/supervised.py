@@ -34,9 +34,7 @@ class SupervisedRunner(Runner):
                 which defines default experiment type to use
                 during ``.train`` and ``.infer`` methods.
         """
-        super().__init__(
-            model=model, device=device, experiment_fn=experiment_fn
-        )
+        super().__init__(model=model, device=device, experiment_fn=experiment_fn)
 
         self.input_key = input_key
         self.output_key = output_key
@@ -127,9 +125,7 @@ class SupervisedRunner(Runner):
         self.output = self.forward(batch)
 
     @torch.no_grad()
-    def predict_batch(
-        self, batch: Mapping[str, Any], **kwargs
-    ) -> Mapping[str, Any]:
+    def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         """
         Run model inference on specified data batch.
 

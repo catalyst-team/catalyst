@@ -1,7 +1,6 @@
 import math
 
 import numpy as np
-
 import torch
 
 from catalyst import metrics
@@ -17,11 +16,7 @@ def test_dcg():
     y_pred = np.arange(3, -1, -1)
 
     dcg_at4 = torch.sum(
-        metrics.dcg(
-            torch.tensor([y_pred]),
-            torch.tensor([y_true]),
-            gain_function="linear_rank",
-        )
+        metrics.dcg(torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="linear_rank",)
     )
     assert torch.isclose(dcg_at4, torch.tensor(4.261), atol=0.05)
 
@@ -29,11 +24,7 @@ def test_dcg():
     y_pred = np.arange(3, -1, -1)
 
     dcg_at4 = torch.sum(
-        metrics.dcg(
-            torch.tensor([y_pred]),
-            torch.tensor([y_true]),
-            gain_function="linear_rank",
-        )
+        metrics.dcg(torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="linear_rank",)
     )
     assert torch.isclose(dcg_at4, torch.tensor(4.631), atol=0.05)
 
@@ -41,11 +32,7 @@ def test_dcg():
     y_pred = np.arange(9, -1, -1)
 
     dcg_at10 = torch.sum(
-        metrics.dcg(
-            torch.tensor([y_pred]),
-            torch.tensor([y_true]),
-            gain_function="linear_rank",
-        )
+        metrics.dcg(torch.tensor([y_pred]), torch.tensor([y_true]), gain_function="linear_rank",)
     )
 
     assert torch.isclose(dcg_at10, torch.tensor(9.61), atol=0.05)

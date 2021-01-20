@@ -1,5 +1,4 @@
 import numpy as np
-
 import torch
 
 from catalyst import metrics
@@ -14,9 +13,7 @@ def test_avg_precision():
     y_pred = [0.5, 0.2, 0.3, 0.8]
     y_true = [1.0, 1.0, 1.0, 1.0]
 
-    average_precision = metrics.avg_precision(
-        torch.Tensor([y_pred]), torch.Tensor([y_true])
-    )
+    average_precision = metrics.avg_precision(torch.Tensor([y_pred]), torch.Tensor([y_true]))
     assert average_precision[0] == 1
 
     # # check is everything is relevant for 3 users
@@ -24,8 +21,7 @@ def test_avg_precision():
     y_true = [1.0, 1.0, 1.0, 1.0]
 
     average_precision = metrics.avg_precision(
-        torch.Tensor([y_pred, y_pred, y_pred]),
-        torch.Tensor([y_true, y_true, y_true]),
+        torch.Tensor([y_pred, y_pred, y_pred]), torch.Tensor([y_true, y_true, y_true]),
     )
     assert torch.equal(average_precision, torch.ones(3))
 
@@ -33,9 +29,7 @@ def test_avg_precision():
     y_pred = [0.5, 0.2, 0.3, 0.8]
     y_true = [0.0, 0.0, 0.0, 0.0]
 
-    average_precision = metrics.avg_precision(
-        torch.Tensor([y_pred]), torch.Tensor([y_true])
-    )
+    average_precision = metrics.avg_precision(torch.Tensor([y_pred]), torch.Tensor([y_true]))
     assert average_precision[0] == 0
 
     # # check is everything is irrelevant for 3 users
@@ -43,8 +37,7 @@ def test_avg_precision():
     y_true = [0.0, 0.0, 0.0, 0.0]
 
     average_precision = metrics.avg_precision(
-        torch.Tensor([y_pred, y_pred, y_pred]),
-        torch.Tensor([y_true, y_true, y_true]),
+        torch.Tensor([y_pred, y_pred, y_pred]), torch.Tensor([y_true, y_true, y_true]),
     )
     assert torch.equal(average_precision, torch.zeros(3))
 

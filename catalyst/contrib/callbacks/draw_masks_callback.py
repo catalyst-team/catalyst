@@ -4,7 +4,6 @@ import os
 import numpy as np
 from skimage.color import label2rgb
 from skimage.color.colorlabel import DEFAULT_COLORS
-
 import torch
 
 from catalyst import utils
@@ -81,9 +80,7 @@ class DrawMasksCallback(ILoggerCallback):
             runner: current runner
         """
         if runner.loader_key not in self.loggers:
-            log_dir = os.path.join(
-                runner.logdir, f"{runner.loader_key}_log/images/"
-            )
+            log_dir = os.path.join(runner.logdir, f"{runner.loader_key}_log/images/")
             self.loggers[runner.loader_key] = SummaryWriter(log_dir)
         self.step = 0
 
@@ -182,14 +179,10 @@ class DrawMasksCallback(ILoggerCallback):
                 image = np.ones_like(pred_mask, dtype=np.uint8) * 255
 
             pred_colors = self._get_colors(pred_mask)
-            image_over_predicted_mask = label2rgb(
-                pred_mask, image, bg_label=0, colors=pred_colors
-            )
+            image_over_predicted_mask = label2rgb(pred_mask, image, bg_label=0, colors=pred_colors)
             if gt_mask is not None:
                 gt_colors = self._get_colors(gt_mask)
-                image_over_gt_mask = label2rgb(
-                    gt_mask, image, bg_label=0, colors=gt_colors
-                )
+                image_over_gt_mask = label2rgb(gt_mask, image, bg_label=0, colors=gt_colors)
             else:
                 image_over_gt_mask = None
 

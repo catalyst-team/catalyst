@@ -51,16 +51,13 @@ def sort_callbacks_by_order(
         output = OrderedDict([(i, value) for i, value in enumerate(output)])
     else:
         raise TypeError(
-            f"Callbacks must be either Dict/OrderedDict or list, "
-            f"got {type(callbacks)}"
+            f"Callbacks must be either Dict/OrderedDict or list, " f"got {type(callbacks)}"
         )
 
     return output
 
 
-def filter_callbacks_by_node(
-    callbacks: Union[Dict, OrderedDict]
-) -> Union[Dict, OrderedDict]:
+def filter_callbacks_by_node(callbacks: Union[Dict, OrderedDict]) -> Union[Dict, OrderedDict]:
     """
     Filters callbacks based on running node.
     Deletes worker-only callbacks from ``CallbackNode.Master``
@@ -77,15 +74,11 @@ def filter_callbacks_by_node(
     rank = get_rank()
     if rank == 0:  # master node
         # remove worker-only callbacks on master node
-        for k in list(
-            filter(lambda c: output[c].node == CallbackNode.worker, output)
-        ):
+        for k in list(filter(lambda c: output[c].node == CallbackNode.worker, output)):
             del output[k]
     elif rank > 0:  # worker node
         # remove master-only callbacks on worker nodes
-        for k in list(
-            filter(lambda c: output[c].node == CallbackNode.master, output)
-        ):
+        for k in list(filter(lambda c: output[c].node == CallbackNode.master, output)):
             del output[k]
     return output
 

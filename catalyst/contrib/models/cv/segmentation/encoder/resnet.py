@@ -13,26 +13,11 @@ from catalyst.contrib.models.cv.segmentation.encoder.core import (  # noqa: WPS4
 )
 
 RESNET_PARAMS = {  # noqa: WPS407
-    "resnet18": {
-        "channels": [64, 64, 128, 256, 512],
-        "strides": [2, 4, 8, 16, 32],
-    },
-    "resnet34": {
-        "channels": [64, 64, 128, 256, 512],
-        "strides": [2, 4, 8, 16, 32],
-    },
-    "resnet50": {
-        "channels": [64, 256, 512, 1024, 2048],
-        "strides": [2, 4, 8, 16, 32],
-    },
-    "resnet101": {
-        "channels": [64, 256, 512, 1024, 2048],
-        "strides": [2, 4, 8, 16, 32],
-    },
-    "resnet152": {
-        "channels": [64, 256, 512, 1024, 2048],
-        "strides": [2, 4, 8, 16, 32],
-    },
+    "resnet18": {"channels": [64, 64, 128, 256, 512], "strides": [2, 4, 8, 16, 32],},
+    "resnet34": {"channels": [64, 64, 128, 256, 512], "strides": [2, 4, 8, 16, 32],},
+    "resnet50": {"channels": [64, 256, 512, 1024, 2048], "strides": [2, 4, 8, 16, 32],},
+    "resnet101": {"channels": [64, 256, 512, 1024, 2048], "strides": [2, 4, 8, 16, 32],},
+    "resnet152": {"channels": [64, 256, 512, 1024, 2048], "strides": [2, 4, 8, 16, 32],},
 }
 
 
@@ -85,22 +70,10 @@ class ResnetEncoder(EncoderSpec):
         self._strides = _take(self._strides, self._layers_indices)
 
         layer0 = nn.Sequential(
-            OrderedDict(
-                [
-                    ("conv1", resnet.conv1),
-                    ("bn1", resnet.bn1),
-                    ("relu", resnet.relu),
-                ]
-            )
+            OrderedDict([("conv1", resnet.conv1), ("bn1", resnet.bn1), ("relu", resnet.relu),])
         )
         self._layers = nn.ModuleList(
-            [
-                layer0,
-                resnet.layer1,
-                resnet.layer2,
-                resnet.layer3,
-                resnet.layer4,
-            ]
+            [layer0, resnet.layer1, resnet.layer2, resnet.layer3, resnet.layer4,]
         )
         self.maxpool0 = resnet.maxpool
 

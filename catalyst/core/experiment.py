@@ -186,11 +186,7 @@ class IExperiment(ABC):
         return None
 
     def get_transforms(
-        self,
-        stage: str = None,
-        epoch: int = None,
-        dataset: str = None,
-        **kwargs,
+        self, stage: str = None, epoch: int = None, dataset: str = None, **kwargs,
     ):
         """Returns the data transforms for a given stage and dataset.
 
@@ -255,9 +251,7 @@ class IExperiment(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_loaders(
-        self, stage: str, epoch: int = None,
-    ) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self, stage: str, epoch: int = None,) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage.  # noqa: DAR401
 
         .. note::

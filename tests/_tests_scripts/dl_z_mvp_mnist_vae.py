@@ -2,7 +2,6 @@
 import os
 
 import numpy as np
-
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -32,9 +31,7 @@ class ClassifyVAE(torch.nn.Module):
     def __init__(self, in_features, hid_features, out_features):
         super().__init__()
         self.encoder = torch.nn.Linear(in_features, hid_features * 2)
-        self.decoder = nn.Sequential(
-            nn.Linear(hid_features, in_features), nn.Sigmoid()
-        )
+        self.decoder = nn.Sequential(nn.Linear(hid_features, in_features), nn.Sigmoid())
         self.clf = torch.nn.Linear(hid_features, out_features)
 
     def forward(self, x, deterministic=False):
@@ -68,16 +65,10 @@ class CustomRunner(dl.Runner):
 
         loss_clf = F.cross_entropy(y_hat, y)
         loss_ae = F.mse_loss(x_, x)
-        loss_kld = (
-            -0.5
-            * torch.mean(1 + log_scale - loc.pow(2) - log_scale.exp())
-            * 0.1
-        )
+        loss_kld = -0.5 * torch.mean(1 + log_scale - loc.pow(2) - log_scale.exp()) * 0.1
         loss_logprob = torch.mean(z_logprob) * 0.01
         loss = loss_clf + loss_ae + loss_kld + loss_logprob
-        accuracy01, accuracy03, accuracy05 = metrics.accuracy(
-            y_hat, y, topk=(1, 3, 5)
-        )
+        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
 
         self.batch_metrics = {
             "loss_clf": loss_clf,
@@ -102,22 +93,16 @@ def main():
 
     loaders = {
         "train": DataLoader(
-            MNIST("./data", train=False, download=True, transform=ToTensor(),),
-            batch_size=32,
+            MNIST("./data", train=False, download=True, transform=ToTensor(),), batch_size=32,
         ),
         "valid": DataLoader(
-            MNIST("./data", train=False, download=True, transform=ToTensor(),),
-            batch_size=32,
+            MNIST("./data", train=False, download=True, transform=ToTensor(),), batch_size=32,
         ),
     }
 
     runner = CustomRunner()
     runner.train(
-        model=model,
-        optimizer=optimizer,
-        loaders=loaders,
-        verbose=True,
-        check=True,
+        model=model, optimizer=optimizer, loaders=loaders, verbose=True, check=True,
     )
 
 

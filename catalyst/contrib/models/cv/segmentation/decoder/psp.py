@@ -6,9 +6,7 @@ from functools import partial
 import torch
 
 from catalyst.contrib.models.cv.segmentation.abn import ABN
-from catalyst.contrib.models.cv.segmentation.blocks.core import (  # noqa: WPS450, E501
-    _get_block,
-)
+from catalyst.contrib.models.cv.segmentation.blocks.core import _get_block  # noqa: WPS450, E501
 from catalyst.contrib.models.cv.segmentation.blocks.psp import PSPBlock
 from catalyst.contrib.models.cv.segmentation.decoder.core import DecoderSpec
 
@@ -30,9 +28,7 @@ class PSPDecoder(DecoderSpec):
         psp_out_channels: int = self._get(in_channels)
 
         self.psp = PSPBlock(
-            psp_out_channels,
-            pool_sizes=(1, 2, 3, 6),
-            use_batchnorm=use_batchnorm,
+            psp_out_channels, pool_sizes=(1, 2, 3, 6), use_batchnorm=use_batchnorm,
         )
 
         self.conv = _get_block(

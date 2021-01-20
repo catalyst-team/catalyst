@@ -43,9 +43,7 @@ def boolean_flag(
     names = ["--" + name]
     if shorthand is not None:
         names.append("-" + shorthand)
-    parser.add_argument(
-        *names, action="store_true", default=default, dest=dest, help=help
-    )
+    parser.add_argument(*names, action="store_true", default=default, dest=dest, help=help)
     parser.add_argument("--no-" + name, action="store_false", dest=dest)
 
 
@@ -101,15 +99,9 @@ def maybe_recursive_call(
         result = type(object_or_dict)()
         for k, v in object_or_dict.items():
             r_args = None if recursive_args is None else recursive_args[k]
-            r_kwargs = (
-                None if recursive_kwargs is None else recursive_kwargs[k]
-            )
+            r_kwargs = None if recursive_kwargs is None else recursive_kwargs[k]
             result[k] = maybe_recursive_call(
-                v,
-                method,
-                recursive_args=r_args,
-                recursive_kwargs=r_kwargs,
-                **kwargs,
+                v, method, recursive_args=r_args, recursive_kwargs=r_kwargs, **kwargs,
             )
         return result
 
@@ -189,9 +181,7 @@ def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
         dict: contains default parameters of `fn`
     """
     argspec = inspect.getfullargspec(fn)
-    default_params = zip(
-        argspec.args[-len(argspec.defaults) :], argspec.defaults
-    )
+    default_params = zip(argspec.args[-len(argspec.defaults) :], argspec.defaults)
     if exclude is not None:
         default_params = filter(lambda x: x[0] not in exclude, default_params)
     default_params = dict(default_params)
@@ -268,35 +258,25 @@ def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
         return getattr(obj, key)[inner_key]
 
 
-def _get_key_str(
-    dictionary: dict, key: Optional[Union[str, List[str]]],
-) -> Any:
+def _get_key_str(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Any:
     return dictionary[key]
 
 
-def _get_key_list(
-    dictionary: dict, key: Optional[Union[str, List[str]]],
-) -> Dict:
+def _get_key_list(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Dict:
     result = {name: dictionary[name] for name in key}
     return result
 
 
-def _get_key_dict(
-    dictionary: dict, key: Optional[Union[str, List[str]]],
-) -> Dict:
+def _get_key_dict(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Dict:
     result = {key_out: dictionary[key_in] for key_in, key_out in key.items()}
     return result
 
 
-def _get_key_none(
-    dictionary: dict, key: Optional[Union[str, List[str]]],
-) -> Dict:
+def _get_key_none(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Dict:
     return {}
 
 
-def _get_key_all(
-    dictionary: dict, key: Optional[Union[str, List[str]]],
-) -> Dict:
+def _get_key_all(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Dict:
     return dictionary
 
 
@@ -379,9 +359,7 @@ def flatten_dict(
     for key, value in dictionary.items():
         new_key = parent_key + separator + key if parent_key else key
         if isinstance(value, collections.MutableMapping):
-            items.extend(
-                flatten_dict(value, new_key, separator=separator).items()
-            )
+            items.extend(flatten_dict(value, new_key, separator=separator).items())
         else:
             items.append((new_key, value))
     return collections.OrderedDict(items)
@@ -408,17 +386,13 @@ def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str) -> Dict:
     """
     subdicts = {}
     extra_subdict = {
-        k: v
-        for k, v in dct.items()
-        if all(not k.startswith(prefix) for prefix in prefixes)
+        k: v for k, v in dct.items() if all(not k.startswith(prefix) for prefix in prefixes)
     }
     if len(extra_subdict) > 0:
         subdicts[extra_key] = extra_subdict
     for prefix in prefixes:
         subdicts[prefix] = {
-            k.replace(f"{prefix}_", ""): v
-            for k, v in dct.items()
-            if k.startswith(prefix)
+            k.replace(f"{prefix}_", ""): v for k, v in dct.items() if k.startswith(prefix)
         }
     return subdicts
 
@@ -427,11 +401,7 @@ def _make_hashable(o):
     if isinstance(o, (tuple, list)):
         return tuple(((type(o).__name__, _make_hashable(e)) for e in o))
     if isinstance(o, dict):
-        return tuple(
-            sorted(
-                (type(o).__name__, k, _make_hashable(v)) for k, v in o.items()
-            )
-        )
+        return tuple(sorted((type(o).__name__, k, _make_hashable(v)) for k, v in o.items()))
     if isinstance(o, (set, frozenset)):
         return tuple(sorted((type(o).__name__, _make_hashable(e)) for e in o))
     return o
@@ -499,11 +469,7 @@ def make_tuple(tuple_like):
     Returns:
         tuple or list
     """
-    tuple_like = (
-        tuple_like
-        if isinstance(tuple_like, (list, tuple))
-        else (tuple_like, tuple_like)
-    )
+    tuple_like = tuple_like if isinstance(tuple_like, (list, tuple)) else (tuple_like, tuple_like)
     return tuple_like
 
 

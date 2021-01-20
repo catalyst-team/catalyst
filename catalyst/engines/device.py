@@ -30,15 +30,10 @@ class DeviceEngine(IEngine):
         elif isinstance(batch, (tuple, list)):
             return [self.handle_device(tensor) for tensor in batch]
         elif isinstance(batch, dict):
-            return {
-                key: self.handle_device(tensor)
-                for key, tensor in batch.items()
-            }
+            return {key: self.handle_device(tensor) for key, tensor in batch.items()}
         return batch
 
-    def save_checkpoint(
-        self, checkpoint_content: Mapping[str, Any], file: str
-    ):
+    def save_checkpoint(self, checkpoint_content: Mapping[str, Any], file: str):
         torch.save(checkpoint_content, file)
 
     def load_checkpoint(

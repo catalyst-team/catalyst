@@ -46,11 +46,7 @@ class SingleStageExperiment(IExperiment):
 
     @property
     def name(self) -> str:
-        return (
-            "experiment"
-            if self._trial is None
-            else f"experiment_{self._trial.number}"
-        )
+        return "experiment" if self._trial is None else f"experiment_{self._trial.number}"
 
     @property
     def hparams(self) -> Dict:
@@ -71,9 +67,7 @@ class SingleStageExperiment(IExperiment):
             "migrate_callbacks_from_previous_stage": False,
         }
 
-    def get_loaders(
-        self, stage: str, epoch: int = None
-    ) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self, stage: str, epoch: int = None) -> "OrderedDict[str, DataLoader]":
         return self._loaders
 
     def get_model(self, stage: str) -> Model:

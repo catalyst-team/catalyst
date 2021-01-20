@@ -5,7 +5,6 @@ import os
 import shutil
 
 from pytest import mark
-
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
@@ -103,9 +102,7 @@ class LossMinimizationCallback(Callback):
 
     def on_epoch_end(self, runner: "IRunner"):
         print(self.container)
-        assert all(
-            a >= b for a, b in zip(self.container[:-1], self.container[1:])
-        )
+        assert all(a >= b for a, b in zip(self.container[:-1], self.container[1:]))
         self.container = []
 
 
@@ -138,9 +135,7 @@ def run_train_with_experiment_distributed_parallel_device(rank, world_size):
     shutil.rmtree(logdir, ignore_errors=True)
 
 
-def run_train_with_config_experiment_distributed_parallel_device(
-    rank, world_size
-):
+def run_train_with_config_experiment_distributed_parallel_device(rank, world_size):
     logdir = "./test_config_ddp_engine"
     dataset = DummyDataset(10)
     sampler = DistributedSampler(dataset, world_size, rank)
@@ -148,11 +143,7 @@ def run_train_with_config_experiment_distributed_parallel_device(
     runner = SupervisedRunner(device=rank)
     exp = ConfigExperiment(
         config={
-            "model_params": {
-                "model": "DummyModel",
-                "in_features": 4,
-                "out_features": 1,
-            },
+            "model_params": {"model": "DummyModel", "in_features": 4, "out_features": 1,},
             "engine": "ddp",
             "args": {"logdir": logdir},
             "stages": {
@@ -168,9 +159,7 @@ def run_train_with_config_experiment_distributed_parallel_device(
                         #     "callback": "DeviceCheckCallback",
                         #     "assert_device": str(device),
                         # },
-                        "test_loss_minimization": {
-                            "callback": "LossMinimizationCallback"
-                        },
+                        "test_loss_minimization": {"callback": "LossMinimizationCallback"},
                     },
                 },
             },
@@ -192,25 +181,19 @@ def _run_test(fn, world_size):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
 def test_experiment_distributed_parallel_engine_with_cuda():
     _run_test(
-        run_train_with_experiment_distributed_parallel_device,
-        NUM_CUDA_DEVICES,
+        run_train_with_experiment_distributed_parallel_device, NUM_CUDA_DEVICES,
     )
 
 
-@mark.skip(
-    "Need to rewrite runner so all of the DDP initializations will be inside!"
-)
+@mark.skip("Need to rewrite runner so all of the DDP initializations will be inside!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
 def test_config_experiment_distributed_parallel_engine_with_cuda():
     _run_test(
-        run_train_with_config_experiment_distributed_parallel_device,
-        NUM_CUDA_DEVICES,
+        run_train_with_config_experiment_distributed_parallel_device, NUM_CUDA_DEVICES,
     )

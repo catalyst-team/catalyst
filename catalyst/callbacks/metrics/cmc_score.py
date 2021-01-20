@@ -84,16 +84,12 @@ class CMCScoreCallback(Callback):
         gallery_labels: torch.LongTensor,
     ) -> None:
         if query_embeddings.shape[0] > 0:
-            add_indices = self._query_idx + torch.arange(
-                query_embeddings.shape[0]
-            )
+            add_indices = self._query_idx + torch.arange(query_embeddings.shape[0])
             self._query_embeddings[add_indices] = query_embeddings
             self._query_labels[add_indices] = query_labels
             self._query_idx += query_embeddings.shape[0]
         if gallery_embeddings.shape[0] > 0:
-            add_indices = self._gallery_idx + torch.arange(
-                gallery_embeddings.shape[0]
-            )
+            add_indices = self._gallery_idx + torch.arange(gallery_embeddings.shape[0])
             self._gallery_embeddings[add_indices] = gallery_embeddings
             self._gallery_labels[add_indices] = gallery_labels
             self._gallery_idx += gallery_embeddings.shape[0]
@@ -105,9 +101,7 @@ class CMCScoreCallback(Callback):
         query_mask = query_mask.type(TORCH_BOOL)
         gallery_mask = ~query_mask
         query_embeddings = runner.output[self.embeddings_key][query_mask].cpu()
-        gallery_embeddings = runner.output[self.embeddings_key][
-            gallery_mask
-        ].cpu()
+        gallery_embeddings = runner.output[self.embeddings_key][gallery_mask].cpu()
         query_labels = runner.input[self.labels_key][query_mask].cpu()
         gallery_labels = runner.input[self.labels_key][gallery_mask].cpu()
 
@@ -126,9 +120,7 @@ class CMCScoreCallback(Callback):
         self._query_size = dataset.query_size
         self._gallery_size = dataset.gallery_size
         self._query_labels = torch.empty(self._query_size, dtype=torch.long)
-        self._gallery_labels = torch.empty(
-            self._gallery_size, dtype=torch.long
-        )
+        self._gallery_labels = torch.empty(self._gallery_size, dtype=torch.long)
         self._gallery_idx = 0
         self._query_idx = 0
 
@@ -142,9 +134,7 @@ class CMCScoreCallback(Callback):
             self._query_idx == self._query_size
         ), "An error occurred during the accumulation process."
 
-        conformity_matrix = self._gallery_labels == self._query_labels.reshape(
-            -1, 1
-        )
+        conformity_matrix = self._gallery_labels == self._query_labels.reshape(-1, 1)
         for key in self.list_args:
             metric = self._metric_fn(
                 query_embeddings=self._query_embeddings,

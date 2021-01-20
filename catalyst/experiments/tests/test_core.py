@@ -13,12 +13,8 @@ from catalyst.experiments import Experiment
 
 def _test_callbacks(test_callbacks, exp, stage="train"):
     exp_callbacks = exp.get_callbacks(stage)
-    exp_callbacks = OrderedDict(
-        sorted(exp_callbacks.items(), key=lambda t: t[0])
-    )
-    test_callbacks = OrderedDict(
-        sorted(test_callbacks.items(), key=lambda t: t[0])
-    )
+    exp_callbacks = OrderedDict(sorted(exp_callbacks.items(), key=lambda t: t[0]))
+    test_callbacks = OrderedDict(sorted(test_callbacks.items(), key=lambda t: t[0]))
 
     assert exp_callbacks.keys() == test_callbacks.keys()
     cbs = zip(exp_callbacks.values(), test_callbacks.values())

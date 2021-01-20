@@ -25,10 +25,7 @@ if SETTINGS.use_libjpeg_turbo:
             _test_img = jpeg.JPEG(fp.name).decode()
 
     except ImportError as ex:
-        logger.warning(
-            "jpeg4py not available. "
-            "To install jpeg4py, run `pip install jpeg4py`."
-        )
+        logger.warning("jpeg4py not available. " "To install jpeg4py, run `pip install jpeg4py`.")
         raise ex
     except OSError as ex:
         logger.warning(
@@ -69,9 +66,7 @@ def imread(
         rootpath = str(rootpath)
         uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
 
-    if SETTINGS.use_libjpeg_turbo and uri.endswith(
-        ("jpg", "JPG", "jpeg", "JPEG")
-    ):
+    if SETTINGS.use_libjpeg_turbo and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
         img = jpeg.JPEG(uri).decode()
     else:
         # @TODO: add tiff support, currently – jpg and png
@@ -167,10 +162,7 @@ def mimwrite_with_meta(uri, ims, meta, **kwargs):
 
 
 def mask_to_overlay_image(
-    image: np.ndarray,
-    masks: List[np.ndarray],
-    threshold: float = 0,
-    mask_strength: float = 0.5,
+    image: np.ndarray, masks: List[np.ndarray], threshold: float = 0, mask_strength: float = 0.5,
 ) -> np.ndarray:
     """Draws every mask for with some color over image.
 
@@ -193,9 +185,7 @@ def mask_to_overlay_image(
 
     image = np.array(image) / 255.0
     image_with_overlay = image * (1 - mask_strength) + mask * mask_strength
-    image_with_overlay = (
-        (image_with_overlay * 255).clip(0, 255).round().astype(np.uint8)
-    )
+    image_with_overlay = (image_with_overlay * 255).clip(0, 255).round().astype(np.uint8)
 
     return image_with_overlay
 

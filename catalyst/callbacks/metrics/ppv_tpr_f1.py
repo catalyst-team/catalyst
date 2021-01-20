@@ -38,9 +38,7 @@ class PrecisionRecallF1ScoreCallback(MeterMetricsCallback):
         # adjusting num_classes automatically if class_names is not None
         num_classes = num_classes if class_names is None else len(class_names)
 
-        meter_list = [
-            PrecisionRecallF1ScoreMeter(threshold) for _ in range(num_classes)
-        ]
+        meter_list = [PrecisionRecallF1ScoreMeter(threshold) for _ in range(num_classes)]
 
         super().__init__(
             metric_names=["ppv", "tpr", "f1"],

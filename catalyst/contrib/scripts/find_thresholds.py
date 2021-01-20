@@ -35,10 +35,7 @@ _RANK_METRICS = [  # noqa: WPS407
 def build_args(parser):
     """Constructs the command-line arguments."""
     parser.add_argument(
-        "--in-csv",
-        type=Path,
-        help="Path to .csv with labels column",
-        required=True,
+        "--in-csv", type=Path, help="Path to .csv with labels column", required=True,
     )
     parser.add_argument(
         "--in-label-column",
@@ -48,16 +45,10 @@ def build_args(parser):
         default="labels",
     )
     parser.add_argument(
-        "--in-npy",
-        type=Path,
-        help="Path to .npy with class logits",
-        required=True,
+        "--in-npy", type=Path, help="Path to .npy with class logits", required=True,
     )
     parser.add_argument(
-        "--out-thresholds",
-        type=Path,
-        help="Path to save .json with thresholds",
-        required=True,
+        "--out-thresholds", type=Path, help="Path to save .json with thresholds", required=True,
     )
 
     parser.add_argument(
@@ -73,22 +64,12 @@ def build_args(parser):
     #     required=False,
     #     default=None
     # )
+    parser.add_argument("--num-splits", type=int, help="NUM_SPLITS", required=False, default=5)
     parser.add_argument(
-        "--num-splits", type=int, help="NUM_SPLITS", required=False, default=5
+        "--num-repeats", type=int, help="NUM_REPEATS", required=False, default=1,
     )
     parser.add_argument(
-        "--num-repeats",
-        type=int,
-        help="NUM_REPEATS",
-        required=False,
-        default=1,
-    )
-    parser.add_argument(
-        "--num-workers",
-        type=int,
-        help="CPU pool size",
-        required=False,
-        default=1,
+        "--num-workers", type=int, help="CPU pool size", required=False, default=1,
     )
 
     boolean_flag(parser, "verbose", default=False)
@@ -149,16 +130,12 @@ def find_best_threshold(
         y_pred_train, y_pred_test = y_pred[train_index], y_pred[test_index]
         y_true_train, y_true_test = y_true[train_index], y_true[test_index]
 
-        best_threshold = find_best_split_threshold(
-            y_pred_train, y_true_train, metric=metric_fn
-        )
+        best_threshold = find_best_split_threshold(y_pred_train, y_true_train, metric=metric_fn)
         best_predictions = (y_pred_test >= best_threshold).astype(int)
 
         for metric_name in fold_metrics.keys():
             try:
-                metric_value = metrics.__dict__[metric_name](
-                    y_true_test, best_predictions
-                )
+                metric_value = metrics.__dict__[metric_name](y_true_test, best_predictions)
             except ValueError:
                 metric_value = 0.0
 
@@ -197,9 +174,7 @@ def optimize_thresholds(
     predictions_list, labels_list = [], []
     for class_index in classes:
         predictions_list.append(predictions_copy[:, class_index])
-        labels_list.append(
-            get_binary_labels(labels, class_index, ignore_label=ignore_label)
-        )
+        labels_list.append(get_binary_labels(labels, class_index, ignore_label=ignore_label))
 
     results = tqdm_parallel_imap(
         find_best_threshold_wrapper,
@@ -223,9 +198,7 @@ def optimize_thresholds(
 
 
 def get_model_confidences(
-    confidences: np.ndarray,
-    thresholds: Dict[int, float] = None,
-    classes: List[int] = None,
+    confidences: np.ndarray, thresholds: Dict[int, float] = None, classes: List[int] = None,
 ) -> np.ndarray:
     """
     @TODO: Docs (add description). Contribution is welcome
@@ -308,10 +281,7 @@ def main(args, _=None):
 
     class_metrics["_mean"] = {
         key_metric: np.mean(
-            [
-                class_metrics[key_class][key_metric]
-                for key_class in class_metrics.keys()
-            ]
+            [class_metrics[key_class][key_metric] for key_class in class_metrics.keys()]
         )
         for key_metric in _BINARY_PER_CLASS_METRICS
     }
@@ -330,20 +300,13 @@ def main(args, _=None):
         thresholds_used = class_thresholds_option is not None
 
         confidences = get_model_confidences(
-            confidences=predictions,
-            thresholds=class_thresholds_option,
-            classes=classes,
+            confidences=predictions, thresholds=class_thresholds_option, classes=classes,
         )
 
         rank_metrics = {
-            key: metrics.__dict__[key](labels_scores, confidences)
-            for key in _RANK_METRICS.copy()
+            key: metrics.__dict__[key](labels_scores, confidences) for key in _RANK_METRICS.copy()
         }
-        postfix = (
-            ".rank.metrics"
-            if not thresholds_used
-            else ".rank.metrics.thresholds"
-        )
+        postfix = ".rank.metrics" if not thresholds_used else ".rank.metrics.thresholds"
         _save_json(rank_metrics, args.out_thresholds, suffix=postfix)
 
         coverage_metrics = score_model_coverage(confidences, labels)
@@ -355,17 +318,9 @@ def main(args, _=None):
         _save_json(coverage_metrics, args.out_thresholds, suffix=postfix)
 
         if args.verbose:
-            print(
-                "RANK METRICS"
-                if not thresholds_used
-                else "RANK METRICS WITH THRESHOLD"
-            )
+            print("RANK METRICS" if not thresholds_used else "RANK METRICS WITH THRESHOLD")
             pprint(rank_metrics)
-            print(
-                "COVERAGE METRICS"
-                if not thresholds_used
-                else "COVERAGE METRICS WITH THRESHOLD"
-            )
+            print("COVERAGE METRICS" if not thresholds_used else "COVERAGE METRICS WITH THRESHOLD")
             pprint(coverage_metrics)
 
 

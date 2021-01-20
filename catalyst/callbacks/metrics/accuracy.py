@@ -48,9 +48,7 @@ class AccuracyCallback(BatchMetricCallback):
             ``catalyst.callbacks.metric.BatchMetricCallback`` and
             ``catalyst.metrics.accuracy.accuracy`` docs
         """
-        topk_args = (
-            topk_args or accuracy_args or get_default_topk_args(num_classes)
-        )
+        topk_args = topk_args or accuracy_args or get_default_topk_args(num_classes)
 
         super().__init__(
             prefix=prefix,

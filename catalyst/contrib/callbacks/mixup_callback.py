@@ -1,7 +1,6 @@
 from typing import List
 
 import numpy as np
-
 import torch
 
 from catalyst.callbacks.criterion import CriterionCallback
@@ -45,9 +44,7 @@ class MixupCallback(CriterionCallback):
                 for validation.
         """
         assert isinstance(input_key, str) and isinstance(output_key, str)
-        assert (
-            len(fields) > 0
-        ), "At least one field for MixupCallback is required"
+        assert len(fields) > 0, "At least one field for MixupCallback is required"
         assert alpha >= 0, "alpha must be>=0"
 
         super().__init__(input_key=input_key, output_key=output_key, **kwargs)
@@ -67,9 +64,7 @@ class MixupCallback(CriterionCallback):
         y_a = runner.input[self.input_key]
         y_b = runner.input[self.input_key][self.index]
 
-        loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(
-            pred, y_b
-        )
+        loss = self.lam * criterion(pred, y_a) + (1 - self.lam) * criterion(pred, y_b)
         return loss
 
     def on_loader_start(self, runner: "IRunner"):
@@ -99,8 +94,7 @@ class MixupCallback(CriterionCallback):
 
         for f in self.fields:
             runner.input[f] = (
-                self.lam * runner.input[f]
-                + (1 - self.lam) * runner.input[f][self.index]
+                self.lam * runner.input[f] + (1 - self.lam) * runner.input[f][self.index]
             )
 
 

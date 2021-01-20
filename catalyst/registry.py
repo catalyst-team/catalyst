@@ -46,10 +46,7 @@ def _transforms_loader(r: registry.Registry):
         r.add_from_module(t, prefix=["catalyst.", "C."])
     except ImportError as ex:
         if SETTINGS.kornia_required:
-            logger.warning(
-                "kornia not available, to install kornia, "
-                "run `pip install kornia`."
-            )
+            logger.warning("kornia not available, to install kornia, " "run `pip install kornia`.")
             raise ex
     except UnsupportedNodeError as ex:
         logger.warning(
@@ -67,11 +64,7 @@ REGISTRY.late_add(_transforms_loader)
 def _samplers_loader(r: registry.Registry):
     from torch.utils.data import sampler as s
 
-    factories = {
-        k: v
-        for k, v in s.__dict__.items()
-        if "Sampler" in k and k != "Sampler"
-    }
+    factories = {k: v for k, v in s.__dict__.items() if "Sampler" in k and k != "Sampler"}
     r.add(**factories)
     from catalyst.data import sampler
 

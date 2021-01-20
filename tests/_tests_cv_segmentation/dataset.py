@@ -2,7 +2,6 @@ from typing import List
 from pathlib import Path
 
 from skimage.io import imread as gif_imread
-
 from torch.utils.data import Dataset
 
 from catalyst import utils
@@ -13,9 +12,7 @@ class SegmentationDataset(Dataset):
     Returns a dict with ``image``, ``mask`` and ``filename`` keys
     """
 
-    def __init__(
-        self, images: List[Path], masks: List[Path] = None, transforms=None
-    ) -> None:
+    def __init__(self, images: List[Path], masks: List[Path] = None, transforms=None) -> None:
         """
         Segmentation dataset.
 

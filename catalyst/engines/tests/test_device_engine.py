@@ -3,7 +3,6 @@
 import shutil
 
 from pytest import mark
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -95,9 +94,7 @@ class LossMinimizationCallback(Callback):
 
     def on_epoch_end(self, runner: "IRunner"):
         print(self.container)
-        assert all(
-            a >= b for a, b in zip(self.container[:-1], self.container[1:])
-        )
+        assert all(a >= b for a, b in zip(self.container[:-1], self.container[1:]))
         self.container = []
 
 
@@ -128,11 +125,7 @@ def run_train_with_config_experiment_device(device):
     logdir = f"./test_{device}_engine"
     exp = ConfigExperiment(
         config={
-            "model_params": {
-                "model": "DummyModel",
-                "in_features": 4,
-                "out_features": 1,
-            },
+            "model_params": {"model": "DummyModel", "in_features": 4, "out_features": 1,},
             "engine": str(device),
             "args": {"logdir": logdir},
             "stages": {
@@ -148,9 +141,7 @@ def run_train_with_config_experiment_device(device):
                             "callback": "DeviceCheckCallback",
                             "assert_device": str(device),
                         },
-                        "test_loss_minimization": {
-                            "callback": "LossMinimizationCallback",
-                        },
+                        "test_loss_minimization": {"callback": "LossMinimizationCallback",},
                     },
                 },
             },
@@ -183,16 +174,14 @@ def test_config_experiment_engine_with_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
 def test_experiment_engine_with_another_cuda_device():
     run_train_with_experiment_device("cuda:1")
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
 def test_config_experiment_engine_with_another_cuda_device():
     run_train_with_config_experiment_device("cuda:1")

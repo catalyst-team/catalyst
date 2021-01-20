@@ -6,14 +6,7 @@ from torch import nn
 import torch.distributed
 
 from catalyst.settings import IS_XLA_AVAILABLE
-from catalyst.typing import (
-    Criterion,
-    Device,
-    Model,
-    Optimizer,
-    RunnerModel,
-    Scheduler,
-)
+from catalyst.typing import Criterion, Device, Model, Optimizer, RunnerModel, Scheduler
 from catalyst.utils.distributed import (
     check_amp_available,
     check_apex_available,
@@ -31,9 +24,7 @@ def _patch_forward(model):
 
     input_caster_lambda = (
         lambda tensor: tensor.to(
-            apex.amp._amp_state.opt_properties.options[  # noqa: WPS437
-                "cast_model_type"
-            ]
+            apex.amp._amp_state.opt_properties.options["cast_model_type"]  # noqa: WPS437
         )
         if tensor.is_floating_point()
         else tensor
@@ -57,12 +48,8 @@ def _patch_forward(model):
     ):
         return apex.amp._initialize.applier(  # noqa: WPS437
             old_fwd(
-                *apex.amp._initialize.applier(  # noqa: WPS437
-                    args, input_caster
-                ),
-                **apex.amp._initialize.applier(  # noqa: WPS437
-                    kwargs, input_caster
-                ),
+                *apex.amp._initialize.applier(args, input_caster),  # noqa: WPS437
+                **apex.amp._initialize.applier(kwargs, input_caster),  # noqa: WPS437
             ),
             output_caster,
         )
@@ -139,9 +126,7 @@ def process_components(
     elif isinstance(device, str):
         device = torch.device(device)
 
-    is_apex_enabled = (
-        engine_params.get("apex", False) and check_apex_available()
-    )
+    is_apex_enabled = engine_params.get("apex", False) and check_apex_available()
 
     is_amp_enabled = engine_params.get("amp", False) and check_amp_available()
 
@@ -156,9 +141,7 @@ def process_components(
         pass
     # distributed data parallel run (ddp) (with apex support)
     elif get_rank() >= 0:
-        assert isinstance(
-            model, nn.Module
-        ), "Distributed training is not available for KV model"
+        assert isinstance(model, nn.Module), "Distributed training is not available for KV model"
 
         local_rank = engine_params.pop("local_rank", 0) or 0
         device = f"cuda:{local_rank}"
@@ -172,9 +155,7 @@ def process_components(
             if syncbn:
                 model = apex.parallel.convert_syncbn_model(model)
 
-            model, optimizer = initialize_apex(
-                model, optimizer, **engine_params
-            )
+            model, optimizer = initialize_apex(model, optimizer, **engine_params)
             model = apex.parallel.DistributedDataParallel(model)
         else:
             if syncbn:
@@ -186,15 +167,11 @@ def process_components(
     # data parallel run (dp) (with apex support)
     else:
         is_data_parallel = (
-            torch.cuda.device_count() > 1
-            and device.type != "cpu"
-            and device.index is None
+            torch.cuda.device_count() > 1 and device.type != "cpu" and device.index is None
         )
 
         if is_apex_enabled and not is_data_parallel:
-            model, optimizer = initialize_apex(
-                model, optimizer, **engine_params
-            )
+            model, optimizer = initialize_apex(model, optimizer, **engine_params)
 
         elif not is_apex_enabled and is_data_parallel:
             if isinstance(model, nn.Module):
@@ -205,9 +182,7 @@ def process_components(
                 raise NotImplementedError()
 
         elif is_apex_enabled and is_data_parallel:
-            model, optimizer = _wrap_into_data_parallel_with_apex(
-                model, optimizer, engine_params
-            )
+            model, optimizer = _wrap_into_data_parallel_with_apex(model, optimizer, engine_params)
 
     model: Model = maybe_recursive_call(model, "to", device=device)
 

@@ -333,26 +333,16 @@ class OptimizerCallback(IOptimizerCallback):
 
     def on_stage_start(self, runner: "IRunner") -> None:
         self.model = get_attr(runner, key="model", inner_key=self.model_key)
-        self.optimizer = get_attr(
-            runner, key="optimizer", inner_key=self.optimizer_key
-        )
-        self.criterion = get_attr(
-            runner, key="criterion", inner_key=self.criterion_key
-        )
+        self.optimizer = get_attr(runner, key="optimizer", inner_key=self.optimizer_key)
+        self.criterion = get_attr(runner, key="criterion", inner_key=self.criterion_key)
         # assert self.optimizer is not None
 
     def on_batch_end(self, runner: "IRunner"):
         if runner.is_train_loader:
             loss = runner.batch_metrics[self.metric_key]
-            runner.engine.zero_grad(
-                self.model, self.criterion, self.optimizer, loss
-            )
-            runner.engine.backward_loss(
-                self.model, self.criterion, self.optimizer, loss
-            )
-            runner.engine.optimizer_step(
-                self.model, self.criterion, self.optimizer, loss
-            )
+            runner.engine.zero_grad(self.model, self.criterion, self.optimizer, loss)
+            runner.engine.backward_loss(self.model, self.criterion, self.optimizer, loss)
+            runner.engine.optimizer_step(self.model, self.criterion, self.optimizer, loss)
 
             # runner.batch_metrics.update({"lr": runner.optimizer.lr})
 

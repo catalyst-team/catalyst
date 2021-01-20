@@ -22,9 +22,7 @@ def build_args(parser):
         action="store_true",
         help="use interactive wizard to setup Catalyst pipeline",
     )
-    parser.add_argument(
-        "-o", "--out-dir", type=Path, default="./", help="path where to init"
-    )
+    parser.add_argument("-o", "--out-dir", type=Path, default="./", help="path where to init")
 
     return parser
 

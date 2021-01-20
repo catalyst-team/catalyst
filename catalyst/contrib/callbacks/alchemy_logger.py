@@ -5,12 +5,7 @@ from typing import Dict, List, TYPE_CHECKING
 from alchemy import Logger
 
 from catalyst import utils
-from catalyst.core.callback import (
-    Callback,
-    CallbackNode,
-    CallbackOrder,
-    CallbackScope,
-)
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, CallbackScope
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -63,9 +58,7 @@ class AlchemyLogger(Callback):
             log_on_epoch_end: logs per-epoch metrics if set True
         """
         super().__init__(
-            order=CallbackOrder.logging,
-            node=CallbackNode.master,
-            scope=CallbackScope.experiment,
+            order=CallbackOrder.logging, node=CallbackNode.master, scope=CallbackScope.experiment,
         )
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
@@ -89,9 +82,7 @@ class AlchemyLogger(Callback):
         """@TODO: Docs. Contribution is welcome."""
         self.logger.close()
 
-    def _log_metrics(
-        self, metrics: Dict[str, float], step: int, mode: str, suffix=""
-    ):
+    def _log_metrics(self, metrics: Dict[str, float], step: int, mode: str, suffix=""):
         if self.metrics_to_log is None:
             metrics_to_log = sorted(metrics.keys())
         else:
@@ -123,19 +114,14 @@ class AlchemyLogger(Callback):
             mode = runner.loader_key
             metrics = runner.loader_metrics
             self._log_metrics(
-                metrics=metrics,
-                step=runner.global_epoch,
-                mode=mode,
-                suffix=self.epoch_log_suffix,
+                metrics=metrics, step=runner.global_epoch, mode=mode, suffix=self.epoch_log_suffix,
             )
 
     def on_epoch_end(self, runner: "IRunner"):
         """Translate epoch metrics to Alchemy."""
         extra_mode = "_base"
         splitted_epoch_metrics = utils.split_dict_to_subdicts(
-            dct=runner.epoch_metrics,
-            prefixes=list(runner.loaders.keys()),
-            extra_key=extra_mode,
+            dct=runner.epoch_metrics, prefixes=list(runner.loaders.keys()), extra_key=extra_mode,
         )
 
         if self.log_on_epoch_end:

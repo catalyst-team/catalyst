@@ -1,7 +1,6 @@
 from functools import partial
 
 import numpy as np
-
 import torch
 
 
@@ -55,9 +54,7 @@ def dice(
 
     num_dims = len(outputs.shape)
     assert num_dims > 2, "shape mismatch, please check the docs for more info"
-    assert (
-        outputs.shape == targets.shape
-    ), "shape mismatch, please check the docs for more info"
+    assert outputs.shape == targets.shape, "shape mismatch, please check the docs for more info"
     dims = list(range(num_dims))
     # support negative index
     if class_dim < 0:
@@ -71,18 +68,14 @@ def dice(
     # makes sure that if I and U are both 0, than Dice == 1
     # and if U != 0 and I == 0 the eps term in numerator is zeroed out
     # i.e. (0 + eps) / (U - 0 + eps) doesn't happen
-    dice_score = (2 * intersection + eps * (union == 0).float()) / (
-        union + eps
-    )
+    dice_score = (2 * intersection + eps * (union == 0).float()) / (union + eps)
 
     return dice_score
 
 
 # @TODO: remove
 def calculate_dice(
-    true_positives: np.array,
-    false_positives: np.array,
-    false_negatives: np.array,
+    true_positives: np.array, false_positives: np.array, false_negatives: np.array,
 ) -> np.array:
     """
     Calculate list of Dice coefficients.

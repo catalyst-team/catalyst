@@ -20,12 +20,8 @@ class ClassifyAE(nn.Module):
         Docs.
         """
         super().__init__()
-        self.encoder = nn.Sequential(
-            nn.Linear(in_features, hid_features), nn.Tanh()
-        )
-        self.decoder = nn.Sequential(
-            nn.Linear(hid_features, in_features), nn.Sigmoid()
-        )
+        self.encoder = nn.Sequential(nn.Linear(in_features, hid_features), nn.Tanh())
+        self.decoder = nn.Sequential(nn.Linear(hid_features, in_features), nn.Sigmoid())
         self.clf = nn.Linear(hid_features, out_features)
 
     def forward(self, x):
@@ -53,9 +49,7 @@ class CustomRunner(dl.Runner):
         loss_clf = F.cross_entropy(y_hat, y)
         loss_ae = F.mse_loss(x_, x)
         loss = loss_clf + loss_ae
-        accuracy01, accuracy03, accuracy05 = metrics.accuracy(
-            y_hat, y, topk=(1, 3, 5)
-        )
+        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
 
         self.batch_metrics = {
             "loss_clf": loss_clf,
@@ -76,9 +70,7 @@ def datasets_fn():
     """
     Docs.
     """
-    dataset = MNIST(
-        "./data", train=False, download=True, transform=ToTensor(),
-    )
+    dataset = MNIST("./data", train=False, download=True, transform=ToTensor(),)
     return {"train": dataset, "valid": dataset}
 
 
@@ -94,11 +86,7 @@ def train():
     runner.train(
         model=model,
         optimizer=optimizer,
-        datasets={
-            "batch_size": 32,
-            "num_workers": 1,
-            "get_datasets_fn": datasets_fn,
-        },
+        datasets={"batch_size": 32, "num_workers": 1, "get_datasets_fn": datasets_fn,},
         logdir="./logs/distributed_ae",
         num_epochs=8,
         verbose=True,

@@ -23,17 +23,13 @@ class SimpleExperiment(ConfigExperiment):
                 "./data",
                 train=False,
                 download=True,
-                transform=SimpleExperiment.get_transforms(
-                    stage=stage, mode="train"
-                ),
+                transform=SimpleExperiment.get_transforms(stage=stage, mode="train"),
             )
             testset = MNIST(
                 "./data",
                 train=False,
                 download=True,
-                transform=SimpleExperiment.get_transforms(
-                    stage=stage, mode="valid"
-                ),
+                transform=SimpleExperiment.get_transforms(stage=stage, mode="valid"),
             )
 
             datasets["train"] = trainset
@@ -43,9 +39,7 @@ class SimpleExperiment(ConfigExperiment):
                 "./data",
                 train=False,
                 download=True,
-                transform=SimpleExperiment.get_transforms(
-                    stage=stage, mode="valid"
-                ),
+                transform=SimpleExperiment.get_transforms(stage=stage, mode="valid"),
             )
             datasets["infer"] = testset
 

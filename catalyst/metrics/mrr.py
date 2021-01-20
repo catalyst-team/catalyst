@@ -5,9 +5,7 @@ import torch
 from catalyst.metrics.functional import process_recsys_components
 
 
-def reciprocal_rank(
-    outputs: torch.Tensor, targets: torch.Tensor, k: int
-) -> torch.Tensor:
+def reciprocal_rank(outputs: torch.Tensor, targets: torch.Tensor, k: int) -> torch.Tensor:
     """
     Calculate the Reciprocal Rank (MRR)
     score given model outputs and targets
@@ -57,9 +55,7 @@ def reciprocal_rank(
         tensor([[0.5000], [1.0000]])
     """
     k = min(outputs.size(1), k)
-    targets_sort_by_outputs_at_k = process_recsys_components(outputs, targets)[
-        :, :k
-    ]
+    targets_sort_by_outputs_at_k = process_recsys_components(outputs, targets)[:, :k]
     values, indices = torch.max(targets_sort_by_outputs_at_k, dim=1)
     indices = indices.type_as(values).unsqueeze(dim=0).t()
     mrr_score = torch.tensor(1.0) / (indices + torch.tensor(1.0))
@@ -69,9 +65,7 @@ def reciprocal_rank(
     return mrr_score
 
 
-def mrr(
-    outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]
-) -> List[torch.Tensor]:
+def mrr(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> List[torch.Tensor]:
     """
     Calculate the Mean Reciprocal Rank (MRR)
     score given model outputs and targets

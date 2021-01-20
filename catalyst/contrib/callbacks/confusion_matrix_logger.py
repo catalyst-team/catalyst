@@ -3,10 +3,7 @@ from typing import Dict, List, TYPE_CHECKING
 import torch
 import torch.distributed  # noqa: WPS301
 
-from catalyst.contrib.utils.visualization import (
-    plot_confusion_matrix,
-    render_figure_to_tensor,
-)
+from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_tensor
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.tools.meters.confusionmeter import ConfusionMeter
 
@@ -54,9 +51,7 @@ class ConfusionMatrixCallback(Callback):
         self._plot_params = plot_params or {}
 
         self.class_names = class_names
-        self.num_classes = (
-            num_classes if class_names is None else len(class_names)
-        )
+        self.num_classes = num_classes if class_names is None else len(class_names)
 
         assert self.num_classes is not None
         self._reset_stats()
@@ -71,9 +66,7 @@ class ConfusionMatrixCallback(Callback):
         confusion_matrix = self.confusion_matrix.value()
         return confusion_matrix
 
-    def _plot_confusion_matrix(
-        self, logger, epoch, confusion_matrix, class_names=None
-    ):
+    def _plot_confusion_matrix(self, logger, epoch, confusion_matrix, class_names=None):
         fig = plot_confusion_matrix(
             confusion_matrix,
             class_names=class_names,
@@ -99,8 +92,7 @@ class ConfusionMatrixCallback(Callback):
             runner: current runner
         """
         self._add_to_stats(
-            runner.output[self.output_key].detach(),
-            runner.input[self.input_key].detach(),
+            runner.output[self.output_key].detach(), runner.input[self.input_key].detach(),
         )
 
     def on_loader_end(self, runner: "IRunner"):
@@ -109,9 +101,7 @@ class ConfusionMatrixCallback(Callback):
         Args:
             runner: current runner
         """
-        class_names = self.class_names or [
-            str(i) for i in range(self.num_classes)
-        ]
+        class_names = self.class_names or [str(i) for i in range(self.num_classes)]
         confusion_matrix = self._compute_confusion_matrix()
 
         if runner.distributed_rank >= 0:

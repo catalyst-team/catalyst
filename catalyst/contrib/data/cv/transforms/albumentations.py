@@ -1,7 +1,6 @@
-import numpy as np
-
 from albumentations import ImageOnlyTransform
 from albumentations.pytorch import ToTensorV2
+import numpy as np
 import torch
 
 from catalyst.contrib.utils.cv.tensor import tensor_to_ndimage
@@ -36,9 +35,7 @@ class TensorToImage(ImageOnlyTransform):
             img = img.unsqueeze(0)
 
         return tensor_to_ndimage(
-            img,
-            denormalize=self.denormalize,
-            move_channels_dim=self.move_channels_dim,
+            img, denormalize=self.denormalize, move_channels_dim=self.move_channels_dim,
         )
 
 
@@ -46,10 +43,7 @@ class ImageToTensor(ToTensorV2):
     """Casts ``numpy.array`` to ``torch.tensor``."""
 
     def __init__(
-        self,
-        move_channels_dim: bool = True,
-        always_apply: bool = False,
-        p: float = 1.0,
+        self, move_channels_dim: bool = True, always_apply: bool = False, p: float = 1.0,
     ):
         """
         Args:

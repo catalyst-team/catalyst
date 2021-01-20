@@ -38,9 +38,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         """Initialize DDP variables and processes."""
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
-        dist.init_process_group(
-            self.backend, rank=self.device, world_size=self.world_size
-        )
+        dist.init_process_group(self.backend, rank=self.device, world_size=self.world_size)
 
     def cleanup(self):
         dist.destroy_process_group()

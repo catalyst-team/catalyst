@@ -22,9 +22,7 @@ def cmc_score_count(
     position_matrix = torch.argsort(perm_matrix)
     conformity_matrix = conformity_matrix.type(TORCH_BOOL)
 
-    position_matrix[~conformity_matrix] = (
-        topk + 1
-    )  # value large enough not to be counted
+    position_matrix[~conformity_matrix] = topk + 1  # value large enough not to be counted
 
     closest = position_matrix.min(dim=1)[0]
     k_mask = (closest < topk).type(torch.float)

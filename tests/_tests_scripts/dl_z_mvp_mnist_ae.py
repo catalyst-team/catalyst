@@ -14,12 +14,8 @@ from catalyst.contrib.datasets import MNIST
 class ClassifyAE(torch.nn.Module):
     def __init__(self, in_features, hid_features, out_features):
         super().__init__()
-        self.encoder = nn.Sequential(
-            nn.Linear(in_features, hid_features), nn.Tanh()
-        )
-        self.decoder = nn.Sequential(
-            nn.Linear(hid_features, in_features), nn.Sigmoid()
-        )
+        self.encoder = nn.Sequential(nn.Linear(in_features, hid_features), nn.Tanh())
+        self.decoder = nn.Sequential(nn.Linear(hid_features, in_features), nn.Sigmoid())
         self.clf = nn.Linear(hid_features, out_features)
 
     def forward(self, x):
@@ -37,9 +33,7 @@ class CustomRunner(dl.Runner):
         loss_clf = F.cross_entropy(y_hat, y)
         loss_ae = F.mse_loss(x_, x)
         loss = loss_clf + loss_ae
-        accuracy01, accuracy03, accuracy05 = metrics.accuracy(
-            y_hat, y, topk=(1, 3, 5)
-        )
+        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
 
         self.batch_metrics = {
             "loss_clf": loss_clf,
@@ -62,22 +56,16 @@ def main():
 
     loaders = {
         "train": DataLoader(
-            MNIST("./data", train=False, download=True, transform=ToTensor(),),
-            batch_size=32,
+            MNIST("./data", train=False, download=True, transform=ToTensor(),), batch_size=32,
         ),
         "valid": DataLoader(
-            MNIST("./data", train=False, download=True, transform=ToTensor(),),
-            batch_size=32,
+            MNIST("./data", train=False, download=True, transform=ToTensor(),), batch_size=32,
         ),
     }
 
     runner = CustomRunner()
     runner.train(
-        model=model,
-        optimizer=optimizer,
-        loaders=loaders,
-        verbose=True,
-        check=True,
+        model=model, optimizer=optimizer, loaders=loaders, verbose=True, check=True,
     )
 
 

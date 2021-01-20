@@ -73,23 +73,20 @@ from catalyst.core.runner import IRunner
 from catalyst.metrics.misc import AverageMetric
 
 
-class ISchedulerCallback(Callback):
+class ICriterionCallback(Callback):
     """Criterion callback interface, abstraction over scheduler step."""
 
     pass
 
 
-class CriterionCallback(ISchedulerCallback):
+class CriterionCallback(ICriterionCallback):
     def __init__(
-        self,
-        metric_key: str = None,
-        outputs_key: str = None,
-        targets_key: str = None,
+        self, metric_key: str = None, output_key: str = None, target_key: str = None,
     ):
         super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
         self.metric_key = metric_key
-        self.outputs_key = outputs_key
-        self.targets_key = targets_key
+        self.output_key = output_key
+        self.target_key = target_key
         self.average_metric = AverageMetric()
 
     def on_loader_start(self, runner: "IRunner") -> None:
@@ -97,8 +94,8 @@ class CriterionCallback(ISchedulerCallback):
 
     def on_batch_end(self, runner: "IRunner"):
         outputs, targets = (
-            runner.batch[self.outputs_key],
-            runner.batch[self.targets_key],
+            runner.batch[self.output_key],
+            runner.batch[self.target_key],
         )
         outputs, targets = (
             runner.engine.sync_tensor(outputs),

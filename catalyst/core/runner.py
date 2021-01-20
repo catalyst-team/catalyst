@@ -10,10 +10,7 @@ from torch.utils.data import DataLoader, DistributedSampler
 from catalyst.core.callback import Callback, CallbackScope, ICallback
 from catalyst.core.engine import IEngine
 from catalyst.core.experiment import IExperiment
-from catalyst.core.functional import (
-    filter_callbacks_by_node,
-    sort_callbacks_by_order,
-)
+from catalyst.core.functional import filter_callbacks_by_node, sort_callbacks_by_order
 from catalyst.core.logger import ILogger
 from catalyst.core.trial import ITrial
 from catalyst.typing import (
@@ -469,15 +466,9 @@ class IStageBasedRunner(IRunner):
             self.scheduler,
         ) = self.engine.init_components(
             model_fn=model_fn,
-            criterion_fn=partial(
-                self.experiment.get_criterion, stage=self.stage_key
-            ),
-            optimizer_fn=partial(
-                self.experiment.get_optimizer, stage=self.stage_key
-            ),
-            scheduler_fn=partial(
-                self.experiment.get_scheduler, stage=self.stage_key
-            ),
+            criterion_fn=partial(self.experiment.get_criterion, stage=self.stage_key),
+            optimizer_fn=partial(self.experiment.get_optimizer, stage=self.stage_key),
+            scheduler_fn=partial(self.experiment.get_scheduler, stage=self.stage_key),
         )
 
         # @TODO: we could refactor here
@@ -507,9 +498,7 @@ class IStageBasedRunner(IRunner):
         assert self.loaders is not None
         for loader_key, loader in self.loaders.items():
             if len(loader) == 0:
-                raise RunnerException(
-                    f"DataLoader with name {loader_key} is empty."
-                )
+                raise RunnerException(f"DataLoader with name {loader_key} is empty.")
 
     def on_loader_start(self, runner: "IRunner"):
         """Event handler for loader start.
@@ -523,9 +512,7 @@ class IStageBasedRunner(IRunner):
         super().on_loader_start(runner)
         self.loader_batch_len = len(self.loader)
         if self.loader_batch_len == 0:
-            raise NotImplementedError(
-                f"DataLoader with name {self.loader_key} is empty."
-            )
+            raise NotImplementedError(f"DataLoader with name {self.loader_key} is empty.")
 
 
 __all__ = ["IRunner", "IStageBasedRunner", "RunnerException"]

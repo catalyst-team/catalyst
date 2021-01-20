@@ -42,9 +42,7 @@ class OptunaPruningCallback(Callback):
     Config API is supported through `catalyst-dl tune` command.
     """
 
-    def __init__(
-        self, loader_key: str, metric_key: str, trial: optuna.Trial = None
-    ):
+    def __init__(self, loader_key: str, metric_key: str, trial: optuna.Trial = None):
         """
         This callback can be used for early stopping (pruning)
         unpromising runs.
@@ -69,11 +67,7 @@ class OptunaPruningCallback(Callback):
             NotImplementedError: if no Optuna trial was found on stage start.
         """
         trial = runner.trial
-        if (
-            self.trial is None
-            and trial is not None
-            and isinstance(trial, optuna.Trial)
-        ):
+        if self.trial is None and trial is not None and isinstance(trial, optuna.Trial):
             self.trial = trial
 
         if self.trial is None:
@@ -94,9 +88,7 @@ class OptunaPruningCallback(Callback):
         metric_value = runner.epoch_metrics[self.loader_key][self.metric_key]
         self.trial.report(metric_value, step=runner.stage_epoch_step)
         if self.trial.should_prune():
-            message = "Trial was pruned at epoch {}.".format(
-                runner.stage_epoch_step
-            )
+            message = "Trial was pruned at epoch {}.".format(runner.stage_epoch_step)
             raise optuna.TrialPruned(message)
 
 

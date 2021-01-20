@@ -9,10 +9,7 @@ from catalyst.contrib.utils.torch_extra import (
 )
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.metrics.dice import calculate_dice, dice
-from catalyst.metrics.functional import (
-    wrap_class_metric2dict,
-    wrap_metric_fn_with_activation,
-)
+from catalyst.metrics.functional import wrap_class_metric2dict, wrap_metric_fn_with_activation
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -51,12 +48,8 @@ class DiceCallback(BatchMetricCallback):
             ``catalyst.callbacks.metric.BatchMetricCallback`` and
             ``catalyst.metrics.dice.dice`` docs
         """
-        metric_fn = wrap_metric_fn_with_activation(
-            metric_fn=dice, activation=activation
-        )
-        metric_fn = wrap_class_metric2dict(
-            metric_fn, per_class=per_class, class_args=class_args
-        )
+        metric_fn = wrap_metric_fn_with_activation(metric_fn=dice, activation=activation)
+        metric_fn = wrap_class_metric2dict(metric_fn, per_class=per_class, class_args=class_args)
         super().__init__(
             prefix=prefix,
             metric_fn=metric_fn,
@@ -112,9 +105,7 @@ class MulticlassDiceMetricCallback(Callback):
         outputs = runner.output[self.output_key]
         targets = runner.input[self.input_key]
 
-        confusion_matrix = calculate_confusion_matrix_from_tensors(
-            outputs, targets
-        )
+        confusion_matrix = calculate_confusion_matrix_from_tensors(outputs, targets)
 
         if self.confusion_matrix is None:
             self.confusion_matrix = confusion_matrix
@@ -133,13 +124,9 @@ class MulticlassDiceMetricCallback(Callback):
 
         # logging the dice scores in the state
         for i, dice_score in enumerate(dice_scores):
-            if isinstance(self.class_names, dict) and i not in list(
-                self.class_names.keys()
-            ):
+            if isinstance(self.class_names, dict) and i not in list(self.class_names.keys()):
                 continue
-            postfix = (
-                self.class_names[i] if self.class_names is not None else str(i)
-            )
+            postfix = self.class_names[i] if self.class_names is not None else str(i)
 
             runner.loader_metrics[f"{self.prefix}_{postfix}"] = dice_score
 

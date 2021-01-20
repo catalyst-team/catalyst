@@ -2,8 +2,6 @@ from typing import Any, Dict
 from abc import ABC, abstractmethod
 
 import numpy as np
-from sklearn.metrics import roc_auc_score
-
 import torch
 
 from catalyst.metrics.accuracy import accuracy
@@ -90,7 +88,7 @@ class ILoaderMetric(IMetric):
     """Interface for all Metrics."""
 
     @abstractmethod
-    def reset(self, loader_batch_len) -> None:
+    def reset(self, batch_len, sample_len) -> None:
         """Resets the metric to it's initial state.
 
         By default, this is called at the start of each loader
@@ -131,12 +129,10 @@ class AverageMetric(IMetric):
             self.mean_old = self.mean
             self.m_s = 0.0
         else:
-            self.mean = self.mean_old + (
-                value - self.mean_old
-            ) * num_samples / float(self.num_samples)
-            self.m_s += (
-                (value - self.mean_old) * (value - self.mean) * num_samples
+            self.mean = self.mean_old + (value - self.mean_old) * num_samples / float(
+                self.num_samples
             )
+            self.m_s += (value - self.mean_old) * (value - self.mean) * num_samples
             self.mean_old = self.mean
             self.std = np.sqrt(self.m_s / (self.num_samples - 1.0))
 
@@ -154,7 +150,7 @@ class AccuracyMetric(AverageMetric):
 
     def compute_key_value(self) -> Dict[str, float]:
         mean, std = super().compute()
-        return {"accuracy_mean": mean, "accuracy_std": std}
+        return {"accuracy": mean, "accuracy/std": std}
 
 
 class AUCMetric(IMetric):
@@ -171,11 +167,14 @@ class AUCMetric(IMetric):
         self.scores.append(scores.cpu().detach())
         self.targets.append(targets.cpu().detach())
 
-    def compute(self) -> float:
+    def compute(self) -> Any:
         targets = torch.cat(self.targets)
         scores = torch.cat(self.scores)
-        score = roc_auc_score(y_true=targets, y_score=scores)
+        score = auc(outputs=scores, targets=targets)
         return score
 
     def compute_key_value(self) -> Dict[str, float]:
-        return {"auc": self.compute()}
+        per_class_auc = self.compute()
+        output = {f"auc/class_{i+1:02d}": value.item() for i, value in enumerate(per_class_auc)}
+        output["auc"] = per_class_auc.mean()
+        return output

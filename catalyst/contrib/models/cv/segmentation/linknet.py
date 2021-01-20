@@ -3,20 +3,11 @@ from functools import partial
 
 import numpy as np
 
-from catalyst.contrib.models.cv.segmentation.blocks import (
-    DecoderSumBlock,
-    EncoderDownsampleBlock,
-)
+from catalyst.contrib.models.cv.segmentation.blocks import DecoderSumBlock, EncoderDownsampleBlock
 from catalyst.contrib.models.cv.segmentation.bridge import UnetBridge
-from catalyst.contrib.models.cv.segmentation.core import (
-    ResnetUnetSpec,
-    UnetSpec,
-)
+from catalyst.contrib.models.cv.segmentation.core import ResnetUnetSpec, UnetSpec
 from catalyst.contrib.models.cv.segmentation.decoder import UNetDecoder
-from catalyst.contrib.models.cv.segmentation.encoder import (
-    ResnetEncoder,
-    UnetEncoder,
-)
+from catalyst.contrib.models.cv.segmentation.encoder import ResnetEncoder, UnetEncoder
 from catalyst.contrib.models.cv.segmentation.head import UnetHead
 
 
@@ -69,9 +60,7 @@ class ResnetLinknet(ResnetUnetSpec):
         decoder = UNetDecoder(
             in_channels=encoder.out_channels,
             in_strides=encoder.out_strides,
-            block_fn=partial(
-                DecoderSumBlock, aggregate_first=False, upsample_scale=None
-            ),
+            block_fn=partial(DecoderSumBlock, aggregate_first=False, upsample_scale=None),
             **decoder_params
         )
         head = UnetHead(

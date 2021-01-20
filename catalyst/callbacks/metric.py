@@ -522,16 +522,12 @@ from catalyst.metrics.misc import ILoaderMetric, IMetric
 
 class MetricCallback(Callback):
     def __init__(
-        self,
-        metric: IMetric,
-        outputs_key: str,
-        targets_key: str,
-        compute_on_batch: bool = True,
+        self, metric: IMetric, output_key: str, target_key: str, compute_on_batch: bool = True,
     ):
         super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
         self.metric = metric
-        self.outputs_key = outputs_key
-        self.targets_key = targets_key
+        self.output_key = output_key
+        self.target_key = target_key
         self.compute_on_batch = compute_on_batch
 
     def on_loader_start(self, runner: "IRunner") -> None:
@@ -539,8 +535,8 @@ class MetricCallback(Callback):
 
     def on_batch_end(self, runner: "IRunner") -> None:
         outputs, targets = (
-            runner.batch[self.outputs_key],
-            runner.batch[self.targets_key],
+            runner.batch[self.output_key],
+            runner.batch[self.target_key],
         )
         outputs, targets = (
             runner.engine.sync_tensor(outputs),
@@ -556,14 +552,9 @@ class MetricCallback(Callback):
 
 
 class LoaderMetricCallback(MetricCallback):
-    def __init__(
-        self, metric: ILoaderMetric, outputs_key: str, targets_key: str
-    ):
+    def __init__(self, metric: ILoaderMetric, output_key: str, target_key: str):
         super().__init__(
-            metric=metric,
-            outputs_key=outputs_key,
-            targets_key=targets_key,
-            compute_on_batch=False,
+            metric=metric, output_key=output_key, target_key=target_key, compute_on_batch=False,
         )
 
     def on_loader_start(self, runner: "IRunner") -> None:

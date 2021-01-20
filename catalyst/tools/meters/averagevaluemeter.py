@@ -52,12 +52,10 @@ class AverageValueMeter(meter.Meter):
             self.mean_old = self.mean
             self.m_s = 0.0
         else:
-            self.mean = self.mean_old + (
-                value - self.mean_old
-            ) * batch_size / float(self.n_samples)
-            self.m_s += (
-                (value - self.mean_old) * (value - self.mean) * batch_size
+            self.mean = self.mean_old + (value - self.mean_old) * batch_size / float(
+                self.n_samples
             )
+            self.m_s += (value - self.mean_old) * (value - self.mean) * batch_size
             self.mean_old = self.mean
             self.std = np.sqrt(self.m_s / (self.n_samples - 1.0))
 

@@ -6,7 +6,6 @@ from os import path
 
 import numpy as np
 import pandas as pd
-
 import torch
 
 from catalyst.contrib.tools.tensorboard import SummaryWriter
@@ -18,36 +17,19 @@ logger = logging.getLogger(__name__)
 def build_args(parser):
     """Constructs the command-line arguments."""
     parser.add_argument(
-        "--in-npy",
-        type=str,
-        help="path to npy with project embeddings",
-        required=True,
+        "--in-npy", type=str, help="path to npy with project embeddings", required=True,
+    )
+    parser.add_argument("--in-csv", type=str, help="path to csv with photos", required=True)
+    parser.add_argument(
+        "--out-dir", type=str, default=None, help="directory to output files", required=True,
     )
     parser.add_argument(
-        "--in-csv", type=str, help="path to csv with photos", required=True
+        "--out-prefix", type=str, default=None, help="additional prefix to saved files",
     )
     parser.add_argument(
-        "--out-dir",
-        type=str,
-        default=None,
-        help="directory to output files",
-        required=True,
+        "--img-col", type=str, default=None, help="column in the table that contains image paths",
     )
-    parser.add_argument(
-        "--out-prefix",
-        type=str,
-        default=None,
-        help="additional prefix to saved files",
-    )
-    parser.add_argument(
-        "--img-col",
-        type=str,
-        default=None,
-        help="column in the table that contains image paths",
-    )
-    parser.add_argument(
-        "--img-rootpath", type=str, help="path to photos directory"
-    )
+    parser.add_argument("--img-rootpath", type=str, help="path to photos directory")
     parser.add_argument(
         "--img-size",
         type=int,
@@ -59,8 +41,7 @@ def build_args(parser):
         "--num-rows",
         type=int,
         default=None,
-        help="count of rows to use in csv "
-        + "(if not defined then it will use whole data)",
+        help="count of rows to use in csv " + "(if not defined then it will use whole data)",
     )
     parser.add_argument(
         "--meta-cols",
@@ -88,18 +69,12 @@ def _load_image_data(rootpath: str, paths: List, img_size: int):
 
         def _load_image(filename, size):
             image = cv2.imread(filename)[..., ::-1]
-            image = cv2.resize(
-                image, (size, size), interpolation=cv2.INTER_NEAREST
-            )
+            image = cv2.resize(image, (size, size), interpolation=cv2.INTER_NEAREST)
             return image
 
         image_names = [path.join(rootpath, name) for name in paths]
-        img_data = np.stack(
-            [_load_image(name, img_size) for name in image_names], axis=0
-        )
-        img_data = (
-            img_data.transpose((0, 3, 1, 2)) / 255.0  # noqa: WPS432
-        ).astype(np.float32)
+        img_data = np.stack([_load_image(name, img_size) for name in image_names], axis=0)
+        img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(np.float32)  # noqa: WPS432
         img_data = torch.from_numpy(img_data)
 
     except ImportError as ex:
@@ -111,8 +86,7 @@ def _load_image_data(rootpath: str, paths: List, img_size: int):
             raise ex
         else:
             logger.warning(
-                "opencv is not available"
-                + " to install opencv, run `pip install opencv-python`."
+                "opencv is not available" + " to install opencv, run `pip install opencv-python`."
             )
 
     return img_data
@@ -139,9 +113,7 @@ def main(args, _=None):
 
     if args.img_col is not None:
         img_data = _load_image_data(
-            rootpath=args.img_rootpath,
-            paths=df[args.img_col].values,
-            img_size=args.img_size,
+            rootpath=args.img_rootpath, paths=df[args.img_col].values, img_size=args.img_size,
         )
     else:
         img_data = None
@@ -150,11 +122,7 @@ def main(args, _=None):
         metadata = df[meta_header].values.tolist()
         metadata = [
             [
-                str(text)
-                .replace("\n", " ")
-                .replace(r"\s", " ")
-                .replace(r"\s\s+", " ")
-                .strip()
+                str(text).replace("\n", " ").replace(r"\s", " ").replace(r"\s\s+", " ").strip()
                 for text in texts
             ]
             for texts in metadata
@@ -183,10 +151,7 @@ def main(args, _=None):
     )
     summary_writer.close()
 
-    print(
-        f"Done. Run `tensorboard --logdir={args.out_dir}` "
-        + "to view in Tensorboard"
-    )
+    print(f"Done. Run `tensorboard --logdir={args.out_dir}` " + "to view in Tensorboard")
 
 
 if __name__ == "__main__":
