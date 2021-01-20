@@ -2,6 +2,7 @@ from typing import Any, Dict, Mapping, Tuple, Union
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from functools import lru_cache, partial
+import logging
 
 import torch
 from torch import nn
@@ -13,10 +14,10 @@ from catalyst.core.callback import Callback, CallbackScope, ICallback
 from catalyst.core.engine import IEngine
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import filter_callbacks_by_node, sort_callbacks_by_order
-from catalyst.engines.distributed import DistributedDataParallelEngine
-from catalyst.settings import SETTINGS
 from catalyst.core.logger import ILogger
 from catalyst.core.trial import ITrial
+from catalyst.engines.distributed import DistributedDataParallelEngine
+from catalyst.settings import SETTINGS
 from catalyst.typing import (
     Device,
     Model,
@@ -27,8 +28,6 @@ from catalyst.typing import (
 )
 from catalyst.utils.loaders import validate_loaders
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -445,7 +444,7 @@ class IRunner(ICallback, ILogger, ABC):
         """
         self.experiment = experiment or self.experiment
         try:
-            if isinstance(self.experiment.engine, DistributedDataParallelEngine):
+            if isinstance(self.engine, DistributedDataParallelEngine):
                 self._run_ddp_experiment()
             else:
                 self._run_experiment()
@@ -548,7 +547,7 @@ class IStageBasedRunner(IRunner):
 
     def on_stage_end(self, runner: "IRunner") -> None:
         # clean process if DDP training or do nothing
-        self.experiment.engine.cleanup_process()
+        self.engine.deinit_components()
 
 
 __all__ = ["IRunner", "IStageBasedRunner", "RunnerException"]

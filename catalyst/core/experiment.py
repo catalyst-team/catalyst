@@ -251,7 +251,7 @@ class IExperiment(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_loaders(self, stage: str, epoch: int = None,) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self, stage: str, epoch: int = None) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage.  # noqa: DAR401
 
         .. note::

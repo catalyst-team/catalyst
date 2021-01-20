@@ -21,8 +21,7 @@ if NUM_CUDA_DEVICES > 1:
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or (NUM_CUDA_DEVICES != 1),
-    reason="CUDA device is not available",
+    not IS_CUDA_AVAILABLE or (NUM_CUDA_DEVICES != 1), reason="CUDA device is not available",
 )
 def test_device_engine_from_none():
     actual = process_engine(None)
@@ -31,8 +30,7 @@ def test_device_engine_from_none():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
 def test_dp_engine_from_none():
     actual = process_engine(None)
