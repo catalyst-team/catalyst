@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
 import pytest
-
 import torch
 
 from catalyst import registry
@@ -65,12 +64,8 @@ registry.REGISTRY.add(SomeScheduler)
 
 def _test_callbacks(test_callbacks, exp, stage="train"):
     exp_callbacks = exp.get_callbacks(stage)
-    exp_callbacks = OrderedDict(
-        sorted(exp_callbacks.items(), key=lambda t: t[0])
-    )
-    test_callbacks = OrderedDict(
-        sorted(test_callbacks.items(), key=lambda t: t[0])
-    )
+    exp_callbacks = OrderedDict(sorted(exp_callbacks.items(), key=lambda t: t[0]))
+    test_callbacks = OrderedDict(sorted(test_callbacks.items(), key=lambda t: t[0]))
     print(test_callbacks.keys())
     print(exp_callbacks.keys())
 
@@ -90,7 +85,7 @@ def test_defaults():
     """
     exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG.copy())
 
-    assert exp.initial_seed == 42
+    assert exp.seed == 42
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
     assert exp.engine_params == {}
@@ -122,7 +117,7 @@ def test_defaults_criterion_optimizer_scheduler():
     config["stages"]["scheduler_params"] = {"_target_": "SomeScheduler"}
     exp = ConfigExperiment(config=config)
 
-    assert exp.initial_seed == 42
+    assert exp.seed == 42
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
     assert exp.engine_params == {}

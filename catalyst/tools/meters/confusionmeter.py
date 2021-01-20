@@ -2,7 +2,6 @@
 Maintains a confusion matrix for a given classification problem.
 """
 import numpy as np
-
 import torch
 
 from catalyst.tools.meters import meter
@@ -69,9 +68,7 @@ class ConfusionMeter(meter.Meter):
             assert (target >= 0).all() and (
                 target <= 1
             ).all(), "in one-hot encoding, target values should be 0 or 1"
-            assert (
-                target.sum(1) == 1
-            ).all(), "multilabel setting is not supported"
+            assert (target.sum(1) == 1).all(), "multilabel setting is not supported"
             target = np.argmax(target, 1)
         else:
             assert (predicted.max() < self.k) and (
@@ -80,9 +77,7 @@ class ConfusionMeter(meter.Meter):
 
         # hack for bincounting 2 arrays together
         x = predicted + self.k * target
-        bincount_2d = np.bincount(  # noqa: WPS114
-            x.astype(np.int32), minlength=self.k ** 2
-        )
+        bincount_2d = np.bincount(x.astype(np.int32), minlength=self.k ** 2)  # noqa: WPS114
         assert bincount_2d.size == self.k ** 2
         conf = bincount_2d.reshape((self.k, self.k))
 

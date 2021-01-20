@@ -37,9 +37,7 @@ class IReader:
         Returns:
             Data object used for your neural network
         """
-        raise NotImplementedError(
-            "You cannot apply a transformation using `BaseReader`"
-        )
+        raise NotImplementedError("You cannot apply a transformation using `BaseReader`")
 
 
 class ScalarReader(IReader):
@@ -75,8 +73,7 @@ class ScalarReader(IReader):
         self.smoothing = smoothing
         if self.one_hot_classes is not None and self.smoothing is not None:
             assert 0.0 < smoothing < 1.0, (
-                "If smoothing is specified it must be in (0; 1), "
-                + f"got {smoothing}"
+                "If smoothing is specified it must be in (0; 1), " + f"got {smoothing}"
             )
 
     def __call__(self, element):
@@ -92,9 +89,7 @@ class ScalarReader(IReader):
         """
         scalar = self.dtype(element.get(self.input_key, self.default_value))
         if self.one_hot_classes is not None:
-            scalar = get_one_hot(
-                scalar, self.one_hot_classes, smoothing=self.smoothing
-            )
+            scalar = get_one_hot(scalar, self.one_hot_classes, smoothing=self.smoothing)
         output = {self.output_key: scalar}
         return output
 

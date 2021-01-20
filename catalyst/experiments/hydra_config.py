@@ -6,7 +6,6 @@ import os
 
 import hydra
 from omegaconf import DictConfig, OmegaConf
-
 import torch
 from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.dataset import Dataset
@@ -50,7 +49,7 @@ class HydraConfigExperiment(IExperiment):
         self._logdir: str = os.getcwd()
 
     @property
-    def initial_seed(self) -> int:
+    def seed(self) -> int:
         """Experiment's initial seed value."""
         return self._initial_seed
 
@@ -94,8 +93,7 @@ class HydraConfigExperiment(IExperiment):
         assert "models" in self._config, "config must contain 'models' key"
         models_params: DictConfig = self._config.models
         model: Dict[str, Model] = {
-            name: self._get_model(model_params)
-            for name, model_params in models_params.items()
+            name: self._get_model(model_params) for name, model_params in models_params.items()
         }
         return model
 
@@ -116,11 +114,7 @@ class HydraConfigExperiment(IExperiment):
         return criterion
 
     def _get_optimizer(
-        self,
-        stage: str,
-        models: Dict[str, Model],
-        name: str,
-        params: DictConfig,
+        self, stage: str, models: Dict[str, Model], name: str, params: DictConfig,
     ) -> Optimizer:
         # lr linear scaling
         lr_scaling_params = params.pop("lr_linear_scaling", None)
@@ -129,8 +123,7 @@ class HydraConfigExperiment(IExperiment):
                 "datasets" in self._config.stages[stage]
             ), "stages config must contain 'datasets' key"
             assert "train" in self._config.stages[stage]["datasets"], (
-                "datasets config must contain 'train' "
-                "dataset for lr linear scaling"
+                "datasets config must contain 'train' " "dataset for lr linear scaling"
             )
             data_params = dict(self._config.stages[stage]["datasets"]["train"])
             batch_size = data_params.get("batch_size")
@@ -156,13 +149,9 @@ class HydraConfigExperiment(IExperiment):
             lr_scaling=lr_scaling,
         )
         # getting load-from-previous-stage flag
-        load_from_previous_stage = params.pop(
-            "load_from_previous_stage", False
-        )
+        load_from_previous_stage = params.pop("load_from_previous_stage", False)
         # instantiate optimizer
-        optimizer: Optimizer = hydra.utils.instantiate(
-            params, params=model_params
-        )
+        optimizer: Optimizer = hydra.utils.instantiate(params, params=model_params)
         # load from previous stage
         if load_from_previous_stage and self.stages.index(stage) != 0:
             checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
@@ -176,9 +165,7 @@ class HydraConfigExperiment(IExperiment):
 
         return optimizer
 
-    def get_optimizer(
-        self, stage: str, model: Dict[str, Model]
-    ) -> Dict[str, Optimizer]:
+    def get_optimizer(self, stage: str, model: Dict[str, Model]) -> Dict[str, Optimizer]:
         """
         Returns the optimizers for a given stage.
 
@@ -200,29 +187,19 @@ class HydraConfigExperiment(IExperiment):
         return optimizer
 
     @staticmethod
-    def _get_scheduler(
-        optimizers: Dict[str, Optimizer], params: DictConfig
-    ) -> Scheduler:
-        assert (
-            "optimizer" in params
-        ), "scheduler config must contain 'optimizer' key"
+    def _get_scheduler(optimizers: Dict[str, Optimizer], params: DictConfig) -> Scheduler:
+        assert "optimizer" in params, "scheduler config must contain 'optimizer' key"
         optimizer_key: str = params.pop("optimizer")
-        scheduler: Scheduler = hydra.utils.instantiate(
-            params, optimizer=optimizers[optimizer_key]
-        )
+        scheduler: Scheduler = hydra.utils.instantiate(params, optimizer=optimizers[optimizer_key])
         return scheduler
 
-    def get_scheduler(
-        self, stage: str, optimizer: Dict[str, Optimizer]
-    ) -> Dict[str, Scheduler]:
+    def get_scheduler(self, stage: str, optimizer: Dict[str, Optimizer]) -> Dict[str, Scheduler]:
         """Returns the schedulers for a given stage."""
         if "schedulers" not in self._config.stages[stage]:
             return {}
         schedulers_params: DictConfig = self._config.stages[stage].schedulers
         scheduler: Dict[str, Scheduler] = {
-            key: self._get_scheduler(
-                optimizers=optimizer, params=scheduler_params
-            )
+            key: self._get_scheduler(optimizers=optimizer, params=scheduler_params)
             for key, scheduler_params in schedulers_params.items()
         }
         return scheduler
@@ -232,9 +209,7 @@ class HydraConfigExperiment(IExperiment):
         transform: Any = hydra.utils.instantiate(params)
         return transform
 
-    def get_transforms(
-        self, stage: str = None, dataset: str = None
-    ) -> Dict[str, Any]:
+    def get_transforms(self, stage: str = None, dataset: str = None) -> Dict[str, Any]:
         """
         Returns transforms for a given stage.
 
@@ -261,9 +236,7 @@ class HydraConfigExperiment(IExperiment):
         dataset: Dataset = hydra.utils.instantiate(params, transform=transform)
         return dataset
 
-    def get_datasets(
-        self, stage: str, epoch: int = None, **kwargs
-    ) -> Dict[str, Dataset]:
+    def get_datasets(self, stage: str, epoch: int = None, **kwargs) -> Dict[str, Dataset]:
         """
         Returns datasets for a given stage.
 
@@ -314,10 +287,7 @@ class HydraConfigExperiment(IExperiment):
 
     @staticmethod
     def _get_loader(
-        dataset: Dataset,
-        sampler: Sampler,
-        initial_seed: int,
-        params: DictConfig,
+        dataset: Dataset, sampler: Sampler, initial_seed: int, params: DictConfig,
     ) -> DataLoader:
         params = OmegaConf.to_container(params, resolve=True)
         per_gpu_scaling = params.pop("per_gpu_scaling", False)
@@ -326,12 +296,8 @@ class HydraConfigExperiment(IExperiment):
         distributed = distributed_rank > -1
         if per_gpu_scaling and not distributed:
             num_gpus = max(1, torch.cuda.device_count())
-            assert (
-                "batch_size" in params
-            ), "loader config must contain 'batch_size' key"
-            assert (
-                "num_workers" in params
-            ), "loader config must contain 'num_workers' key"
+            assert "batch_size" in params, "loader config must contain 'batch_size' key"
+            assert "num_workers" in params, "loader config must contain 'num_workers' key"
             params["batch_size"] *= num_gpus
             params["num_workers"] *= num_gpus
         if distributed:
@@ -344,9 +310,7 @@ class HydraConfigExperiment(IExperiment):
         params["sampler"] = sampler
         worker_init_fn = params.pop("worker_init_fn", None)
         if worker_init_fn is None:
-            params["worker_init_fn"] = lambda x: set_global_seed(
-                initial_seed + x
-            )
+            params["worker_init_fn"] = lambda x: set_global_seed(initial_seed + x)
         else:
             params["worker_init_fn"] = hydra.utils.get_method(worker_init_fn)
         collate_fn = params.pop("collate_fn", None)
@@ -357,9 +321,7 @@ class HydraConfigExperiment(IExperiment):
         loader: DataLoader = DataLoader(**params)
         return loader
 
-    def get_loaders(
-        self, stage: str, epoch: int = None
-    ) -> Dict[str, DataLoader]:
+    def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, DataLoader]:
         """
         Returns loaders for a given stage.
 
@@ -373,9 +335,7 @@ class HydraConfigExperiment(IExperiment):
         """
         datasets = self.get_datasets(stage)
         samplers = self.get_samplers(stage)
-        assert (
-            "loaders" in self._config.stages[stage]
-        ), "stages config must contain 'loaders' key"
+        assert "loaders" in self._config.stages[stage], "stages config must contain 'loaders' key"
         loaders_params = self._config.stages[stage].loaders
         loaders: Dict[str, DataLoader] = {
             name: self._get_loader(

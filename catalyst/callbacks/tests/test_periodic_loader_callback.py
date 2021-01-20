@@ -7,7 +7,6 @@ import shutil
 import sys
 
 import pytest
-
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -43,10 +42,7 @@ def test_multiple_stages_with_magic_callback():
                 and runner.epoch > 1
                 and self._after_first_validation
             ):
-                msg = (
-                    f"Epochs (epoch={runner.epoch}) "
-                    "without valid loader can't be best!"
-                )
+                msg = f"Epochs (epoch={runner.epoch}) " "without valid loader can't be best!"
                 assert not runner.is_best_valid, msg
             else:
                 assert runner.valid_metrics[runner.main_metric] is not None
@@ -159,10 +155,7 @@ def test_validation_with_period_3():
         logdir=logdir,
         num_epochs=10,
         verbose=False,
-        callbacks=[
-            PeriodicLoaderCallback(valid=3),
-            CheckRunCallback(num_epoch_steps=10),
-        ],
+        callbacks=[PeriodicLoaderCallback(valid=3), CheckRunCallback(num_epoch_steps=10),],
     )
 
     sys.stdout = old_stdout
@@ -219,10 +212,7 @@ def test_validation_with_period_0():
         logdir=logdir,
         num_epochs=5,
         verbose=False,
-        callbacks=[
-            PeriodicLoaderCallback(valid=0),
-            CheckRunCallback(num_epoch_steps=5),
-        ],
+        callbacks=[PeriodicLoaderCallback(valid=0), CheckRunCallback(num_epoch_steps=5),],
     )
 
     sys.stdout = old_stdout
@@ -281,9 +271,7 @@ def test_multiple_loaders():
         num_epochs=10,
         verbose=False,
         callbacks=[
-            PeriodicLoaderCallback(
-                train_additional=2, valid=3, valid_additional=0
-            ),
+            PeriodicLoaderCallback(train_additional=2, valid=3, valid_additional=0),
             CheckRunCallback(num_epoch_steps=10),
         ],
     )
@@ -346,9 +334,7 @@ def test_multiple_loaders_and_multiple_stages():
         num_epochs=5,
         verbose=False,
         callbacks=[
-            PeriodicLoaderCallback(
-                train_additional=2, valid=3, valid_additional=0
-            ),
+            PeriodicLoaderCallback(train_additional=2, valid=3, valid_additional=0),
             CheckRunCallback(num_epoch_steps=5),
         ],
     )
@@ -363,9 +349,7 @@ def test_multiple_loaders_and_multiple_stages():
         num_epochs=10,
         verbose=False,
         callbacks=[
-            PeriodicLoaderCallback(
-                train_additional=2, valid=3, valid_additional=0
-            ),
+            PeriodicLoaderCallback(train_additional=2, valid=3, valid_additional=0),
             CheckRunCallback(num_epoch_steps=10),
         ],
     )
@@ -428,9 +412,7 @@ def test_no_loaders_epoch():
             num_epochs=10,
             verbose=False,
             callbacks=[
-                PeriodicLoaderCallback(
-                    train=2, train_additional=2, valid=3, valid_additional=0
-                )
+                PeriodicLoaderCallback(train=2, train_additional=2, valid=3, valid_additional=0)
             ],
         )
 
@@ -708,10 +690,7 @@ def test_loading_best_state_at_end():
         logdir=logdir,
         num_epochs=5,
         verbose=False,
-        callbacks=[
-            PeriodicLoaderCallback(valid=3),
-            CheckRunCallback(num_epoch_steps=5),
-        ],
+        callbacks=[PeriodicLoaderCallback(valid=3), CheckRunCallback(num_epoch_steps=5),],
         load_best_on_end=True,
     )
 
@@ -720,12 +699,7 @@ def test_loading_best_state_at_end():
 
     assert len(re.findall(r"\(train\)", exp_output)) == 5
     assert len(re.findall(r"\(valid\)", exp_output)) == 1
-    assert (
-        len(
-            re.findall(r"\(global epoch 3, epoch 3, stage train\)", exp_output)
-        )
-        == 1
-    )
+    assert len(re.findall(r"\(global epoch 3, epoch 3, stage train\)", exp_output)) == 1
     assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
 
     assert os.path.isfile(logfile)
@@ -780,9 +754,7 @@ def test_loading_best_state_at_end_with_custom_scores():
         "train": {i: i * 0.1 for i in range(1, 11)},
         "valid": {
             i: v
-            for i, v in enumerate(
-                [0.05, 0.1, 0.15, 0.15, 0.2, 0.18, 0.22, 0.11, 0.13, 0.12], 1
-            )
+            for i, v in enumerate([0.05, 0.1, 0.15, 0.15, 0.2, 0.18, 0.22, 0.11, 0.13, 0.12], 1)
         },
     }
 
@@ -810,12 +782,7 @@ def test_loading_best_state_at_end_with_custom_scores():
 
     assert len(re.findall(r"\(train\)", exp_output)) == n_epochs
     assert len(re.findall(r"\(valid\)", exp_output)) == (n_epochs // period)
-    assert (
-        len(
-            re.findall(r"\(global epoch 6, epoch 6, stage train\)", exp_output)
-        )
-        == 1
-    )
+    assert len(re.findall(r"\(global epoch 6, epoch 6, stage train\)", exp_output)) == 1
     assert len(re.findall(r".*/train\.\d\.pth", exp_output)) == 1
 
     assert os.path.isfile(logfile)

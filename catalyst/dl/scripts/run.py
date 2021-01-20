@@ -10,11 +10,7 @@ from catalyst.settings import IS_HYDRA_AVAILABLE
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.parser import parse_args_uargs
-from catalyst.utils.scripts import (
-    distributed_cmd_run,
-    dump_code,
-    prepare_config_api_components,
-)
+from catalyst.utils.scripts import distributed_cmd_run, dump_code, prepare_config_api_components
 from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import prepare_cudnn
 
@@ -38,31 +34,18 @@ def build_args(parser: ArgumentParser):
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
     parser.add_argument(
-        "-j",
-        "--num-workers",
-        default=None,
-        type=int,
-        help="number of data loading workers",
+        "-j", "--num-workers", default=None, type=int, help="number of data loading workers",
     )
+    parser.add_argument("-b", "--batch-size", default=None, type=int, help="mini-batch size")
+    parser.add_argument("-e", "--num-epochs", default=None, type=int, help="number of epochs")
     parser.add_argument(
-        "-b", "--batch-size", default=None, type=int, help="mini-batch size"
-    )
-    parser.add_argument(
-        "-e", "--num-epochs", default=None, type=int, help="number of epochs"
-    )
-    parser.add_argument(
-        "--resume",
-        default=None,
-        type=str,
-        metavar="PATH",
-        help="path to latest checkpoint",
+        "--resume", default=None, type=str, metavar="PATH", help="path to latest checkpoint",
     )
     parser.add_argument(
         "--autoresume",
         type=str,
         help=(
-            "try automatically resume from logdir//{best,last}_full.pth "
-            "if --resume is empty"
+            "try automatically resume from logdir//{best,last}_full.pth " "if --resume is empty"
         ),
         required=False,
         choices=["best", "last"],
@@ -130,7 +113,7 @@ def main_worker(args, unknown_args):
         dump_environment(config, experiment.logdir, args.configs)
         dump_code(args.expdir, experiment.logdir)
 
-    runner.run_experiment(experiment)
+    runner.run(experiment)
 
 
 def main(args, unknown_args):

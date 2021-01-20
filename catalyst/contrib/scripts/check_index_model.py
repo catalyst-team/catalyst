@@ -19,18 +19,10 @@ def build_args(parser):
     parser.add_argument("--label-column", type=str, default=None)
 
     parser.add_argument(
-        "--knn-metric",
-        type=str,
-        default="l2",
-        choices=["l2", "angulardist", "cosinesimil"],
+        "--knn-metric", type=str, default="l2", choices=["l2", "angulardist", "cosinesimil"],
     )
     parser.add_argument(
-        "-b",
-        "--batch-size",
-        default=128,
-        type=int,
-        metavar="N",
-        help="mini-batch size ",
+        "-b", "--batch-size", default=128, type=int, metavar="N", help="mini-batch size ",
     )
     parser.add_argument("-k", "--recall-at", default="1,3,5,10", type=str)
 
@@ -53,9 +45,7 @@ def main(args, _=None):
 
     print("[==        Loading index         ==]")
     index = nmslib.init(
-        method="hnsw",
-        space=args.knn_metric,
-        data_type=nmslib.DataType.DENSE_VECTOR,
+        method="hnsw", space=args.knn_metric, data_type=nmslib.DataType.DENSE_VECTOR,
     )
     index.loadIndex(args.in_knn)
     knn_df = pd.read_csv(args.in_csv)
@@ -67,19 +57,12 @@ def main(args, _=None):
         batch_features = test_features[i : i + args.batch_size, :]
         pred_ind_dist = index.knnQueryBatch(batch_features, k=max(recalls))
         pred_inds = [x[0] for x in pred_ind_dist]
-        pred_labels = [
-            [knn_df.iloc[x_i][args.label_column] for x_i in x]
-            for x in pred_inds
-        ]
+        pred_labels = [[knn_df.iloc[x_i][args.label_column] for x_i in x] for x in pred_inds]
         pred_labels = np.array(pred_labels)
-        true_labels = test_df[args.label_column].values[
-            i : i + args.batch_size, None
-        ]
+        true_labels = test_df[args.label_column].values[i : i + args.batch_size, None]
         for recall_i in recalls:
             batch_ration = pred_labels[:, :recall_i] == true_labels
-            batch_ration = (
-                (batch_ration.sum(axis=1) > 0).astype(np.int32).tolist()
-            )
+            batch_ration = (batch_ration.sum(axis=1) > 0).astype(np.int32).tolist()
             res[recall_i].extend(batch_ration)
 
     for recall_i2 in recalls:

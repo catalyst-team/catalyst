@@ -12,9 +12,7 @@ from catalyst.utils.scripts import import_module
 
 yaml.add_representer(
     OrderedDict,
-    lambda dumper, data: dumper.represent_mapping(
-        "tag:yaml.org,2002:map", data.items()
-    ),
+    lambda dumper, data: dumper.represent_mapping("tag:yaml.org,2002:map", data.items()),
 )
 
 URLS = {  # noqa: WPS407
@@ -87,11 +85,7 @@ class Wizard:
         )  # noqa: WPS355
 
         self._cfg = OrderedDict(
-            [
-                ("model_params", OrderedDict()),
-                ("args", OrderedDict()),
-                ("stages", OrderedDict()),
-            ]
+            [("model_params", OrderedDict()), ("args", OrderedDict()), ("stages", OrderedDict()),]
         )
 
         self.pipeline_path = Path("./")
@@ -222,8 +216,7 @@ class Wizard:
             msg += "\n".join([f"{n+1}: {m}" for n, m in enumerate(modules)])
             print(msg)
             module = prompt(
-                "\nEnter number from list above or "
-                f"class name of {param} you'll be using: "
+                "\nEnter number from list above or " f"class name of {param} you'll be using: "
             )
             if module.isdigit():
                 module = int(module)
@@ -233,9 +226,7 @@ class Wizard:
                 module = modules[module - 1]
                 self.__res(module)
         else:
-            module = prompt(
-                f"Enter class name of {param} " "you'll be using: "
-            )
+            module = prompt(f"Enter class name of {param} " "you'll be using: ")
             self.__res(module)
         opts[param] = module
         res = prompt(
@@ -263,18 +254,12 @@ class Wizard:
             return
         opts = OrderedDict()
         opts["num_epochs"] = int(
-            prompt(
-                "How much epochs you want to run this " "stage: ", default="1"
-            )
+            prompt("How much epochs you want to run this " "stage: ", default="1")
         )
         self.__res(opts["num_epochs"])
-        opts["main_metric"] = prompt(
-            "What is the main_metric?: ", default="loss"
-        )
+        opts["main_metric"] = prompt("What is the main_metric?: ", default="loss")
         self.__res(opts["main_metric"])
-        minimize = bool(
-            prompt("Will it be minimized (True/False): ", default="True")
-        )
+        minimize = bool(prompt("Will it be minimized (True/False): ", default="True"))
         opts["minimize_metric"] = minimize
         self.__res(opts["minimize_metric"])
         stage["stage_params"] = opts
@@ -291,13 +276,9 @@ class Wizard:
         if self._skip_override_stages_common("data_params"):
             return
         opts = OrderedDict()
-        opts["batch_size"] = int(
-            prompt("What is the batch_size?: ", default="1")
-        )
+        opts["batch_size"] = int(prompt("What is the batch_size?: ", default="1"))
         self.__res(opts["batch_size"])
-        opts["num_workers"] = int(
-            prompt("What is the num_workers?: ", default="1")
-        )
+        opts["num_workers"] = int(prompt("What is the num_workers?: ", default="1"))
         self.__res(opts["num_workers"])
         stage["data_params"] = opts
 
@@ -329,8 +310,7 @@ class Wizard:
         cnt = int(cnt) or 1
         if cnt > 1:
             res = prompt(
-                "Do you want to assign some common settings "
-                "for all stages? (y/N): ",
+                "Do you want to assign some common settings " "for all stages? (y/N): ",
                 default="y",
             )
             self.__res(res)
@@ -339,8 +319,7 @@ class Wizard:
             print(f"\nNow we'll configure all {cnt} stages one-by-one\n")
         for stage_id in range(cnt):
             name = prompt(
-                "What would be the name of this stage: ",
-                default=f"stage{stage_id + 1}",
+                "What would be the name of this stage: ", default=f"stage{stage_id + 1}",
             )
             self.__res(name)
             stage = OrderedDict()
@@ -371,10 +350,7 @@ class Wizard:
         except OSError:
             print(f"There is no modules to import found: {expdir}")
         except Exception as err:
-            print(
-                "Unexpected error when tried to import modules from "
-                f"{expdir}: {err}"
-            )
+            print("Unexpected error when tried to import modules from " f"{expdir}: {err}")
 
     def _args_step(self):
         """
@@ -392,8 +368,7 @@ class Wizard:
         )
         self.__res(self._cfg["args"]["expdir"])
         self._cfg["args"]["logdir"] = prompt(
-            "Provide logdir for your experiment "
-            "(where Catalyst supposed to save its logs): ",
+            "Provide logdir for your experiment " "(where Catalyst supposed to save its logs): ",
             default=str(self.pipeline_path / "logs/experiment"),
         )
         self.__res(self._cfg["args"]["logdir"])
@@ -413,21 +388,13 @@ class Wizard:
         msg = "0: Skip this step\n"
         msg += "\n".join([f"{n + 1}: {v}" for n, v in enumerate(opts)])
         print(msg)
-        res = int(
-            prompt(
-                "\nChoose pipeline template you want to init "
-                "your project from: "
-            )
-        )
+        res = int(prompt("\nChoose pipeline template you want to init " "your project from: "))
         if res == 0:
             self.__res("Skipped...")
             return
         pipeline = opts[res - 1]
         self.__res(pipeline)
-        out_dir = prompt(
-            f"Where we need to copy {pipeline} " "template files?: ",
-            default="./",
-        )
+        out_dir = prompt(f"Where we need to copy {pipeline} " "template files?: ", default="./",)
         self.pipeline_path = Path(out_dir)
         clone_pipeline(pipeline.lower(), self.pipeline_path)
         self.__res(f"{pipeline} cloned to {self.pipeline_path}")

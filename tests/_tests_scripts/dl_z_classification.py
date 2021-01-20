@@ -27,9 +27,7 @@ data_transform = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
 loaders = collections.OrderedDict()
 
-trainset = MNIST(
-    "./data", train=False, download=True, transform=data_transform
-)
+trainset = MNIST("./data", train=False, download=True, transform=data_transform)
 trainloader = torch.utils.data.DataLoader(
     trainset, batch_size=bs, shuffle=True, num_workers=num_workers
 )
@@ -135,9 +133,7 @@ optimizer = torch.optim.Adam(model.parameters())
 
 # any Pytorch scheduler supported
 # scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[3, 8], gamma=0.3)
-scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-    optimizer, factor=0.5, patience=2
-)
+scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=2)
 
 # model runner
 runner = SupervisedRunner()
@@ -169,9 +165,7 @@ logdir = "./logs/cifar_simple_notebook_3"
 model = Net()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
-scheduler = torch.optim.lr_scheduler.MultiStepLR(
-    optimizer, milestones=[3, 8], gamma=0.3
-)
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[3, 8], gamma=0.3)
 
 # model runner
 runner = SupervisedRunner()
@@ -208,9 +202,7 @@ logdir = "./logs/cifar_simple_notebook_4"
 model = Net()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
-scheduler = torch.optim.lr_scheduler.MultiStepLR(
-    optimizer, milestones=[3, 8], gamma=0.3
-)
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[3, 8], gamma=0.3)
 
 # model runner
 runner = SupervisedRunner()
@@ -302,9 +294,7 @@ logdir = "./logs/cifar_simple_notebook_6"
 model = Net()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
-scheduler = torch.optim.lr_scheduler.MultiStepLR(
-    optimizer, milestones=[3, 8], gamma=0.3
-)
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[3, 8], gamma=0.3)
 
 # model runner
 runner = SupervisedRunner()
@@ -341,9 +331,7 @@ logdir = "./logs/cifar_simple_notebook_7"
 model = Net()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
-scheduler = torch.optim.lr_scheduler.MultiStepLR(
-    optimizer, milestones=[3, 8], gamma=0.3
-)
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[3, 8], gamma=0.3)
 
 # model runner
 runner = SupervisedRunner()
@@ -375,9 +363,7 @@ logdir = "./logs/cifar_simple_notebook_8"
 model = Net()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters())
-scheduler = torch.optim.lr_scheduler.MultiStepLR(
-    optimizer, milestones=[3, 8], gamma=0.3
-)
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[3, 8], gamma=0.3)
 
 # model runner
 runner = SupervisedRunner()
@@ -421,7 +407,7 @@ runner_out = runner.predict_loader(model=model, loader=loaders["valid"],)
 
 # In[ ]:
 
-next(runner_out)[runner.output_key].shape
+next(runner_out)[runner.input_key].shape
 
 # # Setup 10 - predict batch
 
@@ -440,6 +426,6 @@ runner_out = runner.predict_batch(runner_in)
 
 # In[ ]:
 
-runner_out[runner.output_key].shape
+runner_out[runner.input_key].shape
 
 # In[ ]:

@@ -67,8 +67,7 @@ class InferCallback(Callback):
             runner: current runner
         """
         self.predictions = {
-            key: np.concatenate(value, axis=0)
-            for key, value in self.predictions.items()
+            key: np.concatenate(value, axis=0) for key, value in self.predictions.items()
         }
         if self.out_prefix is not None:
             for key, value in self.predictions.items():

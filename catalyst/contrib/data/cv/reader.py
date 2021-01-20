@@ -39,9 +39,7 @@ class ImageReader(IReader):
             np.ndarray: Image
         """
         image_name = str(element[self.input_key])
-        img = imread(
-            image_name, rootpath=self.rootpath, grayscale=self.grayscale
-        )
+        img = imread(image_name, rootpath=self.rootpath, grayscale=self.grayscale)
 
         output = {self.output_key: img}
         return output

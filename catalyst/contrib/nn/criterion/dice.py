@@ -13,17 +13,12 @@ class DiceLoss(nn.Module):
     """@TODO: Docs. Contribution is welcome."""
 
     def __init__(
-        self,
-        eps: float = 1e-7,
-        threshold: float = None,
-        activation: str = "Sigmoid",
+        self, eps: float = 1e-7, threshold: float = None, activation: str = "Sigmoid",
     ):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
 
-        metric_fn = wrap_metric_fn_with_activation(
-            metric_fn=dice, activation=activation
-        )
+        metric_fn = wrap_metric_fn_with_activation(metric_fn=dice, activation=activation)
         self.loss_fn = partial(metric_fn, eps=eps, threshold=threshold)
 
     def forward(self, logits: torch.Tensor, targets: torch.Tensor):
@@ -57,8 +52,7 @@ class BCEDiceLoss(nn.Module):
 
         if bce_weight == 0 and dice_weight == 0:
             raise ValueError(
-                "Both bce_wight and dice_weight cannot be "
-                "equal to 0 at the same time."
+                "Both bce_wight and dice_weight cannot be " "equal to 0 at the same time."
             )
 
         self.bce_weight = bce_weight
@@ -68,9 +62,7 @@ class BCEDiceLoss(nn.Module):
             self.bce_loss = nn.BCEWithLogitsLoss()
 
         if self.dice_weight != 0:
-            self.dice_loss = DiceLoss(
-                eps=eps, threshold=threshold, activation=activation
-            )
+            self.dice_loss = DiceLoss(eps=eps, threshold=threshold, activation=activation)
 
     def forward(self, outputs, targets):
         """@TODO: Docs. Contribution is welcome."""

@@ -2,10 +2,7 @@ from typing import List
 
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics.auc import auc
-from catalyst.metrics.functional import (
-    wrap_class_metric2dict,
-    wrap_metric_fn_with_activation,
-)
+from catalyst.metrics.functional import wrap_class_metric2dict, wrap_metric_fn_with_activation
 
 
 class AUCCallback(LoaderMetricCallback):
@@ -45,12 +42,8 @@ class AUCCallback(LoaderMetricCallback):
             ``catalyst.callbacks.metric.LoaderMetricCallback`` and
             ``catalyst.metrics.auc.auc`` docs
         """
-        metric_fn = wrap_metric_fn_with_activation(
-            metric_fn=auc, activation=activation
-        )
-        metric_fn = wrap_class_metric2dict(
-            metric_fn, per_class=per_class, class_args=class_args
-        )
+        metric_fn = wrap_metric_fn_with_activation(metric_fn=auc, activation=activation)
+        metric_fn = wrap_class_metric2dict(metric_fn, per_class=per_class, class_args=class_args)
         super().__init__(
             prefix=prefix,
             metric_fn=metric_fn,

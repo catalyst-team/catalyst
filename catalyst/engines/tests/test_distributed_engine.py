@@ -103,15 +103,12 @@ class LossMinimizationCallback(Callback):
 
     def on_epoch_end(self, runner: "IRunner"):
         print(self.container)
-        assert all(
-            a >= b for a, b in zip(self.container[:-1], self.container[1:])
-        )
+        assert all(a >= b for a, b in zip(self.container[:-1], self.container[1:]))
         self.container = []
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
 def test_train_with_experiment_distributed_parallel_device():
     logdir = "./test_ddp_engine"
@@ -147,19 +144,14 @@ def _get_loaders(*args, **kwargs):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
 def test_train_with_config_experiment_distributed_parallel_device():
     logdir = "./test_config_ddp_engine"
     runner = SupervisedRunner()
     exp = ConfigExperiment(
         config={
-            "model_params": {
-                "_target_": "DummyModel",
-                "in_features": 4,
-                "out_features": 1,
-            },
+            "model_params": {"_target_": "DummyModel", "in_features": 4, "out_features": 1,},
             "engine": "ddp",
             "args": {"logdir": logdir},
             "stages": {
@@ -175,9 +167,7 @@ def test_train_with_config_experiment_distributed_parallel_device():
                         #     "_target_": "DeviceCheckCallback",
                         #     "assert_device": str(device),
                         # },
-                        "test_loss_minimization": {
-                            "_target_": "LossMinimizationCallback"
-                        },
+                        "test_loss_minimization": {"_target_": "LossMinimizationCallback"},
                     },
                 },
             },

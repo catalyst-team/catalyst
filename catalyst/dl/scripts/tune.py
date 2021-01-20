@@ -9,11 +9,7 @@ from pathlib import Path
 import optuna
 
 from catalyst.utils.distributed import get_rank
-from catalyst.utils.misc import (
-    boolean_flag,
-    maybe_recursive_call,
-    set_global_seed,
-)
+from catalyst.utils.misc import boolean_flag, maybe_recursive_call, set_global_seed
 from catalyst.utils.parser import parse_args_uargs
 from catalyst.utils.scripts import dump_code, prepare_config_api_components
 from catalyst.utils.sys import dump_environment
@@ -36,24 +32,12 @@ def build_args(parser: ArgumentParser):
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
     parser.add_argument(
-        "-j",
-        "--num-workers",
-        default=None,
-        type=int,
-        help="number of data loading workers",
+        "-j", "--num-workers", default=None, type=int, help="number of data loading workers",
     )
+    parser.add_argument("-b", "--batch-size", default=None, type=int, help="mini-batch size")
+    parser.add_argument("-e", "--num-epochs", default=None, type=int, help="number of epochs")
     parser.add_argument(
-        "-b", "--batch-size", default=None, type=int, help="mini-batch size"
-    )
-    parser.add_argument(
-        "-e", "--num-epochs", default=None, type=int, help="number of epochs"
-    )
-    parser.add_argument(
-        "--resume",
-        default=None,
-        type=str,
-        metavar="PATH",
-        help="path to latest checkpoint",
+        "--resume", default=None, type=str, metavar="PATH", help="path to latest checkpoint",
     )
     # parser.add_argument(
     #     "--autoresume",
@@ -152,16 +136,14 @@ def main_worker(args, unknown_args):
             dump_environment(trial_config, experiment.logdir, args.configs)
             dump_code(args.expdir, experiment.logdir)
 
-        runner.run_experiment(experiment)
+        runner.run(experiment)
 
         return runner.best_valid_metrics[runner.main_metric]
 
     # optuna direction
     direction = (
         "minimize"
-        if config.get("stages", {})
-        .get("stage_params", {})
-        .get("minimize_metric", True)
+        if config.get("stages", {}).get("stage_params", {}).get("minimize_metric", True)
         else "maximize"
     )
 

@@ -8,11 +8,7 @@ from torch import nn
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-from catalyst.callbacks import (
-    CriterionCallback,
-    OptimizerCallback,
-    TracingCallback,
-)
+from catalyst.callbacks import CriterionCallback, OptimizerCallback, TracingCallback
 from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.core.callback import Callback, CallbackOrder
@@ -46,9 +42,7 @@ class _TracedNet(nn.Module):
             h_stride, w_stride = conv.stride
             c = conv.out_channels
             h, w = self.conv2d_size_out(
-                size=(h, w),
-                kernel_size=(h_kernel, w_kernel),
-                stride=(h_stride, w_stride),
+                size=(h, w), kernel_size=(h_kernel, w_kernel), stride=(h_stride, w_stride),
             )
 
         self.fc1 = nn.Linear(in_features=c * h * w, out_features=10)
@@ -88,8 +82,7 @@ class _TracedNet(nn.Module):
             Tuple[int, int]: output size
         """
         size, kernel_size, stride = map(
-            lambda x: torch.tensor(x, dtype=torch.int32),
-            (size, kernel_size, stride),
+            lambda x: torch.tensor(x, dtype=torch.int32), (size, kernel_size, stride),
         )
         output_size = (size - (kernel_size - 1) - 1) // stride + 1
         h, w = map(lambda x: x.item(), output_size)
@@ -97,9 +90,7 @@ class _TracedNet(nn.Module):
         return h, w
 
 
-def _get_loaders(
-    *, root: str, batch_size: int = 1, num_workers: int = 1
-) -> Dict[str, DataLoader]:
+def _get_loaders(*, root: str, batch_size: int = 1, num_workers: int = 1) -> Dict[str, DataLoader]:
     """
     Function to get loaders just for testing.
 
@@ -113,18 +104,10 @@ def _get_loaders(
     """
     data_transform = ToTensor()
 
-    trainset = MNIST(
-        root=root, train=True, download=True, transform=data_transform
-    )
-    trainloader = DataLoader(
-        trainset, batch_size=batch_size, num_workers=num_workers
-    )
-    testset = MNIST(
-        root=root, train=False, download=True, transform=data_transform
-    )
-    testloader = DataLoader(
-        testset, batch_size=batch_size, num_workers=num_workers
-    )
+    trainset = MNIST(root=root, train=True, download=True, transform=data_transform)
+    trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=num_workers)
+    testset = MNIST(root=root, train=False, download=True, transform=data_transform)
+    testloader = DataLoader(testset, batch_size=batch_size, num_workers=num_workers)
 
     loaders = collections.OrderedDict(train=trainloader, valid=testloader)
 
@@ -204,9 +187,7 @@ def test_tracer_callback():
         requires_grad=requires_grad,
         opt_level=opt_level,
     )
-    test_callback = _OnStageEndCheckModelTracedCallback(
-        path=tracing_path, inputs=images,
-    )
+    test_callback = _OnStageEndCheckModelTracedCallback(path=tracing_path, inputs=images,)
 
     callbacks = collections.OrderedDict(
         loss=criterion_callback,

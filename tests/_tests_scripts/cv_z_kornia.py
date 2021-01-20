@@ -25,7 +25,7 @@ class CustomRunner(dl.Runner):
         """
         return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         """Model train/valid step."""
         x, y = batch
         y_hat = self.model(x.view(x.size(0), -1))
@@ -49,16 +49,10 @@ def main():
 
     loaders = {
         "train": DataLoader(
-            MNIST(
-                os.getcwd(), train=True, download=True, transform=ToTensor()
-            ),
-            batch_size=32,
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32,
         ),
         "valid": DataLoader(
-            MNIST(
-                os.getcwd(), train=False, download=True, transform=ToTensor()
-            ),
-            batch_size=32,
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32,
         ),
     }
 

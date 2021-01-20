@@ -49,9 +49,7 @@ class TelegramLogger(Callback):
         self._token = token or SETTINGS.telegram_logger_token
         self._chat_id = chat_id or SETTINGS.telegram_logger_chat_id
         assert self._token is not None and self._chat_id is not None
-        self._base_url = (
-            f"https://api.telegram.org/bot{self._token}/sendMessage"
-        )
+        self._base_url = f"https://api.telegram.org/bot{self._token}/sendMessage"
 
         self.log_on_stage_start = log_on_stage_start
         self.log_on_loader_start = log_on_loader_start
@@ -85,9 +83,7 @@ class TelegramLogger(Callback):
     def on_loader_start(self, runner: "IRunner"):
         """Notify about starting running the new loader."""
         if self.log_on_loader_start:
-            text = (
-                f"{runner.loader_key} {runner.global_epoch} epoch has started"
-            )
+            text = f"{runner.loader_key} {runner.global_epoch} epoch has started"
 
             self._send_text(text)
 
@@ -102,8 +98,7 @@ class TelegramLogger(Callback):
                 metrics_to_log = self.metrics_to_log
 
             rows: List[str] = [
-                f"{runner.loader_key} {runner.global_epoch}"
-                f" epoch was finished:"
+                f"{runner.loader_key} {runner.global_epoch}" f" epoch was finished:"
             ]
 
             for name in metrics_to_log:
@@ -125,13 +120,8 @@ class TelegramLogger(Callback):
         """Notify about raised ``Exception``."""
         if self.log_on_exception:
             exception = runner.exception
-            if is_exception(exception) and not isinstance(
-                exception, KeyboardInterrupt
-            ):
-                text = (
-                    f"`{type(exception).__name__}` exception was raised:\n"
-                    f"{exception}"
-                )
+            if is_exception(exception) and not isinstance(exception, KeyboardInterrupt):
+                text = f"`{type(exception).__name__}` exception was raised:\n" f"{exception}"
 
                 self._send_text(text)
 

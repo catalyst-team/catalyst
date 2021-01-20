@@ -60,34 +60,19 @@ class AutoCallbackExperiment(Experiment):
         optimizer_cls = OptimizerCallback
 
         if not stage.startswith("infer"):
-            if self._criterion is not None and isinstance(
-                self._criterion, Criterion
-            ):
-                default_callbacks.append(
-                    ("_criterion", None, CriterionCallback)
-                )
-            if self._optimizer is not None and isinstance(
-                self._optimizer, Optimizer
-            ):
-                default_callbacks.append(
-                    ("_optimizer", IOptimizerCallback, optimizer_cls)
-                )
+            if self._criterion is not None and isinstance(self._criterion, Criterion):
+                default_callbacks.append(("_criterion", None, CriterionCallback))
+            if self._optimizer is not None and isinstance(self._optimizer, Optimizer):
+                default_callbacks.append(("_optimizer", IOptimizerCallback, optimizer_cls))
             if self._scheduler is not None and isinstance(
                 self._scheduler, (Scheduler, ReduceLROnPlateau)
             ):
-                default_callbacks.append(
-                    ("_scheduler", ISchedulerCallback, SchedulerCallback)
-                )
+                default_callbacks.append(("_scheduler", ISchedulerCallback, SchedulerCallback))
 
-        for (
-            callback_name,
-            callback_interface,
-            callback_fn,
-        ) in default_callbacks:
+        for (callback_name, callback_interface, callback_fn,) in default_callbacks:
             callback_interface = callback_interface or callback_fn
             is_already_present = any(
-                check_callback_isinstance(x, callback_interface)
-                for x in callbacks.values()
+                check_callback_isinstance(x, callback_interface) for x in callbacks.values()
             )
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()

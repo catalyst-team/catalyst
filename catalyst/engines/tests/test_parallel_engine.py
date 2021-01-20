@@ -3,7 +3,6 @@
 import shutil
 
 from pytest import mark
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -97,9 +96,7 @@ class LossMinimizationCallback(Callback):
 
     def on_epoch_end(self, runner: "IRunner"):
         print(self.container)
-        assert all(
-            a >= b for a, b in zip(self.container[:-1], self.container[1:])
-        )
+        assert all(a >= b for a, b in zip(self.container[:-1], self.container[1:]))
         self.container = []
 
 
@@ -121,7 +118,7 @@ def run_train_with_experiment_parallel_device():
         ],
         engine=DataParallelEngine(),
     )
-    runner.run_experiment(exp)
+    runner.run(exp)
 
 
 def run_train_with_config_experiment_parallel_device():
@@ -130,11 +127,7 @@ def run_train_with_config_experiment_parallel_device():
     logdir = f"./test_dp_engine"
     exp = ConfigExperiment(
         config={
-            "model_params": {
-                "_target_": "DummyModel",
-                "in_features": 4,
-                "out_features": 1,
-            },
+            "model_params": {"_target_": "DummyModel", "in_features": 4, "out_features": 1,},
             "engine": "dp",
             "args": {"logdir": logdir},
             "stages": {
@@ -150,9 +143,7 @@ def run_train_with_config_experiment_parallel_device():
                         #     "_target_": "DeviceCheckCallback",
                         #     "assert_device": str(device),
                         # },
-                        "test_loss_minimization": {
-                            "_target_": "LossMinimizationCallback"
-                        },
+                        "test_loss_minimization": {"callback": "LossMinimizationCallback"},
                     },
                 },
             },
@@ -162,7 +153,7 @@ def run_train_with_config_experiment_parallel_device():
         "train": dataset,
         "valid": dataset,
     }
-    runner.run_experiment(exp)
+    runner.run(exp)
     shutil.rmtree(logdir, ignore_errors=True)
 
 

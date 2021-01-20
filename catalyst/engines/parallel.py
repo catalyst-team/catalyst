@@ -28,8 +28,6 @@ class DataParallelEngine(DeviceEngine):
             return obj.to(self.device)
         # fmt: on
 
-    def save_checkpoint(
-        self, checkpoint_content: Mapping[str, Any], file: str
-    ):
+    def save_checkpoint(self, checkpoint_content: Mapping[str, Any], file: str):
         # TODO: method for unpacking torch.nn.DataParallel
         torch.save(checkpoint_content, file)

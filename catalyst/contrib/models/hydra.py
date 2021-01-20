@@ -25,10 +25,7 @@ class Hydra(nn.Module):
     normalize_keyword = "normalize_output"
 
     def __init__(
-        self,
-        heads: nn.ModuleDict,
-        encoder: nn.Module = None,
-        embedders: nn.ModuleDict = None,
+        self, heads: nn.ModuleDict, encoder: nn.Module = None, embedders: nn.ModuleDict = None,
     ):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
@@ -64,18 +61,14 @@ class Hydra(nn.Module):
                     else hidden_params["hiddens"][-1]
                 )
                 output[Hydra.hidden_keyword] = Hydra.parse_head_params(
-                    head_params=hidden_params,
-                    in_features=in_features,
-                    is_leaf=True,
+                    head_params=hidden_params, in_features=in_features, is_leaf=True,
                 )
 
             for head_branch_name, head_branch_params in head_params.items():
                 output[head_branch_name] = Hydra.parse_head_params(
                     head_params=head_branch_params,
                     in_features=in_features,
-                    is_leaf=not head_branch_name.startswith(
-                        Hydra.parent_keyword
-                    ),
+                    is_leaf=not head_branch_name.startswith(Hydra.parent_keyword),
                 )
             output = nn.ModuleDict(output)
         return output
@@ -132,8 +125,7 @@ class Hydra(nn.Module):
             [
                 value
                 for key, value in output_kv.items()
-                if not key.endswith("/")
-                and key not in ["features", "embeddings"]
+                if not key.endswith("/") and key not in ["features", "embeddings"]
             ]
         )
         output = tuple(output)
@@ -153,16 +145,10 @@ class Hydra(nn.Module):
         embedders_params_copy = deepcopy(embedders_params)
 
         def _get_normalization_keyword(dct: Dict):
-            return (
-                dct.pop(Hydra.normalize_keyword, False)
-                if dct is not None
-                else False
-            )
+            return dct.pop(Hydra.normalize_keyword, False) if dct is not None else False
 
         if encoder_params_copy is not None:
-            normalize_embeddings: bool = _get_normalization_keyword(
-                encoder_params_copy
-            )
+            normalize_embeddings: bool = _get_normalization_keyword(encoder_params_copy)
 
             encoder = SequentialNet(**encoder_params_copy)
             in_features = encoder_params_copy["hiddens"][-1]
@@ -173,9 +159,7 @@ class Hydra(nn.Module):
             assert in_features is not None
             encoder = None
 
-        heads = Hydra.parse_head_params(
-            head_params=heads_params_copy, in_features=in_features
-        )
+        heads = Hydra.parse_head_params(head_params=heads_params_copy, in_features=in_features)
         assert isinstance(heads, nn.ModuleDict)
 
         embedders = {}
@@ -183,17 +167,8 @@ class Hydra(nn.Module):
             for key, head_params in embedders_params_copy.items():
                 if isinstance(head_params, int):
                     head_params = {"num_embeddings": head_params}
-                need_normalize = head_params.pop(
-                    Hydra.normalize_keyword, False
-                )
-                block = [
-                    (
-                        "embedding",
-                        nn.Embedding(
-                            embedding_dim=in_features, **head_params,
-                        ),
-                    )
-                ]
+                need_normalize = head_params.pop(Hydra.normalize_keyword, False)
+                block = [("embedding", nn.Embedding(embedding_dim=in_features, **head_params,),)]
                 if need_normalize:
                     block.append(("normalize", Normalize()))
 

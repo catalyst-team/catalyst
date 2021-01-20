@@ -30,12 +30,7 @@ def main():
     runner.train(
         model=model,
         # loaders={"train": loader, "valid": loader},
-        datasets={
-            "batch_size": 32,
-            "num_workers": 1,
-            "train": dataset,
-            "valid": dataset,
-        },
+        datasets={"batch_size": 32, "num_workers": 1, "train": dataset, "valid": dataset,},
         criterion=nn.MSELoss(),
         optimizer=optim.Adam(model.parameters()),
         logdir="logs/log_example_02",

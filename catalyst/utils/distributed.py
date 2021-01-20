@@ -6,7 +6,6 @@ import socket
 import subprocess
 
 from packaging.version import parse, Version
-
 import torch
 from torch import nn
 import torch.distributed
@@ -52,9 +51,7 @@ def check_amp_available() -> bool:
 
 def check_torch_distributed_initialized() -> bool:
     """Checks if torch.distributed is available and initialized."""
-    return (
-        torch.distributed.is_available() and torch.distributed.is_initialized()
-    )
+    return torch.distributed.is_available() and torch.distributed.is_initialized()
 
 
 def check_slurm_available():
@@ -64,13 +61,10 @@ def check_slurm_available():
 
 def assert_fp16_available() -> None:
     """Asserts for installed and available Apex FP16."""
-    assert (
-        torch.backends.cudnn.enabled
-    ), "fp16 mode requires cudnn backend to be enabled."
+    assert torch.backends.cudnn.enabled, "fp16 mode requires cudnn backend to be enabled."
 
     assert check_apex_available(), (
-        "NVidia Apex package must be installed. "
-        "See https://github.com/NVIDIA/apex."
+        "NVidia Apex package must be installed. " "See https://github.com/NVIDIA/apex."
     )
 
 
@@ -88,9 +82,7 @@ def initialize_apex(model, optimizer=None, **engine_params):
     """
     import apex
 
-    amp_params = get_fn_default_params(
-        apex.amp.initialize, ["models", "optimizers"]
-    )
+    amp_params = get_fn_default_params(apex.amp.initialize, ["models", "optimizers"])
     amp_params["opt_level"] = "O0"
     for dp in engine_params:
         if dp in amp_params:
@@ -163,11 +155,7 @@ def get_distributed_mean(value: Union[float, torch.Tensor]):
         # sourceTensor.clone().detach().requires_grad_(True),
         # rather than torch.tensor(sourceTensor).
         if torch.is_tensor(value):
-            value = (
-                value.clone()
-                .detach()
-                .to(device=f"cuda:{torch.cuda.current_device()}")
-            )
+            value = value.clone().detach().to(device=f"cuda:{torch.cuda.current_device()}")
         else:
             value = torch.tensor(
                 value,
@@ -237,10 +225,7 @@ def get_distributed_params():
 
 
 def get_distributed_env(
-    local_rank: int,
-    rank: int,
-    world_size: int,
-    use_cuda_visible_devices: bool = True,
+    local_rank: int, rank: int, world_size: int, use_cuda_visible_devices: bool = True,
 ):
     """Returns environment copy with extra distributed settings.
 

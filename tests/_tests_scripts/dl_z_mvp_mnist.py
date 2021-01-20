@@ -14,8 +14,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
     "train": DataLoader(
-        MNIST("./data", train=True, download=True, transform=ToTensor()),
-        batch_size=32,
+        MNIST("./data", train=True, download=True, transform=ToTensor()), batch_size=32,
     ),
 }
 
@@ -25,7 +24,7 @@ class CustomRunner(dl.Runner):
         # model inference step
         return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         # model train/valid step
         x, y = batch
         y_hat = self.model(x.view(x.size(0), -1))

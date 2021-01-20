@@ -137,9 +137,7 @@ class TripletLoss(nn.Module):
         # For each anchor, get the hardest positive
         # First, we need to get a mask for every valid
         # positive (they should have same label)
-        mask_anchor_positive = self._get_anchor_positive_triplet_mask(
-            labels
-        ).float()
+        mask_anchor_positive = self._get_anchor_positive_triplet_mask(labels).float()
 
         # We put to 0 any element where (a, p) is not valid
         # (valid if a != p and label(a) == label(p))
@@ -151,9 +149,7 @@ class TripletLoss(nn.Module):
         # For each anchor, get the hardest negative
         # First, we need to get a mask for every valid negative
         # (they should have different labels)
-        mask_anchor_negative = self._get_anchor_negative_triplet_mask(
-            labels
-        ).float()
+        mask_anchor_negative = self._get_anchor_negative_triplet_mask(labels).float()
 
         # We add the maximum value in each row
         # to the invalid negatives (label(a) == label(n))
@@ -238,9 +234,7 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
         # a - action space
         # [batch_size, embedding_size] x [batch_size, embedding_size]
         # -> [batch_size, batch_size]
-        pairwise_similarity = torch.einsum(
-            "se,ae->sa", embeddings_pred, embeddings_true
-        )
+        pairwise_similarity = torch.einsum("se,ae->sa", embeddings_pred, embeddings_true)
         bs = embeddings_pred.shape[0]
         batch_idx = torch.arange(bs, device=device)
         negative_similarity = pairwise_similarity + torch.diag(
@@ -249,13 +243,9 @@ class TripletPairwiseEmbeddingLoss(nn.Module):
         # TODO argsort, take k worst
         hard_negative_ids = negative_similarity.argmax(dim=-1)
 
-        negative_similarities = pairwise_similarity[
-            batch_idx, hard_negative_ids
-        ]
+        negative_similarities = pairwise_similarity[batch_idx, hard_negative_ids]
         positive_similarities = pairwise_similarity[batch_idx, batch_idx]
-        loss = torch.relu(
-            self.margin - positive_similarities + negative_similarities
-        )
+        loss = torch.relu(self.margin - positive_similarities + negative_similarities)
         if self.reduction == "mean":
             loss = torch.sum(loss) / bs
         elif self.reduction == "sum":
@@ -269,9 +259,7 @@ class TripletMarginLossWithSampler(nn.Module):
     default TripletMargingLoss from PyTorch.
     """
 
-    def __init__(
-        self, margin: float, sampler_inbatch: "IInbatchTripletSampler"
-    ):
+    def __init__(self, margin: float, sampler_inbatch: "IInbatchTripletSampler"):
         """
         Args:
             margin: margin value
@@ -281,9 +269,7 @@ class TripletMarginLossWithSampler(nn.Module):
         self._sampler_inbatch = sampler_inbatch
         self._triplet_margin_loss = TripletMarginLoss(margin=margin)
 
-    def forward(
-        self, features: Tensor, labels: Union[Tensor, List[int]]
-    ) -> Tensor:
+    def forward(self, features: Tensor, labels: Union[Tensor, List[int]]) -> Tensor:
         """
         Args:
             features: features with shape [batch_size, features_dim]
@@ -294,16 +280,12 @@ class TripletMarginLossWithSampler(nn.Module):
         """
         labels_list = convert_labels2list(labels)
 
-        (
-            features_anchor,
-            features_positive,
-            features_negative,
-        ) = self._sampler_inbatch.sample(features=features, labels=labels_list)
+        (features_anchor, features_positive, features_negative,) = self._sampler_inbatch.sample(
+            features=features, labels=labels_list
+        )
 
         loss = self._triplet_margin_loss(
-            anchor=features_anchor,
-            positive=features_positive,
-            negative=features_negative,
+            anchor=features_anchor, positive=features_positive, negative=features_negative,
         )
         return loss
 

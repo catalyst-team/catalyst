@@ -19,13 +19,7 @@ class DeviceEngine(IEngine):
     def __repr__(self) -> str:  # noqa: D105
         return f"DeviceEngine(device='{self.device}')"
 
-    @property
-    def save_fn(self):
-        """Function to use for saving anything."""
-        # TODO: for XLA devices use
-        #   from torch_xla.core.xla_model import save
-        return torch.save
-
+    # TODO: use to_device from `catalyst.utils.torch.to_device`
     def to_device(
         self, obj: Union[dict, list, tuple, torch.Tensor, nn.Module]
     ) -> Union[dict, torch.Tensor, nn.Module]:
@@ -48,6 +42,7 @@ class DeviceEngine(IEngine):
         else:
             return obj
 
+    # TODO: think about using `self.to_device`
     def handle_device(self, batch: Mapping[str, Any]) -> Mapping[str, Any]:
         """Move batch to a device.
 
@@ -61,9 +56,7 @@ class DeviceEngine(IEngine):
         """
         return self.to_device(batch)
 
-    def save_checkpoint(
-        self, checkpoint_content: Mapping[str, Any], file: str
-    ):
+    def save_checkpoint(self, checkpoint_content: Mapping[str, Any], file: str):
         torch.save(checkpoint_content, file)
 
     def load_checkpoint(

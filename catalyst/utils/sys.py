@@ -28,10 +28,7 @@ def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
     Returns:
         Dict: decoded dict
     """
-    result = {
-        k: v.decode("UTF-8") if type(v) == bytes else v
-        for k, v in dictionary.items()
-    }
+    result = {k: v.decode("UTF-8") if type(v) == bytes else v for k, v in dictionary.items()}
     return result
 
 
@@ -59,9 +56,7 @@ def get_environment_vars() -> Dict[str, Any]:
         try:
             git_branch = (
                 subprocess.check_output(
-                    "git rev-parse --abbrev-ref HEAD".split(),
-                    shell=True,
-                    stderr=devnull,
+                    "git rev-parse --abbrev-ref HEAD".split(), shell=True, stderr=devnull,
                 )
                 .strip()
                 .decode("UTF-8")
@@ -70,9 +65,7 @@ def get_environment_vars() -> Dict[str, Any]:
                 "git rev-parse HEAD".split(), shell=True, stderr=devnull
             )
             git_origin_commit = subprocess.check_output(
-                f"git rev-parse origin/{git_branch}".split(),
-                shell=True,
-                stderr=devnull,
+                f"git rev-parse origin/{git_branch}".split(), shell=True, stderr=devnull,
             )
 
             git = {
@@ -136,9 +129,7 @@ def list_conda_packages() -> str:
         with open(os.devnull, "w") as devnull:
             try:
                 result = (
-                    subprocess.check_output(
-                        "conda list --export".split(), stderr=devnull
-                    )
+                    subprocess.check_output("conda list --export".split(), stderr=devnull)
                     .strip()
                     .decode("UTF-8")
                 )
@@ -161,9 +152,7 @@ def list_conda_packages() -> str:
     return result
 
 
-def dump_environment(
-    experiment_config: Any, logdir: str, configs_path: List[str] = None,
-) -> None:
+def dump_environment(experiment_config: Any, logdir: str, configs_path: List[str] = None,) -> None:
     """
     Saves config, environment variables and package list in JSON into logdir.
 
@@ -173,18 +162,14 @@ def dump_environment(
         configs_path: path(s) to config
     """
     configs_path = configs_path or []
-    configs_path = [
-        Path(path) for path in configs_path if isinstance(path, str)
-    ]
+    configs_path = [Path(path) for path in configs_path if isinstance(path, str)]
     config_dir = Path(logdir) / "configs"
     config_dir.mkdir(exist_ok=True, parents=True)
 
     if IS_HYDRA_AVAILABLE and isinstance(experiment_config, DictConfig):
         with open(config_dir / "config.yaml", "w") as f:
             f.write(OmegaConf.to_yaml(experiment_config, resolve=True))
-        experiment_config = OmegaConf.to_container(
-            experiment_config, resolve=True
-        )
+        experiment_config = OmegaConf.to_container(experiment_config, resolve=True)
 
     environment = get_environment_vars()
 

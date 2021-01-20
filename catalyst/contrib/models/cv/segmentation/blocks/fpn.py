@@ -29,17 +29,13 @@ class DecoderFPNBlock(DecoderBlock):
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
         self.align_corners = align_corners
-        super().__init__(
-            in_channels, enc_channels, out_channels, in_strides, **kwargs
-        )
+        super().__init__(in_channels, enc_channels, out_channels, in_strides, **kwargs)
 
     def _get_block(self):
         block = nn.Conv2d(self.enc_channels, self.out_channels, kernel_size=1)
         return block
 
-    def forward(
-        self, bottom: torch.Tensor, left: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
         """Forward call."""
         x = F.interpolate(
             bottom,
@@ -75,14 +71,7 @@ class Conv3x3GNReLU(nn.Module):
         self.align_corners = align_corners
 
         self.block = nn.Sequential(
-            nn.Conv2d(
-                in_channels,
-                out_channels,
-                kernel_size=3,
-                stride=1,
-                padding=1,
-                bias=False,
-            ),
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1, bias=False,),
             nn.GroupNorm(32, out_channels),
             nn.ReLU(inplace=True),
         )
@@ -103,23 +92,15 @@ class Conv3x3GNReLU(nn.Module):
 class SegmentationBlock(nn.Module):
     """@TODO: Docs (add description, `Example`). Contribution is welcome."""
 
-    def __init__(
-        self, in_channels: int, out_channels: int, num_upsamples: int = 0
-    ):
+    def __init__(self, in_channels: int, out_channels: int, num_upsamples: int = 0):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
 
-        blocks = [
-            Conv3x3GNReLU(
-                in_channels, out_channels, upsample=bool(num_upsamples)
-            )
-        ]
+        blocks = [Conv3x3GNReLU(in_channels, out_channels, upsample=bool(num_upsamples))]
 
         if num_upsamples > 1:
             for _ in range(1, num_upsamples):  # noqa: WPS122
-                blocks.append(
-                    Conv3x3GNReLU(out_channels, out_channels, upsample=True)
-                )
+                blocks.append(Conv3x3GNReLU(out_channels, out_channels, upsample=True))
 
         self.block = nn.Sequential(*blocks)
 

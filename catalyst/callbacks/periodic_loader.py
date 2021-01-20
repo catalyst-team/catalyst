@@ -65,8 +65,7 @@ class PeriodicLoaderCallback(Callback):
         for loader, period in kwargs.items():
             if not isinstance(period, (int, float)):
                 raise TypeError(
-                    "Expected loader period type is int/float "
-                    f"but got {type(period)}!"
+                    "Expected loader period type is int/float " f"but got {type(period)}!"
                 )
             period = int(period)
             if period < 0:
@@ -87,33 +86,23 @@ class PeriodicLoaderCallback(Callback):
             self.loaders[name] = loader
         # stage validation loader
         self.valid_loader = copy.copy(runner.valid_loader)
-        is_loaders_match = all(
-            loader in runner.loaders for loader in self.loader_periods.keys()
-        )
-        is_same_loaders_number = len(self.loader_periods) == len(
-            runner.loaders
-        )
+        is_loaders_match = all(loader in runner.loaders for loader in self.loader_periods.keys())
+        is_same_loaders_number = len(self.loader_periods) == len(runner.loaders)
         if is_same_loaders_number and is_loaders_match:
             # find potential epoch with zero loaders
             zero_loaders_epochs = list(
                 filter(
-                    lambda n: all(
-                        (p == 0 or n % p != 0)
-                        for p in self.loader_periods.values()
-                    ),
+                    lambda n: all((p == 0 or n % p != 0) for p in self.loader_periods.values()),
                     range(1, runner.num_epochs + 1),
                 )
             )
             if len(zero_loaders_epochs) > 0:
                 epoch_with_err = zero_loaders_epochs[0]
-                raise ValueError(
-                    f"There will be no loaders in epoch {epoch_with_err}!"
-                )
+                raise ValueError(f"There will be no loaders in epoch {epoch_with_err}!")
 
         if self.loader_periods.get(runner.valid_loader, 1) < 1:
             raise ValueError(
-                f"Period for a validation loader ('{runner.valid_loader}') "
-                "should be > 0!"
+                f"Period for a validation loader ('{runner.valid_loader}') " "should be > 0!"
             )
 
     def on_epoch_start(self, runner: "IRunner") -> None:
@@ -132,7 +121,7 @@ class PeriodicLoaderCallback(Callback):
         Raises:
             ValueError: if there are no loaders in epoch
         """
-        epoch_num = runner.epoch
+        epoch_num = runner.stage_epoch_step
         # loaders to use in current epoch
         epoch_loaders = OrderedDict()
         for name, loader in self.loaders.items():
@@ -144,9 +133,7 @@ class PeriodicLoaderCallback(Callback):
             raise ValueError(f"There is no loaders in epoch {epoch_num}!")
         first_loader = next(iter(epoch_loaders.keys()))
         runner.valid_loader = (
-            self.valid_loader
-            if self.valid_loader in epoch_loaders
-            else first_loader
+            self.valid_loader if self.valid_loader in epoch_loaders else first_loader
         )
         runner.loaders = epoch_loaders
 

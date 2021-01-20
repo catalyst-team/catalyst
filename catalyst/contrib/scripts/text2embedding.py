@@ -5,9 +5,8 @@ import sys
 
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
-
 import torch
+from tqdm import tqdm
 from transformers import BertConfig, BertModel, BertTokenizer
 
 from catalyst.contrib.data import LambdaReader
@@ -31,17 +30,10 @@ def build_args(parser):
     Returns:
         modified parser
     """
+    parser.add_argument("--in-csv", type=str, help="Path to csv with text", required=True)
+    parser.add_argument("--txt-col", type=str, help="Column in table that contain text")
     parser.add_argument(
-        "--in-csv", type=str, help="Path to csv with text", required=True
-    )
-    parser.add_argument(
-        "--txt-col", type=str, help="Column in table that contain text"
-    )
-    parser.add_argument(
-        "--in-huggingface",
-        type=str,
-        required=False,
-        help="model from huggingface hub",
+        "--in-huggingface", type=str, required=False, help="model from huggingface hub",
     )
     required_path_to_model = True
 
@@ -50,15 +42,9 @@ def build_args(parser):
             required_path_to_model = False
 
     if required_path_to_model:
-        parser.add_argument(
-            "--in-config", type=Path, required=required_path_to_model
-        )
-        parser.add_argument(
-            "--in-model", type=Path, required=required_path_to_model
-        )
-        parser.add_argument(
-            "--in-vocab", type=Path, required=required_path_to_model
-        )
+        parser.add_argument("--in-config", type=Path, required=required_path_to_model)
+        parser.add_argument("--in-model", type=Path, required=required_path_to_model)
+        parser.add_argument("--in-vocab", type=Path, required=required_path_to_model)
 
     parser.add_argument(
         "--out-prefix", type=str, required=True,
@@ -67,10 +53,7 @@ def build_args(parser):
     boolean_flag(parser, "mask-for-max-length", default=False)
     boolean_flag(parser, "output-hidden-states", default=False)
     parser.add_argument(
-        "--bert-level",
-        type=int,
-        help="BERT features level to use",
-        default=None,  # noqa: WPS432
+        "--bert-level", type=int, help="BERT features level to use", default=None,  # noqa: WPS432
     )
     boolean_flag(parser, "strip", default=True)
     boolean_flag(parser, "lowercase", default=True)
@@ -106,10 +89,7 @@ def build_args(parser):
     )
     boolean_flag(parser, "benchmark", default=None, help="Use CuDNN benchmark")
     boolean_flag(
-        parser,
-        "force-save",
-        default=None,
-        help="Force save `.npy` with np.save",
+        parser, "force-save", default=None, help="Force save `.npy` with np.save",
     )
 
     return parser
@@ -137,9 +117,7 @@ def main(args, _=None):
     bert_level = args.bert_level
 
     if bert_level is not None:
-        assert (
-            args.output_hidden_states
-        ), "You need hidden states output for level specification"
+        assert args.output_hidden_states, "You need hidden states output for level specification"
 
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)
@@ -147,9 +125,7 @@ def main(args, _=None):
     if getattr(args, "in_huggingface", False):
         model_config = BertConfig.from_pretrained(args.in_huggingface)
         model_config.output_hidden_states = args.output_hidden_states
-        model = BertModel.from_pretrained(
-            args.in_huggingface, config=model_config
-        )
+        model = BertModel.from_pretrained(args.in_huggingface, config=model_config)
         tokenizer = BertTokenizer.from_pretrained(args.in_huggingface)
     else:
         model_config = BertConfig.from_pretrained(args.in_config)
@@ -184,9 +160,7 @@ def main(args, _=None):
         max_length=max_length,
     )
 
-    dataloader = get_loader(
-        df, open_fn, batch_size=batch_size, num_workers=num_workers,
-    )
+    dataloader = get_loader(df, open_fn, batch_size=batch_size, num_workers=num_workers,)
 
     features = {}
     dataloader = tqdm(dataloader) if args.verbose else dataloader
@@ -195,9 +169,7 @@ def main(args, _=None):
             batch_input = any2device(batch_input, device)
             batch_output = model(**batch_input)
             mask = (
-                batch_input["attention_mask"].unsqueeze(-1)
-                if args.mask_for_max_length
-                else None
+                batch_input["attention_mask"].unsqueeze(-1) if args.mask_for_max_length else None
             )
 
             if check_ddp_wrapped(model):
@@ -223,11 +195,7 @@ def main(args, _=None):
                 for layer_name, layer_value in batch_features.items():
                     if bert_level is not None and bert_level != layer_name:
                         continue
-                    layer_name = (
-                        layer_name
-                        if isinstance(layer_name, str)
-                        else f"{layer_name:02d}"
-                    )
+                    layer_name = layer_name if isinstance(layer_name, str) else f"{layer_name:02d}"
                     _, embedding_size = layer_value.shape
                     features[layer_name] = np.memmap(
                         f"{args.out_prefix}.{layer_name}.npy",
@@ -236,25 +204,17 @@ def main(args, _=None):
                         shape=(num_samples, embedding_size),
                     )
 
-            indices = np.arange(
-                idx * batch_size, min((idx + 1) * batch_size, num_samples)
-            )
+            indices = np.arange(idx * batch_size, min((idx + 1) * batch_size, num_samples))
             for layer_name2, layer_value2 in batch_features.items():
                 if bert_level is not None and bert_level != layer_name2:
                     continue
-                layer_name2 = (
-                    layer_name2
-                    if isinstance(layer_name2, str)
-                    else f"{layer_name2:02d}"
-                )
+                layer_name2 = layer_name2 if isinstance(layer_name2, str) else f"{layer_name2:02d}"
                 features[layer_name2][indices] = _detach(layer_value2)
 
     if args.force_save:
         for key, mmap in features.items():
             mmap.flush()
-            np.save(
-                f"{args.out_prefix}.{key}.force.npy", mmap, allow_pickle=False
-            )
+            np.save(f"{args.out_prefix}.{key}.force.npy", mmap, allow_pickle=False)
 
 
 if __name__ == "__main__":

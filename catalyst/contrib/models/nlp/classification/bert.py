@@ -11,9 +11,7 @@ class BertClassifier(nn.Module):
     See ``transformers/modeling_distilbert.py`` in the transformers repository.
     """
 
-    def __init__(
-        self, pretrained_model_name: str, num_classes: Optional[int] = None
-    ):
+    def __init__(self, pretrained_model_name: str, num_classes: Optional[int] = None):
         """
         Args:
             pretrained_model_name: HuggingFace model name.
@@ -23,18 +21,12 @@ class BertClassifier(nn.Module):
         """
         super().__init__()
 
-        config = AutoConfig.from_pretrained(
-            pretrained_model_name, num_labels=num_classes
-        )
+        config = AutoConfig.from_pretrained(pretrained_model_name, num_labels=num_classes)
 
-        self.distilbert = AutoModel.from_pretrained(
-            pretrained_model_name, config=config
-        )
+        self.distilbert = AutoModel.from_pretrained(pretrained_model_name, config=config)
         self.pre_classifier = nn.Linear(config.dim, config.dim)
         self.classifier = nn.Sequential(
-            nn.ReLU(),
-            nn.Dropout(config.seq_classif_dropout),
-            nn.Linear(config.dim, num_classes),
+            nn.ReLU(), nn.Dropout(config.seq_classif_dropout), nn.Linear(config.dim, num_classes),
         )
 
     def forward(
@@ -60,9 +52,7 @@ class BertClassifier(nn.Module):
         """
         assert attention_mask is not None, "attention mask is none"
         distilbert_output = self.distilbert(
-            input_ids=features,
-            attention_mask=attention_mask,
-            head_mask=head_mask,
+            input_ids=features, attention_mask=attention_mask, head_mask=head_mask,
         )
         # we only need the hidden state here and don't need
         # transformer output, so index 0

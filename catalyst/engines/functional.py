@@ -52,8 +52,7 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
         engine == "cpu"
         or engine == "cuda"
         or (
-            re.match(r"cuda\:\d", engine)
-            and int(engine.split(":")[1]) < torch.cuda.device_count()
+            re.match(r"cuda\:\d", engine) and int(engine.split(":")[1]) < torch.cuda.device_count()
         )
     ):
         use_engine = DeviceEngine(engine)
@@ -132,13 +131,10 @@ def all_gather(data: Any) -> List[Any]:
     # gathering tensors of different shapes
     tensor_list = []
     for _ in size_list:  # noqa: WPS122
-        tensor_list.append(
-            torch.empty((max_size,), dtype=torch.uint8, device="cuda")
-        )
+        tensor_list.append(torch.empty((max_size,), dtype=torch.uint8, device="cuda"))
+
     if local_size != max_size:
-        padding = torch.empty(
-            size=(max_size - local_size,), dtype=torch.uint8, device="cuda"
-        )
+        padding = torch.empty(size=(max_size - local_size,), dtype=torch.uint8, device="cuda")
         tensor = torch.cat((tensor, padding), dim=0)
     dist.all_gather(tensor_list, tensor)
 

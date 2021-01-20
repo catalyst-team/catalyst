@@ -9,11 +9,7 @@ from catalyst.callbacks.checkpoint import CheckpointCallback
 from catalyst.callbacks.criterion import CriterionCallback
 from catalyst.callbacks.early_stop import CheckRunCallback
 from catalyst.callbacks.exception import ExceptionCallback
-from catalyst.callbacks.logging import (
-    ConsoleLogger,
-    TensorboardLogger,
-    VerboseLogger,
-)
+from catalyst.callbacks.logging import ConsoleLogger, TensorboardLogger, VerboseLogger
 from catalyst.callbacks.metric import MetricManagerCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
@@ -33,9 +29,7 @@ if IS_HYDRA_AVAILABLE:
 logger = logging.getLogger(__name__)
 
 
-def process_callbacks(
-    callbacks: Dict[str, Callback], stage_index: int = None
-) -> None:
+def process_callbacks(callbacks: Dict[str, Callback], stage_index: int = None) -> None:
     """
     Iterate over each of the callbacks and update
     appropriate parameters required for success
@@ -110,9 +104,7 @@ def add_default_callbacks(
 
     if not is_infer:
         default_callbacks.append(("_metrics", None, MetricManagerCallback))
-        default_callbacks.append(
-            ("_validation", None, ValidationManagerCallback)
-        )
+        default_callbacks.append(("_validation", None, ValidationManagerCallback))
         default_callbacks.append(("_console", None, ConsoleLogger))
 
         if is_logger:
@@ -122,21 +114,16 @@ def add_default_callbacks(
         if is_criterion:
             default_callbacks.append(("_criterion", None, CriterionCallback))
         if is_optimizer:
-            default_callbacks.append(
-                ("_optimizer", IOptimizerCallback, optimizer_cls)
-            )
+            default_callbacks.append(("_optimizer", IOptimizerCallback, optimizer_cls))
         if is_scheduler:
-            default_callbacks.append(
-                ("_scheduler", ISchedulerCallback, SchedulerCallback)
-            )
+            default_callbacks.append(("_scheduler", ISchedulerCallback, SchedulerCallback))
 
     default_callbacks.append(("_exception", None, ExceptionCallback))
 
     for (callback_name, callback_interface, callback_fn) in default_callbacks:
         callback_interface = callback_interface or callback_fn
         is_already_present = any(
-            check_callback_isinstance(x, callback_interface)
-            for x in callbacks.values()
+            check_callback_isinstance(x, callback_interface) for x in callbacks.values()
         )
         if not is_already_present:
             callbacks[callback_name] = callback_fn()
@@ -244,10 +231,7 @@ def get_model_parameters(
         )
     elif isinstance(models_keys, str):
         model_params = process_model_params(
-            models[models_keys],
-            layerwise_params,
-            no_bias_weight_decay,
-            lr_scaling,
+            models[models_keys], layerwise_params, no_bias_weight_decay, lr_scaling,
         )
     elif (
         IS_HYDRA_AVAILABLE
@@ -257,10 +241,7 @@ def get_model_parameters(
         model_params = []
         for model_key_el in models_keys:
             model_params_el = process_model_params(
-                models[model_key_el],
-                layerwise_params,
-                no_bias_weight_decay,
-                lr_scaling,
+                models[model_key_el], layerwise_params, no_bias_weight_decay, lr_scaling,
             )
             model_params.extend(model_params_el)
     else:

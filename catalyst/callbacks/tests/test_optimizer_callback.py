@@ -8,9 +8,7 @@ from catalyst.callbacks import OptimizerCallback
 
 
 class DummyRunner:
-    def __init__(
-        self, loss_value: torch.tensor, optimizer: torch.optim.Optimizer
-    ):
+    def __init__(self, loss_value: torch.tensor, optimizer: torch.optim.Optimizer):
         self.batch_metrics = {"loss": loss_value}
         self.is_train_loader = True
         self.optimizer = optimizer

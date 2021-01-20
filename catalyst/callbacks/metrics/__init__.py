@@ -19,9 +19,7 @@ from catalyst.callbacks.metrics.iou import (
 )
 from catalyst.callbacks.metrics.mrr import MRRCallback
 from catalyst.callbacks.metrics.perplexity import PerplexityCallback
-from catalyst.callbacks.metrics.ppv_tpr_f1 import (
-    PrecisionRecallF1ScoreCallback,
-)
+from catalyst.callbacks.metrics.ppv_tpr_f1 import PrecisionRecallF1ScoreCallback
 from catalyst.callbacks.metrics.precision import (
     AveragePrecisionCallback,
     PrecisionCallback,

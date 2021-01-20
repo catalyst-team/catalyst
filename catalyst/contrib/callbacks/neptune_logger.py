@@ -4,12 +4,7 @@ from typing import Dict, List, TYPE_CHECKING
 
 import neptune
 
-from catalyst.core.callback import (
-    Callback,
-    CallbackNode,
-    CallbackOrder,
-    CallbackScope,
-)
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, CallbackScope
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -84,9 +79,7 @@ class NeptuneLogger(Callback):
                  be turned off. It is useful for debugging
         """
         super().__init__(
-            order=CallbackOrder.logging,
-            node=CallbackNode.master,
-            scope=CallbackScope.experiment,
+            order=CallbackOrder.logging, node=CallbackNode.master, scope=CallbackScope.experiment,
         )
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
@@ -106,8 +99,7 @@ class NeptuneLogger(Callback):
 
         if offline_mode:
             neptune.init(
-                project_qualified_name="dry-run/project",
-                backend=neptune.OfflineBackend(),
+                project_qualified_name="dry-run/project", backend=neptune.OfflineBackend(),
             )
         else:
             neptune.init(
@@ -125,9 +117,7 @@ class NeptuneLogger(Callback):
         if hasattr(self, "experiment"):
             self.experiment.stop()
 
-    def _log_metrics(
-        self, metrics: Dict[str, float], step: int, mode: str, suffix=""
-    ):
+    def _log_metrics(self, metrics: Dict[str, float], step: int, mode: str, suffix=""):
         if self.metrics_to_log is None:
             metrics_to_log = sorted(metrics.keys())
         else:
@@ -157,10 +147,7 @@ class NeptuneLogger(Callback):
             mode = runner.loader_key
             metrics = runner.loader_metrics
             self._log_metrics(
-                metrics=metrics,
-                step=runner.global_epoch,
-                mode=mode,
-                suffix=self.epoch_log_suffix,
+                metrics=metrics, step=runner.global_epoch, mode=mode, suffix=self.epoch_log_suffix,
             )
 
 

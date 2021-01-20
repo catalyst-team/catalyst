@@ -45,19 +45,13 @@ class MultiSupervisedRunner(Runner):
 
         for model_name, model_keys in models_keys.items():
             self.input_key[model_name] = (
-                model_keys["input_key"]
-                if model_keys["input_key"] is not None
-                else "features"
+                model_keys["input_key"] if model_keys["input_key"] is not None else "features"
             )
             self.output_key[model_name] = (
-                model_keys["output_key"]
-                if model_keys["output_key"] is not None
-                else "logits"
+                model_keys["output_key"] if model_keys["output_key"] is not None else "logits"
             )
             self.target_key[model_name] = (
-                model_keys["target_key"]
-                if model_keys["target_key"] is not None
-                else "targets"
+                model_keys["target_key"] if model_keys["target_key"] is not None else "targets"
             )
             if isinstance(self.input_key[model_name], str):
                 # when model expects value
@@ -98,24 +92,16 @@ class MultiSupervisedRunner(Runner):
         batch = super()._handle_device(batch)
         return batch
 
-    def _process_input_str(
-        self, model_name: str, batch: Mapping[str, Any], **kwargs
-    ):
-        output = self.model[model_name](
-            batch[self.input_key[model_name]], **kwargs
-        )
+    def _process_input_str(self, model_name: str, batch: Mapping[str, Any], **kwargs):
+        output = self.model[model_name](batch[self.input_key[model_name]], **kwargs)
         return output
 
-    def _process_input_list(
-        self, model_name: str, batch: Mapping[str, Any], **kwargs
-    ):
+    def _process_input_list(self, model_name: str, batch: Mapping[str, Any], **kwargs):
         input = {key: batch[key] for key in self.input_key[model_name]}
         output = self.model[model_name](**input, **kwargs)
         return output
 
-    def _process_input_none(
-        self, model_name: str, batch: Mapping[str, Any], **kwargs
-    ):
+    def _process_input_none(self, model_name: str, batch: Mapping[str, Any], **kwargs):
         output = self.model[model_name](**batch, **kwargs)
         return output
 
@@ -123,13 +109,8 @@ class MultiSupervisedRunner(Runner):
         output = {self.output_key[model_name]: output}
         return output
 
-    def _process_output_list(
-        self, model_name: str, output: Union[Tuple, List]
-    ):
-        output = {
-            key: value
-            for key, value in zip(self.output_key[model_name], output)
-        }
+    def _process_output_list(self, model_name: str, output: Union[Tuple, List]):
+        output = {key: value for key, value in zip(self.output_key[model_name], output)}
         return output
 
     def _process_output_none(self, model_name: str, output: Mapping[str, Any]):
@@ -152,14 +133,12 @@ class MultiSupervisedRunner(Runner):
         """
         output = {}
         for model_name in self.model:
-            output = self._process_input[model_name](
-                model_name, batch, **kwargs
-            )
+            output = self._process_input[model_name](model_name, batch, **kwargs)
             output = self._process_output[model_name](model_name, output)
             output.update(output)
         return output
 
-    def _handle_batch(self, batch: Mapping[str, Any]) -> None:
+    def handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
         Inner method to handle specified data batch.
         Used to make a train/valid/infer stage during Experiment run.
@@ -172,9 +151,7 @@ class MultiSupervisedRunner(Runner):
         self.output = self.forward(batch)
 
     @torch.no_grad()
-    def predict_batch(
-        self, batch: Mapping[str, Any], **kwargs
-    ) -> Mapping[str, Any]:
+    def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         """
         Run model inference on specified data batch.
 

@@ -4,12 +4,7 @@ from typing import Dict, List, TYPE_CHECKING
 
 import wandb
 
-from catalyst.core.callback import (
-    Callback,
-    CallbackNode,
-    CallbackOrder,
-    CallbackScope,
-)
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, CallbackScope
 from catalyst.utils.misc import split_dict_to_subdicts
 
 if TYPE_CHECKING:
@@ -83,9 +78,7 @@ class WandbLogger(Callback):
                 and `dir` which is set to `<logdir>`
         """
         super().__init__(
-            order=CallbackOrder.logging,
-            node=CallbackNode.master,
-            scope=CallbackScope.experiment,
+            order=CallbackOrder.logging, node=CallbackNode.master, scope=CallbackScope.experiment,
         )
         self.metrics_to_log = metric_names
         self.log_on_batch_end = log_on_batch_end
@@ -107,12 +100,7 @@ class WandbLogger(Callback):
         self.logging_params = logging_params
 
     def _log_metrics(
-        self,
-        metrics: Dict[str, float],
-        step: int,
-        mode: str,
-        suffix="",
-        commit=True,
+        self, metrics: Dict[str, float], step: int, mode: str, suffix="", commit=True,
     ):
         if self.metrics_to_log is None:
             metrics_to_log = sorted(metrics.keys())
@@ -144,9 +132,7 @@ class WandbLogger(Callback):
     def on_stage_start(self, runner: "IRunner"):
         """Initialize Weights & Biases."""
         wandb.init(**self.logging_params, reinit=True, dir=str(runner.logdir))
-        wandb.watch(
-            models=runner.model, criterion=runner.criterion, log=self.log
-        )
+        wandb.watch(models=runner.model, criterion=runner.criterion, log=self.log)
 
     def on_batch_end(self, runner: "IRunner"):
         """Translate batch metrics to Weights & Biases."""
@@ -178,9 +164,7 @@ class WandbLogger(Callback):
         """Translate epoch metrics to Weights & Biases."""
         extra_mode = "_base"
         splitted_epoch_metrics = split_dict_to_subdicts(
-            dct=runner.epoch_metrics,
-            prefixes=list(runner.loaders.keys()),
-            extra_key=extra_mode,
+            dct=runner.epoch_metrics, prefixes=list(runner.loaders.keys()), extra_key=extra_mode,
         )
 
         if self.log_on_epoch_end:

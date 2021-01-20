@@ -3,7 +3,6 @@
 import os
 
 from pytest import mark
-
 import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
@@ -62,8 +61,7 @@ def test_engine_from_str_on_cuda_0():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
-    reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
 def test_engine_from_str_on_cuda_1():
     actual = process_engine("cuda:1")
@@ -87,9 +85,7 @@ def _sum_reduce(rank: int, world_size: int) -> None:
     to_sreduce = torch.tensor(rank + 1, dtype=torch.float).to(rank)
     actual = sum_reduce(to_sreduce)
 
-    assert actual == torch.tensor(
-        (world_size * (world_size + 1)) // 2, dtype=torch.float
-    ).to(rank)
+    assert actual == torch.tensor((world_size * (world_size + 1)) // 2, dtype=torch.float).to(rank)
 
     _cleanup()
 
@@ -100,9 +96,7 @@ def _mean_reduce(rank: int, world_size: int) -> None:
     to_sreduce = torch.tensor(rank + 1, dtype=torch.float).to(rank)
     actual = mean_reduce(to_sreduce, world_size)
 
-    assert actual == torch.tensor(
-        ((world_size + 1) / 2), dtype=torch.float
-    ).to(rank)
+    assert actual == torch.tensor(((world_size + 1) / 2), dtype=torch.float).to(rank)
 
     _cleanup()
 
@@ -114,9 +108,7 @@ def _all_gather(rank, world_size):
     actual = all_gather(to_gather)
     actual = torch.cat(actual)
 
-    expected = torch.cat(
-        [torch.ones(3, dtype=torch.int) * (i + 1) for i in range(world_size)]
-    )
+    expected = torch.cat([torch.ones(3, dtype=torch.int) * (i + 1) for i in range(world_size)])
 
     assert torch.all(actual.eq(expected))
 

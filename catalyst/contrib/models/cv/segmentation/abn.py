@@ -37,13 +37,9 @@ class ABN(nn.Module):
 
         layers = []
         if use_batchnorm:
-            layers.append(
-                nn.BatchNorm2d(num_features=num_features, **batchnorm_params)
-            )
+            layers.append(nn.BatchNorm2d(num_features=num_features, **batchnorm_params))
         if activation is not None and activation.lower() != "none":
-            layers.append(
-                nn.__dict__[activation](inplace=True, **activation_params)
-            )
+            layers.append(nn.__dict__[activation](inplace=True, **activation_params))
 
         self.net = nn.Sequential(*layers)
 
