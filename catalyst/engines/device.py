@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Union
+from typing import Any, Mapping, Union, Dict
 
 import torch
 import torch.nn as nn
@@ -18,6 +18,44 @@ class DeviceEngine(IEngine):
 
     def __repr__(self) -> str:  # noqa: D105
         return f"DeviceEngine(device='{self.device}')"
+
+    @property
+    def rank(self) -> int:
+        return -1
+
+    @property
+    def world_size(self) -> int:
+        return 1
+
+    def sync_device(self, tensor_or_module: Any) -> Any:
+        return tensor_or_module
+
+    def sync_tensor(self, tensor: Any) -> Any:
+        return tensor
+
+    def zero_grad(self, model, criterion, optimizer, loss) -> None:
+        model.zero_grad()
+
+    def backward_loss(self, model, criterion, optimizer, loss) -> None:
+        loss.backward()
+
+    def optimizer_step(self, model, criterion, optimizer, loss) -> None:
+        optimizer.step()
+
+    def init_components(
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+    ):
+        # setup backend
+        model = model_fn()
+        criterion = criterion_fn()
+        optimizer = optimizer_fn(model=model)
+        scheduler = scheduler_fn(optimizer=optimizer)
+        # @TODO: `sync_device` with the components
+        return model, criterion, optimizer, scheduler
+
+    def deinit_components(self):
+        # remove backend
+        pass
 
     # TODO: use to_device from `catalyst.utils.torch.to_device`
     def to_device(
@@ -55,6 +93,31 @@ class DeviceEngine(IEngine):
             be on a training device.
         """
         return self.to_device(batch)
+
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
+        return {
+            "model": model,
+            "criterion": criterion,
+            "optimizer": optimizer,
+            "scheduler": scheduler,
+            **kwargs,
+        }
+
+    def unpack_checkpoint(
+        self,
+        checkpoint: Dict,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
+    ) -> None:
+        model = checkpoint["model"]
+        criterion = checkpoint["criterion"]
+        optimizer = checkpoint["optimizer"]
+        scheduler = checkpoint["scheduler"]
 
     def save_checkpoint(self, checkpoint_content: Mapping[str, Any], file: str):
         torch.save(checkpoint_content, file)

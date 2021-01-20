@@ -5,7 +5,8 @@ import torch.distributed as dist
 import torch.nn as nn
 
 from catalyst.engines.device import DeviceEngine
-from catalyst.engines.functional import sum_reduce, mean_reduce
+
+# from catalyst.engines.functional import sum_reduce, mean_reduce
 
 
 class DistributedDataParallelEngine(DeviceEngine):
@@ -23,16 +24,24 @@ class DistributedDataParallelEngine(DeviceEngine):
             world_size: total number of processes in experiment
         """
         super().__init__(rank)
-        self.world_size = world_size
+        self._world_size = world_size
         self.address = address
         self.port = port
         self.backend = backend
+
+    @property
+    def rank(self) -> int:
+        return self.device
+
+    @property
+    def world_size(self) -> int:
+        return self._world_size
 
     def __repr__(self):  # noqa: D105
         return (
             f"DistributedDataParallelEngine(address={self.address},"
             f"port={self.port},backend='{self.backend}',"
-            f"rank={self.device},world_size={self.world_size})"
+            f"rank={self.device},world_size={self._world_size})"
         )
 
     def init_process(self):
@@ -40,6 +49,12 @@ class DistributedDataParallelEngine(DeviceEngine):
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
         dist.init_process_group(self.backend, rank=self.device, world_size=self.world_size)
+
+    def init_components(
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+    ):
+        self.init_process()
+        super().init_components(model_fn, criterion_fn, optimizer_fn, scheduler_fn)
 
     def cleanup_process(self):
         """Clean DDP variables and processes."""
