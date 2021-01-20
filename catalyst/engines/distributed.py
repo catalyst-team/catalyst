@@ -5,6 +5,7 @@ import torch.distributed as dist
 import torch.nn as nn
 
 from catalyst.engines.device import DeviceEngine
+from catalyst.engines.functional import sum_reduce, mean_reduce
 
 
 class DistributedDataParallelEngine(DeviceEngine):
@@ -46,8 +47,24 @@ class DistributedDataParallelEngine(DeviceEngine):
         """Clean DDP variables and processes."""
         dist.destroy_process_group()
 
-    def sync_metric(self):
-        pass
+    def sync_metric(self, tensor, sync_type="mean"):
+        """Synchronize tensor.
+
+        Args:
+            tensor (torch.Tensor): tensor to sync across the processes.
+            sync_type (str): tensor synchronization type,
+                should be one of 'sum' or 'mean'.
+                Default is 'mean'.
+
+        Returns:
+            torch.Tensor with synchronized values.
+        """
+        if sync_type not in {"sum", "mean"}:
+            raise ValueError(f"Unknown sync_type '{sync_type}'")
+        if sync_type == "sum":
+            return sum_reduce(tensor)
+        else:
+            return mean_reduce(tensor, self.world_size)
 
     # TODO: maybe handle unpacking DataParallel to simple nn.Module
     def load_checkpoint(
