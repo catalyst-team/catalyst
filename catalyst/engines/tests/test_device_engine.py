@@ -76,6 +76,9 @@ def _optimizer_fn(parameters):
 
 
 class CustomExperiment(dl.IExperiment):
+    def __init__(self, device):
+        self._device = device
+
     @property
     def seed(self) -> int:
         return 73
@@ -129,7 +132,7 @@ class CustomExperiment(dl.IExperiment):
         }
 
     def get_engine(self):
-        return dl.Engine()
+        return DeviceEngine(self._device)
 
     def get_trial(self):
         return None
@@ -175,7 +178,7 @@ def run_train_with_experiment_device(device):
     # dataset = DummyDataset(10)
     # loader = DataLoader(dataset, batch_size=4)
     runner = SupervisedRunner()
-    experiment = CustomExperiment()
+    experiment = CustomExperiment(device)
     # experiment = Experiment(
     #     model=_model_fn,
     #     criterion=nn.MSELoss(),

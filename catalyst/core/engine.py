@@ -47,6 +47,18 @@ class IEngine(ABC):
         pass
 
     @abstractmethod
+    def zero_grad(self, model, criterion, optimizer, loss) -> None:
+        pass
+
+    @abstractmethod
+    def backward_loss(self, model, criterion, optimizer, loss) -> None:
+        pass
+
+    @abstractmethod
+    def optimizer_step(self, model, criterion, optimizer, loss) -> None:
+        pass
+
+    @abstractmethod
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
@@ -70,18 +82,6 @@ class IEngine(ABC):
 
     @abstractmethod
     def load_checkpoint(self, path: str) -> Dict:
-        pass
-
-    @abstractmethod
-    def zero_grad(self, model, criterion, optimizer, loss) -> None:
-        pass
-
-    @abstractmethod
-    def backward_loss(self, model, criterion, optimizer, loss) -> None:
-        pass
-
-    @abstractmethod
-    def optimizer_step(self, model, criterion, optimizer, loss) -> None:
         pass
 
 
