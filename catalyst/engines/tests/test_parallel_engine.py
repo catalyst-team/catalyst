@@ -159,7 +159,7 @@ class CustomExperiment(dl.IExperiment):
                 loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
             # "check": DeviceCheckCallback(),
-            "check2": LossMinimizationCallback("loss"),
+            # "check2": LossMinimizationCallback("loss"),
         }
 
     def get_engine(self):
