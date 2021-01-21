@@ -444,8 +444,8 @@ class IRunner(ICallback, ILogger, ABC):
         """
         self.experiment = experiment or self.experiment
         try:
-            # @TODO: we need to move it to _run_experiment and run_stage
-            # as we can understand Engine only after `on_stage_start`
+            # @TODO: we need to move it to _run_experiment
+            # as we can understand Engine only after `on_experiment_start`
             if isinstance(self.engine, DistributedDataParallelEngine):
                 self._run_ddp_experiment()
             else:
