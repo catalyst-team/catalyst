@@ -1,5 +1,6 @@
 from typing import Any, Dict, Mapping, Union
 
+import numpy as np
 import torch
 import torch.nn as nn
 
@@ -69,13 +70,26 @@ class DeviceEngine(IEngine):
         self, tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module]
     ) -> Any:
         if isinstance(tensor_or_module, dict):
-            return {key: self.sync_tensor(value) for key, value in tensor_or_module.items()}
+            return {key: self.sync_device(value) for key, value in tensor_or_module.items()}
         elif isinstance(tensor_or_module, (list, tuple)):
-            return type(tensor_or_module)(self.sync_tensor(elem) for elem in tensor_or_module)
-        elif hasattr(tensor_or_module, "to"):
+            return type(tensor_or_module)(self.sync_device(elem) for elem in tensor_or_module)
+        elif torch.is_tensor(tensor_or_module):
+            return tensor_or_module.to(self.device, non_blocking=True)
+        elif (
+            isinstance(tensor_or_module, (np.ndarray, np.void))
+            and tensor_or_module.dtype.fields is not None
+        ):
+            return {
+                k: self.sync_device(tensor_or_module[k])
+                for k in tensor_or_module.dtype.fields.keys()
+            }
+        elif isinstance(tensor_or_module, np.ndarray):
+            return torch.tensor(tensor_or_module, device=self.device)
+        elif isinstance(tensor_or_module, nn.Module):
             return tensor_or_module.to(self.device)
-        else:
-            return tensor_or_module
+        # elif hasattr(tensor_or_module, "to"):
+        #     return tensor_or_module.to(self.device)
+        return tensor_or_module
 
     def sync_tensor(self, tensor: Any) -> Any:
         return tensor
@@ -83,12 +97,19 @@ class DeviceEngine(IEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        # setup backend
+        # @TODO: how could we do better?)
+        # model
         model = model_fn()
+        model = self.sync_device(model)
+        # criterion
         criterion = criterion_fn()
+        criterion = self.sync_device(criterion)
+        # optimizer
         optimizer = optimizer_fn(model=model)
+        optimizer = self.sync_device(optimizer)
+        # scheduler
         scheduler = scheduler_fn(optimizer=optimizer)
-        # @TODO: `sync_device` with the components
+        scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
     def deinit_components(self):

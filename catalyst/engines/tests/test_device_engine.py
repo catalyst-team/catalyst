@@ -10,7 +10,8 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst import dl
-from catalyst.callbacks import CriterionCallback, OptimizerCallback
+
+# from catalyst.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.callback import Callback, CallbackOrder
 
 # from catalyst.runners.supervised import SupervisedRunner
@@ -18,7 +19,7 @@ from catalyst.core.runner import IRunner
 from catalyst.engines.device import DeviceEngine
 
 # from catalyst.experiments.config import ConfigExperiment
-from catalyst.experiments.misc import SingleStageExperiment as Experiment
+# from catalyst.experiments.misc import SingleStageExperiment as Experiment
 from catalyst.registry import REGISTRY
 from catalyst.runners.misc import SupervisedRunnerV2 as SupervisedRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
@@ -75,6 +76,38 @@ def _optimizer_fn(parameters):
     return optim.SGD(parameters, lr=1e-3)
 
 
+@REGISTRY.add
+class DeviceCheckCallback(Callback):
+    def __init__(self, assert_device: str):
+        super().__init__(order=CallbackOrder.internal)
+        self.device = torch.device(assert_device)
+
+    def on_stage_start(self, runner: "IRunner"):
+        model_device = next(runner.model.parameters()).device
+        # print(f"model_device: {model_device}")
+        # print(f"self.device: {self.device}")
+        assert model_device == self.device
+
+
+@REGISTRY.add
+class LossMinimizationCallback(Callback):
+    def __init__(self, key="loss"):
+        super().__init__(order=CallbackOrder.metric)
+        self.key = key
+        self.container = None
+
+    def on_epoch_start(self, runner: "IRunner"):
+        self.container = []
+
+    def on_batch_end(self, runner: "IRunner"):
+        self.container.append(runner.batch_metrics[self.key].item())
+
+    def on_epoch_end(self, runner: "IRunner"):
+        print(self.container)
+        assert all(a >= b for a, b in zip(self.container[:-1], self.container[1:]))
+        self.container = []
+
+
 class CustomExperiment(dl.IExperiment):
     def __init__(self, device):
         self._device = device
@@ -129,6 +162,8 @@ class CustomExperiment(dl.IExperiment):
             "checkpoint": dl.CheckpointCallback(
                 loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
+            "check": DeviceCheckCallback(self._device),
+            "check2": LossMinimizationCallback("loss"),
         }
 
     def get_engine(self):
@@ -142,36 +177,6 @@ class CustomExperiment(dl.IExperiment):
             "console": dl.ConsoleLogger(),
             "csv": dl.LogdirLogger(logdir="./logdir"),
         }
-
-
-@REGISTRY.add
-class DeviceCheckCallback(Callback):
-    def __init__(self, assert_device: str):
-        super().__init__(order=CallbackOrder.internal)
-        self.device = torch.device(assert_device)
-
-    def on_stage_start(self, runner: "IRunner"):
-        model_device = next(runner.model.parameters()).device
-        assert model_device == self.device
-
-
-@REGISTRY.add
-class LossMinimizationCallback(Callback):
-    def __init__(self, key="loss"):
-        super().__init__(order=CallbackOrder.metric)
-        self.key = key
-        self.container = None
-
-    def on_epoch_start(self, runner: "IRunner"):
-        self.container = []
-
-    def on_batch_end(self, runner: "IRunner"):
-        self.container.append(runner.batch_metrics[self.key].item())
-
-    def on_epoch_end(self, runner: "IRunner"):
-        print(self.container)
-        assert all(a >= b for a, b in zip(self.container[:-1], self.container[1:]))
-        self.container = []
 
 
 def run_train_with_experiment_device(device):
