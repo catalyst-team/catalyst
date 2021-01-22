@@ -1,13 +1,12 @@
-import os
 from typing import Dict
+import os
 
 import torch
 import torch.distributed as dist
 import torch.nn as nn
 
 from catalyst.engines.device import DeviceEngine
-
-from catalyst.engines.functional import sum_reduce, mean_reduce
+from catalyst.engines.functional import mean_reduce, sum_reduce
 
 
 class DistributedDataParallelEngine(DeviceEngine):

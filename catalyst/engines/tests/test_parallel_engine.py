@@ -1,8 +1,7 @@
 # flake8: noqa
 
-import logging
-
 from typing import Any, Dict, List
+import logging
 import shutil
 
 from pytest import mark
@@ -30,7 +29,6 @@ from .test_device_engine import (
     LossMinimizationCallback,
     SupervisedRunner,
 )
-
 
 logger = logging.getLogger(__name__)
 

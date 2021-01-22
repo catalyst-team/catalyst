@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Union, Dict
+from typing import Any, Dict, Mapping, Union
 
 import torch
 import torch.nn as nn

@@ -1,8 +1,7 @@
 # flake8: noqa
 
-import logging
-
 from typing import Any, Dict, List
+import logging
 import os
 import shutil
 

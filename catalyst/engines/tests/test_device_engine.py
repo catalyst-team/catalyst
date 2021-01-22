@@ -1,8 +1,7 @@
 # flake8: noqa
 
-import logging
-
 from typing import Any, Dict, List
+import logging
 import shutil
 
 from pytest import mark
@@ -17,15 +16,13 @@ from catalyst import dl
 from catalyst.core.callback import Callback, CallbackOrder
 
 # from catalyst.runners.supervised import SupervisedRunner
-from catalyst.core.runner import IRunner
+from catalyst.core.runner import IRunner, IStageBasedRunner
 from catalyst.engines.device import DeviceEngine
 
 # from catalyst.experiments.config import ConfigExperiment
 # from catalyst.experiments.misc import SingleStageExperiment as Experiment
 from catalyst.registry import REGISTRY
-from catalyst.core.runner import IStageBasedRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
-
 
 logger = logging.getLogger(__name__)
 
