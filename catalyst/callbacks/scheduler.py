@@ -232,6 +232,8 @@ class SchedulerCallback(ISchedulerCallback):
             self.make_epoch_step(runner=runner)
 
 
+__all__ = ["ISchedulerCallback", "SchedulerCallback"]
+
 # class ILRUpdater(ABC, Callback):
 #     """Basic class that all Lr updaters inherit from."""
 #

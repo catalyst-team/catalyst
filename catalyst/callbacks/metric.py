@@ -1,3 +1,4 @@
+# @TODO: add metric aggregation, etc callback
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.metrics.misc import ILoaderMetric, IMetric
@@ -42,8 +43,7 @@ class LoaderMetricCallback(MetricCallback):
         )
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        # @TODO: loader_sample_len - how could we get it?
         self.metric.reset(batch_len=runner.loader_batch_len, sample_len=runner.loader_sample_len)
 
 
-# @TODO: add metric aggregation, etc callback
+__all__ = ["IMetricCallback", "MetricCallback", "LoaderMetricCallback"]

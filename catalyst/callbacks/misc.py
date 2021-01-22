@@ -4,8 +4,65 @@ from tqdm.auto import tqdm
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
+from catalyst.tools.time_manager import TimeManager
 
-# import sys
+EPS = 1e-8
+
+
+class TimerCallback(Callback):
+    """Logs pipeline execution time."""
+
+    def __init__(self):
+        """Initialisation for TimerCallback."""
+        super().__init__(order=CallbackOrder.metric + 1, node=CallbackNode.all)
+        self.timer = TimeManager()
+
+    def on_loader_start(self, runner: "IRunner") -> None:
+        """Loader start hook.
+
+        Args:
+            runner: current runner
+        """
+        self.timer.reset()
+        self.timer.start("_timer/batch_time")
+        self.timer.start("_timer/data_time")
+
+    def on_loader_end(self, runner: "IRunner") -> None:
+        """Loader end hook.
+
+        Args:
+            runner: current runner
+        """
+        self.timer.reset()
+
+    def on_batch_start(self, runner: "IRunner") -> None:
+        """Batch start hook.
+
+        Args:
+            runner: current runner
+        """
+        self.timer.stop("_timer/data_time")
+        self.timer.start("_timer/model_time")
+
+    def on_batch_end(self, runner: "IRunner") -> None:
+        """Batch end hook.
+
+        Args:
+            runner: current runner
+        """
+        self.timer.stop("_timer/model_time")
+        self.timer.stop("_timer/batch_time")
+
+        # @TODO: just a trick
+        self.timer.elapsed["_timer/_fps"] = runner.batch_size / (
+            self.timer.elapsed["_timer/batch_time"] + EPS
+        )
+        for key, value in self.timer.elapsed.items():
+            runner.batch_metrics[key] = value
+
+        self.timer.reset()
+        self.timer.start("_timer/batch_time")
+        self.timer.start("_timer/data_time")
 
 
 class VerboseCallback(Callback):
@@ -58,6 +115,77 @@ class VerboseCallback(Callback):
     #         if self.tqdm is not None:
     #             self.tqdm.write("Early exiting")
     #         runner.need_exception_reraise = False
+
+
+class CheckRunCallback(Callback):
+    """Executes only a pipeline part from the ``Experiment``.
+
+    Minimal working example (Notebook API):
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # data
+        num_samples, num_features = int(1e4), int(1e1)
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        # model training
+        runner = dl.SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=8,
+            verbose=True,
+            callbacks=[
+                dl.CheckRunCallback(num_batch_steps=3, num_epoch_steps=3)
+            ]
+        )
+
+    """
+
+    def __init__(self, num_batch_steps: int = 3, num_epoch_steps: int = 3):
+        """
+        Args:
+            num_batch_steps: number of batches to iterate in epoch
+            num_epoch_steps: number of epoch to perform in a stage
+        """
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+        self.num_batch_steps = num_batch_steps
+        self.num_epoch_steps = num_epoch_steps
+
+    def on_epoch_end(self, runner: "IRunner"):
+        """Check if iterated specified number of epochs.
+
+        Args:
+            runner: current runner
+        """
+        if runner.stage_epoch_step >= self.num_epoch_steps:
+            runner.need_early_stop = True
+
+    def on_batch_end(self, runner: "IRunner"):
+        """Check if iterated specified number of batches.
+
+        Args:
+            runner: current runner
+        """
+        if runner.loader_batch_step >= self.num_batch_steps:
+            runner.need_early_stop = True
 
 
 class IRunnerMetricHandler(ABC):
@@ -197,26 +325,13 @@ class TopNEpochMetricHandlerCallback(IEpochMetricHandlerCallback):
         print(log_message)
 
 
-class CheckpointCallback(TopNEpochMetricHandlerCallback):
-    def handle_improvement(self, runner: "IRunner"):
-        # simplified logic here
-        super().handle_improvement(runner=runner)
-        checkpoint = runner.engine.pack_checkpoint(
-            model=runner.model,
-            criterion=runner.criterion,
-            optimizer=runner.optimizer,
-            scheduler=runner.scheduler,
-        )
-        runner.engine.save_checkpoint(checkpoint, "./logpath.pth")
-
-    def on_stage_end(self, runner: "IRunner") -> None:
-        # simplified logic here
-        super().on_stage_end(runner=runner)
-        checkpoint = runner.engine.load_checkpoint("./logpath.pth")
-        runner.engine.unpack_checkpoint(
-            checkpoint=checkpoint,
-            model=runner.model,
-            criterion=runner.criterion,
-            optimizer=runner.optimizer,
-            scheduler=runner.scheduler,
-        )
+__all__ = [
+    "TimerCallback",
+    "VerboseCallback",
+    "CheckRunCallback",
+    "IRunnerMetricHandler",
+    "IBatchMetricHandlerCallback",
+    "IEpochMetricHandlerCallback",
+    "EarlyStoppingCallback",
+    "TopNEpochMetricHandlerCallback",
+]

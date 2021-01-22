@@ -1,4 +1,5 @@
 # @TODO: rewrite
+# @TODO: current location - catalyst/callbacks/misc.py
 # from typing import Callable, Dict, Tuple, TYPE_CHECKING, Union
 # from collections import OrderedDict
 # import os
@@ -860,3 +861,41 @@
 #     "ICheckpointCallback",
 #     "BaseCheckpointCallback",
 # ]
+
+from catalyst.callbacks.misc import TopNEpochMetricHandlerCallback
+from catalyst.core.callback import Callback
+from catalyst.core.runner import IRunner
+
+
+class ICheckpointCallback(Callback):
+    """Criterion callback interface, abstraction over criterion step."""
+
+    pass
+
+
+class CheckpointCallback(ICheckpointCallback, TopNEpochMetricHandlerCallback):
+    def handle_improvement(self, runner: "IRunner"):
+        # simplified logic here
+        super().handle_improvement(runner=runner)
+        checkpoint = runner.engine.pack_checkpoint(
+            model=runner.model,
+            criterion=runner.criterion,
+            optimizer=runner.optimizer,
+            scheduler=runner.scheduler,
+        )
+        runner.engine.save_checkpoint(checkpoint, "./logpath.pth")
+
+    def on_stage_end(self, runner: "IRunner") -> None:
+        # simplified logic here
+        super().on_stage_end(runner=runner)
+        checkpoint = runner.engine.load_checkpoint("./logpath.pth")
+        runner.engine.unpack_checkpoint(
+            checkpoint=checkpoint,
+            model=runner.model,
+            criterion=runner.criterion,
+            optimizer=runner.optimizer,
+            scheduler=runner.scheduler,
+        )
+
+
+__all__ = ["ICheckpointCallback", "CheckpointCallback"]

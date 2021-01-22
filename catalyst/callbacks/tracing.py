@@ -1,4 +1,4 @@
-# @TODO: rewrite as Pruning?
+# @TODO: make the same API for tracing/onnx/pruning/quantization
 # from typing import TYPE_CHECKING, Union
 # from pathlib import Path
 # import warnings
