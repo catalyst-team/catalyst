@@ -268,7 +268,7 @@ class IRunner(ICallback, ILogger, ABC):
 
         maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
         if isinstance(self.loader.sampler, DistributedSampler):
-            self.loader.sampler.set_epoch(self.epoch)
+            self.loader.sampler.set_epoch(self.stage_epoch_step)
 
     def on_batch_start(self, runner: "IRunner"):
         """Event handler for batch start.
@@ -373,10 +373,14 @@ class IRunner(ICallback, ILogger, ABC):
                 from DataLoader.
         """
         pass
+        # for callback in self.callbacks.values():
+        #     callback.handle_batch(self)
 
     def _run_batch(self) -> None:
         self._run_event("on_batch_start")
+        # @TODO: handle_batch with Callback?
         self.handle_batch(batch=self.batch)
+        # self.handle_batch()
         self._run_event("on_batch_end")
 
     def _run_loader(self) -> None:
@@ -476,8 +480,9 @@ class IStageBasedRunner(IRunner):
         """
         super().on_stage_start(runner)
         stage_params = self.experiment.get_stage_params(self.stage_key)
-        set_global_seed(self.experiment.seed)
 
+        # seed fix during dataset creation for reproducibility
+        set_global_seed(self.experiment.seed + self.engine.rank + self.global_epoch_step)
         loaders = self.experiment.get_loaders(stage=self.stage_key)
         loaders = validate_loaders(loaders)
         self.loaders = loaders
@@ -492,6 +497,8 @@ class IStageBasedRunner(IRunner):
             model_fn = partial(self.experiment.get_model, stage=self.stage_key)
 
         # @TODO: we need a better approach here
+        # seed fix during components creation for reproducibility
+        set_global_seed(self.experiment.seed + self.global_epoch_step)
         (
             self.model,
             self.criterion,
@@ -508,6 +515,8 @@ class IStageBasedRunner(IRunner):
         migrate_callbacks_from_previous_stage = stage_params.get(
             "migrate_callbacks_from_previous_stage", True
         )
+        # seed fix during callbacks creation for reproducibility
+        set_global_seed(self.experiment.seed + self.engine.rank + self.global_epoch_step)
         callbacks = self.experiment.get_callbacks(self.stage_key)
         callbacks = filter_callbacks_by_node(callbacks)
         callbacks = sort_callbacks_by_order(callbacks)
@@ -546,6 +555,7 @@ class IStageBasedRunner(IRunner):
         self.loader_batch_len = len(self.loader)
         if self.loader_batch_len == 0:
             raise NotImplementedError(f"DataLoader with name {self.loader_key} is empty.")
+        set_global_seed(self.experiment.seed + self.engine.rank + self.global_epoch_step)
 
     def on_stage_end(self, runner: "IRunner") -> None:
         # clean process if DDP training or do nothing

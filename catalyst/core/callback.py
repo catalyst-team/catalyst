@@ -49,6 +49,14 @@ class ICallback:
         """
         pass
 
+    # def handle_batch(self, runner: "IRunner") -> None:
+    #     """Event handler for exception case.
+    #
+    #     Args:
+    #         runner: IRunner instance.
+    #     """
+    #     pass
+
     def on_batch_end(self, runner: "IRunner") -> None:
         """Event handler for batch end.
 
