@@ -1,5 +1,6 @@
 # flake8: noqa
 
+import logging
 
 from typing import Any, Dict, List
 import os
@@ -32,8 +33,26 @@ from .test_device_engine import (
     SupervisedRunner,
 )
 
+logger = logging.getLogger(__name__)
+
 if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
+
+
+@REGISTRY.add
+class WorldSizeCheckCallback(Callback):
+    def __init__(self, assert_world_size: int):
+        super().__init__(order=CallbackOrder.internal)
+        self.world_size = assert_world_size
+
+    def on_batch_start(self, runner: "IRunner"):
+        device = runner.engine.device
+        world_size = runner.engine.world_size
+        logger.warning(
+            f"WorldSizeCheckCallback: expected world size ({self.world_size}) - actual ({world_size})"
+        )
+        assert device < self.world_size
+        assert self.world_size == world_size
 
 
 class CustomExperiment(dl.IExperiment):
@@ -89,6 +108,7 @@ class CustomExperiment(dl.IExperiment):
             ),
             # "check": DeviceCheckCallback(),
             "check2": LossMinimizationCallback("loss"),
+            "check_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES),
         }
 
     def get_engine(self):
@@ -129,7 +149,7 @@ def test_train_with_experiment_distributed_parallel_device():
     #     logdir=logdir,
     #     engine=engine,
     # )
-    runner = SupervisedRunner()
+    runner = SupervisedRunner(engine=DistributedDataParallelEngine())
     experiment = CustomExperiment()
     runner.run(experiment)
     # shutil.rmtree(logdir, ignore_errors=True)
