@@ -22,7 +22,12 @@ from catalyst.callbacks.misc import (
 )
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.periodic_loader import PeriodicLoaderCallback
-from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
+from catalyst.callbacks.scheduler import (
+    ISchedulerCallback,
+    SchedulerCallback,
+    ILRUpdater,
+    LRFinder,
+)
 
 # if IS_QUANTIZATION_AVAILABLE:
 #     from catalyst.callbacks.quantization import DynamicQuantizationCallback
