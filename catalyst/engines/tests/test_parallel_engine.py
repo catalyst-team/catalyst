@@ -168,6 +168,7 @@ def test_experiment_parallel_engine_with_cuda():
     run_train_with_experiment_parallel_device()
 
 
+@mark.skip("Config experiment is in development phase!")
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_config_experiment_engine_with_cuda():
     run_train_with_config_experiment_parallel_device()
