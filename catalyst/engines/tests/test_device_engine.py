@@ -1,5 +1,7 @@
 # flake8: noqa
 
+import logging
+
 from typing import Any, Dict, List
 import shutil
 
@@ -21,8 +23,11 @@ from catalyst.engines.device import DeviceEngine
 # from catalyst.experiments.config import ConfigExperiment
 # from catalyst.experiments.misc import SingleStageExperiment as Experiment
 from catalyst.registry import REGISTRY
-from catalyst.runners.misc import SupervisedRunnerV2 as SupervisedRunner
+from catalyst.core.runner import IStageBasedRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+
+
+logger = logging.getLogger(__name__)
 
 
 class DummyDataset(Dataset):
@@ -31,7 +36,7 @@ class DummyDataset(Dataset):
     """
 
     features_dim: int = 4
-    out_dim: int = 1
+    out_dim: int = 2
 
     def __init__(self, num_records: int):
         self.num_records = num_records
@@ -68,14 +73,6 @@ class DummyModel(nn.Module):
         return self.layers(batch)
 
 
-def _model_fn():
-    return DummyModel(4, 1)
-
-
-def _optimizer_fn(parameters):
-    return optim.SGD(parameters, lr=1e-3)
-
-
 @REGISTRY.add
 class DeviceCheckCallback(Callback):
     def __init__(self, assert_device: str):
@@ -84,8 +81,9 @@ class DeviceCheckCallback(Callback):
 
     def on_stage_start(self, runner: "IRunner"):
         model_device = next(runner.model.parameters()).device
-        # print(f"model_device: {model_device}")
-        # print(f"self.device: {self.device}")
+        logger.warning(
+            f"DeviceCheckCallback: model device ({model_device}) - device ({self.device})"
+        )
         assert model_device == self.device
 
 
@@ -95,6 +93,7 @@ class LossMinimizationCallback(Callback):
         super().__init__(order=CallbackOrder.metric)
         self.key = key
         self.container = None
+        self.round_nums = 6
 
     def on_epoch_start(self, runner: "IRunner"):
         self.container = []
@@ -103,11 +102,16 @@ class LossMinimizationCallback(Callback):
         self.container.append(runner.batch_metrics[self.key].item())
 
     def on_epoch_end(self, runner: "IRunner"):
-        print(self.container)
-        assert all(a >= b for a, b in zip(self.container[:-1], self.container[1:]))
+        assert len(self.container)
+
+        container = [round(num, self.round_nums) for num in self.container]
+        logger.warning(f"LossMinimizationCallback: {container}")
+        assert all(round(a, 6) >= round(b, 6) for a, b in zip(container[:-1], container[1:]))
+
         self.container = []
 
 
+# experiment definition
 class CustomExperiment(dl.IExperiment):
     def __init__(self, device):
         self._device = device
@@ -136,12 +140,12 @@ class CustomExperiment(dl.IExperiment):
         }
 
     def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
-        dataset = DummyDataset(10)
+        dataset = DummyDataset(6)
         loader = DataLoader(dataset, batch_size=4)
         return {"train": loader, "valid": loader}
 
     def get_model(self, stage: str):
-        return DummyModel(4, 1)
+        return DummyModel(4, 2)
 
     def get_criterion(self, stage: str):
         return nn.MSELoss()
@@ -176,6 +180,19 @@ class CustomExperiment(dl.IExperiment):
         return {
             "console": dl.ConsoleLogger(),
             "csv": dl.LogdirLogger(logdir="./logdir"),
+        }
+
+
+# execute whole experiment
+class SupervisedRunner(IStageBasedRunner):
+    def handle_batch(self, batch):
+        x, y = batch
+        logits = self.model(x)
+
+        self.batch = {
+            "features": x,
+            "targets": y,
+            "logits": logits,
         }
 
 
@@ -242,6 +259,7 @@ def test_experiment_engine_with_cpu():
     run_train_with_experiment_device("cpu")
 
 
+@mark.skip("Config experiment is in development phase!")
 def test_config_experiment_engine_with_cpu():
     run_train_with_config_experiment_device("cpu")
 
@@ -251,6 +269,7 @@ def test_experiment_engine_with_cuda():
     run_train_with_experiment_device("cuda:0")
 
 
+@mark.skip("Config experiment is in development phase!")
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_config_experiment_engine_with_cuda():
     run_train_with_config_experiment_device("cuda:0")
@@ -263,6 +282,7 @@ def test_experiment_engine_with_another_cuda_device():
     run_train_with_experiment_device("cuda:1")
 
 
+@mark.skip("Config experiment is in development phase!")
 @mark.skipif(
     not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )

@@ -415,21 +415,23 @@ class IRunner(ICallback, ILogger, ABC):
         # NOTE: engine should be built elsewhere but not here
         if isinstance(self.engine, DistributedDataParallelEngine):
             self.engine.device = rank
-            self.engine.world_size = world_size
+            self.engine._world_size = world_size
 
-        logger.warn(f"rank: {rank}")
-        logger.warn(f"world size: {world_size}")
-        logger.warn(f"engine: {self.engine}")
+            logger.warning(f"rank: {rank}")
+            logger.warning(f"world size: {world_size}")
+            logger.warning(f"engine: {self.engine}")
 
         self._run_event("on_experiment_start")
         for self.stage_key in self.experiment.stages:
-            if self.engine.rank < 0:
-                # single-device branch (cpu, gpu, dp)
-                self._run_stage()
-            else:
-                # ddp-device branch
-                # mp.spawn(self._run_stage, num_process=self.engine.world_size)
-                raise NotImplementedError()
+            # if self.engine.rank < 0:
+            #     # single-device branch (cpu, gpu, dp)
+            self._run_stage()
+            # else:
+            #     # ddp-device branch
+            #     torch.multiprocessing.spawn(
+            #         self._run_stage, args=(), nprocs=self.engine.world_size
+            #     )
+            #     # raise NotImplementedError()
         self._run_event("on_experiment_end")
 
     def _run_ddp_experiment(self) -> None:

@@ -1,4 +1,4 @@
-from typing import Any, Mapping, Union
+from typing import Any, Mapping, Union, Dict
 
 import torch
 import torch.nn as nn
@@ -27,6 +27,13 @@ class DataParallelEngine(DeviceEngine):
     #     else:
     #         return obj.to(self.device)
     #     # fmt: on
+
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
+        # unwrap model
+        _model = model.module if isinstance(model, nn.DataParallel) else model
+        return super().pack_checkpoint(_model, criterion, optimizer, scheduler, **kwargs)
 
     def save_checkpoint(self, checkpoint: Mapping[str, Any], path: str):
         # TODO: method for unpacking torch.nn.DataParallel

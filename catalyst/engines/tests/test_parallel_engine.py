@@ -1,5 +1,7 @@
 # flake8: noqa
 
+import logging
+
 from typing import Any, Dict, List
 import shutil
 
@@ -20,91 +22,17 @@ from catalyst.engines import DataParallelEngine
 from catalyst.registry import REGISTRY
 
 # from catalyst.experiments import ConfigExperiment, Experiment
-from catalyst.runners.misc import SupervisedRunnerV2 as SupervisedRunner
-from catalyst.settings import IS_CUDA_AVAILABLE
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-NUM_CUDA_DEVICES = torch.cuda.device_count()
-
-
-class DummyDataset(Dataset):
-    """
-    Dummy dataset.
-    """
-
-    features_dim: int = 4
-    out_dim: int = 1
-
-    def __init__(self, num_records: int):
-        self.num_records = num_records
-
-    def __len__(self):
-        """
-        Returns:
-            dataset's length.
-        """
-        return self.num_records
-
-    def __getitem__(self, idx: int):
-        """
-        Args:
-            idx: index of sample
-
-        Returns:
-            dummy features and targets vector
-        """
-        x = torch.ones(self.features_dim, dtype=torch.float)
-        y = torch.ones(self.out_dim, dtype=torch.float)
-        return x, y
+from .test_device_engine import (
+    DummyDataset,
+    DummyModel,
+    LossMinimizationCallback,
+    SupervisedRunner,
+)
 
 
-@REGISTRY.add
-class DummyModel(nn.Module):
-    def __init__(self, in_features, out_features):
-        super().__init__()
-        self.in_features = in_features
-        self.out_features = out_features
-        self.layers = nn.Linear(in_features, out_features)
-
-    def forward(self, batch):
-        return self.layers(batch)
-
-
-def _model_fn():
-    return DummyModel(4, 1)
-
-
-def _optimizer_fn(parameters):
-    return optim.SGD(parameters, lr=1e-3)
-
-
-@REGISTRY.add
-class DeviceCheckCallback(Callback):
-    def __init__(self, assert_device: str):
-        super().__init__(order=CallbackOrder.internal)
-        self.device = torch.device(assert_device)
-
-    def on_stage_start(self, runner: "IRunner"):
-        model_device = next(runner.model.parameters()).device
-        assert model_device == self.device
-
-
-@REGISTRY.add
-class LossMinimizationCallback(Callback):
-    def __init__(self, key="loss"):
-        super().__init__(order=CallbackOrder.metric)
-        self.key = key
-        self.container = None
-
-    def on_epoch_start(self, runner: "IRunner"):
-        self.container = []
-
-    def on_batch_end(self, runner: "IRunner"):
-        self.container.append(runner.batch_metrics[self.key].item())
-
-    def on_epoch_end(self, runner: "IRunner"):
-        print(self.container)
-        assert all(a >= b for a, b in zip(self.container[:-1], self.container[1:]))
-        self.container = []
+logger = logging.getLogger(__name__)
 
 
 class CustomExperiment(dl.IExperiment):
@@ -137,7 +65,7 @@ class CustomExperiment(dl.IExperiment):
         return {"train": loader, "valid": loader}
 
     def get_model(self, stage: str):
-        return DummyModel(4, 1)
+        return DummyModel(4, 2)
 
     def get_criterion(self, stage: str):
         return nn.MSELoss()
@@ -159,7 +87,7 @@ class CustomExperiment(dl.IExperiment):
                 loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
             # "check": DeviceCheckCallback(),
-            # "check2": LossMinimizationCallback("loss"),
+            "check2": LossMinimizationCallback("loss"),
         }
 
     def get_engine(self):
@@ -240,6 +168,7 @@ def test_experiment_parallel_engine_with_cuda():
     run_train_with_experiment_parallel_device()
 
 
+@mark.skip("Config experiment is in development phase!")
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_config_experiment_engine_with_cuda():
     run_train_with_config_experiment_parallel_device()
