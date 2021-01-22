@@ -1,4 +1,5 @@
 import os
+from typing import Dict
 
 import torch
 import torch.distributed as dist
@@ -6,7 +7,7 @@ import torch.nn as nn
 
 from catalyst.engines.device import DeviceEngine
 
-# from catalyst.engines.functional import sum_reduce, mean_reduce
+from catalyst.engines.functional import sum_reduce, mean_reduce
 
 
 class DistributedDataParallelEngine(DeviceEngine):
@@ -54,7 +55,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
         self.init_process()
-        super().init_components(model_fn, criterion_fn, optimizer_fn, scheduler_fn)
+        return super().init_components(model_fn, criterion_fn, optimizer_fn, scheduler_fn)
 
     def cleanup_process(self):
         """Clean DDP variables and processes."""
@@ -79,25 +80,9 @@ class DistributedDataParallelEngine(DeviceEngine):
         else:
             return mean_reduce(tensor, self.world_size)
 
-    # TODO: maybe handle unpacking DataParallel to simple nn.Module
-    def load_checkpoint(
-        self,
-        file: str,
-        model: nn.DataParallel,
-        optimizer: nn.Module = None,
-        criterion=None,
-        scheduler=None,
-    ):
-        content = torch.load(file)
-
-        if "model_state_dict" in content:
-            model.module.load_state_dict(content["model_state_dict"])
-
-        if "optimizer_state_dict" in content and optimizer is not None:
-            optimizer.load_state_dict(content["optimizer_state_dict"])
-
-        if "criterion_state_dict" in content and criterion is not None:
-            criterion.load_state_dict(content["criterion_state_dict"])
-
-        if "scheduler_state_dict" in content and scheduler is not None:
-            scheduler.load_state_dict(content["scheduler_state_dict"])
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
+        # unwrap model
+        _model = model.module if isinstance(model, nn.parallel.DistributedDataParallel) else model
+        return super().pack_checkpoint(_model, criterion, optimizer, scheduler, **kwargs)
