@@ -417,9 +417,9 @@ class IRunner(ICallback, ILogger, ABC):
             self.engine.device = rank
             self.engine.world_size = world_size
 
-        logger.warn(f"rank: {rank}")
-        logger.warn(f"world size: {world_size}")
-        logger.warn(f"engine: {self.engine}")
+            logger.warning(f"rank: {rank}")
+            logger.warning(f"world size: {world_size}")
+            logger.warning(f"engine: {self.engine}")
 
         self._run_event("on_experiment_start")
         for self.stage_key in self.experiment.stages:
