@@ -12,4 +12,5 @@ from catalyst.core.callback import (
     CallbackOrder,
     CallbackScope,
     CallbackWrapper,
+    CallbackList,
 )
