@@ -48,6 +48,11 @@ class ConsoleLogger(ILogger):
             prefix = f"{loader_key} ({stage_epoch_step}/{stage_epoch_len}) "
             msg = prefix + _format_metrics(metrics)
             print(msg)
+        elif scope == "epoch":
+            # @TODO: trick to save pure epoch-based metrics, like lr/momentum
+            prefix = f"* Epoch ({stage_epoch_step}/{stage_epoch_len}) "
+            msg = prefix + _format_metrics(metrics["_epoch_"])
+            print(msg)
 
     def log_image(
         self,
@@ -190,7 +195,7 @@ class TensorboardLogger(ILogger):
     ) -> None:
         if scope == "batch":
             if loader_key not in self.loggers.keys():
-                logdir = os.path.join(self.logdir, f"{loader_key}_log")
+                logdir = os.path.join(self.logdir, f"{loader_key}")
                 self.loggers[loader_key] = SummaryWriter(logdir)
             self._log_metrics(
                 metrics=metrics, step=stage_batch_step, loader_key=loader_key, suffix="/batch"
@@ -198,7 +203,7 @@ class TensorboardLogger(ILogger):
         elif scope == "epoch":
             for loader_key, per_loader_metrics in metrics.items():
                 if loader_key not in self.loggers.keys():
-                    logdir = os.path.join(self.logdir, f"{loader_key}_log")
+                    logdir = os.path.join(self.logdir, f"{loader_key}")
                     self.loggers[loader_key] = SummaryWriter(logdir)
                 self._log_metrics(
                     metrics=per_loader_metrics,

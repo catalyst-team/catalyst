@@ -245,6 +245,8 @@ class IRunner(ICallback, ILogger, ABC):
         self.global_epoch_step += 1
         self.stage_epoch_step += 1
         self.epoch_metrics: Dict = defaultdict(None)
+        # @TODO: trick to save pure epoch-based metrics, like lr/momentum
+        self.epoch_metrics["_epoch_"] = {}
 
     def on_loader_start(self, runner: "IRunner"):
         """Event handler for loader start.

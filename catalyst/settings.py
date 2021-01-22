@@ -156,6 +156,9 @@ class Settings(FrozenClass):
         self.stage_valid_prefix: str = "valid"
         self.stage_infer_prefix: str = "infer"
 
+        # epoch
+        self.epoch_metrics_prefix: str = "_epoch_"
+
         # loader
         self.loader_train_prefix: str = "train"
         self.loader_valid_prefix: str = "valid"

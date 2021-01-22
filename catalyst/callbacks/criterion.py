@@ -33,8 +33,8 @@ class CriterionCallback(ICriterionCallback):
         self.target_key = target_key
         self.metric_key = metric_key
         self.criterion_key = criterion_key
-        self._average_metric = AverageMetric()
-        self._criterion = None
+        self.average_metric = AverageMetric()
+        self.criterion = None
 
     def on_stage_start(self, runner: "IRunner"):
         """Checks that the current stage has correct criterion.
@@ -42,23 +42,22 @@ class CriterionCallback(ICriterionCallback):
         Args:
             runner: current runner
         """
-        criterion = get_attr(runner, key="criterion", inner_key=self.criterion_key)
-        assert criterion is not None
-        self._criterion = criterion
+        self.criterion = get_attr(runner, key="criterion", inner_key=self.criterion_key)
+        assert self.criterion is not None
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        self._average_metric.reset()
+        self.average_metric.reset()
 
     def on_batch_end(self, runner: "IRunner"):
         inputs, targets = runner.batch[self.input_key], runner.batch[self.target_key]
         inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
 
-        loss = self._criterion(inputs, targets)
+        loss = self.criterion(inputs, targets)
         runner.batch_metrics.update({self.metric_key: loss})
-        self._average_metric.update(loss.item(), len(targets))
+        self.average_metric.update(loss.item(), len(targets))
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        mean, std = self._average_metric.compute()
+        mean, std = self.average_metric.compute()
         runner.loader_metrics.update({self.metric_key: mean, f"{self.metric_key}/std": std})
 
 

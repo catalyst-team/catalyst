@@ -168,19 +168,19 @@ class OneCycleLRWithWarmup(BatchScheduler):
         self._calculate_lr_momentum(self.warmup_steps, self.lr_annealing_steps, self.decay_steps)
         self.last_epoch = 0
 
-    def recalculate(self, loader_len: int, current_step: int) -> None:
+    def recalculate(self, loader_batch_len: int, current_batch_step: int) -> None:
         """Recalculates total num_steps for ``batch`` mode.
 
         Args:
-            loader_len: total count of batches in an epoch
-            current_step: current step
+            loader_batch_len: total count of batches in an epoch
+            current_batch_step: current step
         """
-        warmup_steps = self.warmup_steps * loader_len
-        lr_annealing_steps = self.lr_annealing_steps * loader_len
-        decay_steps = self.decay_steps * loader_len
+        warmup_steps = self.warmup_steps * loader_batch_len
+        lr_annealing_steps = self.lr_annealing_steps * loader_batch_len
+        decay_steps = self.decay_steps * loader_batch_len
 
         self._calculate_lr_momentum(warmup_steps, lr_annealing_steps, decay_steps)
-        self.last_epoch = current_step * loader_len
+        self.last_epoch = current_batch_step * loader_batch_len
 
 
 __all__ = ["OneCycleLRWithWarmup"]

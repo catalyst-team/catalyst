@@ -31,4 +31,5 @@ from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 #     from catalyst.callbacks.pruning import PruningCallback
 
 from catalyst.contrib.callbacks.optuna_callback import OptunaPruningCallback
+
 # from catalyst.contrib.callbacks import *

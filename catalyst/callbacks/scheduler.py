@@ -107,15 +107,15 @@ class SchedulerCallback(ISchedulerCallback):
                 specified in experiment.
         """
         super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
+        assert mode in ("batch", "epoch", None)
         self.scheduler_key = scheduler_key
         self.mode = mode
         self.loader_key = loader_key
         self.metric_key = metric_key
+        self.scheduler = None
 
     @staticmethod
-    def _scheduler_step(
-        scheduler, reduced_metric=None,
-    ):
+    def _scheduler_step(scheduler, reduced_metric=None):
         if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
             scheduler.step(reduced_metric)
         else:
@@ -137,7 +137,6 @@ class SchedulerCallback(ISchedulerCallback):
             momentum_list: momentum for each param group
 
         """
-        # todo: consider saving lr and momentum for all param groups ?
         lr = lr_list[0]
         momentum = momentum_list[0]
 
@@ -156,11 +155,8 @@ class SchedulerCallback(ISchedulerCallback):
         Args:
             runner: current runner
         """
-        lr_list, momentum_list = self._scheduler_step(scheduler=self._scheduler)
-        # @TODO: return
-        # self._update_lr_and_momentum_in_metrics_dict(
-        #     runner.batch_metrics, lr_list, momentum_list
-        # )
+        lr_list, momentum_list = self._scheduler_step(scheduler=self.scheduler)
+        self._update_lr_and_momentum_in_metrics_dict(runner.batch_metrics, lr_list, momentum_list)
 
     def make_epoch_step(self, runner: "IRunner") -> None:
         """Perform scheduler step and update epoch metrics
@@ -170,12 +166,12 @@ class SchedulerCallback(ISchedulerCallback):
         """
         reduced_metric = runner.epoch_metrics[self.loader_key][self.metric_key]
         lr_list, momentum_list = self._scheduler_step(
-            scheduler=self._scheduler, reduced_metric=reduced_metric
+            scheduler=self.scheduler, reduced_metric=reduced_metric
         )
-        # @TODO: return
-        # self._update_lr_and_momentum_in_metrics_dict(
-        #     runner.epoch_metrics, lr_list, momentum_list
-        # )
+        # @TODO: trick to save pure epoch-based metrics, like lr/momentum
+        self._update_lr_and_momentum_in_metrics_dict(
+            runner.epoch_metrics["_epoch_"], lr_list, momentum_list
+        )
 
     def on_stage_start(self, runner: "IRunner") -> None:
         """Stage start hook.
@@ -183,19 +179,17 @@ class SchedulerCallback(ISchedulerCallback):
         Args:
             runner: current runner
         """
-
-        scheduler = get_attr(runner, key="scheduler", inner_key=self.scheduler_key)
-        assert scheduler is not None
-        self._scheduler = scheduler
+        self.scheduler = get_attr(runner, key="scheduler", inner_key=self.scheduler_key)
+        assert self.scheduler is not None
 
         if self.mode is None:
-            if isinstance(scheduler, BatchScheduler):
+            if isinstance(self.scheduler, BatchScheduler):
                 self.mode = "batch"
             else:
                 self.mode = "epoch"
 
-        if isinstance(scheduler, OneCycleLRWithWarmup) and self.mode == "batch":
-            scheduler.reset()
+        if isinstance(self.scheduler, OneCycleLRWithWarmup) and self.mode == "batch":
+            self.scheduler.reset()
         assert self.mode is not None
 
     def on_loader_start(self, runner: "IRunner") -> None:
@@ -206,11 +200,12 @@ class SchedulerCallback(ISchedulerCallback):
         """
         if (
             runner.is_train_loader
-            and isinstance(self._scheduler, OneCycleLRWithWarmup)
+            and isinstance(self.scheduler, OneCycleLRWithWarmup)
             and self.mode == "batch"
         ):
-            self._scheduler.recalculate(
-                loader_len=runner.loader_batch_len, current_step=runner.stage_batch_step,
+            self.scheduler.recalculate(
+                loader_batch_len=runner.loader_batch_len,
+                current_batch_step=runner.stage_batch_step,
             )
 
     def on_batch_end(self, runner: "IRunner") -> None:
