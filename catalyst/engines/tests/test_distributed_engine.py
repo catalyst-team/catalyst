@@ -45,12 +45,13 @@ class WorldSizeCheckCallback(Callback):
         self.world_size = assert_world_size
 
     def on_batch_start(self, runner: "IRunner"):
-        device = runner.engine.device
+        rank = runner.engine.rank
         world_size = runner.engine.world_size
         logger.warning(
-            f"WorldSizeCheckCallback: expected world size ({self.world_size}) - actual ({world_size})"
+            f"WorldSizeCheckCallback: "
+            f"expected world size ({self.world_size}) - actual ({world_size})"
         )
-        assert device < self.world_size
+        assert rank < self.world_size
         assert self.world_size == world_size
 
 
