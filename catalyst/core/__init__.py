@@ -14,3 +14,6 @@ from catalyst.core.callback import (
     CallbackWrapper,
     CallbackList,
 )
+from catalyst.core.engine import IEngine
+from catalyst.core.logger import ILogger
+from catalyst.core.trial import ITrial

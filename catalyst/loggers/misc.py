@@ -88,7 +88,7 @@ class ConsoleLogger(ILogger):
         print(f"Hparams ({experiment_key}): {hparams}")
 
 
-class LogdirLogger(ILogger):
+class CSVLogger(ILogger):
     def __init__(self, logdir: str):
         self.logdir = logdir
         self.loggers = {}
@@ -219,3 +219,6 @@ class TensorboardLogger(ILogger):
     def close_log(self) -> None:
         for logger in self.loggers.values():
             logger.close()
+
+
+__all__ = ["ConsoleLogger", "CSVLogger", "TensorboardLogger"]

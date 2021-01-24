@@ -97,7 +97,7 @@ class CustomExperiment(dl.IExperiment):
     def get_loggers(self):
         return {
             "console": dl.ConsoleLogger(),
-            "csv": dl.LogdirLogger(logdir="./logdir"),
+            "csv": dl.CSVLogger(logdir="./logdir"),
         }
 
 

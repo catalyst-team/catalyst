@@ -2,7 +2,7 @@ from typing import Dict
 from abc import ABC
 
 
-# optuna, ray, hyperopt
+# Optuna, Ray, Hyperopt
 class ITrial(ABC):
     """
     An abstraction that syncs experiment run with
