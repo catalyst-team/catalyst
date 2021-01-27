@@ -12,11 +12,11 @@ if TYPE_CHECKING:
 
 
 class ConfusionMatrixCallback(Callback):
-    """Callback to plot your confusion matrix to the Tensorboard.
+    """Callback to plot your confusion matrix to the loggers.
 
     Args:
-        input_key: key to use from ``runner.input``, specifies our ``y_true``
-        output_key: key to use from ``runner.output``, specifies our ``y_pred``
+        target_key: key to use from ``runner.input``, specifies our ``y_true``
+        input_key: key to use from ``runner.output``, specifies our ``y_pred``
         prefix: tensorboard plot name
         mode: Strategy to compute confusion matrix.
             Must be one of [tnt, sklearn]
@@ -28,26 +28,19 @@ class ConfusionMatrixCallback(Callback):
 
     def __init__(
         self,
-        input_key: str = "targets",
-        output_key: str = "logits",
+        input_key: str = "logits",
+        target_key: str = "targets",
         prefix: str = "confusion_matrix",
-        mode: str = "tnt",
         class_names: List[str] = None,
         num_classes: int = None,
         plot_params: Dict = None,
-        tensorboard_callback_name: str = "_tensorboard",
-        version: str = None,
     ):
         """Callback initialisation."""
         super().__init__(CallbackOrder.metric, CallbackNode.all)
         self.prefix = prefix
-        self.output_key = output_key
-        self.input_key = input_key
-        self.tensorboard_callback_name = tensorboard_callback_name
+        self.output_key = input_key
+        self.input_key = target_key
 
-        assert mode in ["tnt"]
-        assert version in [None, "tnt"]
-        self._mode = version or mode
         self._plot_params = plot_params or {}
 
         self.class_names = class_names
@@ -92,7 +85,7 @@ class ConfusionMatrixCallback(Callback):
             runner: current runner
         """
         self._add_to_stats(
-            runner.output[self.output_key].detach(), runner.input[self.input_key].detach(),
+            runner.batch[self.output_key].detach(), runner.batch[self.input_key].detach(),
         )
 
     def on_loader_end(self, runner: "IRunner"):
@@ -104,20 +97,22 @@ class ConfusionMatrixCallback(Callback):
         class_names = self.class_names or [str(i) for i in range(self.num_classes)]
         confusion_matrix = self._compute_confusion_matrix()
 
-        if runner.distributed_rank >= 0:
+        if runner.engine.rank >= 0:
             confusion_matrix = torch.from_numpy(confusion_matrix)
             confusion_matrix = confusion_matrix.to(runner.device)
             torch.distributed.reduce(confusion_matrix, 0)
             confusion_matrix = confusion_matrix.cpu().numpy()
 
-        if runner.distributed_rank <= 0:
-            tb_callback = runner.callbacks[self.tensorboard_callback_name]
-            self._plot_confusion_matrix(
-                logger=tb_callback.loggers[runner.loader_key],
-                epoch=runner.global_epoch,
-                confusion_matrix=confusion_matrix,
-                class_names=class_names,
-            )
+        if runner.engine.rank <= 0:
+            raise NotImplementedError()
+            # runner.log_image()
+            # tb_callback = runner.callbacks[self.tensorboard_callback_name]
+            # self._plot_confusion_matrix(
+            #     logger=tb_callback.loggers[runner.loader_key],
+            #     epoch=runner.global_epoch,
+            #     confusion_matrix=confusion_matrix,
+            #     class_names=class_names,
+            # )
 
 
 __all__ = ["ConfusionMatrixCallback"]

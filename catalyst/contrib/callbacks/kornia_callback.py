@@ -166,9 +166,9 @@ class BatchTransformCallback(Callback):
         Args:
             runner: сurrent runner
         """
-        input_batch = runner.input[self.input_key]
+        input_batch = runner.batch[self.input_key]
         output_batch = self.transform(input_batch)
-        runner.input[self.output_key] = output_batch
+        runner.batch[self.output_key] = output_batch
 
 
 __all__ = ["BatchTransformCallback"]

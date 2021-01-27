@@ -7,6 +7,7 @@ from catalyst.settings import (
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import ICheckpointCallback, CheckpointCallback
+from catalyst.callbacks.confusion_matrix import ConfusionMatrixCallback
 from catalyst.callbacks.control_flow import ControlFlowCallback
 from catalyst.callbacks.criterion import ICriterionCallback, CriterionCallback
 from catalyst.callbacks.metric import IMetricCallback, MetricCallback, LoaderMetricCallback
