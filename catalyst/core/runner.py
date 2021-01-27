@@ -423,7 +423,7 @@ class IRunner(ICallback, ILogger, ABC):
     def _run_experiment(self) -> None:
         self._run_event("on_experiment_start")
         for self.stage_key in self.experiment.stages:
-            if self.engine.world_size < 0:
+            if self.engine.rank < 0:
                 # single-device branch (cpu, gpu, dp)
                 self._run_stage()
             else:

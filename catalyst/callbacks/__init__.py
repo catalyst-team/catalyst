@@ -15,11 +15,10 @@ from catalyst.callbacks.misc import (
     TimerCallback,
     VerboseCallback,
     CheckRunCallback,
-    IRunnerMetricHandler,
+    MetricHandler,
     IBatchMetricHandlerCallback,
     IEpochMetricHandlerCallback,
     EarlyStoppingCallback,
-    TopNEpochMetricHandlerCallback,
 )
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.periodic_loader import PeriodicLoaderCallback

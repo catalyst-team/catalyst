@@ -176,5 +176,5 @@ class AUCMetric(IMetric):
     def compute_key_value(self) -> Dict[str, float]:
         per_class_auc = self.compute()
         output = {f"auc/class_{i+1:02d}": value.item() for i, value in enumerate(per_class_auc)}
-        output["auc"] = per_class_auc.mean()
+        output["auc"] = per_class_auc.mean().item()
         return output

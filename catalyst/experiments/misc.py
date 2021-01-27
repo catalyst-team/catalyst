@@ -9,6 +9,8 @@ from catalyst.core.engine import Engine, IEngine
 from catalyst.core.experiment import IExperiment
 from catalyst.core.logger import ILogger
 from catalyst.core.trial import ITrial
+from catalyst.engines.device import DeviceEngine
+from catalyst.settings import IS_CUDA_AVAILABLE
 from catalyst.typing import Criterion, Model, Optimizer, RunnerModel, Scheduler
 
 
@@ -86,7 +88,8 @@ class SingleStageExperiment(IExperiment):
         return self._callbacks or {}
 
     def get_engine(self) -> IEngine:
-        return self._engine or Engine()
+        default_engine = DeviceEngine("cuda" if IS_CUDA_AVAILABLE else "cpu")
+        return self._engine or default_engine
 
     def get_trial(self) -> ITrial:
         return self._trial
