@@ -3,19 +3,14 @@
 from typing import Any, Dict, List
 import logging
 import os
-import shutil
+from tempfile import TemporaryDirectory
 
 from pytest import mark
-import torch
-import torch.distributed as dist
-import torch.multiprocessing as mp
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, Dataset
-from torch.utils.data.distributed import DistributedSampler
+from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.callback import Callback, CallbackOrder
 
 # from catalyst.dl import SupervisedRunner
@@ -47,15 +42,14 @@ class WorldSizeCheckCallback(Callback):
     def on_batch_start(self, runner: "IRunner"):
         rank = runner.engine.rank
         world_size = runner.engine.world_size
-        logger.warning(
-            f"WorldSizeCheckCallback: "
-            f"expected world size ({self.world_size}) - actual ({world_size})"
-        )
+        logger.warning(f"WorldSizeCheckCallback: " f"expected world size ({self.world_size}) - actual ({world_size})")
         assert rank < self.world_size
         assert self.world_size == world_size
 
 
 class CustomExperiment(dl.IExperiment):
+    _logdir = "./logdir"
+
     @property
     def seed(self) -> int:
         return 73
@@ -98,13 +92,11 @@ class CustomExperiment(dl.IExperiment):
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "criterion": dl.CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
+            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
-                loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
             # "check": DeviceCheckCallback(),
             "check2": LossMinimizationCallback("loss"),
@@ -120,7 +112,7 @@ class CustomExperiment(dl.IExperiment):
     def get_loggers(self):
         return {
             "console": dl.ConsoleLogger(),
-            "csv": dl.CSVLogger(logdir="./logdir"),
+            "csv": dl.CSVLogger(logdir=self._logdir),
         }
 
 
@@ -149,17 +141,11 @@ def test_train_with_experiment_distributed_parallel_device():
     #     logdir=logdir,
     #     engine=engine,
     # )
-    runner = SupervisedRunner(engine=DistributedDataParallelEngine())
-    experiment = CustomExperiment()
-    runner.run(experiment)
-    # shutil.rmtree(logdir, ignore_errors=True)
-
-
-def _get_loaders(*args, **kwargs):
-    dataset = DummyDataset(10)
-    # sampler = DistributedSampler(dataset, world_size, rank)
-    loader = DataLoader(dataset, batch_size=4)  # , sampler=sampler)
-    return {"train": loader, "valid": loader}
+    with TemporaryDirectory() as logdir:
+        runner = SupervisedRunner(engine=DistributedDataParallelEngine())
+        experiment = CustomExperiment()
+        experiment._logdir = logdir
+        runner.run(experiment)
 
 
 @mark.skip("Config experiment is in development phase!")

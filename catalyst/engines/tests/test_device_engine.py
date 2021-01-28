@@ -2,7 +2,7 @@
 
 from typing import Any, Dict, List
 import logging
-import shutil
+from tempfile import TemporaryDirectory
 
 from pytest import mark
 import torch
@@ -12,15 +12,11 @@ from torch.utils.data import DataLoader, Dataset
 
 from catalyst import dl
 
-# from catalyst.callbacks import CriterionCallback, OptimizerCallback
 from catalyst.core.callback import Callback, CallbackOrder
 
-# from catalyst.runners.supervised import SupervisedRunner
 from catalyst.core.runner import IRunner, IStageBasedRunner
 from catalyst.engines.device import DeviceEngine
 
-# from catalyst.experiments.config import ConfigExperiment
-# from catalyst.experiments.misc import SingleStageExperiment as Experiment
 from catalyst.registry import REGISTRY
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
@@ -78,9 +74,7 @@ class DeviceCheckCallback(Callback):
 
     def on_stage_start(self, runner: "IRunner"):
         model_device = next(runner.model.parameters()).device
-        logger.warning(
-            f"DeviceCheckCallback: model device ({model_device}) - device ({self.device})"
-        )
+        logger.warning(f"DeviceCheckCallback: model device ({model_device}) - device ({self.device})")
         assert model_device == self.device
 
 
@@ -110,6 +104,8 @@ class LossMinimizationCallback(Callback):
 
 # experiment definition
 class CustomExperiment(dl.IExperiment):
+    _logdir = "./logdir"
+
     def __init__(self, device):
         self._device = device
 
@@ -155,13 +151,11 @@ class CustomExperiment(dl.IExperiment):
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "criterion": dl.CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
+            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
-                loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
             "check": DeviceCheckCallback(self._device),
             "check2": LossMinimizationCallback("loss"),
@@ -176,7 +170,7 @@ class CustomExperiment(dl.IExperiment):
     def get_loggers(self):
         return {
             "console": dl.ConsoleLogger(),
-            "csv": dl.CSVLogger(logdir="./logdir"),
+            "csv": dl.CSVLogger(logdir=self._logdir),
         }
 
 
@@ -194,25 +188,11 @@ class SupervisedRunner(IStageBasedRunner):
 
 
 def run_train_with_experiment_device(device):
-    # dataset = DummyDataset(10)
-    # loader = DataLoader(dataset, batch_size=4)
-    runner = SupervisedRunner()
-    experiment = CustomExperiment(device)
-    # experiment = Experiment(
-    #     model=_model_fn,
-    #     criterion=nn.MSELoss(),
-    #     optimizer=_optimizer_fn,
-    #     loaders={"train": loader, "valid": loader},
-    #     main_metric="loss",
-    #     callbacks=[
-    #         CriterionCallback(),
-    #         OptimizerCallback(),
-    #         DeviceCheckCallback(device),
-    #         LossMinimizationCallback("loss"),
-    #     ],
-    #     engine=DeviceEngine(device),
-    # )
-    runner.run(experiment)
+    with TemporaryDirectory() as logdir:
+        runner = SupervisedRunner()
+        experiment = CustomExperiment(device)
+        experiment._logdir = logdir
+        runner.run(experiment)
 
 
 def run_train_with_config_experiment_device(device):
