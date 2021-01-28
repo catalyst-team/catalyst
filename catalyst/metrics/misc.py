@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Tuple
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -31,7 +31,7 @@ class IMetric(ABC):
         pass
 
     @abstractmethod
-    def update(self, *args, **kwargs) -> None:
+    def update(self, *args, **kwargs) -> Any:
         """Updates the metrics state using the passed data.
 
         By default, this is called at the end of each batch
@@ -41,6 +41,10 @@ class IMetric(ABC):
             *args: some args :)
             **kwargs: some kwargs ;)
         """
+        pass
+
+    @abstractmethod
+    def update_key_value(self, *args, **kwargs) -> Dict[str, float]:
         pass
 
     @abstractmethod
@@ -57,7 +61,7 @@ class IMetric(ABC):
         pass
 
     @abstractmethod
-    def compute_key_value(self) -> Dict:
+    def compute_key_value(self) -> Dict[str, float]:
         """Computes the metric based on it's accumulated state.
 
         By default, this is called at the end of each loader
@@ -78,17 +82,15 @@ class IMetric(ABC):
         Returns:
             Any: computed value, it's better to return key-value.
         """
-        self.update(*args, **kwargs)
-        if self.compute_on_call:
-            # here should be some engine stuff with tensor sync
-            return self.compute()
+        value = self.update(*args, **kwargs)
+        return self.compute() if self.compute_on_call else value
 
 
 class ILoaderMetric(IMetric):
     """Interface for all Metrics."""
 
     @abstractmethod
-    def reset(self, batch_len, sample_len) -> None:
+    def reset(self, num_batches, num_samples, *args, **kwargs) -> None:
         """Resets the metric to it's initial state.
 
         By default, this is called at the start of each loader
@@ -96,8 +98,24 @@ class ILoaderMetric(IMetric):
         """
         pass
 
+    @abstractmethod
+    def update(self, *args, **kwargs) -> None:
+        """Updates the metrics state using the passed data.
 
-class AverageMetric(IMetric):
+        By default, this is called at the end of each batch
+        (`on_batch_end` event).
+
+        Args:
+            *args: some args :)
+            **kwargs: some kwargs ;)
+        """
+        pass
+
+    def update_key_value(self, *args, **kwargs) -> None:
+        pass
+
+
+class AdditiveValueMetric(IMetric):
     def __init__(self, compute_on_call: bool = True):
         super().__init__(compute_on_call=compute_on_call)
         self.n = 0
@@ -117,7 +135,7 @@ class AverageMetric(IMetric):
         self.std = np.nan
         self.num_samples = 0
 
-    def update(self, value: float, num_samples: int) -> None:
+    def update(self, value: float, num_samples: int) -> float:
         self.value = value
         self.n += 1
         self.num_samples += num_samples
@@ -135,31 +153,40 @@ class AverageMetric(IMetric):
             self.m_s += (value - self.mean_old) * (value - self.mean) * num_samples
             self.mean_old = self.mean
             self.std = np.sqrt(self.m_s / (self.num_samples - 1.0))
+        return value
 
-    def compute(self) -> Any:
+    def update_key_value(self, value: float, num_samples: int) -> Dict[str, float]:
+        raise NotImplementedError()
+
+    def compute(self) -> Tuple[float, float]:
         return self.mean, self.std
 
     def compute_key_value(self) -> Dict[str, float]:
         raise NotImplementedError()
 
 
-class AccuracyMetric(AverageMetric):
-    def update(self, logits: torch.Tensor, targets: torch.Tensor) -> None:
+class AccuracyMetric(AdditiveValueMetric):
+    def update(self, logits: torch.Tensor, targets: torch.Tensor) -> float:
         value = accuracy(logits, targets)[0].item()
-        super().update(value, len(targets))
+        value = super().update(value, len(targets))
+        return value
+
+    def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+        value = self.update(logits=logits, targets=targets)
+        return {"accuracy": value}
 
     def compute_key_value(self) -> Dict[str, float]:
         mean, std = super().compute()
         return {"accuracy": mean, "accuracy/std": std}
 
 
-class AUCMetric(IMetric):
+class AUCMetric(ILoaderMetric):
     def __init__(self, compute_on_call: bool = True):
         super().__init__(compute_on_call=compute_on_call)
         self.scores = []
         self.targets = []
 
-    def reset(self) -> None:
+    def reset(self, num_batches, num_samples) -> None:
         self.scores = []
         self.targets = []
 
@@ -167,7 +194,7 @@ class AUCMetric(IMetric):
         self.scores.append(scores.cpu().detach())
         self.targets.append(targets.cpu().detach())
 
-    def compute(self) -> Any:
+    def compute(self) -> torch.Tensor:
         targets = torch.cat(self.targets)
         scores = torch.cat(self.scores)
         score = auc(outputs=scores, targets=targets)

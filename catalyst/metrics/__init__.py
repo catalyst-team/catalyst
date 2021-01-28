@@ -33,7 +33,7 @@ from catalyst.metrics.recall import recall
 
 from catalyst.metrics.misc import (
     IMetric,
-    AverageMetric,
+    AdditiveValueMetric,
     AccuracyMetric,
     AUCMetric,
 )

@@ -1,6 +1,6 @@
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.metrics.misc import AverageMetric
+from catalyst.metrics.misc import AdditiveValueMetric
 from catalyst.utils.misc import get_attr
 
 
@@ -33,7 +33,7 @@ class CriterionCallback(ICriterionCallback):
         self.target_key = target_key
         self.metric_key = metric_key
         self.criterion_key = criterion_key
-        self.average_metric = AverageMetric()
+        self.average_metric = AdditiveValueMetric()
         self.criterion = None
 
     def on_stage_start(self, runner: "IRunner"):
