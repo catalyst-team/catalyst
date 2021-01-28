@@ -7,9 +7,9 @@ import os
 from pathlib import Path
 import shutil
 
-from catalyst.callbacks.misc import MetricHandler
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
+from catalyst.tools.metric_handler import MetricHandler
 from catalyst.utils.config import save_config
 
 if TYPE_CHECKING:

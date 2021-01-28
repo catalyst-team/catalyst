@@ -4,39 +4,14 @@ from tqdm.auto import tqdm
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
+from catalyst.tools.metric_handler import MetricHandler
 from catalyst.tools.time_manager import TimeManager
 from catalyst.utils.misc import is_exception
 
 EPS = 1e-8
 
-# @TODO: we also can make it BestScoreHanlder and store best score inside
-class MetricHandler:
-    def __init__(self, minimize: bool = True, min_delta: float = 1e-6):
-        self.minimize = minimize
-        self.best_score = None
 
-        if minimize:
-
-            def _is_better(score, best):
-                return score <= (best - min_delta)
-
-        else:
-
-            def _is_better(score, best):
-                return score >= (best + min_delta)
-
-        self.is_better = _is_better
-
-    def __call__(self, score, best_score):
-        # if self.best_score is None or self.is_better(score, self.best_score):
-        #     self.best_score = score
-        #     return True
-        # else:
-        #     return False
-        return self.is_better(score, best_score)
-
-
-class IBatchMetricHandlerCallback(Callback):
+class IBatchMetricHandlerCallback(ABC, Callback):
     def __init__(self, metric_key: str, minimize: bool = True, min_delta: float = 1e-6):
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
@@ -62,7 +37,7 @@ class IBatchMetricHandlerCallback(Callback):
             self.handle_score_is_not_better(runner=runner)
 
 
-class IEpochMetricHandlerCallback(Callback):
+class IEpochMetricHandlerCallback(ABC, Callback):
     def __init__(
         self, loader_key: str, metric_key: str, minimize: bool = True, min_delta: float = 1e-6,
     ):
