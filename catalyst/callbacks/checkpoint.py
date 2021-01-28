@@ -1,16 +1,57 @@
+# @TODO: we still need to simplify the code here
+# too many additional functions, etc
+# could be refactored
 from typing import Dict, Tuple, TYPE_CHECKING, Union
 from collections import OrderedDict
 import os
 from pathlib import Path
+import shutil
 
 from catalyst.callbacks.misc import MetricHandler
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.utils.checkpoint import load_checkpoint, save_checkpoint, unpack_checkpoint
 from catalyst.utils.config import save_config
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
+
+
+def _save_checkpoint(
+    checkpoint: Dict,
+    runner: "IRunner",
+    logdir: Union[Path, str],
+    suffix: str,
+    is_best: bool = False,
+    is_last: bool = False,
+    special_suffix: str = "",
+) -> Union[Path, str]:
+    """Saving checkpoint to a file.
+
+    Args:
+        checkpoint: data to save.
+        logdir: directory where checkpoint
+            should be stored.
+        suffix: checkpoint file name.
+        is_best: if ``True`` then also
+            will be generated best checkpoint file.
+        is_last: if ``True`` then also
+            will be generated last checkpoint file.
+        special_suffix: suffix to use for
+            saving best/last checkpoints.
+        save_fn: function to use for saving
+            data to file, default is ``torch.save``
+
+    Returns:
+        path to saved checkpoint
+    """
+    os.makedirs(logdir, exist_ok=True)
+    filename = f"{logdir}/{suffix}.pth"
+    runner.engine.save_checkpoint(checkpoint, filename)
+    if is_best:
+        shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
+    if is_last:
+        shutil.copyfile(filename, f"{logdir}/last{special_suffix}.pth")
+    return filename
 
 
 def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> None:
@@ -36,18 +77,15 @@ def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> 
         raise FileNotFoundError(f"No checkpoint found at {filename}!")
 
     print(f"=> Loading checkpoint {filename}")
-    checkpoint = load_checkpoint(filename)
+    checkpoint = runner.engine.load_checkpoint(filename)
 
-    if not runner.stage.startswith("infer") and load_full:
-        runner.stage = checkpoint["stage"]
-        runner.epoch = checkpoint["epoch"]
-        runner.global_epoch = checkpoint["global_epoch"]
-        # @TODO: should we also load,
-        # checkpoint_data, main_metric, minimize_metric, valid_loader ?
-        # epoch_metrics, valid_metrics ?
+    if not runner.stage_key.startswith("infer") and load_full:
+        runner.global_epoch_step = checkpoint["global_epoch_step"]
+        runner.global_batch_step = checkpoint["global_batch_step"]
+        runner.global_sample_step = checkpoint["global_sample_step"]
 
     if load_full:
-        unpack_checkpoint(
+        runner.engine.unpack_checkpoint(
             checkpoint,
             model=runner.model,
             criterion=runner.criterion,
@@ -62,14 +100,12 @@ def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> 
             f"stage {checkpoint['stage']})"
         )
     else:
-        unpack_checkpoint(
-            checkpoint, model=runner.model,
-        )
+        runner.engine.unpack_checkpoint(checkpoint, model=runner.model)
 
         print(f"loaded model checkpoint {filename}")
 
 
-def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
+def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
     """
     Generate required files for load model, criterion,
     scheduler, optimizer specified in ``load_map``.
@@ -115,7 +151,9 @@ def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
     return required_files
 
 
-def _load_states_from_file_map(*, runner: "IRunner", load_map: Dict[str, str]) -> None:
+def _load_states_from_file_map(
+    *, logdir: str, runner: "IRunner", load_map: Dict[str, str]
+) -> None:
     """
     Load state of a model, criterion, optimizer, scheduler
     from files specified in ``load_map``.
@@ -136,7 +174,7 @@ def _load_states_from_file_map(*, runner: "IRunner", load_map: Dict[str, str]) -
         FileNotFoundError: when file/state specified in ``load_map``
             is not exist.
     """
-    required_files = _required_files(runner.logdir, load_map)
+    required_files = _get_required_files(logdir, load_map)
 
     for filename in required_files.keys():
         if not os.path.isfile(filename):
@@ -145,9 +183,9 @@ def _load_states_from_file_map(*, runner: "IRunner", load_map: Dict[str, str]) -
     # extracting parts from files
     for filename, parts_to_load in required_files.items():
         print(f"=> Loading {', '.join(parts_to_load)} from {filename}")
-        checkpoint = load_checkpoint(filename)
+        checkpoint = runner.engine.load_checkpoint(filename)
         to_unpack = {part: getattr(runner, part) for part in parts_to_load}
-        unpack_checkpoint(checkpoint, **to_unpack)
+        runner.engine.unpack_checkpoint(checkpoint, **to_unpack)
         print(f"   loaded: {', '.join(parts_to_load)}")
 
 
@@ -170,7 +208,7 @@ def _load_runner(
             checkpoint = mapping
         _load_checkpoint(filename=checkpoint, runner=runner, load_full=load_full)
     elif isinstance(mapping, dict):
-        _load_states_from_file_map(runner=runner, load_map=mapping)
+        _load_states_from_file_map(logdir=logdir, runner=runner, load_map=mapping)
 
 
 class ICheckpointCallback(Callback):
@@ -348,17 +386,18 @@ class CheckpointCallback(ICheckpointCallback):
         logdir = Path(f"{self.logdir}/")
         suffix = f"{runner.stage_key}.{runner.stage_epoch_step}"
 
-        full_checkpoint_path = save_checkpoint(
+        full_checkpoint_path = _save_checkpoint(
+            runner=runner,
             logdir=logdir,
             checkpoint=checkpoint,
             suffix=f"{suffix}_full",
             is_best=is_best,
             is_last=is_last,
             special_suffix="_full",
-            save_fn=runner.engine.save_checkpoint,
         )
         exclude = ["criterion", "optimizer", "scheduler"]
-        checkpoint_path = save_checkpoint(
+        checkpoint_path = _save_checkpoint(
+            runner=runner,
             checkpoint={
                 key: value
                 for key, value in checkpoint.items()
@@ -368,7 +407,6 @@ class CheckpointCallback(ICheckpointCallback):
             suffix=suffix,
             is_best=is_best,
             is_last=is_last,
-            save_fn=runner.engine.save_checkpoint,
         )
         return (full_checkpoint_path, checkpoint_path)
 
@@ -437,12 +475,10 @@ class CheckpointCallback(ICheckpointCallback):
             checkpoint_exists = False
             need_load_full = False
             if isinstance(self.load_on_stage_start, str):
-                checkpoint_exists = os.path.isfile(
-                    f"{self.logdir}/{self.load_on_stage_start}.pth"
-                )
+                checkpoint_exists = os.path.isfile(f"{self.logdir}/{self.load_on_stage_start}.pth")
                 need_load_full = self.load_on_stage_start.endswith("full")
             elif isinstance(self.load_on_stage_start, dict):
-                required_files = _required_files(self.logdir, self.load_on_stage_start).keys()
+                required_files = _get_required_files(self.logdir, self.load_on_stage_start).keys()
                 checkpoint_exists = all(os.path.isfile(file) for file in required_files)
 
             if self.load_on_stage_start is not None and checkpoint_exists:

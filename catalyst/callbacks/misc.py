@@ -9,7 +9,7 @@ from catalyst.utils.misc import is_exception
 
 EPS = 1e-8
 
-
+# @TODO: we also can make it BestScoreHanlder and store best score inside
 class MetricHandler:
     def __init__(self, minimize: bool = True, min_delta: float = 1e-6):
         self.minimize = minimize
@@ -28,6 +28,11 @@ class MetricHandler:
         self.is_better = _is_better
 
     def __call__(self, score, best_score):
+        # if self.best_score is None or self.is_better(score, self.best_score):
+        #     self.best_score = score
+        #     return True
+        # else:
+        #     return False
         return self.is_better(score, best_score)
 
 
