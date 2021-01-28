@@ -44,10 +44,6 @@ class IMetric(ABC):
         pass
 
     @abstractmethod
-    def update_key_value(self, *args, **kwargs) -> Dict[str, float]:
-        pass
-
-    @abstractmethod
     def compute(self) -> Any:
         """Computes the metric based on it's accumulated state.
 
@@ -57,18 +53,6 @@ class IMetric(ABC):
         Returns:
             Any: computed value, # noqa: DAR202
             it's better to return key-value
-        """
-        pass
-
-    @abstractmethod
-    def compute_key_value(self) -> Dict[str, float]:
-        """Computes the metric based on it's accumulated state.
-
-        By default, this is called at the end of each loader
-        (`on_loader_end` event).
-
-        Returns:
-            Dict: computed value in key-value format.  # noqa: DAR202
         """
         pass
 
@@ -84,6 +68,28 @@ class IMetric(ABC):
         """
         value = self.update(*args, **kwargs)
         return self.compute() if self.compute_on_call else value
+
+
+class IBatchMetric(IMetric):
+    @abstractmethod
+    def update_key_value(self, *args, **kwargs) -> Dict[str, float]:
+        # @TODO: could be refactored - we need custom exception here
+        # we need this method only for callback metric logging
+        pass
+
+    @abstractmethod
+    def compute_key_value(self) -> Dict[str, float]:
+        """Computes the metric based on it's accumulated state.
+
+        By default, this is called at the end of each loader
+        (`on_loader_end` event).
+
+        Returns:
+            Dict: computed value in key-value format.  # noqa: DAR202
+        """
+        # @TODO: could be refactored - we need custom exception here
+        # we need this method only for callback metric logging
+        pass
 
 
 class ILoaderMetric(IMetric):
@@ -111,7 +117,18 @@ class ILoaderMetric(IMetric):
         """
         pass
 
-    def update_key_value(self, *args, **kwargs) -> None:
+    @abstractmethod
+    def compute_key_value(self) -> Dict[str, float]:
+        """Computes the metric based on it's accumulated state.
+
+        By default, this is called at the end of each loader
+        (`on_loader_end` event).
+
+        Returns:
+            Dict: computed value in key-value format.  # noqa: DAR202
+        """
+        # @TODO: could be refactored - we need custom exception here
+        # we need this method only for callback metric logging
         pass
 
 
@@ -155,17 +172,11 @@ class AdditiveValueMetric(IMetric):
             self.std = np.sqrt(self.m_s / (self.num_samples - 1.0))
         return value
 
-    def update_key_value(self, value: float, num_samples: int) -> Dict[str, float]:
-        raise NotImplementedError()
-
     def compute(self) -> Tuple[float, float]:
         return self.mean, self.std
 
-    def compute_key_value(self) -> Dict[str, float]:
-        raise NotImplementedError()
 
-
-class AccuracyMetric(AdditiveValueMetric):
+class AccuracyMetric(IBatchMetric, AdditiveValueMetric):
     def update(self, logits: torch.Tensor, targets: torch.Tensor) -> float:
         value = accuracy(logits, targets)[0].item()
         value = super().update(value, len(targets))
@@ -205,3 +216,89 @@ class AUCMetric(ILoaderMetric):
         output = {f"auc/class_{i+1:02d}": value.item() for i, value in enumerate(per_class_auc)}
         output["auc"] = per_class_auc.mean().item()
         return output
+
+
+class ConfusionMetric(IMetric):
+    def __init__(self, num_classes: int, normalized: bool = False, compute_on_call: bool = True):
+        """ConfusionMatrix constructs a confusion matrix for a multiclass classification problems.
+
+        Args:
+            num_classes: number of classes in the classification problem
+            normalized: etermines whether or not the confusion matrix is normalized or not
+            compute_on_call:
+        """
+        super().__init__(compute_on_call=compute_on_call)
+        self.num_classes = num_classes
+        self.normalized = normalized
+        self.conf = np.ndarray((num_classes, num_classes), dtype=np.int32)
+        self.reset()
+
+    def reset(self, *args, **kwargs) -> None:
+        """Reset confusion matrix, filling it with zeros."""
+        self.conf.fill(0)
+
+    def update(self, predictions: torch.Tensor, targets: torch.Tensor) -> None:
+        """Computes the confusion matrix of ``K x K`` size where ``K`` is no of classes.
+
+        Args:
+            predictions: Can be an N x K tensor of predicted scores
+                obtained from the model for N examples and K classes
+                or an N-tensor of integer values between 0 and K-1
+            targets: Can be a N-tensor of integer values assumed
+                to be integer values between 0 and K-1 or N x K tensor, where
+                targets are assumed to be provided as one-hot vectors
+        """
+        predictions = predictions.cpu().numpy()
+        targets = targets.cpu().numpy()
+
+        assert (
+            predictions.shape[0] == targets.shape[0]
+        ), "number of targets and predicted outputs do not match"
+
+        if np.ndim(predictions) != 1:
+            assert (
+                predictions.shape[1] == self.num_classes
+            ), "number of predictions does not match size of confusion matrix"
+            predictions = np.argmax(predictions, 1)
+        else:
+            assert (predictions.max() < self.num_classes) and (
+                predictions.min() >= 0
+            ), "predicted values are not between 1 and k"
+
+        onehot_target = np.ndim(targets) != 1
+        if onehot_target:
+            assert (
+                targets.shape[1] == self.num_classes
+            ), "Onehot target does not match size of confusion matrix"
+            assert (targets >= 0).all() and (
+                targets <= 1
+            ).all(), "in one-hot encoding, target values should be 0 or 1"
+            assert (targets.sum(1) == 1).all(), "multilabel setting is not supported"
+            targets = np.argmax(targets, 1)
+        else:
+            assert (predictions.max() < self.num_classes) and (
+                predictions.min() >= 0
+            ), "predicted values are not between 0 and k-1"
+
+        # hack for bincounting 2 arrays together
+        x = predictions + self.num_classes * targets
+        bincount_2d = np.bincount(
+            x.astype(np.int32), minlength=self.num_classes ** 2
+        )  # noqa: WPS114
+        assert bincount_2d.size == self.num_classes ** 2
+        conf = bincount_2d.reshape((self.num_classes, self.num_classes))
+
+        self.conf += conf
+
+    def compute(self) -> Any:
+        """
+        Returns:
+            Confusion matrix of K rows and K columns, where rows corresponds
+            to ground-truth targets and columns corresponds to predicted
+            targets.
+        """
+        if self.normalized:
+            conf = self.conf.astype(np.float32)
+            return conf / conf.sum(1).clip(min=1e-12)[:, None]
+        else:
+            return self.conf

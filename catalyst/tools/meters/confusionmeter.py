@@ -9,8 +9,8 @@ from catalyst.tools.meters import meter
 
 class ConfusionMeter(meter.Meter):
     """
-    ConfusionMeter constructs a confusion matrix for a multiclass
-    classification problems. It does not support multilabel, multiclass
+    ConfusionMeter constructs a confusion matrix for a multiclass classification problems.
+    It does not support multilabel, multiclass
     problems: for such problems, please use MultiLabelConfusionMeter.
     """
 
