@@ -1,7 +1,7 @@
 # @TODO: add metric aggregation, etc callback
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.metrics.misc import IBatchMetric, ILoaderMetric
+from catalyst.metrics.misc import ICallbackBatchMetric, ICallbackLoaderMetric
 
 
 class IMetricCallback(Callback):
@@ -11,12 +11,16 @@ class IMetricCallback(Callback):
 
 
 # @TODO: add KV support
-class MetricCallback(IMetricCallback):
+class BatchMetricCallback(IMetricCallback):
     def __init__(
-        self, metric: IBatchMetric, input_key: str, target_key: str, log_on_batch: bool = True,
+        self,
+        metric: ICallbackBatchMetric,
+        input_key: str,
+        target_key: str,
+        log_on_batch: bool = True,
     ):
         super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
-        assert isinstance(metric, IBatchMetric)
+        assert isinstance(metric, ICallbackBatchMetric)
         self.metric = metric
         self.input_key = input_key
         self.target_key = target_key
@@ -38,9 +42,9 @@ class MetricCallback(IMetricCallback):
 
 
 class LoaderMetricCallback(IMetricCallback):
-    def __init__(self, metric: ILoaderMetric, input_key: str, target_key: str):
+    def __init__(self, metric: ICallbackLoaderMetric, input_key: str, target_key: str):
         super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
-        assert isinstance(metric, ILoaderMetric)
+        assert isinstance(metric, ICallbackLoaderMetric)
         self.metric = metric
         self.input_key = input_key
         self.target_key = target_key
@@ -59,4 +63,4 @@ class LoaderMetricCallback(IMetricCallback):
         runner.loader_metrics.update(self.metric.compute_key_value())
 
 
-__all__ = ["IMetricCallback", "MetricCallback", "LoaderMetricCallback"]
+__all__ = ["IMetricCallback", "BatchMetricCallback", "LoaderMetricCallback"]

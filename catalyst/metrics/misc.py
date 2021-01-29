@@ -22,7 +22,7 @@ class IMetric(ABC):
         self.compute_on_call = compute_on_call
 
     @abstractmethod
-    def reset(self, *args, **kwargs) -> None:
+    def reset(self) -> None:
         """Resets the metric to it's initial state.
 
         By default, this is called at the start of each loader
@@ -70,11 +70,14 @@ class IMetric(ABC):
         return self.compute() if self.compute_on_call else value
 
 
-class IBatchMetric(IMetric):
+class ICallbackBatchMetric(IMetric):
+    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+        super().__init__(compute_on_call=compute_on_call)
+        self.prefix = prefix or ""
+        self.suffix = suffix or ""
+
     @abstractmethod
     def update_key_value(self, *args, **kwargs) -> Dict[str, float]:
-        # @TODO: could be refactored - we need custom exception here
-        # we need this method only for callback metric logging
         pass
 
     @abstractmethod
@@ -87,16 +90,19 @@ class IBatchMetric(IMetric):
         Returns:
             Dict: computed value in key-value format.  # noqa: DAR202
         """
-        # @TODO: could be refactored - we need custom exception here
-        # we need this method only for callback metric logging
         pass
 
 
-class ILoaderMetric(IMetric):
+class ICallbackLoaderMetric(IMetric):
     """Interface for all Metrics."""
 
+    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+        super().__init__(compute_on_call=compute_on_call)
+        self.prefix = prefix or ""
+        self.suffix = suffix or ""
+
     @abstractmethod
-    def reset(self, num_batches, num_samples, *args, **kwargs) -> None:
+    def reset(self, num_batches, num_samples) -> None:
         """Resets the metric to it's initial state.
 
         By default, this is called at the start of each loader
@@ -176,7 +182,15 @@ class AdditiveValueMetric(IMetric):
         return self.mean, self.std
 
 
-class AccuracyMetric(IBatchMetric, AdditiveValueMetric):
+class AccuracyMetric(ICallbackBatchMetric, AdditiveValueMetric):
+    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+        ICallbackBatchMetric.__init__(
+            self, compute_on_call=compute_on_call, prefix=prefix, suffix=suffix
+        )
+        AdditiveValueMetric.__init__(self, compute_on_call=compute_on_call)
+        self.metric_name_mean = f"{self.prefix}accuracy{self.suffix}"
+        self.metric_name_std = f"{self.prefix}accuracy{self.suffix}/std"
+
     def update(self, logits: torch.Tensor, targets: torch.Tensor) -> float:
         value = accuracy(logits, targets)[0].item()
         value = super().update(value, len(targets))
@@ -184,16 +198,17 @@ class AccuracyMetric(IBatchMetric, AdditiveValueMetric):
 
     def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         value = self.update(logits=logits, targets=targets)
-        return {"accuracy": value}
+        return {self.metric_name_mean: value}
 
     def compute_key_value(self) -> Dict[str, float]:
         mean, std = super().compute()
-        return {"accuracy": mean, "accuracy/std": std}
+        return {self.metric_name_mean: mean, self.metric_name_std: std}
 
 
-class AUCMetric(ILoaderMetric):
-    def __init__(self, compute_on_call: bool = True):
-        super().__init__(compute_on_call=compute_on_call)
+class AUCMetric(ICallbackLoaderMetric):
+    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        self.metric_name = f"{self.prefix}auc{self.suffix}"
         self.scores = []
         self.targets = []
 
@@ -213,8 +228,11 @@ class AUCMetric(ILoaderMetric):
 
     def compute_key_value(self) -> Dict[str, float]:
         per_class_auc = self.compute()
-        output = {f"auc/class_{i+1:02d}": value.item() for i, value in enumerate(per_class_auc)}
-        output["auc"] = per_class_auc.mean().item()
+        output = {
+            f"{self.metric_name}/class_{i+1:02d}": value.item()
+            for i, value in enumerate(per_class_auc)
+        }
+        output[self.metric_name] = per_class_auc.mean().item()
         return output
 
 
@@ -224,7 +242,7 @@ class ConfusionMetric(IMetric):
 
         Args:
             num_classes: number of classes in the classification problem
-            normalized: etermines whether or not the confusion matrix is normalized or not
+            normalized: determines whether or not the confusion matrix is normalized or not
             compute_on_call:
         """
         super().__init__(compute_on_call=compute_on_call)
@@ -233,7 +251,7 @@ class ConfusionMetric(IMetric):
         self.conf = np.ndarray((num_classes, num_classes), dtype=np.int32)
         self.reset()
 
-    def reset(self, *args, **kwargs) -> None:
+    def reset(self) -> None:
         """Reset confusion matrix, filling it with zeros."""
         self.conf.fill(0)
 

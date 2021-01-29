@@ -10,12 +10,11 @@ from catalyst.callbacks.checkpoint import ICheckpointCallback, CheckpointCallbac
 from catalyst.callbacks.confusion_matrix import ConfusionMatrixCallback
 from catalyst.callbacks.control_flow import ControlFlowCallback
 from catalyst.callbacks.criterion import ICriterionCallback, CriterionCallback
-from catalyst.callbacks.metric import IMetricCallback, MetricCallback, LoaderMetricCallback
+from catalyst.callbacks.metric import IMetricCallback, BatchMetricCallback, LoaderMetricCallback
 from catalyst.callbacks.misc import (
     TimerCallback,
     VerboseCallback,
     CheckRunCallback,
-    MetricHandler,
     IBatchMetricHandlerCallback,
     IEpochMetricHandlerCallback,
     EarlyStoppingCallback,

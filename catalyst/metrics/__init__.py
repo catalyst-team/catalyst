@@ -33,8 +33,8 @@ from catalyst.metrics.recall import recall
 
 from catalyst.metrics.misc import (
     IMetric,
-    IBatchMetric,
-    ILoaderMetric,
+    ICallbackBatchMetric,
+    ICallbackLoaderMetric,
     AdditiveValueMetric,
     AccuracyMetric,
     AUCMetric,

@@ -3,9 +3,9 @@ from typing import Dict, List, TYPE_CHECKING
 import torch
 import torch.distributed  # noqa: WPS301
 
-from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_tensor
+from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_numpy, render_figure_to_tensor
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.tools.meters.confusionmeter import ConfusionMeter
+from catalyst.metrics.misc import ConfusionMetric
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -15,15 +15,12 @@ class ConfusionMatrixCallback(Callback):
     """Callback to plot your confusion matrix to the loggers.
 
     Args:
-        target_key: key to use from ``runner.input``, specifies our ``y_true``
-        input_key: key to use from ``runner.output``, specifies our ``y_pred``
+        input_key: key to use from ``runner.batch``, specifies our ``y_pred``
+        target_key: key to use from ``runner.batch``, specifies our ``y_true``
         prefix: tensorboard plot name
-        mode: Strategy to compute confusion matrix.
-            Must be one of [tnt, sklearn]
         class_names: list with class names
         num_classes: number of classes
         plot_params: extra params for plt.figure rendering
-        tensorboard_callback_name: name of the tensorboard logger callback
     """
 
     def __init__(
@@ -33,42 +30,23 @@ class ConfusionMatrixCallback(Callback):
         prefix: str = "confusion_matrix",
         class_names: List[str] = None,
         num_classes: int = None,
+        normalized: bool = False,
         plot_params: Dict = None,
     ):
         """Callback initialisation."""
-        super().__init__(CallbackOrder.metric, CallbackNode.all)
+        super().__init__(CallbackOrder.metric, CallbackNode.master)
+        assert num_classes is not None or class_names is not None
         self.prefix = prefix
-        self.output_key = input_key
-        self.input_key = target_key
+        self.input_key = input_key
+        self.target_key = target_key
 
         self._plot_params = plot_params or {}
 
-        self.class_names = class_names
+        self.class_names = class_names or [str(i) for i in range(num_classes)]
         self.num_classes = num_classes if class_names is None else len(class_names)
+        self.normalized = normalized
 
         assert self.num_classes is not None
-        self._reset_stats()
-
-    def _reset_stats(self):
-        self.confusion_matrix = ConfusionMeter(self.num_classes)
-
-    def _add_to_stats(self, outputs, targets):
-        self.confusion_matrix.add(predicted=outputs, target=targets)
-
-    def _compute_confusion_matrix(self):
-        confusion_matrix = self.confusion_matrix.value()
-        return confusion_matrix
-
-    def _plot_confusion_matrix(self, logger, epoch, confusion_matrix, class_names=None):
-        fig = plot_confusion_matrix(
-            confusion_matrix,
-            class_names=class_names,
-            normalize=True,
-            show=False,
-            **self._plot_params,
-        )
-        fig = render_figure_to_tensor(fig)
-        logger.add_image(f"{self.prefix}/epoch", fig, global_step=epoch)
 
     def on_loader_start(self, runner: "IRunner"):
         """Loader start hook.
@@ -76,7 +54,9 @@ class ConfusionMatrixCallback(Callback):
         Args:
             runner: current runner
         """
-        self._reset_stats()
+        self.confusion_matrix = ConfusionMetric(
+            num_classes=self.num_classes, normalized=self.normalized
+        )
 
     def on_batch_end(self, runner: "IRunner"):
         """Batch end hook.
@@ -84,9 +64,9 @@ class ConfusionMatrixCallback(Callback):
         Args:
             runner: current runner
         """
-        self._add_to_stats(
-            runner.batch[self.output_key].detach(), runner.batch[self.input_key].detach(),
-        )
+        inputs, targets = runner.batch[self.input_key].detach(), runner.batch[self.target_key].detach()
+        inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
+        self.confusion_matrix.update(predictions=inputs, targets=targets)
 
     def on_loader_end(self, runner: "IRunner"):
         """Loader end hook.
@@ -94,25 +74,21 @@ class ConfusionMatrixCallback(Callback):
         Args:
             runner: current runner
         """
-        class_names = self.class_names or [str(i) for i in range(self.num_classes)]
-        confusion_matrix = self._compute_confusion_matrix()
-
-        if runner.engine.rank >= 0:
-            confusion_matrix = torch.from_numpy(confusion_matrix)
-            confusion_matrix = confusion_matrix.to(runner.device)
-            torch.distributed.reduce(confusion_matrix, 0)
-            confusion_matrix = confusion_matrix.cpu().numpy()
-
-        if runner.engine.rank <= 0:
-            raise NotImplementedError()
-            # runner.log_image()
-            # tb_callback = runner.callbacks[self.tensorboard_callback_name]
-            # self._plot_confusion_matrix(
-            #     logger=tb_callback.loggers[runner.loader_key],
-            #     epoch=runner.global_epoch,
-            #     confusion_matrix=confusion_matrix,
-            #     class_names=class_names,
-            # )
+        confusion_matrix = self.confusion_matrix.compute()
+        # if runner.engine.rank >= 0:
+        #     confusion_matrix = torch.from_numpy(confusion_matrix)
+        #     confusion_matrix = runner.engine.sync_tensor(confusion_matrix)
+        #     confusion_matrix = confusion_matrix.cpu().numpy()
+        # if runner.engine.rank <= 0:
+        fig = plot_confusion_matrix(
+            confusion_matrix,
+            class_names=self.class_names,
+            normalize=self.normalized,
+            show=False,
+            **self._plot_params,
+        )
+        image = render_figure_to_tensor(fig)
+        runner.log_image(tag=self.prefix, image=image, scope="loader")
 
 
 __all__ = ["ConfusionMatrixCallback"]

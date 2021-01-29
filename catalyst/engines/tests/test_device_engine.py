@@ -11,12 +11,9 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst import dl
-
 from catalyst.core.callback import Callback, CallbackOrder
-
 from catalyst.core.runner import IRunner, IStageBasedRunner
 from catalyst.engines.device import DeviceEngine
-
 from catalyst.registry import REGISTRY
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
@@ -74,7 +71,9 @@ class DeviceCheckCallback(Callback):
 
     def on_stage_start(self, runner: "IRunner"):
         model_device = next(runner.model.parameters()).device
-        logger.warning(f"DeviceCheckCallback: model device ({model_device}) - device ({self.device})")
+        logger.warning(
+            f"DeviceCheckCallback: model device ({model_device}) - device ({self.device})"
+        )
         assert model_device == self.device
 
 
@@ -151,7 +150,9 @@ class CustomExperiment(dl.IExperiment):
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
+            "criterion": dl.CriterionCallback(
+                metric_key="loss", input_key="logits", target_key="targets"
+            ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
