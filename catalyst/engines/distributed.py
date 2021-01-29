@@ -27,7 +27,7 @@ class DistributedDataParallelEngine(IEngine):
         self.address = address
         self.port = port
         self.backend = backend
-        self._rank = None
+        self._rank = 0
         self._world_size = world_size or torch.cuda.device_count()
         self.device = None
 
