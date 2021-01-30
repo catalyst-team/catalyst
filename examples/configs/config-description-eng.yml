@@ -7,7 +7,7 @@ shared:  # Example
 model_params:  # REQUIRED KEYWORD, model(s) parameters
   _key_value: False  # KEYWORD, if True, there may be several models and then they need to be wrapped in key-value.
 
-  model: ModelName  # REQUIRED KEYWORD, class name. The class itself will be constructed in the registry by this name.
+  _target_: ModelName  # REQUIRED KEYWORD, class name. The class itself will be constructed in the registry by this name.
   # At this level, the parameters for __init__ of the model can be found, for example
   arch: resnet18  # with this key, the model will be created as follows: `ModelName(arch=resnet18)`
 
@@ -29,7 +29,7 @@ runner_params:  # OPTIONAL KEYWORD, params for Runner's init
   output_key: null  # Example
 
 
-distributed_params:  # OPTIONAL KEYWORD, params for distributed training and NVIDIA Apex
+engine_params:  # OPTIONAL KEYWORD, params for distributed training and NVIDIA Apex
   rank: -1  # Rank for distributed training
   opt_level: O1  # Example for NVIDIA Apex
   syncbn: False  # KEYWORD, whether to convert BatchNorm to SyncBatchNorm (Default is False)
@@ -52,7 +52,7 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
     samplers_params:  # KEYWORD, per-loader params for samplers, the same API as in loaders_params
      # Example
       train:  # only for train loader
-        sampler: MiniEpochSampler  # KEYWORD, name of the sampler
+        _target_: MiniEpochSampler  # KEYWORD, name of the sampler
         # At this level, the parameters for __init__ of the sampler can be found, for example
         data_len: 50000  # Example
         mini_epoch_len: 40000  # Example
@@ -68,10 +68,10 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
     train:  # only for train dataset
       _key_value: False  # KEYWORD, if False, transform will be applied to the dataset sample
 
-      transform: A.Compose  # KEYWORD, name of the transform
+      _target_: A.Compose  # KEYWORD, name of the transform
       # At this level, the parameters for __init__ of a transform can be found, for example
       transforms:  # KEYWORD, list of transforms (should be wrapped in key-value-value) that will be passed to transform as a parameter
-        - transform: SomeTransform  # Example
+        - _target_: SomeTransform  # Example
           param1: value1  # Example
           param2: value2  # Example
 
@@ -79,9 +79,9 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
       _key_value: True  # KEYWORD, if True, for each key-value of data-sample its own transforms can be defined and then they should be wrapped in key-value-value
 
       image:
-        transform: A.Compose
+        _target_: A.Compose
         transforms:
-          - transform: SomeTransform
+          - _target_: SomeTransform
             param: value
 
     infer: *transform  # only for infer dataset
@@ -99,7 +99,7 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
   criterion_params:  # REQUIRED KEYWORD, parameters for the loss function
     _key_value: False  # KEYWORD, if True, there may be several loss-functions and then they should be wrapped in key-value
 
-    criterion: BCEWithLogitsLoss  # REQUIRED KEYWORD, name of the loss function
+    _target_: BCEWithLogitsLoss  # REQUIRED KEYWORD, name of the loss function
     # At this level, the parameters for __init__ of the loss function can be found, for example
     reduction: sum
 
@@ -116,7 +116,7 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
       lr: 0.001
       base_batch_size: 64  # KEYWORD, size of the base batch size before scaling
 
-    optimizer: Adam  # REQUIRED KEYWORD, name of the optimizer
+    _target_: Adam  # REQUIRED KEYWORD, name of the optimizer
     # At this level, the parameters for __init__ of the optimizer can be found, for example
     lr: 0.003
     weight_decay: 0.0001
@@ -124,7 +124,7 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
   scheduler_params:  # REQUIRED KEYWORD, params for lr-scheduler
     _key_value: False  # KEYWORD, if True, there may be several lr-schedulers and then they should be wrapped in key-value
 
-    scheduler: StepLR  # REQUIRED KEYWORD, name of the lr-scheduler
+    _target_: StepLR  # REQUIRED KEYWORD, name of the lr-scheduler
     # At this level, the parameters for __init__ of the lr-scheduler can be found, for example
     step_size: 10
     gamma: 0.3
@@ -136,15 +136,15 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
     callbacks_params:  # REQUIRED KEYWORD, The most important part. It's where all the callbacks are written down for this stage.
     # Callbacks are written through key-value
       loss:
-        callback: CriterionCallback  # KEYWORD name of the callback
+        _target_: CriterionCallback  # KEYWORD name of the callback
       optimizer:
-        callback: OptimizerCallback
+        _target_: OptimizerCallback
       scheduler:
-        callback: SchedulerCallback
+        _target_: SchedulerCallback
         # At this level, the parameters for any callback can be found, for example
         reduced_metric: *main_metric
       saver:
-        callback: CheckpointCallback
+        _target_: CheckpointCallback
         save_n_best: 3
 
   finetune:  # Example of a second training stage, here we can change our parameters
@@ -153,7 +153,7 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
 
     optimizer_params:  # Example of an overridden optimizer
       load_from_previous_stage: True  # KEYWORD, a flag that says you need to load statistics from the previous stage
-      optimizer: Adam
+      _target_: Adam
       lr: 0.001
 
   # the number of stages can be as many as you like.

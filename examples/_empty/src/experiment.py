@@ -4,6 +4,7 @@ from collections import OrderedDict
 from torchvision import transforms
 
 from catalyst.dl import ConfigExperiment
+
 from .dataset import SomeDataset
 
 
@@ -13,17 +14,12 @@ class Experiment(ConfigExperiment):
 
         # CHANGE ME
         result = transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-            ]
+            [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),]
         )
 
         return result
 
-    def get_datasets(
-        self, stage: str, batch_size: int, num_workers: int, **kwargs
-    ):
+    def get_datasets(self, stage: str, batch_size: int, num_workers: int, **kwargs):
         datasets = OrderedDict()
 
         # CHANGE TO YOUR DATASET

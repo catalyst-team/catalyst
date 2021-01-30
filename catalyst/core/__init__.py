@@ -12,5 +12,8 @@ from catalyst.core.callback import (
     CallbackOrder,
     CallbackScope,
     CallbackWrapper,
+    CallbackList,
 )
-from catalyst.core.state import State
+from catalyst.core.engine import IEngine
+from catalyst.core.logger import ILogger
+from catalyst.core.trial import ITrial

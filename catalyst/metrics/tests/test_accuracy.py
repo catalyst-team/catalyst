@@ -1,5 +1,4 @@
 import numpy as np
-
 import torch
 
 from catalyst.metrics import accuracy

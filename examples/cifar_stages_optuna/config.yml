@@ -10,7 +10,7 @@ study_params:
 
 
 model_params:
-  model: SimpleNet
+  _target_: SimpleNet
   num_filters1: "int(trial.suggest_loguniform('num_filters1', 4, 32))"
   num_filters2: "int(trial.suggest_loguniform('num_filters2', 4, 32))"
   num_hiddens1: "int(trial.suggest_loguniform('num_hiddens1', 32, 128))"
@@ -35,10 +35,10 @@ stages:
     num_workers: 1
 
   transform_params:
-    transform: albumentations.Compose
+    _target_: albumentations.Compose
     transforms:
-      - transform: albumentations.Normalize
-      - transform: catalyst.ImageToTensor
+      - _target_: albumentations.Normalize
+      - _target_: catalyst.ImageToTensor
 
   stage_params:
     num_epochs: 3
@@ -46,32 +46,32 @@ stages:
     minimize_metric: False
 
   criterion_params:
-    criterion: CrossEntropyLoss
+    _target_: CrossEntropyLoss
 
   scheduler_params:
-    scheduler: MultiStepLR
+    _target_: MultiStepLR
     milestones: [10]
     gamma: 0.3
 
   callbacks_params:
     loss:
-      callback: CriterionCallback
+      _target_: CriterionCallback
     optimizer:
-      callback: OptimizerCallback
+      _target_: OptimizerCallback
     accuracy:
-      callback: AccuracyCallback
+      _target_: AccuracyCallback
       accuracy_args: [1, 3, 5]
     scheduler:
-      callback: SchedulerCallback
+      _target_: SchedulerCallback
       reduced_metric: *reduced_metric
     saver:
-      callback: CheckpointCallback
+      _target_: CheckpointCallback
     optuna_pruner:
-      callback: OptunaPruningCallback
+      _target_: OptunaPruningCallback
 
   stage1:
     optimizer_params:
-      optimizer: Ralamb
+      _target_: Ralamb
 
       layerwise_params:
         conv1.*:
@@ -93,7 +93,7 @@ stages:
 
     optimizer_params:
       load_from_previous_stage: True
-      optimizer: Ralamb
+      _target_: Ralamb
       lr_linear_scaling:
         lr: 0.0001
         base_batch_size: 64

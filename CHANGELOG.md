@@ -12,6 +12,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Fix bug in `OptimizerCallback` when mixed-precision params set both:
   in callback arguments and in distributed_params  ([#1042](https://github.com/catalyst-team/catalyst/pull/1042))
 
+## [20.12.1] - XXXX-XX-XX
+
+
+### Added
+
+- Inference mode for face layers ([#1045](https://github.com/catalyst-team/catalyst/pull/1045))
+
 
 ## [20.12] - 2020-12-20
 

@@ -6,24 +6,13 @@ from pathlib import Path
 from torch import jit, nn
 
 from catalyst.typing import Device, Model
-from catalyst.utils.checkpoint import (
-    load_checkpoint,
-    pack_checkpoint,
-    unpack_checkpoint,
-)
+from catalyst.utils.checkpoint import load_checkpoint, pack_checkpoint, unpack_checkpoint
 from catalyst.utils.config import load_config
-from catalyst.utils.distributed import (
-    assert_fp16_available,
-    get_nn_from_ddp_module,
-)
+from catalyst.utils.distributed import assert_fp16_available, get_nn_from_ddp_module
 from catalyst.utils.loaders import get_native_batch_from_loaders
 from catalyst.utils.misc import get_fn_argsnames
 from catalyst.utils.scripts import prepare_config_api_components
-from catalyst.utils.torch import (
-    any2device,
-    get_requires_grad,
-    set_requires_grad,
-)
+from catalyst.utils.torch import any2device, get_requires_grad, set_requires_grad
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -32,9 +21,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def _get_input_argnames(
-    fn: Callable[..., Any], exclude: List[str] = None
-) -> List[str]:
+def _get_input_argnames(fn: Callable[..., Any], exclude: List[str] = None) -> List[str]:
     """
     Function to get input argument names of function.
 
@@ -46,9 +33,7 @@ def _get_input_argnames(
         List[str]: List of input argument names
     """
     argspec = inspect.getfullargspec(fn)
-    assert (
-        argspec.varargs is None and argspec.varkw is None
-    ), "not supported by PyTorch"
+    assert argspec.varargs is None and argspec.varkw is None, "not supported by PyTorch"
 
     return get_fn_argsnames(fn, exclude=exclude)
 
@@ -200,9 +185,7 @@ def trace_model_from_checkpoint(
 
     logger.info("Import experiment and runner from logdir")
     experiment: ConfigExperiment = None
-    experiment, runner, _ = prepare_config_api_components(
-        expdir=expdir, config=config
-    )
+    experiment, runner, _ = prepare_config_api_components(expdir=expdir, config=config)
 
     logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:
@@ -215,9 +198,7 @@ def trace_model_from_checkpoint(
 
     if loader is None:
         loader = 0
-    batch = get_native_batch_from_loaders(
-        loaders=experiment.get_loaders(stage), loader=loader
-    )
+    batch = get_native_batch_from_loaders(loaders=experiment.get_loaders(stage), loader=loader)
 
     # function to run prediction on batch
     def predict_fn(model, inputs, **kwargs):  # noqa: WPS442
@@ -410,8 +391,7 @@ def save_traced_model(
         if output is None:
             if logdir is None:
                 raise ValueError(
-                    "One of `logdir`, `out_dir` or `out_model` "
-                    "should be specified"
+                    "One of `logdir`, `out_dir` or `out_model` " "should be specified"
                 )
             output: Path = Path(logdir) / "trace"
 
@@ -425,9 +405,7 @@ def save_traced_model(
 
 
 def load_traced_model(
-    model_path: Union[str, Path],
-    device: Device = "cpu",
-    opt_level: str = None,
+    model_path: Union[str, Path], device: Device = "cpu", opt_level: str = None,
 ) -> jit.ScriptModule:
     """Loads a traced model.
 

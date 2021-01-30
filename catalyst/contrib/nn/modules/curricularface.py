@@ -45,11 +45,7 @@ class CurricularFace(nn.Module):
     """  # noqa: RST215
 
     def __init__(  # noqa: D107
-        self,
-        in_features: int,
-        out_features: int,
-        s: float = 64.0,
-        m: float = 0.5,
+        self, in_features: int, out_features: int, s: float = 64.0, m: float = 0.5,
     ):
         super(CurricularFace, self).__init__()
 
@@ -78,9 +74,7 @@ class CurricularFace(nn.Module):
         )
         return rep
 
-    def forward(
-        self, input: torch.Tensor, label: torch.LongTensor
-    ) -> torch.Tensor:
+    def forward(self, input: torch.Tensor, label: torch.LongTensor = None) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -90,24 +84,24 @@ class CurricularFace(nn.Module):
             label: target classes,
                 expected shapes ``B`` where
                 ``B`` is batch dimension.
+                If `None` then will be returned
+                projection on centroids.
+                Default is `None`.
 
         Returns:
             tensor (logits) with shapes ``BxC``
             where ``C`` is a number of classes.
         """
-        cos_theta = torch.mm(
-            F.normalize(input), F.normalize(self.weight, dim=0)
-        )
+        cos_theta = torch.mm(F.normalize(input), F.normalize(self.weight, dim=0))
         cos_theta = cos_theta.clamp(-1, 1)  # for numerical stability
 
-        target_logit = cos_theta[torch.arange(0, input.size(0)), label].view(
-            -1, 1
-        )
+        if label is None:
+            return cos_theta
+
+        target_logit = cos_theta[torch.arange(0, input.size(0)), label].view(-1, 1)
 
         sin_theta = torch.sqrt(1.0 - torch.pow(target_logit, 2))
-        cos_theta_m = (
-            target_logit * self.cos_m - sin_theta * self.sin_m
-        )  # cos(target+margin)
+        cos_theta_m = target_logit * self.cos_m - sin_theta * self.sin_m  # cos(target+margin)
         mask = cos_theta > cos_theta_m
         final_target_logit = torch.where(
             target_logit > self.threshold, cos_theta_m, target_logit - self.mm

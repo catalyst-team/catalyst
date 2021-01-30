@@ -21,12 +21,8 @@ from catalyst.experiments.auto import AutoCallbackExperiment
 
 def _test_callbacks(test_callbacks, exp, stage="train"):
     exp_callbacks = exp.get_callbacks(stage)
-    exp_callbacks = OrderedDict(
-        sorted(exp_callbacks.items(), key=lambda t: t[0])
-    )
-    test_callbacks = OrderedDict(
-        sorted(test_callbacks.items(), key=lambda t: t[0])
-    )
+    exp_callbacks = OrderedDict(sorted(exp_callbacks.items(), key=lambda t: t[0]))
+    test_callbacks = OrderedDict(sorted(test_callbacks.items(), key=lambda t: t[0]))
 
     assert exp_callbacks.keys() == test_callbacks.keys()
     cbs = zip(exp_callbacks.values(), test_callbacks.values())
@@ -55,9 +51,7 @@ def test_defaults():
         ]
     )
 
-    exp = AutoCallbackExperiment(
-        model=model, loaders=loaders, valid_loader="train",
-    )
+    exp = AutoCallbackExperiment(model=model, loaders=loaders, valid_loader="train",)
     _test_callbacks(test_callbacks, exp)
 
 
@@ -82,11 +76,7 @@ def test_defaults_verbose():
     loaders["train"] = dataloader
 
     exp = AutoCallbackExperiment(
-        model=model,
-        loaders=loaders,
-        verbose=True,
-        valid_loader="train",
-        logdir="./logs",
+        model=model, loaders=loaders, verbose=True, valid_loader="train", logdir="./logs",
     )
     _test_callbacks(test_callbacks, exp)
 
@@ -112,11 +102,7 @@ def test_defaults_check():
     loaders["train"] = dataloader
 
     exp = AutoCallbackExperiment(
-        model=model,
-        loaders=loaders,
-        check_run=True,
-        valid_loader="train",
-        logdir="./logs",
+        model=model, loaders=loaders, check_run=True, valid_loader="train", logdir="./logs",
     )
     _test_callbacks(test_callbacks, exp)
 

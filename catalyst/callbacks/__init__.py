@@ -6,58 +6,34 @@ from catalyst.settings import (
 )
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
-from catalyst.callbacks.checkpoint import (
-    ICheckpointCallback,
-    BaseCheckpointCallback,
-    CheckpointCallback,
-    IterationCheckpointCallback,
-)
+from catalyst.callbacks.checkpoint import ICheckpointCallback, CheckpointCallback
+from catalyst.callbacks.confusion_matrix import ConfusionMatrixCallback
 from catalyst.callbacks.control_flow import ControlFlowCallback
-from catalyst.callbacks.criterion import CriterionCallback
-from catalyst.callbacks.early_stop import (
-    EarlyStoppingCallback,
+from catalyst.callbacks.criterion import ICriterionCallback, CriterionCallback
+from catalyst.callbacks.metric import IMetricCallback, BatchMetricCallback, LoaderMetricCallback
+from catalyst.callbacks.misc import (
+    TimerCallback,
+    VerboseCallback,
     CheckRunCallback,
+    IBatchMetricHandlerCallback,
+    IEpochMetricHandlerCallback,
+    EarlyStoppingCallback,
 )
-from catalyst.callbacks.exception import ExceptionCallback
-from catalyst.callbacks.logging import (
-    ILoggerCallback,
-    VerboseLogger,
-    ConsoleLogger,
-    TensorboardLogger,
-    CSVLogger,
-)
-from catalyst.callbacks.meter import MeterMetricsCallback
-from catalyst.callbacks.metric import (
-    IMetricCallback,
-    IBatchMetricCallback,
-    ILoaderMetricCallback,
-    BatchMetricCallback,
-    LoaderMetricCallback,
-    MetricCallback,
-    MetricAggregationCallback,
-    MetricManagerCallback,
-)
-from catalyst.callbacks.optimizer import (
-    IOptimizerCallback,
-    OptimizerCallback,
-)
+from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.periodic_loader import PeriodicLoaderCallback
 from catalyst.callbacks.scheduler import (
     ISchedulerCallback,
-    ILRUpdater,
     SchedulerCallback,
+    ILRUpdater,
     LRFinder,
 )
-from catalyst.callbacks.timer import TimerCallback
-from catalyst.callbacks.tracing import TracingCallback, TracerCallback
-from catalyst.callbacks.validation import ValidationManagerCallback
 
-from catalyst.callbacks.metrics import *
+# if IS_QUANTIZATION_AVAILABLE:
+#     from catalyst.callbacks.quantization import DynamicQuantizationCallback
 
-if IS_QUANTIZATION_AVAILABLE:
-    from catalyst.callbacks.quantization import DynamicQuantizationCallback
+# if IS_PRUNING_AVAILABLE:
+#     from catalyst.callbacks.pruning import PruningCallback
 
-if IS_PRUNING_AVAILABLE:
-    from catalyst.callbacks.pruning import PruningCallback
+from catalyst.contrib.callbacks.optuna_callback import OptunaPruningCallback
 
-from catalyst.contrib.callbacks import *
+# from catalyst.contrib.callbacks import *

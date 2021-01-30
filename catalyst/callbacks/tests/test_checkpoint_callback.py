@@ -6,7 +6,6 @@ import shutil
 import sys
 
 import pytest
-
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -107,11 +106,7 @@ def test_multiple_stages_and_different_checkpoints_to_load():
         callbacks=[
             dl.CheckpointCallback(
                 save_n_best=2,
-                load_on_stage_end={
-                    "model": "best",
-                    "criterion": "best",
-                    "optimizer": "last",
-                },
+                load_on_stage_end={"model": "best", "criterion": "best", "optimizer": "last",},
             ),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
         ],
@@ -128,11 +123,7 @@ def test_multiple_stages_and_different_checkpoints_to_load():
         callbacks=[
             dl.CheckpointCallback(
                 save_n_best=3,
-                load_on_stage_start={
-                    "model": "last",
-                    "criterion": "last",
-                    "optimizer": "best",
-                },
+                load_on_stage_start={"model": "last", "criterion": "last", "optimizer": "best",},
             ),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
         ],
@@ -196,11 +187,7 @@ def test_resume_with_missing_file():
             callbacks=[
                 dl.CheckpointCallback(
                     save_n_best=2,
-                    load_on_stage_end={
-                        "model": "best",
-                        "criterion": "best",
-                        "optimizer": "last",
-                    },
+                    load_on_stage_end={"model": "best", "criterion": "best", "optimizer": "last",},
                     resume="not_existing_file.pth",
                 ),
                 dl.CheckRunCallback(num_epoch_steps=num_epochs),

@@ -35,12 +35,8 @@ class PerplexityCallback(BatchMetricCallback):
             ignore_index: index to ignore, usually pad_index
         """
         self.ignore_index = ignore_index or nn.CrossEntropyLoss().ignore_index
-        self.cross_entropy_loss = nn.CrossEntropyLoss(
-            ignore_index=self.ignore_index
-        )
-        metric_fn = partial(
-            _perplexity_metric, criterion=self.cross_entropy_loss
-        )
+        self.cross_entropy_loss = nn.CrossEntropyLoss(ignore_index=self.ignore_index)
+        metric_fn = partial(_perplexity_metric, criterion=self.cross_entropy_loss)
 
         super().__init__(
             metric_fn=metric_fn,
@@ -51,7 +47,4 @@ class PerplexityCallback(BatchMetricCallback):
         )
 
 
-# backward compatibility
-PerplexityMetricCallback = PerplexityCallback
-
-__all__ = ["PerplexityCallback", "PerplexityMetricCallback"]
+__all__ = ["PerplexityCallback"]

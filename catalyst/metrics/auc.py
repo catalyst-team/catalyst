@@ -1,7 +1,6 @@
 from typing import Tuple
 
 import numpy as np
-
 import torch
 from torch.nn import functional as F
 
@@ -124,9 +123,7 @@ def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
 
     per_class_auc = []
     for class_i in range(outputs.shape[1]):
-        per_class_auc.append(
-            _binary_auc(outputs[:, class_i], targets[:, class_i])[0]
-        )
+        per_class_auc.append(_binary_auc(outputs[:, class_i], targets[:, class_i])[0])
     output = torch.Tensor(per_class_auc)
     return output
 

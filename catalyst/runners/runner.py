@@ -10,24 +10,13 @@ from catalyst.core.callback import Callback
 from catalyst.core.functional import sort_callbacks_by_order
 from catalyst.core.runner import IStageBasedRunner
 from catalyst.experiments.experiment import Experiment
-from catalyst.typing import (
-    Criterion,
-    Device,
-    Model,
-    Optimizer,
-    RunnerModel,
-    Scheduler,
-)
+from catalyst.typing import Criterion, Device, Model, Optimizer, RunnerModel, Scheduler
 from catalyst.utils import check_amp_available
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.components import process_components
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 from catalyst.utils.scripts import distributed_cmd_run
-from catalyst.utils.torch import (
-    get_device,
-    get_requires_grad,
-    set_requires_grad,
-)
+from catalyst.utils.torch import get_device, get_requires_grad, set_requires_grad
 from catalyst.utils.tracing import save_traced_model, trace_model
 
 
@@ -42,11 +31,7 @@ def _resolve_bool_fp16(fp16: Union[Dict, bool]) -> Dict:
     """
     if isinstance(fp16, bool):
         if fp16:
-            return (
-                {"amp": True}
-                if check_amp_available()
-                else {"apex": True, "opt_level": "O1"}
-            )
+            return {"amp": True} if check_amp_available() else {"apex": True, "opt_level": "O1"}
         else:
             return {}
     else:
@@ -173,8 +158,7 @@ class Runner(IStageBasedRunner):
             if load_best_on_end:
                 load_on_stage_end = "best_full"
                 assert logdir is not None, (
-                    "For ``load_best_on_end`` feature "
-                    "you need to specify ``logdir``"
+                    "For ``load_best_on_end`` feature " "you need to specify ``logdir``"
                 )
             callbacks = sort_callbacks_by_order(callbacks)
             checkpoint_callback_flag = any(
@@ -207,11 +191,11 @@ class Runner(IStageBasedRunner):
             overfit=overfit,
             stage_kwargs=stage_kwargs or state_kwargs,
             checkpoint_data=checkpoint_data,
-            distributed_params=fp16,
+            engine_params=fp16,
             initial_seed=initial_seed,
         )
         self.experiment = experiment
-        distributed_cmd_run(self.run_experiment, distributed)
+        distributed_cmd_run(self.run, distributed)
 
     def infer(
         self,
@@ -287,15 +271,13 @@ class Runner(IStageBasedRunner):
             check_time=timeit,
             check_run=check,
             stage_kwargs=stage_kwargs or state_kwargs,
-            distributed_params=fp16,
+            engine_params=fp16,
             initial_seed=initial_seed,
         )
-        self.run_experiment(experiment)
+        self.run(experiment)
 
     @torch.no_grad()
-    def predict_batch(
-        self, batch: Mapping[str, Any], **kwargs
-    ) -> Mapping[str, Any]:
+    def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         """
         Run model inference on specified data batch.
 
@@ -311,9 +293,7 @@ class Runner(IStageBasedRunner):
         Raises:
             NotImplementedError: if not implemented yet
         """
-        raise NotImplementedError(
-            "Please implement `runner.predict_batch` method"
-        )
+        raise NotImplementedError("Please implement `runner.predict_batch` method")
 
     @torch.no_grad()
     def predict_loader(
@@ -354,13 +334,17 @@ class Runner(IStageBasedRunner):
 
         self.experiment = None
         set_global_seed(initial_seed)
-        (model, _, _, _, device) = process_components(  # noqa: WPS122
-            model=self.model, distributed_params=fp16, device=self.device,
-        )
+
+        engine = self.experiment.engine
+        model = engine.to_device(self.model)
+
+        # (model, _, _, _, device) = process_components(  # noqa: WPS122
+        #     model=self.model, engine_params=fp16, device=self.device,
+        # )
         self._prepare_inner_state(
             stage="infer",
             model=model,
-            device=device,
+            device=engine.device,
             is_train_loader=False,
             is_valid_loader=False,
             is_infer_loader=True,
@@ -412,9 +396,7 @@ class Runner(IStageBasedRunner):
         # @TODO: also add quantize, prune, onnx-convert
         if batch is None:
             if loader is None:
-                raise ValueError(
-                    "If batch is not provided the loader must be specified"
-                )
+                raise ValueError("If batch is not provided the loader must be specified")
             batch = next(iter(loader))
 
         if model is not None:

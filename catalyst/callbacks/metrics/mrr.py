@@ -1,8 +1,8 @@
-from catalyst.callbacks.metric import MetricCallback
+from catalyst.callbacks.metric import BatchMetricCallback
 from catalyst.metrics import mrr
 
 
-class MRRCallback(MetricCallback):
+class MRRCallback(BatchMetricCallback):
     """Calculates the MRR."""
 
     def __init__(

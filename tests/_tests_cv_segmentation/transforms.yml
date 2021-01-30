@@ -7,33 +7,33 @@ stages:
     _key_value: True
 
     train:
-      transform: A.Compose
+      _target_:  A.Compose
       transforms:
-        - transform: A.SmallestMaxSize # also `albu.SmallestMaxSize` is allowed
+        - _target_:  A.SmallestMaxSize # also `albu.SmallestMaxSize` is allowed
           max_size: *resize_size
           p: 1.0
-        - transform: A.RandomCrop
+        - _target_:  A.RandomCrop
           height: *image_size
           width: *image_size
           p: 1.0
-        - transform: A.RandomRotate90
-        - transform: A.Cutout
-        - transform: A.RandomBrightnessContrast
+        - _target_:  A.RandomRotate90
+        - _target_:  A.Cutout
+        - _target_:  A.RandomBrightnessContrast
           brightness_limit: 0.2
           contrast_limit: 0.2
           p: 0.3
-        - transform: A.GridDistortion
+        - _target_:  A.GridDistortion
           p: 0.3
-        - transform: A.HueSaturationValue
+        - _target_:  A.HueSaturationValue
           p: 0.3
-        - transform: A.Normalize
-        - transform: A.ToTensor
+        - _target_:  A.Normalize
+        - _target_:  A.ToTensor
     valid:
-      transform: A.Compose
+      _target_:  A.Compose
       transforms:
-        - transform: A.CenterCrop
+        - _target_:  A.CenterCrop
           height: *image_size
           width: *image_size
           p: 1.0
-        - transform: A.Normalize
-        - transform: A.ToTensor
+        - _target_:  A.Normalize
+        - _target_:  A.ToTensor

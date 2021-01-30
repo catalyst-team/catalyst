@@ -1,7 +1,6 @@
 from collections import OrderedDict
 
 import pytest
-
 import torch
 
 from catalyst import registry
@@ -19,7 +18,7 @@ from catalyst.callbacks import (
 from catalyst.experiments import ConfigExperiment
 
 DEFAULT_MINIMAL_CONFIG = {  # noqa: WPS407
-    "model_params": {"model": "SomeModel"},
+    "model_params": {"_target_": "SomeModel"},
     "stages": {"data_params": {"num_workers": 0}, "train": {}},
     "args": {"logdir": "./logdir"},
 }
@@ -58,19 +57,15 @@ class SomeScheduler(torch.nn.Module):
         super().__init__()
 
 
-registry.MODEL.add(SomeModel)
-registry.OPTIMIZER.add(SomeOptimizer)
-registry.SCHEDULER.add(SomeScheduler)
+registry.REGISTRY.add(SomeModel)
+registry.REGISTRY.add(SomeOptimizer)
+registry.REGISTRY.add(SomeScheduler)
 
 
 def _test_callbacks(test_callbacks, exp, stage="train"):
     exp_callbacks = exp.get_callbacks(stage)
-    exp_callbacks = OrderedDict(
-        sorted(exp_callbacks.items(), key=lambda t: t[0])
-    )
-    test_callbacks = OrderedDict(
-        sorted(test_callbacks.items(), key=lambda t: t[0])
-    )
+    exp_callbacks = OrderedDict(sorted(exp_callbacks.items(), key=lambda t: t[0]))
+    test_callbacks = OrderedDict(sorted(test_callbacks.items(), key=lambda t: t[0]))
     print(test_callbacks.keys())
     print(exp_callbacks.keys())
 
@@ -90,10 +85,10 @@ def test_defaults():
     """
     exp = ConfigExperiment(config=DEFAULT_MINIMAL_CONFIG.copy())
 
-    assert exp.initial_seed == 42
+    assert exp.seed == 42
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
-    assert exp.distributed_params == {}
+    assert exp.engine_params == {}
     assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
@@ -117,15 +112,15 @@ def test_defaults_criterion_optimizer_scheduler():
     callbacks["_scheduler"] = SchedulerCallback
 
     config = DEFAULT_MINIMAL_CONFIG.copy()
-    config["stages"]["criterion_params"] = {"criterion": "BCEWithLogitsLoss"}
-    config["stages"]["optimizer_params"] = {"optimizer": "SomeOptimizer"}
-    config["stages"]["scheduler_params"] = {"scheduler": "SomeScheduler"}
+    config["stages"]["criterion_params"] = {"_target_": "BCEWithLogitsLoss"}
+    config["stages"]["optimizer_params"] = {"_target_": "SomeOptimizer"}
+    config["stages"]["scheduler_params"] = {"_target_": "SomeScheduler"}
     exp = ConfigExperiment(config=config)
 
-    assert exp.initial_seed == 42
+    assert exp.seed == 42
     assert exp.logdir == "./logdir"
     assert exp.stages == ["train"]
-    assert exp.distributed_params == {}
+    assert exp.engine_params == {}
     assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
@@ -148,13 +143,13 @@ def test_when_callback_defined():
     callbacks["my_scheduler"] = SchedulerCallback
 
     config = DEFAULT_MINIMAL_CONFIG.copy()
-    config["stages"]["criterion_params"] = {"criterion": "BCEWithLogitsLoss"}
-    config["stages"]["optimizer_params"] = {"optimizer": "SomeOptimizer"}
-    config["stages"]["scheduler_params"] = {"scheduler": "SomeScheduler"}
+    config["stages"]["criterion_params"] = {"_target_": "BCEWithLogitsLoss"}
+    config["stages"]["optimizer_params"] = {"_target_": "SomeOptimizer"}
+    config["stages"]["scheduler_params"] = {"_target_": "SomeScheduler"}
     config["stages"]["callbacks_params"] = {
-        "my_criterion": {"callback": "CriterionCallback"},
-        "my_optimizer": {"callback": "OptimizerCallback"},
-        "my_scheduler": {"callback": "SchedulerCallback"},
+        "my_criterion": {"_target_": "CriterionCallback"},
+        "my_optimizer": {"_target_": "OptimizerCallback"},
+        "my_scheduler": {"_target_": "SchedulerCallback"},
     }
     exp = ConfigExperiment(config=config)
     _test_callbacks(callbacks, exp)

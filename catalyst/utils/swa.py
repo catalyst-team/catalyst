@@ -75,9 +75,7 @@ def get_averaged_weights_by_path_mask(
     if logdir is None:
         models_pathes = glob.glob(path_mask)
     else:
-        models_pathes = glob.glob(
-            os.path.join(logdir, "checkpoints", path_mask)
-        )
+        models_pathes = glob.glob(os.path.join(logdir, "checkpoints", path_mask))
 
     all_weights = [_load_weights(path) for path in models_pathes]
     averaged_dict = average_weights(all_weights)

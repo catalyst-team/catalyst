@@ -16,10 +16,7 @@ class IoULoss(nn.Module):
     """
 
     def __init__(
-        self,
-        eps: float = 1e-7,
-        threshold: float = None,
-        activation: str = "Sigmoid",
+        self, eps: float = 1e-7, threshold: float = None, activation: str = "Sigmoid",
     ):
         """
         Args:
@@ -29,9 +26,7 @@ class IoULoss(nn.Module):
                 Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax'``
         """
         super().__init__()
-        metric_fn = wrap_metric_fn_with_activation(
-            metric_fn=iou, activation=activation
-        )
+        metric_fn = wrap_metric_fn_with_activation(metric_fn=iou, activation=activation)
         self.loss_fn = partial(metric_fn, eps=eps, threshold=threshold)
 
     def forward(self, outputs, targets):

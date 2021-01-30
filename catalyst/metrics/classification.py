@@ -57,10 +57,7 @@ def precision_recall_fbeta_support(
         )
     """
     tn, fp, fn, tp, support = get_multiclass_statistics(
-        outputs=outputs,
-        targets=targets,
-        argmax_dim=argmax_dim,
-        num_classes=num_classes,
+        outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes,
     )
     precision = (tp + eps) / (fp + tp + eps)
     recall = (tp + eps) / (fn + tp + eps)

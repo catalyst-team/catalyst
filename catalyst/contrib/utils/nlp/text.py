@@ -2,7 +2,6 @@ from typing import Dict, List, Union
 import string
 
 import numpy as np
-
 import torch
 
 from catalyst.contrib.nn.modules import LamaPooling
@@ -38,9 +37,7 @@ def tokenize_text(
         text = text.translate(str.maketrans("", "", string.punctuation))
     text = text.replace(r"\s", " ").replace(r"\s\s+", " ").strip()
 
-    inputs = tokenizer.encode_plus(
-        text, "", add_special_tokens=True, max_length=max_length
-    )
+    inputs = tokenizer.encode_plus(text, "", add_special_tokens=True, max_length=max_length)
     input_ids, token_type_ids = inputs["input_ids"], inputs["token_type_ids"]
     attention_mask = [1] * len(input_ids)
 

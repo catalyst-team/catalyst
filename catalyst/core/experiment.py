@@ -4,16 +4,19 @@ from collections import OrderedDict
 
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.core.callback import Callback
+from catalyst.core.callback import Callback, ICallback
+from catalyst.core.engine import IEngine
+from catalyst.core.logger import ILogger
+from catalyst.core.trial import ITrial
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 
 
 class IExperiment(ABC):
-    """
-    An abstraction that contains information about the experiment –
+    """An abstraction that knows **what** you would like to run.
+
+    IExperiment contains information about the experiment –
     a model, a criterion, an optimizer, a scheduler, and their hyperparameters.
     It also contains information about the data and transformations used.
-    In general, the Experiment knows **what** you would like to run.
 
     .. note::
         To learn more about Catalyst Core concepts, please check out
@@ -30,8 +33,7 @@ class IExperiment(ABC):
     """
 
     @property
-    @abstractmethod
-    def initial_seed(self) -> int:
+    def seed(self) -> int:
         """
         Experiment's initial seed, used to setup `global seed`
         at the beginning of each stage.
@@ -42,25 +44,16 @@ class IExperiment(ABC):
 
         Example::
 
-            >>> experiment.initial_seed
+            >>> experiment.seed
             42
         """
-        pass
+        return 42
 
     @property
-    @abstractmethod
-    def logdir(self) -> str:
-        """Path to the directory where the experiment logs would be saved.
-
-        Example::
-
-            >>> experiment.logdir
-            ./path/to/my/experiment/logs
-        """
-        pass
+    def name(self) -> str:
+        return "IExperiment"
 
     @property
-    @abstractmethod
     def hparams(self) -> OrderedDict:
         """
         Returns hyper-parameters for current experiment.
@@ -75,42 +68,7 @@ class IExperiment(ABC):
              ('amsgrad', False),
              ('train_batch_size', 32)])
         """
-
-    @property
-    @abstractmethod
-    def trial(self) -> Any:
-        """
-        Returns hyperparameter trial for current experiment.
-        Could be usefull for Optuna/HyperOpt/Ray.tune
-        hyperparameters optimizers.
-
-        Example::
-
-            >>> experiment.trial
-            optuna.trial._trial.Trial  # Optuna variant
-        """
-        pass
-
-    @property
-    @abstractmethod
-    def distributed_params(self) -> Dict:
-        """
-        Dictionary with the parameters for distributed
-        and half-precision training.
-
-        Used in :py:mod:`catalyst.utils.distributed.process_components`
-        to setup `Nvidia Apex`_ or `PyTorch distributed`_.
-
-        .. _`Nvidia Apex`: https://github.com/NVIDIA/apex
-        .. _`PyTorch distributed`:
-            https://pytorch.org/docs/stable/distributed.html
-
-        Example::
-
-            >>> experiment.distributed_params
-            {"opt_level": "O1", "syncbn": True}  # Apex variant
-        """
-        pass
+        return {}
 
     @property
     @abstractmethod
@@ -134,16 +92,11 @@ class IExperiment(ABC):
 
         Example::
 
-            >>> experiment.get_stage_params(stage="training")
+            >>> experiment.get_stage_params(stage="train_2")
             {
-                "logdir": "./logs/training",
                 "num_epochs": 42,
-                "valid_loader": "valid",
-                "main_metric": "loss",
-                "minimize_metric": True,
-                "checkpoint_data": {
-                    "comment": "break the cycle - use the Catalyst"
-                }
+                "migrate_model_from_previous_stage": True,
+                "migrate_callbacks_from_previous_stage": False,
             }
 
         Args:
@@ -163,7 +116,7 @@ class IExperiment(ABC):
 
             # suppose we have typical MNIST model, like
             # nn.Sequential(nn.Linear(28*28, 128), nn.Linear(128, 10))
-            >>> experiment.get_model(stage="training")
+            >>> experiment.get_model(stage="train")
             Sequential(
              : Linear(in_features=784, out_features=128, bias=True)
              : Linear(in_features=128, out_features=10, bias=True)
@@ -178,7 +131,6 @@ class IExperiment(ABC):
         """
         pass
 
-    @abstractmethod
     def get_criterion(self, stage: str) -> Criterion:
         """Returns the criterion for a given stage.
 
@@ -195,9 +147,9 @@ class IExperiment(ABC):
         Returns:  # noqa: DAR202
             Criterion: criterion for a given stage.
         """
-        pass
+        # @TODO: could we also pass model here for model-criterion interaction?
+        return None
 
-    @abstractmethod
     def get_optimizer(self, stage: str, model: Model) -> Optimizer:
         """Returns the optimizer for a given stage and model.
 
@@ -214,9 +166,8 @@ class IExperiment(ABC):
         Returns:  # noqa: DAR202
             Optimizer: optimizer for a given stage and model.
         """
-        pass
+        return None
 
-    @abstractmethod
     def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
         """Returns the scheduler for a given stage and optimizer.
 
@@ -232,12 +183,12 @@ class IExperiment(ABC):
         Returns:  # noqa: DAR202
             Scheduler: scheduler for a given stage and optimizer.
         """
-        pass
+        return None
 
-    def get_transforms(self, stage: str = None, dataset: str = None):
+    def get_transforms(
+        self, stage: str = None, epoch: int = None, dataset: str = None, **kwargs,
+    ):
         """Returns the data transforms for a given stage and dataset.
-
-        # noqa: DAR401, W505
 
         Args:
             stage: stage name of interest,
@@ -246,7 +197,7 @@ class IExperiment(ABC):
                 like "train" / "valid" / "infer"
 
         .. note::
-            For datasets/loaders nameing please follow
+            For datasets/loaders naming please follow
             :py:mod:`catalyst.core.runner` documentation.
 
         Returns:  # noqa: DAR202
@@ -264,7 +215,7 @@ class IExperiment(ABC):
             For Deep Learning cases you have the same dataset
             during whole stage.
 
-            For Reinforcement Learning it common to change the dataset
+            For Reinforcement Learning it's common to change the dataset
             (experiment) every training epoch.
 
         Args:
@@ -300,9 +251,7 @@ class IExperiment(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_loaders(
-        self, stage: str, epoch: int = None,
-    ) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self, stage: str, epoch: int = None) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage.  # noqa: DAR401
 
         .. note::
@@ -321,10 +270,9 @@ class IExperiment(ABC):
                 with loaders for current stage and epoch.
 
         """
-        raise NotImplementedError
+        pass
 
-    @abstractmethod
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
         """Returns callbacks for a given stage.
 
         .. note::
@@ -360,7 +308,16 @@ class IExperiment(ABC):
             OrderedDict[str, Callback]: Ordered dictionary
                 with callbacks for current stage.
         """
-        pass
+        return {}
+
+    def get_engine(self) -> IEngine:
+        return None
+
+    def get_trial(self) -> ITrial:
+        return None
+
+    def get_loggers(self) -> Dict[str, ILogger]:
+        return {}
 
 
 __all__ = ["IExperiment"]

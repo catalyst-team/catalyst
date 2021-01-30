@@ -16,10 +16,10 @@ from catalyst.contrib.datasets import MNIST
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.dl import SupervisedRunner
-from catalyst.registry import Model
+from catalyst.registry import REGISTRY
 
 
-@Model
+@REGISTRY.add
 class _SimpleNet(nn.Module):
     def __init__(self, input_shape: Tuple[int]):
         super().__init__()
@@ -35,9 +35,7 @@ class _SimpleNet(nn.Module):
             h_stride, w_stride = conv.stride
             c = conv.out_channels
             h, w = self.conv2d_size_out(
-                size=(h, w),
-                kernel_size=(h_kernel, w_kernel),
-                stride=(h_stride, w_stride),
+                size=(h, w), kernel_size=(h_kernel, w_kernel), stride=(h_stride, w_stride),
             )
 
         self.fc1 = nn.Linear(in_features=c * h * w, out_features=10)
@@ -69,8 +67,7 @@ class _SimpleNet(nn.Module):
             int: output size
         """
         size, kernel_size, stride = map(
-            lambda x: torch.tensor(x, dtype=torch.int32),
-            (size, kernel_size, stride),
+            lambda x: torch.tensor(x, dtype=torch.int32), (size, kernel_size, stride),
         )
         output_size = (size - (kernel_size - 1) - 1) // stride + 1
         h, w = map(lambda x: x.item(), output_size)
@@ -81,18 +78,10 @@ class _SimpleNet(nn.Module):
 def _get_loaders(*, root: str, batch_size: int = 1, num_workers: int = 1):
     data_transform = ToTensor()
 
-    trainset = MNIST(
-        root=root, train=True, download=True, transform=data_transform
-    )
-    trainloader = DataLoader(
-        trainset, batch_size=batch_size, num_workers=num_workers
-    )
-    testset = MNIST(
-        root=root, train=False, download=True, transform=data_transform
-    )
-    testloader = DataLoader(
-        testset, batch_size=batch_size, num_workers=num_workers
-    )
+    trainset = MNIST(root=root, train=True, download=True, transform=data_transform)
+    trainloader = DataLoader(trainset, batch_size=batch_size, num_workers=num_workers)
+    testset = MNIST(root=root, train=False, download=True, transform=data_transform)
+    testloader = DataLoader(testset, batch_size=batch_size, num_workers=num_workers)
 
     loaders = collections.OrderedDict(train=trainloader, valid=testloader)
 

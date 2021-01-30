@@ -97,9 +97,7 @@ def split_dataset_train_test(
     train_dataset = defaultdict(list)
     test_dataset = defaultdict(list)
     for key, value in dataset.items():
-        train_ids, test_ids = train_test_split(
-            range(len(value)), **train_test_split_args
-        )
+        train_ids, test_ids = train_test_split(range(len(value)), **train_test_split_args)
         train_dataset[key].extend([value[i] for i in train_ids])
         test_dataset[key].extend([value[i] for i in test_ids])
     return train_dataset, test_dataset
@@ -124,9 +122,7 @@ def create_dataframe(dataset: DictDataset, **dataframe_args) -> pd.DataFrame:
     Returns:
         pd.DataFrame: dataframe from giving dataset
     """
-    data = [
-        (key, value) for key, values in dataset.items() for value in values
-    ]
+    data = [(key, value) for key, values in dataset.items() for value in values]
     df = pd.DataFrame(data, **dataframe_args)
     return df
 
@@ -237,10 +233,7 @@ def split_dataframe_on_folds(
 
 
 def split_dataframe_on_stratified_folds(
-    dataframe: pd.DataFrame,
-    class_column: str,
-    random_state: int = 42,
-    n_folds: int = 5,
+    dataframe: pd.DataFrame, class_column: str, random_state: int = 42, n_folds: int = 5,
 ) -> pd.DataFrame:
     """Splits DataFrame into `N` stratified folds.
 
@@ -255,23 +248,16 @@ def split_dataframe_on_stratified_folds(
     Returns:
         pd.DataFrame: new dataframe with `fold` column
     """
-    skf = StratifiedKFold(
-        n_splits=n_folds, shuffle=True, random_state=random_state
-    )
+    skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=random_state)
     fold_column = np.zeros(len(dataframe), dtype=int)
-    for i, (_, test_index) in enumerate(
-        skf.split(range(len(dataframe)), dataframe[class_column])
-    ):
+    for i, (_, test_index) in enumerate(skf.split(range(len(dataframe)), dataframe[class_column])):
         fold_column[test_index] = i
     dataframe["fold"] = fold_column
     return dataframe
 
 
 def split_dataframe_on_column_folds(
-    dataframe: pd.DataFrame,
-    column: str,
-    random_state: int = 42,
-    n_folds: int = 5,
+    dataframe: pd.DataFrame, column: str, random_state: int = 42, n_folds: int = 5,
 ) -> pd.DataFrame:
     """Splits DataFrame into `N` folds.
 
@@ -285,9 +271,7 @@ def split_dataframe_on_column_folds(
         pd.DataFrame: new dataframe with `fold` column
     """
     df_tmp = []
-    labels = shuffle(
-        sorted(dataframe[column].unique()), random_state=random_state
-    )
+    labels = shuffle(sorted(dataframe[column].unique()), random_state=random_state)
     for i, fold_labels in enumerate(np.array_split(labels, n_folds)):
         df_label = dataframe[dataframe[column].isin(fold_labels)]
         df_label["fold"] = i
@@ -351,9 +335,7 @@ def separate_tags(
     return df_new
 
 
-def get_dataset_labeling(
-    dataframe: pd.DataFrame, tag_column: str
-) -> Dict[str, int]:
+def get_dataset_labeling(dataframe: pd.DataFrame, tag_column: str) -> Dict[str, int]:
     """Prepares a mapping using unique values from ``tag_column``.
 
     .. code-block:: javascript
@@ -374,9 +356,7 @@ def get_dataset_labeling(
     """
     tag_to_labels = {
         str(class_name): label
-        for label, class_name in enumerate(
-            sorted(dataframe[tag_column].unique())
-        )
+        for label, class_name in enumerate(sorted(dataframe[tag_column].unique()))
     }
     return tag_to_labels
 
@@ -413,21 +393,14 @@ def split_dataframe(
             whole dataframe, train part, valid part and infer part
     """
     if args_are_not_none(tag2class, tag_column, class_column):
-        dataframe = map_dataframe(
-            dataframe, tag_column, class_column, tag2class
-        )
+        dataframe = map_dataframe(dataframe, tag_column, class_column, tag2class)
 
     if class_column is not None:
         result_dataframe = split_dataframe_on_stratified_folds(
-            dataframe,
-            class_column=class_column,
-            random_state=seed,
-            n_folds=n_folds,
+            dataframe, class_column=class_column, random_state=seed, n_folds=n_folds,
         )
     else:
-        result_dataframe = split_dataframe_on_folds(
-            dataframe, random_state=seed, n_folds=n_folds
-        )
+        result_dataframe = split_dataframe_on_folds(dataframe, random_state=seed, n_folds=n_folds)
 
     fold_series = result_dataframe["fold"]
 
@@ -447,9 +420,7 @@ def split_dataframe(
     return result_dataframe, df_train, df_valid, df_infer
 
 
-def merge_multiple_fold_csv(
-    fold_name: str, paths: Optional[str]
-) -> pd.DataFrame:
+def merge_multiple_fold_csv(fold_name: str, paths: Optional[str]) -> pd.DataFrame:
     """Reads csv into one DataFrame with column ``fold``.
 
     Args:
@@ -491,9 +462,7 @@ def read_multiple_dataframes(
         tuple: tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
     """
-    assert any(
-        x is not None for x in (in_csv_train, in_csv_valid, in_csv_infer)
-    )
+    assert any(x is not None for x in (in_csv_train, in_csv_valid, in_csv_infer))
 
     result_df = None
     fold_dfs = {}
@@ -501,19 +470,13 @@ def read_multiple_dataframes(
         (in_csv_train, in_csv_valid, in_csv_infer), ("train", "valid", "infer")
     ):
         if fold_df is not None:
-            fold_df = merge_multiple_fold_csv(
-                fold_name=fold_name, paths=fold_df
-            )
+            fold_df = merge_multiple_fold_csv(fold_name=fold_name, paths=fold_df)
             if args_are_not_none(tag2class, tag_column, class_column):
-                fold_df = map_dataframe(
-                    fold_df, tag_column, class_column, tag2class
-                )
+                fold_df = map_dataframe(fold_df, tag_column, class_column, tag2class)
             fold_dfs[fold_name] = fold_df
 
             result_df = (
-                fold_df
-                if result_df is None
-                else result_df.append(fold_df, ignore_index=True)
+                fold_df if result_df is None else result_df.append(fold_df, ignore_index=True)
             )
 
     output = (
@@ -584,15 +547,12 @@ def read_csv_data(
     """
     from_one_df: bool = in_csv is not None
     from_multiple_df: bool = (
-        in_csv_train is not None
-        or in_csv_valid is not None
-        or in_csv_infer is not None
+        in_csv_train is not None or in_csv_valid is not None or in_csv_infer is not None
     )
 
     if from_one_df == from_multiple_df:
         raise ValueError(
-            "You should pass `in_csv` "
-            "or `in_csv_train` with `in_csv_valid` but not both!"
+            "You should pass `in_csv` " "or `in_csv_train` with `in_csv_valid` but not both!"
         )
 
     if from_one_df:
@@ -675,17 +635,13 @@ def balance_classes(
                     replace=True,
                     random_state=random_state,
                 )
-                balanced_dfs[label] = pd.concat(
-                    (df_class_column, df_class_column_additional)
-                )
+                balanced_dfs[label] = pd.concat((df_class_column, df_class_column_additional))
     elif how == "downsampling":
         samples_per_class = min(cnt.values())
 
         balanced_dfs = {}
         for label in sorted(dataframe[class_column].unique()):
-            balanced_dfs[label] = dataframe[
-                dataframe[class_column] == label
-            ].sample(
+            balanced_dfs[label] = dataframe[dataframe[class_column] == label].sample(
                 samples_per_class, replace=False, random_state=random_state
             )
     else:

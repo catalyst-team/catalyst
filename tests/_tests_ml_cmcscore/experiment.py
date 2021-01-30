@@ -35,7 +35,6 @@ class Experiment(ConfigExperiment):
         datasets["train"] = trainset
         datasets["valid"] = testset
         datasets["valid_query_gallery"] = MnistQGDataset(
-            "./data",
-            transform=Experiment.get_transforms(stage=stage, mode="valid"),
+            "./data", transform=Experiment.get_transforms(stage=stage, mode="valid"),
         )
         return datasets

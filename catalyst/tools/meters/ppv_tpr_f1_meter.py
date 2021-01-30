@@ -118,12 +118,8 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         Returns:
             tuple of floats: (precision, recall, f1)
         """
-        precision_value = precision(
-            self.tp_fp_fn_counts["tp"], self.tp_fp_fn_counts["fp"]
-        )
-        recall_value = recall(
-            self.tp_fp_fn_counts["tp"], self.tp_fp_fn_counts["fn"]
-        )
+        precision_value = precision(self.tp_fp_fn_counts["tp"], self.tp_fp_fn_counts["fp"])
+        recall_value = recall(self.tp_fp_fn_counts["tp"], self.tp_fp_fn_counts["fn"])
         f1_value = f1score(precision_value, recall_value)
         return (float(precision_value), float(recall_value), float(f1_value))
 

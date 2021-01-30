@@ -1,9 +1,8 @@
 import numpy as np
-
 import torch
 
 from catalyst.metrics.functional import wrap_topk_metric2dict
-from catalyst.utils import metrics
+from catalyst.metrics.hitrate import hitrate
 
 
 def test_hitrate():
@@ -14,9 +13,7 @@ def test_hitrate():
     y_true = [1.0, 0.0]
     k = [1, 2]
 
-    hitrate_at1, hitrate_at2 = metrics.hitrate(
-        torch.Tensor([y_pred]), torch.Tensor([y_true]), k
-    )
+    hitrate_at1, hitrate_at2 = hitrate(torch.Tensor([y_pred]), torch.Tensor([y_true]), k)
     assert hitrate_at1 == 1.0
     assert hitrate_at2 == 0.5
 
@@ -25,9 +22,7 @@ def test_hitrate():
     y_true = [0.0, 0.0]
     k = [2]
 
-    hitrate_at2 = metrics.hitrate(
-        torch.Tensor([y_pred]), torch.Tensor([y_true]), k
-    )[0]
+    hitrate_at2 = hitrate(torch.Tensor([y_pred]), torch.Tensor([y_true]), k)[0]
     assert hitrate_at2 == 0.0
 
 
@@ -42,7 +37,7 @@ def test_wrapper_metrics():
     outputs = torch.Tensor([y_pred])
     targets = torch.Tensor([y_true])
 
-    hitrate_wrapper = wrap_topk_metric2dict(metrics.hitrate, topk_args)
+    hitrate_wrapper = wrap_topk_metric2dict(hitrate, topk_args)
     hitrate_dict = hitrate_wrapper(outputs, targets)
 
     hitrate_at1 = hitrate_dict["01"]

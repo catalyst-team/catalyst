@@ -3,9 +3,15 @@ import configparser
 import logging
 import os
 
+import torch
+
 from catalyst.tools.frozen_class import FrozenClass
 
 logger = logging.getLogger(__name__)
+
+IS_CUDA_AVAILABLE = torch.cuda.is_available()
+NUM_CUDA_DEVICES = torch.cuda.device_count()
+
 
 try:
     from git import Repo  # noqa: F401
@@ -102,47 +108,27 @@ class Settings(FrozenClass):
         self.albumentations_required: bool = self._optional_value(
             albumentations_required, default=cv_required
         )
-        self.kornia_required: bool = self._optional_value(
-            kornia_required, default=cv_required
-        )
+        self.kornia_required: bool = self._optional_value(kornia_required, default=cv_required)
         self.segmentation_models_required: bool = self._optional_value(
             segmentation_models_required, default=cv_required
         )
         self.use_libjpeg_turbo: bool = use_libjpeg_turbo
 
         # [catalyst-log]
-        self.alchemy_required: bool = self._optional_value(
-            alchemy_required, default=log_required
-        )
-        self.neptune_required: bool = self._optional_value(
-            neptune_required, default=log_required
-        )
-        self.wandb_required: bool = self._optional_value(
-            wandb_required, default=log_required
-        )
-        self.plotly_required: bool = self._optional_value(
-            plotly_required, default=log_required
-        )
+        self.alchemy_required: bool = self._optional_value(alchemy_required, default=log_required)
+        self.neptune_required: bool = self._optional_value(neptune_required, default=log_required)
+        self.wandb_required: bool = self._optional_value(wandb_required, default=log_required)
+        self.plotly_required: bool = self._optional_value(plotly_required, default=log_required)
 
         # [catalyst-ml]
-        self.scipy_required: bool = self._optional_value(
-            scipy_required, default=ml_required
-        )
+        self.scipy_required: bool = self._optional_value(scipy_required, default=ml_required)
         self.matplotlib_required: bool = self._optional_value(
             matplotlib_required, default=ml_required
         )
-        self.pandas_required: bool = self._optional_value(
-            pandas_required, default=ml_required
-        )
-        self.sklearn_required: bool = self._optional_value(
-            sklearn_required, default=ml_required
-        )
-        self.ipython_required: bool = self._optional_value(
-            ipython_required, default=ml_required
-        )
-        self.git_required: bool = self._optional_value(
-            git_required, default=ml_required
-        )
+        self.pandas_required: bool = self._optional_value(pandas_required, default=ml_required)
+        self.sklearn_required: bool = self._optional_value(sklearn_required, default=ml_required)
+        self.ipython_required: bool = self._optional_value(ipython_required, default=ml_required)
+        self.git_required: bool = self._optional_value(git_required, default=ml_required)
 
         # [catalyst-nlp]
         self.transformers_required: bool = self._optional_value(
@@ -150,9 +136,7 @@ class Settings(FrozenClass):
         )
 
         # [catalyst-tune]
-        self.optuna_required: bool = self._optional_value(
-            optuna_required, default=tune_required
-        )
+        self.optuna_required: bool = self._optional_value(optuna_required, default=tune_required)
 
         # [catalyst-knn]
         self.nmslib_required: bool = nmslib_required
@@ -171,6 +155,9 @@ class Settings(FrozenClass):
         self.stage_train_prefix: str = "train"
         self.stage_valid_prefix: str = "valid"
         self.stage_infer_prefix: str = "infer"
+
+        # epoch
+        self.epoch_metrics_prefix: str = "_epoch_"
 
         # loader
         self.loader_train_prefix: str = "train"
@@ -237,17 +224,13 @@ class ConfigFileFinder:
             home_dir = os.path.expanduser("~")
             config_file_basename = f".{program_name}"
         else:
-            home_dir = os.environ.get(
-                "XDG_CONFIG_HOME", os.path.expanduser("~/.config")
-            )
+            home_dir = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
             config_file_basename = program_name
 
         return os.path.join(home_dir, config_file_basename)
 
     @staticmethod
-    def _read_config(
-        *files: str,
-    ) -> Tuple[configparser.RawConfigParser, List[str]]:
+    def _read_config(*files: str,) -> Tuple[configparser.RawConfigParser, List[str]]:
         config = configparser.RawConfigParser()
 
         found_files: List[str] = []
@@ -277,9 +260,7 @@ class ConfigFileFinder:
         found_config_files = False
         while tail and not found_config_files:
             for project_filename in self.project_filenames:
-                filename = os.path.abspath(
-                    os.path.join(parent, project_filename)
-                )
+                filename = os.path.abspath(os.path.join(parent, project_filename))
                 if os.path.exists(filename):
                     yield filename
                     found_config_files = True
@@ -339,12 +320,9 @@ class MergedConfigParser:
         self.config_finder = config_finder
 
     def _normalize_value(self, option, value):
-        final_value = option.normalize(
-            value, self.config_finder.local_directory
-        )
+        final_value = option.normalize(value, self.config_finder.local_directory)
         logger.debug(
-            f"{value} has been normalized to {final_value}"
-            f" for option '{option.config_name}'",
+            f"{value} has been normalized to {final_value}" f" for option '{option.config_name}'",
         )
         return final_value
 
@@ -359,9 +337,7 @@ class MergedConfigParser:
             for option_name in config_parser.options(self.program_name):
                 type_ = DEFAULT_SETTINGS.type_hint(option_name)
                 method = type2method.get(type_, config_parser.get)
-                config_dict[option_name] = method(
-                    self.program_name, option_name
-                )
+                config_dict[option_name] = method(self.program_name, option_name)
 
         return config_dict
 
@@ -388,9 +364,9 @@ SETTINGS = Settings.parse()
 setattr(SETTINGS, "IS_GIT_AVAILABLE", IS_GIT_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_XLA_AVAILABLE", IS_XLA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_PRUNING_AVAILABLE", IS_PRUNING_AVAILABLE)  # noqa: B010
-setattr(  # noqa: B010
-    SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE
-)
+setattr(SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
 setattr(SETTINGS, "IS_OPTUNA_AVAILABLE", IS_OPTUNA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_HYDRA_AVAILABLE", IS_HYDRA_AVAILABLE)  # noqa: B010
 

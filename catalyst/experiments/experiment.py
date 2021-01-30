@@ -1,36 +1,21 @@
-from typing import (
-    Any,
-    Dict,
-    Iterable,
-    List,
-    Mapping,
-    Tuple,
-    TYPE_CHECKING,
-    Union,
-)
+from typing import Any, Dict, Iterable, List, Mapping, Tuple, TYPE_CHECKING, Union
 from collections import OrderedDict
 import warnings
 
-from torch import nn
+from torch import nn, optim
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback
 from catalyst.callbacks.early_stop import CheckRunCallback
 from catalyst.callbacks.exception import ExceptionCallback
-from catalyst.callbacks.logging import (
-    ConsoleLogger,
-    TensorboardLogger,
-    VerboseLogger,
-)
+from catalyst.callbacks.logging import ConsoleLogger, TensorboardLogger, VerboseLogger
 from catalyst.callbacks.metric import MetricManagerCallback
 from catalyst.callbacks.timer import TimerCallback
 from catalyst.callbacks.validation import ValidationManagerCallback
 from catalyst.core.experiment import IExperiment
-from catalyst.core.functional import (
-    check_callback_isinstance,
-    sort_callbacks_by_order,
-)
+from catalyst.core.functional import check_callback_isinstance, sort_callbacks_by_order
+from catalyst.engines import IEngine, process_engine
 from catalyst.settings import SETTINGS
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.loaders import get_loaders_from_params
@@ -64,8 +49,9 @@ class Experiment(IExperiment):
         overfit: bool = False,
         stage_kwargs: Dict = None,
         checkpoint_data: Dict = None,
-        distributed_params: Dict = None,
+        engine_params: Dict = None,
         initial_seed: int = 42,
+        engine: str = None,
     ):
         """
         Args:
@@ -108,13 +94,15 @@ class Experiment(IExperiment):
             stage_kwargs: additional stage params
             checkpoint_data: additional data to save in checkpoint,
                 for example: ``class_names``, ``date_of_training``, etc
-            distributed_params: dictionary with the parameters
+            engine_params: dictionary with the parameters
                 for distributed and FP16 method
             initial_seed: experiment's initial seed value
+            engine: engine to use, if ``None`` then will be used
+                device engine.
         """
-        assert (
-            datasets is not None or loaders is not None
-        ), "Please specify the data sources"
+        assert datasets is not None or loaders is not None, "Please specify the data sources"
+
+        self._engine: IEngine = process_engine(engine)
 
         self._model = model
         self._loaders, self._valid_loader = self._get_loaders(
@@ -144,17 +132,21 @@ class Experiment(IExperiment):
         self._overfit = overfit
         self._stage_kwargs = stage_kwargs or {}
         self._checkpoint_data = checkpoint_data or {}
-        self._distributed_params = distributed_params or {}
+        self._engine_params = engine_params or {}
 
     @property
-    def initial_seed(self) -> int:
+    def seed(self) -> int:
         """Experiment's initial seed value."""
         return self._initial_seed
 
     @property
-    def logdir(self):
-        """Path to the directory where the experiment logs."""
-        return self._logdir
+    def name(self) -> str:
+        return "Experiment"
+
+    # @property
+    # def logdir(self):
+    #     """Path to the directory where the experiment logs."""
+    #     return self._logdir
 
     @property
     def stages(self) -> Iterable[str]:
@@ -196,9 +188,9 @@ class Experiment(IExperiment):
         return self._trial
 
     @property
-    def distributed_params(self) -> Dict:
+    def engine_params(self) -> Dict:
         """Dict with the parameters for distributed and FP16 method."""
-        return self._distributed_params
+        return self._engine_params
 
     @staticmethod
     def _get_loaders(
@@ -210,19 +202,13 @@ class Experiment(IExperiment):
     ) -> "Tuple[OrderedDict[str, DataLoader], str]":
         """Prepares loaders for a given stage."""
         if datasets is not None:
-            loaders = get_loaders_from_params(
-                initial_seed=initial_seed, **datasets,
-            )
+            loaders = get_loaders_from_params(initial_seed=initial_seed, **datasets,)
         if not stage.startswith(SETTINGS.stage_infer_prefix):  # train stage
             if len(loaders) == 1:
                 valid_loader = list(loaders.keys())[0]
-                warnings.warn(
-                    "Attention, there is only one dataloader - "
-                    + str(valid_loader)
-                )
+                warnings.warn("Attention, there is only one dataloader - " + str(valid_loader))
             assert valid_loader in loaders, (
-                "The validation loader must be present "
-                "in the loaders used during experiment."
+                "The validation loader must be present " "in the loaders used during experiment."
             )
         return loaders, valid_loader
 
@@ -240,25 +226,40 @@ class Experiment(IExperiment):
         stage_params = {**default_params, **self._stage_kwargs}
         return stage_params
 
+    @property
+    def engine(self):
+        return self._engine
+
     def get_model(self, stage: str) -> Model:
         """Returns the model for a given stage."""
-        return self._model
+        # TODO: force user to return model from this method
+        model = (
+            self._model()
+            if callable(self._model) and not isinstance(self._model, nn.Module)
+            else self._model
+        )
+        return self._engine.to_device(model)
 
     def get_criterion(self, stage: str) -> Criterion:
         """Returns the criterion for a given stage."""
+        # TODO: force user to return criterion from this method
         return self._criterion
 
     def get_optimizer(self, stage: str, model: nn.Module) -> Optimizer:
         """Returns the optimizer for a given stage."""
-        return self._optimizer
+        # TODO: force user to return optimizer from this method
+        return (
+            self._optimizer(model.parameters())
+            if callable(self._optimizer) and not isinstance(self._optimizer, optim.Optimizer)
+            else self._optimizer
+        )
 
     def get_scheduler(self, stage: str, optimizer=None) -> Scheduler:
         """Returns the scheduler for a given stage."""
-        return self._scheduler
+        # TODO: force user to return scheduler from this method
+        return self._scheduler(optimizer) if callable(self._scheduler) else self._scheduler
 
-    def get_loaders(
-        self, stage: str, epoch: int = None,
-    ) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self, stage: str, epoch: int = None,) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage."""
         return self._loaders
 
@@ -280,9 +281,7 @@ class Experiment(IExperiment):
 
         if not stage.startswith("infer"):
             default_callbacks.append(("_metrics", MetricManagerCallback))
-            default_callbacks.append(
-                ("_validation", ValidationManagerCallback)
-            )
+            default_callbacks.append(("_validation", ValidationManagerCallback))
             default_callbacks.append(("_console", ConsoleLogger))
             if self.logdir is not None:
                 default_callbacks.append(("_saver", CheckpointCallback))
@@ -291,8 +290,7 @@ class Experiment(IExperiment):
 
         for callback_name, callback_fn in default_callbacks:
             is_already_present = any(
-                check_callback_isinstance(x, callback_fn)
-                for x in callbacks.values()
+                check_callback_isinstance(x, callback_fn) for x in callbacks.values()
             )
             if not is_already_present:
                 callbacks[callback_name] = callback_fn()

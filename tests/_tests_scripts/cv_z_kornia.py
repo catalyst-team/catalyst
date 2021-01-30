@@ -6,7 +6,7 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from catalyst import dl, metrics
-from catalyst.contrib.callbacks.kornia_transform import BatchTransformCallback
+from catalyst.contrib.callbacks.kornia_callback import BatchTransformCallback
 from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 
@@ -25,7 +25,7 @@ class CustomRunner(dl.Runner):
         """
         return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         """Model train/valid step."""
         x, y = batch
         y_hat = self.model(x.view(x.size(0), -1))
@@ -49,16 +49,10 @@ def main():
 
     loaders = {
         "train": DataLoader(
-            MNIST(
-                os.getcwd(), train=True, download=True, transform=ToTensor()
-            ),
-            batch_size=32,
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32,
         ),
         "valid": DataLoader(
-            MNIST(
-                os.getcwd(), train=False, download=True, transform=ToTensor()
-            ),
-            batch_size=32,
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32,
         ),
     }
 

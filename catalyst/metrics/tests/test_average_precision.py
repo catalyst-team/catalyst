@@ -13,9 +13,7 @@ def test_average_precision_base():
     outputs = torch.Tensor([0.1, 0.4, 0.35, 0.8])
     targets = torch.Tensor([0, 0, 1, 1])
 
-    assert torch.isclose(
-        average_precision(outputs, targets), torch.tensor(0.8333), atol=1e-3
-    )
+    assert torch.isclose(average_precision(outputs, targets), torch.tensor(0.8333), atol=1e-3)
 
 
 def test_average_precision_weighted():
@@ -37,9 +35,7 @@ def test_average_precision_weighted():
     output = torch.Tensor([4, 3, 2, 1])
     weight = torch.Tensor([1, 2, 3, 4])
     ap = average_precision(outputs=output, targets=target, weights=weight)
-    val = (
-        0 * 1.0 / 1.0 + 1.0 * 2.0 / 3.0 + 2.0 * 0 / 6.0 + 6.0 * 1.0 / 10.0
-    ) / 2.0
+    val = (0 * 1.0 / 1.0 + 1.0 * 2.0 / 3.0 + 2.0 * 0 / 6.0 + 6.0 * 1.0 / 10.0) / 2.0
     assert math.fabs(ap - val) < 0.01, "ap test3 failed"
 
     ap = average_precision(outputs=output, targets=target, weights=None)
@@ -50,9 +46,7 @@ def test_average_precision_weighted():
     output = torch.Tensor([1, 4, 2, 3])
     weight = torch.Tensor([1, 2, 3, 4])
     ap = average_precision(outputs=output, targets=target, weights=weight)
-    val = (
-        4 * 1.0 / 4.0 + 6 * 1.0 / 6.0 + 0 * 6.0 / 9.0 + 0 * 6.0 / 10.0
-    ) / 2.0
+    val = (4 * 1.0 / 4.0 + 6 * 1.0 / 6.0 + 0 * 6.0 / 9.0 + 0 * 6.0 / 10.0) / 2.0
     assert math.fabs(ap - val) < 0.01, "ap test5 failed"
 
     ap = average_precision(outputs=output, targets=target, weights=None)
@@ -91,20 +85,8 @@ def test_average_precision_weighted():
             ap.sum()
             - torch.Tensor(
                 [
-                    (
-                        1 * 3.0 / 3.0
-                        + 0 * 3.0 / 5.0
-                        + 3.5 * 1 / 5.5
-                        + 0 * 3.5 / 6.5
-                    )
-                    / 2.0,
-                    (
-                        0 * 1.0 / 1.0
-                        + 1 * 0.5 / 1.5
-                        + 0 * 0.5 / 3.5
-                        + 1 * 3.5 / 6.5
-                    )
-                    / 2.0,
+                    (1 * 3.0 / 3.0 + 0 * 3.0 / 5.0 + 3.5 * 1 / 5.5 + 0 * 3.5 / 6.5) / 2.0,
+                    (0 * 1.0 / 1.0 + 1 * 0.5 / 1.5 + 0 * 0.5 / 3.5 + 1 * 3.5 / 6.5) / 2.0,
                 ]
             ).sum()
         )
@@ -117,10 +99,8 @@ def test_average_precision_weighted():
             ap.sum()
             - torch.Tensor(
                 [
-                    (1 * 1.0 + 0 * 1.0 / 2.0 + 2 * 1.0 / 3 + 0 * 1.0 / 4.0)
-                    / 2.0,
-                    (0 * 1.0 + 1 * 1.0 / 2.0 + 0 * 1.0 / 3.0 + 2.0 * 1.0 / 4.0)
-                    / 2.0,
+                    (1 * 1.0 + 0 * 1.0 / 2.0 + 2 * 1.0 / 3 + 0 * 1.0 / 4.0) / 2.0,
+                    (0 * 1.0 + 1 * 1.0 / 2.0 + 0 * 1.0 / 3.0 + 2.0 * 1.0 / 4.0) / 2.0,
                 ]
             ).sum()
         )

@@ -1,6 +1,5 @@
 # flake8: noqa
 import optuna
-
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -14,19 +13,13 @@ from catalyst.dl import AccuracyCallback
 
 
 def test_mnist():
-    trainset = MNIST(
-        "./data", train=False, download=True, transform=ToTensor(),
-    )
-    testset = MNIST(
-        "./data", train=False, download=True, transform=ToTensor(),
-    )
+    trainset = MNIST("./data", train=False, download=True, transform=ToTensor(),)
+    testset = MNIST("./data", train=False, download=True, transform=ToTensor(),)
     loaders = {
         "train": DataLoader(trainset, batch_size=32),
         "valid": DataLoader(testset, batch_size=64),
     }
-    model = nn.Sequential(
-        Flatten(), nn.Linear(784, 128), nn.ReLU(), nn.Linear(128, 10)
-    )
+    model = nn.Sequential(Flatten(), nn.Linear(784, 128), nn.ReLU(), nn.Linear(128, 10))
 
     def objective(trial):
         lr = trial.suggest_loguniform("lr", 1e-3, 1e-1)
@@ -38,10 +31,7 @@ def test_mnist():
             loaders=loaders,
             criterion=criterion,
             optimizer=optimizer,
-            callbacks=[
-                OptunaPruningCallback(trial),
-                AccuracyCallback(num_classes=10),
-            ],
+            callbacks=[OptunaPruningCallback(trial), AccuracyCallback(num_classes=10),],
             num_epochs=10,
             main_metric="accuracy01",
             minimize_metric=False,
@@ -50,9 +40,7 @@ def test_mnist():
 
     study = optuna.create_study(
         direction="maximize",
-        pruner=optuna.pruners.MedianPruner(
-            n_startup_trials=1, n_warmup_steps=0, interval_steps=1
-        ),
+        pruner=optuna.pruners.MedianPruner(n_startup_trials=1, n_warmup_steps=0, interval_steps=1),
     )
     study.optimize(objective, n_trials=5, timeout=300)
     assert True

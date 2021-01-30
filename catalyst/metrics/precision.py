@@ -7,9 +7,7 @@ from catalyst.metrics.functional import process_multilabel_components
 
 
 def average_precision(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    weights: Optional[torch.Tensor] = None,
+    outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """Computes the average precision.
 
@@ -67,9 +65,7 @@ def average_precision(
         precision = tp.div(rg)
 
         # compute average precision
-        ap[class_i] = precision[correct.bool()].sum() / max(
-            float(correct.sum()), 1
-        )
+        ap[class_i] = precision[correct.bool()].sum() / max(float(correct.sum()), 1)
 
     return ap
 
@@ -115,11 +111,7 @@ def precision(
         tensor([0.5000, 0.5000]
     """
     precision_score, _, _, _, = precision_recall_fbeta_support(
-        outputs=outputs,
-        targets=targets,
-        argmax_dim=argmax_dim,
-        eps=eps,
-        num_classes=num_classes,
+        outputs=outputs, targets=targets, argmax_dim=argmax_dim, eps=eps, num_classes=num_classes,
     )
     return precision_score
 

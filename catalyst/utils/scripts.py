@@ -11,11 +11,8 @@ import warnings
 import torch
 import torch.distributed
 
-from catalyst.registry import EXPERIMENTS, RUNNERS
-from catalyst.utils.distributed import (
-    get_distributed_env,
-    get_distributed_params,
-)
+from catalyst.registry import REGISTRY
+from catalyst.utils.distributed import get_distributed_env, get_distributed_params
 from catalyst.utils.misc import get_utcnow_time
 
 
@@ -70,7 +67,7 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
         x is None for x in (experiment_fn, experiment_from_config)
     ), "Experiment is set both in code and config."
     if experiment_fn is None and experiment_from_config is not None:
-        experiment_fn = EXPERIMENTS.get(experiment_from_config)
+        experiment_fn = REGISTRY.get(experiment_from_config)
 
     runner_params = copy_config.get("runner_params", {})
     runner_from_config = runner_params.pop("runner", None)
@@ -78,7 +75,7 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
         x is None for x in (runner_fn, runner_from_config)
     ), "Runner is set both in code and config."
     if runner_fn is None and runner_from_config is not None:
-        runner_fn = RUNNERS.get(runner_from_config)
+        runner_fn = REGISTRY.get(runner_from_config)
 
     experiment = experiment_fn(copy_config)
     runner = runner_fn(**runner_params)
@@ -92,9 +89,7 @@ def _tricky_dir_copy(dir_from: str, dir_to: str) -> None:
     shutil.copytree(dir_from, dir_to)
 
 
-def dump_code(
-    expdir: Union[str, pathlib.Path], logdir: Union[str, pathlib.Path]
-) -> None:
+def dump_code(expdir: Union[str, pathlib.Path], logdir: Union[str, pathlib.Path]) -> None:
     """
     Dumps Catalyst code for reproducibility.
 
@@ -148,9 +143,7 @@ def dump_experiment_code(src: pathlib.Path, dst: pathlib.Path) -> None:
     dump_python_files(src, dst)
 
 
-def distributed_cmd_run(
-    worker_fn: Callable, distributed: bool = True, *args, **kwargs
-) -> None:
+def distributed_cmd_run(worker_fn: Callable, distributed: bool = True, *args, **kwargs) -> None:
     """
     Distributed run
 
@@ -170,18 +163,12 @@ def distributed_cmd_run(
             "switching to normal run for correct distributed training."
         )
 
-    if (
-        not distributed
-        or torch.distributed.is_initialized()
-        or world_size <= 1
-    ):
+    if not distributed or torch.distributed.is_initialized() or world_size <= 1:
         worker_fn(*args, **kwargs)
     elif local_rank is not None:
         torch.cuda.set_device(int(local_rank))
 
-        torch.distributed.init_process_group(
-            backend="nccl", init_method="env://"
-        )
+        torch.distributed.init_process_group(backend="nccl", init_method="env://")
         worker_fn(*args, **kwargs)
     else:
         workers = []

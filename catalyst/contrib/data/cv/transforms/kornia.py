@@ -2,9 +2,8 @@ from typing import Any, Dict, Iterable, Optional, Tuple, Union
 import copy
 import random
 
-import numpy as np
-
 from kornia.augmentation import AugmentationBase2D, AugmentationBase3D
+import numpy as np
 import torch
 from torch import nn
 
@@ -13,8 +12,7 @@ class OneOfPerBatch(nn.Module):
     """Select one of tensor transforms and apply it batch-wise."""
 
     def __init__(
-        self,
-        transforms: Iterable[Union[AugmentationBase2D, AugmentationBase3D]],
+        self, transforms: Iterable[Union[AugmentationBase2D, AugmentationBase3D]],
     ) -> None:
         """Constructor method for the :class:`OneOfPerBatch` transform.
 
@@ -66,8 +64,7 @@ class OneOfPerSample(nn.Module):
     """Select one of tensor transforms to apply sample-wise."""
 
     def __init__(
-        self,
-        transforms: Iterable[Union[AugmentationBase2D, AugmentationBase3D]],
+        self, transforms: Iterable[Union[AugmentationBase2D, AugmentationBase3D]],
     ) -> None:
         """Constructor method for the :class:`OneOfPerSample` transform.
 
@@ -137,15 +134,9 @@ class OneOfPerSample(nn.Module):
     ):
         """Apply ``transform`` inplace."""
         # process input
-        input_ = (
-            (batch[0][mask], batch[1][mask])
-            if isinstance(batch, tuple)
-            else batch[mask]
-        )
+        input_ = (batch[0][mask], batch[1][mask]) if isinstance(batch, tuple) else batch[mask]
 
-        output = transform(
-            input_, *args, transform_matrix=return_transform, **kwargs
-        )
+        output = transform(input_, *args, transform_matrix=return_transform, **kwargs)
 
         # process output
         transform_matrix = None

@@ -1,10 +1,7 @@
 from typing import List
 
 from catalyst.callbacks.metric import BatchMetricCallback
-from catalyst.metrics.functional import (
-    wrap_class_metric2dict,
-    wrap_metric_fn_with_activation,
-)
+from catalyst.metrics.functional import wrap_class_metric2dict, wrap_metric_fn_with_activation
 from catalyst.metrics.recall import recall
 
 
@@ -41,12 +38,8 @@ class RecallCallback(BatchMetricCallback):
             ``catalyst.callbacks.metric.BatchMetricCallback`` and
             ``catalyst.metrics.recall.recall`` docs
         """
-        metric_fn = wrap_metric_fn_with_activation(
-            metric_fn=recall, activation=activation
-        )
-        metric_fn = wrap_class_metric2dict(
-            metric_fn, per_class=per_class, class_args=class_args
-        )
+        metric_fn = wrap_metric_fn_with_activation(metric_fn=recall, activation=activation)
+        metric_fn = wrap_class_metric2dict(metric_fn, per_class=per_class, class_args=class_args)
         super().__init__(
             prefix=prefix,
             metric_fn=metric_fn,

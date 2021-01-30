@@ -31,20 +31,19 @@ try:
 
     from catalyst.contrib.utils.visualization import (
         plot_confusion_matrix,
+        render_figure_to_numpy,
         render_figure_to_tensor,
     )
 except ModuleNotFoundError as ex:
     if SETTINGS.matplotlib_required:
         logger.warning(
-            "matplotlib is not available, to install matplotlib,"
-            " run `pip install matplotlib`."
+            "matplotlib is not available, to install matplotlib," " run `pip install matplotlib`."
         )
         raise ex
 except ImportError as ex:
     if SETTINGS.matplotlib_required:
         logger.warning(
-            "matplotlib is not available, to install matplotlib,"
-            " run `pip install matplotlib`."
+            "matplotlib is not available, to install matplotlib," " run `pip install matplotlib`."
         )
         raise ex
 
@@ -94,17 +93,11 @@ try:
     )
 except ModuleNotFoundError as ex:
     if SETTINGS.plotly_required:
-        logger.warning(
-            "plotly not available, to install plotly,"
-            " run `pip install plotly`."
-        )
+        logger.warning("plotly not available, to install plotly," " run `pip install plotly`.")
         raise ex
 except ImportError as ex:
     if SETTINGS.plotly_required:
-        logger.warning(
-            "plotly not available, to install plotly,"
-            " run `pip install plotly`."
-        )
+        logger.warning("plotly not available, to install plotly," " run `pip install plotly`.")
         raise ex
 
 try:
