@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, TypeVar, Union, Tuple
 import argparse
 from base64 import urlsafe_b64encode
 import collections
@@ -13,6 +13,8 @@ import shutil
 
 import numpy as np
 from packaging.version import parse, Version
+
+T = TypeVar("T")
 
 
 def boolean_flag(
@@ -439,7 +441,7 @@ def get_short_hash(obj) -> str:
     return hash_
 
 
-def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
+def pairwise(iterable: Iterable[T]) -> Iterable[Tuple[T, T]]:
     """Iterate sequences by pairs.
 
     Examples:
@@ -508,6 +510,16 @@ def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
     return inds
 
 
+def get_by_keys(dict_: dict, *keys: Any, default: Optional[T] = None) -> T:
+    if not isinstance(dict_, dict):
+        raise ValueError()
+
+    key, *keys = keys
+    if len(keys) == 0 or key not in dict_:
+        return dict_.get(key, default)
+    return get_by_keys(dict_[key], *keys, default=default)
+
+
 __all__ = [
     "boolean_flag",
     "copy_directory",
@@ -529,4 +541,5 @@ __all__ = [
     "make_tuple",
     "pairwise",
     "find_value_ids",
+    "get_by_keys",
 ]
