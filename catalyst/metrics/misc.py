@@ -1,4 +1,4 @@
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Optional
 from abc import ABC, abstractmethod
 
 import numpy as np
@@ -6,6 +6,7 @@ import torch
 
 from catalyst.metrics.accuracy import accuracy
 from catalyst.metrics.auc import auc
+from catalyst.metrics.region_base_metrics import get_segmentation_statistics, _iou
 
 
 class IMetric(ABC):
@@ -71,7 +72,8 @@ class IMetric(ABC):
 
 
 class ICallbackBatchMetric(IMetric):
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+    def __init__(self, compute_on_call: bool = True, prefix: str = None,
+                 suffix: str = None):
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
         self.suffix = suffix or ""
@@ -96,7 +98,8 @@ class ICallbackBatchMetric(IMetric):
 class ICallbackLoaderMetric(IMetric):
     """Interface for all Metrics."""
 
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+    def __init__(self, compute_on_call: bool = True, prefix: str = None,
+                 suffix: str = None):
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
         self.suffix = suffix or ""
@@ -170,10 +173,12 @@ class AdditiveValueMetric(IMetric):
             self.mean_old = self.mean
             self.m_s = 0.0
         else:
-            self.mean = self.mean_old + (value - self.mean_old) * num_samples / float(
+            self.mean = self.mean_old + (
+                    value - self.mean_old) * num_samples / float(
                 self.num_samples
             )
-            self.m_s += (value - self.mean_old) * (value - self.mean) * num_samples
+            self.m_s += (value - self.mean_old) * (
+                    value - self.mean) * num_samples
             self.mean_old = self.mean
             self.std = np.sqrt(self.m_s / (self.num_samples - 1.0))
         return value
@@ -183,7 +188,8 @@ class AdditiveValueMetric(IMetric):
 
 
 class AccuracyMetric(ICallbackBatchMetric, AdditiveValueMetric):
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+    def __init__(self, compute_on_call: bool = True, prefix: str = None,
+                 suffix: str = None):
         ICallbackBatchMetric.__init__(
             self, compute_on_call=compute_on_call, prefix=prefix, suffix=suffix
         )
@@ -196,7 +202,8 @@ class AccuracyMetric(ICallbackBatchMetric, AdditiveValueMetric):
         value = super().update(value, len(targets))
         return value
 
-    def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+    def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> \
+    Dict[str, float]:
         value = self.update(logits=logits, targets=targets)
         return {self.metric_name_mean: value}
 
@@ -206,8 +213,10 @@ class AccuracyMetric(ICallbackBatchMetric, AdditiveValueMetric):
 
 
 class AUCMetric(ICallbackLoaderMetric):
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
-        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+    def __init__(self, compute_on_call: bool = True, prefix: str = None,
+                 suffix: str = None):
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix,
+                         suffix=suffix)
         self.metric_name = f"{self.prefix}auc{self.suffix}"
         self.scores = []
         self.targets = []
@@ -229,7 +238,7 @@ class AUCMetric(ICallbackLoaderMetric):
     def compute_key_value(self) -> Dict[str, float]:
         per_class_auc = self.compute()
         output = {
-            f"{self.metric_name}/class_{i+1:02d}": value.item()
+            f"{self.metric_name}/class_{i + 1:02d}": value.item()
             for i, value in enumerate(per_class_auc)
         }
         output[self.metric_name] = per_class_auc.mean().item()
@@ -237,7 +246,8 @@ class AUCMetric(ICallbackLoaderMetric):
 
 
 class ConfusionMetric(IMetric):
-    def __init__(self, num_classes: int, normalized: bool = False, compute_on_call: bool = True):
+    def __init__(self, num_classes: int, normalized: bool = False,
+                 compute_on_call: bool = True):
         """ConfusionMatrix constructs a confusion matrix for a multiclass classification problems.
 
         Args:
@@ -291,7 +301,8 @@ class ConfusionMetric(IMetric):
             assert (targets >= 0).all() and (
                 targets <= 1
             ).all(), "in one-hot encoding, target values should be 0 or 1"
-            assert (targets.sum(1) == 1).all(), "multilabel setting is not supported"
+            assert (targets.sum(
+                1) == 1).all(), "multilabel setting is not supported"
             targets = np.argmax(targets, 1)
         else:
             assert (predictions.max() < self.num_classes) and (
@@ -320,3 +331,74 @@ class ConfusionMetric(IMetric):
             return conf / conf.sum(1).clip(min=1e-12)[:, None]
         else:
             return self.conf
+
+
+class IOUMetric(IMetric):
+    def __init__(self,
+                 compute_on_call: bool = True,
+                 mode: str = 'macro',
+                 class_dim: int = 1,
+                 threshold: float = Optional[None], ):
+        super().__init__(compute_on_call=compute_on_call)
+        assert mode in ['micro', 'macro']
+        self.mode = mode
+        self.class_dim = class_dim
+        self.threshold = threshold
+        self.statistics = {}  # for macro
+        self.metrics = {}  # for micro
+        self.N = 0  # for micro
+
+    def reset(self):
+        self.statistics = {}  # for macro
+        self.metrics = {}  # for micro
+        self.N = 0  # for micro
+
+    def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> None:
+        tp, fp, fn = get_segmentation_statistics(outputs=outputs,
+                                                 targets=targets,
+                                                 class_dim=self.class_dim,
+                                                 threshold=self.threshold)
+        tp = tp.cpu().detach()
+        fp = fp.cpu().detach()
+        fn = fn.cpu().detach()
+        if self.mode == 'macro':
+            for idx, (tp_class, fp_class, fn_class) in enumerate(zip(tp, fp, fn)):
+                if f'class_{idx}' in self.statistics:
+                    self.statistics[f'class_{idx}']['tp'] += tp_class
+                    self.statistics[f'class_{idx}']['fp'] += fp_class
+                    self.statistics[f'class_{idx}']['fn'] += fn_class
+                else:
+                    self.statistics[f'class_{idx}'] = {}
+                    self.statistics[f'class_{idx}']['tp'] = tp_class
+                    self.statistics[f'class_{idx}']['fp'] = fp_class
+                    self.statistics[f'class_{idx}']['fn'] = fn_class
+        else:
+            batch_size = outputs.shape[0]
+            for idx, (tp_class, fp_class, fn_class) in enumerate(zip(tp, fp, fn)):
+                self.metrics[f'class_{idx}'] = self.metrics.get(f'class_{idx}', 0) * self.N / (self.N + batch_size) + \
+                                               _iou(tp_class, fp_class, fn_class) * batch_size / (self.N + batch_size)
+                self.N += batch_size
+
+    def compute(self) -> Dict[str, torch.Tensor]:
+        values = {}
+        if self.mode == 'macro':
+            total_tp = 0
+            total_fp = 0
+            total_fn = 0
+            for class_name, statistics in self.statistics:
+                values[class_name] = _iou(statistics['tp'],
+                                          statistics['fp'],
+                                          statistics['fn'])
+                total_tp += statistics['tp']
+                total_fp += statistics['fp']
+                total_fn += statistics['fn']
+            values['mean'] = _iou(total_tp,
+                                  total_fp,
+                                  total_fn)
+        else:
+            total_score = 0
+            for class_name, metric in self.metrics:
+                values[class_name] = metric
+                total_score += metric
+            values['mean'] = total_score / self.N
+        return values
