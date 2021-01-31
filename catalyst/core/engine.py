@@ -1,5 +1,6 @@
 from typing import Any, Dict
 from abc import ABC, abstractmethod
+from contextlib import contextmanager
 
 
 # @TODO: should IEngine be ICallback-based?
@@ -84,6 +85,12 @@ class IEngine(ABC):
     def load_checkpoint(self, path: str) -> Dict:
         pass
 
+    @abstractmethod
+    @contextmanager
+    def autocast(self):
+        # amp scaling context
+        pass
+
 
 class Engine(IEngine):
     @property
@@ -156,6 +163,10 @@ class Engine(IEngine):
 
     def optimizer_step(self, model, criterion, optimizer, loss) -> None:
         optimizer.step()
+
+    @contextmanager
+    def autocast(self, *args, **kwargs):
+        pass
 
 
 def get_engine_by_params(engine_params: Dict):

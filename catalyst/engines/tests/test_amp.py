@@ -5,6 +5,7 @@ import logging
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -17,10 +18,40 @@ from .test_device_engine import (
     DummyDataset,
     DummyModel,
     LossMinimizationCallback,
-    SupervisedRunner,
+    # SupervisedRunner,
 )
 
 logger = logging.getLogger(__name__)
+
+
+class SupervisedRunner(dl.IStageBasedRunner):
+    def handle_batch(self, batch):
+        x, y = batch
+
+        logits = self.model(x)
+
+        logger.warning(f"x dtype: {x.dtype}")
+        logger.warning(f"y dtype: {y.dtype}")
+        logger.warning(f"logits dtype: {logits.dtype}")
+
+        self.batch = {
+            "features": x,
+            "targets": y,
+            "logits": logits,
+        }
+
+
+class TensorTypeChecker(dl.Callback):
+    def __init__(self, key, use_batch_metrics=False):
+        super().__init__(dl.CallbackOrder.Metric)
+        self.key = key
+        self.use_batch_metrics = use_batch_metrics
+
+    def on_batch_end(self, runner):
+        if self.use_batch_metrics:
+            assert runner.batch_metrics[self.key].dtype == torch.float16
+        else:
+            assert runner.batch[self.key].dtype == torch.float16
 
 
 class CustomExperiment(dl.IExperiment):
@@ -76,11 +107,14 @@ class CustomExperiment(dl.IExperiment):
             ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            "checkpoint": dl.CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
-            ),
+            # TODO: fix issue with pickling wrapped model's forward function
+            # "checkpoint": dl.CheckpointCallback(
+            #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            # ),
             # "check": DeviceCheckCallback(),
-            # "check2": LossMinimizationCallback("loss"),
+            "check2": LossMinimizationCallback("loss"),
+            "logits_type_checker": TensorTypeChecker("logits"),
+            # "loss_type_checker": TensorTypeChecker("loss", True),
         }
 
     def get_engine(self):

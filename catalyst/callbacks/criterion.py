@@ -3,6 +3,8 @@ from catalyst.core.runner import IRunner
 from catalyst.metrics.misc import AdditiveValueMetric
 from catalyst.utils.misc import get_attr
 
+import torch.cuda.amp as amp
+
 
 class ICriterionCallback(Callback):
     """Criterion callback interface, abstraction over criterion step."""
@@ -52,7 +54,11 @@ class CriterionCallback(ICriterionCallback):
         inputs, targets = runner.batch[self.input_key], runner.batch[self.target_key]
         inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
 
-        loss = self.criterion(inputs, targets)
+        # NOTE: similar to amp guides in docs
+        # https://pytorch.org/docs/stable/notes/amp_examples.html
+        with runner.engine.autocast():
+            loss = self.criterion(inputs, targets)
+
         runner.batch_metrics.update({self.metric_key: loss})
         self.average_metric.update(loss.item(), len(targets))
 
