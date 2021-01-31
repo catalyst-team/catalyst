@@ -2,7 +2,7 @@ from typing import Optional, Tuple
 
 import torch
 
-from catalyst.metrics.functional import get_multiclass_statistics
+from catalyst.metrics.functional.misc import get_multiclass_statistics
 
 
 def precision_recall_fbeta_support(

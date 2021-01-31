@@ -2,7 +2,7 @@ from typing import Optional, Union
 
 import torch
 
-from catalyst.metrics import precision_recall_fbeta_support
+from catalyst.metrics.functional.classification import precision_recall_fbeta_support
 
 
 def recall(

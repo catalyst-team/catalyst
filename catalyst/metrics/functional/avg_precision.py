@@ -5,7 +5,7 @@ from typing import List
 
 import torch
 
-from catalyst.metrics.functional import process_recsys_components
+from catalyst.metrics.functional.misc import process_recsys_components
 
 
 def avg_precision(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:

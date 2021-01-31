@@ -5,7 +5,7 @@ from functools import partial
 import torch
 from torch import nn
 
-from catalyst.metrics.iou import iou
+from catalyst.metrics.functional.iou import iou
 
 
 class IoULoss(nn.Module):
