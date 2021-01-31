@@ -2,10 +2,10 @@ from typing import Any, Dict, Mapping, Union
 import functools
 
 import torch
-import torch.nn as nn
 
 # TODO: use only latest version of pytorch
 import torch.cuda.amp as amp
+import torch.nn as nn
 
 from catalyst.engines.device import DeviceEngine
 

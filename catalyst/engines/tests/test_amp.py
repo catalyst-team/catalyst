@@ -14,11 +14,10 @@ from catalyst import dl
 from catalyst.engines.amp import AMPEngine
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .test_device_engine import (
+from .test_device_engine import (  # SupervisedRunner,
     DummyDataset,
     DummyModel,
     LossMinimizationCallback,
-    # SupervisedRunner,
 )
 
 logger = logging.getLogger(__name__)

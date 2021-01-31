@@ -3,7 +3,11 @@ from typing import Dict, List, TYPE_CHECKING
 import torch
 import torch.distributed  # noqa: WPS301
 
-from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_numpy, render_figure_to_tensor
+from catalyst.contrib.utils.visualization import (
+    plot_confusion_matrix,
+    render_figure_to_numpy,
+    render_figure_to_tensor,
+)
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.metrics.misc import ConfusionMetric
 
@@ -64,7 +68,10 @@ class ConfusionMatrixCallback(Callback):
         Args:
             runner: current runner
         """
-        inputs, targets = runner.batch[self.input_key].detach(), runner.batch[self.target_key].detach()
+        inputs, targets = (
+            runner.batch[self.input_key].detach(),
+            runner.batch[self.target_key].detach(),
+        )
         inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
         self.confusion_matrix.update(predictions=inputs, targets=targets)
 
