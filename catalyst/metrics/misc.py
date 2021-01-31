@@ -1,14 +1,11 @@
-from collections import defaultdict
-from typing import Any, Dict, Tuple, Iterable, Union
+from typing import Any, Dict, Tuple
 from abc import ABC, abstractmethod
 
 import numpy as np
 import torch
 
-from catalyst.metrics import get_binary_statistics, get_multiclass_statistics
 from catalyst.metrics.accuracy import accuracy
 from catalyst.metrics.auc import auc
-from catalyst.tools.meters.ppv_tpr_f1_meter import precision, recall, f1score
 
 
 class IMetric(ABC):
@@ -105,7 +102,7 @@ class ICallbackLoaderMetric(IMetric):
         self.suffix = suffix or ""
 
     @abstractmethod
-    def reset(self, num_batches, num_samples) -> None:
+    def reset(self, batch_len, sample_len) -> None:
         """Resets the metric to it's initial state.
 
         By default, this is called at the start of each loader
@@ -215,7 +212,7 @@ class AUCMetric(ICallbackLoaderMetric):
         self.scores = []
         self.targets = []
 
-    def reset(self, num_batches, num_samples) -> None:
+    def reset(self, batch_len, sample_len) -> None:
         self.scores = []
         self.targets = []
 
@@ -323,141 +320,3 @@ class ConfusionMetric(IMetric):
             return conf / conf.sum(1).clip(min=1e-12)[:, None]
         else:
             return self.conf
-
-
-class PrecisionRecallF1SupportMetric(ICallbackLoaderMetric):
-    """
-
-    Notes:
-        All the metrics (but support) for classes without true samples will be set with 1.
-    """
-    def __init__(
-            self,
-            compute_on_call: bool = True,
-            prefix: str = None,
-            suffix: str = None,
-            num_classes: int = 2,
-            threshold: Union[float, Iterable[float]] = 0.5,
-    ) -> None:
-        """
-        Init PrecisionRecallF1SupportMetric instance
-
-        Args:
-            compute_on_call: if True, allows compute metric's value on call
-            prefix: ?
-            suffix: ?
-            num_classes: number of classes in loader's dataset
-            threshold:
-        """
-        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
-        self.threshold = threshold
-        self.num_classes = num_classes
-        self.statistics = None
-        self.metrics = None
-        self.reset(num_batches=0, num_samples=0)
-
-    def reset(self, num_batches: int, num_samples: int) -> None:
-        """
-        Reset all the statistics and metrics fields
-
-        Args:
-            num_batches: ?
-            num_samples: ?
-        """
-        if self.num_classes == 2:
-            self.statistics = defaultdict(float)
-        else:
-            self.statistics = defaultdict(lambda: np.zeros(shape=(self.num_classes, )))
-        self.metrics = defaultdict(float)
-
-    def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> None:
-        """
-        Update statistics with data from batch.
-
-        Args:
-            outputs: predicted labels
-            targets: true labels
-        """
-        # outputs = (scores > self.threshold).float()
-
-        if self.num_classes == 2:
-            _, fp, fn, tp, support = get_binary_statistics(
-                outputs=outputs.cpu().detach(), targets=targets.cpu().detach()
-            )
-        else:
-            _, fp, fn, tp, support = get_multiclass_statistics(
-                outputs=outputs.cpu().detach(),
-                targets=targets.cpu().detach(),
-                num_classes=self.num_classes
-            )
-        self.statistics["fp"] += fp.numpy()
-        self.statistics["fn"] += fn.numpy()
-        self.statistics["tp"] += tp.numpy()
-        self.statistics["support"] += support.numpy()
-
-    def compute(self) -> Any:
-        """
-        Compute precision, recall, f1 score and support.
-        If not binary, compute micro, macro and weighted average for the metrics.
-
-        Returns:
-            dict of metrics
-        """
-        # binary mode
-        if self.num_classes == 2:
-            self.metrics["precision"] = precision(
-                tp=self.statistics["tp"], fp=self.statistics["fp"]
-            )
-            self.metrics["recall"] = recall(tp=self.statistics["tp"], fn=self.statistics["fn"])
-            self.metrics["f1"] = f1score(
-                precision_value=self.metrics["precision"], recall_value=self.metrics["recall"]
-            )
-        else:
-            precision_values, recall_values, f1_values = \
-                np.zeros(shape=(self.num_classes, )), \
-                np.zeros(shape=(self.num_classes, )), \
-                np.zeros(shape=(self.num_classes, ))
-
-            for i in range(self.num_classes):
-                precision_values[i] = precision(
-                    tp=self.statistics["tp"][i], fp=self.statistics["fp"][i]
-                )
-                recall_values[i] = recall(tp=self.statistics["tp"][i], fn=self.statistics["fn"][i])
-                f1_values[i] = f1score(
-                    precision_value=precision_values[i], recall_value=recall_values[i]
-                )
-
-            weights = self.statistics["support"] / self.statistics["support"].sum()
-
-            for metric_name, metric_value in zip(
-                    ("precision", "recall", "f1", "support"),
-                    (precision_values, recall_values, f1_values, self.statistics["support"]),
-            ):
-                for i in range(self.num_classes):
-                    self.metrics[f"{metric_name}/class_{i+1:02d}"] = metric_value[i]
-                if metric_name != "support":
-                    self.metrics[f"{metric_name}/macro"] = metric_value.mean()
-                    self.metrics[f"{metric_name}/weighted"] = (metric_value * weights).sum()
-
-            # count micro average
-            self.metrics["precision/micro"] = (self.statistics["tp"].sum() / (
-                    self.statistics["tp"].sum() + self.statistics["fp"].sum()
-            )).item()
-            self.metrics["recall/micro"] = (self.statistics["tp"].sum() / (
-                    self.statistics["tp"].sum() + self.statistics["fn"].sum()
-            )).item()
-            self.metrics["f1/micro"] = (2 * self.statistics["tp"].sum() / (
-                    2 * self.statistics["tp"].sum() +
-                    self.statistics["fp"].sum() + self.statistics["fn"].sum()
-            )).item()
-        return {k: self.metrics[k] for k in sorted(self.metrics.keys())}
-
-    def compute_key_value(self) -> Dict[str, float]:
-        """
-        Compute precision, recall, f1 score and support.
-        If not binary, compute micro, macro and weighted average for the metrics.
-
-        Returns:
-            dict of metrics
-        """
-        return self.compute()
