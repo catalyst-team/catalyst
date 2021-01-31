@@ -367,7 +367,7 @@ class PrecisionRecallF1SupportMetric(ICallbackLoaderMetric):
         if self.num_classes == 2:
             self.statistics = defaultdict(float)
         else:
-            self.statistics = defaultdict(lambda: torch.zeros(size=(self.num_classes, )))
+            self.statistics = defaultdict(lambda: np.zeros(shape=(self.num_classes, )))
         self.metrics = defaultdict(float)
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> None:
@@ -381,15 +381,19 @@ class PrecisionRecallF1SupportMetric(ICallbackLoaderMetric):
         # outputs = (scores > self.threshold).float()
 
         if self.num_classes == 2:
-            _, fp, fn, tp, support = get_binary_statistics(outputs=outputs, targets=targets)
+            _, fp, fn, tp, support = get_binary_statistics(
+                outputs=outputs.cpu().detach(), targets=targets.cpu().detach()
+            )
         else:
             _, fp, fn, tp, support = get_multiclass_statistics(
-                outputs=outputs, targets=targets, num_classes=self.num_classes
+                outputs=outputs.cpu().detach(),
+                targets=targets.cpu().detach(),
+                num_classes=self.num_classes
             )
-        self.statistics["fp"] += fp
-        self.statistics["fn"] += fn
-        self.statistics["tp"] += tp
-        self.statistics["support"] += support
+        self.statistics["fp"] += fp.numpy()
+        self.statistics["fn"] += fn.numpy()
+        self.statistics["tp"] += tp.numpy()
+        self.statistics["support"] += support.numpy()
 
     def compute(self) -> Any:
         """
@@ -410,9 +414,9 @@ class PrecisionRecallF1SupportMetric(ICallbackLoaderMetric):
             )
         else:
             precision_values, recall_values, f1_values = \
-                torch.zeros(size=(self.num_classes, )), \
-                torch.zeros(size=(self.num_classes, )), \
-                torch.zeros(size=(self.num_classes, ))
+                np.zeros(shape=(self.num_classes, )), \
+                np.zeros(shape=(self.num_classes, )), \
+                np.zeros(shape=(self.num_classes, ))
 
             for i in range(self.num_classes):
                 precision_values[i] = precision(
@@ -433,20 +437,20 @@ class PrecisionRecallF1SupportMetric(ICallbackLoaderMetric):
                     self.metrics[f"{metric_name}/class_{i+1:02d}"] = metric_value[i]
                 if metric_name != "support":
                     self.metrics[f"{metric_name}/macro"] = metric_value.mean()
-                    self.metrics[f"{metric_name}/weighted"] = (metric_value * weights).mean()
+                    self.metrics[f"{metric_name}/weighted"] = (metric_value * weights).sum()
 
             # count micro average
-            self.metrics["precision/micro"] = self.statistics["tp"].sum() / (
+            self.metrics["precision/micro"] = (self.statistics["tp"].sum() / (
                     self.statistics["tp"].sum() + self.statistics["fp"].sum()
-            )
-            self.metrics["recall/micro"] = self.statistics["tp"].sum() / (
+            )).item()
+            self.metrics["recall/micro"] = (self.statistics["tp"].sum() / (
                     self.statistics["tp"].sum() + self.statistics["fn"].sum()
-            )
-            self.metrics["f1/micro"] = 2 * self.statistics["tp"].sum() / (
+            )).item()
+            self.metrics["f1/micro"] = (2 * self.statistics["tp"].sum() / (
                     2 * self.statistics["tp"].sum() +
                     self.statistics["fp"].sum() + self.statistics["fn"].sum()
-            )
-        return self.metrics
+            )).item()
+        return {k: self.metrics[k] for k in sorted(self.metrics.keys())}
 
     def compute_key_value(self) -> Dict[str, float]:
         """
