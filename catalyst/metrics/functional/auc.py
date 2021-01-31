@@ -53,12 +53,16 @@ def _binary_auc(
 
 
 def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-    """
-    AUC metric.
+    """Computes ROC-AUC.
 
     Args:
-        outputs: [data_len; num_classes] estimated scores from a model.
-        targets: [data_len; num_classes] ground truth (correct) target values.
+        outputs: NxK tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets:  binary NxK tensort that encodes which of the K
+            classes are associated with the N-th input
+            (eg: a row [0, 1, 0, 1] indicates that the example is
+            associated with classes 2 and 4)
 
     Returns:
         torch.Tensor: Tensor with [num_classes] shape of per-class-aucs

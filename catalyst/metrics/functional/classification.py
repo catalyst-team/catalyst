@@ -66,3 +66,6 @@ def precision_recall_fbeta_support(
     fbeta = numerator / denominator
 
     return precision, recall, fbeta, support
+
+
+__all__ = ["precision_recall_fbeta_support"]

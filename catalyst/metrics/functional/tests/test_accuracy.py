@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 
-from catalyst.metrics import accuracy
+from catalyst.metrics.functional.accuracy import accuracy
 
 BATCH_SIZE = 4
 NUM_CLASSES = 10

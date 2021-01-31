@@ -1,14 +1,78 @@
-"""
-MAP metric.
-"""
-from typing import List
+from typing import List, Optional
 
 import torch
 
-from catalyst.metrics.functional.misc import process_recsys_components
+from catalyst.metrics.functional.misc import (
+    process_multilabel_components,
+    process_recsys_components,
+)
 
 
-def avg_precision(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+def binary_average_precision(
+    outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None,
+) -> torch.Tensor:
+    """Computes the average precision.
+
+    Args:
+        outputs: NxK tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets:  binary NxK tensort that encodes which of the K
+            classes are associated with the N-th input
+            (eg: a row [0, 1, 0, 1] indicates that the example is
+            associated with classes 2 and 4)
+        weights: importance for each sample
+
+    Returns:
+        torch.Tensor: tensor of [K; ] shape,
+        with average precision for K classes
+
+    Examples:
+        >>> binary_average_precision(
+        >>>     outputs=torch.Tensor([0.1, 0.4, 0.35, 0.8]),
+        >>>     targets=torch.Tensor([0, 0, 1, 1]),
+        >>> )
+        tensor([0.8333])
+    """
+    # outputs - [bs; num_classes] with scores
+    # targets - [bs; num_classes] with binary labels
+    outputs, targets, weights = process_multilabel_components(
+        outputs=outputs, targets=targets, weights=weights,
+    )
+    if outputs.numel() == 0:
+        return torch.zeros(1)
+
+    ap = torch.zeros(targets.size(1))
+
+    # compute average precision for each class
+    for class_i in range(targets.size(1)):
+        # sort scores
+        class_scores = outputs[:, class_i]
+        class_targets = targets[:, class_i]
+        _, sortind = torch.sort(class_scores, dim=0, descending=True)
+        correct = class_targets[sortind]
+
+        # compute true positive sums
+        if weights is not None:
+            class_weight = weights[sortind]
+            weighted_correct = correct.float() * class_weight
+
+            tp = weighted_correct.cumsum(0)
+            rg = class_weight.cumsum(0)
+        else:
+            tp = correct.float().cumsum(0)
+            rg = torch.arange(1, targets.size(0) + 1).float()
+
+        # compute precision curve
+        precision = tp.div(rg)
+
+        # compute average precision
+        ap[class_i] = precision[correct.bool()].sum() / max(float(correct.sum()), 1)
+
+    return ap
+
+
+def average_precision(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     """
     Calculate the Average Precision for RecSys.
     The precision metric summarizes the fraction of relevant items
@@ -47,7 +111,7 @@ def avg_precision(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
             size: [batch_size, 1]
 
     Examples:
-        >>> avg_precision(
+        >>> average_precision(
         >>>     outputs=torch.tensor([
         >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
         >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
@@ -73,7 +137,7 @@ def avg_precision(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     return ap_score
 
 
-def mean_avg_precision(
+def mean_average_precision(
     outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]
 ) -> List[torch.Tensor]:
     """
@@ -104,7 +168,7 @@ def mean_avg_precision(
             size: len(top_k)
 
     Examples:
-        >>> mean_avg_precision(
+        >>> mean_average_precision(
         >>>     outputs=torch.tensor([
         >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
         >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
@@ -120,9 +184,9 @@ def mean_avg_precision(
     results = []
     for k in topk:
         k = min(outputs.size(1), k)
-        results.append(torch.mean(avg_precision(outputs, targets)[:k]))
+        results.append(torch.mean(average_precision(outputs, targets)[:k]))
 
     return results
 
 
-__all__ = ["mean_avg_precision", "avg_precision"]
+__all__ = ["binary_average_precision", "mean_average_precision", "average_precision"]
