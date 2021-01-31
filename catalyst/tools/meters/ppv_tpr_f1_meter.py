@@ -124,4 +124,4 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         return (float(precision_value), float(recall_value), float(f1_value))
 
 
-__all__ = ["PrecisionRecallF1ScoreMeter"]
+__all__ = ["PrecisionRecallF1ScoreMeter", "precision", "recall", "f1score"]
