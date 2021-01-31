@@ -1,11 +1,14 @@
-from typing import Any, Dict, Tuple
+from collections import defaultdict
+from typing import Any, Dict, Tuple, Iterable, Union
 from abc import ABC, abstractmethod
 
 import numpy as np
 import torch
 
+from catalyst.metrics import get_binary_statistics, get_multiclass_statistics
 from catalyst.metrics.accuracy import accuracy
 from catalyst.metrics.auc import auc
+from catalyst.tools.meters.ppv_tpr_f1_meter import precision, recall, f1score
 
 
 class IMetric(ABC):
@@ -320,3 +323,104 @@ class ConfusionMetric(IMetric):
             return conf / conf.sum(1).clip(min=1e-12)[:, None]
         else:
             return self.conf
+
+
+class PrecisionRecallF1SupportMetric(ICallbackLoaderMetric):
+    def __init__(
+            self,
+            compute_on_call: bool = True,
+            prefix: str = None,
+            suffix: str = None,
+            mode: str = "binary",
+            num_classes: int = 2,
+            threshold: Union[float, Iterable[float]] = 0.5,
+    ) -> None:
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        assert mode in ("binary", "micro", "macro", "weighted", None)
+        self.mode = mode
+        self.threshold = threshold
+        self.num_classes = num_classes
+        self.statistics = {}
+        self.reset(num_batches=0, num_samples=0)
+
+    def reset(self, num_batches, num_samples) -> None:
+        if self.mode == "binary":
+            self.statistics = defaultdict(float)
+        else:
+            self.statistics = defaultdict(lambda: torch.zeros(size=(self.num_classes, )))
+
+    def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> None:
+        # outputs = (scores > self.threshold).float()
+
+        if self.mode == "binary":
+            _, fp, fn, tp, support = get_binary_statistics(outputs=outputs, targets=targets)
+        else:
+            _, fp, fn, tp, support = get_multiclass_statistics(
+                outputs=outputs, targets=targets, num_classes=self.num_classes
+            )
+        self.statistics["fp"] += fp
+        self.statistics["fn"] += fn
+        self.statistics["tp"] += tp
+        self.statistics["support"] += support
+
+    def compute(self) -> Any:
+        if self.mode == "binary":
+            precision_value = precision(tp=self.statistics["tp"], fp=self.statistics["fp"])
+            recall_value = recall(tp=self.statistics["tp"], fn=self.statistics["fn"])
+            f1_value = f1score(precision_value=precision_value, recall_value=recall_value)
+
+        else:
+            precision_values, recall_values, f1_values = \
+                torch.zeros(size=(self.num_classes, )), \
+                torch.zeros(size=(self.num_classes, )), \
+                torch.zeros(size=(self.num_classes, ))
+            for i in range(self.num_classes):
+                precision_values[i] = precision(
+                    tp=self.statistics["tp"][i], fp=self.statistics["fp"][i]
+                )
+                recall_values[i] = recall(tp=self.statistics["tp"][i], fn=self.statistics["fn"][i])
+                f1_values[i] = f1score(
+                    precision_value=precision_values[i], recall_value=recall_values[i]
+                )
+            precision_mask = (self.statistics["tp"] + self.statistics["fp"] > 0).bool()
+            # if there is a label that not in targets, recall value is set to 1
+            # sklearn metrics set it with 0
+            recall_mask = (self.statistics["support"] > 0).bool()
+            if self.mode == "macro":
+                precision_value = (precision_values * precision_mask).float().mean()
+                recall_value = (recall_values * recall_mask).float().mean()
+                f1_value = f1_values.mean()
+
+            elif self.mode == "weighted":
+                weight = self.statistics["support"] / self.statistics["support"].sum()
+                precision_value = (precision_values * precision_mask * weight).sum()
+                recall_value = (recall_values * recall_mask * weight).sum()
+                f1_value = (f1_values * weight).sum()
+
+            elif self.mode == "micro":
+                precision_value = self.statistics["tp"].sum() / (
+                        self.statistics["tp"].sum() + self.statistics["fp"].sum()
+                )
+                recall_value = self.statistics["tp"].sum() / (
+                        self.statistics["tp"].sum() + self.statistics["fn"].sum()
+                )
+                f1_value = 2 * self.statistics["tp"].sum() / (
+                        2 * self.statistics["tp"].sum() +
+                        self.statistics["fp"].sum() + self.statistics["fn"].sum()
+                )
+            else:
+                return precision_values * precision_mask, recall_values * recall_mask, f1_values
+
+        return precision_value, recall_value, f1_value
+
+    def compute_key_value(self) -> Dict[str, float]:
+        precision_value, recall_value, f1_value = self.compute()
+        if self.mode is None:
+            metrics = {}
+            for i in range(self.num_classes):
+                for (metric_name, metric_value) in zip(
+                        ("precision", "recall", "f1"), (precision_value, recall_value, f1_value)
+                ):
+                    metrics[f"{metric_name}/class_{i + 1}"] = metric_value
+            return metrics
+        return {"precision": precision_value, "recall": recall_value, "f1": f1_value}
