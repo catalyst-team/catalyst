@@ -87,12 +87,12 @@ class SingleStageExperiment(IExperiment):
     def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
         return self._callbacks or {}
 
+    def get_loggers(self) -> Dict[str, ILogger]:
+        return self._loggers or {}
+
     def get_engine(self) -> IEngine:
         default_engine = DeviceEngine("cuda" if IS_CUDA_AVAILABLE else "cpu")
         return self._engine or default_engine
 
     def get_trial(self) -> ITrial:
         return self._trial
-
-    def get_loggers(self) -> Dict[str, ILogger]:
-        return self._loggers or {}
