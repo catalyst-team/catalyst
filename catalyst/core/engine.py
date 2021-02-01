@@ -3,6 +3,11 @@ from abc import ABC, abstractmethod
 from contextlib import contextmanager
 
 
+@contextmanager
+def nullcontext(enter_result=None):
+    yield enter_result
+
+
 # @TODO: should IEngine be ICallback-based?
 class IEngine(ABC):
     """
@@ -60,20 +65,12 @@ class IEngine(ABC):
         pass
 
     @abstractmethod
-    def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
-    ) -> Dict:
+    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,) -> Dict:
         pass
 
     @abstractmethod
     def unpack_checkpoint(
-        self,
-        checkpoint: Dict,
-        model=None,
-        criterion=None,
-        optimizer=None,
-        scheduler=None,
-        **kwargs,
+        self, checkpoint: Dict, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> None:
         pass
 
@@ -85,11 +82,11 @@ class IEngine(ABC):
     def load_checkpoint(self, path: str) -> Dict:
         pass
 
-    @abstractmethod
-    @contextmanager
-    def autocast(self):
-        # amp scaling context
-        pass
+    def autocast(self, *args, **kwargs):
+        """AMP scaling context.
+        Default autocast context does not scale anything.
+        """
+        return nullcontext()
 
 
 class Engine(IEngine):
@@ -122,9 +119,7 @@ class Engine(IEngine):
         # remove backend
         pass
 
-    def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
-    ) -> Dict:
+    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,) -> Dict:
         return {
             "model": model,
             "criterion": criterion,
@@ -134,13 +129,7 @@ class Engine(IEngine):
         }
 
     def unpack_checkpoint(
-        self,
-        checkpoint: Dict,
-        model=None,
-        criterion=None,
-        optimizer=None,
-        scheduler=None,
-        **kwargs,
+        self, checkpoint: Dict, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> None:
         model = checkpoint["model"]
         criterion = checkpoint["criterion"]
@@ -163,10 +152,6 @@ class Engine(IEngine):
 
     def optimizer_step(self, model, criterion, optimizer, loss) -> None:
         optimizer.step()
-
-    @contextmanager
-    def autocast(self, *args, **kwargs):
-        pass
 
 
 def get_engine_by_params(engine_params: Dict):

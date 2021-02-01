@@ -12,7 +12,7 @@ class DataParallelEngine(DeviceEngine):
         self.device_count = torch.cuda.device_count()
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"DataParallelEngine(device_count={self.device_count})"
+        return f"{self.__class__.__name__}(device_count={self.device_count})"
 
     # def to_device(
     #     self, obj: Union[dict, torch.Tensor, nn.Module]
@@ -28,9 +28,7 @@ class DataParallelEngine(DeviceEngine):
     #         return obj.to(self.device)
     #     # fmt: on
 
-    def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
-    ) -> Dict:
+    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,) -> Dict:
         # unwrap model
         _model = model.module if isinstance(model, nn.DataParallel) else model
         return super().pack_checkpoint(_model, criterion, optimizer, scheduler, **kwargs)

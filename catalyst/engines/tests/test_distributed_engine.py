@@ -42,10 +42,7 @@ class WorldSizeCheckCallback(Callback):
     def on_batch_start(self, runner: "IRunner"):
         rank = runner.engine.rank
         world_size = runner.engine.world_size
-        logger.warning(
-            f"WorldSizeCheckCallback: "
-            f"expected world size ({self.world_size}) - actual ({world_size})"
-        )
+        logger.warning(f"WorldSizeCheckCallback: " f"expected world size ({self.world_size}) - actual ({world_size})")
         assert rank < self.world_size
         assert self.world_size == world_size
 
@@ -95,14 +92,12 @@ class CustomExperiment(dl.IExperiment):
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "criterion": dl.CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
+            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            "checkpoint": dl.CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
-            ),
+            # "checkpoint": dl.CheckpointCallback(
+            #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            # ),
             # "check": DeviceCheckCallback(),
             "check2": LossMinimizationCallback("loss"),
             "check_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES),

@@ -15,11 +15,7 @@ class ICriterionCallback(Callback):
 # @TODO: add KV support
 class CriterionCallback(ICriterionCallback):
     def __init__(
-        self,
-        input_key: str = None,
-        target_key: str = None,
-        metric_key: str = None,
-        criterion_key: str = None,
+        self, input_key: str = None, target_key: str = None, metric_key: str = None, criterion_key: str = None,
     ):
         """
         Args:

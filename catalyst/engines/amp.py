@@ -1,26 +1,15 @@
 from typing import Any, Dict, Mapping, Union
-import functools
+from contextlib import contextmanager
 
 import torch
 import torch.nn as nn
 
-# TODO: use only latest version of pytorch
+# TODO: works only with latest pytorch (1.7.1) - fix for older versions
 import torch.cuda.amp as amp
 
 from catalyst.engines.device import DeviceEngine
 
 
-def _patch_with_scaler(fn):
-    @functools.wraps(fn)
-    def wrapper(*args, **kwargs):
-        with amp.autocast():
-            res = fn(*args, **kwargs)
-        return res
-
-    return wrapper
-
-
-# TODO: wrap with autocast computing output & loss
 class AMPEngine(DeviceEngine):
     def __init__(self, device: str = "cuda"):
         """
@@ -31,7 +20,7 @@ class AMPEngine(DeviceEngine):
         self.scaler = amp.GradScaler()
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"AMPEngine(device='{self.device}')"
+        return f"{self.__class__.__name__}(device='{self.device}')"
 
     def backward_loss(self, model, criterion, optimizer, loss) -> None:
         self.scaler.scale(loss).backward()
@@ -43,7 +32,7 @@ class AMPEngine(DeviceEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        # @TODO: how could we do better?)
+        # TODO: how could we do better?)
         # model
         model = model_fn()
         model = self.sync_device(model)
@@ -59,3 +48,7 @@ class AMPEngine(DeviceEngine):
         scheduler = scheduler_fn(optimizer=optimizer)
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
+
+    # TODO: should be used with forward method? (similar to criterion)
+    def autocast(self):
+        return amp.autocast()
