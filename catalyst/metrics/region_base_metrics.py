@@ -364,8 +364,9 @@ def trevsky(
         >>> )
         tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.8333])
     """
-    assert 0 < alpha < 1  # I am not sure about this
+    # assert 0 < alpha < 1  # I am not sure about this
     if beta is None:
+        assert 0 < alpha < 1, "if beta=None, alpha must be in (0, 1)"
         beta = 1 - alpha
     metric_fn = partial(_trevsky, alpha=alpha, beta=beta, eps=eps)
     score = _get_region_based_metrics(
