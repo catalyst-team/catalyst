@@ -1,9 +1,9 @@
+import torch.cuda.amp as amp
+
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.metrics.misc import AdditiveValueMetric
+from catalyst.metrics.additive import AdditiveValueMetric
 from catalyst.utils.misc import get_attr
-
-import torch.cuda.amp as amp
 
 
 class ICriterionCallback(Callback):

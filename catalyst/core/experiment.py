@@ -108,82 +108,14 @@ class IExperiment(ABC):
         """
         pass
 
-    @abstractmethod
-    def get_model(self, stage: str) -> Model:
-        """Returns the model for a given stage.
-
-        Example::
-
-            # suppose we have typical MNIST model, like
-            # nn.Sequential(nn.Linear(28*28, 128), nn.Linear(128, 10))
-            >>> experiment.get_model(stage="train")
-            Sequential(
-             : Linear(in_features=784, out_features=128, bias=True)
-             : Linear(in_features=128, out_features=10, bias=True)
-            )
-
-        Args:
-            stage: stage name of interest
-                like "pretrain" / "train" / "finetune" / etc
-
-        Returns:  # noqa: DAR202
-            Model: model for a given stage.
-        """
-        pass
-
-    def get_criterion(self, stage: str) -> Criterion:
-        """Returns the criterion for a given stage.
-
-        Example::
-
-            # for typical classification task
-            >>> experiment.get_criterion(stage="training")
-            nn.CrossEntropyLoss()
-
-        Args:
-            stage: stage name of interest
-                like "pretrain" / "train" / "finetune" / etc
-
-        Returns:  # noqa: DAR202
-            Criterion: criterion for a given stage.
-        """
-        # @TODO: could we also pass model here for model-criterion interaction?
+    def get_trial(self) -> ITrial:
         return None
 
-    def get_optimizer(self, stage: str, model: Model) -> Optimizer:
-        """Returns the optimizer for a given stage and model.
-
-        Example::
-
-            >>> experiment.get_optimizer(stage="training", model=model)
-            torch.optim.Adam(model.parameters())
-
-        Args:
-            stage: stage name of interest
-                like "pretrain" / "train" / "finetune" / etc
-            model: model to optimize with stage optimizer
-
-        Returns:  # noqa: DAR202
-            Optimizer: optimizer for a given stage and model.
-        """
+    def get_engine(self) -> IEngine:
         return None
 
-    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
-        """Returns the scheduler for a given stage and optimizer.
-
-        Example::
-            >>> experiment.get_scheduler(stage="training", optimizer=optimizer)
-            torch.optim.lr_scheduler.StepLR(optimizer)
-
-        Args:
-            stage: stage name of interest
-                like "pretrain" / "train" / "finetune" / etc
-            optimizer: optimizer to schedule with stage scheduler
-
-        Returns:  # noqa: DAR202
-            Scheduler: scheduler for a given stage and optimizer.
-        """
-        return None
+    def get_loggers(self) -> Dict[str, ILogger]:
+        return {}
 
     def get_transforms(
         self, stage: str = None, epoch: int = None, dataset: str = None, **kwargs,
@@ -272,6 +204,83 @@ class IExperiment(ABC):
         """
         pass
 
+    @abstractmethod
+    def get_model(self, stage: str) -> Model:
+        """Returns the model for a given stage.
+
+        Example::
+
+            # suppose we have typical MNIST model, like
+            # nn.Sequential(nn.Linear(28*28, 128), nn.Linear(128, 10))
+            >>> experiment.get_model(stage="train")
+            Sequential(
+             : Linear(in_features=784, out_features=128, bias=True)
+             : Linear(in_features=128, out_features=10, bias=True)
+            )
+
+        Args:
+            stage: stage name of interest
+                like "pretrain" / "train" / "finetune" / etc
+
+        Returns:  # noqa: DAR202
+            Model: model for a given stage.
+        """
+        pass
+
+    def get_criterion(self, stage: str) -> Criterion:
+        """Returns the criterion for a given stage.
+
+        Example::
+
+            # for typical classification task
+            >>> experiment.get_criterion(stage="training")
+            nn.CrossEntropyLoss()
+
+        Args:
+            stage: stage name of interest
+                like "pretrain" / "train" / "finetune" / etc
+
+        Returns:  # noqa: DAR202
+            Criterion: criterion for a given stage.
+        """
+        # @TODO: could we also pass model here for model-criterion interaction?
+        return None
+
+    def get_optimizer(self, stage: str, model: Model) -> Optimizer:
+        """Returns the optimizer for a given stage and model.
+
+        Example::
+
+            >>> experiment.get_optimizer(stage="training", model=model)
+            torch.optim.Adam(model.parameters())
+
+        Args:
+            stage: stage name of interest
+                like "pretrain" / "train" / "finetune" / etc
+            model: model to optimize with stage optimizer
+
+        Returns:  # noqa: DAR202
+            Optimizer: optimizer for a given stage and model.
+        """
+        return None
+
+    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
+        """Returns the scheduler for a given stage and optimizer.
+
+        Example::
+            >>> experiment.get_scheduler(stage="training", optimizer=optimizer)
+            torch.optim.lr_scheduler.StepLR(optimizer)
+
+        Args:
+            stage: stage name of interest
+                like "pretrain" / "train" / "finetune" / etc
+            optimizer: optimizer to schedule with stage scheduler
+
+        Returns:  # noqa: DAR202
+            Scheduler: scheduler for a given stage and optimizer.
+        """
+        return None
+
     def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
         """Returns callbacks for a given stage.
 
@@ -308,15 +317,6 @@ class IExperiment(ABC):
             OrderedDict[str, Callback]: Ordered dictionary
                 with callbacks for current stage.
         """
-        return {}
-
-    def get_engine(self) -> IEngine:
-        return None
-
-    def get_trial(self) -> ITrial:
-        return None
-
-    def get_loggers(self) -> Dict[str, ILogger]:
         return {}
 
 

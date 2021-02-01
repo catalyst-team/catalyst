@@ -1,14 +1,9 @@
 from typing import Callable, Dict, List, TYPE_CHECKING
 import logging
-import warnings
-
-import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.registry import REGISTRY
 from catalyst.typing import Optimizer
-from catalyst.utils.misc import get_attr, maybe_recursive_call
-from catalyst.utils.torch import get_optimizer_momentum
+from catalyst.utils.misc import get_attr
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
