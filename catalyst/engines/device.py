@@ -19,7 +19,7 @@ class DeviceEngine(IEngine):
         self.device = device
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"DeviceEngine(device='{self.device}')"
+        return f"{self.__class__.__name__}(device='{self.device}')"
 
     @property
     def rank(self) -> int:

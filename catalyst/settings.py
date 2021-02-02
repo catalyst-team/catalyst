@@ -3,6 +3,7 @@ import configparser
 import logging
 import os
 
+from packaging.version import parse, Version
 import torch
 
 from catalyst.tools.frozen_class import FrozenClass
@@ -10,6 +11,7 @@ from catalyst.tools.frozen_class import FrozenClass
 logger = logging.getLogger(__name__)
 
 IS_CUDA_AVAILABLE = torch.cuda.is_available()
+IS_AMP_AVAILABLE = IS_CUDA_AVAILABLE and parse(torch.__version__) >= Version("1.6.0")
 NUM_CUDA_DEVICES = torch.cuda.device_count()
 
 
@@ -19,6 +21,14 @@ try:
     IS_GIT_AVAILABLE = True
 except ImportError:
     IS_GIT_AVAILABLE = False
+
+try:
+    import apex  # noqa: F401
+    from apex import amp  # noqa: F401
+
+    IS_APEX_AVAILABLE = True
+except ImportError:
+    IS_APEX_AVAILABLE = False
 
 try:
     import torch_xla.core.xla_model as xm  # noqa: F401
@@ -362,11 +372,13 @@ class MergedConfigParser:
 
 SETTINGS = Settings.parse()
 setattr(SETTINGS, "IS_GIT_AVAILABLE", IS_GIT_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_APEX_AVAILABLE", IS_APEX_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_AMP_AVAILABLE", IS_AMP_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
 setattr(SETTINGS, "IS_XLA_AVAILABLE", IS_XLA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_PRUNING_AVAILABLE", IS_PRUNING_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
 setattr(SETTINGS, "IS_OPTUNA_AVAILABLE", IS_OPTUNA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_HYDRA_AVAILABLE", IS_HYDRA_AVAILABLE)  # noqa: B010
 

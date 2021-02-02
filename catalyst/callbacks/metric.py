@@ -1,7 +1,7 @@
 # @TODO: add metric aggregation, etc callback
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.metrics.misc import ICallbackBatchMetric, ICallbackLoaderMetric
+from catalyst.metrics.metric import ICallbackBatchMetric, ICallbackLoaderMetric
 
 
 class IMetricCallback(Callback):

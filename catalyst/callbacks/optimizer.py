@@ -1,14 +1,9 @@
 from typing import Callable, Dict, List, TYPE_CHECKING
 import logging
-import warnings
-
-import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.registry import REGISTRY
 from catalyst.typing import Optimizer
-from catalyst.utils.misc import get_attr, maybe_recursive_call
-from catalyst.utils.torch import get_optimizer_momentum
+from catalyst.utils.misc import get_attr
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -315,10 +310,10 @@ class IOptimizerCallback(Callback):
 class OptimizerCallback(IOptimizerCallback):
     def __init__(
         self,
-        metric_key: str = None,
+        metric_key: str,
         model_key: str = None,
         optimizer_key: str = None,
-        criterion_key: str = None,
+        criterion_key: str = None,  # @TODO: do we need it?
         accumulation_steps: int = 1,
         grad_clip_params: Dict = None,
     ):

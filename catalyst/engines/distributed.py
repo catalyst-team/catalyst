@@ -33,7 +33,7 @@ class DistributedDataParallelEngine(IEngine):
 
     def __repr__(self):  # noqa: D105
         return (
-            f"DistributedDataParallelEngine(address={self.address}, "
+            f"{self.__class__.__name__}(address={self.address}, "
             f"port={self.port}, backend='{self.backend}',"
             f"rank={self._rank}, world_size={self._world_size})"
         )
