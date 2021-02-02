@@ -310,10 +310,10 @@ class IOptimizerCallback(Callback):
 class OptimizerCallback(IOptimizerCallback):
     def __init__(
         self,
-        metric_key: str = None,
+        metric_key: str,
         model_key: str = None,
         optimizer_key: str = None,
-        criterion_key: str = None,
+        criterion_key: str = None,  # @TODO: do we need it?
         accumulation_steps: int = 1,
         grad_clip_params: Dict = None,
     ):

@@ -1,11 +1,10 @@
-from typing import Any, Dict, Mapping, Tuple, Union
+from typing import Any, Dict, Mapping, Tuple
 from abc import ABC, abstractmethod
 from collections import defaultdict
 from functools import lru_cache, partial
 import logging
 
 import torch
-from torch import nn
 import torch.distributed
 import torch.multiprocessing
 from torch.utils.data import DataLoader, DistributedSampler
@@ -17,7 +16,6 @@ from catalyst.core.functional import filter_callbacks_by_node, sort_callbacks_by
 from catalyst.core.logger import ILogger
 from catalyst.core.trial import ITrial
 from catalyst.engines.distributed import DistributedDataParallelEngine
-from catalyst.settings import SETTINGS
 from catalyst.typing import (
     Device,
     Model,

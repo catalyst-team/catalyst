@@ -32,17 +32,17 @@ def _get_default_engine():
 def _process_loaders(
     loaders: "OrderedDict[str, DataLoader]", stage: str, valid_loader: str, initial_seed: int,
 ) -> "Tuple[OrderedDict[str, DataLoader], str]":
-    """Prepares loaders for a given stage."""
     if not isinstance(loaders[list(loaders.keys())[0]], DataLoader):
         loaders = get_loaders_from_params(initial_seed=initial_seed, **loaders)
-    if not stage.startswith(SETTINGS.stage_infer_prefix):  # train stage
-        if len(loaders) == 1:
-            valid_loader = list(loaders.keys())[0]
-            warnings.warn("Attention, there is only one dataloader - " + str(valid_loader))
-        assert (
-            valid_loader in loaders
-        ), "The validation loader must be present in the loaders used during experiment."
-    return loaders, valid_loader
+    return loaders
+    # if not stage.startswith(SETTINGS.stage_infer_prefix):  # train stage
+    #     if len(loaders) == 1:
+    #         valid_loader = list(loaders.keys())[0]
+    #         warnings.warn("Attention, there is only one dataloader - " + str(valid_loader))
+    #     assert (
+    #         valid_loader in loaders
+    #     ), "The validation loader must be present in the loaders used during experiment."
+    # return loaders, valid_loader
 
 
 class Experiment(IExperiment):
@@ -64,7 +64,7 @@ class Experiment(IExperiment):
         # the callbacks
         callbacks: "Union[OrderedDict[str, Callback], List[Callback]]" = None,
         # the loggers
-        loggers: "Union[Dict[str, Callback]]" = None,
+        loggers: "Union[Dict[str, ILogger]]" = None,
         # experiment info
         seed: int = 42,
         hparams: Dict[str, Any] = None,
@@ -72,14 +72,14 @@ class Experiment(IExperiment):
         stage: str = "train",
         num_epochs: int = 1,
         # extra info (callbacks info)
-        logdir: str = None,
-        valid_loader: str = "valid",
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
-        verbose: bool = False,
-        check_time: bool = False,
-        check_run: bool = False,
-        overfit: bool = False,
+        # logdir: str = None,
+        # valid_loader: str = "valid",
+        # main_metric: str = "loss",
+        # minimize_metric: bool = True,
+        # verbose: bool = False,
+        # check_time: bool = False,
+        # check_run: bool = False,
+        # overfit: bool = False,
     ):
         """
         Args:
@@ -149,14 +149,14 @@ class Experiment(IExperiment):
         self._stage = stage
         self._num_epochs = num_epochs
         # extra info (callbacks info)
-        self._logdir = logdir
-        self._valid_loader = valid_loader
-        self._main_metric = main_metric
-        self._minimize_metric = minimize_metric
-        self._verbose = verbose
-        self._check_time = check_time
-        self._check_run = check_run
-        self._overfit = overfit
+        # self._logdir = logdir
+        # self._valid_loader = valid_loader
+        # self._main_metric = main_metric
+        # self._minimize_metric = minimize_metric
+        # self._verbose = verbose
+        # self._check_time = check_time
+        # self._check_run = check_run
+        # self._overfit = overfit
 
     @property
     def seed(self) -> int:
@@ -201,10 +201,10 @@ class Experiment(IExperiment):
 
     def get_loaders(self, stage: str, epoch: int = None,) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage."""
-        self._loaders, self._valid_loader = _process_loaders(
+        self._loaders = _process_loaders(  # self._loaders, self._valid_loader
             loaders=self._loaders,
             stage=self._stage,
-            valid_loader=self._valid_loader,
+            valid_loader=None,  # self._valid_loader,
             initial_seed=self._seed,
         )
         return self._loaders
@@ -247,34 +247,34 @@ class Experiment(IExperiment):
         )
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
-        """
-        Returns the callbacks for a given stage.
-        """
-        callbacks = self._callbacks or OrderedDict()
-
-        is_already_present = lambda callback_fn: any(
-            check_callback_isinstance(x, callback_fn) for x in callbacks.values()
-        )
-
-        if self._verbose and not is_already_present(VerboseCallback):
-            callbacks["_verbose"] = VerboseCallback()
-        if self._check_time and not is_already_present(TimerCallback):
-            callbacks["_timer"] = TimerCallback()
-        if self._check_run and not is_already_present(CheckRunCallback):
-            callbacks["_check"] = CheckRunCallback()
-        if self._overfit and not is_already_present(BatchOverfitCallback):
-            callbacks["_overfit"] = BatchOverfitCallback()
-
-        if not stage.startswith(SETTINGS.stage_infer_prefix):
-            if self._logdir is not None and not is_already_present(CheckpointCallback):
-                callbacks["_checkpoint"] = CheckpointCallback(
-                    logdir=self._logdir,
-                    loader_key=self._valid_loader,
-                    metric_key=self._main_metric,
-                    minimize=self._minimize_metric,
-                )
-
-        return callbacks
+        """Returns the callbacks for a given stage."""
+        return self._callbacks or OrderedDict()
+        #
+        # callbacks = self._callbacks or OrderedDict()
+        #
+        # is_already_present = lambda callback_fn: any(
+        #     check_callback_isinstance(x, callback_fn) for x in callbacks.values()
+        # )
+        #
+        # if self._verbose and not is_already_present(VerboseCallback):
+        #     callbacks["_verbose"] = VerboseCallback()
+        # if self._check_time and not is_already_present(TimerCallback):
+        #     callbacks["_timer"] = TimerCallback()
+        # if self._check_run and not is_already_present(CheckRunCallback):
+        #     callbacks["_check"] = CheckRunCallback()
+        # if self._overfit and not is_already_present(BatchOverfitCallback):
+        #     callbacks["_overfit"] = BatchOverfitCallback()
+        #
+        # if not stage.startswith(SETTINGS.stage_infer_prefix):
+        #     if self._logdir is not None and not is_already_present(CheckpointCallback):
+        #         callbacks["_checkpoint"] = CheckpointCallback(
+        #             logdir=self._logdir,
+        #             loader_key=self._valid_loader,
+        #             metric_key=self._main_metric,
+        #             minimize=self._minimize_metric,
+        #         )
+        #
+        # return callbacks
 
 
 __all__ = ["Experiment"]

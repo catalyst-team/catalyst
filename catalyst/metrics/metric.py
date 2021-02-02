@@ -65,6 +65,7 @@ class IMetric(ABC):
 
 
 class ICallbackBatchMetric(IMetric):
+    # @TODO: do we need prefix/suffix here?
     def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""

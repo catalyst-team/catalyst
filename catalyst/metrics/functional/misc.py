@@ -79,7 +79,7 @@ def process_recsys_components(outputs: torch.Tensor, targets: torch.Tensor) -> t
 
     Args:
         outputs (torch.Tensor):
-            Tensor weith predicted score
+            Tensor with predicted scores
             size: [batch_size, slate_length]
             model outputs, logits
         targets (torch.Tensor):
