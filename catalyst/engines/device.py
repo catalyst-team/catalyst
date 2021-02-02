@@ -1,16 +1,10 @@
 from typing import Any, Dict, Mapping, Union
-from contextlib import contextmanager
 
 import numpy as np
 import torch
 import torch.nn as nn
 
 from catalyst.core.engine import IEngine
-
-
-@contextmanager
-def nullcontext(enter_result=None):
-    yield enter_result
 
 
 # @TODO: merge it with DataParallel version?
@@ -25,7 +19,7 @@ class DeviceEngine(IEngine):
         self.device = device
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"DeviceEngine(device='{self.device}')"
+        return f"{self.__class__.__name__}(device='{self.device}')"
 
     @property
     def rank(self) -> int:
@@ -135,6 +129,3 @@ class DeviceEngine(IEngine):
 
     def load_checkpoint(self, path: str):
         return torch.load(path)
-
-    def autocast(self, *args, **kwargs):
-        return nullcontext()
