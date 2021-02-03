@@ -3,7 +3,7 @@ import math
 
 import torch
 
-from catalyst.metrics.auc import auc
+from catalyst.metrics.functional.auc import auc
 
 
 def test_auc():

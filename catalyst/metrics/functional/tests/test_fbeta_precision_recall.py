@@ -1,7 +1,7 @@
 import pytest  # noqa: F401
 import torch
 
-from catalyst.metrics import (
+from catalyst.metrics.functional import (
     f1_score,
     fbeta_score,
     precision,

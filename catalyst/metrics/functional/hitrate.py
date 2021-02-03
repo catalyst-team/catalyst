@@ -1,12 +1,8 @@
-"""
-Hitrate metric:
-    * :func:`hitrate`
-"""
 from typing import List
 
 import torch
 
-from catalyst.metrics.functional import process_recsys_components
+from catalyst.metrics.functional.misc import process_recsys_components
 
 
 def hitrate(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> List[torch.Tensor]:

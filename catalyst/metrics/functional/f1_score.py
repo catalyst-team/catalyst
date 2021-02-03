@@ -2,7 +2,7 @@ from typing import Optional, Union
 
 import torch
 
-from catalyst.metrics.classification import precision_recall_fbeta_support
+from catalyst.metrics.functional.classification import precision_recall_fbeta_support
 
 
 def fbeta_score(
@@ -13,8 +13,7 @@ def fbeta_score(
     argmax_dim: int = -1,
     num_classes: Optional[int] = None,
 ) -> Union[float, torch.Tensor]:
-    """
-    Counts fbeta score for given ``outputs`` and ``targets``.
+    """Counts fbeta score for given ``outputs`` and ``targets``.
 
     Args:
         outputs: A list of predicted elements
@@ -52,8 +51,7 @@ def f1_score(
     argmax_dim: int = -1,
     num_classes: Optional[int] = None,
 ) -> Union[float, torch.Tensor]:
-    """
-    Fbeta_score with beta=1.
+    """Fbeta_score with beta=1.
 
     Args:
         outputs: A list of predicted elements

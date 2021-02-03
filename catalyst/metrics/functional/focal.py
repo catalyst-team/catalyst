@@ -1,9 +1,3 @@
-"""
-Focal losses:
-    * :func:`sigmoid_focal_loss`
-    * :func:`reduced_focal_loss`
-"""
-
 import torch
 import torch.nn.functional as F
 

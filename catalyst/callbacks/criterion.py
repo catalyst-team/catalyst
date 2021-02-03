@@ -1,9 +1,9 @@
+import torch.cuda.amp as amp
+
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.metrics.misc import AdditiveValueMetric
+from catalyst.metrics.additive import AdditiveValueMetric
 from catalyst.utils.misc import get_attr
-
-import torch.cuda.amp as amp
 
 
 class ICriterionCallback(Callback):
@@ -15,11 +15,7 @@ class ICriterionCallback(Callback):
 # @TODO: add KV support
 class CriterionCallback(ICriterionCallback):
     def __init__(
-        self,
-        input_key: str = None,
-        target_key: str = None,
-        metric_key: str = None,
-        criterion_key: str = None,
+        self, input_key: str, target_key: str, metric_key: str, criterion_key: str = None,
     ):
         """
         Args:
@@ -35,7 +31,7 @@ class CriterionCallback(ICriterionCallback):
         self.target_key = target_key
         self.metric_key = metric_key
         self.criterion_key = criterion_key
-        self.average_metric = AdditiveValueMetric()
+        self.additive_metric = AdditiveValueMetric()
         self.criterion = None
 
     def on_stage_start(self, runner: "IRunner"):
@@ -48,7 +44,7 @@ class CriterionCallback(ICriterionCallback):
         assert self.criterion is not None
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        self.average_metric.reset()
+        self.additive_metric.reset()
 
     def on_batch_end(self, runner: "IRunner"):
         inputs, targets = runner.batch[self.input_key], runner.batch[self.target_key]
@@ -60,10 +56,10 @@ class CriterionCallback(ICriterionCallback):
             loss = self.criterion(inputs, targets)
 
         runner.batch_metrics.update({self.metric_key: loss})
-        self.average_metric.update(loss.item(), len(targets))
+        self.additive_metric.update(loss.item(), len(targets))
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        mean, std = self.average_metric.compute()
+        mean, std = self.additive_metric.compute()
         runner.loader_metrics.update({self.metric_key: mean, f"{self.metric_key}/std": std})
 
 
