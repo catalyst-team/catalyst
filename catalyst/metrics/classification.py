@@ -16,9 +16,10 @@ from catalyst.metrics.functional.misc import (
     get_multiclass_statistics,
     get_multilabel_statistics,
 )
-from catalyst.metrics.metric import ICallbackLoaderMetric
+from catalyst.metrics.metric import ICallbackBatchMetric, ICallbackLoaderMetric
 
 
+# @TODO: make ICallbackBatchMetric
 class StatisticsMetric(ICallbackLoaderMetric):
     """
     This metric accumulates true positive, false positive, true negative,
