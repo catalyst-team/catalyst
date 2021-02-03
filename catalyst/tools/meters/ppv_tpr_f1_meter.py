@@ -29,7 +29,9 @@ def f1score(precision_value, recall_value, eps=1e-5):
     return numerator / denominator
 
 
-def precision(tp, fp, eps: float = 1e-5) -> float:
+def precision(
+    tp: int, fp: int, eps: float = 1e-5, zero_division: int = 1
+) -> float:
     """
     Calculates precision (a.k.a. positive predictive value) for binary
     classification and segmentation.
@@ -38,6 +40,8 @@ def precision(tp, fp, eps: float = 1e-5) -> float:
         tp: number of true positives
         fp: number of false positives
         eps: epsilon to use
+        zero_division: int value, should be one of 0 or 1; if both tp==0 and fp==0 return this
+            value as s result
 
     Returns:
         precision value (0-1)
@@ -45,10 +49,12 @@ def precision(tp, fp, eps: float = 1e-5) -> float:
     # originally precision is: ppv = tp / (tp + fp + eps)
     # but when both masks are empty this gives: tp=0 and fp=0 => ppv=0
     # so here precision is defined as ppv := 1 - fdr (false discovery rate)
+    if tp == 0 and fp == 0:
+        return zero_division
     return 1 - fp / (tp + fp + eps)
 
 
-def recall(tp, fn, eps=1e-5) -> float:
+def recall(tp: int, fn: int, eps=1e-5, zero_division: int = 1) -> float:
     """
     Calculates recall (a.k.a. true positive rate) for binary classification and
     segmentation.
@@ -57,6 +63,8 @@ def recall(tp, fn, eps=1e-5) -> float:
         tp: number of true positives
         fn: number of false negatives
         eps: epsilon to use
+        zero_division: int value, should be one of 0 or 1; if both tp==0 and fn==0 return this
+            value as s result
 
     Returns:
         recall value (0-1)
@@ -64,6 +72,8 @@ def recall(tp, fn, eps=1e-5) -> float:
     # originally reacall is: tpr := tp / (tp + fn + eps)
     # but when both masks are empty this gives: tp=0 and fn=0 => tpr=0
     # so here recall is defined as tpr := 1 - fnr (false negative rate)
+    if tp == 0 and fn == 0:
+        return zero_division
     return 1 - fn / (fn + tp + eps)
 
 
@@ -118,8 +128,12 @@ class PrecisionRecallF1ScoreMeter(meter.Meter):
         Returns:
             tuple of floats: (precision, recall, f1)
         """
-        precision_value = precision(self.tp_fp_fn_counts["tp"], self.tp_fp_fn_counts["fp"])
-        recall_value = recall(self.tp_fp_fn_counts["tp"], self.tp_fp_fn_counts["fn"])
+        precision_value = precision(
+            self.tp_fp_fn_counts["tp"], self.tp_fp_fn_counts["fp"]
+        )
+        recall_value = recall(
+            self.tp_fp_fn_counts["tp"], self.tp_fp_fn_counts["fn"]
+        )
         f1_value = f1score(precision_value, recall_value)
         return (float(precision_value), float(recall_value), float(f1_value))
 
