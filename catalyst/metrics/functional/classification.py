@@ -6,13 +6,72 @@ import numpy as np
 
 import torch
 
-from catalyst.metrics import (
+from catalyst.metrics.functional.misc import (
     get_binary_statistics,
     get_multiclass_statistics,
     get_multilabel_statistics,
 )
-from catalyst.metrics.misc import ICallbackLoaderMetric
-from catalyst.tools.meters.ppv_tpr_f1_meter import f1score, precision, recall
+from catalyst.metrics.metric import ICallbackLoaderMetric
+
+
+def f1score(precision_value, recall_value, eps=1e-5):
+    """
+    Calculating F1-score from precision and recall to reduce computation
+    redundancy.
+    Args:
+        precision_value: precision (0-1)
+        recall_value: recall (0-1)
+        eps: epsilon to use
+    Returns:
+        F1 score (0-1)
+    """
+    numerator = 2 * (precision_value * recall_value)
+    denominator = precision_value + recall_value + eps
+    return numerator / denominator
+
+
+def precision(
+    tp: int, fp: int, eps: float = 1e-5, zero_division: int = 1
+) -> float:
+    """
+    Calculates precision (a.k.a. positive predictive value) for binary
+    classification and segmentation.
+    Args:
+        tp: number of true positives
+        fp: number of false positives
+        eps: epsilon to use
+        zero_division: int value, should be one of 0 or 1; if both tp==0 and fp==0 return this
+            value as s result
+    Returns:
+        precision value (0-1)
+    """
+    # originally precision is: ppv = tp / (tp + fp + eps)
+    # but when both masks are empty this gives: tp=0 and fp=0 => ppv=0
+    # so here precision is defined as ppv := 1 - fdr (false discovery rate)
+    if tp == 0 and fp == 0:
+        return zero_division
+    return 1 - fp / (tp + fp + eps)
+
+
+def recall(tp: int, fn: int, eps=1e-5, zero_division: int = 1) -> float:
+    """
+    Calculates recall (a.k.a. true positive rate) for binary classification and
+    segmentation.
+    Args:
+        tp: number of true positives
+        fn: number of false negatives
+        eps: epsilon to use
+        zero_division: int value, should be one of 0 or 1; if both tp==0 and fn==0 return this
+            value as s result
+    Returns:
+        recall value (0-1)
+    """
+    # originally recall is: tpr := tp / (tp + fn + eps)
+    # but when both masks are empty this gives: tp=0 and fn=0 => tpr=0
+    # so here recall is defined as tpr := 1 - fnr (false negative rate)
+    if tp == 0 and fn == 0:
+        return zero_division
+    return 1 - fn / (fn + tp + eps)
 
 
 def precision_recall_fbeta_support(
@@ -127,9 +186,9 @@ class StatisticsMetric(ICallbackLoaderMetric):
 
         self.num_classes = num_classes
         self.statistics = None
-        super().reset(batch_len=0, sample_len=0)
+        super().reset(num_batches=0, num_samples=0)
 
-    def reset(self, batch_len: int, sample_len: int) -> None:
+    def reset(self, num_batches: int, num_samples: int) -> None:
         """Reset all the statistics."""
         self.statistics = defaultdict(
             lambda: np.zeros(shape=(self.num_classes,))
@@ -208,11 +267,11 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         )
         self.zero_division = zero_division
         self.metrics = None
-        self.reset(batch_len=0, sample_len=0)
+        self.reset(num_batches=0, num_samples=0)
 
-    def reset(self, batch_len: int, sample_len: int) -> None:
+    def reset(self, num_batches: int, num_samples: int) -> None:
         """Reset all the statistics and metrics fields"""
-        super().reset(batch_len=batch_len, sample_len=sample_len)
+        super().reset(num_batches=num_batches, num_samples=num_samples)
         self.metrics = defaultdict(float)
 
     def _compute_weighted_average(
@@ -441,7 +500,7 @@ class BinaryPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
             mode="binary",
         )
 
-    def reset(self, batch_len: int, sample_len: int) -> None:
+    def reset(self, num_batches: int, num_samples: int) -> None:
         """Reset all the statistics and metrics fields."""
         self.statistics = defaultdict(float)
         self.metrics = defaultdict(float)
@@ -474,5 +533,5 @@ __all__ = [
     "precision_recall_fbeta_support",
     "MultiClassPrecisionRecallF1SupportMetric",
     "MultiLabelPrecisionRecallF1SupportMetric",
-    "BinaryPrecisionRecallF1SupportMetric"
+    "BinaryPrecisionRecallF1SupportMetric",
 ]

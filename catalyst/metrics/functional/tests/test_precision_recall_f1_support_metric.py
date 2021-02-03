@@ -4,7 +4,7 @@ import pytest
 
 import torch
 
-from catalyst.metrics.classification import (
+from catalyst.metrics import (
     BinaryPrecisionRecallF1SupportMetric,
     MultiClassPrecisionRecallF1SupportMetric,
     MultiLabelPrecisionRecallF1SupportMetric,
