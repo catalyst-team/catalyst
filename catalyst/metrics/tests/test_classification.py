@@ -1,13 +1,12 @@
 from typing import Dict, Iterable
 
 import pytest
-
 import torch
 
 from catalyst.metrics import (
     BinaryPrecisionRecallF1SupportMetric,
-    MultiClassPrecisionRecallF1SupportMetric,
-    MultiLabelPrecisionRecallF1SupportMetric,
+    MulticlassPrecisionRecallF1SupportMetric,
+    MultilabelPrecisionRecallF1SupportMetric,
 )
 
 EPS = 1e-4
@@ -237,7 +236,7 @@ def test_multiclass_metrics(
     targets: torch.Tensor,
     num_classes: int,
     zero_division: int,
-    true_values: Dict[str, float]
+    true_values: Dict[str, float],
 ) -> None:
     """
     Test multiclass metric
@@ -247,7 +246,7 @@ def test_multiclass_metrics(
         zero_division: zero division policy flag
         true_values: true values of metrics
     """
-    metric = MultiClassPrecisionRecallF1SupportMetric(
+    metric = MulticlassPrecisionRecallF1SupportMetric(
         num_classes=num_classes, zero_division=zero_division
     )
     metrics = metric(outputs=outputs, targets=targets)
@@ -260,12 +259,8 @@ def test_multiclass_metrics(
     "outputs,targets,num_classes,zero_division,true_values",
     (
         (
-            torch.tensor(
-                [[0, 1, 0], [1, 1, 0], [0, 0, 1], [0, 0, 0], [0, 1, 1]]
-            ),
-            torch.tensor(
-                [[0, 1, 1], [1, 1, 1], [0, 0, 0], [0, 0, 1], [0, 1, 1]]
-            ),
+            torch.tensor([[0, 1, 0], [1, 1, 0], [0, 0, 1], [0, 0, 0], [0, 1, 1]]),
+            torch.tensor([[0, 1, 1], [1, 1, 1], [0, 0, 0], [0, 0, 1], [0, 1, 1]]),
             3,
             0,
             {
@@ -293,24 +288,8 @@ def test_multiclass_metrics(
             },
         ),
         (
-            torch.tensor(
-                [
-                    [0, 1, 0, 0],
-                    [1, 1, 0, 0],
-                    [0, 0, 1, 0],
-                    [0, 0, 0, 0],
-                    [0, 1, 1, 0],
-                ]
-            ),
-            torch.tensor(
-                [
-                    [0, 1, 1, 1],
-                    [1, 1, 1, 0],
-                    [0, 0, 0, 0],
-                    [0, 0, 1, 1],
-                    [0, 1, 1, 0],
-                ]
-            ),
+            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0],]),
+            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0],]),
             4,
             0,
             {
@@ -342,24 +321,8 @@ def test_multiclass_metrics(
             },
         ),
         (
-            torch.tensor(
-                [
-                    [0, 1, 0, 0],
-                    [1, 1, 0, 0],
-                    [0, 0, 1, 0],
-                    [0, 0, 0, 0],
-                    [0, 1, 1, 0],
-                ]
-            ),
-            torch.tensor(
-                [
-                    [0, 1, 1, 1],
-                    [1, 1, 1, 0],
-                    [0, 0, 0, 0],
-                    [0, 0, 1, 1],
-                    [0, 1, 1, 0],
-                ]
-            ),
+            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0],]),
+            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0],]),
             4,
             1,
             {
@@ -483,7 +446,7 @@ def test_multilabel_metrics(
     targets: torch.Tensor,
     num_classes: int,
     zero_division: int,
-    true_values: Dict[str, float]
+    true_values: Dict[str, float],
 ) -> None:
     """
     Test multilabel metric
@@ -493,7 +456,7 @@ def test_multilabel_metrics(
         zero_division: zero division policy flag
         true_values: true values of metrics
     """
-    metric = MultiLabelPrecisionRecallF1SupportMetric(
+    metric = MultilabelPrecisionRecallF1SupportMetric(
         num_classes=num_classes, zero_division=zero_division
     )
     metrics = metric(outputs=outputs, targets=targets)
@@ -532,10 +495,7 @@ def test_multilabel_metrics(
     ),
 )
 def test_binary_metrics(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    zero_division: int,
-    true_values: Dict[str, float]
+    outputs: torch.Tensor, targets: torch.Tensor, zero_division: int, true_values: Dict[str, float]
 ) -> None:
     """
     Test binary metric
@@ -556,52 +516,44 @@ def test_binary_metrics(
     "outputs_list,targets_list,num_classes,zero_division,true_values",
     (
         (
-            [
-                torch.tensor([1, 2, 3]),
-                torch.tensor([0, 3, 4]),
-                torch.tensor([4, 5]),
-            ],
-            [
-                torch.tensor([1, 2, 4]),
-                torch.tensor([0, 3, 4]),
-                torch.tensor([5, 5]),
-            ],
+            [torch.tensor([1, 2, 3]), torch.tensor([0, 3, 4]), torch.tensor([4, 5]),],
+            [torch.tensor([1, 2, 4]), torch.tensor([0, 3, 4]), torch.tensor([5, 5]),],
             6,
             0,
             {
-                'precision/macro': 0.833333,
-                'precision/micro': 0.75,
-                'precision/weighted': 0.8125,
-                'precision/class_01': 1.0,
-                'precision/class_02': 1.0,
-                'precision/class_03': 1.0,
-                'precision/class_04': 0.5,
-                'precision/class_05': 0.5,
-                'precision/class_06': 1.0,
-                'recall/macro': 0.833333,
-                'recall/micro': 0.75,
-                'recall/weighted': 0.75,
-                'recall/class_01': 1.0,
-                'recall/class_02': 1.0,
-                'recall/class_03': 1.0,
-                'recall/class_04': 1.0,
-                'recall/class_05': 0.5,
-                'recall/class_06': 0.5,
-                'f1/macro': 0.805556,
-                'f1/micro': 0.75,
-                'f1/weighted': 0.75,
-                'f1/class_01': 1.0,
-                'f1/class_02': 1.0,
-                'f1/class_03': 1.0,
-                'f1/class_04': 0.666667,
-                'f1/class_05': 0.5,
-                'f1/class_06': 0.666667,
-                'support/class_01': 1,
-                'support/class_02': 1,
-                'support/class_03': 1,
-                'support/class_04': 1,
-                'support/class_05': 2,
-                'support/class_06': 2
+                "precision/macro": 0.833333,
+                "precision/micro": 0.75,
+                "precision/weighted": 0.8125,
+                "precision/class_01": 1.0,
+                "precision/class_02": 1.0,
+                "precision/class_03": 1.0,
+                "precision/class_04": 0.5,
+                "precision/class_05": 0.5,
+                "precision/class_06": 1.0,
+                "recall/macro": 0.833333,
+                "recall/micro": 0.75,
+                "recall/weighted": 0.75,
+                "recall/class_01": 1.0,
+                "recall/class_02": 1.0,
+                "recall/class_03": 1.0,
+                "recall/class_04": 1.0,
+                "recall/class_05": 0.5,
+                "recall/class_06": 0.5,
+                "f1/macro": 0.805556,
+                "f1/micro": 0.75,
+                "f1/weighted": 0.75,
+                "f1/class_01": 1.0,
+                "f1/class_02": 1.0,
+                "f1/class_03": 1.0,
+                "f1/class_04": 0.666667,
+                "f1/class_05": 0.5,
+                "f1/class_06": 0.666667,
+                "support/class_01": 1,
+                "support/class_02": 1,
+                "support/class_03": 1,
+                "support/class_04": 1,
+                "support/class_05": 2,
+                "support/class_06": 2,
             },
         ),
     ),
@@ -611,7 +563,7 @@ def test_update(
     targets_list: Iterable[torch.Tensor],
     num_classes: int,
     zero_division: int,
-    true_values: Dict[str, float]
+    true_values: Dict[str, float],
 ) -> None:
     """
     Test if metric works correctly while updating.
@@ -622,7 +574,7 @@ def test_update(
         zero_division: zero division policy flag
         true_values: true values of metrics
     """
-    metric = MultiClassPrecisionRecallF1SupportMetric(
+    metric = MulticlassPrecisionRecallF1SupportMetric(
         num_classes=num_classes, zero_division=zero_division
     )
     for outputs, targets in zip(outputs_list, targets_list):

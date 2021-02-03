@@ -5,10 +5,7 @@ import torch
 
 
 def get_segmentation_statistics(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    class_dim: int = 1,
-    threshold: float = None,
+    outputs: torch.Tensor, targets: torch.Tensor, class_dim: int = 1, threshold: float = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """
     Computes true positive, false positive, false negative
@@ -107,10 +104,7 @@ def _get_region_based_metrics(
     """
     assert mode in ["micro", "macro", "weighted", "per-class"]
     segmentation_stats = get_segmentation_statistics(
-        outputs=outputs,
-        targets=targets,
-        class_dim=class_dim,
-        threshold=threshold,
+        outputs=outputs, targets=targets, class_dim=class_dim, threshold=threshold,
     )
     if mode == "micro":
         segmentation_stats = [torch.sum(stats) for stats in segmentation_stats]
@@ -131,17 +125,13 @@ def _get_region_based_metrics(
     return metric
 
 
-def _iou(
-    tp: torch.Tensor, fp: torch.Tensor, fn: torch.Tensor, eps: float = 1e-7
-) -> torch.Tensor:
+def _iou(tp: torch.Tensor, fp: torch.Tensor, fn: torch.Tensor, eps: float = 1e-7) -> torch.Tensor:
     union = tp + fp + fn
     score = (tp + eps * (union == 0).float()) / (tp + fp + fn + eps)
     return score
 
 
-def _dice(
-    tp: torch.Tensor, fp: torch.Tensor, fn: torch.Tensor, eps: float = 1e-7
-) -> torch.Tensor:
+def _dice(tp: torch.Tensor, fp: torch.Tensor, fn: torch.Tensor, eps: float = 1e-7) -> torch.Tensor:
     union = tp + fp + fn
     score = (2 * tp + eps * (union == 0).float()) / (2 * tp + fp + fn + eps)
     return score
@@ -156,9 +146,7 @@ def _trevsky(
     eps: float = 1e-7,
 ) -> torch.Tensor:
     union = tp + fp + fn
-    score = (tp + eps * (union == 0).float()) / (
-        tp + fp * beta + fn * alpha + eps
-    )
+    score = (tp + eps * (union == 0).float()) / (tp + fp * beta + fn * alpha + eps)
     return score
 
 
