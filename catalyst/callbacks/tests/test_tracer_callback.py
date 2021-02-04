@@ -196,7 +196,7 @@ def test_tracer_callback():
         test_callback=test_callback,
     )
 
-    runner = SupervisedRunner(model_input_key="x")
+    runner = SupervisedRunner(input_key="x")
     runner.train(
         model=model,
         criterion=criterion,

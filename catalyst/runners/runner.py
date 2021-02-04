@@ -3,30 +3,25 @@ from collections import OrderedDict
 import os
 
 import torch
-from torch.jit import ScriptModule
-from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
-from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, VerboseCallback
-from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
-from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core.callback import Callback
 from catalyst.core.engine import IEngine
 from catalyst.core.functional import check_callback_isinstance, sort_callbacks_by_order
+from catalyst.core.logger import ILogger
 from catalyst.core.runner import IStageBasedRunner
 from catalyst.core.trial import ITrial
 from catalyst.experiments.experiment import Experiment
-from catalyst.typing import Criterion, Device, Model, Optimizer, RunnerModel, Scheduler
+from catalyst.loggers.console import ConsoleLogger
+from catalyst.loggers.csv import CSVLogger
+from catalyst.loggers.tensorboard import TensorboardLogger
+from catalyst.typing import Criterion, Model, Optimizer, RunnerModel, Scheduler
 from catalyst.utils import check_amp_available
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
-from catalyst.utils.components import process_components
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-from catalyst.utils.scripts import distributed_cmd_run
-from catalyst.utils.torch import get_device, get_requires_grad, set_requires_grad
-from catalyst.utils.tracing import save_traced_model, trace_model
 
 
 def _resolve_bool_fp16(fp16: Union[Dict, bool]) -> Dict:
@@ -68,6 +63,81 @@ class Runner(IStageBasedRunner):
         super().__init__(model=model, engine=engine)
         self._experiment_fn = experiment_fn
 
+    def _process_train_callbacks(
+        self,
+        *,
+        # the data
+        loaders: "OrderedDict[str, DataLoader]",
+        # the core
+        model: Model,
+        engine: Union["IEngine", str] = None,
+        trial: ITrial = None,
+        # the components
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        scheduler: Scheduler = None,
+        # the callbacks
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
+        # extra info (callbacks info)
+        logdir: str = None,
+        resume: str = None,
+        valid_loader: str = "valid",
+        main_metric: str = "loss",
+        minimize_metric: bool = True,
+        verbose: bool = False,
+        timeit: bool = False,
+        check: bool = False,
+        overfit: bool = False,
+        load_best_on_end: bool = False,
+    ):
+        # callbacks handling
+        callbacks = sort_callbacks_by_order(callbacks)
+        is_callback_exists = lambda callback_fn: any(
+            check_callback_isinstance(x, callback_fn) for x in callbacks.values()
+        )
+        if verbose and not is_callback_exists(VerboseCallback):
+            callbacks["_verbose"] = VerboseCallback()
+        if timeit and not is_callback_exists(TimerCallback):
+            callbacks["_timer"] = TimerCallback()
+        if check and not is_callback_exists(CheckRunCallback):
+            callbacks["_check"] = CheckRunCallback()
+        if overfit and not is_callback_exists(BatchOverfitCallback):
+            callbacks["_overfit"] = BatchOverfitCallback()
+
+        if logdir is not None or resume is not None or load_best_on_end:
+            load_on_stage_end = None
+            if load_best_on_end:
+                load_on_stage_end = "best_full"
+                assert logdir is not None, (
+                    "For ``load_best_on_end`` feature " "you need to specify ``logdir``"
+                )
+
+            if not is_callback_exists(ICheckpointCallback):
+                callbacks["_checkpoint"] = CheckpointCallback(
+                    logdir=os.path.join(logdir, "checkpoints"),
+                    loader_key=valid_loader,
+                    metric_key=main_metric,
+                    minimize=minimize_metric,
+                    resume=resume,
+                    load_on_stage_end=load_on_stage_end,
+                )
+            else:
+                raise NotImplementedError("CheckpointCallback already exist")
+        return callbacks
+
+    def _process_train_loggers(self, *, loggers: "Dict[str, ILogger]" = None, logdir: str = None):
+        loggers = loggers or {}
+        is_logger_exists = lambda logger_fn: any(
+            isinstance(x, logger_fn) for x in loggers.values()
+        )
+        if not is_logger_exists(ConsoleLogger):
+            loggers["_console"] = ConsoleLogger()
+        if logdir is not None and not is_logger_exists(CSVLogger):
+            loggers["_csv"] = CSVLogger(logdir=logdir)
+        if logdir is not None and not is_logger_exists(TensorboardLogger):
+            loggers["_tensorboard"] = TensorboardLogger(logdir=os.path.join(logdir, "tensorboard"))
+        return loggers
+
     def train(
         self,
         *,
@@ -84,7 +154,7 @@ class Runner(IStageBasedRunner):
         # the callbacks
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         # the loggers
-        loggers: "Union[Dict[str, ILogger]]" = None,
+        loggers: "Dict[str, ILogger]" = None,
         # experiment info
         seed: int = 42,
         hparams: Dict[str, Any] = None,
@@ -98,13 +168,12 @@ class Runner(IStageBasedRunner):
         minimize_metric: bool = True,
         verbose: bool = False,
         timeit: bool = False,
-        check_run: bool = False,
+        check: bool = False,
         overfit: bool = False,
+        load_best_on_end: bool = False,
         # engine extra params, @TODO: what to do with them?
         fp16: Union[Dict, bool] = None,
         distributed: bool = False,
-        # user-friendly API, @TODO: what to do with it?
-        load_best_on_end: bool = False,
     ) -> None:
         """
         Starts the train stage of the model.
@@ -148,7 +217,7 @@ class Runner(IStageBasedRunner):
             distributed: if `True` will start training
                 in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
-            check_run: if True, then only checks that pipeline is working
+            check: if True, then only checks that pipeline is working
                 (3 epochs only with 3 batches per loader)
             overfit: if True, then takes only one batch per loader
                 for model overfitting, for advance usage please check
@@ -167,48 +236,28 @@ class Runner(IStageBasedRunner):
         """
         # fp16 = _resolve_bool_fp16(fp16)
 
-        # callbacks handling
-        callbacks = sort_callbacks_by_order(callbacks)
-        is_already_present = lambda callback_fn: any(
-            check_callback_isinstance(x, callback_fn) for x in callbacks.values()
+        callbacks = self._process_train_callbacks(
+            loaders=loaders,
+            model=model,
+            engine=engine,
+            trial=trial,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            callbacks=callbacks,
+            logdir=logdir,
+            resume=resume,
+            valid_loader=valid_loader,
+            main_metric=main_metric,
+            minimize_metric=minimize_metric,
+            verbose=verbose,
+            timeit=timeit,
+            check=check,
+            overfit=overfit,
+            load_best_on_end=load_best_on_end,
         )
-        if verbose and not is_already_present(VerboseCallback):
-            callbacks["_verbose"] = VerboseCallback()
-        if timeit and not is_already_present(TimerCallback):
-            callbacks["_timer"] = TimerCallback()
-        if check_run and not is_already_present(CheckRunCallback):
-            callbacks["_check"] = CheckRunCallback()
-        if overfit and not is_already_present(BatchOverfitCallback):
-            callbacks["_overfit"] = BatchOverfitCallback()
 
-        if resume is not None or load_best_on_end:
-            load_on_stage_end = None
-            if load_best_on_end:
-                load_on_stage_end = "best_full"
-                assert logdir is not None, (
-                    "For ``load_best_on_end`` feature " "you need to specify ``logdir``"
-                )
-
-            if not is_already_present(ICheckpointCallback):
-                callbacks["_checkpoint"] = CheckpointCallback(
-                    logdir=os.path.join(logdir, "checkpoints"),
-                    loader_key=valid_loader,
-                    metric_key=main_metric,
-                    minimize=minimize_metric,
-                    resume=resume,
-                    load_on_stage_end=load_on_stage_end,
-                )
-            else:
-                raise NotImplementedError("CheckpointCallback already exist")
-
-        # if isinstance(criterion, Criterion) and not is_already_present(ICriterionCallback):
-        #     callbacks["_criterion"] = CriterionCallback()
-        # if isinstance(optimizer, Optimizer) and not is_already_present(IOptimizerCallback):
-        #     callbacks["_optimizer"] = OptimizerCallback()
-        # if isinstance(scheduler, (Scheduler, ReduceLROnPlateau)) and not is_already_present(
-        #         ISchedulerCallback
-        # ):
-        #     callbacks["_scheduler"] = SchedulerCallback()
+        loggers = self._process_train_loggers(loggers=loggers, logdir=logdir)
 
         experiment = self._experiment_fn(
             # the data
@@ -234,85 +283,6 @@ class Runner(IStageBasedRunner):
         )
         self.experiment = experiment
         self.run()
-
-    # def infer(
-    #     self,
-    #     *,
-    #     model: Model,
-    #     datasets: "OrderedDict[str, Union[Dataset, Dict, Any]]" = None,
-    #     loaders: "OrderedDict[str, DataLoader]" = None,
-    #     callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
-    #     logdir: str = None,
-    #     resume: str = None,
-    #     verbose: bool = False,
-    #     stage_kwargs: Dict = None,
-    #     fp16: Union[Dict, bool] = None,
-    #     check: bool = False,
-    #     timeit: bool = False,
-    #     initial_seed: int = 42,
-    #     state_kwargs: Dict = None,
-    # ) -> None:
-    #     """
-    #     Starts the inference stage of the model.
-    #
-    #     Args:
-    #         model: model for inference
-    #         datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary
-    #             with one or several  ``torch.utils.data.Dataset``
-    #             for training, validation or inference
-    #             used for Loaders automatic creation
-    #             preferred way for distributed training setup
-    #         loaders (OrderedDict[str, DataLoader]): dictionary
-    #             with one or several ``torch.utils.data.DataLoader``
-    #             for training, validation or inference
-    #         callbacks (Union[List[Callback], OrderedDict[str, Callback]]):
-    #             list or dictionary with Catalyst callbacks
-    #         logdir: path to output directory
-    #         resume: path to checkpoint to use for resume
-    #         verbose: if `True`, it displays the status of the training
-    #             to the console.
-    #         stage_kwargs: additional stage params
-    #         fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)
-    #         check: if True, then only checks that pipeline is working
-    #             (3 epochs only)
-    #         timeit: if True, computes the execution time
-    #             of training process and displays it to the console.
-    #         initial_seed: experiment's initial seed value
-    #         state_kwargs: deprecated, use `stage_kwargs` instead
-    #
-    #     Raises:
-    #         NotImplementedError: if both `resume` and `CheckpointCallback`
-    #             already exist
-    #     """
-    #     assert state_kwargs is None or stage_kwargs is None
-    #
-    #     fp16 = _resolve_bool_fp16(fp16)
-    #
-    #     if resume is not None:
-    #         callbacks = sort_callbacks_by_order(callbacks)
-    #         checkpoint_callback_flag = any(
-    #             isinstance(x, CheckpointCallback) for x in callbacks.values()
-    #         )
-    #         if not checkpoint_callback_flag:
-    #             callbacks["loader"] = CheckpointCallback(resume=resume)
-    #         else:
-    #             raise NotImplementedError("CheckpointCallback already exist")
-    #
-    #     experiment = self._experiment_fn(
-    #         stage="infer",
-    #         model=model,
-    #         datasets=datasets,
-    #         loaders=loaders,
-    #         callbacks=callbacks,
-    #         logdir=logdir,
-    #         verbose=verbose,
-    #         check_time=timeit,
-    #         check_run=check,
-    #         stage_kwargs=stage_kwargs or state_kwargs,
-    #         engine_params=fp16,
-    #         initial_seed=initial_seed,
-    #     )
-    #     self.run(experiment)
 
     @torch.no_grad()
     def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
@@ -344,7 +314,7 @@ class Runner(IStageBasedRunner):
         initial_seed: int = 42,
     ) -> Generator:
         """
-        Runs model inference on PyTorch Dataloader and returns
+        Runs model inference on PyTorch DataLoader and returns
         python generator with model predictions from `runner.predict_batch`.
         Cleans up the experiment info to avoid possible collisions.
         Sets `is_train_loader` and `is_valid_loader` to `False` while
@@ -378,112 +348,6 @@ class Runner(IStageBasedRunner):
         set_global_seed(initial_seed)
         for batch in loader:
             yield self.predict_batch(batch)
-
-    # def trace(
-    #     self,
-    #     *,
-    #     model: Model = None,
-    #     batch: Any = None,
-    #     logdir: str = None,
-    #     loader: DataLoader = None,
-    #     method_name: str = "forward",
-    #     mode: str = "eval",
-    #     requires_grad: bool = False,
-    #     fp16: Union[Dict, bool] = None,
-    #     device: Device = "cpu",
-    #     predict_params: dict = None,
-    # ) -> ScriptModule:
-    #     """
-    #     Traces model using Torch Jit.
-    #
-    #     Args:
-    #         model: model to trace
-    #         batch: batch to forward through the model to trace
-    #         logdir (str, optional): If specified,
-    #             the result will be written to the directory
-    #         loader (DataLoader, optional): if batch is not specified, the batch
-    #             will be ``next(iter(loader))``
-    #         method_name: model's method name that will be traced
-    #         mode: ``train`` or ``eval``
-    #         requires_grad: flag to trace with gradients
-    #         fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)
-    #         device: Torch device or a string
-    #         predict_params: additional parameters for model forward
-    #
-    #     Returns:
-    #         ScriptModule: traced model
-    #
-    #     Raises:
-    #         ValueError: if `batch` and `loader` are Nones
-    #     """
-    #     # @TODO: refactor for easy use
-    #     # @TODO: also add quantize, prune, onnx-convert
-    #     if batch is None:
-    #         if loader is None:
-    #             raise ValueError("If batch is not provided the loader must be specified")
-    #         batch = next(iter(loader))
-    #
-    #     if model is not None:
-    #         self.model = model
-    #     assert self.model is not None
-    #
-    #     fp16 = _resolve_bool_fp16(fp16)
-    #     opt_level = None
-    #     if fp16:
-    #         opt_level = fp16.get("opt_level", None)
-    #
-    #     if opt_level is not None:
-    #         device = "cuda"
-    #     elif device is None:
-    #         if self.device is None:
-    #             self.device = get_device()
-    #         device = self.device
-    #
-    #     # Dumping previous state of the model, we will need it to restore
-    #     device_dump, is_training_dump, requires_grad_dump = (
-    #         self.device,
-    #         self.model.training,
-    #         get_requires_grad(self.model),
-    #     )
-    #
-    #     self.model.to(device)
-    #
-    #     # function to run prediction on batch
-    #     def predict_fn(model, inputs, **kwargs):  # noqa: WPS442
-    #         model_dump = self.model
-    #         self.model = model
-    #         result = self.predict_batch(inputs, **kwargs)
-    #         self.model = model_dump
-    #         return result
-    #
-    #     traced_model = trace_model(
-    #         model=self.model,
-    #         predict_fn=predict_fn,
-    #         batch=batch,
-    #         method_name=method_name,
-    #         mode=mode,
-    #         requires_grad=requires_grad,
-    #         opt_level=opt_level,
-    #         device=device,
-    #         predict_params=predict_params,
-    #     )
-    #
-    #     if logdir is not None:
-    #         save_traced_model(
-    #             model=traced_model,
-    #             logdir=logdir,
-    #             method_name=method_name,
-    #             mode=mode,
-    #             requires_grad=requires_grad,
-    #             opt_level=opt_level,
-    #         )
-    #
-    #     # Restore previous state of the model
-    #     getattr(self.model, "train" if is_training_dump else "eval")()
-    #     set_requires_grad(self.model, requires_grad_dump)
-    #     self.model.to(device_dump)
-    #
-    #     return traced_model
 
 
 __all__ = ["Runner"]
