@@ -1,5 +1,11 @@
 from typing import Any, Dict
 from abc import ABC, abstractmethod
+from contextlib import contextmanager
+
+
+@contextmanager
+def nullcontext(enter_result=None):
+    yield enter_result
 
 
 # @TODO: should IEngine be ICallback-based?
@@ -83,6 +89,12 @@ class IEngine(ABC):
     @abstractmethod
     def load_checkpoint(self, path: str) -> Dict:
         pass
+
+    def autocast(self, *args, **kwargs):
+        """AMP scaling context.
+        Default autocast context does not scale anything.
+        """
+        return nullcontext()
 
 
 class Engine(IEngine):
