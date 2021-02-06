@@ -14,7 +14,12 @@ from catalyst.utils import (
     unpack_checkpoint,
 )
 
-from catalyst.utils.onnx import convert_to_onnx, quantize_onnx_model
+from catalyst.utils.onnx import convert_to_onnx
+
+from catalyst.settings import IS_ONNX_AVAILABLE
+
+if IS_ONNX_AVAILABLE:
+    from catalyst.utils.onnx import quantize_onnx_model
 
 if TYPE_CHECKING:
     from catalyst.experiments import ConfigExperiment
@@ -42,6 +47,10 @@ def quantize(
         )
         return quantized_model
     else:
+        if not IS_ONNX_AVAILABLE:
+            raise Exception(
+                "Onnx is not availabel. You can install it with `pip install onnx onnxruntime`"
+            )
         if isinstance(model, torch.nn.Module):
             if "file" in onnx_params.keys():
                 onnx_model = onnx_params["file"]
@@ -58,7 +67,8 @@ def quantize(
         quantize_onnx_model(
             onnx_model_path=onnx_model,
             quantized_model_path="quantized_model.onnx",
-            qtype=dtype
+            qtype=dtype,
+            verbose=True
         )
 
 

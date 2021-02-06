@@ -21,6 +21,13 @@ except ImportError:
     IS_GIT_AVAILABLE = False
 
 try:
+    import onnx, onnxruntime  # noqa: F401
+
+    IS_ONNX_AVAILABLE = True
+except ImportError:
+    IS_ONNX_AVAILABLE = False
+
+try:
     import torch_xla.core.xla_model as xm  # noqa: F401
 
     IS_XLA_AVAILABLE = True
