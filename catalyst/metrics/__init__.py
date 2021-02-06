@@ -9,8 +9,7 @@ from catalyst.metrics.functional import *
 from catalyst.metrics.metric import IMetric, ICallbackLoaderMetric, ICallbackBatchMetric
 from catalyst.metrics.additive import AdditiveValueMetric
 from catalyst.metrics.classification import (
-    PrecisionRecallF1SupportMetric,
-    BinaryPrecisionRecallF1SupportMetric,
+    BinaryPrecisionRecallF1Metric,
     MulticlassPrecisionRecallF1SupportMetric,
     MultilabelPrecisionRecallF1SupportMetric,
 )
