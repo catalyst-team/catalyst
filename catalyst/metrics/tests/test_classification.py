@@ -906,13 +906,28 @@ def test_update(
     ),
 )
 def test_update_key_value_multiclass(
-    outputs_list,
-    targets_list,
-    num_classes,
-    zero_division,
-    update_true_values,
-    compute_true_value,
-):
+    outputs_list: Iterable[torch.Tensor],
+    targets_list: Iterable[torch.Tensor],
+    num_classes: int,
+    zero_division: int,
+    update_true_values: Iterable[Dict[str, float]],
+    compute_true_value: Dict[str, float],
+) -> None:
+    """
+    This test checks that metrics update works correctly with multiple calls.
+    Metric should update statistics and return metrics for tmp input, so in this test
+    we call update_key_value multiple times and check that all the intermediate metrics values
+    are correct. After all the updates it checks that metrics computed with accumulated
+    statistics are correct too.
+
+    Args:
+        outputs_list: sequence of predictions
+        targets_list: sequence of targets
+        num_classes: number of classes
+        zero_division: int value, should be 0 or 1; return it in metrics in case of zero division
+        update_true_values: sequence of true intermediate metrics
+        compute_true_value: total metrics value for all the items from output_list and targets_list
+    """
     metric = MulticlassPrecisionRecallF1SupportMetric(
         num_classes=num_classes, zero_division=zero_division
     )
@@ -1063,13 +1078,28 @@ def test_update_key_value_multiclass(
     ),
 )
 def test_update_key_value_multilabel(
-    outputs_list,
-    targets_list,
-    num_classes,
-    zero_division,
-    update_true_values,
-    compute_true_value,
+        outputs_list: Iterable[torch.Tensor],
+        targets_list: Iterable[torch.Tensor],
+        num_classes: int,
+        zero_division: int,
+        update_true_values: Iterable[Dict[str, float]],
+        compute_true_value: Dict[str, float],
 ):
+    """
+    This test checks that metrics update works correctly with multiple calls.
+    Metric should update statistics and return metrics for tmp input, so in this test
+    we call update_key_value multiple times and check that all the intermediate metrics values
+    are correct. After all the updates it checks that metrics computed with accumulated
+    statistics are correct too.
+
+    Args:
+        outputs_list: sequence of predictions
+        targets_list: sequence of targets
+        num_classes: number of classes
+        zero_division: int value, should be 0 or 1; return it in metrics in case of zero division
+        update_true_values: sequence of true intermediate metrics
+        compute_true_value: total metrics value for all the items from output_list and targets_list
+    """
     metric = MultilabelPrecisionRecallF1SupportMetric(
         num_classes=num_classes, zero_division=zero_division
     )
@@ -1106,12 +1136,26 @@ def test_update_key_value_multilabel(
     ),
 )
 def test_update_key_value_binary(
-    outputs_list,
-    targets_list,
-    zero_division,
-    update_true_values,
-    compute_true_value,
+    outputs_list: Iterable[torch.Tensor],
+    targets_list: Iterable[torch.Tensor],
+    zero_division: int,
+    update_true_values: Iterable[Dict[str, float]],
+    compute_true_value: Dict[str, float],
 ):
+    """
+    This test checks that metrics update works correctly with multiple calls.
+    Metric should update statistics and return metrics for tmp input, so in this test
+    we call update_key_value multiple times and check that all the intermediate metrics values
+    are correct. After all the updates it checks that metrics computed with accumulated
+    statistics are correct too.
+
+    Args:
+        outputs_list: sequence of predictions
+        targets_list: sequence of targets
+        zero_division: int value, should be 0 or 1; return it in metrics in case of zero division
+        update_true_values: sequence of true intermediate metrics
+        compute_true_value: total metrics value for all the items from output_list and targets_list
+    """
     metric = BinaryPrecisionRecallF1Metric(zero_division=zero_division)
     for outputs, targets, update_true_value in zip(
         outputs_list, targets_list, update_true_values
