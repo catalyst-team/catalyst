@@ -14,7 +14,7 @@ class AMPEngine(DeviceEngine):
     def __init__(self, device: str = "cuda"):
         """
         Args:
-            device (str, optional): use device, default is `"cpu"`.
+            device (str): use device, default is `"cpu"`.
         """
         super().__init__(device)
         self.scaler = amp.GradScaler()
@@ -36,11 +36,11 @@ class AMPEngine(DeviceEngine):
         # model
         model = model_fn()
         model = self.sync_device(model)
-        model.forward = amp.autocast()(model.forward)
+        # model.forward = amp.autocast()(model.forward)
         # criterion
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
-        criterion.__call__ = amp.autocast()(criterion.__call__)
+        # criterion.__call__ = amp.autocast()(criterion.__call__)
         # optimizer
         optimizer = optimizer_fn(model=model)
         optimizer = self.sync_device(optimizer)
