@@ -126,4 +126,11 @@ from catalyst.settings import IS_HYDRA_AVAILABLE
 if IS_HYDRA_AVAILABLE:
     from catalyst.utils.hydra_config import prepare_hydra_config
 
+from catalyst.settings import IS_ONNX_AVAILABLE
+
+from catalyst.utils.onnx import convert_to_onnx
+
+if IS_ONNX_AVAILABLE:
+    from catalyst.utils.onnx import quantize_onnx_model
+
 from catalyst.contrib.utils import *
