@@ -11,7 +11,6 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst import dl
-from catalyst.core.runner import IRunner, IStageBasedRunner
 from catalyst.engines.device import DeviceEngine
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
@@ -82,16 +81,16 @@ class CheckRequiresGrad(dl.Callback):
                     self.requires_grad == param.requires_grad
                 ), f"Stage '{stage}', layer '{self.name}': expected - {self.requires_grad}, actual - {param.requires_grad}"
 
-    def on_stage_start(self, runner: "IRunner"):
+    def on_stage_start(self, runner: dl.IRunner):
         self.check_fn(runner.model, runner.stage_key)
 
-    def on_batch_start(self, runner: "IRunner"):
+    def on_batch_start(self, runner: dl.IRunner):
         self.check_fn(runner.model, runner.stage_key)
 
-    def on_batch_end(self, runner: "IRunner"):
+    def on_batch_end(self, runner: dl.IRunner):
         self.check_fn(runner.model, runner.stage_key)
 
-    def on_stage_enf(self, runner: "IRunner"):
+    def on_stage_enf(self, runner: dl.IRunner):
         self.check_fn(runner.model, runner.stage_key)
 
 
@@ -172,7 +171,7 @@ class CustomExperiment(dl.IExperiment):
 
 
 # execute whole experiment
-class SupervisedRunner(IStageBasedRunner):
+class SupervisedRunner(dl.IStageBasedRunner):
     def handle_batch(self, batch):
         x, y = batch
         logits = self.model(x)
