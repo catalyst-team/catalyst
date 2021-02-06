@@ -3,7 +3,6 @@ from collections import defaultdict
 from functools import partial
 
 import numpy as np
-
 import torch
 
 from catalyst.metrics.functional.classification import (

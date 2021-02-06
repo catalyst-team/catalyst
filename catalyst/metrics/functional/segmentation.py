@@ -75,7 +75,7 @@ def _get_region_based_metrics(
     metric_fn: Callable,
     class_dim=None,
     threshold: float = None,
-    mode: str = "micro",
+    mode: str = "per-class",
     weights: Optional[List[float]] = None,
 ) -> torch.Tensor:
     """
@@ -102,7 +102,7 @@ def _get_region_based_metrics(
     Returns:
         Metric
     """
-    assert mode in ["micro", "macro", "weighted", "per-class"]
+    assert mode in ["per-class", "micro", "macro", "weighted"]
     segmentation_stats = get_segmentation_statistics(
         outputs=outputs, targets=targets, class_dim=class_dim, threshold=threshold,
     )
@@ -155,7 +155,7 @@ def iou(
     targets: torch.Tensor,
     class_dim: int = 1,
     threshold: float = None,
-    mode: str = "micro",
+    mode: str = "per-class",
     weights: Optional[List[float]] = None,
     eps: float = 1e-7,
 ) -> torch.Tensor:
@@ -203,7 +203,7 @@ def iou(
         >>>     targets=targets,
         >>>     class_dim=1,
         >>>     threshold=0.5,
-        >>>     mode='separately'
+        >>>     mode="per-class"
         >>> )
         tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])
     """
@@ -225,7 +225,7 @@ def dice(
     targets: torch.Tensor,
     class_dim: int = 1,
     threshold: float = None,
-    mode: str = "micro",
+    mode: str = "per-class",
     weights: Optional[List[float]] = None,
     eps: float = 1e-7,
 ) -> torch.Tensor:
@@ -273,7 +273,7 @@ def dice(
         >>>      targets=targets,
         >>>      class_dim=1,
         >>>      threshold=0.5,
-        >>>      mode='separately'
+        >>>      mode="per-class"
         >>> )
         tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.6667])
     """
@@ -297,7 +297,7 @@ def trevsky(
     beta: Optional[float] = None,
     class_dim: int = 1,
     threshold: float = None,
-    mode: str = "micro",
+    mode: str = "per-class",
     weights: Optional[List[float]] = None,
     eps: float = 1e-7,
 ) -> torch.Tensor:
@@ -348,7 +348,7 @@ def trevsky(
         >>>         alpha=0.2,
         >>>         class_dim=1,
         >>>         threshold=0.5,
-        >>>         mode='separately'
+        >>>         mode="per-class"
         >>> )
         tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.8333])
     """
