@@ -6,45 +6,8 @@ import torch.nn as nn
 
 from catalyst.core.engine import IEngine
 
-# TODO: use to_device from `catalyst.utils.torch.to_device`
-# def to_device(
-#     obj: Union[dict, list, tuple, torch.Tensor, nn.Module], device
-# ) -> Union[dict, torch.Tensor, nn.Module]:
-#     """Move tensors/modules to engine device.
-#
-#     Args:
-#         obj (torch.Tensor or nn.Module or dict/list/tuple):
-#             object to move to device.
-#
-#     Returns:
-#         torch.Tensor or nn.Module or dict/list/tuple where
-#         objects moved to a train device.
-#     """
-#     if isinstance(obj, dict):
-#         return {key: to_device(value, device) for key, value in obj.items()}
-#     if isinstance(obj, (list, tuple)):
-#         return type(obj)(to_device(elem, device) for elem in obj)
-#     elif hasattr(obj, "to"):
-#         return obj.to(device)
-#     else:
-#         return obj
-#
-#
-# # TODO: think about using `self.to_device`
-# def handle_device(self, batch: Mapping[str, Any], device) -> Mapping[str, Any]:
-#     """Move batch to a device.
-#
-#     Args:
-#         batch (Mapping[str, Any]): data which should be moved
-#             to a device.
-#
-#     Returns:
-#         Mapping[str, Any] where each torch.Tensor object will
-#         be on a training device.
-#     """
-#     return to_device(batch, device)
 
-
+# @TODO: merge it with DataParallel version?
 class DeviceEngine(IEngine):
     """Single training device engine."""
 
@@ -56,7 +19,7 @@ class DeviceEngine(IEngine):
         self.device = device
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"DeviceEngine(device='{self.device}')"
+        return f"{self.__class__.__name__}(device='{self.device}')"
 
     @property
     def rank(self) -> int:

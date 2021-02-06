@@ -2,7 +2,7 @@ from collections import OrderedDict
 
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 
-from catalyst.callbacks.criterion import CriterionCallback
+from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core.callback import Callback
@@ -57,19 +57,17 @@ class AutoCallbackExperiment(Experiment):
         # default_callbacks = [(Name, InterfaceClass, InstanceFactory)]
         default_callbacks = []
 
-        optimizer_cls = OptimizerCallback
-
         if not stage.startswith("infer"):
             if self._criterion is not None and isinstance(self._criterion, Criterion):
-                default_callbacks.append(("_criterion", None, CriterionCallback))
+                default_callbacks.append(("_criterion", ICriterionCallback, CriterionCallback))
             if self._optimizer is not None and isinstance(self._optimizer, Optimizer):
-                default_callbacks.append(("_optimizer", IOptimizerCallback, optimizer_cls))
+                default_callbacks.append(("_optimizer", IOptimizerCallback, OptimizerCallback))
             if self._scheduler is not None and isinstance(
                 self._scheduler, (Scheduler, ReduceLROnPlateau)
             ):
                 default_callbacks.append(("_scheduler", ISchedulerCallback, SchedulerCallback))
 
-        for (callback_name, callback_interface, callback_fn,) in default_callbacks:
+        for (callback_name, callback_interface, callback_fn) in default_callbacks:
             callback_interface = callback_interface or callback_fn
             is_already_present = any(
                 check_callback_isinstance(x, callback_interface) for x in callbacks.values()

@@ -2,26 +2,16 @@
 
 from typing import Any, Dict, List
 import logging
-import shutil
+from tempfile import TemporaryDirectory
 
 from pytest import mark
-import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 
 from catalyst import dl
-
-# from catalyst.callbacks import CriterionCallback, OptimizerCallback
-from catalyst.core.callback import Callback, CallbackOrder
-
-# from catalyst.dl import SupervisedRunner
-from catalyst.core.runner import IRunner
 from catalyst.engines import DataParallelEngine
-from catalyst.registry import REGISTRY
-
-# from catalyst.experiments import ConfigExperiment, Experiment
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_CUDA_AVAILABLE
 
 from .test_device_engine import (
     DummyDataset,
@@ -34,6 +24,8 @@ logger = logging.getLogger(__name__)
 
 
 class CustomExperiment(dl.IExperiment):
+    _logdir = "./logdir"
+
     @property
     def seed(self) -> int:
         return 73
@@ -82,7 +74,7 @@ class CustomExperiment(dl.IExperiment):
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
-                loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
             # "check": DeviceCheckCallback(),
             "check2": LossMinimizationCallback("loss"),
@@ -97,7 +89,7 @@ class CustomExperiment(dl.IExperiment):
     def get_loggers(self):
         return {
             "console": dl.ConsoleLogger(),
-            "csv": dl.LogdirLogger(logdir="./logdir"),
+            "csv": dl.CSVLogger(logdir=self._logdir),
         }
 
 
@@ -119,9 +111,11 @@ def run_train_with_experiment_parallel_device():
     #     ],
     #     engine=DataParallelEngine(),
     # )
-    runner = SupervisedRunner()
-    experiment = CustomExperiment()
-    runner.run(experiment)
+    with TemporaryDirectory() as logdir:
+        runner = SupervisedRunner()
+        experiment = CustomExperiment()
+        experiment._logdir = logdir
+        runner.run(experiment)
 
 
 def run_train_with_config_experiment_parallel_device():

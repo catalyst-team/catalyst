@@ -39,7 +39,7 @@ def plot_confusion_matrix(
 
     plt.rcParams.update({"font.size": int(fontsize / np.log2(len(class_names)))})
 
-    f = plt.figure(figsize=(figsize, figsize))
+    figure = plt.figure(figsize=(figsize, figsize))
     plt.title(title)
     plt.imshow(cm, interpolation="nearest", cmap=cmap)
     plt.colorbar()
@@ -70,7 +70,25 @@ def plot_confusion_matrix(
     if show:
         plt.show()
 
-    return f
+    return figure
+
+
+def render_figure_to_numpy(figure):
+    """@TODO: Docs. Contribution is welcome."""
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    plt.ioff()
+
+    figure.canvas.draw()
+
+    image = np.array(figure.canvas.renderer._renderer)  # noqa: WPS437
+    plt.close(figure)
+    del figure
+
+    return image
 
 
 def render_figure_to_tensor(figure):
@@ -92,4 +110,4 @@ def render_figure_to_tensor(figure):
     return image
 
 
-__all__ = ["plot_confusion_matrix", "render_figure_to_tensor"]
+__all__ = ["plot_confusion_matrix", "render_figure_to_numpy", "render_figure_to_tensor"]

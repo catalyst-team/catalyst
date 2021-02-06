@@ -7,18 +7,17 @@ from catalyst.settings import (
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import ICheckpointCallback, CheckpointCallback
+from catalyst.callbacks.confusion_matrix import ConfusionMatrixCallback
 from catalyst.callbacks.control_flow import ControlFlowCallback
 from catalyst.callbacks.criterion import ICriterionCallback, CriterionCallback
-from catalyst.callbacks.metric import IMetricCallback, MetricCallback, LoaderMetricCallback
+from catalyst.callbacks.metric import IMetricCallback, BatchMetricCallback, LoaderMetricCallback
 from catalyst.callbacks.misc import (
     TimerCallback,
     VerboseCallback,
     CheckRunCallback,
-    IRunnerMetricHandler,
     IBatchMetricHandlerCallback,
     IEpochMetricHandlerCallback,
     EarlyStoppingCallback,
-    TopNEpochMetricHandlerCallback,
 )
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.periodic_loader import PeriodicLoaderCallback

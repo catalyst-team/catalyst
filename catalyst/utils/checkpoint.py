@@ -105,7 +105,7 @@ def save_checkpoint(
     is_best: bool = False,
     is_last: bool = False,
     special_suffix: str = "",
-    saver_fn: Callable = torch.save,
+    save_fn: Callable = torch.save,
 ) -> Union[Path, str]:
     """Saving checkpoint to a file.
 
@@ -120,7 +120,7 @@ def save_checkpoint(
             will be generated last checkpoint file.
         special_suffix: suffix to use for
             saving best/last checkpoints.
-        saver_fn: function to use for saving
+        save_fn: function to use for saving
             data to file, default is ``torch.save``
 
     Returns:
@@ -128,7 +128,7 @@ def save_checkpoint(
     """
     os.makedirs(logdir, exist_ok=True)
     filename = f"{logdir}/{suffix}.pth"
-    saver_fn(checkpoint, filename)
+    save_fn(checkpoint, filename)
     if is_best:
         shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
     if is_last:

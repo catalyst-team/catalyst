@@ -21,11 +21,12 @@ except ImportError:
     IS_GIT_AVAILABLE = False
 
 try:
-    import onnx, onnxruntime  # noqa: F401
+    import apex  # noqa: F401
+    from apex import amp  # noqa: F401
 
-    IS_ONNX_AVAILABLE = True
+    IS_APEX_AVAILABLE = True
 except ImportError:
-    IS_ONNX_AVAILABLE = False
+    IS_APEX_AVAILABLE = False
 
 try:
     import torch_xla.core.xla_model as xm  # noqa: F401
@@ -33,6 +34,13 @@ try:
     IS_XLA_AVAILABLE = True
 except ModuleNotFoundError:
     IS_XLA_AVAILABLE = False
+
+try:
+    import onnx, onnxruntime  # noqa: F401
+
+    IS_ONNX_AVAILABLE = True
+except ImportError:
+    IS_ONNX_AVAILABLE = False
 
 try:
     import torch.nn.utils.prune as prune  # noqa: F401

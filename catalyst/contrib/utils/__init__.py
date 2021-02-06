@@ -31,6 +31,7 @@ try:
 
     from catalyst.contrib.utils.visualization import (
         plot_confusion_matrix,
+        render_figure_to_numpy,
         render_figure_to_tensor,
     )
 except ModuleNotFoundError as ex:

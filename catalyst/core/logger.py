@@ -33,6 +33,7 @@ class ILogger:
 
     def log_image(
         self,
+        tag: str,
         image: np.ndarray,
         scope: str = None,
         # experiment info
