@@ -1,18 +1,18 @@
 from typing import Optional, Tuple
 
 import torch
+import numpy as np
 
 from catalyst.metrics.functional.misc import get_multiclass_statistics
 
 
-def precision(tp: int, fp: int, eps: float = 1e-5, zero_division: int = 0) -> float:
+def precision(tp: int, fp: int, zero_division: int = 0) -> float:
     """Calculates precision (a.k.a. positive predictive value) for binary
     classification and segmentation.
 
     Args:
         tp: number of true positives
         fp: number of false positives
-        eps: epsilon to use
         zero_division: int value, should be one of 0 or 1; if both tp==0 and fp==0 return this
             value as s result
 
@@ -24,16 +24,15 @@ def precision(tp: int, fp: int, eps: float = 1e-5, zero_division: int = 0) -> fl
     # so here precision is defined as ppv := 1 - fdr (false discovery rate)
     if tp == 0 and fp == 0:
         return zero_division
-    return 1 - fp / (tp + fp + eps)
+    return 1 - fp / (tp + fp)
 
 
-def recall(tp: int, fn: int, eps=1e-5, zero_division: int = 0) -> float:
+def recall(tp: int, fn: int, zero_division: int = 0) -> float:
     """Calculates recall (a.k.a. true positive rate) for binary classification and segmentation.
 
     Args:
         tp: number of true positives
         fn: number of false negatives
-        eps: epsilon to use
         zero_division: int value, should be one of 0 or 1; if both tp==0 and fn==0 return this
             value as s result
 
@@ -45,7 +44,7 @@ def recall(tp: int, fn: int, eps=1e-5, zero_division: int = 0) -> float:
     # so here recall is defined as tpr := 1 - fnr (false negative rate)
     if tp == 0 and fn == 0:
         return zero_division
-    return 1 - fn / (fn + tp + eps)
+    return 1 - fn / (fn + tp)
 
 
 def f1score(precision_value, recall_value, eps=1e-5):
@@ -132,6 +131,90 @@ def precision_recall_fbeta_support(
     return precision, recall, fbeta, support
 
 
+def get_aggregated_metrics(
+        tp: np.array,
+        fp: np.array,
+        fn: np.array,
+        support: np.array,
+        zero_division: int = 0
+) -> Tuple[np.array, np.array, np.array, np.array]:
+    """
+    Count precision, recall, f1 scores per-class and with macro, weighted and micro average
+    with statistics.
+
+    Args:
+        tp: array of shape (num_classes, ) of true positive statistics per class
+        fp: array of shape (num_classes, ) of false positive statistics per class
+        fn: array of shape (num_classes, ) of false negative statistics per class
+        support: array of shape (num_classes, ) of samples count per class
+        zero_division: int value, should be one of 0 or 1;
+            used for precision and recall computation
+
+    Returns:
+        arrays of metrics: per-class, micro, macro, weighted averaging
+    """
+    num_classes = len(tp)
+    precision_values = np.zeros(shape=(num_classes, ))
+    recall_values = np.zeros(shape=(num_classes, ))
+    f1_values = np.zeros(shape=(num_classes, ))
+
+    for i in range(num_classes):
+        precision_values[i] = precision(tp=tp[i], fp=fp[i], zero_division=zero_division)
+        recall_values[i] = recall(tp=tp[i], fn=fn[i], zero_division=zero_division)
+        f1_values[i] = f1score(
+            precision_value=precision_values[i],
+            recall_value=recall_values[i],
+        )
+
+    per_class = (precision_values, recall_values, f1_values, support,)
+
+    macro = (precision_values.mean(), recall_values.mean(), f1_values.mean(), None,)
+
+    weight = support / support.sum()
+    weighted = (
+        (precision_values * weight).sum(),
+        (recall_values * weight).sum(),
+        (f1_values * weight).sum(),
+        None,
+    )
+
+    micro_precision = precision(tp=tp.sum(), fp=fp.sum(), zero_division=zero_division)
+    micro_recall = recall(tp=tp.sum(), fn=fn.sum(), zero_division=zero_division)
+    micro = (
+        micro_precision,
+        micro_recall,
+        f1score(precision_value=micro_precision, recall_value=micro_recall),
+        None,
+    )
+    return per_class, micro, macro, weighted
+
+
+def get_binary_metrics(tp: int, fp: int, fn: int, zero_division: int) -> Tuple[float, float, float]:
+    """
+    Get precision, recall, f1 score metrics from true positive, false positive,
+        false negative statistics for binary classification
+
+
+    Args:
+        tp: true positive
+        fp: false positive
+        fn: false negative
+        zero_division: int value, should be 0 or 1
+
+    Returns:
+        precision, recall, f1 scores
+    """
+    precision_value = precision(tp=tp, fp=fp, zero_division=zero_division)
+    recall_value = recall(tp=tp, fn=fn, zero_division=zero_division)
+    f1_value = f1score(precision_value=precision_value, recall_value=recall_value)
+    return precision_value, recall_value, f1_value
+
+
 __all__ = [
+    "f1score",
     "precision_recall_fbeta_support",
+    "precision",
+    "recall",
+    "get_aggregated_metrics",
+    "get_binary_metrics",
 ]

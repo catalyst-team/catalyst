@@ -13,8 +13,7 @@ from catalyst.metrics.confusion_matrix import ConfusionMetric
 from catalyst.metrics.accuracy import AccuracyMetric
 from catalyst.metrics.auc import AUCMetric
 from catalyst.metrics.classification import (
-    PrecisionRecallF1SupportMetric,
-    BinaryPrecisionRecallF1SupportMetric,
+    BinaryPrecisionRecallF1Metric,
     MulticlassPrecisionRecallF1SupportMetric,
     MultilabelPrecisionRecallF1SupportMetric,
 )

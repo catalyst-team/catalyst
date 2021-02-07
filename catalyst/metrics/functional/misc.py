@@ -164,7 +164,7 @@ def get_binary_statistics(
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
     """
     Computes the number of true negative, false positive,
-    false negative, true negative and support
+    false negative, true positive and support
     for a binary classification problem for a given label.
 
     Args:
@@ -198,7 +198,7 @@ def get_multiclass_statistics(
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
     """
     Computes the number of true negative, false positive,
-    false negative, true negative and support
+    false negative, true positive and support
     for a multiclass classification problem.
 
     Args:
@@ -249,7 +249,7 @@ def get_multilabel_statistics(
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
     """
     Computes the number of true negative, false positive,
-    false negative, true negative and support
+    false negative, true positive and support
     for a multilabel classification problem.
 
     Args:
