@@ -11,8 +11,8 @@ from catalyst.metrics.metric import ICallbackBatchMetric
 class AccuracyMetric(ICallbackBatchMetric):
     def __init__(
         self,
-        num_classes: int = None,
         topk_args: List[int] = None,
+        num_classes: int = None,
         compute_on_call: bool = True,
         prefix: str = None,
         suffix: str = None,

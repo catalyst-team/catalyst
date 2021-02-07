@@ -33,8 +33,8 @@ def test_mnist():
             optimizer=optimizer,
             callbacks=[OptunaPruningCallback(trial), AccuracyCallback(num_classes=10),],
             num_epochs=10,
-            main_metric="accuracy01",
-            minimize_metric=False,
+            valid_metric="accuracy01",
+            minimize_valid_metric=False,
         )
         return runner.best_valid_metrics[runner.main_metric]
 

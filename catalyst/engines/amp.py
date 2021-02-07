@@ -14,7 +14,7 @@ class AMPEngine(DeviceEngine):
     def __init__(self, device: str = "cuda"):
         """
         Args:
-            device (str, optional): use device, default is `"cpu"`.
+            device (str): use device, default is `"cpu"`.
         """
         super().__init__(device)
         self.scaler = amp.GradScaler()
@@ -22,10 +22,10 @@ class AMPEngine(DeviceEngine):
     def __repr__(self) -> str:  # noqa: D105
         return f"{self.__class__.__name__}(device='{self.device}')"
 
-    def backward_loss(self, model, criterion, optimizer, loss) -> None:
+    def backward_loss(self, loss, model, optimizer) -> None:
         self.scaler.scale(loss).backward()
 
-    def optimizer_step(self, model, criterion, optimizer, loss) -> None:
+    def optimizer_step(self, loss, model, optimizer) -> None:
         self.scaler.step(optimizer)
         self.scaler.update()
 
@@ -36,11 +36,11 @@ class AMPEngine(DeviceEngine):
         # model
         model = model_fn()
         model = self.sync_device(model)
-        model.forward = amp.autocast()(model.forward)
+        # model.forward = amp.autocast()(model.forward)
         # criterion
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
-        criterion.__call__ = amp.autocast()(criterion.__call__)
+        # criterion.__call__ = amp.autocast()(criterion.__call__)
         # optimizer
         optimizer = optimizer_fn(model=model)
         optimizer = self.sync_device(optimizer)
