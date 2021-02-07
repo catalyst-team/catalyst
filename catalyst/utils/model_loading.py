@@ -9,7 +9,7 @@ from catalyst.utils import (
 )
 
 
-def load_model(logdir, checkpoint_name: str = "best", stage: str = None):
+def load_model(logdir: Path, checkpoint_name: str = "best", stage: str = None):
     config_path = logdir / "configs" / "_config.json"
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
 
