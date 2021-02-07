@@ -108,6 +108,14 @@ class SchedulerCallback(ISchedulerCallback):
                 specified in experiment.
         """
         super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
+        if loader_key is not None or metric_key is not None:
+            assert loader_key is not None and metric_key is not None, (
+                "For metric reduction `SchedulerCallback` "
+                "requires both `loader_key` and `metric_key` specified."
+            )
+            self._use_metric_reduction = True
+        else:
+            self._use_metric_reduction = False
         assert mode in ("batch", "epoch", None)
         self.scheduler_key = scheduler_key
         self.mode = mode
@@ -165,7 +173,10 @@ class SchedulerCallback(ISchedulerCallback):
         Args:
             runner: current runner
         """
-        reduced_metric = runner.epoch_metrics[self.loader_key][self.metric_key]
+        if self._use_metric_reduction:
+            reduced_metric = runner.epoch_metrics[self.loader_key][self.metric_key]
+        else:
+            reduced_metric = None
         lr_list, momentum_list = self._scheduler_step(
             scheduler=self.scheduler, reduced_metric=reduced_metric
         )
@@ -182,6 +193,12 @@ class SchedulerCallback(ISchedulerCallback):
         """
         self.scheduler = get_attr(runner, key="scheduler", inner_key=self.scheduler_key)
         assert self.scheduler is not None
+
+        if isinstance(self.scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+            assert self.loader_key is not None and self.metric_key is not None, (
+                "For `ReduceLROnPlateau` scheduler `SchedulerCallback` "
+                "required both `loader_key` and `metric_key` specified"
+            )
 
         if self.mode is None:
             if isinstance(self.scheduler, BatchScheduler):

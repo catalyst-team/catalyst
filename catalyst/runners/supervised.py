@@ -186,8 +186,8 @@ class SupervisedRunner(Runner):
         logdir: str = None,
         resume: str = None,
         valid_loader: str = "valid",
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
+        valid_metric: str = "loss",
+        minimize_valid_metric: bool = True,
         verbose: bool = False,
         timeit: bool = False,
         check: bool = False,
@@ -207,8 +207,8 @@ class SupervisedRunner(Runner):
             logdir=logdir,
             resume=resume,
             valid_loader=valid_loader,
-            main_metric=main_metric,
-            minimize_metric=minimize_metric,
+            valid_metric=valid_metric,
+            minimize_valid_metric=minimize_valid_metric,
             verbose=verbose,
             timeit=timeit,
             check=check,
@@ -228,7 +228,7 @@ class SupervisedRunner(Runner):
             ISchedulerCallback
         ):
             callbacks["_scheduler"] = SchedulerCallback(
-                loader_key=valid_loader, metric_key=main_metric
+                loader_key=valid_loader, metric_key=valid_metric
             )
         return callbacks
 

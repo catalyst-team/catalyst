@@ -22,10 +22,10 @@ class AMPEngine(DeviceEngine):
     def __repr__(self) -> str:  # noqa: D105
         return f"{self.__class__.__name__}(device='{self.device}')"
 
-    def backward_loss(self, model, criterion, optimizer, loss) -> None:
+    def backward_loss(self, loss, model, optimizer) -> None:
         self.scaler.scale(loss).backward()
 
-    def optimizer_step(self, model, criterion, optimizer, loss) -> None:
+    def optimizer_step(self, loss, model, optimizer) -> None:
         self.scaler.step(optimizer)
         self.scaler.update()
 

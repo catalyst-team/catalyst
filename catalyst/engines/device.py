@@ -79,18 +79,19 @@ class DeviceEngine(IEngine):
         # remove backend
         pass
 
-    def zero_grad(self, model, criterion, optimizer, loss) -> None:
+    def zero_grad(self, loss, model, optimizer) -> None:
         model.zero_grad()
 
-    def backward_loss(self, model, criterion, optimizer, loss) -> None:
+    def backward_loss(self, loss, model, optimizer) -> None:
         loss.backward()
 
-    def optimizer_step(self, model, criterion, optimizer, loss) -> None:
+    def optimizer_step(self, loss, model, optimizer) -> None:
         optimizer.step()
 
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
+        # add data parallel support
         return {
             "model": model,
             "criterion": criterion,

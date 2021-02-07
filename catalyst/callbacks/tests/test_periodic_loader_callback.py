@@ -767,8 +767,8 @@ def test_loading_best_state_at_end_with_custom_scores():
         logdir=logdir,
         num_epochs=n_epochs,
         verbose=False,
-        main_metric="metric",
-        minimize_metric=False,
+        valid_metric="metric",
+        minimize_valid_metric=False,
         callbacks=[
             PeriodicLoaderCallback(valid=period),
             CheckRunCallback(num_epoch_steps=n_epochs),

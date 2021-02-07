@@ -60,15 +60,15 @@ class IEngine(ABC):
         pass
 
     @abstractmethod
-    def zero_grad(self, model, criterion, optimizer, loss) -> None:
+    def zero_grad(self, loss, model, optimizer) -> None:
         pass
 
     @abstractmethod
-    def backward_loss(self, model, criterion, optimizer, loss) -> None:
+    def backward_loss(self, loss, model, optimizer) -> None:
         pass
 
     @abstractmethod
-    def optimizer_step(self, model, criterion, optimizer, loss) -> None:
+    def optimizer_step(self, loss, model, optimizer) -> None:
         pass
 
     @abstractmethod

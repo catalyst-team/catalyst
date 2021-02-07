@@ -56,7 +56,7 @@ class APEXEngine(DeviceEngine):
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
-    def backward_loss(self, model, criterion, optimizer, loss) -> None:
+    def backward_loss(self, loss, model, optimizer) -> None:
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 

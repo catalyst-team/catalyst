@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING
 import optuna
 
 from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.tools.metric_handler import MetricHandler
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -42,10 +43,16 @@ class OptunaPruningCallback(Callback):
     Config API is supported through `catalyst-dl tune` command.
     """
 
-    def __init__(self, loader_key: str, metric_key: str, trial: optuna.Trial = None):
+    def __init__(
+        self,
+        loader_key: str,
+        metric_key: str,
+        minimize: bool,
+        min_delta: float = 1e-6,
+        trial: optuna.Trial = None,
+    ):
         """
-        This callback can be used for early stopping (pruning)
-        unpromising runs.
+        This callback can be used for early stopping (pruning) unpromising runs.
 
         Args:
              trial: Optuna.Trial for experiment.
@@ -53,6 +60,9 @@ class OptunaPruningCallback(Callback):
         super().__init__(CallbackOrder.External)
         self.loader_key = loader_key
         self.metric_key = metric_key
+        self.minimize = minimize
+        self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
+        self.best_score = None
         self.trial = trial
 
     def on_stage_start(self, runner: "IRunner"):
@@ -85,8 +95,10 @@ class OptunaPruningCallback(Callback):
         Raises:
             TrialPruned: if current run should be pruned
         """
-        metric_value = runner.epoch_metrics[self.loader_key][self.metric_key]
-        self.trial.report(metric_value, step=runner.stage_epoch_step)
+        score = runner.epoch_metrics[self.loader_key][self.metric_key]
+        if self.best_score is None or self.is_better(score, self.best_score):
+            self.best_score = score
+        self.trial.report(score, step=runner.stage_epoch_step)
         if self.trial.should_prune():
             message = "Trial was pruned at epoch {}.".format(runner.stage_epoch_step)
             raise optuna.TrialPruned(message)
