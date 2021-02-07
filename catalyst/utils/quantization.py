@@ -28,48 +28,20 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def quantize(
+def quantize_model(
         model,
-        qconfig_spec = None,
+        qconfig_spec=None,
         dtype: Union[str, Optional[torch.dtype]] = "qint8",
-        backend: Optional[str] = "torch",
-        onnx_params: Optional[Dict] = None,
 ):
-    assert backend in ["torch", "onnx"]
-    if backend == "torch":
-        if isinstance(dtype, str):
-            type_mapping = {
-                "qint8": torch.qint8,
-                "quint8": torch.quint8
-            }
-        quantized_model = quantization.quantize_dynamic(
-            model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype],
-        )
-        return quantized_model
-    else:
-        if not IS_ONNX_AVAILABLE:
-            raise Exception(
-                "Onnx is not availabel. You can install it with `pip install onnx onnxruntime`"
-            )
-        if isinstance(model, torch.nn.Module):
-            if "file" in onnx_params.keys():
-                onnx_model = onnx_params["file"]
-            else:
-                onnx_model = "model.onnx"
-                onnx_params["file"] = onnx_model
-            convert_to_onnx(model, **onnx_params)
-        elif isinstance(model, str):
-            onnx_model = model
-        else:
-            raise ValueError(
-                "model param should be string or torch.nn.Module"
-            )
-        quantize_onnx_model(
-            onnx_model_path=onnx_model,
-            quantized_model_path="quantized_model.onnx",
-            qtype=dtype,
-            verbose=True
-        )
+    if isinstance(dtype, str):
+        type_mapping = {
+            "qint8": torch.qint8,
+            "quint8": torch.quint8
+        }
+    quantized_model = quantization.quantize_dynamic(
+        model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype],
+    )
+    return quantized_model
 
 
 def save_quantized_model(

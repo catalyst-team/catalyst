@@ -117,6 +117,7 @@ from catalyst.settings import IS_QUANTIZATION_AVAILABLE
 
 if IS_QUANTIZATION_AVAILABLE:
     from catalyst.utils.quantization import (
+        quantize_model,
         save_quantized_model,
         quantize_model_from_checkpoint,
     )

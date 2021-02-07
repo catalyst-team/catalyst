@@ -4,6 +4,11 @@ from typing import Union, List, Tuple, Iterable, Dict
 
 import torch
 
+from catalyst.settings import IS_ONNX_AVAILABLE
+
+if IS_ONNX_AVAILABLE:
+    from onnxruntime.quantization import quantize_dynamic, QuantType
+
 
 def convert_to_onnx(
     model: torch.nn.Module,
@@ -29,7 +34,6 @@ def convert_to_onnx(
 
 
 def quantize_onnx_model(onnx_model_path, quantized_model_path, qtype: str="qint8", verbose: bool = False):
-    from onnxruntime.quantization import quantize_dynamic, QuantType
     type_mapping = {
         "qint8": QuantType.QInt8,
         "quint8": QuantType.QUInt8,
