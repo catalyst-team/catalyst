@@ -1,9 +1,7 @@
 from typing import Any, Dict, Mapping, Union
 
-import torch
-
 import apex.amp as amp
-
+import torch
 
 from catalyst.engines.device import DeviceEngine
 
@@ -62,7 +60,9 @@ class APEXEngine(DeviceEngine):
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 
-    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,) -> Dict:
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
         return {
             "model": model,
             "criterion": criterion,
@@ -75,7 +75,13 @@ class APEXEngine(DeviceEngine):
         }
 
     def unpack_checkpoint(
-        self, checkpoint: Dict, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        checkpoint: Dict,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> None:
 
         if "model_state_dict" in checkpoint:

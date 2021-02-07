@@ -5,10 +5,7 @@ from functools import partial
 import numpy as np
 import torch
 
-from catalyst.metrics.functional.classification import (
-    get_aggregated_metrics,
-    get_binary_metrics,
-)
+from catalyst.metrics.functional.classification import get_aggregated_metrics, get_binary_metrics
 from catalyst.metrics.functional.misc import (
     get_binary_statistics,
     get_multiclass_statistics,
@@ -51,25 +48,19 @@ class StatisticsMetric(ICallbackBatchMetric):
         if mode == "binary":
             self.statistics_fn = get_binary_statistics
         elif mode == "multiclass":
-            self.statistics_fn = partial(
-                get_multiclass_statistics, num_classes=num_classes
-            )
+            self.statistics_fn = partial(get_multiclass_statistics, num_classes=num_classes)
         elif mode == "multilabel":
             self.statistics_fn = get_multilabel_statistics
         else:
-            raise ValueError(
-                f'Mode should be one of "binary", "multiclass", "multilabel".'
-            )
+            raise ValueError(f'Mode should be one of "binary", "multiclass", "multilabel".')
 
         self.num_classes = num_classes
         self.statistics = None
-        self.reset(num_batches=0, num_samples=0)
+        self.reset()
 
-    def reset(self, num_batches: int, num_samples: int) -> None:
+    def reset(self) -> None:
         """Reset all the statistics."""
-        self.statistics = defaultdict(
-            lambda: np.zeros(shape=(self.num_classes,))
-        )
+        self.statistics = defaultdict(lambda: np.zeros(shape=(self.num_classes,)))
 
     def update(
         self, outputs: torch.Tensor, targets: torch.Tensor
@@ -103,17 +94,7 @@ class StatisticsMetric(ICallbackBatchMetric):
 
         return tn, fp, fn, tp, support
 
-    def compute(self) -> Dict[str, Union[int, np.array]]:
-        """
-        Return accumulated statistics
-        Returns:
-            dict of statistics
-        """
-        return self.statistics
-
-    def update_key_value(
-        self, outputs: torch.Tensor, targets: torch.Tensor
-    ) -> Dict[str, float]:
+    def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         """
         Update statistics and return statistics intermediate result
 
@@ -126,6 +107,14 @@ class StatisticsMetric(ICallbackBatchMetric):
         """
         tn, fp, fn, tp, support = self.update(outputs=outputs, targets=targets)
         return {"fn": fn, "fp": fp, "support": support, "tn": tn, "tp": tp}
+
+    def compute(self) -> Dict[str, Union[int, np.array]]:
+        """
+        Return accumulated statistics
+        Returns:
+            dict of statistics
+        """
+        return self.statistics
 
     def compute_key_value(self) -> Dict[str, float]:
         """
@@ -175,15 +164,9 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
             mode=mode,
         )
         self.zero_division = zero_division
-        self.reset(num_batches=0, num_samples=0)
+        self.reset()
 
-    def reset(self, num_batches: int, num_samples: int) -> None:
-        """Reset all the statistics and metrics fields"""
-        super().reset(num_batches=num_batches, num_samples=num_samples)
-
-    def _convert_metrics_to_kv(
-        self, per_class, micro, macro, weighted
-    ) -> Dict[str, float]:
+    def _convert_metrics_to_kv(self, per_class, micro, macro, weighted) -> Dict[str, float]:
         """
         Convert metrics aggregation to key-value format
 
@@ -222,6 +205,41 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         kv_metrics.update(per_class_metrics)
         return kv_metrics
 
+    def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> Tuple[Any, Any, Any, Any]:
+        """
+        Update statistics and return intermediate metrics results
+
+        Args:
+            outputs: prediction values
+            targets: true answers
+
+        Returns:
+            tuple of metrics intermediate results with per-class, micro, macro and
+                weighted averaging
+        """
+        tn, fp, fn, tp, support = super().update(outputs=outputs, targets=targets)
+        per_class, micro, macro, weighted = get_aggregated_metrics(
+            tp=tp, fp=fp, fn=fn, support=support, zero_division=self.zero_division,
+        )
+        return per_class, micro, macro, weighted
+
+    def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+        """
+        Update statistics and return intermediate metrics results
+
+        Args:
+            outputs: prediction values
+            targets: true answers
+
+        Returns:
+            dict of metrics intermediate results
+        """
+        per_class, micro, macro, weighted = self.update(outputs=outputs, targets=targets)
+        metrics = self._convert_metrics_to_kv(
+            per_class=per_class, micro=micro, macro=macro, weighted=weighted
+        )
+        return metrics
+
     def compute(self) -> Any:
         """
         Compute precision, recall, f1 score and support.
@@ -249,53 +267,6 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
             dict of metrics
         """
         per_class, micro, macro, weighted = self.compute()
-        metrics = self._convert_metrics_to_kv(
-            per_class=per_class, micro=micro, macro=macro, weighted=weighted
-        )
-        return metrics
-
-    def update(
-        self, outputs: torch.Tensor, targets: torch.Tensor
-    ) -> Tuple[Any, Any, Any, Any]:
-        """
-        Update statistics and return intermediate metrics results
-
-        Args:
-            outputs: prediction values
-            targets: true answers
-
-        Returns:
-            tuple of metrics intermediate results with per-class, micro, macro and
-                weighted averaging
-        """
-        tn, fp, fn, tp, support = super().update(
-            outputs=outputs, targets=targets
-        )
-        per_class, micro, macro, weighted = get_aggregated_metrics(
-            tp=tp,
-            fp=fp,
-            fn=fn,
-            support=support,
-            zero_division=self.zero_division,
-        )
-        return per_class, micro, macro, weighted
-
-    def update_key_value(
-        self, outputs: torch.Tensor, targets: torch.Tensor
-    ) -> Dict[str, float]:
-        """
-        Update statistics and return intermediate metrics results
-
-        Args:
-            outputs: prediction values
-            targets: true answers
-
-        Returns:
-            dict of metrics intermediate results
-        """
-        per_class, micro, macro, weighted = self.update(
-            outputs=outputs, targets=targets
-        )
         metrics = self._convert_metrics_to_kv(
             per_class=per_class, micro=micro, macro=macro, weighted=weighted
         )
@@ -330,25 +301,7 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
             suffix=suffix,
         )
         self.zero_division = zero_division
-
-    def reset(self, num_batches: int, num_samples: int) -> None:
-        """Reset all the statistics and metrics fields."""
-        self.statistics = defaultdict(float)
-
-    def compute(self) -> Tuple[float, float, float]:
-        """
-        Compute metrics with accumulated statistics
-
-        Returns:
-            tuple of metrics: precision, recall, f1 score
-        """
-        precision_value, recall_value, f1_value = get_binary_metrics(
-            tp=self.statistics["tp"],
-            fp=self.statistics["fp"],
-            fn=self.statistics["fn"],
-            zero_division=self.zero_division,
-        )
-        return precision_value, recall_value, f1_value
+        self.reset()
 
     @staticmethod
     def _convert_metrics_to_kv(
@@ -372,24 +325,11 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         }
         return kv_metrics
 
-    def compute_key_value(self) -> Dict[str, float]:
-        """
-        Compute metrics with all accumulated statistics
+    def reset(self) -> None:
+        """Reset all the statistics and metrics fields."""
+        self.statistics = defaultdict(float)
 
-        Returns:
-            dict of metrics
-        """
-        precision_value, recall_value, f1_value = self.compute()
-        kv_metrics = self._convert_metrics_to_kv(
-            precision_value=precision_value,
-            recall_value=recall_value,
-            f1_value=f1_value,
-        )
-        return kv_metrics
-
-    def update(
-        self, outputs: torch.Tensor, targets: torch.Tensor
-    ) -> Tuple[float, float, float]:
+    def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> Tuple[float, float, float]:
         """
         Update statistics and return metrics intermediate results
 
@@ -400,17 +340,13 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         Returns:
             tuple of intermediate metrics: precision, recall, f1 score
         """
-        tn, fp, fn, tp, support = super().update(
-            outputs=outputs, targets=targets
-        )
+        tn, fp, fn, tp, support = super().update(outputs=outputs, targets=targets)
         precision_value, recall_value, f1_value = get_binary_metrics(
             tp=tp, fp=fp, fn=fn, zero_division=self.zero_division
         )
         return precision_value, recall_value, f1_value
 
-    def update_key_value(
-        self, outputs: torch.Tensor, targets: torch.Tensor
-    ) -> Dict[str, float]:
+    def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         """
         Update statistics and return metrics intermediate results
 
@@ -421,13 +357,37 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         Returns:
             dict of intermediate metrics
         """
-        precision_value, recall_value, f1_value = self.update(
-            outputs=outputs, targets=targets
-        )
+        precision_value, recall_value, f1_value = self.update(outputs=outputs, targets=targets)
         kv_metrics = self._convert_metrics_to_kv(
-            precision_value=precision_value,
-            recall_value=recall_value,
-            f1_value=f1_value,
+            precision_value=precision_value, recall_value=recall_value, f1_value=f1_value,
+        )
+        return kv_metrics
+
+    def compute(self) -> Tuple[float, float, float]:
+        """
+        Compute metrics with accumulated statistics
+
+        Returns:
+            tuple of metrics: precision, recall, f1 score
+        """
+        precision_value, recall_value, f1_value = get_binary_metrics(
+            tp=self.statistics["tp"],
+            fp=self.statistics["fp"],
+            fn=self.statistics["fn"],
+            zero_division=self.zero_division,
+        )
+        return precision_value, recall_value, f1_value
+
+    def compute_key_value(self) -> Dict[str, float]:
+        """
+        Compute metrics with all accumulated statistics
+
+        Returns:
+            dict of metrics
+        """
+        precision_value, recall_value, f1_value = self.compute()
+        kv_metrics = self._convert_metrics_to_kv(
+            precision_value=precision_value, recall_value=recall_value, f1_value=f1_value,
         )
         return kv_metrics
 

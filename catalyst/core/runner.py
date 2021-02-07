@@ -132,6 +132,12 @@ class IRunner(ICallback, ILogger, ABC):
         self.need_early_stop: bool = False
         self.need_exception_reraise: bool = True
 
+    # @TODO: remove hotfix
+    @property
+    def device(self) -> Device:
+        """Returns the runner's device instance."""
+        return self.engine.device
+
     def log_metrics(self, *args, **kwargs) -> None:
         for logger in self.loggers.values():
             logger.log_metrics(
@@ -484,7 +490,9 @@ class IStageBasedRunner(IRunner):
         loaders = validate_loaders(loaders)
         self.loaders = loaders
 
-        migrate_model_from_previous_stage = stage_params.get("migrate_model_from_previous_stage", True)
+        migrate_model_from_previous_stage = stage_params.get(
+            "migrate_model_from_previous_stage", True
+        )
         # some custom logic is possible here
         if self.model is not None and migrate_model_from_previous_stage:
             model_fn = lambda: self.model
@@ -494,7 +502,12 @@ class IStageBasedRunner(IRunner):
         # @TODO: we need a better approach here
         # seed fix during components creation for reproducibility
         set_global_seed(self.experiment.seed + self.global_epoch_step)
-        (self.model, self.criterion, self.optimizer, self.scheduler,) = self.engine.init_components(
+        (
+            self.model,
+            self.criterion,
+            self.optimizer,
+            self.scheduler,
+        ) = self.engine.init_components(
             model_fn=model_fn,
             criterion_fn=partial(self.experiment.get_criterion, stage=self.stage_key),
             optimizer_fn=partial(self.experiment.get_optimizer, stage=self.stage_key),
@@ -502,7 +515,9 @@ class IStageBasedRunner(IRunner):
         )
 
         # @TODO: we could refactor here
-        migrate_callbacks_from_previous_stage = stage_params.get("migrate_callbacks_from_previous_stage", True)
+        migrate_callbacks_from_previous_stage = stage_params.get(
+            "migrate_callbacks_from_previous_stage", True
+        )
         # seed fix during callbacks creation for reproducibility
         set_global_seed(self.experiment.seed + self.engine.rank + self.global_epoch_step)
         callbacks = self.experiment.get_callbacks(self.stage_key)

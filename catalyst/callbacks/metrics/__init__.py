@@ -1,4 +1,8 @@
-# # flake8: noqa
+# flake8: noqa
+
+from catalyst.callbacks.metrics.accuracy import AccuracyCallback
+from catalyst.callbacks.metrics.auc import AUCCallback
+
 #
 # from catalyst.callbacks.metrics.accuracy import (
 #     AccuracyCallback,

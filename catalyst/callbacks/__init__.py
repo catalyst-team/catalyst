@@ -28,6 +28,8 @@ from catalyst.callbacks.scheduler import (
     LRFinder,
 )
 
+from catalyst.callbacks.metrics import *
+
 # if IS_QUANTIZATION_AVAILABLE:
 #     from catalyst.callbacks.quantization import DynamicQuantizationCallback
 

@@ -1,7 +1,7 @@
 from typing import Optional, Tuple
 
-import torch
 import numpy as np
+import torch
 
 from catalyst.metrics.functional.misc import get_multiclass_statistics
 
@@ -132,11 +132,7 @@ def precision_recall_fbeta_support(
 
 
 def get_aggregated_metrics(
-        tp: np.array,
-        fp: np.array,
-        fn: np.array,
-        support: np.array,
-        zero_division: int = 0
+    tp: np.array, fp: np.array, fn: np.array, support: np.array, zero_division: int = 0
 ) -> Tuple[np.array, np.array, np.array, np.array]:
     """
     Count precision, recall, f1 scores per-class and with macro, weighted and micro average
@@ -154,21 +150,28 @@ def get_aggregated_metrics(
         arrays of metrics: per-class, micro, macro, weighted averaging
     """
     num_classes = len(tp)
-    precision_values = np.zeros(shape=(num_classes, ))
-    recall_values = np.zeros(shape=(num_classes, ))
-    f1_values = np.zeros(shape=(num_classes, ))
+    precision_values = np.zeros(shape=(num_classes,))
+    recall_values = np.zeros(shape=(num_classes,))
+    f1_values = np.zeros(shape=(num_classes,))
 
     for i in range(num_classes):
         precision_values[i] = precision(tp=tp[i], fp=fp[i], zero_division=zero_division)
         recall_values[i] = recall(tp=tp[i], fn=fn[i], zero_division=zero_division)
-        f1_values[i] = f1score(
-            precision_value=precision_values[i],
-            recall_value=recall_values[i],
-        )
+        f1_values[i] = f1score(precision_value=precision_values[i], recall_value=recall_values[i],)
 
-    per_class = (precision_values, recall_values, f1_values, support,)
+    per_class = (
+        precision_values,
+        recall_values,
+        f1_values,
+        support,
+    )
 
-    macro = (precision_values.mean(), recall_values.mean(), f1_values.mean(), None,)
+    macro = (
+        precision_values.mean(),
+        recall_values.mean(),
+        f1_values.mean(),
+        None,
+    )
 
     weight = support / support.sum()
     weighted = (
@@ -189,7 +192,9 @@ def get_aggregated_metrics(
     return per_class, micro, macro, weighted
 
 
-def get_binary_metrics(tp: int, fp: int, fn: int, zero_division: int) -> Tuple[float, float, float]:
+def get_binary_metrics(
+    tp: int, fp: int, fn: int, zero_division: int
+) -> Tuple[float, float, float]:
     """
     Get precision, recall, f1 score metrics from true positive, false positive,
         false negative statistics for binary classification

@@ -1,13 +1,13 @@
 from typing import Tuple
 
-import pytest
 import numpy as np
+import pytest
 
 from catalyst.metrics.functional.classification import (
-    precision,
-    recall,
     f1score,
     get_aggregated_metrics,
+    precision,
+    recall,
 )
 
 EPS = 1e-5
@@ -15,12 +15,7 @@ EPS = 1e-5
 
 @pytest.mark.parametrize(
     "tp,fp,zero_division,true_value",
-    (
-            (5, 3, 1, 0.625),
-            (5, 5, 0, 0.5),
-            (0, 0, 0, 0),
-            (0, 0, 1, 1),
-    )
+    ((5, 3, 1, 0.625), (5, 5, 0, 0.5), (0, 0, 0, 0), (0, 0, 1, 1),),
 )
 def test_precision(tp: int, fp: int, zero_division: int, true_value: float):
     """
@@ -38,12 +33,7 @@ def test_precision(tp: int, fp: int, zero_division: int, true_value: float):
 
 @pytest.mark.parametrize(
     "tp,fn,zero_division,true_value",
-    (
-        (5, 3, 1, 0.625),
-        (5, 5, 0, 0.5),
-        (0, 0, 0, 0),
-        (0, 0, 1, 1),
-    )
+    ((5, 3, 1, 0.625), (5, 5, 0, 0.5), (0, 0, 0, 0), (0, 0, 1, 1),),
 )
 def test_recall(tp: int, fn: int, zero_division: int, true_value: float):
     """
@@ -61,11 +51,7 @@ def test_recall(tp: int, fn: int, zero_division: int, true_value: float):
 
 @pytest.mark.parametrize(
     "precision_value,recall_value,true_value",
-    (
-        (0.8, 0.7, 0.746667),
-        (0.5, 0.5, 0.5),
-        (0.6, 0.4, 0.48),
-    ),
+    ((0.8, 0.7, 0.746667), (0.5, 0.5, 0.5), (0.6, 0.4, 0.48),),
 )
 def test_f1score(precision_value: float, recall_value: float, true_value: float):
     """
@@ -84,38 +70,38 @@ def test_f1score(precision_value: float, recall_value: float, true_value: float)
     "tp,fp,fn,support,zero_division,true_answer",
     (
         (
-            np.array([0., 1., 1., 0.]),
-            np.array([0., 0., 0., 1.]),
-            np.array([1., 0., 0., 0.]),
-            np.array([1., 1., 1., 0.]),
+            np.array([0.0, 1.0, 1.0, 0.0]),
+            np.array([0.0, 0.0, 0.0, 1.0]),
+            np.array([1.0, 0.0, 0.0, 0.0]),
+            np.array([1.0, 1.0, 1.0, 0.0]),
             1,
             (0.666667, 0.666667, 0.666667),
         ),
         (
-            np.array([1., 2., 2., 0.]),
-            np.array([0., 0., 0., 2.]),
-            np.array([2., 0., 0., 0.]),
-            np.array([3., 2., 2., 0.]),
+            np.array([1.0, 2.0, 2.0, 0.0]),
+            np.array([0.0, 0.0, 0.0, 2.0]),
+            np.array([2.0, 0.0, 0.0, 0.0]),
+            np.array([3.0, 2.0, 2.0, 0.0]),
             0,
             (0.714286, 0.714286, 0.714286),
         ),
         (
-            np.array([1., 2., 2., 0., 0., 0.]),
-            np.array([0., 0., 0., 2., 1., 1.]),
-            np.array([3., 0., 0., 0., 0., 1.]),
-            np.array([4., 2., 2., 0., 0., 1.]),
+            np.array([1.0, 2.0, 2.0, 0.0, 0.0, 0.0]),
+            np.array([0.0, 0.0, 0.0, 2.0, 1.0, 1.0]),
+            np.array([3.0, 0.0, 0.0, 0.0, 0.0, 1.0]),
+            np.array([4.0, 2.0, 2.0, 0.0, 0.0, 1.0]),
             0,
             (0.555556, 0.555556, 0.555556),
-        )
-    )
+        ),
+    ),
 )
 def test_micro(
-        tp: np.array,
-        fp: np.array,
-        fn: np.array,
-        support: np.array,
-        zero_division: int,
-        true_answer: Tuple[float]
+    tp: np.array,
+    fp: np.array,
+    fn: np.array,
+    support: np.array,
+    zero_division: int,
+    true_answer: Tuple[float],
 ):
     """
     Test micro metrics averaging
@@ -148,30 +134,30 @@ def test_micro(
             (0.277778, 0.311111, 0.292929),
         ),
         (
-            np.array([1., 2., 1., 0., 1., 1.]),
-            np.array([0., 0., 1., 1., 0., 0.]),
-            np.array([1., 1., 0., 0., 0., 0.]),
-            np.array([2., 3., 1., 0., 1., 1.]),
+            np.array([1.0, 2.0, 1.0, 0.0, 1.0, 1.0]),
+            np.array([0.0, 0.0, 1.0, 1.0, 0.0, 0.0]),
+            np.array([1.0, 1.0, 0.0, 0.0, 0.0, 0.0]),
+            np.array([2.0, 3.0, 1.0, 0.0, 1.0, 1.0]),
             0,
             (0.75, 0.694444, 0.688889),
         ),
         (
-            np.array([0., 1., 1., 0.]),
-            np.array([0., 0., 0., 1.]),
-            np.array([1., 0., 0., 0.]),
-            np.array([1., 1., 1., 0.]),
+            np.array([0.0, 1.0, 1.0, 0.0]),
+            np.array([0.0, 0.0, 0.0, 1.0]),
+            np.array([1.0, 0.0, 0.0, 0.0]),
+            np.array([1.0, 1.0, 1.0, 0.0]),
             1,
             (0.75, 0.75, 0.5),
         ),
-    )
+    ),
 )
 def test_macro_average(
-        tp: np.array,
-        fp: np.array,
-        fn: np.array,
-        support: np.array,
-        zero_division: int,
-        true_answer: Tuple[float]
+    tp: np.array,
+    fp: np.array,
+    fn: np.array,
+    support: np.array,
+    zero_division: int,
+    true_answer: Tuple[float],
 ):
     """
     Test macro metrics averaging
@@ -196,38 +182,38 @@ def test_macro_average(
     "tp,fp,fn,support,zero_division,true_answer",
     (
         (
-            np.array([1., 2., 2., 0., 0., 0.]),
-            np.array([0., 0., 0., 2., 1., 1.]),
-            np.array([3., 0., 0., 0., 0., 1.]),
-            np.array([4., 2., 2., 0., 0., 1.]),
+            np.array([1.0, 2.0, 2.0, 0.0, 0.0, 0.0]),
+            np.array([0.0, 0.0, 0.0, 2.0, 1.0, 1.0]),
+            np.array([3.0, 0.0, 0.0, 0.0, 0.0, 1.0]),
+            np.array([4.0, 2.0, 2.0, 0.0, 0.0, 1.0]),
             0,
             (0.888889, 0.555556, 0.622222),
         ),
         (
-            np.array([1., 2., 2., 0.]),
-            np.array([0., 0., 0., 2.]),
-            np.array([2., 0., 0., 0.]),
-            np.array([3., 2., 2., 0.]),
+            np.array([1.0, 2.0, 2.0, 0.0]),
+            np.array([0.0, 0.0, 0.0, 2.0]),
+            np.array([2.0, 0.0, 0.0, 0.0]),
+            np.array([3.0, 2.0, 2.0, 0.0]),
             0,
             (1.0, 0.714286, 0.785714),
         ),
         (
-            np.array([0., 1.]),
-            np.array([1., 1.]),
-            np.array([1., 1.]),
-            np.array([1., 2.]),
+            np.array([0.0, 1.0]),
+            np.array([1.0, 1.0]),
+            np.array([1.0, 1.0]),
+            np.array([1.0, 2.0]),
             0,
             (0.333333, 0.333333, 0.333333),
         ),
-    )
+    ),
 )
 def test_weighted(
-        tp: np.array,
-        fp: np.array,
-        fn: np.array,
-        support: np.array,
-        zero_division: int,
-        true_answer: Tuple[float]
+    tp: np.array,
+    fp: np.array,
+    fn: np.array,
+    support: np.array,
+    zero_division: int,
+    true_answer: Tuple[float],
 ):
     """
     Test weighted metrics averaging

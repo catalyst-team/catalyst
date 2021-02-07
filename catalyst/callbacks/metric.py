@@ -10,7 +10,7 @@ class IMetricCallback(Callback):
     pass
 
 
-# @TODO: add KV support
+# @TODO: add KV support for input/output
 class BatchMetricCallback(IMetricCallback):
     def __init__(
         self,

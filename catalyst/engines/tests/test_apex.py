@@ -14,12 +14,7 @@ from catalyst import dl
 from catalyst.engines.apex import APEXEngine
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-
-from .test_device import (  # SupervisedRunner,
-    DummyDataset,
-    DummyModel,
-    LossMinimizationCallback,
-)
+from .test_device import DummyDataset, DummyModel, LossMinimizationCallback  # SupervisedRunner,
 
 logger = logging.getLogger(__name__)
 
@@ -59,7 +54,9 @@ class TensorTypeChecker(dl.Callback):
         self.expected_type = OPT_TYPE_MAP[opt_level]
 
     def on_batch_end(self, runner):
-        check_tensor = runner.batch_metrics[self.key] if self.use_batch_metrics else runner.batch[self.key]
+        check_tensor = (
+            runner.batch_metrics[self.key] if self.use_batch_metrics else runner.batch[self.key]
+        )
         assert check_tensor.dtype == self.expected_type, (
             f"Wrong types for {self.opt_level} - actual is "
             f"'{check_tensor.dtype}' but expected is '{self.expected_type}'!"
@@ -115,7 +112,9 @@ class CustomExperiment(dl.IExperiment):
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
+            "criterion": dl.CriterionCallback(
+                metric_key="loss", input_key="logits", target_key="targets"
+            ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             # TODO: fix issue with pickling wrapped model's forward function
