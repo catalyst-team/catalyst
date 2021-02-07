@@ -12,7 +12,7 @@ if IS_ONNX_AVAILABLE:
 
 def convert_to_onnx(
     model: torch.nn.Module,
-    inp_shape: Union[List, Tuple, torch.Size],
+    input_shape: Union[List, Tuple, torch.Size],
     input_names: Iterable = None,
     output_names: List[str] = None,
     file="model.onnx",
