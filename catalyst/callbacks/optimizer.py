@@ -307,6 +307,9 @@ class IOptimizerCallback(Callback):
 #             self.scaler = None
 
 
+# @TODO:
+# - return gradient accumulation
+# - return optimizer lr/momentum logging
 class OptimizerCallback(IOptimizerCallback):
     def __init__(
         self,
@@ -333,7 +336,6 @@ class OptimizerCallback(IOptimizerCallback):
     def on_batch_end(self, runner: "IRunner"):
         if runner.is_train_loader:
             loss = runner.batch_metrics[self.metric_key]
-            # @TODO: do we need criterion here? Looks like no :)
             runner.engine.zero_grad(loss, self.model, self.optimizer)
             runner.engine.backward_loss(loss, self.model, self.optimizer)
             runner.engine.optimizer_step(loss, self.model, self.optimizer)

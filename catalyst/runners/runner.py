@@ -5,9 +5,10 @@ import os
 import torch
 from torch.utils.data import DataLoader, Dataset
 
+from catalyst.callbacks.criterion import ICriterionCallback, CriterionCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
-from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, VerboseCallback
+from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.core.callback import Callback
 from catalyst.core.engine import IEngine
 from catalyst.core.functional import check_callback_isinstance, sort_callbacks_by_order
@@ -95,8 +96,8 @@ class Runner(IStageBasedRunner):
         is_callback_exists = lambda callback_fn: any(
             check_callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
-        if verbose and not is_callback_exists(VerboseCallback):
-            callbacks["_verbose"] = VerboseCallback()
+        if verbose and not is_callback_exists(TqdmCallback):
+            callbacks["_verbose"] = TqdmCallback()
         if timeit and not is_callback_exists(TimerCallback):
             callbacks["_timer"] = TimerCallback()
         if check and not is_callback_exists(CheckRunCallback):
@@ -256,6 +257,14 @@ class Runner(IStageBasedRunner):
             overfit=overfit,
             load_best_on_end=load_best_on_end,
         )
+
+        if valid_metric is not None:
+            have_required_callback = False
+            for callback in callbacks.values():
+                if isinstance(callback, CriterionCallback) and callback.metric_key == valid_metric:
+                    have_required_callback = True
+            assert have_required_callback, \
+                f"No CriterionCallback with `metric_key={valid_metric}` were found"
 
         loggers = self._process_train_loggers(loggers=loggers, logdir=logdir)
 

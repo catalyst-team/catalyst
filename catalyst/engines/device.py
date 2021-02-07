@@ -61,6 +61,7 @@ class DeviceEngine(IEngine):
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
         # @TODO: how could we do better?)
+        # @TODO: should we move this logic to the Runner?
         # model
         model = model_fn()
         model = self.sync_device(model)

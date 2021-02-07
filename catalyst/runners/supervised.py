@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader, Dataset
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
-from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, VerboseCallback
+from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core.callback import Callback
@@ -185,8 +185,8 @@ class SupervisedRunner(Runner):
         # extra info (callbacks info)
         logdir: str = None,
         resume: str = None,
-        valid_loader: str = "valid",
-        valid_metric: str = "loss",
+        valid_loader: str = None,
+        valid_metric: str = None,
         minimize_valid_metric: bool = True,
         verbose: bool = False,
         timeit: bool = False,
@@ -218,12 +218,13 @@ class SupervisedRunner(Runner):
         is_callback_exists = lambda callback_fn: any(
             check_callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
+        default_loss_key = "loss"
         if isinstance(criterion, Criterion) and not is_callback_exists(ICriterionCallback):
             callbacks["_criterion"] = CriterionCallback(
-                input_key=self.output_key, target_key=self.target_key, metric_key="loss",
+                input_key=self.output_key, target_key=self.target_key, metric_key=default_loss_key,
             )
         if isinstance(optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
-            callbacks["_optimizer"] = OptimizerCallback(metric_key="loss",)
+            callbacks["_optimizer"] = OptimizerCallback(metric_key=default_loss_key)
         if isinstance(scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
             ISchedulerCallback
         ):

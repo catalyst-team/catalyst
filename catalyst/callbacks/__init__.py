@@ -13,7 +13,7 @@ from catalyst.callbacks.criterion import ICriterionCallback, CriterionCallback
 from catalyst.callbacks.metric import IMetricCallback, BatchMetricCallback, LoaderMetricCallback
 from catalyst.callbacks.misc import (
     TimerCallback,
-    VerboseCallback,
+    TqdmCallback,
     CheckRunCallback,
     IBatchMetricHandlerCallback,
     IEpochMetricHandlerCallback,

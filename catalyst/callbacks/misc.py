@@ -163,11 +163,11 @@ class TimerCallback(Callback):
         self.timer.start("_timer/data_time")
 
 
-class VerboseCallback(Callback):
+class TqdmCallback(Callback):
     """Logs the params into console."""
 
     def __init__(self):
-        super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.master)
         self.tqdm: tqdm = None
         self.step = 0
 
@@ -211,7 +211,7 @@ class VerboseCallback(Callback):
 
         if isinstance(exception, KeyboardInterrupt):
             if self.tqdm is not None:
-                self.tqdm.write("Early exiting")
+                self.tqdm.write("Keyboard Interrupt")
                 self.tqdm.clear()
                 self.tqdm.close()
                 self.tqdm = None
@@ -291,7 +291,7 @@ class CheckRunCallback(Callback):
 
 __all__ = [
     "TimerCallback",
-    "VerboseCallback",
+    "TqdmCallback",
     "CheckRunCallback",
     "MetricHandler",
     "IBatchMetricHandlerCallback",

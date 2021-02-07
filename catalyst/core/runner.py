@@ -204,11 +204,6 @@ class IRunner(ICallback, ILogger, ABC):
             logger.close_log()
 
     def on_experiment_start(self, runner: "IRunner"):
-        """Event handler for experiment start.
-
-        Args:
-            runner: IRunner instance.
-        """
         assert self.experiment is not None
         self.experiment_key = self.experiment.name
         self.global_epoch_step: int = 0
@@ -224,11 +219,6 @@ class IRunner(ICallback, ILogger, ABC):
         self.log_hparams(hparams=self.experiment.hparams)
 
     def on_stage_start(self, runner: "IRunner"):
-        """Event handler for stage start.
-
-        Args:
-            runner: IRunner instance.
-        """
         assert self.stage_key is not None
         stage_params = self.experiment.get_stage_params(self.stage_key)
         self.is_infer_stage: bool = self.stage_key.startswith("infer")
@@ -238,14 +228,6 @@ class IRunner(ICallback, ILogger, ABC):
         self.stage_sample_step: int = 0
 
     def on_epoch_start(self, runner: "IRunner"):
-        """Event handler for epoch start.
-
-        Args:
-            runner: IRunner instance.
-
-        Raises:
-            RunnerException: if current DataLoader is empty.
-        """
         self.global_epoch_step += 1
         self.stage_epoch_step += 1
         self.epoch_metrics: Dict = defaultdict(None)
@@ -253,14 +235,6 @@ class IRunner(ICallback, ILogger, ABC):
         self.epoch_metrics["_epoch_"] = {}
 
     def on_loader_start(self, runner: "IRunner"):
-        """Event handler for loader start.
-
-        Args:
-            runner: IRunner instance.
-
-        Raises:
-            RunnerException: if current DataLoader is empty.
-        """
         assert self.loader is not None
         self.is_train_loader: bool = self.loader_key.startswith("train")
         self.is_valid_loader: bool = self.loader_key.startswith("valid")
@@ -277,11 +251,6 @@ class IRunner(ICallback, ILogger, ABC):
             self.loader.sampler.set_epoch(self.stage_epoch_step)
 
     def on_batch_start(self, runner: "IRunner"):
-        """Event handler for batch start.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.batch = self.engine.sync_device(tensor_or_module=self.batch)
 
         if isinstance(self.batch, dict):
@@ -298,69 +267,26 @@ class IRunner(ICallback, ILogger, ABC):
         self.batch_metrics: Dict = defaultdict(None)
 
     def on_batch_end(self, runner: "IRunner"):
-        """Event handler for batch end.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
-        """Event handler for loader end.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.log_metrics(metrics=self.loader_metrics, scope="loader")
         self.epoch_metrics[self.loader_key] = self.loader_metrics.copy()
 
     def on_epoch_end(self, runner: "IRunner"):
-        """Event handler for epoch end.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.log_metrics(metrics=self.epoch_metrics, scope="epoch")
         self.flush_log()
 
     def on_stage_end(self, runner: "IRunner"):
-        """Event handler for stage end.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.engine.deinit_components()
 
     def on_experiment_end(self, runner: "IRunner"):
-        """Event handler for experiment end.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.close_log()
 
     def on_exception(self, runner: "IRunner"):
-        """Event handler for exception case.
-
-        Args:
-            runner: IRunner instance.
-
-        Raises:
-            exception: pipeline exception
-        """
         raise self.exception
 
     def _run_event(self, event: str) -> None:
-        """Inner method to run specified event on Runners' callbacks.
-
-        Args:
-            event(str): event name to run on callbacks.
-
-        .. note::
-            To learn more about Catalyst Callbacks mechanism, please follow
-            :py:mod:`catalyst.core.callback.Callback` documentation.
-
-        """
         if _has_str_intersections(event, ("_start",)):
             getattr(self, event)(self)
         for callback in self.callbacks.values():
@@ -398,6 +324,7 @@ class IRunner(ICallback, ILogger, ABC):
         self._run_event("on_loader_start")
         with torch.set_grad_enabled(self.is_train_loader):
             for self.loader_batch_step, self.batch in enumerate(self.loader):
+                # @TODO: could we move `with self.engine.autocast():` here?
                 self._run_batch()
                 if self.need_early_stop:
                     self.need_early_stop = False
@@ -445,8 +372,7 @@ class IRunner(ICallback, ILogger, ABC):
         self._run_event("on_experiment_end")
 
     def run(self, experiment: IExperiment = None) -> "IRunner":
-        """
-        Starts the experiment.
+        """Runs the experiment.
 
         Args:
             experiment: Experiment instance to use for Runner.
@@ -464,57 +390,52 @@ class IRunner(ICallback, ILogger, ABC):
 
 
 class IStageBasedRunner(IRunner):
-    """
-    Runner abstraction that suppose to have constant
-    datasources per stage.
-    """
+    """Runner abstraction that suppose to have constant datasources per stage."""
 
-    def on_stage_start(self, runner: "IRunner") -> None:
-        """Event handler for stage start.
-
-        For the `IStageBasedRunner` case:
-
-        - prepares loaders - our datasources
-        - prepares model components - model, criterion, optimizer, scheduler
-        - prepares callbacks for the current stage
-
-        Args:
-            runner: IRunner instance.
-        """
-        super().on_stage_start(runner)
-        stage_params = self.experiment.get_stage_params(self.stage_key)
-
-        # seed fix during dataset creation for reproducibility
-        set_global_seed(self.experiment.seed + self.engine.rank + self.global_epoch_step)
+    def _setup_loaders(self) -> None:
         loaders = self.experiment.get_loaders(stage=self.stage_key)
         loaders = validate_loaders(loaders)
         self.loaders = loaders
 
+    def _get_model(self):
+        stage_params = self.experiment.get_stage_params(stage=self.stage_key)
         migrate_model_from_previous_stage = stage_params.get(
             "migrate_model_from_previous_stage", True
         )
         # some custom logic is possible here
         if self.model is not None and migrate_model_from_previous_stage:
-            model_fn = lambda: self.model
+            return self.model
         else:
-            model_fn = partial(self.experiment.get_model, stage=self.stage_key)
+            return self.experiment.get_model(stage=self.stage_key)
 
-        # @TODO: we need a better approach here
-        # seed fix during components creation for reproducibility
-        set_global_seed(self.experiment.seed + self.global_epoch_step)
+    def _get_criterion(self):
+        # some custom logic is possible here
+        return self.experiment.get_criterion(stage=self.stage_key)
+
+    def _get_optimizer(self, model):
+        # some custom logic is possible here
+        return self.experiment.get_optimizer(stage=self.stage_key, model=model)
+
+    def _get_sheduler(self, optimizer):
+        # some custom logic is possible here
+        return self.experiment.get_scheduler(stage=self.stage_key, optimizer=optimizer)
+
+    def _setup_components(self) -> None:
+        # @TODO: should we move engine logic here?
         (
             self.model,
             self.criterion,
             self.optimizer,
             self.scheduler,
         ) = self.engine.init_components(
-            model_fn=model_fn,
-            criterion_fn=partial(self.experiment.get_criterion, stage=self.stage_key),
-            optimizer_fn=partial(self.experiment.get_optimizer, stage=self.stage_key),
-            scheduler_fn=partial(self.experiment.get_scheduler, stage=self.stage_key),
+            model_fn=self._get_model,
+            criterion_fn=self._get_criterion,
+            optimizer_fn=self._get_optimizer,
+            scheduler_fn=self._get_sheduler,
         )
 
-        # @TODO: we could refactor here
+    def _setup_callbacks(self):
+        stage_params = self.experiment.get_stage_params(stage=self.stage_key)
         migrate_callbacks_from_previous_stage = stage_params.get(
             "migrate_callbacks_from_previous_stage", True
         )
@@ -530,15 +451,19 @@ class IStageBasedRunner(IRunner):
         callbacks = sort_callbacks_by_order(callbacks)
         self.callbacks = callbacks
 
+    def on_stage_start(self, runner: "IRunner") -> None:
+        super().on_stage_start(runner)
+        # the data
+        set_global_seed(self.experiment.seed + self.engine.rank + self.global_epoch_step)
+        self._setup_loaders()
+        # the components
+        set_global_seed(self.experiment.seed + self.engine.rank + self.global_epoch_step)
+        self._setup_components()
+        # the callbacks
+        set_global_seed(self.experiment.seed + self.engine.rank + self.global_epoch_step)
+        self._setup_callbacks()
+
     def on_epoch_start(self, runner: "IRunner"):
-        """Event handler for stage start.
-
-        Args:
-            runner: IRunner instance.
-
-        Raises:
-            RunnerException: if current DataLoader is empty.
-        """
         super().on_epoch_start(runner)
         assert self.loaders is not None
         for loader_key, loader in self.loaders.items():
@@ -546,14 +471,6 @@ class IStageBasedRunner(IRunner):
                 raise RunnerException(f"DataLoader with name {loader_key} is empty.")
 
     def on_loader_start(self, runner: "IRunner"):
-        """Event handler for loader start.
-
-        Args:
-            runner: IRunner instance.
-
-        Raises:
-            RunnerException: if current DataLoader is empty.
-        """
         super().on_loader_start(runner)
         self.loader_batch_len = len(self.loader)
         if self.loader_batch_len == 0:
