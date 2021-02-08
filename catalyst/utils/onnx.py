@@ -22,7 +22,7 @@ def convert_to_onnx(
 ):
     torch.onnx.export(
         model,
-        inp_shape,
+        input_shape,
         file,
         verbose=True,
         input_names=input_names,
