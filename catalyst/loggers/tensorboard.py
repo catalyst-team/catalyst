@@ -1,11 +1,10 @@
-from typing import Any, Dict
+from typing import Dict
 import os
 
 import numpy as np
 
-from catalyst.contrib.tools.tensorboard import SummaryWriter
 from catalyst.core.logger import ILogger
-from catalyst.utils.config import save_config
+from catalyst.tools.tensorboard import SummaryWriter
 
 
 class TensorboardLogger(ILogger):

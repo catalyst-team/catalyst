@@ -9,8 +9,8 @@ from subprocess import CalledProcessError
 import sys
 import warnings
 
-from catalyst.contrib.tools.tensorboard import SummaryWriter
 from catalyst.settings import IS_HYDRA_AVAILABLE
+from catalyst.tools.tensorboard import SummaryWriter
 from catalyst.utils.config import save_config
 from catalyst.utils.misc import get_utcnow_time
 

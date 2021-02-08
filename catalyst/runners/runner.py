@@ -5,9 +5,9 @@ import os
 import torch
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst.callbacks.criterion import ICriterionCallback, CriterionCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
+from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.core.callback import Callback
 from catalyst.core.engine import IEngine
@@ -263,8 +263,9 @@ class Runner(IStageBasedRunner):
             for callback in callbacks.values():
                 if isinstance(callback, CriterionCallback) and callback.metric_key == valid_metric:
                     have_required_callback = True
-            assert have_required_callback, \
-                f"No CriterionCallback with `metric_key={valid_metric}` were found"
+            assert (
+                have_required_callback
+            ), f"No CriterionCallback with `metric_key={valid_metric}` were found"
 
         loggers = self._process_train_loggers(loggers=loggers, logdir=logdir)
 

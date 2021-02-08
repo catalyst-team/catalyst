@@ -1,11 +1,6 @@
-from typing import Any, Dict
-import os
+from typing import Dict
 
-import numpy as np
-
-from catalyst.contrib.tools.tensorboard import SummaryWriter
 from catalyst.core.logger import ILogger
-from catalyst.utils.config import save_config
 
 
 def _format_metrics(dct: Dict):

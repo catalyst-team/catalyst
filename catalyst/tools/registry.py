@@ -1,6 +1,3 @@
-"""
-Global Catalyst registries subpackage.
-"""
 from typing import Any, Callable, Dict, Iterator, List, Mapping, Optional, Tuple, Type, Union
 import collections
 import functools
