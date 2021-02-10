@@ -8,12 +8,12 @@ from catalyst.callbacks import (
     CheckpointCallback,
     ConsoleLogger,
     CriterionCallback,
-    ExceptionCallback,
-    MetricManagerCallback,
+    # ExceptionCallback,
+    # MetricManagerCallback,
     OptimizerCallback,
     SchedulerCallback,
     TensorboardLogger,
-    ValidationManagerCallback,
+    # ValidationManagerCallback,
 )
 from catalyst.experiments import ConfigExperiment
 
@@ -25,12 +25,12 @@ DEFAULT_MINIMAL_CONFIG = {  # noqa: WPS407
 
 DEFAULT_CALLBACKS = OrderedDict(
     [
-        ("_metrics", MetricManagerCallback),
-        ("_validation", ValidationManagerCallback),
+        # ("_metrics", MetricManagerCallback),
+        # ("_validation", ValidationManagerCallback),
         ("_saver", CheckpointCallback),
         ("_console", ConsoleLogger),
         ("_tensorboard", TensorboardLogger),
-        ("_exception", ExceptionCallback),
+        # ("_exception", ExceptionCallback),
     ]
 )
 

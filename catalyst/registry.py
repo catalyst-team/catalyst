@@ -193,4 +193,14 @@ def _callbacks_loader(r: registry.Registry):
 
 REGISTRY.late_add(_callbacks_loader)
 
+
+def _loggers_loader(r: registry.Registry):
+    from catalyst import loggers as m  # noqa: WPS347
+
+    r.add_from_module(m)
+
+
+REGISTRY.late_add(_loggers_loader)
+
+
 __all__ = ["REGISTRY"]

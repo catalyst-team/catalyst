@@ -4,17 +4,20 @@ import logging
 import torch
 from torch import nn
 
-from catalyst.callbacks.batch_overfit import BatchOverfitCallback
-from catalyst.callbacks.checkpoint import CheckpointCallback
-from catalyst.callbacks.criterion import CriterionCallback
-from catalyst.callbacks.early_stop import CheckRunCallback
-from catalyst.callbacks.exception import ExceptionCallback
-from catalyst.callbacks.logging import ConsoleLogger, TensorboardLogger, VerboseLogger
-from catalyst.callbacks.metric import MetricManagerCallback
-from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
-from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
-from catalyst.callbacks.timer import TimerCallback
-from catalyst.callbacks.validation import ValidationManagerCallback
+# ExceptionCallback
+from catalyst.callbacks import (
+    BatchOverfitCallback,
+    CheckpointCallback,
+    CheckRunCallback,
+    CriterionCallback,
+    IOptimizerCallback,
+    ISchedulerCallback,
+    OptimizerCallback,
+    SchedulerCallback,
+    TimerCallback,
+    VerboseCallback,
+)
+from catalyst.loggers import ConsoleLogger, TensorboardLogger
 from catalyst.core.callback import Callback
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.settings import IS_HYDRA_AVAILABLE
@@ -94,7 +97,7 @@ def add_default_callbacks(
     optimizer_cls = OptimizerCallback
 
     if verbose:
-        default_callbacks.append(("_verbose", None, VerboseLogger))
+        default_callbacks.append(("_verbose", None, VerboseCallback))
     if check_time:
         default_callbacks.append(("_timer", None, TimerCallback))
     if check_run:
@@ -103,8 +106,8 @@ def add_default_callbacks(
         default_callbacks.append(("_overfit", None, BatchOverfitCallback))
 
     if not is_infer:
-        default_callbacks.append(("_metrics", None, MetricManagerCallback))
-        default_callbacks.append(("_validation", None, ValidationManagerCallback))
+        # default_callbacks.append(("_metrics", None, MetricManagerCallback))
+        # default_callbacks.append(("_validation", None, ValidationManagerCallback))
         default_callbacks.append(("_console", None, ConsoleLogger))
 
         if is_logger:
@@ -118,7 +121,7 @@ def add_default_callbacks(
         if is_scheduler:
             default_callbacks.append(("_scheduler", ISchedulerCallback, SchedulerCallback))
 
-    default_callbacks.append(("_exception", None, ExceptionCallback))
+    # default_callbacks.append(("_exception", None, ExceptionCallback))
 
     for (callback_name, callback_interface, callback_fn) in default_callbacks:
         callback_interface = callback_interface or callback_fn
