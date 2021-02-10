@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
+- Fixed a bug in the code of the segmentation example, in the "Model tracing" section.
 - Fix bug in `OptimizerCallback` when mixed-precision params set both:
   in callback arguments and in distributed_params  ([#1042](https://github.com/catalyst-team/catalyst/pull/1042))
 
