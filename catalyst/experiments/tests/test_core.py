@@ -4,9 +4,9 @@ import torch
 
 from catalyst.callbacks import (
     ConsoleLogger,
-    ExceptionCallback,
-    MetricManagerCallback,
-    ValidationManagerCallback,
+    # ExceptionCallback,
+    # MetricManagerCallback,
+    # ValidationManagerCallback,
 )
 from catalyst.experiments import Experiment
 
@@ -34,10 +34,10 @@ def test_defaults():
     loaders["train"] = dataloader
     test_callbacks = OrderedDict(
         [
-            ("_metrics", MetricManagerCallback),
-            ("_validation", ValidationManagerCallback),
+            # ("_metrics", MetricManagerCallback),
+            # ("_validation", ValidationManagerCallback),
             ("_console", ConsoleLogger),
-            ("_exception", ExceptionCallback),
+            # ("_exception", ExceptionCallback),
         ]
     )
 

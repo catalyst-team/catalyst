@@ -10,6 +10,8 @@ from catalyst.contrib.data.augmentor import Augmentor, AugmentorCompose
 from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import check_callback_isinstance
+from catalyst.core.logger import ILogger
+from catalyst.core.trial import ITrial, get_trial_by_params
 from catalyst.engines import IEngine, process_engine
 from catalyst.experiments.functional import (
     add_default_callbacks,
@@ -21,7 +23,12 @@ from catalyst.experiments.functional import (
 from catalyst.registry import REGISTRY
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.loaders import get_loaders_from_params
-from catalyst.utils.misc import get_short_hash, get_utcnow_time, merge_dicts
+from catalyst.utils.misc import (
+    get_by_keys,
+    get_short_hash,
+    get_utcnow_time,
+    merge_dicts,
+)
 
 
 class ConfigExperiment(IExperiment):
@@ -45,56 +52,22 @@ class ConfigExperiment(IExperiment):
             config: dictionary with parameters
         """
         self._config: Dict = deepcopy(config)
-        self._trial = None
-        self._initial_seed: int = self._config.get("args", {}).get("seed", 42)
-        self._verbose: bool = self._config.get("args", {}).get("verbose", False)
-        self._check_time: bool = self._config.get("args", {}).get("timeit", False)
-        self._check_run: bool = self._config.get("args", {}).get("check", False)
-        self._overfit: bool = self._config.get("args", {}).get("overfit", False)
-
-        self._engine: IEngine = process_engine(self._config.get("engine"))
-
-        self._prepare_logdir()
-
         self._config["stages"]["stage_params"] = merge_dicts(
             deepcopy(self._config["stages"].get("stage_params", {})),
             deepcopy(self._config.get("args", {})),
-            {"logdir": self._logdir},
         )
         self.stages_config: Dict = self._get_stages_config(self._config["stages"])
 
-    @property
-    def engine(self):
-        return self._engine
-
-    def _get_logdir(self, config: Dict) -> str:
-        timestamp = get_utcnow_time()
-        config_hash = get_short_hash(config)
-        logdir = f"{timestamp}.{config_hash}"
-        return logdir
-
-    def _prepare_logdir(self):  # noqa: WPS112
-        exclude_tag = "none"
-
-        logdir = self._config.get("args", {}).get("logdir", None)
-        baselogdir = self._config.get("args", {}).get("baselogdir", None)
-
-        if logdir is not None and logdir.lower() != exclude_tag:
-            self._logdir = logdir
-        elif baselogdir is not None and baselogdir.lower() != exclude_tag:
-            logdir_postfix = self._get_logdir(self._config)
-            self._logdir = f"{baselogdir}/{logdir_postfix}"
-        else:
-            self._logdir = None
-
     def _get_stages_config(self, stages_config: Dict):
-        stages_defaults = {}
+        stages_defaults = {
+            key: deepcopy(stages_config.get(key, {})) for key in self.STAGE_KEYWORDS
+        }
+
         stages_config_out = OrderedDict()
-        for key in self.STAGE_KEYWORDS:
-            stages_defaults[key] = deepcopy(stages_config.get(key, {}))
         for stage in stages_config:
             if stage in self.STAGE_KEYWORDS or stages_config.get(stage) is None:
                 continue
+
             stages_config_out[stage] = {}
             for key2 in self.STAGE_KEYWORDS:
                 stages_config_out[stage][key2] = merge_dicts(
@@ -107,39 +80,22 @@ class ConfigExperiment(IExperiment):
     @property
     def seed(self) -> int:
         """Experiment's initial seed value."""
-        return self._initial_seed
+        seed = get_by_keys(self._config, "args", "seed", default=42)
+        return seed
 
     @property
-    def logdir(self):
-        """Path to the directory where the experiment logs."""
-        return self._logdir
+    def name(self) -> str:
+        timestamp = get_utcnow_time()
+        config_hash = get_short_hash(self._config)
+        default_name = f"{timestamp}-{config_hash}"
+
+        name = get_by_keys(self._config, "args", "name", default=default_name)
+        return name
 
     @property
     def hparams(self) -> OrderedDict:
         """Returns hyperparameters"""
         return OrderedDict(self._config)
-
-    @property
-    def trial(self) -> Any:
-        """
-        Returns hyperparameter trial for current experiment.
-        Could be usefull for Optuna/HyperOpt/Ray.tune
-        hyperparameters optimizers.
-
-        Returns:
-            trial
-
-        Example::
-
-            >>> experiment.trial
-            optuna.trial._trial.Trial  # Optuna variant
-        """
-        return self._trial
-
-    @property
-    def engine_params(self) -> Dict:
-        """Dict with the parameters for distributed and FP16 methond."""
-        return self._config.get("engine_params", {})
 
     @property
     def stages(self) -> List[str]:
@@ -149,16 +105,17 @@ class ConfigExperiment(IExperiment):
 
     def get_stage_params(self, stage: str) -> Mapping[str, Any]:
         """Returns the state parameters for a given stage."""
-        return self.stages_config[stage].get("stage_params", {})
+        return get_by_keys(self.stages_config, stage, "stage_params", default={})
 
     @staticmethod
     def _get_model(**params):
         key_value_flag = params.pop("_key_value", False)
 
         if key_value_flag:
-            model = {}
-            for model_key, model_params in params.items():
-                model[model_key] = ConfigExperiment._get_model(**model_params)  # noqa: WPS437
+            model = {
+                model_key: ConfigExperiment._get_model(**model_params)  # noqa: WPS437
+                for model_key, model_params in params.items()
+            }
             model = nn.ModuleDict(model)
         else:
             model = REGISTRY.get_from_params(**params)
@@ -175,18 +132,17 @@ class ConfigExperiment(IExperiment):
         key_value_flag = params.pop("_key_value", False)
 
         if key_value_flag:
-            criterion = {}
-            for key, key_params in params.items():
-                criterion[key] = ConfigExperiment._get_criterion(**key_params)  # noqa: WPS437
+            criterion = {
+                key: ConfigExperiment._get_criterion(**key_params)  # noqa: WPS437
+                for key, key_params in params.items()
+            }
         else:
             criterion = REGISTRY.get_from_params(**params)
-            if criterion is not None and torch.cuda.is_available():
-                criterion = criterion.cuda()
         return criterion
 
     def get_criterion(self, stage: str) -> Criterion:
         """Returns the criterion for a given stage."""
-        criterion_params = self.stages_config[stage].get("criterion_params", {})
+        criterion_params = get_by_keys(self.stages_config, stage, "criterion_params", default={})
         criterion = self._get_criterion(**criterion_params)
         return criterion
 
@@ -195,23 +151,24 @@ class ConfigExperiment(IExperiment):
     ) -> Optimizer:
         # @TODO 1: refactoring; this method is too long
         # @TODO 2: load state dicts for schedulers & criterion
-        # lr linear scaling
+
+        # learning rate linear scaling
         lr_scaling_params = params.pop("lr_linear_scaling", None)
         if lr_scaling_params:
             data_params = dict(self.stages_config[stage]["data_params"])
-            batch_size = data_params.get("batch_size")
-            per_gpu_scaling = data_params.get("per_gpu_scaling", False)
             lr, lr_scaling = do_lr_linear_scaling(
                 lr_scaling_params=lr_scaling_params,
-                batch_size=batch_size,
-                per_gpu_scaling=per_gpu_scaling,
+                batch_size=data_params.get("batch_size", 1),
+                per_gpu_scaling=data_params.get("per_gpu_scaling", False),
             )
             params["lr"] = lr
         else:
             lr_scaling = 1.0
+
         # getting layer-wise parameters
         layerwise_params = params.pop("layerwise_params", OrderedDict())
         no_bias_weight_decay = params.pop("no_bias_weight_decay", True)
+
         # getting model parameters
         model_key = params.pop("_model", None)
         model_params = get_model_parameters(
@@ -221,21 +178,21 @@ class ConfigExperiment(IExperiment):
             no_bias_weight_decay=no_bias_weight_decay,
             lr_scaling=lr_scaling,
         )
-        # getting load-from-previous-stage flag
-        load_from_previous_stage = params.pop("load_from_previous_stage", False)
-        # instantiate optimizer
-        optimizer_key = params.pop("optimizer_key", None)
+
+        # # getting load-from-previous-stage flags
+        # load_from_previous_stage = params.pop("load_from_previous_stage", False)
+        # optimizer_key = params.pop("optimizer_key", None)
+
         optimizer = REGISTRY.get_from_params(**params, params=model_params)
-        # load from previous stage
-        if load_from_previous_stage and self.stages.index(stage) != 0:
-            checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
-            optimizer = load_optimizer_from_checkpoint(
-                optimizer,
-                checkpoint_path=checkpoint_path,
-                checkpoint_optimizer_key=optimizer_key,
-                model_parameters=model_params,
-                optimizer_params=params,
-            )
+        # if load_from_previous_stage and self.stages.index(stage) != 0:
+        #     checkpoint_path = f"{self.logdir}/checkpoints/best_full.pth"
+        #     optimizer = load_optimizer_from_checkpoint(
+        #         optimizer,
+        #         checkpoint_path=checkpoint_path,
+        #         checkpoint_optimizer_key=optimizer_key,
+        #         model_parameters=model_params,
+        #         optimizer_params=params,
+        #     )
 
         return optimizer
 
@@ -252,9 +209,10 @@ class ConfigExperiment(IExperiment):
         Returns:
             optimizer for selected stage
         """
-        optimizer_params = self.stages_config[stage].get("optimizer_params", {})
-        key_value_flag = optimizer_params.pop("_key_value", False)
+        optimizer_params = get_by_keys(self.stages_config, stage, "optimizer_params", default={})
 
+        optimizer_params = deepcopy(optimizer_params)
+        key_value_flag = optimizer_params.pop("_key_value", False)
         if key_value_flag:
             optimizer = {}
             for key, params in optimizer_params.items():
@@ -273,26 +231,27 @@ class ConfigExperiment(IExperiment):
     def _get_scheduler(
         *, optimizer: Union[Optimizer, Dict[str, Optimizer]], **params: Any
     ) -> Union[Scheduler, Dict[str, Scheduler]]:
+        key_value_flag = params.pop("_key_value", False)
+
         optimizer_key = params.pop("_optimizer", None)
         optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
-        scheduler = REGISTRY.get_from_params(**params, optimizer=optimizer)
 
+        if key_value_flag:
+            scheduler: Dict[str, Scheduler] = {}
+            for key, scheduler_params in params.items():
+                scheduler[key] = ConfigExperiment._get_scheduler(  # noqa: WPS437
+                    **scheduler_params, optimizer=optimizer
+                )
+        else:
+            scheduler = REGISTRY.get_from_params(**params, optimizer=optimizer)
         return scheduler
 
     def get_scheduler(
         self, stage: str, optimizer: Union[Optimizer, Dict[str, Optimizer]]
     ) -> Union[Scheduler, Dict[str, Scheduler]]:
         """Returns the scheduler for a given stage."""
-        params = self.stages_config[stage].get("scheduler_params", {})
-        key_value_flag = params.pop("_key_value", False)
-
-        if key_value_flag:
-            scheduler: Dict[str, Scheduler] = {}
-            for key, scheduler_params in params.items():
-                scheduler[key] = self._get_scheduler(optimizer=optimizer, **scheduler_params)
-        else:
-            scheduler = self._get_scheduler(optimizer=optimizer, **params)
-
+        scheduler_params = get_by_keys(self.stages_config, stage, "scheduler_params", default={})
+        scheduler = self._get_scheduler(optimizer=optimizer, **scheduler_params)
         return scheduler
 
     @staticmethod
@@ -305,14 +264,11 @@ class ConfigExperiment(IExperiment):
                 for transform_key, transform_params in params.items()
             }
 
-            transform = AugmentorCompose(
-                {
-                    key: Augmentor(
-                        dict_key=key, augment_fn=transform, input_key=key, output_key=key,
-                    )
-                    for key, transform in transforms_composition.items()
-                }
-            )
+            augmentors = {
+                key: Augmentor(dict_key=key, augment_fn=transform, input_key=key, output_key=key)
+                for key, transform in transforms_composition.items()
+            }
+            transform = AugmentorCompose(augmentors)
         else:
             if "transforms" in params:
                 transforms_composition = [
@@ -336,8 +292,9 @@ class ConfigExperiment(IExperiment):
         Returns:
             Callable: transform function
         """
-        transform_params = deepcopy(self.stages_config[stage].get("transform_params", {}))
+        transform_params = get_by_keys(self.stages_config, stage, "transform_params", default={})
 
+        transform_params = deepcopy(transform_params)
         key_value_flag = transform_params.pop("_key_value", False)
         if key_value_flag:
             transform_params = transform_params.get(dataset, {})
@@ -373,26 +330,26 @@ class ConfigExperiment(IExperiment):
             callback = ConfigExperiment._get_callback(**wrapper_params)  # noqa: WPS437
         return callback
 
-    def get_callbacks(self, stage: str) -> "OrderedDict[Callback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage."""
-        callbacks_params = self.stages_config[stage].get("callbacks_params", {})
+        callbacks_params = get_by_keys(self.stages_config, stage, "callbacks_params", default={})
 
-        callbacks = OrderedDict()
-        for key, callback_params in callbacks_params.items():
-            callback = self._get_callback(**callback_params)
-            callbacks[key] = callback
+        callbacks_list = [
+            (key, self._get_callback(**callback_params))
+            for key, callback_params in callbacks_params.items()
+        ]
 
         callbacks = add_default_callbacks(
-            callbacks,
-            verbose=self._verbose,
-            check_time=self._check_time,
-            check_run=self._check_run,
-            overfit=self._overfit,
+            OrderedDict(callbacks_list),
+            verbose=get_by_keys(self._config, "args", "verbose", default=False),
+            check_time=get_by_keys(self._config, "args", "timeit", default=False),
+            check_run=get_by_keys(self._config, "args", "check", default=False),
+            overfit=get_by_keys(self._config, "args", "overfit", default=False),
             is_infer=stage.startswith("infer"),
-            is_logger=self.logdir is not None,
-            is_criterion=self.stages_config[stage].get("criterion_params", {}),
-            is_optimizer=self.stages_config[stage].get("optimizer_params", {}),
-            is_scheduler=self.stages_config[stage].get("scheduler_params", {}),
+            is_logger=(not self.get_loggers()),
+            is_criterion=get_by_keys(self.stages_config, stage, "criterion_params", default=False),
+            is_optimizer=get_by_keys(self.stages_config, stage, "optimizer_params", default=False),
+            is_scheduler=get_by_keys(self.stages_config, stage, "scheduler_params", default=False),
         )
 
         # NOTE: stage should be in self._config.stages
@@ -401,6 +358,21 @@ class ConfigExperiment(IExperiment):
         process_callbacks(callbacks, stage_index)
 
         return callbacks
+
+    def get_engine(self) -> IEngine:
+        engine_params = self._config.get("engine")
+        return process_engine(engine_params)
+
+    def get_trial(self) -> ITrial:
+        trial_params = self._config.get("trial", {})
+        return get_trial_by_params(trial_params)
+
+    def get_loggers(self) -> Dict[str, ILogger]:
+        loggers_params = self._config.get("loggers", {})
+        loggers = {
+            key: REGISTRY.get_from_params(**params) for key, params in loggers_params.items()
+        }
+        return loggers
 
 
 __all__ = ["ConfigExperiment"]
