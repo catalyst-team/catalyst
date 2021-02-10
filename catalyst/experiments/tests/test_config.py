@@ -92,10 +92,10 @@ def test_defaults():
     assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
-    assert isinstance(exp.get_model("train"), SomeModel)
-    assert exp.get_criterion("train") is None
-    assert exp.get_optimizer("train", SomeModel()) is None
-    assert exp.get_scheduler("train", None) is None
+    assert isinstance(exp._get_model("train"), SomeModel)
+    assert exp._get_criterion("train") is None
+    assert exp._get_optimizer("train", SomeModel()) is None
+    assert exp._get_scheduler("train", None) is None
 
     _test_callbacks(DEFAULT_CALLBACKS, exp)
 
@@ -124,10 +124,10 @@ def test_defaults_criterion_optimizer_scheduler():
     assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
-    assert isinstance(exp.get_model("train"), SomeModel)
-    assert exp.get_criterion("train") is not None
-    assert exp.get_optimizer("train", SomeModel()) is not None
-    assert exp.get_scheduler("train", None) is not None
+    assert isinstance(exp._get_model("train"), SomeModel)
+    assert exp._get_criterion("train") is not None
+    assert exp._get_optimizer("train", SomeModel()) is not None
+    assert exp._get_scheduler("train", None) is not None
 
     _test_callbacks(callbacks, exp)
 

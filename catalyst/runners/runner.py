@@ -15,7 +15,8 @@ from catalyst.core.functional import check_callback_isinstance, sort_callbacks_b
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IStageBasedRunner
 from catalyst.core.trial import ITrial
-from catalyst.experiments.experiment import Experiment
+
+# from catalyst.experiments.experiment import Experiment
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
@@ -50,19 +51,15 @@ class Runner(IStageBasedRunner):
         self,
         model: RunnerModel = None,
         engine: IEngine = None,
-        experiment_fn: Callable = Experiment,
+        # experiment_fn: Callable = Experiment,
     ):
         """
 
         Args:
             model: Torch model object
-            device: Torch device
-            experiment_fn: callable function,
-                which defines default experiment type to use
-                during ``.train`` and ``.infer`` methods.
+            engine: Torch device
         """
         super().__init__(model=model, engine=engine)
-        self._experiment_fn = experiment_fn
 
     def _process_train_callbacks(
         self,

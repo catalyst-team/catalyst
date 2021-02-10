@@ -380,7 +380,7 @@ class CheckpointCallback(ICheckpointCallback):
             optimizer=runner.optimizer,
             scheduler=runner.scheduler,
             # experiment info
-            experiment_key=runner.experiment_key,
+            experiment_key=runner.run_key,
             global_epoch_step=runner.global_epoch_step,
             global_batch_step=runner.global_batch_step,
             global_sample_step=runner.global_sample_step,

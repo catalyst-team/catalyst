@@ -151,19 +151,19 @@ def _schedulers_loader(r: registry.Registry):
 REGISTRY.late_add(_schedulers_loader)
 
 
-def _experiments_loader(r: registry.Registry):
-    from catalyst.core.experiment import IExperiment
-
-    r.add(IExperiment)
-
-    from catalyst import experiments as m
-
-    r.add_from_module(m)  # noqa: WPS347
-
-    r.add_from_module(m)
-
-
-REGISTRY.late_add(_experiments_loader)
+# def _experiments_loader(r: registry.Registry):
+#     from catalyst.core.experiment import IExperiment
+#
+#     r.add(IExperiment)
+#
+#     from catalyst import experiments as m
+#
+#     r.add_from_module(m)  # noqa: WPS347
+#
+#     r.add_from_module(m)
+#
+#
+# REGISTRY.late_add(_experiments_loader)
 
 
 def _runners_loader(r: registry.Registry):

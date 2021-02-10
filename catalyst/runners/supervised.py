@@ -18,7 +18,8 @@ from catalyst.core.engine import IEngine
 from catalyst.core.functional import check_callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner, IStageBasedRunner
 from catalyst.core.trial import ITrial
-from catalyst.experiments.experiment import Experiment
+
+# from catalyst.experiments.experiment import Experiment
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
@@ -38,7 +39,7 @@ class SupervisedRunner(Runner):
         input_key: Any = "features",
         output_key: Any = "logits",
         target_key: str = "targets",
-        experiment_fn: Callable = Experiment,
+        # experiment_fn: Callable = Experiment,
     ):
         """
         Args:
@@ -52,7 +53,7 @@ class SupervisedRunner(Runner):
                 which defines default experiment type to use
                 during ``.train`` and ``.infer`` methods.
         """
-        super().__init__(model=model, engine=engine, experiment_fn=experiment_fn)
+        super().__init__(model=model, engine=engine)
 
         self.input_key = input_key
         self.output_key = output_key
