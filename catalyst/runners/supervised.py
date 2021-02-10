@@ -39,7 +39,7 @@ class SupervisedRunner(Runner):
         input_key: Any = "features",
         output_key: Any = "logits",
         target_key: str = "targets",
-        # experiment_fn: Callable = Experiment,
+        loss_key: str = "loss",
     ):
         """
         Args:
@@ -55,17 +55,18 @@ class SupervisedRunner(Runner):
         """
         super().__init__(model=model, engine=engine)
 
-        self.input_key = input_key
-        self.output_key = output_key
-        self.target_key = target_key
+        self._input_key = input_key
+        self._output_key = output_key
+        self._target_key = target_key
+        self._loss_key = loss_key
 
-        if isinstance(self.input_key, str):
+        if isinstance(self._input_key, str):
             # when model expects value
             self._process_input = self._process_input_str
-        elif isinstance(self.input_key, (list, tuple)):
+        elif isinstance(self._input_key, (list, tuple)):
             # when model expects tuple
             self._process_input = self._process_input_list
-        elif self.input_key is None:
+        elif self._input_key is None:
             # when model expects dict
             self._process_input = self._process_input_none
         else:
@@ -77,7 +78,7 @@ class SupervisedRunner(Runner):
         elif isinstance(output_key, (list, tuple)):
             # when model returns tuple
             self._process_output = self._process_output_list
-        elif self.output_key is None:
+        elif self._output_key is None:
             # when model returns dict
             self._process_output = self._process_output_none
         else:
@@ -86,15 +87,15 @@ class SupervisedRunner(Runner):
     def _process_batch(self, batch):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 2
-            batch = {self.input_key: batch[0], self.target_key: batch[1]}
+            batch = {self._input_key: batch[0], self._target_key: batch[1]}
         return batch
 
     def _process_input_str(self, batch: Mapping[str, Any], **kwargs):
-        output = self.model(batch[self.input_key], **kwargs)
+        output = self.model(batch[self._input_key], **kwargs)
         return output
 
     def _process_input_list(self, batch: Mapping[str, Any], **kwargs):
-        input = {key: batch[key] for key in self.input_key}  # noqa: WPS125
+        input = {key: batch[key] for key in self._input_key}  # noqa: WPS125
         output = self.model(**input, **kwargs)
         return output
 
@@ -103,11 +104,11 @@ class SupervisedRunner(Runner):
         return output
 
     def _process_output_str(self, output: torch.Tensor):
-        output = {self.output_key: output}
+        output = {self._output_key: output}
         return output
 
     def _process_output_list(self, output: Union[Tuple, List]):
-        output = {key: value for key, value in zip(self.output_key, output)}
+        output = {key: value for key, value in zip(self._output_key, output)}
         return output
 
     def _process_output_none(self, output: Mapping[str, Any]):
@@ -168,69 +169,23 @@ class SupervisedRunner(Runner):
         output = self.forward(batch, **kwargs)
         return output
 
-    def _process_train_callbacks(
-        self,
-        *,
-        # the data
-        loaders: "OrderedDict[str, DataLoader]",
-        # the core
-        model: Model,
-        engine: Union["IEngine", str] = None,
-        trial: ITrial = None,
-        # the components
-        criterion: Criterion = None,
-        optimizer: Optimizer = None,
-        scheduler: Scheduler = None,
-        # the callbacks
-        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
-        # extra info (callbacks info)
-        logdir: str = None,
-        resume: str = None,
-        valid_loader: str = None,
-        valid_metric: str = None,
-        minimize_valid_metric: bool = True,
-        verbose: bool = False,
-        timeit: bool = False,
-        check: bool = False,
-        overfit: bool = False,
-        load_best_on_end: bool = False,
-    ):
-        # callbacks handling
-        callbacks = super()._process_train_callbacks(
-            loaders=loaders,
-            model=model,
-            engine=engine,
-            trial=trial,
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            callbacks=callbacks,
-            logdir=logdir,
-            resume=resume,
-            valid_loader=valid_loader,
-            valid_metric=valid_metric,
-            minimize_valid_metric=minimize_valid_metric,
-            verbose=verbose,
-            timeit=timeit,
-            check=check,
-            overfit=overfit,
-            load_best_on_end=load_best_on_end,
-        )
+    def get_callbacks(self, stage: str, epoch: int = None) -> "OrderedDict[str, ICallback]":
+
+        callbacks = super().get_callbacks(stage=stage, epoch=epoch)
         is_callback_exists = lambda callback_fn: any(
             check_callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
-        default_loss_key = "loss"
-        if isinstance(criterion, Criterion) and not is_callback_exists(ICriterionCallback):
+        if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
             callbacks["_criterion"] = CriterionCallback(
-                input_key=self.output_key, target_key=self.target_key, metric_key=default_loss_key,
+                input_key=self._output_key, target_key=self._target_key, metric_key=self._loss_key,
             )
-        if isinstance(optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
-            callbacks["_optimizer"] = OptimizerCallback(metric_key=default_loss_key)
-        if isinstance(scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
+        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
+            callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
+        if isinstance(self._scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
             ISchedulerCallback
         ):
             callbacks["_scheduler"] = SchedulerCallback(
-                loader_key=valid_loader, metric_key=valid_metric
+                loader_key=self._valid_loader, metric_key=self._valid_metric
             )
         return callbacks
 

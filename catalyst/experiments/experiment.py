@@ -139,7 +139,7 @@ class Experiment(IExperiment):
 
     def get_loaders(self, stage: str, epoch: int = None,) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage."""
-        self._loaders = _process_loaders(loaders=self._loaders, initial_seed=self._seed,)
+        self._loaders = _process_loaders(loaders=self._loaders, initial_seed=self._seed)
         return self._loaders
 
     def get_model(self, stage: str) -> Model:
