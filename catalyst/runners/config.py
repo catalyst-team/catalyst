@@ -76,7 +76,7 @@ class ConfigRunner(IStageBasedRunner):
 
     def get_engine(self) -> IEngine:
         engine_params = self._config.get("engine")
-        return process_engine(engine_params)
+        return process_engine(**engine_params)
 
     def get_loggers(self) -> Dict[str, ILogger]:
         loggers_params = self._config.get("loggers", {})

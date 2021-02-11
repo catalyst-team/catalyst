@@ -35,6 +35,13 @@ engine:
 #  _target_: DeviceEngine
 #  device: "cpu"
 
+loggers:
+  console:
+    _target_: ConsoleLogger
+  tensorboard:
+    _target_: TensorboardLogger
+    logdir: *logdir
+
 model:
   _target_: SimpleNet
 

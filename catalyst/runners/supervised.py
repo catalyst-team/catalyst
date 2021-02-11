@@ -37,7 +37,7 @@ class ISupervisedRunner(IRunner):
             target_key: Key in batch dict mapping for target
         """
         # super().__init__(model=model, engine=engine)
-        super().__init__()
+        IRunner.__init__(self)
 
         self._input_key = input_key
         self._output_key = output_key
