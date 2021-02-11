@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Generator, Iterable, List, Mapping, TYPE_CHECKING, Union
+from typing import Any, Dict, Generator, Iterable, List, Mapping, TYPE_CHECKING, Union
 from collections import OrderedDict
 import os
 
@@ -8,24 +8,19 @@ from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
-from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.core.callback import Callback
-from catalyst.core.engine import IEngine
 from catalyst.core.functional import check_callback_isinstance, sort_callbacks_by_order
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IStageBasedRunner
 from catalyst.core.trial import ITrial
 from catalyst.engines import DeviceEngine, IEngine
-
-# from catalyst.experiments.experiment import Experiment
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.settings import IS_CUDA_AVAILABLE
 from catalyst.typing import (
     Criterion,
-    Device,
     Model,
     Optimizer,
     RunnerCriterion,

@@ -1,8 +1,13 @@
 # flake8: noqa
 
 from catalyst.runners.runner import Runner
-from catalyst.runners.supervised import SupervisedRunner
+from catalyst.runners.supervised import ISupervisedRunner, SupervisedRunner
+from catalyst.runners.config import ConfigRunner, SupervisedConfigRunner
 
-# from catalyst.runners.multi_supervised import MultiSupervisedRunner
-
-__all__ = ["Runner", "SupervisedRunner"]  # , "MultiSupervisedRunner"]
+__all__ = [
+    "Runner",
+    "ISupervisedRunner",
+    "SupervisedRunner",
+    "ConfigRunner",
+    "SupervisedConfigRunner",
+]

@@ -11,7 +11,7 @@ from catalyst.core.callback import Callback
 from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.logger import ILogger
-from catalyst.core.trial import ITrial, get_trial_by_params
+from catalyst.core.trial import get_trial_by_params, ITrial
 from catalyst.engines import IEngine, process_engine
 from catalyst.experiments.functional import (
     add_default_callbacks,
@@ -23,12 +23,7 @@ from catalyst.experiments.functional import (
 from catalyst.registry import REGISTRY
 from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 from catalyst.utils.loaders import get_loaders_from_params
-from catalyst.utils.misc import (
-    get_by_keys,
-    get_short_hash,
-    get_utcnow_time,
-    merge_dicts,
-)
+from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time, merge_dicts
 
 
 class ConfigExperiment(IExperiment):
@@ -342,8 +337,8 @@ class ConfigExperiment(IExperiment):
         callbacks = add_default_callbacks(
             OrderedDict(callbacks_list),
             verbose=get_by_keys(self._config, "args", "verbose", default=False),
-            check_time=get_by_keys(self._config, "args", "timeit", default=False),
-            check_run=get_by_keys(self._config, "args", "check", default=False),
+            timeit=get_by_keys(self._config, "args", "timeit", default=False),
+            check=get_by_keys(self._config, "args", "check", default=False),
             overfit=get_by_keys(self._config, "args", "overfit", default=False),
             is_infer=stage.startswith("infer"),
             is_logger=(not self.get_loggers()),

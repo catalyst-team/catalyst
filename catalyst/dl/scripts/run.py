@@ -33,30 +33,30 @@ def build_args(parser: ArgumentParser):
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
-    parser.add_argument(
-        "-j", "--num-workers", default=None, type=int, help="number of data loading workers",
-    )
-    parser.add_argument("-b", "--batch-size", default=None, type=int, help="mini-batch size")
-    parser.add_argument("-e", "--num-epochs", default=None, type=int, help="number of epochs")
-    parser.add_argument(
-        "--resume", default=None, type=str, metavar="PATH", help="path to latest checkpoint",
-    )
-    parser.add_argument(
-        "--autoresume",
-        type=str,
-        help=(
-            "try automatically resume from logdir//{best,last}_full.pth " "if --resume is empty"
-        ),
-        required=False,
-        choices=["best", "last"],
-        default=None,
-    )
+    # parser.add_argument(
+    #     "-j", "--num-workers", default=None, type=int, help="number of data loading workers",
+    # )
+    # parser.add_argument("-b", "--batch-size", default=None, type=int, help="mini-batch size")
+    # parser.add_argument("-e", "--num-epochs", default=None, type=int, help="number of epochs")
+    # parser.add_argument(
+    #     "--resume", default=None, type=str, metavar="PATH", help="path to latest checkpoint",
+    # )
+    # parser.add_argument(
+    #     "--autoresume",
+    #     type=str,
+    #     help=(
+    #         "try automatically resume from logdir//{best,last}_full.pth " "if --resume is empty"
+    #     ),
+    #     required=False,
+    #     choices=["best", "last"],
+    #     default=None,
+    # )
     parser.add_argument("--seed", type=int, default=42)
     boolean_flag(
         parser,
         "apex",
         default=os.getenv("USE_APEX", "0") == "1",
-        help="Enable/disable using of Apex extension",
+        help="Enable/disable using of Nvidia Apex extension",
     )
     boolean_flag(
         parser,
@@ -102,23 +102,22 @@ def main_worker(args, unknown_args):
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)
 
-    config.setdefault("engine_params", {})["apex"] = args.apex
-    config.setdefault("engine_params", {})["amp"] = args.amp
+    # config.setdefault("engine_params", {})["apex"] = args.apex
+    # config.setdefault("engine_params", {})["amp"] = args.amp
 
-    experiment, runner, config = prepare_config_api_components(
-        expdir=Path(args.expdir), config=config
-    )
+    runner, config = prepare_config_api_components(expdir=Path(args.expdir), config=config)
 
-    if experiment.logdir is not None and get_rank() <= 0:
-        dump_environment(config, experiment.logdir, args.configs)
-        dump_code(args.expdir, experiment.logdir)
+    # if runner.logdir is not None and get_rank() <= 0:
+    #     dump_environment(config, runner.logdir, args.configs)
+    #     dump_code(args.expdir, runner.logdir)
 
-    runner.run(experiment)
+    runner.run()
 
 
 def main(args, unknown_args):
     """Runs the ``catalyst-dl run`` script."""
-    distributed_cmd_run(main_worker, args.distributed, args, unknown_args)
+    main_worker(args, unknown_args)
+    # distributed_cmd_run(main_worker, args.distributed, args, unknown_args)
 
 
 if __name__ == "__main__":

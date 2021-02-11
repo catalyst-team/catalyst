@@ -379,8 +379,8 @@ class HydraConfigExperiment(IExperiment):
         callbacks = add_default_callbacks(
             callbacks,
             verbose=self._verbose,
-            check_time=self._check_time,
-            check_run=self._check_run,
+            timeit=self._check_time,
+            check=self._check_run,
             overfit=self._overfit,
             is_infer=stage.startswith("infer"),
             is_logger=self.logdir is not None,

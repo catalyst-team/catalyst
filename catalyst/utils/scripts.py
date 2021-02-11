@@ -58,29 +58,29 @@ def prepare_config_api_components(expdir: pathlib.Path, config: Dict):
     if not isinstance(expdir, pathlib.Path):
         expdir = pathlib.Path(expdir)
     m = import_module(expdir)
-    experiment_fn = getattr(m, "Experiment", None)
+    # experiment_fn = getattr(m, "Experiment", None)
     runner_fn = getattr(m, "Runner", None)
 
-    experiment_params = copy_config.get("experiment_params", {})
-    experiment_from_config = experiment_params.pop("experiment", None)
-    assert any(
-        x is None for x in (experiment_fn, experiment_from_config)
-    ), "Experiment is set both in code and config."
-    if experiment_fn is None and experiment_from_config is not None:
-        experiment_fn = REGISTRY.get(experiment_from_config)
+    # experiment_params = copy_config.get("experiment_params", {})
+    # experiment_from_config = experiment_params.pop("experiment", None)
+    # assert any(
+    #     x is None for x in (experiment_fn, experiment_from_config)
+    # ), "Experiment is set both in code and config."
+    # if experiment_fn is None and experiment_from_config is not None:
+    #     experiment_fn = REGISTRY.get(experiment_from_config)
 
-    runner_params = copy_config.get("runner_params", {})
-    runner_from_config = runner_params.pop("runner", None)
+    runner_params = copy_config.get("runner", {})
+    runner_from_config = runner_params.pop("_target_", None)
     assert any(
         x is None for x in (runner_fn, runner_from_config)
     ), "Runner is set both in code and config."
     if runner_fn is None and runner_from_config is not None:
         runner_fn = REGISTRY.get(runner_from_config)
 
-    experiment = experiment_fn(copy_config)
-    runner = runner_fn(**runner_params)
+    # experiment = experiment_fn(copy_config)
+    runner = runner_fn(config=copy_config, **runner_params)
 
-    return experiment, runner, config
+    return runner, config
 
 
 def _tricky_dir_copy(dir_from: str, dir_to: str) -> None:

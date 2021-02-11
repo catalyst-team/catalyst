@@ -2,18 +2,15 @@ from collections import OrderedDict
 
 import torch
 
-from catalyst.callbacks import (
+from catalyst.callbacks import (  # ExceptionCallback,; MetricManagerCallback,; ValidationManagerCallback,
     CheckpointCallback,
     CheckRunCallback,
     ConsoleLogger,
     CriterionCallback,
-    # ExceptionCallback,
-    # MetricManagerCallback,
     OptimizerCallback,
     SchedulerCallback,
     TensorboardLogger,
     TimerCallback,
-    # ValidationManagerCallback,
     VerboseCallback,
 )
 from catalyst.experiments.auto import AutoCallbackExperiment

@@ -351,22 +351,22 @@ class IRunner(ICallback, ILogger, ABC):
         """
         return None
 
-    def _get_model(self) -> Model:
+    def get_model_(self) -> Model:
         self.model = self.get_model(stage=self.stage_key, epoch=self.stage_epoch_step)
         return self.model
 
-    def _get_criterion(self) -> Criterion:
+    def get_criterion_(self) -> Criterion:
         self.criterion = self.get_criterion(stage=self.stage_key, epoch=self.stage_epoch_step)
         return self.criterion
 
-    def _get_optimizer(self) -> Optimizer:
+    def get_optimizer_(self) -> Optimizer:
         assert self.model is not None, "You need to setup model first"
         self.optimizer = self.get_optimizer(
             stage=self.stage_key, epoch=self.stage_epoch_step, model=self.model
         )
         return self.optimizer
 
-    def _get_scheduler(self) -> Scheduler:
+    def get_scheduler_(self) -> Scheduler:
         assert self.optimizer is not None, "You need to setup optimizer first"
         self.scheduler = self.get_scheduler(
             stage=self.stage_key, epoch=self.stage_epoch_step, optimizer=self.optimizer
@@ -676,10 +676,10 @@ class IStageBasedRunner(IRunner):
             self.optimizer,
             self.scheduler,
         ) = self.engine.init_components(
-            model_fn=self._get_model,
-            criterion_fn=self._get_criterion,
-            optimizer_fn=self._get_optimizer,
-            scheduler_fn=self._get_scheduler,
+            model_fn=self.get_model_,
+            criterion_fn=self.get_criterion_,
+            optimizer_fn=self.get_optimizer_,
+            scheduler_fn=self.get_scheduler_,
         )
 
     def _setup_callbacks(self):

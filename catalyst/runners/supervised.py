@@ -1,41 +1,27 @@
-from typing import Any, Callable, Dict, List, Mapping, Tuple, Union
+from typing import Any, List, Mapping, Tuple, Union
 from collections import OrderedDict
 import logging
-import os
 
 import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
-from torch.utils.data import DataLoader, Dataset
 
-from catalyst.callbacks.batch_overfit import BatchOverfitCallback
-from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
-from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
-from catalyst.core.callback import Callback
 from catalyst.core.engine import IEngine
-from catalyst.core.functional import check_callback_isinstance, sort_callbacks_by_order
-from catalyst.core.runner import IRunner, IStageBasedRunner
-from catalyst.core.trial import ITrial
-
-# from catalyst.experiments.experiment import Experiment
-from catalyst.loggers.console import ConsoleLogger
-from catalyst.loggers.csv import CSVLogger
-from catalyst.loggers.tensorboard import TensorboardLogger
+from catalyst.core.functional import check_callback_isinstance
+from catalyst.core.runner import IRunner
 from catalyst.runners.runner import Runner
 from catalyst.typing import Criterion, Device, Model, Optimizer, RunnerModel, Scheduler
 
 logger = logging.getLogger(__name__)
 
 
-class SupervisedRunner(Runner):
-    """Runner for experiments with supervised model."""
-
+class ISupervisedRunner(IRunner):
     def __init__(
         self,
-        model: RunnerModel = None,
-        engine: IEngine = None,
+        # model: RunnerModel = None,
+        # engine: IEngine = None,
         input_key: Any = "features",
         output_key: Any = "logits",
         target_key: str = "targets",
@@ -49,11 +35,9 @@ class SupervisedRunner(Runner):
             output_key: Key in output dict model output
                 will be stored under
             target_key: Key in batch dict mapping for target
-            experiment_fn: callable function,
-                which defines default experiment type to use
-                during ``.train`` and ``.infer`` methods.
         """
-        super().__init__(model=model, engine=engine)
+        # super().__init__(model=model, engine=engine)
+        super().__init__()
 
         self._input_key = input_key
         self._output_key = output_key
@@ -147,6 +131,37 @@ class SupervisedRunner(Runner):
         """
         self.batch = {**batch, **self.forward(batch)}
 
+
+class SupervisedRunner(ISupervisedRunner, Runner):
+    """Runner for experiments with supervised model."""
+
+    def __init__(
+        self,
+        model: RunnerModel = None,
+        engine: IEngine = None,
+        input_key: Any = "features",
+        output_key: Any = "logits",
+        target_key: str = "targets",
+        loss_key: str = "loss",
+    ):
+        """
+        Args:
+            model: Torch model object
+            device: Torch device
+            input_key: Key in batch dict mapping for model input
+            output_key: Key in output dict model output
+                will be stored under
+            target_key: Key in batch dict mapping for target
+        """
+        ISupervisedRunner.__init__(
+            self,
+            input_key=input_key,
+            output_key=output_key,
+            target_key=target_key,
+            loss_key=loss_key,
+        )
+        Runner.__init__(self, model=model, engine=engine)
+
     @torch.no_grad()
     def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
         """
@@ -190,4 +205,4 @@ class SupervisedRunner(Runner):
         return callbacks
 
 
-__all__ = ["SupervisedRunner"]
+__all__ = ["ISupervisedRunner", "SupervisedRunner"]
