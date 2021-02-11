@@ -10,7 +10,7 @@ from catalyst.metrics.metric import IMetric, ICallbackLoaderMetric, ICallbackBat
 from catalyst.metrics.additive import AdditiveValueMetric
 from catalyst.metrics.confusion_matrix import ConfusionMetric
 
-from catalyst.metrics.accuracy import AccuracyMetric, MRRMetric
+from catalyst.metrics.accuracy import AccuracyMetric
 from catalyst.metrics.auc import AUCMetric
 from catalyst.metrics.classification import (
     PrecisionRecallF1SupportMetric,
@@ -25,4 +25,9 @@ from catalyst.metrics.segmentation import (
     DiceMetric,
     TrevskyMetric,
 )
+
+from catalyst.metrics.hitrate import HitrateMetric
+from catalyst.metrics.ndcg import NDCGMetric
+from catalyst.metrics.mrr import MRRMetric
+
 
