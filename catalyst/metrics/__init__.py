@@ -28,6 +28,7 @@ from catalyst.metrics.segmentation import (
 
 from catalyst.metrics.hitrate import HitrateMetric
 from catalyst.metrics.ndcg import NDCGMetric
+from catalyst.metrics.map import MAPMetric
 from catalyst.metrics.mrr import MRRMetric
 
 
