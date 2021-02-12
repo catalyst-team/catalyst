@@ -23,7 +23,7 @@ args:
   benchmark: False
 
 runner:
-  _target_: SupervisedConfigRunner
+#  _target_: SupervisedConfigRunner
   input_key: &model_input "features"
   output_key: &model_output "logits"
   target_key: &model_target "targets"
@@ -49,35 +49,35 @@ stages:
   train:
     num_epochs: 10
 
-#    datasets:
-#      train:
-#        _target_: MNIST
-#        root: *dataset_root
-#        train: True
-#        download: True
-#      valid:
-#        _target_: MNIST
-#        root: *dataset_root
-#        train: False
-#        download: True
-#
-#    samplers:
-#      train:
-#        _target_: MiniEpochSampler
-#        data_len: 50000
-#        mini_epoch_len: 35000
-#        drop_last: True
-#        shuffle: per_epoch
-#
-#    transforms:
-#      _target_: albumentations.Compose
-#      transforms:
-#        - _target_: albumentations.Normalize
-#        - _target_: catalyst.ImageToTensor
-
     loaders:
       batch_size: 32
       num_workers: 1
+
+#      datasets:
+#        train:
+#          _target_: MNIST
+#          root: *dataset_root
+#          train: True
+#          download: True
+#        valid:
+#          _target_: MNIST
+#          root: *dataset_root
+#          train: False
+#          download: True
+#
+#      samplers:
+#        train:
+#          _target_: MiniEpochSampler
+#          data_len: 50000
+#          mini_epoch_len: 35000
+#          drop_last: True
+#          shuffle: per_epoch
+#
+#      transforms:
+#        _target_: albumentations.Compose
+#        transforms:
+#          - _target_: albumentations.Normalize
+#          - _target_: catalyst.ImageToTensor
 
     criterion:
       _target_: CrossEntropyLoss
@@ -114,6 +114,8 @@ stages:
         loader_key: *valid_loader
         metric_key: *valid_metric
         minimize: True
+      verbose:
+        _target_: TqdmCallback
 
   tune:
     num_epochs: 6
@@ -158,5 +160,7 @@ stages:
         loader_key: *valid_loader
         metric_key: *valid_metric
         minimize: True
+      verbose:
+        _target_: TqdmCallback
 
 

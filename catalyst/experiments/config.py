@@ -312,7 +312,7 @@ class ConfigExperiment(IExperiment):
         """Returns the loaders for a given stage."""
         data_params = dict(self.stages_config[stage]["data_params"])
         loaders = get_loaders_from_params(
-            get_datasets_fn=self.get_datasets, initial_seed=self.seed, stage=stage, **data_params,
+            datasets_fn=self.get_datasets, initial_seed=self.seed, stage=stage, **data_params,
         )
         return loaders
 

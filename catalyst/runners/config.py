@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Union
 from collections import OrderedDict
 from copy import deepcopy
+from functools import partial
 
 from torch import nn
 from torch.utils.data import DataLoader
@@ -28,6 +29,7 @@ from catalyst.typing import (
     RunnerScheduler,
     Scheduler,
 )
+from catalyst.utils.loaders import get_loaders_from_params
 from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
 
 
@@ -145,42 +147,54 @@ class ConfigRunner(IStageBasedRunner):
     #     return transform_fn
 
     def get_loaders(self, stage: str, epoch: int = None) -> "OrderedDict[str, DataLoader]":
-        """Returns the loaders for a given stage."""
-
-        # @TODO: test case
-        import os
-
-        from torch.utils.data import DataLoader
-
-        from catalyst.contrib.data.cv import ToTensor
-        from catalyst.contrib.datasets import MNIST
-
-        loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-            ),
-        }
+        loaders_params = dict(self._stage_config[stage]["loaders"])
+        loaders = get_loaders_from_params(
+            datasets_fn=partial(self.get_datasets, stage=stage, epoch=epoch),
+            initial_seed=self.seed,
+            stage=stage,
+            **loaders_params,
+        )
         return loaders
 
-        # assert "loaders" in self.stages_config[stage], "stages config must contain 'loaders' key"
-        # is_datasets_key = "datasets" in self.stages_config[stage]
-        # is_samplers_key = "samplers" in self.stages_config[stage]
-        # is_transforms_key = "transforms" in self.stages_config[stage]
+    def get_loaders_(self, stage: str, epoch: int = None) -> "OrderedDict[str, DataLoader]":
+        """Returns the loaders for a given stage."""
+
+        # # @TODO: test case
+        # import os
         #
-        # datasets_params = dict(self.stages_config[stage]["datasets"])
-        # samplers_params = dict(self.stages_config[stage]["samplers"])
-        # transforms_params = dict(self.stages_config[stage]["transforms"])
-        # loaders_params = dict(self.stages_config[stage]["loaders"])
-        # loaders = get_loaders_from_params(
-        #     get_datasets_fn=self.get_datasets, initial_seed=self.seed, stage=stage, **data_params,
-        # )
+        # from torch.utils.data import DataLoader
+        #
+        # from catalyst.contrib.data.cv import ToTensor
+        # from catalyst.contrib.datasets import MNIST
+        #
+        # loaders = {
+        #     "train": DataLoader(
+        #         MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        #     ),
+        #     "valid": DataLoader(
+        #         MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+        #     ),
+        # }
         # return loaders
 
+        assert "loaders" in self._stage_config[stage], "stages config must contain 'loaders' key"
+        loaders_params = dict(self._stage_config[stage]["loaders"])
+
+        datasets_ = "datasets" in loaders_params
+        samplers_ = "samplers" in loaders_params
+        transforms_ = "transforms" in loaders_params
+        if datasets_ is not None and samplers_ is not None and transforms_ is not None:
+            raise NotImplementedError()
+            datasets = self.get_datasets_(stage=stage, epoch=epoch)
+            samplers = self.get_samplers_(stage=stage, epoch=epoch)
+            transforms = self.get_transforms_(stage=stage, epoch=epoch)
+        else:
+            loaders = self.get_loaders(stage=stage, epoch=epoch)
+
+        return loaders
+
     @staticmethod
-    def _get_model(**params):
+    def _get_model(**params) -> RunnerModel:
         key_value_flag = params.pop("_key_value", False)
 
         if key_value_flag:
@@ -193,7 +207,7 @@ class ConfigRunner(IStageBasedRunner):
             model = REGISTRY.get_from_params(**params)
         return model
 
-    def get_model(self, stage: str, epoch: int = None) -> Model:
+    def get_model(self, stage: str, epoch: int = None) -> RunnerModel:
         """Returns the model for a given stage."""
         model_params = self._config["model"]
         model = self._get_model(**model_params)

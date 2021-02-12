@@ -192,26 +192,7 @@ class IRunner(ICallback, ILogger, ABC):
     def get_loggers(self) -> Dict[str, ILogger]:
         return {}
 
-    def get_transforms(self, stage: str = None, epoch: int = None, dataset: str = None, **kwargs):
-        """Returns the data transforms for a given stage and dataset.
-
-        Args:
-            stage: stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
-            dataset: dataset name of interest,
-                like "train" / "valid" / "infer"
-
-        .. note::
-            For datasets/loaders naming please follow
-            :py:mod:`catalyst.core.runner` documentation.
-
-        Returns:  # noqa: DAR202
-            Data transformations to use for specified dataset.
-
-        """
-        raise NotImplementedError
-
-    def get_datasets(self, stage: str, epoch: int = None, **kwargs) -> "OrderedDict[str, Dataset]":
+    def get_datasets(self, stage: str, epoch: int = None) -> "OrderedDict[str, Dataset]":
         """Returns the datasets for a given stage and epoch.  # noqa: DAR401
 
         .. note::
@@ -249,6 +230,28 @@ class IRunner(ICallback, ILogger, ABC):
                 "valid": CsvDataset(in_csv=in_csv_valid, ...),
             })
 
+
+        """
+        raise NotImplementedError
+
+    def get_samplers(self, stage: str = None, epoch: int = None):
+        raise NotImplementedError
+
+    def get_transforms(self, stage: str = None, epoch: int = None):
+        """Returns the data transforms for a given stage and dataset.
+
+        Args:
+            stage: stage name of interest,
+                like "pretrain" / "train" / "finetune" / etc
+            dataset: dataset name of interest,
+                like "train" / "valid" / "infer"
+
+        .. note::
+            For datasets/loaders naming please follow
+            :py:mod:`catalyst.core.runner` documentation.
+
+        Returns:  # noqa: DAR202
+            Data transformations to use for specified dataset.
 
         """
         raise NotImplementedError
