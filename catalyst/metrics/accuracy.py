@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Union, Tuple
+from typing import Dict, List, Optional, Union, Tuple
 
 import numpy as np
 
@@ -21,6 +21,7 @@ class AccuracyMetric(ICallbackBatchMetric):
     ):
         """
         Init AccuracyMetric
+
         Args:
             topk_args: list of `topk` for accuracy@topk computing
             num_classes: number of classes
@@ -33,9 +34,7 @@ class AccuracyMetric(ICallbackBatchMetric):
         )
         self.metric_name_mean = f"{self.prefix}accuracy{self.suffix}"
         self.metric_name_std = f"{self.prefix}accuracy{self.suffix}/std"
-        self.topk_args: List[int] = topk_args or get_default_topk_args(
-            num_classes
-        )
+        self.topk_args: List[int] = topk_args or get_default_topk_args(num_classes)
         self.additive_metrics: List[AdditiveValueMetric] = [
             AdditiveValueMetric() for _ in range(len(self.topk_args))
         ]
@@ -79,14 +78,13 @@ class AccuracyMetric(ICallbackBatchMetric):
             f"{self.prefix}accuracy{key:02d}{self.suffix}": value
             for key, value in zip(self.topk_args, values)
         }
-        output[self.metric_name_mean] = output[
-            f"{self.prefix}accuracy01{self.suffix}"
-        ]
+        output[self.metric_name_mean] = output[f"{self.prefix}accuracy01{self.suffix}"]
         return output
 
     def compute(self) -> Tuple[List[float], List[float]]:
         """
         Compute accuracy for all data
+
         Returns:
             list of mean values, list of std values
         """
