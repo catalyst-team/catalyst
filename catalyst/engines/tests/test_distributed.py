@@ -20,12 +20,7 @@ from catalyst.registry import REGISTRY
 # from catalyst.experiments import ConfigExperiment, Experiment
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .test_device_engine import (
-    DummyDataset,
-    DummyModel,
-    LossMinimizationCallback,
-    SupervisedRunner,
-)
+from .test_device import DummyDataset, DummyModel, LossMinimizationCallback, SupervisedRunner
 
 logger = logging.getLogger(__name__)
 

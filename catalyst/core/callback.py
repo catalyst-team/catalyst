@@ -137,15 +137,10 @@ class CallbackOrder(IntFlag):
       like sum different losses into one.
     - **Optimizer** (60) - optimizer step,
       requires computed metrics for optimization.
-    - **Validation** (80) - validation step,
-      computes validation metrics subset based on all metrics.
-    - **Scheduler** (100) - scheduler step,
+    - **Scheduler** (80) - scheduler step,
       in `ReduceLROnPlateau` case
       requires computed validation metrics for optimizer schedule.
-    - **Logging** (120) - logging step,
-      logs metrics to Console/Tensorboard/Alchemy_,
-      requires computed metrics.
-    - **External** (200) - additional callbacks with custom logic,
+    - **External** (100) - additional callbacks with custom logic,
       like InferenceCallbacks
 
     Nevertheless, you always can create CustomCallback with any order,
@@ -165,10 +160,8 @@ class CallbackOrder(IntFlag):
     Metric = metric = 20  # noqa: WPS115
     MetricAggregation = metric_aggregation = 40  # noqa: WPS115
     Optimizer = optimizer = 60  # noqa: WPS115
-    Validation = validation = 80  # noqa: WPS115
-    Scheduler = scheduler = 100  # noqa: WPS115
-    Logging = logging = 120  # noqa: WPS115
-    External = external = 200  # noqa: WPS115
+    Scheduler = scheduler = 80  # noqa: WPS115
+    External = external = 100  # noqa: WPS115
 
 
 class CallbackScope(IntFlag):

@@ -46,7 +46,7 @@ Contrib
 
 Tensorboard
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.tools.tensorboard
+.. automodule:: catalyst.tools.tensorboard
     :members:
     :undoc-members:
     :show-inheritance:

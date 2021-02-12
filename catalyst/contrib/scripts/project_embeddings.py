@@ -8,8 +8,8 @@ import numpy as np
 import pandas as pd
 import torch
 
-from catalyst.contrib.tools.tensorboard import SummaryWriter
 from catalyst.settings import SETTINGS
+from catalyst.tools.tensorboard import SummaryWriter
 
 logger = logging.getLogger(__name__)
 

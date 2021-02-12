@@ -141,6 +141,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
         metrics[f"{self.prefix}/macro"] = macro_metric
         if self.weights is not None:
             metrics[f"{self.prefix}/weighted"] = weighted_metric
+        # @TODO: hotfix for metrics logging, move to loggers also
+        metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
 
     def compute(self):

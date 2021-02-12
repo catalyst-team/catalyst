@@ -632,11 +632,11 @@ runner.train(
     optimizer=optimizer,
     callbacks=callbacks,
     loaders={"train": train_loader, "valid": val_loader},
-    minimize_metric=False,
+    minimize_valid_metric=False,
     verbose=True,
     valid_loader="valid",
     num_epochs=200,
-    main_metric="cmc01",
+    valid_metric="cmc01",
 )   
 ```
 </p>
@@ -744,7 +744,7 @@ runner.train(
             metric_key="loss_discriminator"
         ),
     ],
-    main_metric="loss_generator",
+    valid_metric="loss_generator",
     num_epochs=20,
     verbose=True,
     logdir="./logs_gan",
@@ -1057,8 +1057,8 @@ def objective(trial):
             dl.AccuracyCallback(num_classes=10),
         ],
         num_epochs=10,
-        main_metric="accuracy01",
-        minimize_metric=False,
+        valid_metric="accuracy01",
+        minimize_valid_metric=False,
     )
     return runner.best_valid_metrics[runner.main_metric]
 

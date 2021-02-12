@@ -7,7 +7,8 @@ from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
-from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, VerboseCallback
+from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
+from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.core.callback import Callback
 from catalyst.core.engine import IEngine
 from catalyst.core.functional import check_callback_isinstance, sort_callbacks_by_order
@@ -81,9 +82,9 @@ class Runner(IStageBasedRunner):
         # extra info (callbacks info)
         logdir: str = None,
         resume: str = None,
-        valid_loader: str = "valid",
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
+        valid_loader: str = None,
+        valid_metric: str = None,
+        minimize_valid_metric: bool = True,
         verbose: bool = False,
         timeit: bool = False,
         check: bool = False,
@@ -95,8 +96,8 @@ class Runner(IStageBasedRunner):
         is_callback_exists = lambda callback_fn: any(
             check_callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
-        if verbose and not is_callback_exists(VerboseCallback):
-            callbacks["_verbose"] = VerboseCallback()
+        if verbose and not is_callback_exists(TqdmCallback):
+            callbacks["_verbose"] = TqdmCallback()
         if timeit and not is_callback_exists(TimerCallback):
             callbacks["_timer"] = TimerCallback()
         if check and not is_callback_exists(CheckRunCallback):
@@ -116,8 +117,8 @@ class Runner(IStageBasedRunner):
                 callbacks["_checkpoint"] = CheckpointCallback(
                     logdir=os.path.join(logdir, "checkpoints"),
                     loader_key=valid_loader,
-                    metric_key=main_metric,
-                    minimize=minimize_metric,
+                    metric_key=valid_metric,
+                    minimize=minimize_valid_metric,
                     resume=resume,
                     load_on_stage_end=load_on_stage_end,
                 )
@@ -163,9 +164,9 @@ class Runner(IStageBasedRunner):
         # extra info (callbacks info)
         logdir: str = None,
         resume: str = None,
-        valid_loader: str = "valid",
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
+        valid_loader: str = None,
+        valid_metric: str = None,
+        minimize_valid_metric: bool = True,
         verbose: bool = False,
         timeit: bool = False,
         check: bool = False,
@@ -200,10 +201,10 @@ class Runner(IStageBasedRunner):
                 the metrics and save the checkpoints. For example,
                 you can pass `train` and then
                 the metrics will be taken from `train` loader.
-            main_metric: the key to the name of the metric
+            valid_metric: the key to the name of the metric
                 by which the checkpoints will be selected.
-            minimize_metric: flag to indicate whether
-                the ``main_metric`` should be minimized.
+            minimize_valid_metric: flag to indicate whether
+                the ``valid_metric`` should be minimized or not.
             verbose: if `True`, it displays the status of the training
                 to the console.
             fp16: parameters for fp16/distributed training.
@@ -248,14 +249,23 @@ class Runner(IStageBasedRunner):
             logdir=logdir,
             resume=resume,
             valid_loader=valid_loader,
-            main_metric=main_metric,
-            minimize_metric=minimize_metric,
+            valid_metric=valid_metric,
+            minimize_valid_metric=minimize_valid_metric,
             verbose=verbose,
             timeit=timeit,
             check=check,
             overfit=overfit,
             load_best_on_end=load_best_on_end,
         )
+
+        if valid_metric is not None:
+            have_required_callback = False
+            for callback in callbacks.values():
+                if isinstance(callback, CriterionCallback) and callback.metric_key == valid_metric:
+                    have_required_callback = True
+            assert (
+                have_required_callback
+            ), f"No CriterionCallback with `metric_key={valid_metric}` were found"
 
         loggers = self._process_train_loggers(loggers=loggers, logdir=logdir)
 

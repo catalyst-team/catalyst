@@ -291,8 +291,7 @@ class IExperiment(ABC):
         .. note::
             We need ordered dictionary to guarantee the correct dataflow
             and order of metrics optimization.
-            For example, to compute loss before optimization,
-            or to compute all the metrics before logging :)
+            For example, to compute loss before optimization ;)
 
         Args:
             stage: stage name of interest

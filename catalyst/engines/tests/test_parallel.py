@@ -13,12 +13,7 @@ from catalyst import dl
 from catalyst.engines import DataParallelEngine
 from catalyst.settings import IS_CUDA_AVAILABLE
 
-from .test_device_engine import (
-    DummyDataset,
-    DummyModel,
-    LossMinimizationCallback,
-    SupervisedRunner,
-)
+from .test_device import DummyDataset, DummyModel, LossMinimizationCallback, SupervisedRunner
 
 logger = logging.getLogger(__name__)
 

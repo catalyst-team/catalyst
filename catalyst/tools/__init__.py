@@ -2,4 +2,11 @@
 from catalyst.tools.frozen_class import FrozenClass
 from catalyst.tools.metric_handler import MetricHandler
 from catalyst.tools.registry import Registry
+from catalyst.tools.tensorboard import (
+    EventReadingException,
+    EventsFileReader,
+    SummaryItem,
+    SummaryReader,
+    SummaryWriter,
+)
 from catalyst.tools.time_manager import TimeManager

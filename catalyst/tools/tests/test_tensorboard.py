@@ -7,11 +7,7 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from catalyst.contrib.tools.tensorboard import (
-    EventReadingException,
-    EventsFileReader,
-    SummaryReader,
-)
+from catalyst.tools.tensorboard import EventReadingException, EventsFileReader, SummaryReader
 
 
 def _get_test_data():

@@ -307,13 +307,15 @@ class IOptimizerCallback(Callback):
 #             self.scaler = None
 
 
+# @TODO:
+# - return gradient accumulation
+# - return optimizer lr/momentum logging
 class OptimizerCallback(IOptimizerCallback):
     def __init__(
         self,
         metric_key: str,
         model_key: str = None,
         optimizer_key: str = None,
-        criterion_key: str = None,  # @TODO: do we need it?
         accumulation_steps: int = 1,
         grad_clip_params: Dict = None,
     ):
@@ -321,7 +323,6 @@ class OptimizerCallback(IOptimizerCallback):
         self.metric_key = metric_key
         self.model_key = model_key
         self.optimizer_key = optimizer_key
-        self.criterion_key = criterion_key
         self.model = None
         self.optimizer = None
         self.criterion = None
@@ -329,17 +330,15 @@ class OptimizerCallback(IOptimizerCallback):
     def on_stage_start(self, runner: "IRunner") -> None:
         self.model = get_attr(runner, key="model", inner_key=self.model_key)
         self.optimizer = get_attr(runner, key="optimizer", inner_key=self.optimizer_key)
-        self.criterion = get_attr(runner, key="criterion", inner_key=self.criterion_key)
         assert self.model is not None
         assert self.optimizer is not None
 
     def on_batch_end(self, runner: "IRunner"):
         if runner.is_train_loader:
             loss = runner.batch_metrics[self.metric_key]
-            # @TODO: do we need criterion here? Looks like no :)
-            runner.engine.zero_grad(self.model, self.criterion, self.optimizer, loss)
-            runner.engine.backward_loss(self.model, self.criterion, self.optimizer, loss)
-            runner.engine.optimizer_step(self.model, self.criterion, self.optimizer, loss)
+            runner.engine.zero_grad(loss, self.model, self.optimizer)
+            runner.engine.backward_loss(loss, self.model, self.optimizer)
+            runner.engine.optimizer_step(loss, self.model, self.optimizer)
 
             # runner.batch_metrics.update({"lr": runner.optimizer.lr})
 

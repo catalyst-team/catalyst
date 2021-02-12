@@ -58,6 +58,7 @@ from catalyst.utils.misc import (
     make_tuple,
     pairwise,
     find_value_ids,
+    get_by_keys,
 )
 from catalyst.utils.numpy import get_one_hot
 from catalyst.utils.parser import parse_config_args, parse_args_uargs
