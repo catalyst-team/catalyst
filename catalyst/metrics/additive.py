@@ -6,7 +6,15 @@ from catalyst.metrics.metric import IMetric
 
 
 class AdditiveValueMetric(IMetric):
+    """This metric computes mean and std values of input data."""
+
     def __init__(self, compute_on_call: bool = True):
+        """
+        Init AdditiveValueMetric
+
+        Args:
+            compute_on_call: if True, computes and returns metric value during metric call
+        """
         super().__init__(compute_on_call=compute_on_call)
         self.n = 0
         self.value = 0.0
@@ -17,6 +25,7 @@ class AdditiveValueMetric(IMetric):
         self.num_samples = 0
 
     def reset(self) -> None:
+        """Reset all fields"""
         self.n = 0
         self.value = 0.0
         self.mean = np.nan
@@ -26,6 +35,13 @@ class AdditiveValueMetric(IMetric):
         self.num_samples = 0
 
     def update(self, value: float, num_samples: int) -> float:
+        """
+        Update mean metric value and std with new value.
+
+        Args:
+            value: value to update mean and std with
+            num_samples: number of value samples that metrics should be updated with
+        """
         self.value = value
         self.n += 1
         self.num_samples += num_samples
@@ -46,6 +62,12 @@ class AdditiveValueMetric(IMetric):
         return value
 
     def compute(self) -> Tuple[float, float]:
+        """
+        Returns mean and std values of all the input data
+
+        Returns:
+            tuple of mean and std values
+        """
         return self.mean, self.std
 
 
