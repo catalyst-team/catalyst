@@ -59,6 +59,7 @@ def test_accuracy(
 ) -> None:
     """
     Test multiclass accuracy with different topk args
+    Note that now `accuracy/std` is not std exactly so it can fail if you fix it.
 
     Args:
         outputs: tensor of outputs
@@ -147,6 +148,7 @@ def test_accuracy_update(
     """
     This test checks that AccuracyMetric updates its values correctly and return
     correct intermediate results
+    Note that now `accuracy/std` is not std exactly so it can fail if you fix it.
 
     Args:
         outputs_list: list of output tensors
@@ -197,7 +199,8 @@ def test_multilabel_accuracy(
     true_values: Dict[str, float],
 ) -> None:
     """
-    Test multilabel accuracy metric with single and multiple thresholds
+    Test multilabel accuracy metric with single and multiple thresholds.
+    Note that now `accuracy/std` is not std exactly so it can fail if you fix it.
 
     Args:
         outputs: tensor of outputs
@@ -335,7 +338,8 @@ def test_multilabel_accuracy_std(
 ) -> None:
     """
     This test checks that all the intermediate metrics values are correct during accumulation.
-
+    Note that now `accuracy/std` is not std exactly so it can fail if you fix it.
+    
     Args:
         outputs_list: list of output tensors
         targets_list: list of true answer tensors
