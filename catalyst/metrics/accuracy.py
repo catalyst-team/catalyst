@@ -11,6 +11,11 @@ from catalyst.metrics.metric import ICallbackBatchMetric
 
 
 class AccuracyMetric(ICallbackBatchMetric):
+    """
+    This metric computes accuracy for multiclass classification case.
+    It computes mean value of accuracy and it's approximate std value
+    (note that it's not a real accuracy std but std of accuracy over batch mean values).
+    """
     def __init__(
         self,
         topk_args: List[int] = None,
@@ -116,7 +121,7 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
     """
     This metric computes accuracy for multilabel classification case.
     It computes mean value of accuracy and it's approximate std value
-    (note that it's not a real std but something close).
+    (note that it's not a real accuracy std but std of accuracy over batch mean values).
     """
     def __init__(
         self,
@@ -173,7 +178,7 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
             accuracy metric for outputs and targets
         """
         metric = self.update(outputs=outputs, targets=targets)
-        return {"accuracy": metric}
+        return {self.metric_name_mean: metric}
 
     def compute_key_value(self) -> Dict[str, float]:
         """
