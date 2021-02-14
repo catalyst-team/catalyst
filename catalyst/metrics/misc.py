@@ -9,6 +9,7 @@ import torch
 from catalyst.metrics.accuracy import accuracy
 from catalyst.metrics.auc import auc
 
+
 class IMetric(ABC):
     """Interface for all Metrics."""
 
