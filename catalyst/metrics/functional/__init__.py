@@ -26,7 +26,12 @@ from catalyst.metrics.functional.focal import (
     reduced_focal_loss,
 )
 from catalyst.metrics.functional.hitrate import hitrate
-from catalyst.metrics.functional.segmentation import iou, dice, trevsky, get_segmentation_statistics
+from catalyst.metrics.functional.segmentation import (
+    iou,
+    dice,
+    trevsky,
+    get_segmentation_statistics
+)
 from catalyst.metrics.functional.mrr import reciprocal_rank, mrr
 from catalyst.metrics.functional.ndcg import dcg, ndcg
 from catalyst.metrics.functional.precision import precision
