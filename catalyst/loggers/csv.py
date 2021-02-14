@@ -6,7 +6,9 @@ from catalyst.utils.config import save_config
 
 
 class CSVLogger(ILogger):
-    def __init__(self, logdir: str):
+    def __init__(self, logdir: str, use_logdir_postfix: bool = False):
+        if use_logdir_postfix:
+            logdir = os.path.join(logdir, "logs")
         self.logdir = logdir
         self.loggers = {}
         os.makedirs(self.logdir, exist_ok=True)

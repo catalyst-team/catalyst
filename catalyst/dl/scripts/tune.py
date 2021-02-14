@@ -8,10 +8,11 @@ from pathlib import Path
 
 import optuna
 
+from catalyst.runners.config import ConfigRunner
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, maybe_recursive_call, set_global_seed
 from catalyst.utils.parser import parse_args_uargs
-from catalyst.utils.scripts import dump_code, prepare_config_api_components
+from catalyst.utils.scripts import dump_code, get_config_runner
 from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import prepare_cudnn
 
@@ -31,14 +32,14 @@ def build_args(parser: ArgumentParser):
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
-    parser.add_argument(
-        "-j", "--num-workers", default=None, type=int, help="number of data loading workers",
-    )
-    parser.add_argument("-b", "--batch-size", default=None, type=int, help="mini-batch size")
-    parser.add_argument("-e", "--num-epochs", default=None, type=int, help="number of epochs")
-    parser.add_argument(
-        "--resume", default=None, type=str, metavar="PATH", help="path to latest checkpoint",
-    )
+    # parser.add_argument(
+    #     "-j", "--num-workers", default=None, type=int, help="number of data loading workers",
+    # )
+    # parser.add_argument("-b", "--batch-size", default=None, type=int, help="mini-batch size")
+    # parser.add_argument("-e", "--num-epochs", default=None, type=int, help="number of epochs")
+    # parser.add_argument(
+    #     "--resume", default=None, type=str, metavar="PATH", help="path to latest checkpoint",
+    # )
     # parser.add_argument(
     #     "--autoresume",
     #     type=str,
@@ -83,8 +84,9 @@ def build_args(parser: ArgumentParser):
     boolean_flag(parser, "benchmark", default=None, help="Use CuDNN benchmark")
 
     parser.add_argument("--storage", type=int, default=None)
-    parser.add_argument("--study-name", type=int, default=None)
+    parser.add_argument("--study-name", type=str, default=None)
 
+    parser.add_argument("--direction", type=str, default=None)
     parser.add_argument("--n-trials", type=int, default=None)
     parser.add_argument("--timeout", type=int, default=None)
     parser.add_argument("--n-jobs", type=int, default=None)
@@ -113,46 +115,33 @@ def _process_trial_config(trial, config: Dict) -> Tuple[optuna.Trial, Dict]:
     return trial, config
 
 
-def main_worker(args, unknown_args):
-    """Runs main worker thread from model training."""
+def main(args, unknown_args):
+    """Runs the ``catalyst-dl tune`` script."""
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)
 
-    config.setdefault("engine_params", {})["apex"] = args.apex
-    config.setdefault("engine_params", {})["amp"] = args.amp
-    expdir = Path(args.expdir)
-
     # optuna objective
     def objective(trial: optuna.trial):
         trial, trial_config = _process_trial_config(trial, config.copy())
-        experiment, runner, trial_config = prepare_config_api_components(
-            expdir=expdir, config=trial_config
-        )
+        runner: ConfigRunner = get_config_runner(expdir=Path(args.expdir), config=trial_config)
         # @TODO: here we need better solution.
-        experiment._trial = trial  # noqa: WPS437
+        runner._trial = trial  # noqa: WPS437
 
-        if experiment.logdir is not None and get_rank() <= 0:
-            dump_environment(trial_config, experiment.logdir, args.configs)
-            dump_code(args.expdir, experiment.logdir)
+        if get_rank() <= 0:
+            dump_environment(logdir=runner.logdir, config=config, configs_path=args.configs)
+            dump_code(expdir=args.expdir, logdir=runner.logdir)
 
-        runner.run(experiment)
+        runner.run()
 
-        return runner.best_valid_metrics[runner.main_metric]
-
-    # optuna direction
-    direction = (
-        "minimize"
-        if config.get("stages", {}).get("stage_params", {}).get("minimize_metric", True)
-        else "maximize"
-    )
+        return trial.best_score
 
     # optuna study
-    study_params = config.pop("study_params", {})
+    study_params = config.pop("study", {})
 
     # optuna sampler
-    sampler_params = study_params.pop("sampler_params", {})
-    optuna_sampler_type = sampler_params.pop("sampler", None)
+    sampler_params = study_params.pop("sampler", {})
+    optuna_sampler_type = sampler_params.pop("_target_", None)
     optuna_sampler = (
         optuna.samplers.__dict__[optuna_sampler_type](**sampler_params)
         if optuna_sampler_type is not None
@@ -160,8 +149,8 @@ def main_worker(args, unknown_args):
     )
 
     # optuna pruner
-    pruner_params = study_params.pop("pruner_params", {})
-    optuna_pruner_type = pruner_params.pop("pruner", None)
+    pruner_params = study_params.pop("pruner", {})
+    optuna_pruner_type = pruner_params.pop("_target_", None)
     optuna_pruner = (
         optuna.pruners.__dict__[optuna_pruner_type](**pruner_params)
         if optuna_pruner_type is not None
@@ -169,11 +158,12 @@ def main_worker(args, unknown_args):
     )
 
     study = optuna.create_study(
-        direction=direction,
+        direction=args.direction or study_params.pop("direction", "minimize"),
         storage=args.storage or study_params.pop("storage", None),
         study_name=args.study_name or study_params.pop("study_name", None),
         sampler=optuna_sampler,
         pruner=optuna_pruner,
+        **study_params,
     )
     study.optimize(
         objective,
@@ -183,14 +173,6 @@ def main_worker(args, unknown_args):
         gc_after_trial=args.gc_after_trial,
         show_progress_bar=args.show_progress_bar,
     )
-
-
-def main(args, unknown_args):
-    """Runs the ``catalyst-dl tune`` script."""
-    main_worker(args, unknown_args)
-    # distributed_cmd_run(
-    #     main_worker, args.distributed, args, unknown_args
-    # )
 
 
 if __name__ == "__main__":

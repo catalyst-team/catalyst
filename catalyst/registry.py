@@ -151,21 +151,6 @@ def _schedulers_loader(r: registry.Registry):
 REGISTRY.late_add(_schedulers_loader)
 
 
-def _experiments_loader(r: registry.Registry):
-    from catalyst.core.experiment import IExperiment
-
-    r.add(IExperiment)
-
-    from catalyst import experiments as m
-
-    r.add_from_module(m)  # noqa: WPS347
-
-    r.add_from_module(m)
-
-
-REGISTRY.late_add(_experiments_loader)
-
-
 def _runners_loader(r: registry.Registry):
     from catalyst.core.runner import IRunner, IStageBasedRunner
 
@@ -178,6 +163,19 @@ def _runners_loader(r: registry.Registry):
 
 
 REGISTRY.late_add(_runners_loader)
+
+
+def _engines_loader(r: registry.Registry):
+    from catalyst.core.engine import IEngine
+
+    r.add(IEngine)
+
+    from catalyst import engines as m  # noqa: WPS347
+
+    r.add_from_module(m)
+
+
+REGISTRY.late_add(_engines_loader)
 
 
 def _callbacks_loader(r: registry.Registry):

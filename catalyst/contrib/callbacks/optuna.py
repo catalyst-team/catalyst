@@ -99,6 +99,10 @@ class OptunaPruningCallback(Callback):
         if self.best_score is None or self.is_better(score, self.best_score):
             self.best_score = score
         self.trial.report(score, step=runner.stage_epoch_step)
+
+        # @TODO: hack
+        self.trial.best_score = self.best_score
+
         if self.trial.should_prune():
             message = "Trial was pruned at epoch {}.".format(runner.stage_epoch_step)
             raise optuna.TrialPruned(message)
