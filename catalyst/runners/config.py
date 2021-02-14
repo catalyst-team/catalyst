@@ -249,6 +249,7 @@ class ConfigRunner(IStageBasedRunner):
 
     @staticmethod
     def _get_model(**params) -> RunnerModel:
+        params = deepcopy(params)
         is_key_value = params.pop("_key_value", False)
 
         if is_key_value:
@@ -270,6 +271,7 @@ class ConfigRunner(IStageBasedRunner):
 
     @staticmethod
     def _get_criterion(**params) -> RunnerCriterion:
+        params = deepcopy(params)
         key_value_flag = params.pop("_key_value", False)
 
         if key_value_flag:
@@ -357,8 +359,9 @@ class ConfigRunner(IStageBasedRunner):
 
     @staticmethod
     def _get_scheduler(*, optimizer: RunnerOptimizer, **params) -> RunnerScheduler:
-        is_key_value = params.pop("_key_value", False)
+        params = deepcopy(params)
 
+        is_key_value = params.pop("_key_value", False)
         optimizer_key = params.pop("_optimizer", None)
         optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
 
@@ -384,6 +387,7 @@ class ConfigRunner(IStageBasedRunner):
 
     @staticmethod
     def _get_callback(**params):
+        params = deepcopy(params)
         wrapper_params = params.pop("_wrapper", None)
         callback = REGISTRY.get_from_params(**params)
         if wrapper_params is not None:

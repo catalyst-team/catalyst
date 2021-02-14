@@ -27,8 +27,7 @@ def main(cfg: DictConfig):
     prepare_cudnn(cfg.args.deterministic, cfg.args.benchmark)
 
     import_module(hydra.utils.to_absolute_path(cfg.args.expdir))
-
-    runner = hydra.utils.instantiate(cfg.runner)
+    runner = hydra.utils.instantiate(cfg.runner, cfg=cfg)
 
     if get_rank() <= 0:
         dump_environment(logdir=runner.logdir, config=cfg)

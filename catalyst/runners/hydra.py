@@ -44,13 +44,13 @@ logger = logging.getLogger(__name__)
 class HydraRunner(IStageBasedRunner):
     """Runner created from a hydra configuration file."""
 
-    def __init__(self, config: DictConfig):
+    def __init__(self, cfg: DictConfig):
         """
         Args:
-            config: dictionary with parameters
+            cfg: dictionary with parameters
         """
         super().__init__()
-        self._config: DictConfig = deepcopy(config)
+        self._config: DictConfig = deepcopy(cfg)
 
         self._seed: int = self._config.args.seed
         self._verbose: bool = self._config.args.verbose
@@ -126,7 +126,7 @@ class HydraRunner(IStageBasedRunner):
         return engine
 
     def get_loggers(self) -> Dict[str, ILogger]:
-        loggers_params = self._config.loggers
+        loggers_params = self._config.loggers or {}
         loggers = {key: hydra.utils.instantiate(params) for key, params in loggers_params.items()}
 
         is_logger_exists = lambda logger_fn: any(
@@ -294,6 +294,7 @@ class HydraRunner(IStageBasedRunner):
 
     @staticmethod
     def _get_model(params: DictConfig) -> RunnerModel:
+        params = deepcopy(params)
         is_key_value = params._key_value or False
         if is_key_value:
             model = {
@@ -313,6 +314,7 @@ class HydraRunner(IStageBasedRunner):
 
     @staticmethod
     def _get_criterion(params: DictConfig) -> RunnerCriterion:
+        params = deepcopy(params)
         is_key_value = params._key_value or False
         if is_key_value:
             criterion = {
@@ -335,7 +337,7 @@ class HydraRunner(IStageBasedRunner):
         self, model: RunnerModel, stage: str, epoch: int, params: DictConfig,
     ) -> Optimizer:
         # @TODO 1: refactor; this method is too long
-
+        params = deepcopy(params)
         # learning rate linear scaling
         lr_scaling_params = params.pop("lr_linear_scaling", None)
         if lr_scaling_params:
@@ -403,6 +405,7 @@ class HydraRunner(IStageBasedRunner):
 
     @staticmethod
     def _get_scheduler(*, optimizer: RunnerOptimizer, params: DictConfig) -> RunnerScheduler:
+        params = deepcopy(params)
         is_key_value = params._key_value or False
         optimizer_key = params._optimizer or None
         optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
@@ -430,6 +433,7 @@ class HydraRunner(IStageBasedRunner):
 
     @staticmethod
     def _get_callback(params: DictConfig):
+        params = deepcopy(params)
         wrapper_params = params.pop("_wrapper", None)
         target = params.pop("_target_")
         callback_class = hydra.utils.get_class(target)
@@ -472,7 +476,7 @@ class HydraRunner(IStageBasedRunner):
 class SupervisedHydraRunner(ISupervisedRunner, HydraRunner):
     def __init__(
         self,
-        config: DictConfig = None,
+        cfg: DictConfig = None,
         input_key: Any = "features",
         output_key: Any = "logits",
         target_key: str = "targets",
@@ -485,7 +489,7 @@ class SupervisedHydraRunner(ISupervisedRunner, HydraRunner):
             target_key=target_key,
             loss_key=loss_key,
         )
-        HydraRunner.__init__(self, config=config)
+        HydraRunner.__init__(self, cfg=cfg)
 
 
 __all__ = ["HydraRunner", "SupervisedHydraRunner"]

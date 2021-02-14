@@ -7,17 +7,6 @@ shared:
   valid_metric: accuracy01
   minimize_valid_metric: False
 
-  optimizer:
-    target: torch.optim.Adam
-    lr: 0.001
-    weight_decay: 0.0001
-
-  scheduler:
-    target: catalyst.contrib.nn.OneCycleLRWithWarmup
-    warmup_steps: 1
-    lr_range: [ 0.005, 0.00005 ]
-    momentum_range: [ 0.85, 0.95 ]
-
 args:
   expdir: "cifar_stages"
   logdir: "./logs/cifar_stages_hydra"
@@ -33,22 +22,31 @@ args:
   benchmark: False
 
 runner:
-  _target_: cifar_stages.CustomSupervisedHydraRunner
+  _target_: cifar_stages.runner.CustomSupervisedHydraRunner
   input_key: "features"
   output_key: "logits"
   target_key: "targets"
   loss_key: "loss"
+
+engine:
+#  engine: "cpu"
+  _target_: catalyst.engines.DeviceEngine
+  device: "cpu"
+
+loggers:
+  console:
+    _target_: catalyst.loggers.ConsoleLogger
 
 model:
   _target_: cifar_stages.SimpleNet
 
 stages:
   train:
-    num_epochs: 10
+    num_epochs: 4
 
     loaders:
-      batch_size: ${shared.train_batch_size}
-      num_workers: ${shared.train_num_workers}
+      batch_size: 32
+      num_workers: 1
 #      train:
 #        batch_size: ${shared.train_batch_size}
 #        num_workers: ${shared.train_num_workers}
@@ -78,23 +76,19 @@ stages:
       _target_: torch.nn.CrossEntropyLoss
 
     optimizer:
-      _target_: ${shared.optimizer.target}
-      lr: ${shared.optimizer.lr}
-      weight_decay: ${shared.optimizer.weight_decay}
+      _target_: torch.optim.Adam
 
     scheduler:
-      _target_: ${shared.scheduler.target}
-      num_steps: ${stages.train.num_epochs}
-      warmup_steps: ${shared.scheduler.warmup_steps}
-      lr_range: ${shared.scheduler.lr_range}
-      momentum_range: ${shared.scheduler.momentum_range}
+      _target_: torch.optim.lr_scheduler.MultiStepLR
+      milestones: [ 2 ]
+      gamma: 0.3
 
     callbacks:
       accuracy:
         _target_: catalyst.callbacks.AccuracyCallback
         input_key: ${runner.output_key}
         target_key: ${runner.target_key}
-        accuracy_args: [ 1, 3, 5 ]
+        topk_args: [ 1, 3, 5 ]
       loss:
         _target_: catalyst.callbacks.CriterionCallback
         input_key: ${runner.output_key}
@@ -117,24 +111,24 @@ stages:
       verbose:
         _target_: catalyst.callbacks.TqdmCallback
 
-#  tune:
-#    num_epochs: 6
-#
-#    loaders: ${stages.train.loaders}
-#
-#    criterion:
-#      _target_: torch.nn.CrossEntropyLoss
-#
-#    optimizer:
-#      _target_: catalyst.contrib.nn.Ralamb
-#
-#    scheduler:
-#      _target_: torch.optim.lr_scheduler.MultiStepLR
-#      milestones: [ 3 ]
-#      gamma: 0.3
-#
-#    callbacks: ${stages.train.callbacks}
+  tune:
+    num_epochs: 4
 
-#hydra:
-#  run:
-#    dir: ${args.logdir}
+    loaders: ${stages.train.loaders}
+
+    criterion:
+      _target_: torch.nn.CrossEntropyLoss
+
+    optimizer:
+      _target_: catalyst.contrib.nn.Ralamb
+
+    scheduler:
+      _target_: torch.optim.lr_scheduler.MultiStepLR
+      milestones: [ 2 ]
+      gamma: 0.3
+
+    callbacks: ${stages.train.callbacks}
+
+hydra:
+  run:
+    dir: ${args.logdir}

@@ -110,6 +110,7 @@ def main(args, unknown_args):
     if args.hydra:
         assert IS_HYDRA_AVAILABLE, "Hydra is not available"
     if args.hydra:
+        sys.argv.remove("run")
         sys.argv.remove("--hydra")
         hydra_main()
     else:

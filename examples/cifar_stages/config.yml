@@ -43,7 +43,7 @@ model:
 
 stages:
   train:
-    num_epochs: 10
+    num_epochs: 4
 
     loaders: &loaders
       batch_size: 32
@@ -83,7 +83,7 @@ stages:
 
     scheduler:
       _target_: MultiStepLR
-      milestones: [ 8 ]
+      milestones: [ 2 ]
       gamma: 0.3
 
     callbacks: &callbacks
@@ -114,7 +114,7 @@ stages:
         _target_: TqdmCallback
 
   tune:
-    num_epochs: 6
+    num_epochs: 4
 
     loaders: *loaders
 
@@ -126,7 +126,7 @@ stages:
 
     scheduler:
       _target_: MultiStepLR
-      milestones: [ 3 ]
+      milestones: [ 2 ]
       gamma: 0.3
 
     callbacks: *callbacks

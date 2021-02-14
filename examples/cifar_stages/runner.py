@@ -66,13 +66,18 @@ class RunnerMixin:
 
 
 class CustomSupervisedConfigRunner(RunnerMixin, SupervisedConfigRunner):
-    """``ConfigRunner`` with CIFAR10 dataset."""
-
     pass
+
 
 
 if IS_HYDRA_AVAILABLE:
     from catalyst.dl import SupervisedHydraRunner
 
-    class CustomSupervisedHydraRunner(SupervisedHydraRunner, RunnerMixin):
+    class CustomSupervisedHydraRunner(RunnerMixin, SupervisedHydraRunner):
         pass
+
+
+
+    __all__ = ["CustomSupervisedConfigRunner", "CustomSupervisedHydraRunner"]
+else:
+    __all__ = ["CustomSupervisedConfigRunner"]
