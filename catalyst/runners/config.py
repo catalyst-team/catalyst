@@ -2,11 +2,13 @@ from typing import Any, Dict, List, Union
 from collections import OrderedDict
 from copy import deepcopy
 from functools import partial
+import logging
 import os
 
 from torch import nn
 from torch.utils.data import DataLoader
 
+from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.core.functional import check_callback_isinstance
@@ -33,6 +35,8 @@ from catalyst.typing import (
 from catalyst.utils.loaders import get_loaders_from_params
 from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
 
+logger = logging.getLogger(__name__)
+
 
 class ConfigRunner(IStageBasedRunner):
     def __init__(self, config: Dict):
@@ -43,7 +47,21 @@ class ConfigRunner(IStageBasedRunner):
         super().__init__()
         self._config: Dict = deepcopy(config)
         self._stage_config: Dict = self._config["stages"]
-        self._logdir = self._prepare_logdir()
+
+        self._seed: int = get_by_keys(self._config, "args", "seed", default=42)
+        self._verbose: bool = get_by_keys(self._config, "args", "verbose", default=False)
+        self._timeit: bool = get_by_keys(self._config, "args", "timeit", default=False)
+        self._check: bool = get_by_keys(self._config, "args", "check", default=False)
+        self._overfit: bool = get_by_keys(self._config, "args", "overfit", default=False)
+        self._name: str = self._get_name_()
+        self._logdir: str = self._get_logdir_()
+
+    def _get_name_(self) -> str:
+        timestamp = get_utcnow_time()
+        config_hash = get_short_hash(self._config)
+        default_name = f"{timestamp}-{config_hash}"
+        name = get_by_keys(self._config, "args", "name", default=default_name)
+        return name
 
     def _get_logdir(self, config: Dict) -> str:
         timestamp = get_utcnow_time()
@@ -51,7 +69,7 @@ class ConfigRunner(IStageBasedRunner):
         logdir = f"{timestamp}.{config_hash}"
         return logdir
 
-    def _prepare_logdir(self) -> str:  # noqa: WPS112
+    def _get_logdir_(self) -> str:  # noqa: WPS112
         output = None
         exclude_tag = "none"
 
@@ -71,18 +89,11 @@ class ConfigRunner(IStageBasedRunner):
 
     @property
     def seed(self) -> int:
-        """Experiment's initial seed value."""
-        seed = get_by_keys(self._config, "args", "seed", default=42)
-        return seed
+        return self._seed
 
     @property
     def name(self) -> str:
-        timestamp = get_utcnow_time()
-        config_hash = get_short_hash(self._config)
-        default_name = f"{timestamp}-{config_hash}"
-
-        name = get_by_keys(self._config, "args", "name", default=default_name)
-        return name
+        return self._name
 
     @property
     def hparams(self) -> Dict:
@@ -99,12 +110,16 @@ class ConfigRunner(IStageBasedRunner):
         return get_by_keys(self._stage_config, stage, "num_epochs", default=1)
 
     def get_trial(self) -> ITrial:
-        trial_params = self._config.get("trial", {})
-        return get_trial_by_params(trial_params)
+        return None
 
     def get_engine(self) -> IEngine:
         engine_params = self._config.get("engine")
-        return process_engine(**engine_params)
+        # @TODO: remove the trick
+        try:
+            engine = REGISTRY.get_from_params(**engine_params)
+        except:
+            engine = process_engine(**engine_params)
+        return engine
 
     def get_loggers(self) -> Dict[str, ILogger]:
         loggers_params = self._config.get("loggers", {})
@@ -195,48 +210,48 @@ class ConfigRunner(IStageBasedRunner):
         )
         return loaders
 
-    def get_loaders_(self, stage: str, epoch: int = None) -> "OrderedDict[str, DataLoader]":
-        """Returns the loaders for a given stage."""
-
-        # # @TODO: test case
-        # import os
-        #
-        # from torch.utils.data import DataLoader
-        #
-        # from catalyst.contrib.data.cv import ToTensor
-        # from catalyst.contrib.datasets import MNIST
-        #
-        # loaders = {
-        #     "train": DataLoader(
-        #         MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-        #     ),
-        #     "valid": DataLoader(
-        #         MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-        #     ),
-        # }
-        # return loaders
-
-        assert "loaders" in self._stage_config[stage], "stages config must contain 'loaders' key"
-        loaders_params = dict(self._stage_config[stage]["loaders"])
-
-        datasets_ = "datasets" in loaders_params
-        samplers_ = "samplers" in loaders_params
-        transforms_ = "transforms" in loaders_params
-        if datasets_ is not None and samplers_ is not None and transforms_ is not None:
-            raise NotImplementedError()
-            datasets = self.get_datasets_(stage=stage, epoch=epoch)
-            samplers = self.get_samplers_(stage=stage, epoch=epoch)
-            transforms = self.get_transforms_(stage=stage, epoch=epoch)
-        else:
-            loaders = self.get_loaders(stage=stage, epoch=epoch)
-
-        return loaders
+    # def get_loaders_(self, stage: str, epoch: int = None) -> "OrderedDict[str, DataLoader]":
+    #     """Returns the loaders for a given stage."""
+    #
+    #     # # @TODO: test case
+    #     # import os
+    #     #
+    #     # from torch.utils.data import DataLoader
+    #     #
+    #     # from catalyst.contrib.data.cv import ToTensor
+    #     # from catalyst.contrib.datasets import MNIST
+    #     #
+    #     # loaders = {
+    #     #     "train": DataLoader(
+    #     #         MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+    #     #     ),
+    #     #     "valid": DataLoader(
+    #     #         MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+    #     #     ),
+    #     # }
+    #     # return loaders
+    #
+    #     assert "loaders" in self._stage_config[stage], "stages config must contain 'loaders' key"
+    #     loaders_params = dict(self._stage_config[stage]["loaders"])
+    #
+    #     datasets_ = "datasets" in loaders_params
+    #     samplers_ = "samplers" in loaders_params
+    #     transforms_ = "transforms" in loaders_params
+    #     if datasets_ is not None and samplers_ is not None and transforms_ is not None:
+    #         raise NotImplementedError()
+    #         datasets = self.get_datasets_(stage=stage, epoch=epoch)
+    #         samplers = self.get_samplers_(stage=stage, epoch=epoch)
+    #         transforms = self.get_transforms_(stage=stage, epoch=epoch)
+    #     else:
+    #         loaders = self.get_loaders(stage=stage, epoch=epoch)
+    #
+    #     return loaders
 
     @staticmethod
     def _get_model(**params) -> RunnerModel:
-        key_value_flag = params.pop("_key_value", False)
+        is_key_value = params.pop("_key_value", False)
 
-        if key_value_flag:
+        if is_key_value:
             model = {
                 model_key: ConfigRunner._get_model(**model_params)  # noqa: WPS437
                 for model_key, model_params in params.items()
@@ -248,8 +263,9 @@ class ConfigRunner(IStageBasedRunner):
 
     def get_model(self, stage: str, epoch: int = None) -> RunnerModel:
         """Returns the model for a given stage."""
-        model_params = self._config["model"]
-        model = self._get_model(**model_params)
+        assert "model" in self._config, "config must contain 'model' key"
+        model_params: Dict = self._config["model"]
+        model: RunnerModel = self._get_model(**model_params)
         return model
 
     @staticmethod
@@ -267,13 +283,16 @@ class ConfigRunner(IStageBasedRunner):
 
     def get_criterion(self, stage: str, epoch: int = None) -> RunnerCriterion:
         """Returns the criterion for a given stage."""
+        if "criterion" not in self._stage_config[stage]:
+            return None
         criterion_params = get_by_keys(self._stage_config, stage, "criterion", default={})
         criterion = self._get_criterion(**criterion_params)
         return criterion
 
-    def _get_optimizer(self, model: RunnerModel, stage: str, **params) -> RunnerOptimizer:
-        # @TODO 1: refactoring; this method is too long
-        # @TODO 2: load state dicts for schedulers & criterion
+    def _get_optimizer(
+        self, model: RunnerModel, stage: str, epoch: int = None, **params
+    ) -> RunnerOptimizer:
+        # @TODO 1: refactor; this method is too long
 
         # learning rate linear scaling
         lr_scaling_params = params.pop("lr_linear_scaling", None)
@@ -287,11 +306,9 @@ class ConfigRunner(IStageBasedRunner):
             params["lr"] = lr
         else:
             lr_scaling = 1.0
-
         # getting layer-wise parameters
         layerwise_params = params.pop("layerwise_params", OrderedDict())
         no_bias_weight_decay = params.pop("no_bias_weight_decay", True)
-
         # getting model parameters
         model_key = params.pop("_model", None)
         model_params = get_model_parameters(
@@ -301,31 +318,34 @@ class ConfigRunner(IStageBasedRunner):
             no_bias_weight_decay=no_bias_weight_decay,
             lr_scaling=lr_scaling,
         )
-
+        # instantiate optimizer
         optimizer = REGISTRY.get_from_params(**params, params=model_params)
-
         return optimizer
 
     def get_optimizer(self, model: RunnerModel, stage: str, epoch: int = None) -> RunnerOptimizer:
         """
-        Returns the optimizer for a given stage.
+        Returns the optimizer for a given stage and epoch.
 
         Args:
-            stage: stage name
-            model (Union[Model, Dict[str, Model]]): model or a dict of models
+            model: model or a dict of models
+            stage: current stage name
+            epoch: current epoch index
 
         Returns:
-            optimizer for selected stage
+            optimizer for selected stage and epoch
         """
-        optimizer_params = get_by_keys(self._stage_config, stage, "optimizer", default={})
+        if "optimizer" not in self._stage_config[stage]:
+            return None
 
+        optimizer_params = get_by_keys(self._stage_config, stage, "optimizer", default={})
         optimizer_params = deepcopy(optimizer_params)
-        key_value_flag = optimizer_params.pop("_key_value", False)
-        if key_value_flag:
+        is_key_value = optimizer_params.pop("_key_value", False)
+
+        if is_key_value:
             optimizer = {}
             for key, params in optimizer_params.items():
                 # load specified optimizer from checkpoint
-                optimizer_key = "optimizer_key"
+                optimizer_key = "_optimizer"
                 assert optimizer_key not in params, "keyword reserved"
                 params[optimizer_key] = key
 
@@ -337,12 +357,12 @@ class ConfigRunner(IStageBasedRunner):
 
     @staticmethod
     def _get_scheduler(*, optimizer: RunnerOptimizer, **params) -> RunnerScheduler:
-        key_value_flag = params.pop("_key_value", False)
+        is_key_value = params.pop("_key_value", False)
 
         optimizer_key = params.pop("_optimizer", None)
         optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
 
-        if key_value_flag:
+        if is_key_value:
             scheduler: Dict[str, Scheduler] = {}
             for key, scheduler_params in params.items():
                 scheduler[key] = ConfigRunner._get_scheduler(  # noqa: WPS437
@@ -356,6 +376,8 @@ class ConfigRunner(IStageBasedRunner):
         self, optimizer: RunnerOptimizer, stage: str, epoch: int = None
     ) -> RunnerScheduler:
         """Returns the scheduler for a given stage."""
+        if "scheduler" not in self._stage_config[stage]:
+            return None
         scheduler_params = get_by_keys(self._stage_config, stage, "scheduler", default={})
         scheduler = self._get_scheduler(optimizer=optimizer, **scheduler_params)
         return scheduler
@@ -369,7 +391,7 @@ class ConfigRunner(IStageBasedRunner):
             callback = ConfigRunner._get_callback(**wrapper_params)  # noqa: WPS437
         return callback
 
-    def get_callbacks(self, stage: str, epoch: int = None) -> "OrderedDict[str, ICallback]":
+    def get_callbacks(self, stage: str, epoch: int = None) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage."""
         callbacks_params = get_by_keys(self._stage_config, stage, "callbacks", default={})
 
@@ -380,43 +402,22 @@ class ConfigRunner(IStageBasedRunner):
             ]
         )
 
-        verbose = get_by_keys(self._config, "args", "verbose", default=False)
-        timeit = get_by_keys(self._config, "args", "timeit", default=False)
-        check = get_by_keys(self._config, "args", "check", default=False)
-        overfit = get_by_keys(self._config, "args", "overfit", default=False)
-        # logdir = get_by_keys(self._config, "args", "logdir", default=None)
-
         is_callback_exists = lambda callback_fn: any(
             check_callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
-        if verbose and not is_callback_exists(TqdmCallback):
+        if self._verbose and not is_callback_exists(TqdmCallback):
             callbacks["_verbose"] = TqdmCallback()
-        if timeit and not is_callback_exists(TimerCallback):
+        if self._timeit and not is_callback_exists(TimerCallback):
             callbacks["_timer"] = TimerCallback()
-        if check and not is_callback_exists(CheckRunCallback):
+        if self._check and not is_callback_exists(CheckRunCallback):
             callbacks["_check"] = CheckRunCallback()
-        if overfit and not is_callback_exists(BatchOverfitCallback):
+        if self._overfit and not is_callback_exists(BatchOverfitCallback):
             callbacks["_overfit"] = BatchOverfitCallback()
 
-        # if logdir is not None:  # or resume is not None or load_best_on_end:
-        #     # load_on_stage_end = None
-        #     # if load_best_on_end:
-        #     #     load_on_stage_end = "best_full"
-        #     #     assert logdir is not None, (
-        #     #         "For ``load_best_on_end`` feature " "you need to specify ``logdir``"
-        #     #     )
-        #
-        #     if not is_callback_exists(ICheckpointCallback):
-        #         callbacks["_checkpoint"] = CheckpointCallback(
-        #             logdir=os.path.join(self._logdir, "checkpoints"),
-        #             loader_key=self._valid_loader,
-        #             metric_key=self._valid_metric,
-        #             minimize=self._minimize_valid_metric,
-        #             # resume=resume,
-        #             # load_on_stage_end=load_on_stage_end,
-        #         )
-        #     else:
-        #         raise NotImplementedError("CheckpointCallback already exist")
+        if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
+            callbacks["_checkpoint"] = CheckpointCallback(
+                logdir=os.path.join(self._logdir, "checkpoints"),
+            )
 
         return callbacks
 

@@ -1,12 +1,4 @@
 # flake8: noqa
-"""
-All utils are gathered in :py:mod:`catalyst.utils` for easier access.
-
-.. note::
-    Everything from :py:mod:`catalyst.contrib.utils` is included in :py:mod:`catalyst.utils`
-"""
-
-
 from catalyst.utils.checkpoint import (
     load_checkpoint,
     pack_checkpoint,

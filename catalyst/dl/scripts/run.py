@@ -78,8 +78,7 @@ def build_args(parser: ArgumentParser):
         help="Deterministic mode if running in CuDNN backend",
     )
     boolean_flag(parser, "benchmark", default=None, help="Use CuDNN benchmark")
-    if IS_HYDRA_AVAILABLE:
-        boolean_flag(parser, "hydra", default=None, help="Use Hydra")
+    boolean_flag(parser, "hydra", default=None, help="Use Hydra")
 
     return parser
 
@@ -92,8 +91,7 @@ def parse_args():
     return args, unknown_args
 
 
-def main(args, unknown_args):
-    """Runs the ``catalyst-dl run`` script."""
+def config_main(args, unknown_args):
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)
@@ -107,10 +105,17 @@ def main(args, unknown_args):
     runner.run()
 
 
-if __name__ == "__main__":
-    args, unknown_args = parse_args()
-    if IS_HYDRA_AVAILABLE and args.hydra:
+def main(args, unknown_args):
+    """Runs the ``catalyst-dl run`` script."""
+    if args.hydra:
+        assert IS_HYDRA_AVAILABLE, "Hydra is not available"
+    if args.hydra:
         sys.argv.remove("--hydra")
         hydra_main()
     else:
-        main(args, unknown_args)
+        config_main(args, unknown_args)
+
+
+if __name__ == "__main__":
+    args, unknown_args = parse_args()
+    main(args, unknown_args)

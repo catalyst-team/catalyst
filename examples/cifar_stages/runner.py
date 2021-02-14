@@ -7,6 +7,7 @@ from torchvision import transforms
 
 from catalyst import utils
 from catalyst.dl import SupervisedConfigRunner
+from catalyst.settings import IS_HYDRA_AVAILABLE
 
 
 class CIFAR10(torchvision.datasets.CIFAR10):
@@ -29,43 +30,29 @@ class CIFAR10(torchvision.datasets.CIFAR10):
         return image, target
 
 
-class CustomSupervisedConfigRunner(SupervisedConfigRunner):
-    """``ConfigExperiment`` with CIFAR10 dataset."""
-
+class RunnerMixin:
     def get_model(self, stage: str, epoch: int = None):
-        """
-        Model specification for current stage
-
-        Args:
-            stage: current stage name
-
-        Returns:
-            model
-        """
-        model = super().get_model(stage=stage, epoch=epoch)
-        if isinstance(model, torch.nn.DataParallel):
-            model = model.module
-
+        if self.model is None:
+            # first stage
+            model = super().get_model(stage=stage, epoch=epoch)
+        else:
+            model = self.model
         conv_layres = ["conv1", "pool", "conv2"]
-
         if stage == "tune":
+            # second stage logic
+            model = self.model
             for key in conv_layres:
                 layer = getattr(model, key)
                 utils.set_requires_grad(layer, requires_grad=False)
         return model
 
     def get_transform(self, stage: str = None, dataset: str = None):
-        """Docs? Contribution is welcome"""
         return transforms.Compose(
             [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
         )
 
     def get_datasets(self, stage: str, epoch: int = None) -> "OrderedDict[str, Dataset]":
-        """Provides train/validation subsets from CIFAR10 dataset.
-
-        Args:
-            stage: stage name e.g. ``'stage1'`` or ``'infer'``
-        """
+        """Provides train/validation datasets from CIFAR10 dataset."""
         datasets = OrderedDict()
         for dataset in ("train", "valid"):
             datasets[dataset] = CIFAR10(
@@ -76,3 +63,16 @@ class CustomSupervisedConfigRunner(SupervisedConfigRunner):
             )
 
         return datasets
+
+
+class CustomSupervisedConfigRunner(RunnerMixin, SupervisedConfigRunner):
+    """``ConfigRunner`` with CIFAR10 dataset."""
+
+    pass
+
+
+if IS_HYDRA_AVAILABLE:
+    from catalyst.dl import SupervisedHydraRunner
+
+    class CustomSupervisedHydraRunner(SupervisedHydraRunner, RunnerMixin):
+        pass

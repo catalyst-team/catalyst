@@ -208,22 +208,13 @@ class Runner(IStageBasedRunner):
         if self._overfit and not is_callback_exists(BatchOverfitCallback):
             callbacks["_overfit"] = BatchOverfitCallback()
 
-        if self._logdir is not None:  # or resume is not None or load_best_on_end:
-            # load_on_stage_end = None
-            # if load_best_on_end:
-            #     load_on_stage_end = "best_full"
-            #     assert logdir is not None, (
-            #         "For ``load_best_on_end`` feature " "you need to specify ``logdir``"
-            #     )
-
+        if self._logdir is not None:
             if not is_callback_exists(ICheckpointCallback):
                 callbacks["_checkpoint"] = CheckpointCallback(
                     logdir=os.path.join(self._logdir, "checkpoints"),
                     loader_key=self._valid_loader,
                     metric_key=self._valid_metric,
                     minimize=self._minimize_valid_metric,
-                    # resume=resume,
-                    # load_on_stage_end=load_on_stage_end,
                 )
             else:
                 raise NotImplementedError("CheckpointCallback already exist")
