@@ -4,16 +4,13 @@ import pytest
 import torch
 
 from catalyst import registry
-from catalyst.callbacks import (
+from catalyst.callbacks import (  # ExceptionCallback,; MetricManagerCallback,; ValidationManagerCallback,
     CheckpointCallback,
     ConsoleLogger,
     CriterionCallback,
-    ExceptionCallback,
-    MetricManagerCallback,
     OptimizerCallback,
     SchedulerCallback,
     TensorboardLogger,
-    ValidationManagerCallback,
 )
 from catalyst.experiments import ConfigExperiment
 
@@ -25,12 +22,12 @@ DEFAULT_MINIMAL_CONFIG = {  # noqa: WPS407
 
 DEFAULT_CALLBACKS = OrderedDict(
     [
-        ("_metrics", MetricManagerCallback),
-        ("_validation", ValidationManagerCallback),
+        # ("_metrics", MetricManagerCallback),
+        # ("_validation", ValidationManagerCallback),
         ("_saver", CheckpointCallback),
         ("_console", ConsoleLogger),
         ("_tensorboard", TensorboardLogger),
-        ("_exception", ExceptionCallback),
+        # ("_exception", ExceptionCallback),
     ]
 )
 
@@ -92,10 +89,10 @@ def test_defaults():
     assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
-    assert isinstance(exp.get_model("train"), SomeModel)
-    assert exp.get_criterion("train") is None
-    assert exp.get_optimizer("train", SomeModel()) is None
-    assert exp.get_scheduler("train", None) is None
+    assert isinstance(exp.get_model_("train"), SomeModel)
+    assert exp.get_criterion_("train") is None
+    assert exp.get_optimizer_("train", SomeModel()) is None
+    assert exp.get_scheduler_("train", None) is None
 
     _test_callbacks(DEFAULT_CALLBACKS, exp)
 
@@ -124,10 +121,10 @@ def test_defaults_criterion_optimizer_scheduler():
     assert exp.get_stage_params("train") == {
         "logdir": "./logdir",
     }
-    assert isinstance(exp.get_model("train"), SomeModel)
-    assert exp.get_criterion("train") is not None
-    assert exp.get_optimizer("train", SomeModel()) is not None
-    assert exp.get_scheduler("train", None) is not None
+    assert isinstance(exp.get_model_("train"), SomeModel)
+    assert exp.get_criterion_("train") is not None
+    assert exp.get_optimizer_("train", SomeModel()) is not None
+    assert exp.get_scheduler_("train", None) is not None
 
     _test_callbacks(callbacks, exp)
 

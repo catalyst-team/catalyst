@@ -8,7 +8,7 @@
 #
 # from catalyst import utils
 # from catalyst.callbacks import ILoggerCallback
-# from catalyst.contrib.tools.tensorboard import SummaryWriter
+# from catalyst.tools.tensorboard import SummaryWriter
 # from catalyst.contrib.utils.cv.tensor import tensor_to_ndimage
 # from catalyst.core.callback import CallbackNode, CallbackOrder
 #

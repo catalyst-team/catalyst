@@ -2,19 +2,16 @@ from collections import OrderedDict
 
 import torch
 
-from catalyst.callbacks import (
+from catalyst.callbacks import (  # ExceptionCallback,; MetricManagerCallback,; ValidationManagerCallback,
     CheckpointCallback,
     CheckRunCallback,
     ConsoleLogger,
     CriterionCallback,
-    ExceptionCallback,
-    MetricManagerCallback,
     OptimizerCallback,
     SchedulerCallback,
     TensorboardLogger,
     TimerCallback,
-    ValidationManagerCallback,
-    VerboseLogger,
+    VerboseCallback,
 )
 from catalyst.experiments.auto import AutoCallbackExperiment
 
@@ -44,10 +41,10 @@ def test_defaults():
 
     test_callbacks = OrderedDict(
         [
-            ("_metrics", MetricManagerCallback),
-            ("_validation", ValidationManagerCallback),
+            # ("_metrics", MetricManagerCallback),
+            # ("_validation", ValidationManagerCallback),
             ("_console", ConsoleLogger),
-            ("_exception", ExceptionCallback),
+            # ("_exception", ExceptionCallback),
         ]
     )
 
@@ -59,13 +56,13 @@ def test_defaults_verbose():
     """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
-            ("_verbose", VerboseLogger),
-            ("_metrics", MetricManagerCallback),
-            ("_validation", ValidationManagerCallback),
+            ("_verbose", VerboseCallback),
+            # ("_metrics", MetricManagerCallback),
+            # ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
             ("_tensorboard", TensorboardLogger),
-            ("_exception", ExceptionCallback),
+            # ("_exception", ExceptionCallback),
         ]
     )
 
@@ -86,12 +83,12 @@ def test_defaults_check():
     test_callbacks = OrderedDict(
         [
             ("_check", CheckRunCallback),
-            ("_metrics", MetricManagerCallback),
-            ("_validation", ValidationManagerCallback),
+            # ("_metrics", MetricManagerCallback),
+            # ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
             ("_tensorboard", TensorboardLogger),
-            ("_exception", ExceptionCallback),
+            # ("_exception", ExceptionCallback),
         ]
     )
 
@@ -111,12 +108,12 @@ def test_criterion():
     """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
-            ("_metrics", MetricManagerCallback),
-            ("_validation", ValidationManagerCallback),
+            # ("_metrics", MetricManagerCallback),
+            # ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
             ("_tensorboard", TensorboardLogger),
-            ("_exception", ExceptionCallback),
+            # ("_exception", ExceptionCallback),
             ("_criterion", CriterionCallback),
         ]
     )
@@ -146,12 +143,12 @@ def test_optimizer():
     """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
-            ("_metrics", MetricManagerCallback),
-            ("_validation", ValidationManagerCallback),
+            # ("_metrics", MetricManagerCallback),
+            # ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_console", ConsoleLogger),
             ("_tensorboard", TensorboardLogger),
-            ("_exception", ExceptionCallback),
+            # ("_exception", ExceptionCallback),
             ("_optimizer", OptimizerCallback),
         ]
     )
@@ -181,13 +178,13 @@ def test_scheduler():
     """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
-            ("_metrics", MetricManagerCallback),
-            ("_validation", ValidationManagerCallback),
+            # ("_metrics", MetricManagerCallback),
+            # ("_validation", ValidationManagerCallback),
             ("_saver", CheckpointCallback),
             ("_timer", TimerCallback),
             ("_console", ConsoleLogger),
             ("_tensorboard", TensorboardLogger),
-            ("_exception", ExceptionCallback),
+            # ("_exception", ExceptionCallback),
             ("_optimizer", OptimizerCallback),
             ("_scheduler", SchedulerCallback),
         ]
@@ -217,12 +214,12 @@ def test_all():
     """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
-            ("_verbose", VerboseLogger),
+            ("_verbose", VerboseCallback),
             ("_check", CheckRunCallback),
-            ("_metrics", MetricManagerCallback),
-            ("_validation", ValidationManagerCallback),
+            # ("_metrics", MetricManagerCallback),
+            # ("_validation", ValidationManagerCallback),
             ("_console", ConsoleLogger),
-            ("_exception", ExceptionCallback),
+            # ("_exception", ExceptionCallback),
             ("_criterion", CriterionCallback),
             ("_optimizer", OptimizerCallback),
             ("_scheduler", SchedulerCallback),
@@ -253,7 +250,7 @@ def test_all():
 
 def test_infer_defaults():
     """Docs? Contribution is welcome."""
-    test_callbacks = OrderedDict([("_exception", ExceptionCallback)])
+    test_callbacks = OrderedDict([])  # ("_exception", ExceptionCallback)
 
     model = torch.nn.Linear(10, 10)
     criterion = torch.nn.CrossEntropyLoss()
@@ -279,9 +276,9 @@ def test_infer_all():
     """Docs? Contribution is welcome."""
     test_callbacks = OrderedDict(
         [
-            ("_verbose", VerboseLogger),
+            ("_verbose", VerboseCallback),
             ("_check", CheckRunCallback),
-            ("_exception", ExceptionCallback),
+            # ("_exception", ExceptionCallback),
         ]
     )
 

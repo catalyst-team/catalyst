@@ -2,6 +2,7 @@
 
 from catalyst.callbacks.metrics.accuracy import AccuracyCallback
 from catalyst.callbacks.metrics.auc import AUCCallback
+from catalyst.callbacks.metrics.confusion_matrix import ConfusionMatrixCallback
 
 #
 # from catalyst.callbacks.metrics.accuracy import (

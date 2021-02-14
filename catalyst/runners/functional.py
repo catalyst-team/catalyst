@@ -4,19 +4,22 @@ import logging
 import torch
 from torch import nn
 
-from catalyst.callbacks.batch_overfit import BatchOverfitCallback
-from catalyst.callbacks.checkpoint import CheckpointCallback
-from catalyst.callbacks.criterion import CriterionCallback
-from catalyst.callbacks.early_stop import CheckRunCallback
-from catalyst.callbacks.exception import ExceptionCallback
-from catalyst.callbacks.logging import ConsoleLogger, TensorboardLogger, VerboseLogger
-from catalyst.callbacks.metric import MetricManagerCallback
-from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
-from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
-from catalyst.callbacks.timer import TimerCallback
-from catalyst.callbacks.validation import ValidationManagerCallback
+# ExceptionCallback
+from catalyst.callbacks import (
+    BatchOverfitCallback,
+    CheckpointCallback,
+    CheckRunCallback,
+    CriterionCallback,
+    IOptimizerCallback,
+    ISchedulerCallback,
+    OptimizerCallback,
+    SchedulerCallback,
+    TimerCallback,
+    TqdmCallback,
+)
 from catalyst.core.callback import Callback
 from catalyst.core.functional import check_callback_isinstance
+from catalyst.loggers import ConsoleLogger, TensorboardLogger
 from catalyst.settings import IS_HYDRA_AVAILABLE
 from catalyst.typing import Model, Optimizer
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
@@ -61,8 +64,8 @@ def process_callbacks(callbacks: Dict[str, Callback], stage_index: int = None) -
 def add_default_callbacks(
     callbacks,
     verbose: bool,
-    check_time: bool,
-    check_run: bool,
+    timeit: bool,
+    check: bool,
     overfit: bool,
     is_infer: bool,
     is_logger: bool = False,
@@ -76,8 +79,8 @@ def add_default_callbacks(
     Args:
         callbacks: user callbacks
         verbose: verbose config flag
-        check_time: check time config flag
-        check_run: check run config flag
+        timeit: check time config flag
+        check: check run config flag
         overfit: overfit config flag
         is_infer: is stage is infer stage
         is_logger: is there logdir
@@ -94,17 +97,17 @@ def add_default_callbacks(
     optimizer_cls = OptimizerCallback
 
     if verbose:
-        default_callbacks.append(("_verbose", None, VerboseLogger))
-    if check_time:
+        default_callbacks.append(("_verbose", None, TqdmCallback))
+    if timeit:
         default_callbacks.append(("_timer", None, TimerCallback))
-    if check_run:
+    if check:
         default_callbacks.append(("_check", None, CheckRunCallback))
     if overfit:
         default_callbacks.append(("_overfit", None, BatchOverfitCallback))
 
     if not is_infer:
-        default_callbacks.append(("_metrics", None, MetricManagerCallback))
-        default_callbacks.append(("_validation", None, ValidationManagerCallback))
+        # default_callbacks.append(("_metrics", None, MetricManagerCallback))
+        # default_callbacks.append(("_validation", None, ValidationManagerCallback))
         default_callbacks.append(("_console", None, ConsoleLogger))
 
         if is_logger:
@@ -118,7 +121,7 @@ def add_default_callbacks(
         if is_scheduler:
             default_callbacks.append(("_scheduler", ISchedulerCallback, SchedulerCallback))
 
-    default_callbacks.append(("_exception", None, ExceptionCallback))
+    # default_callbacks.append(("_exception", None, ExceptionCallback))
 
     for (callback_name, callback_interface, callback_fn) in default_callbacks:
         callback_interface = callback_interface or callback_fn

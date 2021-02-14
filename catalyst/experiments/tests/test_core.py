@@ -2,11 +2,8 @@ from collections import OrderedDict
 
 import torch
 
-from catalyst.callbacks import (
+from catalyst.callbacks import (  # ExceptionCallback,; MetricManagerCallback,; ValidationManagerCallback,
     ConsoleLogger,
-    ExceptionCallback,
-    MetricManagerCallback,
-    ValidationManagerCallback,
 )
 from catalyst.experiments import Experiment
 
@@ -34,10 +31,10 @@ def test_defaults():
     loaders["train"] = dataloader
     test_callbacks = OrderedDict(
         [
-            ("_metrics", MetricManagerCallback),
-            ("_validation", ValidationManagerCallback),
+            # ("_metrics", MetricManagerCallback),
+            # ("_validation", ValidationManagerCallback),
             ("_console", ConsoleLogger),
-            ("_exception", ExceptionCallback),
+            # ("_exception", ExceptionCallback),
         ]
     )
 
@@ -56,9 +53,9 @@ def test_defaults():
         "minimize_metric": True,
         "checkpoint_data": {},
     }
-    assert exp.get_model("") == model
-    assert exp.get_criterion("") is None
-    assert exp.get_optimizer("", model) is None
-    assert exp.get_scheduler("") is None
+    assert exp.get_model_("") == model
+    assert exp.get_criterion_("") is None
+    assert exp.get_optimizer_("", model) is None
+    assert exp.get_scheduler_("") is None
     _test_callbacks(test_callbacks, exp)
     assert exp.get_loaders("") == loaders
