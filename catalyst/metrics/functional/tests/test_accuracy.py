@@ -2,7 +2,6 @@ from typing import Union
 
 import numpy as np
 import pytest
-
 import torch
 
 from catalyst.metrics.functional.accuracy import accuracy, multilabel_accuracy
@@ -48,31 +47,14 @@ def test_accuracy_top3():
 @pytest.mark.parametrize(
     "outputs,targets,threshold,true_value",
     (
+        (torch.tensor([[0, 0.8], [0.75, 0.5]]), torch.tensor([[0, 1], [1, 1]]), 0.7, 0.75,),
         (
-            torch.tensor([[0, 0.8], [0.75, 0.5]]),
-            torch.tensor([[0, 1], [1, 1]]),
-            0.7,
-            0.75,
-        ),
-        (
-            torch.tensor(
-                [
-                    [0.0, 0.1, 0.2],
-                    [0.4, 0.7, 0.0],
-                    [0.6, 0.9, 0],
-                    [0, 1.0, 0.77],
-                ]
-            ),
+            torch.tensor([[0.0, 0.1, 0.2], [0.4, 0.7, 0.0], [0.6, 0.9, 0], [0, 1.0, 0.77],]),
             torch.tensor([[0, 0, 1], [0, 1, 0], [1, 0, 1], [0, 1, 0]]),
             0.5,
             0.666667,
         ),
-        (
-            torch.tensor([[0.9, 0.9], [0.0, 0.0]]),
-            torch.tensor([[1, 1], [1, 1]]),
-            0.6,
-            0.5,
-        ),
+        (torch.tensor([[0.9, 0.9], [0.0, 0.0]]), torch.tensor([[1, 1], [1, 1]]), 0.6, 0.5,),
         (
             torch.tensor([[0.7, 0.5], [0.5, 0.8]]),
             torch.tensor([[1, 0], [1, 1]]),
@@ -96,7 +78,5 @@ def test_multilabel_accuracy(
         threshold: thresholds for multilabel classification
         true_value: expected metric value
     """
-    value = multilabel_accuracy(
-        outputs=outputs, targets=targets, threshold=threshold
-    ).item()
+    value = multilabel_accuracy(outputs=outputs, targets=targets, threshold=threshold).item()
     assert np.isclose(value, true_value)

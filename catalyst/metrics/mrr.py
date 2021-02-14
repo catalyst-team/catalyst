@@ -3,8 +3,8 @@ from typing import Any, Dict, List
 import torch
 
 from catalyst.metrics.additive import AdditiveValueMetric
-from catalyst.metrics.functional.mrr import mrr
 from catalyst.metrics.functional.misc import get_default_topk_args
+from catalyst.metrics.functional.mrr import mrr
 from catalyst.metrics.metric import ICallbackBatchMetric
 
 
