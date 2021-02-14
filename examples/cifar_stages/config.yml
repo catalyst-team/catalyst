@@ -23,7 +23,7 @@ args:
   benchmark: False
 
 runner:
-#  _target_: SupervisedConfigRunner
+  _target_: CustomSupervisedConfigRunner
   input_key: &model_input "features"
   output_key: &model_output "logits"
   target_key: &model_target "targets"
@@ -38,9 +38,6 @@ engine:
 loggers:
   console:
     _target_: ConsoleLogger
-  tensorboard:
-    _target_: TensorboardLogger
-    logdir: *logdir
 
 model:
   _target_: SimpleNet
@@ -49,7 +46,7 @@ stages:
   train:
     num_epochs: 10
 
-    loaders:
+    loaders: &loaders
       batch_size: 32
       num_workers: 1
 
@@ -83,14 +80,14 @@ stages:
       _target_: CrossEntropyLoss
 
     optimizer:
-      _target_: Ralamb
+      _target_: Adam
 
     scheduler:
       _target_: MultiStepLR
       milestones: [ 8 ]
       gamma: 0.3
 
-    callbacks:
+    callbacks: &callbacks
       loss:
         _target_: CriterionCallback
         input_key: *model_output
@@ -120,47 +117,19 @@ stages:
   tune:
     num_epochs: 6
 
+    loaders: *loaders
+
     criterion:
       _target_: CrossEntropyLoss
 
     optimizer:
       _target_: Ralamb
-#      lr_linear_scaling:
-#        lr: 0.0001
-#        base_batch_size: 64
-#      weight_decay: 0.0001
-#      no_bias_weight_decay: False
 
     scheduler:
       _target_: MultiStepLR
       milestones: [ 3 ]
       gamma: 0.3
 
-    callbacks:
-      loss:
-        _target_: CriterionCallback
-        input_key: *model_output
-        target_key: *model_target
-        metric_key: *model_loss
-      optimizer:
-        _target_: OptimizerCallback
-        metric_key: *model_loss
-      accuracy:
-        _target_: AccuracyCallback
-        input_key: *model_output
-        target_key: *model_target
-        topk_args: [ 1, 3, 5 ]
-      scheduler:
-        _target_: SchedulerCallback
-        loader_key: *valid_loader
-        metric_key: *valid_metric
-      saver:
-        _target_: CheckpointCallback
-        logdir: *logdir
-        loader_key: *valid_loader
-        metric_key: *valid_metric
-        minimize: True
-      verbose:
-        _target_: TqdmCallback
+    callbacks: *callbacks
 
 

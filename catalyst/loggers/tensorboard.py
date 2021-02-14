@@ -49,14 +49,14 @@ class TensorboardLogger(ILogger):
         if scope == "batch":
             self._check_loader_key(loader_key=loader_key)
             self._log_metrics(
-                metrics=metrics, step=stage_batch_step, loader_key=loader_key, suffix="/batch"
+                metrics=metrics, step=global_batch_step, loader_key=loader_key, suffix="/batch"
             )
         elif scope == "epoch":
             for loader_key, per_loader_metrics in metrics.items():
                 self._check_loader_key(loader_key=loader_key)
                 self._log_metrics(
                     metrics=per_loader_metrics,
-                    step=stage_epoch_step,
+                    step=global_epoch_step,
                     loader_key=loader_key,
                     suffix="/epoch",
                 )

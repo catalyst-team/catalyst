@@ -11,7 +11,7 @@ from catalyst.utils.config import load_config
 from catalyst.utils.distributed import assert_fp16_available, get_nn_from_ddp_module
 from catalyst.utils.loaders import get_native_batch_from_loaders
 from catalyst.utils.misc import get_fn_argsnames
-from catalyst.utils.scripts import prepare_config_api_components
+from catalyst.utils.scripts import get_config_runner
 from catalyst.utils.torch import any2device, get_requires_grad, set_requires_grad
 
 if TYPE_CHECKING:
@@ -185,7 +185,7 @@ def trace_model_from_checkpoint(
 
     logger.info("Import experiment and runner from logdir")
     experiment: ConfigExperiment = None
-    experiment, runner, _ = prepare_config_api_components(expdir=expdir, config=config)
+    experiment, runner, _ = get_config_runner(expdir=expdir, config=config)
 
     logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:

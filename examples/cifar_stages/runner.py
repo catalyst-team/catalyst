@@ -29,7 +29,7 @@ class CIFAR10(torchvision.datasets.CIFAR10):
         return image, target
 
 
-class Runner(SupervisedConfigRunner):
+class CustomSupervisedConfigRunner(SupervisedConfigRunner):
     """``ConfigExperiment`` with CIFAR10 dataset."""
 
     def get_model(self, stage: str, epoch: int = None):

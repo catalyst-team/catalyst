@@ -2,6 +2,7 @@ from typing import Any, Dict, List, Union
 from collections import OrderedDict
 from copy import deepcopy
 from functools import partial
+import os
 
 from torch import nn
 from torch.utils.data import DataLoader
@@ -42,6 +43,31 @@ class ConfigRunner(IStageBasedRunner):
         super().__init__()
         self._config: Dict = deepcopy(config)
         self._stage_config: Dict = self._config["stages"]
+        self._logdir = self._prepare_logdir()
+
+    def _get_logdir(self, config: Dict) -> str:
+        timestamp = get_utcnow_time()
+        config_hash = get_short_hash(config)
+        logdir = f"{timestamp}.{config_hash}"
+        return logdir
+
+    def _prepare_logdir(self) -> str:  # noqa: WPS112
+        output = None
+        exclude_tag = "none"
+
+        logdir: str = get_by_keys(self._config, "args", "logdir", default=None)
+        baselogdir: str = get_by_keys(self._config, "args", "baselogdir", default=None)
+
+        if logdir is not None and logdir.lower() != exclude_tag:
+            output = logdir
+        elif baselogdir is not None and baselogdir.lower() != exclude_tag:
+            logdir = self._get_logdir(self._config)
+            output = f"{baselogdir}/{logdir}"
+        return output
+
+    @property
+    def logdir(self) -> str:
+        return self._logdir
 
     @property
     def seed(self) -> int:
@@ -85,6 +111,19 @@ class ConfigRunner(IStageBasedRunner):
         loggers = {
             key: REGISTRY.get_from_params(**params) for key, params in loggers_params.items()
         }
+
+        is_logger_exists = lambda logger_fn: any(
+            isinstance(x, logger_fn) for x in loggers.values()
+        )
+        if not is_logger_exists(ConsoleLogger):
+            loggers["_console"] = ConsoleLogger()
+        if self._logdir is not None and not is_logger_exists(CSVLogger):
+            loggers["_csv"] = CSVLogger(logdir=self._logdir)
+        if self._logdir is not None and not is_logger_exists(TensorboardLogger):
+            loggers["_tensorboard"] = TensorboardLogger(
+                logdir=os.path.join(self._logdir, "tensorboard")
+            )
+
         return loggers
 
     # @staticmethod

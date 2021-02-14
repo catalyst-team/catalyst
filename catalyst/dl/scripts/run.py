@@ -6,11 +6,12 @@ import os
 from pathlib import Path
 import sys
 
+from catalyst.runners.config import ConfigRunner
 from catalyst.settings import IS_HYDRA_AVAILABLE
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.parser import parse_args_uargs
-from catalyst.utils.scripts import distributed_cmd_run, dump_code, prepare_config_api_components
+from catalyst.utils.scripts import dump_code, get_config_runner
 from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import prepare_cudnn
 
@@ -33,11 +34,6 @@ def build_args(parser: ArgumentParser):
     parser.add_argument("--expdir", type=str, default=None)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
-    # parser.add_argument(
-    #     "-j", "--num-workers", default=None, type=int, help="number of data loading workers",
-    # )
-    # parser.add_argument("-b", "--batch-size", default=None, type=int, help="mini-batch size")
-    # parser.add_argument("-e", "--num-epochs", default=None, type=int, help="number of epochs")
     # parser.add_argument(
     #     "--resume", default=None, type=str, metavar="PATH", help="path to latest checkpoint",
     # )
@@ -96,28 +92,19 @@ def parse_args():
     return args, unknown_args
 
 
-def main_worker(args, unknown_args):
-    """Runs main worker thread from model training."""
+def main(args, unknown_args):
+    """Runs the ``catalyst-dl run`` script."""
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)
 
-    # config.setdefault("engine_params", {})["apex"] = args.apex
-    # config.setdefault("engine_params", {})["amp"] = args.amp
+    runner: ConfigRunner = get_config_runner(expdir=Path(args.expdir), config=config)
 
-    runner, config = prepare_config_api_components(expdir=Path(args.expdir), config=config)
-
-    # if runner.logdir is not None and get_rank() <= 0:
-    #     dump_environment(config, runner.logdir, args.configs)
-    #     dump_code(args.expdir, runner.logdir)
+    if get_rank() <= 0:
+        dump_environment(logdir=runner.logdir, config=config, configs_path=args.configs)
+        dump_code(expdir=args.expdir, logdir=runner.logdir)
 
     runner.run()
-
-
-def main(args, unknown_args):
-    """Runs the ``catalyst-dl run`` script."""
-    main_worker(args, unknown_args)
-    # distributed_cmd_run(main_worker, args.distributed, args, unknown_args)
 
 
 if __name__ == "__main__":

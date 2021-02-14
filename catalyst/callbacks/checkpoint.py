@@ -237,8 +237,8 @@ class CheckpointCallback(ICheckpointCallback):
         # loading info
         load_on_stage_start: Union[str, Dict[str, str]] = None,
         load_on_stage_end: Union[str, Dict[str, str]] = None,
-        resume: str = None,
-        resume_dir: str = None,
+        # resume: str = None,
+        # resume_dir: str = None,
         # checkpointer info
         metrics_filename: str = "_metrics.json",
         mode: str = "all",
@@ -333,8 +333,8 @@ class CheckpointCallback(ICheckpointCallback):
             assert load_on_stage_start in possible_states
         if isinstance(load_on_stage_end, str):
             assert load_on_stage_end in possible_states
-        if resume_dir is not None:
-            assert resume is not None
+        # if resume_dir is not None:
+        #     assert resume is not None
 
         if loader_key is not None or metric_key is not None:
             assert loader_key is not None and metric_key is not None, (
@@ -370,8 +370,8 @@ class CheckpointCallback(ICheckpointCallback):
         # loading info
         self.load_on_stage_start = load_on_stage_start
         self.load_on_stage_end = load_on_stage_end
-        self.resume = resume
-        self.resume_dir = resume_dir
+        # self.resume = resume
+        # self.resume_dir = resume_dir
 
     def _pack_checkpoint(self, runner: "IRunner"):
         checkpoint = runner.engine.pack_checkpoint(

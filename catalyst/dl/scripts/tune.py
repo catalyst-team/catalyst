@@ -11,7 +11,7 @@ import optuna
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, maybe_recursive_call, set_global_seed
 from catalyst.utils.parser import parse_args_uargs
-from catalyst.utils.scripts import dump_code, prepare_config_api_components
+from catalyst.utils.scripts import dump_code, get_config_runner
 from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import prepare_cudnn
 
@@ -126,9 +126,7 @@ def main_worker(args, unknown_args):
     # optuna objective
     def objective(trial: optuna.trial):
         trial, trial_config = _process_trial_config(trial, config.copy())
-        experiment, runner, trial_config = prepare_config_api_components(
-            expdir=expdir, config=trial_config
-        )
+        experiment, runner, trial_config = get_config_runner(expdir=expdir, config=trial_config)
         # @TODO: here we need better solution.
         experiment._trial = trial  # noqa: WPS437
 
