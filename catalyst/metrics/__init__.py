@@ -6,7 +6,11 @@
 
 from catalyst.metrics.functional import *
 
-from catalyst.metrics.metric import IMetric, ICallbackLoaderMetric, ICallbackBatchMetric
+from catalyst.metrics.metric import (
+    IMetric,
+    ICallbackLoaderMetric,
+    ICallbackBatchMetric,
+)
 from catalyst.metrics.additive import AdditiveValueMetric
 from catalyst.metrics.confusion_matrix import ConfusionMetric
 

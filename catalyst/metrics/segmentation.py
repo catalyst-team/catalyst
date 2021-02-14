@@ -12,7 +12,6 @@ from catalyst.metrics.functional.segmentation import (
 from catalyst.metrics.metric import ICallbackBatchMetric
 
 
-# @TODO: make ICallbackBatchMetric
 class RegionBasedMetric(ICallbackBatchMetric):
     """
     Logic class for all region based metrics, like IoU, Dice, Trevsky
@@ -22,12 +21,12 @@ class RegionBasedMetric(ICallbackBatchMetric):
         self,
         metric_fn: Callable,
         compute_on_call: bool = True,
-        prefix: str = None,
-        suffix: str = None,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
-        threshold: Optional[float] = None,
+        threshold: Optional[float] = 0.5,
     ):
         """
 
@@ -53,9 +52,22 @@ class RegionBasedMetric(ICallbackBatchMetric):
         self._checked_params = False
 
     def reset(self):
+        """Reset all statistics"""
         self.statistics = {}
 
-    def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    def update(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> torch.Tensor:
+        """
+        Update segmentation statistics for new data and return intermediate metrics values.
+
+        Args:
+            outputs: tensor of logits
+            targets: tensor of targets
+
+        Returns:
+            metric for each class
+        """
         tp, fp, fn = get_segmentation_statistics(
             outputs=outputs.cpu().detach(),
             targets=targets.cpu().detach(),
@@ -63,7 +75,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
             threshold=self.threshold,
         )
 
-        for idx, (tp_class, fp_class, fn_class) in enumerate(zip(tp, fp, fn), start=1):
+        for idx, (tp_class, fp_class, fn_class) in enumerate(
+            zip(tp, fp, fn), start=1
+        ):
             if idx in self.statistics:
                 self.statistics[idx]["tp"] += tp_class
                 self.statistics[idx]["fp"] += fp_class
@@ -81,30 +95,32 @@ class RegionBasedMetric(ICallbackBatchMetric):
         # check class_names
         if self.class_names is not None:
             assert len(self.class_names) == len(self.statistics), (
-                f"the number of"
-                f" class names must"
-                f" be equal to "
-                f"the number of"
-                f" classes, got"
-                f" weights {len(self.class_names)}"
-                f" and classes: {len(self.statistics)}"
+                f"the number of class names must be equal to the number of classes, got weights"
+                f" {len(self.class_names)} and classes: {len(self.statistics)}"
             )
         else:
-            self.class_names = [f"class_{idx}" for idx in range(1, len(self.statistics) + 1)]
+            self.class_names = [
+                f"class_{idx}" for idx in range(1, len(self.statistics) + 1)
+            ]
         if self.weights is not None:
             assert len(self.weights) == len(self.statistics), (
-                f"the number of"
-                f" weights must"
-                f" be equal to "
-                f"the number of"
-                f" classes, got"
-                f" weights {len(self.weights)}"
-                f" and classes: {len(self.statistics)}"
+                f"the number of weights must be equal to the number of classes, got weights"
+                f" {len(self.weights)} and classes: {len(self.statistics)}"
             )
 
     def update_key_value(
         self, outputs: torch.Tensor, targets: torch.Tensor
     ) -> Dict[str, torch.Tensor]:
+        """
+        Update segmentation statistics for new data and return intermediate metrics values.
+
+        Args:
+            outputs: tensor of logits
+            targets: tensor of targets
+
+        Returns:
+            dict of metric for each class and weighted (if weights were given) metric
+        """
         values = self.update(outputs, targets)
         # need only one time
         if not self._checked_params:
@@ -119,9 +135,17 @@ class RegionBasedMetric(ICallbackBatchMetric):
             for idx, value in enumerate(values):
                 weighted_metric += value * self.weights[idx]
             metrics[f"{self.prefix}/weighted"] = weighted_metric
+        # convert torch.Tensor to float
+        metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
 
     def compute_key_value(self) -> Dict[str, torch.Tensor]:
+        """
+        Compute segmentation metric for all data and return results in key-value format
+
+        Returns:
+             dict of metrics, including micro, macro and weighted (if weights were given) metrics
+        """
         metrics = {}
         total_statistics = {}
         micro_metric = 0
@@ -134,14 +158,16 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 weighted_metric += value * self.weights[class_idx - 1]
             metrics[f"{self.prefix}/{self.class_names[class_idx-1]}"] = value
             for stats_name, value in statistics.items():
-                total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
+                total_statistics[stats_name] = (
+                    total_statistics.get(stats_name, 0) + value
+                )
         micro_metric /= len(self.statistics)
         macro_metric = self.metric_fn(**total_statistics)
         metrics[f"{self.prefix}/micro"] = micro_metric
         metrics[f"{self.prefix}/macro"] = macro_metric
         if self.weights is not None:
             metrics[f"{self.prefix}/weighted"] = weighted_metric
-        # @TODO: hotfix for metrics logging, move to loggers also
+        # convert torch.Tensor to float
         metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
 
@@ -158,8 +184,8 @@ class IOUMetric(RegionBasedMetric):
     def __init__(
         self,
         compute_on_call: bool = True,
-        prefix: str = None,
-        suffix: str = None,
+        prefix: Optional[str] = "iou",
+        suffix: Optional[str] = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
@@ -203,8 +229,8 @@ class DiceMetric(RegionBasedMetric):
     def __init__(
         self,
         compute_on_call: bool = True,
-        prefix: str = None,
-        suffix: str = None,
+        prefix: Optional[str] = "dice",
+        suffix: Optional[str] = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
@@ -249,8 +275,8 @@ class TrevskyMetric(RegionBasedMetric):
         alpha: float,
         beta: Optional[float] = None,
         compute_on_call: bool = True,
-        prefix: str = None,
-        suffix: str = None,
+        prefix: Optional[str] = "trevsky_index",
+        suffix: Optional[str] = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
@@ -293,4 +319,10 @@ class TrevskyMetric(RegionBasedMetric):
 
 JaccardMetric = IOUMetric
 
-__all__ = ["RegionBasedMetric", "IOUMetric", "JaccardMetric", "DiceMetric", "TrevskyMetric"]
+__all__ = [
+    "RegionBasedMetric",
+    "IOUMetric",
+    "JaccardMetric",
+    "DiceMetric",
+    "TrevskyMetric",
+]

@@ -12,7 +12,9 @@ EPS = 1e-8
 
 
 class IBatchMetricHandlerCallback(ABC, Callback):
-    def __init__(self, metric_key: str, minimize: bool = True, min_delta: float = 1e-6):
+    def __init__(
+        self, metric_key: str, minimize: bool = True, min_delta: float = 1e-6
+    ):
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
         self.metric_key = metric_key
@@ -39,7 +41,11 @@ class IBatchMetricHandlerCallback(ABC, Callback):
 
 class IEpochMetricHandlerCallback(ABC, Callback):
     def __init__(
-        self, loader_key: str, metric_key: str, minimize: bool = True, min_delta: float = 1e-6,
+        self,
+        loader_key: str,
+        metric_key: str,
+        minimize: bool = True,
+        min_delta: float = 1e-6,
     ):
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
@@ -92,7 +98,10 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
                 default value is ``1e-6``.
         """
         super().__init__(
-            loader_key=loader_key, metric_key=metric_key, minimize=minimize, min_delta=min_delta,
+            loader_key=loader_key,
+            metric_key=metric_key,
+            minimize=minimize,
+            min_delta=min_delta,
         )
         self.patience = patience
         self.num_no_improvement_epochs = 0
@@ -167,7 +176,9 @@ class TqdmCallback(Callback):
     """Logs the params into console."""
 
     def __init__(self):
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.master)
+        super().__init__(
+            order=CallbackOrder.external, node=CallbackNode.master
+        )
         self.tqdm: tqdm = None
         self.step = 0
 
