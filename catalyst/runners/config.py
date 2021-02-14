@@ -55,6 +55,7 @@ class ConfigRunner(IStageBasedRunner):
         self._overfit: bool = get_by_keys(self._config, "args", "overfit", default=False)
         self._name: str = self._get_name_()
         self._logdir: str = self._get_logdir_()
+        self._trial = None  # @TODO: hack for catalyst-dl tune
 
     def _get_name_(self) -> str:
         timestamp = get_utcnow_time()
@@ -110,7 +111,7 @@ class ConfigRunner(IStageBasedRunner):
         return get_by_keys(self._stage_config, stage, "num_epochs", default=1)
 
     def get_trial(self) -> ITrial:
-        return None
+        return self._trial
 
     def get_engine(self) -> IEngine:
         engine_params = self._config.get("engine")

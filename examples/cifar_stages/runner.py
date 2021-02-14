@@ -69,14 +69,11 @@ class CustomSupervisedConfigRunner(RunnerMixin, SupervisedConfigRunner):
     pass
 
 
-
 if IS_HYDRA_AVAILABLE:
     from catalyst.dl import SupervisedHydraRunner
 
     class CustomSupervisedHydraRunner(RunnerMixin, SupervisedHydraRunner):
         pass
-
-
 
     __all__ = ["CustomSupervisedConfigRunner", "CustomSupervisedHydraRunner"]
 else:

@@ -10,7 +10,9 @@ from catalyst.tools.tensorboard import SummaryWriter
 class TensorboardLogger(ILogger):
     """Logger callback, translates ``runner.metric_manager`` to tensorboard."""
 
-    def __init__(self, logdir: str):
+    def __init__(self, logdir: str, use_logdir_postfix: bool = False):
+        if use_logdir_postfix:
+            logdir = os.path.join(logdir, "tensorboard")
         self.logdir = logdir
         self.loggers = {}
         os.makedirs(self.logdir, exist_ok=True)

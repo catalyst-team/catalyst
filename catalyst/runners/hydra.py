@@ -59,6 +59,7 @@ class HydraRunner(IStageBasedRunner):
         self._overfit: bool = self._config.args.overfit
         self._name: str = self._get_name_()
         self._logdir: str = self._get_logdir_()
+        self._trial = None  # @TODO: hack for catalyst-dl tune
 
     def _get_name_(self) -> str:
         timestamp = get_utcnow_time()
@@ -114,7 +115,7 @@ class HydraRunner(IStageBasedRunner):
         return self._config.stages[stage].num_epochs or 1
 
     def get_trial(self) -> ITrial:
-        return None
+        return self._trial
 
     def get_engine(self) -> IEngine:
         engine_params = self._config.engine
