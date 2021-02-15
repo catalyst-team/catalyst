@@ -4,11 +4,10 @@ import torch
 
 from catalyst.metrics.additive import AdditiveValueMetric
 from catalyst.metrics.functional.average_precision import mean_average_precision
-from catalyst.metrics.functional.misc import get_default_topk_args
 from catalyst.metrics.metric import ICallbackBatchMetric
 
 
-class MRRMetric(ICallbackBatchMetric):
+class MAPMetric(ICallbackBatchMetric):
     def __init__(
         self,
         topk_args: List[int] = [1],
@@ -29,7 +28,7 @@ class MRRMetric(ICallbackBatchMetric):
             metric.reset()
 
     def update(self, logits: torch.Tensor, targets: torch.Tensor) -> List[float]:
-        values = mrr(logits, targets, topk=self.topk_args)
+        values = mean_average_precision(logits, targets, topk=self.topk_args)
         values = [v.item() for v in values]
         for value, metric in zip(values, self.additive_metrics):
             metric.update(value, len(targets))
@@ -63,4 +62,4 @@ class MRRMetric(ICallbackBatchMetric):
         return {**output_mean, **output_std}
 
 
-__all__ = ["MAPetric"]
+__all__ = ["MAPMetric"]
