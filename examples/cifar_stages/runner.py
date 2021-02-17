@@ -31,10 +31,10 @@ class CIFAR10(torchvision.datasets.CIFAR10):
 
 
 class RunnerMixin:
-    def get_model(self, stage: str, epoch: int = None):
+    def get_model(self, stage: str):
         if self.model is None:
             # first stage
-            model = super().get_model(stage=stage, epoch=epoch)
+            model = super().get_model(stage=stage)
         else:
             model = self.model
         conv_layres = ["conv1", "pool", "conv2"]
@@ -51,7 +51,7 @@ class RunnerMixin:
             [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
         )
 
-    def get_datasets(self, stage: str, epoch: int = None) -> "OrderedDict[str, Dataset]":
+    def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
         """Provides train/validation datasets from CIFAR10 dataset."""
         datasets = OrderedDict()
         for dataset in ("train", "valid"):

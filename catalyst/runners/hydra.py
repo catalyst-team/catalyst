@@ -16,7 +16,7 @@ from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallbac
 from catalyst.core import Callback
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.logger import ILogger
-from catalyst.core.runner import IStageBasedRunner
+from catalyst.core.runner import IRunner
 from catalyst.core.trial import get_trial_by_params, ITrial
 from catalyst.engines import DeviceEngine, IEngine, process_engine
 from catalyst.loggers.console import ConsoleLogger
@@ -41,7 +41,7 @@ from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
 logger = logging.getLogger(__name__)
 
 
-class HydraRunner(IStageBasedRunner):
+class HydraRunner(IRunner):
     """Runner created from a hydra configuration file."""
 
     def __init__(self, cfg: DictConfig):
@@ -176,7 +176,7 @@ class HydraRunner(IStageBasedRunner):
     #     dataset: Dataset = hydra.utils.instantiate(params, transform=transform)
     #     return dataset
     #
-    # def get_datasets(self, stage: str, epoch: int = None, **kwargs) -> Dict[str, Dataset]:
+    # def get_datasets(self, stage: str, **kwargs) -> Dict[str, Dataset]:
     #     """
     #     Returns datasets for a given stage.
     #
@@ -261,7 +261,7 @@ class HydraRunner(IStageBasedRunner):
     #     loader: DataLoader = DataLoader(**params)
     #     return loader
 
-    def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, DataLoader]:
+    def get_loaders(self, stage: str) -> Dict[str, DataLoader]:
         """
         Returns loaders for a given stage.
 
@@ -286,7 +286,7 @@ class HydraRunner(IStageBasedRunner):
         loaders_params = self._config.stages[stage].loaders
         loaders_params = OmegaConf.to_container(loaders_params, resolve=True)
         loaders = get_loaders_from_params(
-            datasets_fn=partial(self.get_datasets, stage=stage, epoch=epoch),
+            datasets_fn=partial(self.get_datasets, stage=stage),
             initial_seed=self.seed,
             stage=stage,
             **loaders_params,
@@ -306,7 +306,7 @@ class HydraRunner(IStageBasedRunner):
             model: Model = hydra.utils.instantiate(params)
         return model
 
-    def get_model(self, stage: str, epoch: int = None) -> RunnerModel:
+    def get_model(self, stage: str) -> RunnerModel:
         """Returns the model for a given stage."""
         assert "model" in self._config, "config must contain 'model' key"
         model_params: DictConfig = self._config.model
@@ -326,7 +326,7 @@ class HydraRunner(IStageBasedRunner):
             criterion: Criterion = hydra.utils.instantiate(params)
         return criterion
 
-    def get_criterion(self, stage: str, epoch: int = None) -> RunnerCriterion:
+    def get_criterion(self, stage: str) -> RunnerCriterion:
         """Returns the criterions for a given stage."""
         if "criterion" not in self._config.stages[stage]:
             return None
@@ -335,7 +335,7 @@ class HydraRunner(IStageBasedRunner):
         return criterion
 
     def _get_optimizer(
-        self, model: RunnerModel, stage: str, epoch: int, params: DictConfig,
+        self, model: RunnerModel, stage: str, params: DictConfig,
     ) -> Optimizer:
         # @TODO 1: refactor; this method is too long
         params = deepcopy(params)
@@ -368,7 +368,7 @@ class HydraRunner(IStageBasedRunner):
         optimizer: Optimizer = hydra.utils.instantiate(params, params=model_params)
         return optimizer
 
-    def get_optimizer(self, model: RunnerModel, stage: str, epoch: int = None) -> RunnerOptimizer:
+    def get_optimizer(self, model: RunnerModel, stage: str) -> RunnerOptimizer:
         """
         Returns the optimizer for a given stage and epoch.
 
@@ -395,11 +395,11 @@ class HydraRunner(IStageBasedRunner):
                 params[optimizer_key] = key
 
                 optimizer[key] = self._get_optimizer(
-                    model=model, stage=stage, epoch=epoch, params=params
+                    model=model, stage=stage, params=params
                 )
         else:
             optimizer = self._get_optimizer(
-                model=model, stage=stage, epoch=epoch, params=optimizer_params
+                model=model, stage=stage, params=optimizer_params
             )
 
         return optimizer
@@ -423,7 +423,7 @@ class HydraRunner(IStageBasedRunner):
         return scheduler
 
     def get_scheduler(
-        self, optimizer: RunnerOptimizer, stage: str, epoch: int = None
+        self, optimizer: RunnerOptimizer, stage: str
     ) -> RunnerScheduler:
         """Returns the schedulers for a given stage."""
         if "scheduler" not in self._config.stages[stage]:
@@ -445,7 +445,7 @@ class HydraRunner(IStageBasedRunner):
             callback = HydraRunner._get_callback(**wrapper_params)  # noqa: WPS437
         return callback
 
-    def get_callbacks(self, stage: str, epoch: int = None) -> "OrderedDict[str, Callback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage."""
         callbacks_params = self._config.stages[stage].callbacks or {}
 

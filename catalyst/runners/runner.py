@@ -12,7 +12,7 @@ from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallbac
 from catalyst.core.callback import Callback
 from catalyst.core.functional import check_callback_isinstance, sort_callbacks_by_order
 from catalyst.core.logger import ILogger
-from catalyst.core.runner import IStageBasedRunner
+from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
 from catalyst.engines import DeviceEngine, IEngine
 from catalyst.loggers.console import ConsoleLogger
@@ -68,7 +68,7 @@ def _process_loaders(
     return loaders
 
 
-class Runner(IStageBasedRunner):
+class Runner(IRunner):
     """Single-stage deep learning Runner with user-friendly API."""
 
     def __init__(self, *args, **kwargs):
@@ -151,12 +151,12 @@ class Runner(IStageBasedRunner):
             )
         return loggers
 
-    def get_loaders(self, stage: str, epoch: int = None,) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self, stage: str,) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage."""
         self._loaders = _process_loaders(loaders=self._loaders, initial_seed=self.seed)
         return self._loaders
 
-    def get_model(self, stage: str, epoch: int = None) -> Model:
+    def get_model(self, stage: str) -> Model:
         """Returns the model for a given stage."""
         model = (
             self._model()
@@ -165,7 +165,7 @@ class Runner(IStageBasedRunner):
         )
         return model
 
-    def get_criterion(self, stage: str, epoch: int = None) -> Criterion:
+    def get_criterion(self, stage: str) -> Criterion:
         """Returns the criterion for a given stage."""
         return (
             self._criterion()
@@ -173,7 +173,7 @@ class Runner(IStageBasedRunner):
             else self._criterion
         )
 
-    def get_optimizer(self, model: Model, stage: str, epoch: int = None) -> Optimizer:
+    def get_optimizer(self, model: Model, stage: str) -> Optimizer:
         """Returns the optimizer for a given stage."""
         return (
             self._optimizer(model)
@@ -181,7 +181,7 @@ class Runner(IStageBasedRunner):
             else self._optimizer
         )
 
-    def get_scheduler(self, optimizer: Optimizer, stage: str, epoch: int = None) -> Scheduler:
+    def get_scheduler(self, optimizer: Optimizer, stage: str) -> Scheduler:
         """Returns the scheduler for a given stage."""
         return (
             self._scheduler(optimizer)
@@ -193,7 +193,7 @@ class Runner(IStageBasedRunner):
             else self._scheduler
         )
 
-    def get_callbacks(self, stage: str, epoch: int = None) -> "OrderedDict[str, ICallback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
         """Returns the callbacks for a given stage."""
         callbacks = sort_callbacks_by_order(self._callbacks)
         is_callback_exists = lambda callback_fn: any(
