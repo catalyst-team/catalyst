@@ -1,9 +1,8 @@
 from typing import List
 import random
 
-import numpy as np
-
 import albumentations as albu
+import numpy as np
 
 
 class BlurMixin:
@@ -31,9 +30,7 @@ class BlurMixin:
         self.blur = [albu.__dict__[x]() for x in blur]
         self.num_blur = len(self.blur)
         self.num_blur_classes = blur_max - blur_min + 1 + 1
-        self.blur_probability = (
-            self.num_blur_classes - 1
-        ) / self.num_blur_classes
+        self.blur_probability = (self.num_blur_classes - 1) / self.num_blur_classes
 
     def __call__(self, dictionary):
         """@TODO: Docs. Contribution is welcome."""
@@ -42,11 +39,7 @@ class BlurMixin:
 
         if random.random() < self.blur_probability:
             blur_fn = np.random.choice(self.blur)
-            blur_factor = int(
-                np.random.randint(self.blur_min, self.blur_max)
-                - self.blur_min
-                + 1
-            )
+            blur_factor = int(np.random.randint(self.blur_min, self.blur_max) - self.blur_min + 1)
             image = blur_fn.apply(image=image, ksize=blur_factor)
 
         dictionary[self.input_key] = image

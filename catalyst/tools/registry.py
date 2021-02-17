@@ -1,18 +1,4 @@
-"""
-Global Catalyst registries subpackage.
-"""
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Iterator,
-    List,
-    Mapping,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import Any, Callable, Dict, Iterator, List, Mapping, Optional, Tuple, Type, Union
 import collections
 import functools
 import inspect
@@ -47,9 +33,7 @@ class Registry(collections.MutableMapping):
     Universal class allowing to add and access various factories by name.
     """
 
-    def __init__(
-        self, default_meta_factory: MetaFactory = _default_meta_factory
-    ):
+    def __init__(self, default_meta_factory: MetaFactory = _default_meta_factory):
         """
         Args:
             default_meta_factory: default object
@@ -68,9 +52,7 @@ class Registry(collections.MutableMapping):
                     f"Factory {f} has no __name__ and no " f"name was provided"
                 )
             if provided_name == "<lambda>":
-                raise RegistryException(
-                    "Name for lambda factories must be provided"
-                )
+                raise RegistryException("Name for lambda factories must be provided")
         return provided_name
 
     def _do_late_add(self):
@@ -104,9 +86,7 @@ class Registry(collections.MutableMapping):
             RegistryException: if factory with provided name is already present
         """
         if len(factories) > 0 and name is not None:
-            raise RegistryException(
-                "Multiple factories with single name are not allowed"
-            )
+            raise RegistryException("Multiple factories with single name are not allowed")
 
         if factory is not None:
             named_factories[self._get_factory_name(factory, name)] = factory
@@ -143,9 +123,7 @@ class Registry(collections.MutableMapping):
         """
         self._late_add_callbacks.append(cb)
 
-    def add_from_module(
-        self, module, prefix: Union[str, List[str]] = None
-    ) -> None:
+    def add_from_module(self, module, prefix: Union[str, List[str]] = None) -> None:
         """
         Adds all factories present in module.
         If ``__all__`` attribute is present, takes ony what mentioned in it.
@@ -160,9 +138,7 @@ class Registry(collections.MutableMapping):
             TypeError: if prefix is not a list or a string
         """
         factories = {
-            k: v
-            for k, v in module.__dict__.items()
-            if inspect.isclass(v) or inspect.isfunction(v)
+            k: v for k, v in module.__dict__.items() if inspect.isclass(v) or inspect.isfunction(v)
         }
 
         # Filter by __all__ if present
@@ -176,15 +152,9 @@ class Registry(collections.MutableMapping):
             if any((not isinstance(p, str)) for p in prefix):
                 raise TypeError("All prefix in list must be strings.")
         else:
-            raise TypeError(
-                f"Prefix must be a list or a string, got {type(prefix)}."
-            )
+            raise TypeError(f"Prefix must be a list or a string, got {type(prefix)}.")
 
-        to_add = {
-            f"{p}{name}": factories[name]
-            for p in prefix
-            for name in names_to_add
-        }
+        to_add = {f"{p}{name}": factories[name] for p in prefix for name in names_to_add}
         self.add(**to_add)
 
     def get(self, name: str) -> Optional[Factory]:
@@ -209,9 +179,7 @@ class Registry(collections.MutableMapping):
         res = self._factories.get(name, None)
 
         if not res:
-            raise RegistryException(
-                f"No factory with name '{name}' was registered"
-            )
+            raise RegistryException(f"No factory with name '{name}' was registered")
 
         return res
 

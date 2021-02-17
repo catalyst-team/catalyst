@@ -36,9 +36,7 @@ class UnetHead(HeadSpec):
         ] * num_upsample_blocks
         if dropout > 0:
             additional_layers.append(nn.Dropout2d(p=dropout, inplace=True))
-        self.head = nn.Sequential(
-            *additional_layers, nn.Conv2d(in_channels_last, out_channels, 1)
-        )
+        self.head = nn.Sequential(*additional_layers, nn.Conv2d(in_channels_last, out_channels, 1))
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
         """Forward call."""

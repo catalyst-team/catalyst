@@ -29,12 +29,7 @@ scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 runner = SupervisedRunner()
 runner.train(
     model=model,
-    datasets={
-        "batch_size": 32,
-        "num_workers": 1,
-        "train": dataset,
-        "valid": dataset,
-    },
+    datasets={"batch_size": 32, "num_workers": 1, "train": dataset, "valid": dataset,},
     criterion=criterion,
     optimizer=optimizer,
     logdir="./logs/example_2",

@@ -5,7 +5,6 @@ __ https://github.com/pytorch/vision
 """
 
 import numpy as np
-
 import torch
 
 
@@ -25,9 +24,7 @@ def to_tensor(pic: np.ndarray) -> torch.Tensor:
     if not isinstance(pic, np.ndarray):
         raise TypeError(f"pic should be ndarray. Got {type(pic)}")
     if pic.ndim not in {2, 3}:
-        raise ValueError(
-            f"pic should be 2/3 dimensional. Got {pic.ndim} dimensions."
-        )
+        raise ValueError(f"pic should be 2/3 dimensional. Got {pic.ndim} dimensions.")
 
     if pic.ndim == 2:
         pic = pic[:, :, None]
@@ -159,9 +156,7 @@ class Normalize(object):
 
     def __repr__(self):
         """@TODO: Docs. Contribution is welcome."""
-        return self.__class__.__name__ + "(mean={0}, std={1})".format(
-            self.mean, self.std
-        )
+        return self.__class__.__name__ + "(mean={0}, std={1})".format(self.mean, self.std)
 
 
 __all__ = ["Compose", "Normalize", "ToTensor", "to_tensor", "normalize"]

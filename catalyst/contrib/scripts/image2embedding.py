@@ -5,9 +5,8 @@ from pathlib import Path
 import cv2
 import numpy as np
 import pandas as pd
-from tqdm import tqdm
-
 import torch
+from tqdm import tqdm
 
 from catalyst.contrib.data.cv import ImageReader
 from catalyst.contrib.models.cv import ResnetEncoder
@@ -72,27 +71,15 @@ def build_args(parser):
     Returns:
         modified parser
     """
+    parser.add_argument("--in-csv", type=str, dest="in_csv", help="Path to csv with photos")
     parser.add_argument(
-        "--in-csv", type=str, dest="in_csv", help="Path to csv with photos"
+        "--img-rootpath", type=str, dest="rootpath", help="Path to photos directory",
     )
     parser.add_argument(
-        "--img-rootpath",
-        type=str,
-        dest="rootpath",
-        help="Path to photos directory",
+        "--img-col", type=str, dest="img_col", help="Column in table that contain image path",
     )
     parser.add_argument(
-        "--img-col",
-        type=str,
-        dest="img_col",
-        help="Column in table that contain image path",
-    )
-    parser.add_argument(
-        "--img-size",
-        type=int,
-        dest="img_size",
-        default=224,
-        help="Target size of images",
+        "--img-size", type=int, dest="img_size", default=224, help="Target size of images",
     )
     parser.add_argument(
         "--out-npy",
@@ -102,11 +89,7 @@ def build_args(parser):
         help="Path to output `.npy` file with embedded features",
     )
     parser.add_argument(
-        "--arch",
-        type=str,
-        dest="arch",
-        default="resnet18",
-        help="Neural network architecture",
+        "--arch", type=str, dest="arch", default="resnet18", help="Neural network architecture",
     )
     parser.add_argument(
         "--pooling",
@@ -130,11 +113,7 @@ def build_args(parser):
         default=0,
     )
     parser.add_argument(
-        "--batch-size",
-        type=int,
-        dest="batch_size",
-        help="Dataloader batch size",
-        default=32,
+        "--batch-size", type=int, dest="batch_size", help="Dataloader batch size", default=32,
     )
     parser.add_argument(
         "--verbose",
@@ -184,9 +163,7 @@ def main(args, _=None):
     df = df.reset_index().drop("index", axis=1)
     df = list(df.to_dict("index").values())
 
-    open_fn = ImageReader(
-        input_key=args.img_col, output_key="image", rootpath=args.rootpath
-    )
+    open_fn = ImageReader(input_key=args.img_col, output_key="image", rootpath=args.rootpath)
 
     dataloader = get_loader(
         df,

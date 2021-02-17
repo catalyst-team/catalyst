@@ -9,15 +9,9 @@ from catalyst.contrib.models.cv.segmentation.blocks import (
     EncoderUpsampleBlock,
 )
 from catalyst.contrib.models.cv.segmentation.bridge import UnetBridge
-from catalyst.contrib.models.cv.segmentation.core import (
-    ResnetUnetSpec,
-    UnetSpec,
-)
+from catalyst.contrib.models.cv.segmentation.core import ResnetUnetSpec, UnetSpec
 from catalyst.contrib.models.cv.segmentation.decoder import UNetDecoder
-from catalyst.contrib.models.cv.segmentation.encoder import (
-    ResnetEncoder,
-    UnetEncoder,
-)
+from catalyst.contrib.models.cv.segmentation.encoder import ResnetEncoder, UnetEncoder
 from catalyst.contrib.models.cv.segmentation.head import UnetHead
 
 
@@ -77,9 +71,7 @@ class ResnetUnet(ResnetUnetSpec):
         decoder = UNetDecoder(
             in_channels=bridge.out_channels,
             in_strides=bridge.out_strides,
-            block_fn=partial(
-                DecoderConcatBlock, aggregate_first=True, upsample_scale=2
-            ),
+            block_fn=partial(DecoderConcatBlock, aggregate_first=True, upsample_scale=2),
             **decoder_params,
         )
         head = UnetHead(

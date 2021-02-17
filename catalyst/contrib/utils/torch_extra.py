@@ -1,5 +1,4 @@
 import numpy as np
-
 import torch
 
 
@@ -71,9 +70,7 @@ def calculate_confusion_matrix_from_tensors(
     predictions = y_pred.cpu().numpy()
     labels = y_true.cpu().numpy()
 
-    return calculate_confusion_matrix_from_arrays(
-        predictions, labels, num_classes
-    )
+    return calculate_confusion_matrix_from_arrays(predictions, labels, num_classes)
 
 
 __all__ = [

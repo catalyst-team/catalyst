@@ -19,13 +19,7 @@ def test_parse_config_args():
     parser.add_argument("--command")
 
     args, uargs = parser.parse_known_args(
-        [
-            "--command",
-            "run",
-            "--path=test.yml:str",
-            "--stages/zero=cero:str",
-            "-C=like:str",
-        ]
+        ["--command", "run", "--path=test.yml:str", "--stages/zero=cero:str", "-C=like:str",]
     )
 
     configuration, args = utils.parse_config_args(

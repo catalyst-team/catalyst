@@ -1,7 +1,6 @@
 # flake8: noqa
 import numpy as np
 import pytest
-
 import torch
 from torch import nn
 
@@ -9,8 +8,9 @@ from catalyst import dl
 from catalyst.settings import IS_PRUNING_AVAILABLE
 
 if IS_PRUNING_AVAILABLE:
-    from catalyst.dl import PruningCallback
     from torch.nn.utils.prune import l1_unstructured
+
+    from catalyst.dl import PruningCallback
 
 
 def pruning_factor(model):
@@ -65,11 +65,7 @@ def test_parametrization():
         optimizer=torch.optim.Adam(model.parameters()),
         criterion=criterion,
         loaders={"train": dataloader},
-        callbacks=[
-            PruningCallback(
-                l1_unstructured, remove_reparametrization_on_stage_end=False
-            )
-        ],
+        callbacks=[PruningCallback(l1_unstructured, remove_reparametrization_on_stage_end=False)],
         num_epochs=1,
     )
     assert np.isclose(pruning_factor(model), 0.5)

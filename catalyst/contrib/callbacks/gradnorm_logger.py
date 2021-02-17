@@ -26,9 +26,7 @@ class GradNormLogger(Callback):
                 ``model.zero_grad()``.
                 Should be the same as in `OptimizerCallback`.
         """
-        super().__init__(
-            order=CallbackOrder.optimizer + 1, node=CallbackNode.all
-        )
+        super().__init__(order=CallbackOrder.optimizer + 1, node=CallbackNode.all)
 
         self.grad_norm_prefix = "_grad_norm"
         self.norm_type = norm_type
@@ -77,15 +75,11 @@ class GradNormLogger(Callback):
             return
 
         self._accumulation_counter += 1
-        need_gradient_step = (
-            self._accumulation_counter % self.accumulation_steps == 0
-        )
+        need_gradient_step = self._accumulation_counter % self.accumulation_steps == 0
 
         if need_gradient_step:
             grad_norm = self.grad_norm(
-                model=runner.model,
-                prefix=self.grad_norm_prefix,
-                norm_type=self.norm_type,
+                model=runner.model, prefix=self.grad_norm_prefix, norm_type=self.norm_type,
             )
 
             runner.batch_metrics.update(**grad_norm)

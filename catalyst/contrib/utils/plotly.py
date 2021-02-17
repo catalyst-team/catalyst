@@ -7,7 +7,7 @@ from pathlib import Path
 import plotly.graph_objs as go
 from plotly.offline import init_notebook_mode, iplot
 
-from catalyst.contrib.tools.tensorboard import SummaryItem, SummaryReader
+from catalyst.tools.tensorboard import SummaryItem, SummaryReader
 
 
 def _get_tensorboard_scalars(
@@ -17,9 +17,7 @@ def _get_tensorboard_scalars(
 
     items = defaultdict(list)
     for item in summary_reader:
-        if step in item.tag and (
-            metrics is None or any(m in item.tag for m in metrics)
-        ):
+        if step in item.tag and (metrics is None or any(m in item.tag for m in metrics)):
             items[item.tag].append(item)
     return items
 
@@ -72,10 +70,7 @@ def plot_tensorboard_log(
                 pass
 
         layout = go.Layout(
-            title=metric_name,
-            height=height,
-            width=width,
-            yaxis={"hoverformat": ".5f"},
+            title=metric_name, height=height, width=width, yaxis={"hoverformat": ".5f"},
         )
         iplot(go.Figure(data=metric_data, layout=layout))
 
@@ -102,10 +97,7 @@ def plot_metrics(
         width: the width of the whole resulting plot
 
     """
-    assert step in [
-        "batch",
-        "epoch",
-    ], f"Step should be either 'batch' or 'epoch', got '{step}'"
+    assert step in ["batch", "epoch",], f"Step should be either 'batch' or 'epoch', got '{step}'"
     metrics = metrics or ["loss"]
     plot_tensorboard_log(logdir, step, metrics, height, width)
 

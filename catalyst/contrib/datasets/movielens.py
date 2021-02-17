@@ -3,7 +3,6 @@ import os
 
 import numpy as np
 import scipy.sparse as sp
-
 import torch
 from torch.utils.data import Dataset
 
@@ -85,9 +84,7 @@ class MovieLens(Dataset):
         self._fetch_movies()
 
         if not self._check_exists():
-            raise RuntimeError(
-                "Dataset not found. You can use download=True to download it"
-            )
+            raise RuntimeError("Dataset not found. You can use download=True to download it")
 
         if self.train:
             data_file = self.training_file
@@ -132,9 +129,7 @@ class MovieLens(Dataset):
         """
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
-        ) and os.path.exists(
-            os.path.join(self.processed_folder, self.test_file)
-        )
+        ) and os.path.exists(os.path.join(self.processed_folder, self.test_file))
 
     def _download(self):
         """
@@ -200,9 +195,7 @@ class MovieLens(Dataset):
         v = torch.FloatTensor(values)
         shape = coo.shape
 
-        interaction_matrix = torch.sparse.FloatTensor(
-            i, v, torch.Size(shape)
-        ).to_dense()
+        interaction_matrix = torch.sparse.FloatTensor(i, v, torch.Size(shape)).to_dense()
         return interaction_matrix
 
     def _parse(self, data):
@@ -255,33 +248,18 @@ class MovieLens(Dataset):
             3. Parse test data
             4. Save in the .pt with torch.save
         """
-        (
-            train_raw,
-            test_raw,
-            item_metadata_raw,
-            genres_raw,
-        ) = self._read_raw_movielens_data()
+        (train_raw, test_raw, item_metadata_raw, genres_raw,) = self._read_raw_movielens_data()
 
-        num_users, num_items = self._get_dimensions(
-            self._parse(train_raw), self._parse(test_raw)
-        )
+        num_users, num_items = self._get_dimensions(self._parse(train_raw), self._parse(test_raw))
 
-        train = self._build_interaction_matrix(
-            num_users, num_items, self._parse(train_raw)
-        )
-        test = self._build_interaction_matrix(
-            num_users, num_items, self._parse(test_raw)
-        )
+        train = self._build_interaction_matrix(num_users, num_items, self._parse(train_raw))
+        test = self._build_interaction_matrix(num_users, num_items, self._parse(test_raw))
         assert train.shape == test.shape
 
-        with open(
-            os.path.join(self.processed_folder, self.training_file), "wb"
-        ) as f:
+        with open(os.path.join(self.processed_folder, self.training_file), "wb") as f:
             torch.save(train, f)
 
-        with open(
-            os.path.join(self.processed_folder, self.test_file), "wb"
-        ) as f:
+        with open(os.path.join(self.processed_folder, self.test_file), "wb") as f:
             torch.save(test, f)
 
 

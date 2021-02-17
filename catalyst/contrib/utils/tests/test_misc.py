@@ -45,9 +45,7 @@ def test_get_fn_argsnames():
     ]
 
     params_predicted = list(
-        map(
-            lambda x: utils.get_fn_argsnames(x.forward, exclude=["self"]), nets
-        )
+        map(lambda x: utils.get_fn_argsnames(x.forward, exclude=["self"]), nets)
     )
     assert params_predicted == params_true
 

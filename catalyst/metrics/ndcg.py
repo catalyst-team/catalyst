@@ -1,185 +1,66 @@
-from typing import List
+from typing import Any, Dict, List
 
 import torch
 
-from catalyst.metrics.functional import process_recsys_components
+from catalyst.metrics.additive import AdditiveValueMetric
+from catalyst.metrics.functional.misc import get_default_topk_args
+from catalyst.metrics.functional.ndcg import ndcg
+from catalyst.metrics.metric import ICallbackBatchMetric
 
 
-def dcg(
-    outputs: torch.Tensor, targets: torch.Tensor, gain_function="exp_rank",
-) -> torch.Tensor:
-    """
-    Computes DCG@topk for the specified values of `k`.
-    Graded relevance as a measure of  usefulness,
-    or gain, from examining a set of items.
-    Gain may be reduced at lower ranks.
-    Reference:
-    https://en.wikipedia.org/wiki/Discounted_cumulative_gain
+class NDCGMetric(ICallbackBatchMetric):
+    def __init__(
+        self,
+        topk_args: List[int] = [1],
+        compute_on_call: bool = True,
+        prefix: str = None,
+        suffix: str = None,
+    ):
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        self.metric_name_mean = f"{self.prefix}ndcg{self.suffix}"
+        self.metric_name_std = f"{self.prefix}ndcg{self.suffix}/std"
+        self.topk_args: List[int] = topk_args
+        self.additive_metrics: List[AdditiveValueMetric] = [
+            AdditiveValueMetric() for _ in range(len(self.topk_args))
+        ]
 
-    Args:
-        outputs: model outputs, logits
-            with shape [batch_size; slate_length]
-        targets: ground truth, labels
-            with shape [batch_size; slate_length]
-        gain_function:
-            String indicates the gain function for the ground truth labels.
-            Two options available:
-            - `exp_rank`: torch.pow(2, x) - 1
-            - `linear_rank`: x
-            On the default, `exp_rank` is used
-            to emphasize on retrieving the relevant documents.
+    def reset(self) -> None:
+        for metric in self.additive_metrics:
+            metric.reset()
 
-    Returns:
-        dcg_score (torch.Tensor):
-            The discounted gains tensor
+    def update(self, logits: torch.Tensor, targets: torch.Tensor) -> List[float]:
+        values = ndcg(logits, targets, topk=self.topk_args)
+        values = [v.item() for v in values]
+        for value, metric in zip(values, self.additive_metrics):
+            metric.update(value, len(targets))
+        return values
 
-    Raises:
-        ValueError: gain function can be either `pow_rank` or `rank`
+    def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+        values = self.update(logits=logits, targets=targets)
+        output = {
+            f"{self.prefix}ndcg{key:02d}{self.suffix}": value
+            for key, value in zip(self.topk_args, values)
+        }
+        output[self.metric_name_mean] = output[f"{self.prefix}ndcg01{self.suffix}"]
+        return output
 
-    Examples:
-        >>> dcg(
-        >>>     outputs = torch.tensor([
-        >>>         [3, 2, 1, 0],
-        >>>     ]),
-        >>>     targets = torch.Tensor([
-        >>>         [2.0, 2.0, 1.0, 0.0],
-        >>>     ]),
-        >>>     gain_function="linear_rank",
-        >>> )
-        tensor([[2.0000, 2.0000, 0.6309, 0.0000]])
-        >>> dcg(
-        >>>     outputs = torch.tensor([
-        >>>         [3, 2, 1, 0],
-        >>>     ]),
-        >>>     targets = torch.Tensor([
-        >>>         [2.0, 2.0, 1.0, 0.0],
-        >>>     ]),
-        >>>     gain_function="linear_rank",
-        >>> ).sum()
-        tensor(4.6309)
-        >>> dcg(
-        >>>     outputs = torch.tensor([
-        >>>         [3, 2, 1, 0],
-        >>>     ]),
-        >>>     targets = torch.Tensor([
-        >>>         [2.0, 2.0, 1.0, 0.0],
-        >>>     ]),
-        >>>     gain_function="exp_rank",
-        >>> )
-        tensor([[3.0000, 1.8928, 0.5000, 0.0000]])
-        >>> dcg(
-        >>>     outputs = torch.tensor([
-        >>>         [3, 2, 1, 0],
-        >>>     ]),
-        >>>     targets = torch.Tensor([
-        >>>         [2.0, 2.0, 1.0, 0.0],
-        >>>     ]),
-        >>>     gain_function="exp_rank",
-        >>> ).sum()
-        tensor(5.3928)
-    """
-    targets_sort_by_outputs = process_recsys_components(outputs, targets)
-    target_device = targets_sort_by_outputs.device
+    def compute(self) -> Any:
+        means, stds = zip(*(metric.compute() for metric in self.additive_metrics))
+        return means, stds
 
-    if gain_function == "exp_rank":
-        gain_function = lambda x: torch.pow(2, x) - 1
-        gains = gain_function(targets_sort_by_outputs)
-        discounts = torch.tensor(1) / torch.log2(
-            torch.arange(
-                targets_sort_by_outputs.shape[1],
-                dtype=torch.float,
-                device=target_device,
-            )
-            + 2.0
-        )
-        discounted_gains = gains * discounts
-
-    elif gain_function == "linear_rank":
-        discounts = torch.tensor(1) / torch.log2(
-            torch.arange(
-                targets_sort_by_outputs.shape[1],
-                dtype=torch.float,
-                device=target_device,
-            )
-            + 1.0
-        )
-        discounts[0] = 1
-        discounted_gains = targets_sort_by_outputs * discounts
-
-    else:
-        raise ValueError("gain function can be either exp_rank or linear_rank")
-
-    dcg_score = discounted_gains
-    return dcg_score
+    def compute_key_value(self) -> Dict[str, float]:
+        means, stds = self.compute()
+        output_mean = {
+            f"{self.prefix}ndcg{key:02d}{self.suffix}": value
+            for key, value in zip(self.topk_args, means)
+        }
+        output_std = {
+            f"{self.prefix}ndcg{key:02d}{self.suffix}/std": value
+            for key, value in zip(self.topk_args, stds)
+        }
+        output_mean[self.metric_name_mean] = output_mean[f"{self.prefix}ndcg01{self.suffix}"]
+        output_std[self.metric_name_std] = output_std[f"{self.prefix}ndcg01{self.suffix}/std"]
+        return {**output_mean, **output_std}
 
 
-def ndcg(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    topk: List[int],
-    gain_function="exp_rank",
-) -> List[torch.Tensor]:
-    """
-    Computes nDCG@topk for the specified values of `topk`.
-
-    Args:
-        outputs (torch.Tensor): model outputs, logits
-            with shape [batch_size; slate_size]
-        targets (torch.Tensor): ground truth, labels
-            with shape [batch_size; slate_size]
-        gain_function:
-            callable, gain function for the ground truth labels.
-            Two options available:
-            - `exp_rank`: torch.pow(2, x) - 1
-            - `linear_rank`: x
-            On the default, `exp_rank` is used
-            to emphasize on retrieving the relevant documents.
-        topk (List[int]):
-            Parameter fro evaluation on top-k items
-
-    Returns:
-        results (Tuple[float]):
-            tuple with computed ndcg@topk
-
-    Examples:
-        >>> ndcg(
-        >>>     outputs = torch.tensor([
-        >>>         [0.5, 0.2, 0.1],
-        >>>         [0.5, 0.2, 0.1],
-        >>>     ]),
-        >>>     targets = torch.Tensor([
-        >>>         [1.0, 0.0, 1.0],
-        >>>         [1.0, 0.0, 1.0],
-        >>>     ]),
-        >>>     topk=[2],
-        >>>     gain_function="exp_rank",
-        >>> )
-        [tensor(0.6131)]
-        >>> ndcg(
-        >>>     outputs = torch.tensor([
-        >>>         [0.5, 0.2, 0.1],
-        >>>         [0.5, 0.2, 0.1],
-        >>>     ]),
-        >>>     targets = torch.Tensor([
-        >>>         [1.0, 0.0, 1.0],
-        >>>         [1.0, 0.0, 1.0],
-        >>>     ]),
-        >>>     topk=[2],
-        >>>     gain_function="exp_rank",
-        >>> )
-        [tensor(0.5000)]
-    """
-    results = []
-    for k in topk:
-        ideal_dcgs = dcg(targets, targets, gain_function)[:, :k]
-        predicted_dcgs = dcg(outputs, targets, gain_function)[:, :k]
-        ideal_dcgs_score = torch.sum(ideal_dcgs, dim=1)
-        predicted_dcgs_score = torch.sum(predicted_dcgs, dim=1)
-        ndcg_score = predicted_dcgs_score / ideal_dcgs_score
-        idcg_mask = ideal_dcgs_score == 0
-        ndcg_score[idcg_mask] = 0.0
-        results.append(torch.mean(ndcg_score))
-    return results
-
-
-__all__ = ["dcg", "ndcg"]
+__all__ = ["NDCGMetric"]

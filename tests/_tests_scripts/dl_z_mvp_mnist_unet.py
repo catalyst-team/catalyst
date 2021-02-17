@@ -14,9 +14,7 @@ from catalyst.contrib.datasets import MNIST
 class ClassifyUnet(nn.Module):
     def __init__(self, in_channels, in_hw, out_features):
         super().__init__()
-        self.encoder = nn.Sequential(
-            nn.Conv2d(in_channels, in_channels, 3, 1, 1), nn.Tanh()
-        )
+        self.encoder = nn.Sequential(nn.Conv2d(in_channels, in_channels, 3, 1, 1), nn.Tanh())
         self.decoder = nn.Conv2d(in_channels, in_channels, 3, 1, 1)
         self.clf = nn.Linear(in_channels * in_hw * in_hw, out_features)
 
@@ -29,7 +27,7 @@ class ClassifyUnet(nn.Module):
 
 
 class CustomRunner(dl.Runner):
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         x, y = batch
         x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
         y_hat, x_ = self.model(x_noise)
@@ -38,9 +36,7 @@ class CustomRunner(dl.Runner):
         iou = metrics.iou(x_, x).mean()
         loss_iou = 1 - iou
         loss = loss_clf + loss_iou
-        accuracy01, accuracy03, accuracy05 = metrics.accuracy(
-            y_hat, y, topk=(1, 3, 5)
-        )
+        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
 
         self.batch_metrics = {
             "loss_clf": loss_clf,
@@ -64,22 +60,16 @@ def main():
 
     loaders = {
         "train": DataLoader(
-            MNIST("./data", train=False, download=True, transform=ToTensor(),),
-            batch_size=32,
+            MNIST("./data", train=False, download=True, transform=ToTensor(),), batch_size=32,
         ),
         "valid": DataLoader(
-            MNIST("./data", train=False, download=True, transform=ToTensor(),),
-            batch_size=32,
+            MNIST("./data", train=False, download=True, transform=ToTensor(),), batch_size=32,
         ),
     }
 
     runner = CustomRunner()
     runner.train(
-        model=model,
-        optimizer=optimizer,
-        loaders=loaders,
-        verbose=True,
-        check=True,
+        model=model, optimizer=optimizer, loaders=loaders, verbose=True, check=True,
     )
 
 

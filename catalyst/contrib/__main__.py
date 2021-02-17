@@ -84,34 +84,26 @@ COMMANDS = OrderedDict([("collect-env", collect_env)])
 
 try:
     import pandas  # noqa: F401 F811
+
     from catalyst.contrib.scripts import project_embeddings
 
     COMMANDS["project-embeddings"] = project_embeddings
 except ModuleNotFoundError as ex:
     if SETTINGS.pandas_required:
-        logger.error(
-            "pandas not available, to install pandas,"
-            " run `pip install pandas`."
-        )
+        logger.error("pandas not available, to install pandas," " run `pip install pandas`.")
         raise ex
 except ImportError as ex:
     if SETTINGS.pandas_required:
-        logger.warning(
-            "pandas not available, to install pandas,"
-            " run `pip install pandas`."
-        )
+        logger.warning("pandas not available, to install pandas," " run `pip install pandas`.")
         raise ex
 
 
 try:
-    import sklearn  # noqa: F401 F811
     import pandas  # noqa: F401 F811
     import scipy  # noqa: F401 F811
-    from catalyst.contrib.scripts import (
-        find_thresholds,
-        tag2label,
-        split_dataframe,
-    )
+    import sklearn  # noqa: F401 F811
+
+    from catalyst.contrib.scripts import find_thresholds, split_dataframe, tag2label
 
     COMMANDS["find-thresholds"] = find_thresholds
     COMMANDS["tag2label"] = tag2label
@@ -134,8 +126,9 @@ except ImportError as ex:
 
 try:
     import nmslib  # noqa: F401
-    import sklearn  # noqa: F401 F811
     import pandas  # noqa: F401 F811
+    import sklearn  # noqa: F401 F811
+
     from catalyst.contrib.scripts import check_index_model, create_index_model
 
     COMMANDS["check-index-model"] = check_index_model
@@ -168,9 +161,10 @@ except ImportError as ex:
 try:
     import cv2  # noqa: F401
     import imageio  # noqa: F401
-    import torchvision  # noqa: F401
     import pandas  # noqa: F401 F811
-    from catalyst.contrib.scripts import process_images, image2embedding
+    import torchvision  # noqa: F401
+
+    from catalyst.contrib.scripts import image2embedding, process_images
 
     COMMANDS["process-images"] = process_images
     COMMANDS["image2embedding"] = image2embedding
@@ -200,8 +194,9 @@ except ImportError as ex:  # noqa: WPS440
         )
 
 try:
-    import transformers  # noqa: F401
     import pandas  # noqa: F401 F811
+    import transformers  # noqa: F401
+
     from catalyst.contrib.scripts import text2embedding
 
     COMMANDS["text2embedding"] = text2embedding
@@ -239,18 +234,12 @@ def build_parser() -> ArgumentParser:
     Returns:
         parser
     """
-    parser = ArgumentParser(
-        "catalyst-contrib", formatter_class=RawTextHelpFormatter
-    )
-    parser.add_argument(
-        "-v", "--version", action="version", version=f"%(prog)s {__version__}"
-    )
+    parser = ArgumentParser("catalyst-contrib", formatter_class=RawTextHelpFormatter)
+    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}")
     all_commands = ", \n".join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
     subparsers = parser.add_subparsers(
-        metavar="{command}",
-        dest="command",
-        help=f"available commands: \n{all_commands}",
+        metavar="{command}", dest="command", help=f"available commands: \n{all_commands}",
     )
     subparsers.required = True
 

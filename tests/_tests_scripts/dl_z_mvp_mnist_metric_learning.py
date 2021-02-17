@@ -28,9 +28,7 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
     dataset_train = datasets.MnistMLDataset(
         root=dataset_root, train=True, download=True, transform=transforms,
     )
-    sampler = data.BalanceBatchSampler(
-        labels=dataset_train.get_labels(), p=5, k=10
-    )
+    sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)
     train_loader = DataLoader(
         dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size
     )
@@ -45,16 +43,12 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
     optimizer = Adam(model.parameters(), lr=0.0005)
 
     # 3. criterion with triplets sampling
-    criterion = nn.TripletMarginLossWithSampler(
-        margin=0.5, sampler_inbatch=sampler_inbatch
-    )
+    criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
 
     # 4. training with catalyst Runner
     callbacks = [
         dl.ControlFlowCallback(dl.CriterionCallback(), loaders="train"),
-        dl.ControlFlowCallback(
-            dl.CMCScoreCallback(topk_args=[1]), loaders="valid"
-        ),
+        dl.ControlFlowCallback(dl.CMCScoreCallback(topk_args=[1]), loaders="valid"),
         dl.PeriodicLoaderCallback(valid=100),
     ]
 
@@ -65,11 +59,11 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
         optimizer=optimizer,
         callbacks=callbacks,
         loaders={"train": train_loader, "valid": val_loader},
-        minimize_metric=False,
+        minimize_valid_metric=False,
         verbose=True,
         valid_loader="valid",
         num_epochs=100,
-        main_metric="cmc01",
+        valid_metric="cmc01",
     )
     return runner.best_valid_metrics["cmc01"]
 

@@ -17,11 +17,7 @@ class Experiment(ConfigExperiment):
         return Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
     def get_datasets(
-        self,
-        stage: str,
-        n_samples: int = 320,
-        duplicate_loaders: bool = False,
-        **kwargs
+        self, stage: str, n_samples: int = 320, duplicate_loaders: bool = False, **kwargs
     ):
         """Docs? Contribution is welcome"""
         datasets = OrderedDict()

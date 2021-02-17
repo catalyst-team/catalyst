@@ -59,9 +59,7 @@ def prune_model(
 
 
 def remove_reparametrization(
-    model: Module,
-    keys_to_prune: List[str],
-    layers_to_prune: Optional[List[str]] = None,
+    model: Module, keys_to_prune: List[str], layers_to_prune: Optional[List[str]] = None,
 ) -> None:
     """
     Removes pre-hooks and pruning masks from the model.

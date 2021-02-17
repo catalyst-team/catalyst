@@ -29,7 +29,7 @@ runner_params:  # OPTIONAL KEYWORD, params for Runner's init
   output_key: null  # Example
 
 
-distributed_params:  # OPTIONAL KEYWORD, params for distributed training and NVIDIA Apex
+engine_params:  # OPTIONAL KEYWORD, params for distributed training and NVIDIA Apex
   rank: -1  # Rank for distributed training
   opt_level: O1  # Example for NVIDIA Apex
   syncbn: False  # KEYWORD, whether to convert BatchNorm to SyncBatchNorm (Default is False)
