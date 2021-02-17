@@ -17,19 +17,20 @@ base_targets = torch.tensor([
 ])
 EPS = 1e-5
 
+
 @pytest.mark.parametrize("outputs, targets, weights, class_names, batch_answer, total_answer",
                          (torch.stack([base_outputs, base_targets])[None, :, :, :],
-                              torch.stack([base_targets, base_targets])[None, :, :, :],
-                              [0.2, 0.8],
-                              ['class_name_1', 'class_name_2'],
-                              {'dice/class_name_1': 0.3636363446712494,
-                               'dice/class_name_2': 1.0,
-                               'dice/weighted': 0.8727272748947144},
-                              {'dice/class_name_1': 0.3636363446712494,
-                               'dice/class_name_2': 1.0,
-                               'dice/micro': 0.6818181872367859,
-                               'dice/macro': 0.7123287916183472,
-                               'dice/weighted': 0.8727272748947144})
+                          torch.stack([base_targets, base_targets])[None, :, :, :],
+                          [0.2, 0.8],
+                          ['class_name_1', 'class_name_2'],
+                          {'dice/class_name_1': 0.3636363446712494,
+                           'dice/class_name_2': 1.0,
+                           'dice/weighted': 0.8727272748947144},
+                          {'dice/class_name_1': 0.3636363446712494,
+                           'dice/class_name_2': 1.0,
+                           'dice/micro': 0.6818181872367859,
+                           'dice/macro': 0.7123287916183472,
+                           'dice/weighted': 0.8727272748947144})
                          )
 def test_dice_metric(outputs: torch.Tensor,
                      targets: torch.Tensor,
@@ -79,22 +80,23 @@ def test_dice_metric(outputs: torch.Tensor,
         assert abs(total_score[key] - total_answer[key]) < EPS
 
 
-@pytest.mark.parametrize("outputs, targets, alpha, weights, class_names, batch_answer, total_answer",
-                         (torch.stack([base_outputs, base_targets])[None, :, :, :],
-                          torch.stack([base_targets, base_targets])[None, :, :, :],
-                          0.2,
-                          [0.2, 0.8],
-                          ['class_name_1', 'class_name_2'],
-                          {'trevsky_index/class_name_1': 0.4166666567325592,
-                           'trevsky_index/class_name_2': 1.0,
-                           'trevsky_index/weighted': 0.8833333253860474},
-                          {'trevsky_index/class_name_1': 0.4166666567325592,
-                           'trevsky_index/class_name_2': 1.0,
-                           'trevsky_index/micro': 0.7083333134651184,
-                           'trevsky_index/macro': 0.7558139562606812,
-                           'trevsky_index/weighted': 0.8833333253860474})
-                         )
-def test_dice_metric(outputs: torch.Tensor,
+@pytest.mark.parametrize(
+    "outputs, targets, alpha, weights, class_names, batch_answer, total_answer",
+    (torch.stack([base_outputs, base_targets])[None, :, :, :],
+     torch.stack([base_targets, base_targets])[None, :, :, :],
+     0.2,
+     [0.2, 0.8],
+     ['class_name_1', 'class_name_2'],
+     {'trevsky_index/class_name_1': 0.4166666567325592,
+      'trevsky_index/class_name_2': 1.0,
+      'trevsky_index/weighted': 0.8833333253860474},
+     {'trevsky_index/class_name_1': 0.4166666567325592,
+      'trevsky_index/class_name_2': 1.0,
+      'trevsky_index/micro': 0.7083333134651184,
+      'trevsky_index/macro': 0.7558139562606812,
+      'trevsky_index/weighted': 0.8833333253860474})
+    )
+def test_trevsky_metric(outputs: torch.Tensor,
                      targets: torch.Tensor,
                      alpha: float,
                      weights: List[float],
