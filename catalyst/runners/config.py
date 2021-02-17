@@ -13,7 +13,7 @@ from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.logger import ILogger
-from catalyst.core.runner import IStageBasedRunner
+from catalyst.core.runner import IRunner
 from catalyst.core.trial import get_trial_by_params, ITrial
 from catalyst.engines import DeviceEngine, IEngine, process_engine
 from catalyst.loggers.console import ConsoleLogger
@@ -38,7 +38,7 @@ from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
 logger = logging.getLogger(__name__)
 
 
-class ConfigRunner(IStageBasedRunner):
+class ConfigRunner(IRunner):
     def __init__(self, config: Dict):
         """
         Args:
@@ -201,17 +201,17 @@ class ConfigRunner(IStageBasedRunner):
     #
     #     return transform_fn
 
-    def get_loaders(self, stage: str, epoch: int = None) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         loaders_params = dict(self._stage_config[stage]["loaders"])
         loaders = get_loaders_from_params(
-            datasets_fn=partial(self.get_datasets, stage=stage, epoch=epoch),
+            datasets_fn=partial(self.get_datasets, stage=stage),
             initial_seed=self.seed,
             stage=stage,
             **loaders_params,
         )
         return loaders
 
-    # def get_loaders_(self, stage: str, epoch: int = None) -> "OrderedDict[str, DataLoader]":
+    # def get_loaders_(self, stage: str) -> "OrderedDict[str, DataLoader]":
     #     """Returns the loaders for a given stage."""
     #
     #     # # @TODO: test case
@@ -240,11 +240,11 @@ class ConfigRunner(IStageBasedRunner):
     #     transforms_ = "transforms" in loaders_params
     #     if datasets_ is not None and samplers_ is not None and transforms_ is not None:
     #         raise NotImplementedError()
-    #         datasets = self.get_datasets_(stage=stage, epoch=epoch)
-    #         samplers = self.get_samplers_(stage=stage, epoch=epoch)
-    #         transforms = self.get_transforms_(stage=stage, epoch=epoch)
+    #         datasets = self.get_datasets_(stage=stage)
+    #         samplers = self.get_samplers_(stage=stage)
+    #         transforms = self.get_transforms_(stage=stage)
     #     else:
-    #         loaders = self.get_loaders(stage=stage, epoch=epoch)
+    #         loaders = self.get_loaders(stage=stage)
     #
     #     return loaders
 
@@ -263,7 +263,7 @@ class ConfigRunner(IStageBasedRunner):
             model = REGISTRY.get_from_params(**params)
         return model
 
-    def get_model(self, stage: str, epoch: int = None) -> RunnerModel:
+    def get_model(self, stage: str) -> RunnerModel:
         """Returns the model for a given stage."""
         assert "model" in self._config, "config must contain 'model' key"
         model_params: Dict = self._config["model"]
@@ -284,7 +284,7 @@ class ConfigRunner(IStageBasedRunner):
             criterion = REGISTRY.get_from_params(**params)
         return criterion
 
-    def get_criterion(self, stage: str, epoch: int = None) -> RunnerCriterion:
+    def get_criterion(self, stage: str) -> RunnerCriterion:
         """Returns the criterion for a given stage."""
         if "criterion" not in self._stage_config[stage]:
             return None
@@ -293,7 +293,7 @@ class ConfigRunner(IStageBasedRunner):
         return criterion
 
     def _get_optimizer(
-        self, model: RunnerModel, stage: str, epoch: int = None, **params
+        self, model: RunnerModel, stage: str, **params
     ) -> RunnerOptimizer:
         # @TODO 1: refactor; this method is too long
 
@@ -325,7 +325,7 @@ class ConfigRunner(IStageBasedRunner):
         optimizer = REGISTRY.get_from_params(**params, params=model_params)
         return optimizer
 
-    def get_optimizer(self, model: RunnerModel, stage: str, epoch: int = None) -> RunnerOptimizer:
+    def get_optimizer(self, model: RunnerModel, stage: str) -> RunnerOptimizer:
         """
         Returns the optimizer for a given stage and epoch.
 
@@ -377,7 +377,7 @@ class ConfigRunner(IStageBasedRunner):
         return scheduler
 
     def get_scheduler(
-        self, optimizer: RunnerOptimizer, stage: str, epoch: int = None
+        self, optimizer: RunnerOptimizer, stage: str
     ) -> RunnerScheduler:
         """Returns the scheduler for a given stage."""
         if "scheduler" not in self._stage_config[stage]:
@@ -396,7 +396,7 @@ class ConfigRunner(IStageBasedRunner):
             callback = ConfigRunner._get_callback(**wrapper_params)  # noqa: WPS437
         return callback
 
-    def get_callbacks(self, stage: str, epoch: int = None) -> "OrderedDict[str, Callback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage."""
         callbacks_params = get_by_keys(self._stage_config, stage, "callbacks", default={})
 

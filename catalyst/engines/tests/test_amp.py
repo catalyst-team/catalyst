@@ -19,7 +19,7 @@ from .test_device import DummyDataset, DummyModel, LossMinimizationCallback  # S
 logger = logging.getLogger(__name__)
 
 
-class SupervisedRunner(dl.IStageBasedRunner):
+class SupervisedRunner(dl.IRunner):
     def handle_batch(self, batch):
         x, y = batch
 

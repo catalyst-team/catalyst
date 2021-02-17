@@ -184,9 +184,9 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         output = self.forward(batch, **kwargs)
         return output
 
-    def get_callbacks(self, stage: str, epoch: int = None) -> "OrderedDict[str, ICallback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
 
-        callbacks = super().get_callbacks(stage=stage, epoch=epoch)
+        callbacks = super().get_callbacks(stage=stage)
         is_callback_exists = lambda callback_fn: any(
             check_callback_isinstance(x, callback_fn) for x in callbacks.values()
         )

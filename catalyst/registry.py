@@ -152,10 +152,10 @@ REGISTRY.late_add(_schedulers_loader)
 
 
 def _runners_loader(r: registry.Registry):
-    from catalyst.core.runner import IRunner, IStageBasedRunner
+    from catalyst.core.runner import IRunner
 
     r.add(IRunner)
-    r.add(IStageBasedRunner)
+    r.add(IRunner)
 
     from catalyst import runners as m  # noqa: WPS347
 
