@@ -191,7 +191,7 @@ def trace_model_from_checkpoint(
     if stage is None:
         stage = list(experiment.stages)[0]
 
-    model = experiment.get_model_(stage)
+    model = experiment._get_model(stage)
     checkpoint = load_checkpoint(checkpoint_path)
     unpack_checkpoint(checkpoint, model=model)
     runner.model, runner.device = model, device
