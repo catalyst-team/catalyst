@@ -87,19 +87,19 @@ jobs:
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
         run: |
-#          pytest .
-#        pytest catalyst/callbacks
-        pytest catalyst/contrib
-        pytest catalyst/core
-        pytest catalyst/data
-#        pytest catalyst/dl
-#        pytest catalyst/engines
-#        pytest catalyst/engines/tests/test_device.py
-        pytest catalyst/loggers
-#        pytest catalyst/metrics
-        pytest catalyst/metrics/functional
-        pytest catalyst/runners
-#        pytest catalyst/tests
-        pytest catalyst/tools
-        pytest catalyst/utils
-#          (set -e; for f in ./bin/tests/check_dl_core*.sh; do USE_APEX="0" CUDA_VISIBLE_DEVICES="" bash "$f"; done)
+#         pytest .
+#         pytest catalyst/callbacks
+          pytest catalyst/contrib
+          pytest catalyst/core
+          pytest catalyst/data
+#         pytest catalyst/dl
+#         pytest catalyst/engines
+#         pytest catalyst/engines/tests/test_device.py
+          pytest catalyst/loggers
+#         pytest catalyst/metrics
+          pytest catalyst/metrics/functional
+          pytest catalyst/runners
+#         pytest catalyst/tests
+          pytest catalyst/tools
+          pytest catalyst/utils
+#         (set -e; for f in ./bin/tests/check_dl_core*.sh; do USE_APEX="0" CUDA_VISIBLE_DEVICES="" bash "$f"; done)
