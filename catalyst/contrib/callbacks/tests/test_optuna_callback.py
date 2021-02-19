@@ -12,7 +12,7 @@ from catalyst.contrib.nn.modules import Flatten
 from catalyst.dl import AccuracyCallback
 
 
-def test_mnist():
+def test_optuna():
     trainset = MNIST("./data", train=False, download=True, transform=ToTensor(),)
     testset = MNIST("./data", train=False, download=True, transform=ToTensor(),)
     loaders = {
@@ -31,12 +31,19 @@ def test_mnist():
             loaders=loaders,
             criterion=criterion,
             optimizer=optimizer,
-            callbacks=[OptunaPruningCallback(trial), AccuracyCallback(num_classes=10),],
+            callbacks={
+                "optuna": OptunaPruningCallback(
+                    loader_key="valid", metric_key="loss", minimize=True, trial=trial
+                ),
+                "accuracy": AccuracyCallback(
+                    num_classes=10, input_key="logits", target_key="targets"
+                ),
+            },
             num_epochs=10,
             valid_metric="accuracy01",
             minimize_valid_metric=False,
         )
-        return runner.best_valid_metrics[runner.main_metric]
+        return runner.callbacks["optuna"].best_score
 
     study = optuna.create_study(
         direction="maximize",
