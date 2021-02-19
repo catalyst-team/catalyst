@@ -112,5 +112,5 @@ jobs:
       - name: check codestyle
         run: |
           catalyst-check-codestyle --line-length 99
-          # pytest .
+#          pytest .
           make check-docs
