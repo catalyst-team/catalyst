@@ -8,9 +8,7 @@ from catalyst.metrics.functional.misc import (
     get_multilabel_statistics,
     get_default_topk_args,
 )
-from catalyst.metrics.functional.classification import (
-    precision_recall_fbeta_support,
-)
+from catalyst.metrics.functional.classification import precision_recall_fbeta_support
 
 from catalyst.metrics.functional.accuracy import accuracy, multilabel_accuracy
 from catalyst.metrics.functional.auc import auc
@@ -30,7 +28,7 @@ from catalyst.metrics.functional.segmentation import (
     iou,
     dice,
     trevsky,
-    get_segmentation_statistics
+    get_segmentation_statistics,
 )
 from catalyst.metrics.functional.mrr import reciprocal_rank, mrr
 from catalyst.metrics.functional.ndcg import dcg, ndcg

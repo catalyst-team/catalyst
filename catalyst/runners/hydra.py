@@ -334,9 +334,7 @@ class HydraRunner(IRunner):
         criterion = self._get_criterion(criterion_params)
         return criterion
 
-    def _get_optimizer(
-        self, model: RunnerModel, stage: str, params: DictConfig,
-    ) -> Optimizer:
+    def _get_optimizer(self, model: RunnerModel, stage: str, params: DictConfig,) -> Optimizer:
         # @TODO 1: refactor; this method is too long
         params = deepcopy(params)
         # learning rate linear scaling
@@ -394,13 +392,9 @@ class HydraRunner(IRunner):
                 assert optimizer_key not in params, "keyword reserved"
                 params[optimizer_key] = key
 
-                optimizer[key] = self._get_optimizer(
-                    model=model, stage=stage, params=params
-                )
+                optimizer[key] = self._get_optimizer(model=model, stage=stage, params=params)
         else:
-            optimizer = self._get_optimizer(
-                model=model, stage=stage, params=optimizer_params
-            )
+            optimizer = self._get_optimizer(model=model, stage=stage, params=optimizer_params)
 
         return optimizer
 
@@ -422,9 +416,7 @@ class HydraRunner(IRunner):
 
         return scheduler
 
-    def get_scheduler(
-        self, optimizer: RunnerOptimizer, stage: str
-    ) -> RunnerScheduler:
+    def get_scheduler(self, optimizer: RunnerOptimizer, stage: str) -> RunnerScheduler:
         """Returns the schedulers for a given stage."""
         if "scheduler" not in self._config.stages[stage]:
             return None

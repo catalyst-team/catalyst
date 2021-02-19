@@ -292,9 +292,7 @@ class ConfigRunner(IRunner):
         criterion = self._get_criterion(**criterion_params)
         return criterion
 
-    def _get_optimizer(
-        self, model: RunnerModel, stage: str, **params
-    ) -> RunnerOptimizer:
+    def _get_optimizer(self, model: RunnerModel, stage: str, **params) -> RunnerOptimizer:
         # @TODO 1: refactor; this method is too long
 
         # learning rate linear scaling
@@ -376,9 +374,7 @@ class ConfigRunner(IRunner):
             scheduler = REGISTRY.get_from_params(**params, optimizer=optimizer)
         return scheduler
 
-    def get_scheduler(
-        self, optimizer: RunnerOptimizer, stage: str
-    ) -> RunnerScheduler:
+    def get_scheduler(self, optimizer: RunnerOptimizer, stage: str) -> RunnerScheduler:
         """Returns the scheduler for a given stage."""
         if "scheduler" not in self._stage_config[stage]:
             return None
