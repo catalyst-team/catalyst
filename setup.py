@@ -92,7 +92,7 @@ extras = {
     "log": load_requirements("requirements/requirements-log.txt"),
     "ml": load_requirements("requirements/requirements-ml.txt"),
     "nlp": load_requirements("requirements/requirements-nlp.txt"),
-    "tune": load_requirements("requirements/requirements-tune.txt"),
+    "tune": load_requirements("requirements/requirements-optuna.txt"),
 }
 extras["contrib"] = (
     extras["cv"]
