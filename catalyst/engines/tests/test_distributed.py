@@ -6,12 +6,10 @@ import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
-import torch.nn as nn
-import torch.optim as optim
+import torch
 from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.core.callback import Callback, CallbackOrder
 
 # from catalyst.dl import SupervisedRunner
 from catalyst.engines import DistributedDataParallelEngine
@@ -20,7 +18,7 @@ from catalyst.registry import REGISTRY
 # from catalyst.experiments import ConfigExperiment, Experiment
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .test_device import DummyDataset, DummyModel, LossMinimizationCallback, SupervisedRunner
+from .utils import DummyModel, DummyDataset, LossMinimizationCallback, WorldSizeCheckCallback
 
 logger = logging.getLogger(__name__)
 
@@ -28,71 +26,17 @@ if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 
 
-@REGISTRY.add
-class WorldSizeCheckCallback(Callback):
-    def __init__(self, assert_world_size: int):
-        super().__init__(order=CallbackOrder.internal)
-        self.world_size = assert_world_size
+class CustomExperiment(dl.IRunner):
+    def __init__(self, logdir):
+        super().__init__()
+        self._logdir = logdir
 
-    def on_batch_start(self, runner: "IRunner"):
-        rank = runner.engine.rank
-        world_size = runner.engine.world_size
-        logger.warning(
-            f"WorldSizeCheckCallback: "
-            f"expected world size ({self.world_size}) - actual ({world_size})"
-        )
-        assert rank < self.world_size
-        assert self.world_size == world_size
-
-
-class CustomExperiment(dl.IExperiment):
-    _logdir = "./logdir"
-
-    @property
-    def seed(self) -> int:
-        return 73
-
-    @property
-    def name(self) -> str:
-        return "experiment73"
-
-    @property
-    def hparams(self) -> Dict:
-        return {}
-
-    @property
-    def stages(self) -> List[str]:
-        return ["train"]
-
-    def get_stage_params(self, stage: str) -> Dict[str, Any]:
-        return {
-            "num_epochs": 10,
-            "migrate_model_from_previous_stage": False,
-            "migrate_callbacks_from_previous_stage": False,
-        }
-
-    def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
-        dataset = DummyDataset(10)
-        loader = DataLoader(dataset, batch_size=4)
-        return {"train": loader, "valid": loader}
-
-    def get_model(self, stage: str):
-        return DummyModel(4, 1)
-
-    def get_criterion(self, stage: str):
-        return nn.MSELoss()
-
-    def get_optimizer(self, stage: str, model):
-        return optim.SGD(model.parameters(), lr=1e-3)
-
-    def get_scheduler(self, stage: str, optimizer):
-        return None
+    def get_engine(self):
+        return DistributedDataParallelEngine()
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "criterion": dl.CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
+            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             # "checkpoint": dl.CheckpointCallback(
@@ -103,17 +47,53 @@ class CustomExperiment(dl.IExperiment):
             "check_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES),
         }
 
-    def get_engine(self):
-        return DistributedDataParallelEngine()
+    @property
+    def stages(self) -> "Iterable[str]":
+        return ["train"]
+
+    def get_stage_len(self, stage: str) -> int:
+        return 3
+
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        dataset = DummyDataset(6)
+        loader = DataLoader(dataset, batch_size=4)
+        return {"train": loader, "valid": loader}
+
+    def get_model(self, stage: str):
+        return DummyModel(4, 2)
+
+    def get_criterion(self, stage: str):
+        return torch.nn.MSELoss()
+
+    def get_optimizer(self, model, stage: str):
+        return torch.optim.Adam(model.parameters())
+
+    # TODO: fix this
+    def _get_optimizer(self, *args, **kwargs):
+        assert self.model is not None, "You need to setup model first"
+        self.optimizer = self.get_optimizer(stage=self.stage_key, model=self.model)
+        return self.optimizer
+
+    def get_scheduler(self, optimizer, stage: str):
+        return None
+
+    # TODO: fix this
+    def _get_scheduler(self, *args, **kwargs):
+        assert self.optimizer is not None, "You need to setup optimizer first"
+        self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
+        return self.scheduler
 
     def get_trial(self):
         return None
 
     def get_loggers(self):
-        return {
-            "console": dl.ConsoleLogger(),
-            "csv": dl.CSVLogger(logdir=self._logdir),
-        }
+        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+
+    def handle_batch(self, batch):
+        x, y = batch
+        logits = self.model(x)
+
+        self.batch = {"features": x, "targets": y, "logits": logits}
 
 
 @mark.skipif(
@@ -142,10 +122,8 @@ def test_train_with_experiment_distributed_parallel_device():
     #     engine=engine,
     # )
     with TemporaryDirectory() as logdir:
-        runner = SupervisedRunner(engine=DistributedDataParallelEngine())
-        experiment = CustomExperiment()
-        experiment._logdir = logdir
-        runner.run(experiment)
+        runner = CustomExperiment(logdir)
+        runner.run()
 
 
 @mark.skip("Config experiment is in development phase!")

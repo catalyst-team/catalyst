@@ -6,153 +6,30 @@ from tempfile import TemporaryDirectory
 
 from pytest import mark
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.runner import IRunner
 from catalyst.engines.device import DeviceEngine
-from catalyst.registry import REGISTRY
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+
+from .utils import DummyModel, DummyDataset, DeviceCheckCallback, LossMinimizationCallback
 
 logger = logging.getLogger(__name__)
 
 
-class DummyDataset(Dataset):
-    """
-    Dummy dataset.
-    """
-
-    features_dim: int = 4
-    out_dim: int = 2
-
-    def __init__(self, num_records: int):
-        self.num_records = num_records
-
-    def __len__(self):
-        """
-        Returns:
-            dataset's length.
-        """
-        return self.num_records
-
-    def __getitem__(self, idx: int):
-        """
-        Args:
-            idx: index of sample
-
-        Returns:
-            dummy features and targets vector
-        """
-        x = torch.ones(self.features_dim, dtype=torch.float)
-        y = torch.ones(self.out_dim, dtype=torch.float)
-        return x, y
-
-
-@REGISTRY.add
-class DummyModel(nn.Module):
-    def __init__(self, in_features, out_features):
-        super().__init__()
-        self.in_features = in_features
-        self.out_features = out_features
-        self.layers = nn.Linear(in_features, out_features)
-
-    def forward(self, batch):
-        return self.layers(batch)
-
-
-@REGISTRY.add
-class DeviceCheckCallback(Callback):
-    def __init__(self, assert_device: str):
-        super().__init__(order=CallbackOrder.internal)
-        self.device = torch.device(assert_device)
-
-    def on_stage_start(self, runner: "IRunner"):
-        model_device = next(runner.model.parameters()).device
-        logger.warning(
-            f"DeviceCheckCallback: model device ({model_device}) - device ({self.device})"
-        )
-        assert model_device == self.device
-
-
-@REGISTRY.add
-class LossMinimizationCallback(Callback):
-    def __init__(self, key="loss"):
-        super().__init__(order=CallbackOrder.metric)
-        self.key = key
-        self.container = None
-        self.round_nums = 6
-
-    def on_epoch_start(self, runner: "IRunner"):
-        self.container = []
-
-    def on_batch_end(self, runner: "IRunner"):
-        self.container.append(runner.batch_metrics[self.key].item())
-
-    def on_epoch_end(self, runner: "IRunner"):
-        assert len(self.container)
-
-        container = [round(num, self.round_nums) for num in self.container]
-        logger.warning(f"LossMinimizationCallback: {container}")
-        assert all(round(a, 6) >= round(b, 6) for a, b in zip(container[:-1], container[1:]))
-
-        self.container = []
-
-
 # experiment definition
-class CustomExperiment(dl.IExperiment):
-    _logdir = "./logdir"
-
-    def __init__(self, device):
+class CustomRunner(dl.IRunner):
+    def __init__(self, logdir, device):
+        super().__init__()
+        self._logdir = logdir
         self._device = device
 
-    @property
-    def seed(self) -> int:
-        return 73
-
-    @property
-    def name(self) -> str:
-        return "experiment73"
-
-    @property
-    def hparams(self) -> Dict:
-        return {}
-
-    @property
-    def stages(self) -> List[str]:
-        return ["train"]
-
-    def get_stage_params(self, stage: str) -> Dict[str, Any]:
-        return {
-            "num_epochs": 10,
-            "migrate_model_from_previous_stage": False,
-            "migrate_callbacks_from_previous_stage": False,
-        }
-
-    def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
-        dataset = DummyDataset(6)
-        loader = DataLoader(dataset, batch_size=4)
-        return {"train": loader, "valid": loader}
-
-    def get_model(self, stage: str):
-        return DummyModel(4, 2)
-
-    def get_criterion(self, stage: str):
-        return nn.MSELoss()
-
-    def get_optimizer(self, stage: str, model):
-        return optim.SGD(model.parameters(), lr=1e-3)
-
-    def get_scheduler(self, stage: str, optimizer):
-        return None
+    def get_engine(self):
+        return DeviceEngine(self._device)
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "criterion": dl.CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
+            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
@@ -162,38 +39,59 @@ class CustomExperiment(dl.IExperiment):
             "check2": LossMinimizationCallback("loss"),
         }
 
-    def get_engine(self):
-        return DeviceEngine(self._device)
+    @property
+    def stages(self) -> "Iterable[str]":
+        return ["train"]
+
+    def get_stage_len(self, stage: str) -> int:
+        return 3
+
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        dataset = DummyDataset(6)
+        loader = DataLoader(dataset, batch_size=4)
+        return {"train": loader, "valid": loader}
+
+    def get_model(self, stage: str):
+        return DummyModel(4, 2)
+
+    def get_criterion(self, stage: str):
+        return torch.nn.MSELoss()
+
+    def get_optimizer(self, model, stage: str):
+        return torch.optim.Adam(model.parameters())
+
+    # TODO: fix this
+    def _get_optimizer(self, *args, **kwargs):
+        assert self.model is not None, "You need to setup model first"
+        self.optimizer = self.get_optimizer(stage=self.stage_key, model=self.model)
+        return self.optimizer
+
+    def get_scheduler(self, optimizer, stage: str):
+        return None
+
+    # TODO: fix this
+    def _get_scheduler(self, *args, **kwargs):
+        assert self.optimizer is not None, "You need to setup optimizer first"
+        self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
+        return self.scheduler
 
     def get_trial(self):
         return None
 
     def get_loggers(self):
-        return {
-            "console": dl.ConsoleLogger(),
-            "csv": dl.CSVLogger(logdir=self._logdir),
-        }
+        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
 
-
-# execute whole experiment
-class SupervisedRunner(IRunner):
     def handle_batch(self, batch):
         x, y = batch
         logits = self.model(x)
 
-        self.batch = {
-            "features": x,
-            "targets": y,
-            "logits": logits,
-        }
+        self.batch = {"features": x, "targets": y, "logits": logits}
 
 
 def run_train_with_experiment_device(device):
     with TemporaryDirectory() as logdir:
-        runner = SupervisedRunner()
-        experiment = CustomExperiment(device)
-        experiment._logdir = logdir
-        runner.run(experiment)
+        runner = CustomRunner(logdir, device)
+        runner.run()
 
 
 def run_train_with_config_experiment_device(device):

@@ -6,80 +6,49 @@ from tempfile import TemporaryDirectory
 
 from pytest import mark
 import torch
-import torch.nn as nn
-import torch.optim as optim
 from torch.utils.data import DataLoader
 
 from catalyst import dl
 from catalyst.engines.amp import AMPEngine
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .test_device import DummyDataset, DummyModel, LossMinimizationCallback  # SupervisedRunner,
+from .utils import DummyDataset, DummyModel, LossMinimizationCallback, TensorTypeChecker, DeviceCheckCallback
 
 logger = logging.getLogger(__name__)
 
 
-class SupervisedRunner(dl.IRunner):
-    def handle_batch(self, batch):
-        x, y = batch
-
-        logits = self.model(x)
-
-        logger.warning(f"x dtype: {x.dtype}")
-        logger.warning(f"y dtype: {y.dtype}")
-        logger.warning(f"logits dtype: {logits.dtype}")
-
-        self.batch = {
-            "features": x,
-            "targets": y,
-            "logits": logits,
-        }
-
-
-class TensorTypeChecker(dl.Callback):
-    def __init__(self, key, use_batch_metrics=False):
-        super().__init__(dl.CallbackOrder.Metric)
-        self.key = key
-        self.use_batch_metrics = use_batch_metrics
-
-    def on_batch_end(self, runner):
-        if self.use_batch_metrics:
-            assert runner.batch_metrics[self.key].dtype == torch.float16
-        else:
-            assert runner.batch[self.key].dtype == torch.float16
-
-
-class CustomExperiment(dl.IExperiment):
-    _logdir = "./logdir"
-
-    def __init__(self, device):
+class CustomRunner(dl.IRunner):
+    def __init__(self, logdir, device):
+        super().__init__()
+        self._logdir = logdir
         self._device = device
 
-    @property
-    def seed(self) -> int:
-        return 73
+    def get_engine(self):
+        return AMPEngine(self._device)
 
-    @property
-    def name(self) -> str:
-        return "experiment73"
-
-    @property
-    def hparams(self) -> Dict:
-        return {}
-
-    @property
-    def stages(self) -> List[str]:
-        return ["train"]
-
-    def get_stage_params(self, stage: str) -> Dict[str, Any]:
+    def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "num_epochs": 10,
-            "migrate_model_from_previous_stage": False,
-            "migrate_callbacks_from_previous_stage": False,
+            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
+            "optimizer": dl.OptimizerCallback(metric_key="loss"),
+            # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
+            "checkpoint": dl.CheckpointCallback(
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            ),
+            "check": DeviceCheckCallback(self._device),
+            "check2": LossMinimizationCallback("loss"),
+            "logits_type_checker": TensorTypeChecker("logits"),
+            # "loss_type_checker": TensorTypeChecker("loss", True),
         }
 
-    def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
-        dataset = DummyDataset(10)
+    @property
+    def stages(self) -> "Iterable[str]":
+        return ["train"]
+
+    def get_stage_len(self, stage: str) -> int:
+        return 3
+
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        dataset = DummyDataset(6)
         loader = DataLoader(dataset, batch_size=4)
         return {"train": loader, "valid": loader}
 
@@ -87,41 +56,37 @@ class CustomExperiment(dl.IExperiment):
         return DummyModel(4, 2)
 
     def get_criterion(self, stage: str):
-        return nn.MSELoss()
+        return torch.nn.MSELoss()
 
-    def get_optimizer(self, stage: str, model):
-        return optim.SGD(model.parameters(), lr=1e-3)
+    def get_optimizer(self, model, stage: str):
+        return torch.optim.Adam(model.parameters())
 
-    def get_scheduler(self, stage: str, optimizer):
+    # TODO: fix this
+    def _get_optimizer(self, *args, **kwargs):
+        assert self.model is not None, "You need to setup model first"
+        self.optimizer = self.get_optimizer(stage=self.stage_key, model=self.model)
+        return self.optimizer
+
+    def get_scheduler(self, optimizer, stage: str):
         return None
 
-    def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
-        return {
-            "criterion": dl.CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
-            "optimizer": dl.OptimizerCallback(metric_key="loss"),
-            # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            "checkpoint": dl.CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
-            ),
-            # "check": DeviceCheckCallback(),
-            "check2": LossMinimizationCallback("loss"),
-            "logits_type_checker": TensorTypeChecker("logits"),
-            # "loss_type_checker": TensorTypeChecker("loss", True),
-        }
-
-    def get_engine(self):
-        return AMPEngine(self._device)
+    # TODO: fix this
+    def _get_scheduler(self, *args, **kwargs):
+        assert self.optimizer is not None, "You need to setup optimizer first"
+        self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
+        return self.scheduler
 
     def get_trial(self):
         return None
 
     def get_loggers(self):
-        return {
-            "console": dl.ConsoleLogger(),
-            "csv": dl.CSVLogger(logdir=self._logdir),
-        }
+        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+
+    def handle_batch(self, batch):
+        x, y = batch
+        logits = self.model(x)
+
+        self.batch = {"features": x, "targets": y, "logits": logits}
 
 
 def run_train_with_experiment_amp_device(device):
@@ -143,10 +108,8 @@ def run_train_with_experiment_amp_device(device):
     #     engine=DataParallelEngine(),
     # )
     with TemporaryDirectory() as logdir:
-        runner = SupervisedRunner()
-        experiment = CustomExperiment(device)
-        experiment._logdir = logdir
-        runner.run(experiment)
+        runner = CustomRunner(logdir, device)
+        runner.run()
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
