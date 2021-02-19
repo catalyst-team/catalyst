@@ -16,46 +16,46 @@ def _transforms_loader(r: registry.Registry):
 
     r.add_from_module(t, prefix=["catalyst.", "C."])
 
-    try:
-        import albumentations as m
+    # try:
+    #     import albumentations as m
+    #
+    #     r.add_from_module(m, prefix=["A.", "albu.", "albumentations."])
+    #
+    #     from albumentations import pytorch as p
+    #
+    #     r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
+    #
+    #     from catalyst.contrib.data.cv.transforms import albumentations as t
+    #
+    #     r.add_from_module(t, prefix=["catalyst.", "C."])
+    # except ImportError as ex:
+    #     if SETTINGS.albumentations_required:
+    #         logger.warning(
+    #             "albumentations not available, to install albumentations, "
+    #             "run `pip install albumentations`."
+    #         )
+    #         raise ex
 
-        r.add_from_module(m, prefix=["A.", "albu.", "albumentations."])
-
-        from albumentations import pytorch as p
-
-        r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
-
-        from catalyst.contrib.data.cv.transforms import albumentations as t
-
-        r.add_from_module(t, prefix=["catalyst.", "C."])
-    except ImportError as ex:
-        if SETTINGS.albumentations_required:
-            logger.warning(
-                "albumentations not available, to install albumentations, "
-                "run `pip install albumentations`."
-            )
-            raise ex
-
-    try:
-        from kornia import augmentation as k
-
-        r.add_from_module(k, prefix=["kornia."])
-
-        from catalyst.contrib.data.cv.transforms import kornia as t
-
-        r.add_from_module(t, prefix=["catalyst.", "C."])
-    except ImportError as ex:
-        if SETTINGS.kornia_required:
-            logger.warning("kornia not available, to install kornia, " "run `pip install kornia`.")
-            raise ex
-    except UnsupportedNodeError as ex:
-        logger.warning(
-            "kornia has requirement torch>=1.5.0, probably you have"
-            " an old version of torch which is incompatible.\n"
-            "To update pytorch, run `pip install -U 'torch>=1.5.0'`."
-        )
-        if SETTINGS.kornia_required:
-            raise ex
+    # try:
+    #     from kornia import augmentation as k
+    #
+    #     r.add_from_module(k, prefix=["kornia."])
+    #
+    #     from catalyst.contrib.data.cv.transforms import kornia as t
+    #
+    #     r.add_from_module(t, prefix=["catalyst.", "C."])
+    # except ImportError as ex:
+    #     if SETTINGS.kornia_required:
+    #         logger.warning("kornia not available, to install kornia, " "run `pip install kornia`.")
+    #         raise ex
+    # except UnsupportedNodeError as ex:
+    #     logger.warning(
+    #         "kornia has requirement torch>=1.5.0, probably you have"
+    #         " an old version of torch which is incompatible.\n"
+    #         "To update pytorch, run `pip install -U 'torch>=1.5.0'`."
+    #     )
+    #     if SETTINGS.kornia_required:
+    #         raise ex
 
 
 REGISTRY.late_add(_transforms_loader)
@@ -107,18 +107,18 @@ def _model_loader(r: registry.Registry):
 
     r.add_from_module(m)
 
-    try:
-        import segmentation_models_pytorch as smp
-
-        r.add_from_module(smp, prefix="smp.")
-    except ImportError as ex:
-        if SETTINGS.segmentation_models_required:
-            logger.warning(
-                "segmentation_models_pytorch not available,"
-                " to install segmentation_models_pytorch,"
-                " run `pip install segmentation-models-pytorch`."
-            )
-            raise ex
+    # try:
+    #     import segmentation_models_pytorch as smp
+    #
+    #     r.add_from_module(smp, prefix="smp.")
+    # except ImportError as ex:
+    #     if SETTINGS.segmentation_models_required:
+    #         logger.warning(
+    #             "segmentation_models_pytorch not available,"
+    #             " to install segmentation_models_pytorch,"
+    #             " run `pip install segmentation-models-pytorch`."
+    #         )
+    #         raise ex
 
 
 REGISTRY.late_add(_model_loader)
