@@ -9,43 +9,41 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 
-from catalyst import dl
+from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.runner import IRunner
 from catalyst.engines import DataParallelEngine
-from catalyst.settings import IS_CUDA_AVAILABLE
+from catalyst.engines.device import DeviceEngine
+from catalyst.loggers import ConsoleLogger, CSVLogger
+from catalyst.registry import REGISTRY
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .test_device import DummyDataset, DummyModel, LossMinimizationCallback, SupervisedRunner
+from .misc import DummyDataset, DummyModel, LossMinimizationCallback
 
 logger = logging.getLogger(__name__)
 
 
-class CustomExperiment(dl.IExperiment):
+class CustomRunner(IRunner):
     _logdir = "./logdir"
 
-    @property
-    def seed(self) -> int:
-        return 73
+    def get_engine(self):
+        return DataParallelEngine()
 
-    @property
-    def name(self) -> str:
-        return "experiment73"
-
-    @property
-    def hparams(self) -> Dict:
-        return {}
+    def get_loggers(self):
+        return {
+            "console": ConsoleLogger(),
+            "csv": CSVLogger(logdir=self._logdir),
+        }
 
     @property
     def stages(self) -> List[str]:
         return ["train"]
 
-    def get_stage_params(self, stage: str) -> Dict[str, Any]:
-        return {
-            "num_epochs": 10,
-            "migrate_model_from_previous_stage": False,
-            "migrate_callbacks_from_previous_stage": False,
-        }
+    def get_stage_len(self, stage: str) -> int:
+        return 10
 
     def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
-        dataset = DummyDataset(10)
+        dataset = DummyDataset(6)
         loader = DataLoader(dataset, batch_size=4)
         return {"train": loader, "valid": loader}
 
@@ -61,30 +59,28 @@ class CustomExperiment(dl.IExperiment):
     def get_scheduler(self, stage: str, optimizer):
         return None
 
-    def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
+    def get_callbacks(self, stage: str):
         return {
-            "criterion": dl.CriterionCallback(
+            "criterion": CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
-            "optimizer": dl.OptimizerCallback(metric_key="loss"),
+            "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            "checkpoint": dl.CheckpointCallback(
+            "checkpoint": CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
             # "check": DeviceCheckCallback(),
             "check2": LossMinimizationCallback("loss"),
         }
 
-    def get_engine(self):
-        return DataParallelEngine()
+    def handle_batch(self, batch):
+        x, y = batch
+        logits = self.model(x)
 
-    def get_trial(self):
-        return None
-
-    def get_loggers(self):
-        return {
-            "console": dl.ConsoleLogger(),
-            "csv": dl.CSVLogger(logdir=self._logdir),
+        self.batch = {
+            "features": x,
+            "targets": y,
+            "logits": logits,
         }
 
 
@@ -107,10 +103,9 @@ def run_train_with_experiment_parallel_device():
     #     engine=DataParallelEngine(),
     # )
     with TemporaryDirectory() as logdir:
-        runner = SupervisedRunner()
-        experiment = CustomExperiment()
-        experiment._logdir = logdir
-        runner.run(experiment)
+        runner = CustomRunner()
+        runner._logdir = logdir
+        runner.run()
 
 
 def run_train_with_config_experiment_parallel_device():

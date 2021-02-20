@@ -44,7 +44,7 @@ class APEXEngine(DeviceEngine):
         criterion = self.sync_device(criterion)
 
         # optimizer
-        optimizer = optimizer_fn(model=model)
+        optimizer = optimizer_fn()
         optimizer = self.sync_device(optimizer)
 
         # from official docs:
@@ -52,7 +52,7 @@ class APEXEngine(DeviceEngine):
         model, optimizer = amp.initialize(model, optimizer, opt_level=self.opt_level)
 
         # scheduler
-        scheduler = scheduler_fn(optimizer=optimizer)
+        scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
