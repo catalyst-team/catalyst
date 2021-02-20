@@ -90,6 +90,10 @@ jobs:
           pytest catalyst/contrib
           pytest catalyst/core
           pytest catalyst/data
+          pytest catalyst/engines/tests/test_distributed.py
+          pytest catalyst/engines/tests/test_device.py
+          pytest catalyst/engines/tests/test_functional.py
+          pytest catalyst/engines/tests/test_parallel.py
           pytest catalyst/loggers
           pytest catalyst/metrics/functional
           pytest catalyst/runners
