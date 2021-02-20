@@ -1,4 +1,4 @@
 imageio>=2.3.0
 opencv-python-headless
 scikit-image>=0.14.2
-torchvision>=0.3.0
+torchvision>=0.4.1
