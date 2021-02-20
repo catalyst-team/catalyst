@@ -1,7 +1,6 @@
-from typing import Dict, List, Optional, Union, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
-
 import torch
 
 from catalyst.metrics.additive import AdditiveValueMetric
@@ -16,6 +15,7 @@ class AccuracyMetric(ICallbackBatchMetric):
     It computes mean value of accuracy and it's approximate std value
     (note that it's not a real accuracy std but std of accuracy over batch mean values).
     """
+
     def __init__(
         self,
         topk_args: List[int] = None,
@@ -34,9 +34,7 @@ class AccuracyMetric(ICallbackBatchMetric):
             prefix: metric prefix
             suffix: metric suffix
         """
-        super().__init__(
-            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix
-        )
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_name_mean = f"{self.prefix}accuracy{self.suffix}"
         self.metric_name_std = f"{self.prefix}accuracy{self.suffix}/std"
         self.topk_args: List[int] = topk_args or get_default_topk_args(num_classes)
@@ -123,6 +121,7 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
     It computes mean value of accuracy and it's approximate std value
     (note that it's not a real accuracy std but std of accuracy over batch mean values).
     """
+
     def __init__(
         self,
         compute_on_call: bool = True,
@@ -163,9 +162,7 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
         super().update(value=metric, num_samples=np.prod(targets.shape))
         return metric
 
-    def update_key_value(
-        self, outputs: torch.Tensor, targets: torch.Tensor
-    ) -> Dict[str, float]:
+    def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         """
         Update metric value with accuracy for new data and return intermediate metric
         value in key-value format.
@@ -188,7 +185,10 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
             dict of metrics
         """
         metric_mean, metric_std = self.compute()
-        return {self.metric_name_mean: metric_mean, self.metric_name_std: metric_std, }
+        return {
+            self.metric_name_mean: metric_mean,
+            self.metric_name_std: metric_std,
+        }
 
 
 __all__ = ["AccuracyMetric", "MultilabelAccuracyMetric"]

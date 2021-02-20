@@ -15,11 +15,11 @@ from catalyst.callbacks import (
     OptimizerCallback,
     SchedulerCallback,
     TimerCallback,
-    VerboseCallback,
+    TqdmCallback,
 )
-from catalyst.loggers import ConsoleLogger, TensorboardLogger
 from catalyst.core.callback import Callback
 from catalyst.core.functional import check_callback_isinstance
+from catalyst.loggers import ConsoleLogger, TensorboardLogger
 from catalyst.settings import IS_HYDRA_AVAILABLE
 from catalyst.typing import Model, Optimizer
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
@@ -64,8 +64,8 @@ def process_callbacks(callbacks: Dict[str, Callback], stage_index: int = None) -
 def add_default_callbacks(
     callbacks,
     verbose: bool,
-    check_time: bool,
-    check_run: bool,
+    timeit: bool,
+    check: bool,
     overfit: bool,
     is_infer: bool,
     is_logger: bool = False,
@@ -79,8 +79,8 @@ def add_default_callbacks(
     Args:
         callbacks: user callbacks
         verbose: verbose config flag
-        check_time: check time config flag
-        check_run: check run config flag
+        timeit: check time config flag
+        check: check run config flag
         overfit: overfit config flag
         is_infer: is stage is infer stage
         is_logger: is there logdir
@@ -97,10 +97,10 @@ def add_default_callbacks(
     optimizer_cls = OptimizerCallback
 
     if verbose:
-        default_callbacks.append(("_verbose", None, VerboseCallback))
-    if check_time:
+        default_callbacks.append(("_verbose", None, TqdmCallback))
+    if timeit:
         default_callbacks.append(("_timer", None, TimerCallback))
-    if check_run:
+    if check:
         default_callbacks.append(("_check", None, CheckRunCallback))
     if overfit:
         default_callbacks.append(("_overfit", None, BatchOverfitCallback))

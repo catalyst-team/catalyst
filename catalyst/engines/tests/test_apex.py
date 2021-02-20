@@ -28,7 +28,7 @@ OPT_TYPE_MAP = {
 }
 
 
-class SupervisedRunner(dl.IStageBasedRunner):
+class SupervisedRunner(dl.IRunner):
     def handle_batch(self, batch):
         x, y = batch
 

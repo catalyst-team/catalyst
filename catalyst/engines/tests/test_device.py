@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from catalyst import dl
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.core.runner import IRunner, IStageBasedRunner
+from catalyst.core.runner import IRunner
 from catalyst.engines.device import DeviceEngine
 from catalyst.registry import REGISTRY
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
@@ -176,7 +176,7 @@ class CustomExperiment(dl.IExperiment):
 
 
 # execute whole experiment
-class SupervisedRunner(IStageBasedRunner):
+class SupervisedRunner(IRunner):
     def handle_batch(self, batch):
         x, y = batch
         logits = self.model(x)

@@ -173,7 +173,7 @@ class CustomExperiment(dl.IExperiment):
 
 
 # execute whole experiment
-class SupervisedRunner(dl.IStageBasedRunner):
+class SupervisedRunner(dl.IRunner):
     def handle_batch(self, batch):
         x, y = batch
         logits = self.model(x)

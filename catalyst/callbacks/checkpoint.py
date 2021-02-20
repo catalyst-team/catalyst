@@ -227,7 +227,7 @@ class CheckpointCallback(ICheckpointCallback):
 
     def __init__(
         self,
-        logdir: str,
+        logdir: str = None,
         # model selection info
         loader_key: str = None,
         metric_key: str = None,
@@ -237,11 +237,13 @@ class CheckpointCallback(ICheckpointCallback):
         # loading info
         load_on_stage_start: Union[str, Dict[str, str]] = None,
         load_on_stage_end: Union[str, Dict[str, str]] = None,
-        resume: str = None,
-        resume_dir: str = None,
+        # resume: str = None,
+        # resume_dir: str = None,
         # checkpointer info
         metrics_filename: str = "_metrics.json",
         mode: str = "all",
+        use_logdir_postfix: bool = False,
+        use_runner_logdir: bool = False,
     ):
         """
         Args:
@@ -333,8 +335,8 @@ class CheckpointCallback(ICheckpointCallback):
             assert load_on_stage_start in possible_states
         if isinstance(load_on_stage_end, str):
             assert load_on_stage_end in possible_states
-        if resume_dir is not None:
-            assert resume is not None
+        # if resume_dir is not None:
+        #     assert resume is not None
 
         if loader_key is not None or metric_key is not None:
             assert loader_key is not None and metric_key is not None, (
@@ -357,6 +359,11 @@ class CheckpointCallback(ICheckpointCallback):
         self.logdir = logdir
         self.mode = mode
         self.metrics_filename = metrics_filename
+        self.use_logdir_postfix = use_logdir_postfix
+        self.use_runner_logdir = use_runner_logdir
+        assert (
+            self.logdir is not None or self.use_runner_logdir
+        ), "CheckpointCallback requires specified `logdir`"
 
         # model selection info
         self.loader_key = loader_key
@@ -370,8 +377,8 @@ class CheckpointCallback(ICheckpointCallback):
         # loading info
         self.load_on_stage_start = load_on_stage_start
         self.load_on_stage_end = load_on_stage_end
-        self.resume = resume
-        self.resume_dir = resume_dir
+        # self.resume = resume
+        # self.resume_dir = resume_dir
 
     def _pack_checkpoint(self, runner: "IRunner"):
         checkpoint = runner.engine.pack_checkpoint(
@@ -380,7 +387,7 @@ class CheckpointCallback(ICheckpointCallback):
             optimizer=runner.optimizer,
             scheduler=runner.scheduler,
             # experiment info
-            experiment_key=runner.experiment_key,
+            experiment_key=runner.run_key,
             global_epoch_step=runner.global_epoch_step,
             global_batch_step=runner.global_batch_step,
             global_sample_step=runner.global_sample_step,
@@ -466,20 +473,26 @@ class CheckpointCallback(ICheckpointCallback):
             metrics = [("last", {**last_epoch_metrics, **{"_score_": last_epoch_score},},)]
         return OrderedDict(metrics)
 
-    # def on_stage_start(self, runner: "IRunner") -> None:
-    #     """Setup model for stage.
-    #
-    #     .. note::
-    #
-    #         If CheckpointCallback initialized with
-    #         ``resume`` (as path to checkpoint file)
-    #         or ``resume`` (as filename)
-    #         and ``resume_dir`` (as directory with file)
-    #         then will be performed loading checkpoint.
-    #
-    #     Args:
-    #         runner: current runner
-    #     """
+    def on_stage_start(self, runner: "IRunner") -> None:
+        """Setup model for stage.
+
+        .. note::
+
+            If CheckpointCallback initialized with
+            ``resume`` (as path to checkpoint file)
+            or ``resume`` (as filename)
+            and ``resume_dir`` (as directory with file)
+            then will be performed loading checkpoint.
+
+        Args:
+            runner: current runner
+        """
+        # @TODO: very tricky hack
+        if self.logdir is None and self.use_runner_logdir:
+            self.logdir = getattr(runner, "_logdir", None)
+            if self.use_logdir_postfix:
+                self.logdir = os.path.join(self.logdir, "checkpoints")
+
     #
     #     if getattr(runner, "resume", None) is not None:
     #         self.resume = runner.resume

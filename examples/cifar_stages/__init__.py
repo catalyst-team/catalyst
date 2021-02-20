@@ -1,9 +1,9 @@
 # flake8: noqa
 
-from catalyst import registry
-from catalyst.dl import SupervisedRunner as Runner
+from catalyst.registry import Registry
 
-from .experiment import Experiment
+from .runner import CustomSupervisedConfigRunner
 from .model import SimpleNet
 
-registry.REGISTRY.add(SimpleNet)
+Registry(CustomSupervisedConfigRunner)
+Registry(SimpleNet)

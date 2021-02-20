@@ -1,12 +1,4 @@
 # flake8: noqa
-"""
-All utils are gathered in :py:mod:`catalyst.utils` for easier access.
-
-.. note::
-    Everything from :py:mod:`catalyst.contrib.utils` is included in :py:mod:`catalyst.utils`
-"""
-
-
 from catalyst.utils.checkpoint import (
     load_checkpoint,
     pack_checkpoint,
@@ -65,21 +57,13 @@ from catalyst.utils.parser import parse_config_args, parse_args_uargs
 from catalyst.utils.scripts import (
     import_module,
     dump_code,
-    dump_python_files,
-    prepare_config_api_components,
-    dump_experiment_code,
-    distributed_cmd_run,
+    get_config_runner,
 )
 from catalyst.utils.swa import (
     average_weights,
     get_averaged_weights_by_path_mask,
 )
-from catalyst.utils.sys import (
-    get_environment_vars,
-    list_conda_packages,
-    list_pip_packages,
-    dump_environment,
-)
+from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import (
     get_optimal_inner_init,
     outer_init,

@@ -19,26 +19,13 @@ if IS_HYDRA_AVAILABLE:
 
 
 def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
-    """
-    Decode bytes values in the dictionary to UTF-8.
-
-    Args:
-        dictionary: a dict
-
-    Returns:
-        Dict: decoded dict
-    """
+    """Decode bytes values in the dictionary to UTF-8."""
     result = {k: v.decode("UTF-8") if type(v) == bytes else v for k, v in dictionary.items()}
     return result
 
 
-def get_environment_vars() -> Dict[str, Any]:
-    """
-    Creates a dictionary with environment variables.
-
-    Returns:
-        Dict: environment variables
-    """
+def _get_environment_vars() -> Dict[str, Any]:
+    """Creates a dictionary with environment variables."""
     result = {
         "python_version": sys.version,
         "conda_environment": os.environ.get("CONDA_DEFAULT_ENV", ""),
@@ -81,16 +68,9 @@ def get_environment_vars() -> Dict[str, Any]:
     return result
 
 
-def list_pip_packages() -> str:
-    """
-    Lists pip installed packages.
-
-    Returns:
-        str: string with pip installed packages
-    """
+def _list_pip_packages() -> str:
+    """Lists pip installed packages."""
     result = ""
-    # TODO: Docs. Contribution is welcome
-    # TODO: When catching exception, e has no attribute 'output'
     with open(os.devnull, "w") as devnull:
         try:
             result = (
@@ -102,7 +82,7 @@ def list_pip_packages() -> str:
             warnings.warn(
                 "Failed to freeze pip packages. "
                 # f"Pip Output: ```{e.output}```."
-                "Continue experiment without pip packages dumping."
+                "Continue run without pip packages dumping."
             )
             pass
         # except FileNotFoundError:
@@ -113,17 +93,10 @@ def list_pip_packages() -> str:
     return result
 
 
-def list_conda_packages() -> str:
-    """
-    Lists conda installed packages.
-
-    Returns:
-        str: list with conda installed packages
-    """
+def _list_conda_packages() -> str:
+    """Lists conda installed packages."""
     result = ""
     conda_meta_path = Path(sys.prefix) / "conda-meta"
-    # TODO: Docs. Contribution is welcome
-    # TODO: When catching exception, e has no attribute 'output'
     if conda_meta_path.exists():
         # We are currently in conda virtual env
         with open(os.devnull, "w") as devnull:
@@ -138,7 +111,7 @@ def list_conda_packages() -> str:
                     "Running from conda env, "
                     "but failed to list conda packages. "
                     # f"Conda Output: ```{e.output}```."
-                    "Continue experiment without conda packages dumping."
+                    "Continue run without conda packages dumping."
                 )
                 pass
             # except FileNotFoundError:
@@ -152,13 +125,13 @@ def list_conda_packages() -> str:
     return result
 
 
-def dump_environment(experiment_config: Any, logdir: str, configs_path: List[str] = None,) -> None:
+def dump_environment(logdir: str, config: Any = None, configs_path: List[str] = None) -> None:
     """
     Saves config, environment variables and package list in JSON into logdir.
 
     Args:
-        experiment_config: experiment config
         logdir: path to logdir
+        config: experiment config
         configs_path: path(s) to config
     """
     configs_path = configs_path or []
@@ -166,19 +139,19 @@ def dump_environment(experiment_config: Any, logdir: str, configs_path: List[str
     config_dir = Path(logdir) / "configs"
     config_dir.mkdir(exist_ok=True, parents=True)
 
-    if IS_HYDRA_AVAILABLE and isinstance(experiment_config, DictConfig):
+    if IS_HYDRA_AVAILABLE and isinstance(config, DictConfig):
         with open(config_dir / "config.yaml", "w") as f:
-            f.write(OmegaConf.to_yaml(experiment_config, resolve=True))
-        experiment_config = OmegaConf.to_container(experiment_config, resolve=True)
+            f.write(OmegaConf.to_yaml(config, resolve=True))
+        config = OmegaConf.to_container(config, resolve=True)
 
-    environment = get_environment_vars()
-
-    save_config(experiment_config, config_dir / "_config.json")
+    environment = _get_environment_vars()
     save_config(environment, config_dir / "_environment.json")
+    if config is not None:
+        save_config(config, config_dir / "_config.json")
 
-    pip_pkg = list_pip_packages()
+    pip_pkg = _list_pip_packages()
     (config_dir / "pip-packages.txt").write_text(pip_pkg)
-    conda_pkg = list_conda_packages()
+    conda_pkg = _list_conda_packages()
     if conda_pkg:
         (config_dir / "conda-packages.txt").write_text(conda_pkg)
 
@@ -187,25 +160,23 @@ def dump_environment(experiment_config: Any, logdir: str, configs_path: List[str
         outpath = config_dir / name
         shutil.copyfile(path, outpath)
 
-    config_str = json.dumps(experiment_config, indent=2, ensure_ascii=False)
-    config_str = config_str.replace("\n", "\n\n")
-
-    environment_str = json.dumps(environment, indent=2, ensure_ascii=False)
-    environment_str = environment_str.replace("\n", "\n\n")
-
     pip_pkg = pip_pkg.replace("\n", "\n\n")
     conda_pkg = conda_pkg.replace("\n", "\n\n")
     with SummaryWriter(config_dir) as writer:
-        writer.add_text("_config", config_str, 0)
+        if config is not None:
+            config_str = json.dumps(config, indent=2, ensure_ascii=False)
+            config_str = config_str.replace("\n", "\n\n")
+            writer.add_text("_config", config_str, 0)
+
+        environment_str = json.dumps(environment, indent=2, ensure_ascii=False)
+        environment_str = environment_str.replace("\n", "\n\n")
         writer.add_text("_environment", environment_str, 0)
+
         writer.add_text("pip-packages", pip_pkg, 0)
         if conda_pkg:
             writer.add_text("conda-packages", conda_pkg, 0)
 
 
 __all__ = [
-    "get_environment_vars",
-    "list_conda_packages",
-    "list_pip_packages",
     "dump_environment",
 ]
