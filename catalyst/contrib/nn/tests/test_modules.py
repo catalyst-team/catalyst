@@ -59,7 +59,7 @@ def test_softmax():
 
     expected = features @ weight.T + bias
     actual = layer(torch.from_numpy(features)).detach().numpy()
-    assert np.allclose(expected, actual)
+    assert np.allclose(expected, actual, atol=EPS)
 
 
 def _check_layer(layer):
@@ -142,7 +142,7 @@ def test_arcface_with_cross_entropy_loss():
         .detach()
         .numpy()
     )
-    assert np.allclose(expected_loss, actual)
+    assert np.allclose(expected_loss, actual, atol=EPS)
 
     loss_fn = nn.CrossEntropyLoss(reduction="mean")
 
@@ -215,7 +215,7 @@ def test_cosface_with_cross_entropy_loss():
         .detach()
         .numpy()
     )
-    assert np.allclose(expected_loss, actual)
+    assert np.allclose(expected_loss, actual, atol=EPS)
 
     loss_fn = nn.CrossEntropyLoss(reduction="mean")
 
@@ -303,7 +303,7 @@ def test_curricularface_with_cross_entropy_loss():
         .numpy()
     )
 
-    assert np.allclose(expected_loss, actual)
+    assert np.allclose(expected_loss, actual, atol=EPS)
 
     # reinitialize layer (t is changed)
     layer = CurricularFace(emb_size, n_classes, s, m)
