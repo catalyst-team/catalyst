@@ -1,5 +1,3 @@
-import torch.cuda.amp as amp
-
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.metrics.additive import AdditiveValueMetric

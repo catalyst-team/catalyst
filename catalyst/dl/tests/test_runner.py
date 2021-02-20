@@ -48,7 +48,7 @@ def test_epoch_increasing():
     runner = SupervisedRunner()
 
     callbacks = [
-        IncreaseCheckerCallback("global_epoch"),
+        IncreaseCheckerCallback("global_epoch_step"),
         IncreaseCheckerCallback("global_batch_step"),
         IncreaseCheckerCallback("global_sample_step"),
     ]
@@ -104,7 +104,7 @@ def test_epoch_increasing():
         num_epochs=2,
         verbose=False,
         callbacks=[
-            IncreaseCheckerCallback("global_epoch"),
+            IncreaseCheckerCallback("global_epoch_step"),
             IncreaseCheckerCallback("global_batch_step"),
             IncreaseCheckerCallback("global_sample_step"),
         ],
@@ -120,7 +120,7 @@ def test_epoch_increasing():
         num_epochs=3,
         verbose=False,
         callbacks=[
-            IncreaseCheckerCallback("global_epoch", 2),
+            IncreaseCheckerCallback("global_epoch_step", 2),
             IncreaseCheckerCallback("global_batch_step", 626),
             IncreaseCheckerCallback("global_sample_step", 20_000),
         ],

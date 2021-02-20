@@ -42,10 +42,10 @@ class AMPEngine(DeviceEngine):
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
         # optimizer
-        optimizer = optimizer_fn(model=model)
+        optimizer = optimizer_fn()
         optimizer = self.sync_device(optimizer)
         # scheduler
-        scheduler = scheduler_fn(optimizer=optimizer)
+        scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
