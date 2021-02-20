@@ -16,13 +16,9 @@ from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.registry import REGISTRY
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-logger = logging.getLogger(__name__)
-
 
 class DummyDataset(Dataset):
-    """
-    Dummy dataset.
-    """
+    """Dummy dataset."""
 
     features_dim: int = 4
     out_dim: int = 2
@@ -64,25 +60,25 @@ class DummyModel(nn.Module):
 
 @REGISTRY.add
 class DeviceCheckCallback(Callback):
-    def __init__(self, assert_device: str):
+    def __init__(self, assert_device: str, logger=None):
         super().__init__(order=CallbackOrder.internal)
         self.device = torch.device(assert_device)
+        self.logger = logging.getLogger(__name__) if logger is None else logger
 
     def on_stage_start(self, runner: "IRunner"):
         model_device = next(runner.model.parameters()).device
-        logger.warning(
-            f"DeviceCheckCallback: model device ({model_device}) - device ({self.device})"
-        )
+        self.logger.warning(f"DeviceCheckCallback: model device ({model_device}) - device ({self.device})")
         assert model_device == self.device
 
 
 @REGISTRY.add
 class LossMinimizationCallback(Callback):
-    def __init__(self, key="loss"):
+    def __init__(self, key="loss", nums=5, logger=None):
         super().__init__(order=CallbackOrder.metric)
         self.key = key
         self.container = None
-        self.round_nums = 6
+        self.nums = nums
+        self.logger = logging.getLogger(__name__) if logger is None else logger
 
     def on_epoch_start(self, runner: "IRunner"):
         self.container = []
@@ -93,8 +89,64 @@ class LossMinimizationCallback(Callback):
     def on_epoch_end(self, runner: "IRunner"):
         assert len(self.container)
 
-        container = [round(num, self.round_nums) for num in self.container]
-        logger.warning(f"LossMinimizationCallback: {container}")
-        assert all(round(a, 6) >= round(b, 6) for a, b in zip(container[:-1], container[1:]))
+        container = [round(num, self.nums) for num in self.container]
+        self.logger.warning(f"LossMinimizationCallback: {container}")
+        assert all(round(a, self.nums) >= round(b, self.nums) for a, b in zip(container[:-1], container[1:]))
 
         self.container = []
+
+
+@REGISTRY.add
+class WorldSizeCheckCallback(Callback):
+    def __init__(self, assert_world_size: int, logger=None):
+        super().__init__(order=CallbackOrder.internal)
+        self.world_size = assert_world_size
+        self.logger = logging.getLogger(__name__) if logger is None else logger
+
+    def on_batch_start(self, runner: "IRunner"):
+        rank = runner.engine.rank
+        world_size = runner.engine.world_size
+        self.logger.warning(
+            f"WorldSizeCheckCallback: " f"expected world size ({self.world_size}) - actual ({world_size})"
+        )
+        assert rank < self.world_size
+        assert self.world_size == world_size
+
+
+@REGISTRY.add
+class TensorTypeChecker(Callback):
+    def __init__(self, key, use_batch_metrics=False):
+        super().__init__(CallbackOrder.Metric)
+        self.key = key
+        self.use_batch_metrics = use_batch_metrics
+
+    def on_batch_end(self, runner):
+        if self.use_batch_metrics:
+            assert runner.batch_metrics[self.key].dtype == torch.float16
+        else:
+            assert runner.batch[self.key].dtype == torch.float16
+
+
+OPT_TYPE_MAP = {
+    "O0": torch.float32,  # no-op training
+    "O1": torch.float16,  # mixed precision (FP16) training
+    "O2": torch.float32,  # almost FP16 training
+    "O3": torch.float32,  # another implementation of FP16 training
+}
+
+
+@REGISTRY.add
+class OPTTensorTypeChecker(Callback):
+    def __init__(self, key, opt_level, use_batch_metrics=False):
+        super().__init__(CallbackOrder.Metric)
+        self.key = key
+        self.use_batch_metrics = use_batch_metrics
+        self.opt_level = opt_level
+        self.expected_type = OPT_TYPE_MAP[opt_level]
+
+    def on_batch_end(self, runner):
+        check_tensor = runner.batch_metrics[self.key] if self.use_batch_metrics else runner.batch[self.key]
+        assert check_tensor.dtype == self.expected_type, (
+            f"Wrong types for {self.opt_level} - actual is "
+            f"'{check_tensor.dtype}' but expected is '{self.expected_type}'!"
+        )
