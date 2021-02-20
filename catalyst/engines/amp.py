@@ -5,8 +5,8 @@ import torch
 
 # TODO: works only with latest pytorch (1.7.1) - fix for older versions
 import torch.cuda.amp as amp
-import torch.nn as nn
 import torch.distributed as dist
+import torch.nn as nn
 
 from catalyst.engines.device import DeviceEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
@@ -57,7 +57,11 @@ class AMPEngine(DeviceEngine):
 # TODO: move this class to a engines/distributed.py ??
 class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
     def __init__(
-        self, address: str = "localhost", port: str = "12345", backend: str = "nccl", world_size: int = None,
+        self,
+        address: str = "localhost",
+        port: str = "12345",
+        backend: str = "nccl",
+        world_size: int = None,
     ):
         """
         Args:
