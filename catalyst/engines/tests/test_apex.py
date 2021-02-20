@@ -97,6 +97,10 @@ def run_train_with_experiment_apex_device(device, opt_level):
         runner.run()
 
 
+def run_train_with_config_experiment_apex_device(device, opt_level):
+    pass
+
+
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA devices is not available")
 def test_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
@@ -108,5 +112,7 @@ def test_apex_with_devices():
 @mark.skip("Config experiment is in development phase!")
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA devices is not available")
 def test_config_apex_with_devices():
-    for level in OPT_LEVELS:
-        run_train_with_experiment_apex_device("cuda:0", level)
+    to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
+    for device in to_check_devices:
+        for level in OPT_LEVELS:
+            run_train_with_config_experiment_apex_device(device, level)

@@ -89,27 +89,20 @@ def run_train_with_experiment_amp_device(device):
         runner.run()
 
 
+def run_train_with_config_experiment_amp_device(device):
+    pass
+
+
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_experiment_engine_with_cuda():
-    run_train_with_experiment_amp_device("cuda:0")
+def test_experiment_engine_with_devices():
+    to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
+    for device in to_check_devices:
+        run_train_with_experiment_amp_device(device)
 
 
 @mark.skip("Config experiment is in development phase!")
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_config_experiment_engine_with_cuda():
-    run_train_with_experiment_amp_device("cuda:0")
-
-
-@mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
-)
-def test_experiment_engine_with_another_cuda_device():
-    run_train_with_experiment_amp_device("cuda:1")
-
-
-@mark.skip("Config experiment is in development phase!")
-@mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
-)
-def test_config_experiment_engine_with_another_cuda_device():
-    run_train_with_experiment_amp_device("cuda:1")
+    to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
+    for device in to_check_devices:
+        run_train_with_config_experiment_amp_device(device)

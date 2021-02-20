@@ -92,27 +92,6 @@ class CustomRunner(dl.IRunner):
     not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
 def test_train_with_experiment_distributed_parallel_amp_device():
-    # logdir = "./test_ddp_engine"
-    # dataset = DummyDataset(10)
-    # # sampler = DistributedSampler(dataset, world_size, rank)
-    # loader = DataLoader(dataset, batch_size=4)  # , sampler=sampler)
-    # runner = SupervisedRunner()
-    # engine = DistributedDataParallelEngine()
-    # exp = Experiment(
-    #     model=_model_fn,
-    #     criterion=nn.MSELoss(),
-    #     optimizer=_optimizer_fn,
-    #     loaders={"train": loader, "valid": loader},
-    #     main_metric="loss",
-    #     callbacks=[
-    #         CriterionCallback(),
-    #         OptimizerCallback(),
-    #         # DeviceCheckCallback(device),
-    #         LossMinimizationCallback(),
-    #     ],
-    #     logdir=logdir,
-    #     engine=engine,
-    # )
     with TemporaryDirectory() as logdir:
         runner = CustomRunner(logdir)
         runner.run()
