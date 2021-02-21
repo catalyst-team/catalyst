@@ -15,6 +15,11 @@ from catalyst.utils.scripts import prepare_config_api_components
 from catalyst.utils.torch import any2device, get_requires_grad, set_requires_grad, ForwardOverrideModel
 from catalyst.utils.model_loading import get_model_file_name, load_experiment
 
+from catalyst.settings import IS_APEX_AVAILABLE
+
+if IS_APEX_AVAILABLE:
+    from apex import amp
+
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
     from catalyst.experiments import Experiment
@@ -113,14 +118,16 @@ def trace_model(
 
     tracer = _TracingModelWrapper(model, method_name)
     if opt_level is not None:
-        assert_fp16_available()
+        if IS_APEX_AVAILABLE:
         # If traced in AMP we need to initialize the model before calling
         # the jit
         # https://github.com/NVIDIA/apex/issues/303#issuecomment-493142950
-        from apex import amp
+        
+            model = model.to(device)
+            model = amp.initialize(model, optimizers=None, opt_level=opt_level)
+        else:
+            raise ValueError("Apex is not available, but opt_level is not None")
 
-        model = model.to(device)
-        model = amp.initialize(model, optimizers=None, opt_level=opt_level)
 
     getattr(model, mode)()
     set_requires_grad(model, requires_grad=requires_grad)
@@ -162,7 +169,6 @@ def trace_model_from_checkpoint(
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
 
     logger.info("Import experiment and runner from logdir")
-    experiment: Experiment = None
     experiment, runner = load_experiment(logdir)
 
     logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
@@ -367,10 +373,10 @@ def load_traced_model(
     model = jit.load(model_path, map_location=device)
 
     if opt_level is not None:
-        assert_fp16_available()
-        from apex import amp
-
-        model = amp.initialize(model, optimizers=None, opt_level=opt_level)
+        if IS_APEX_AVAILABLE:
+            model = amp.initialize(model, optimizers=None, opt_level=opt_level)
+        else:
+            raise ValueError("Apex is not available but, opt_level is not None")
 
     return model
 
