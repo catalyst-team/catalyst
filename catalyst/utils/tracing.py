@@ -17,7 +17,7 @@ from catalyst.utils.model_loading import get_model_file_name, load_experiment
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
-    from catalyst.experiments import ConfigExperiment
+    from catalyst.experiments import Experiment
 
 logger = logging.getLogger(__name__)
 
@@ -162,7 +162,7 @@ def trace_model_from_checkpoint(
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
 
     logger.info("Import experiment and runner from logdir")
-    experiment: ConfigExperiment = None
+    experiment: Experiment = None
     experiment, runner = load_experiment(logdir)
 
     logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
