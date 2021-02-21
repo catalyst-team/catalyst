@@ -15,7 +15,7 @@ if IS_ONNX_AVAILABLE:
 def convert_to_onnx(
     model: torch.nn.Module,
     input_shape: Union[List, Tuple, torch.Size],
-    method: str = "forward",
+    method_name: str = "forward",
     input_names: Iterable = None,
     output_names: List[str] = None,
     file="model.onnx",
@@ -23,8 +23,8 @@ def convert_to_onnx(
     opset_version: int = 9,
     do_constant_folding: bool = False,
 ):
-    if method != "forward":
-        model = ForwardOverrideModel(model=model, method_name=method)
+    if method_name != "forward":
+        model = ForwardOverrideModel(model=model, method_name=method_name)
     torch.onnx.export(
         model,
         input_shape,
