@@ -47,7 +47,7 @@ def normalize(
 
 
 def dict_transformer(sample):
-    """@TODO: Docs. Contribution is welcome."""
+    """Transform wrapper."""
     image = sample["image"]
 
     # image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)

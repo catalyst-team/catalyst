@@ -33,6 +33,4 @@ if IS_PRUNING_AVAILABLE:
     from catalyst.callbacks.pruning import PruningCallback
 
 if IS_OPTUNA_AVAILABLE:
-    from catalyst.contrib.callbacks.optuna import OptunaPruningCallback
-
-# from catalyst.contrib.callbacks import *
+    from catalyst.callbacks.optuna import OptunaPruningCallback

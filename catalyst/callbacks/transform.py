@@ -71,7 +71,7 @@ class BatchTransformCallback(Callback):
                 batch_size=32,
             ),
         }
-        transrorms = [
+        transforms = [
             augmentation.RandomAffine(degrees=(-15, 20), scale=(0.75, 1.25)),
         ]
 
@@ -85,7 +85,7 @@ class BatchTransformCallback(Callback):
             logdir="./logs",
             num_epochs=5,
             verbose=True,
-            callbacks=[BatchTransformCallback(transrorms, input_key=0)],
+            callbacks=[BatchTransformCallback(transforms, input_key=0)],
         )
 
     To apply augmentations only during specific loader e.g. only during

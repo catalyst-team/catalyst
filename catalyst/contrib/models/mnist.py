@@ -5,9 +5,9 @@ from catalyst.contrib.nn import Normalize
 from catalyst.contrib.nn.modules import Flatten
 
 
-class SimpleConv(nn.Module):
+class MnistSimpleNet(nn.Module):
     """
-    Simple convolutional network.
+    Simple MNIST convolutional network for test purposes.
     """
 
     def __init__(self, features_dim: int):
@@ -15,7 +15,7 @@ class SimpleConv(nn.Module):
         Args:
             features_dim: size of the output tensor
         """
-        super(SimpleConv, self).__init__()
+        super().__init__()
         self._net = nn.Sequential(
             nn.Conv2d(1, 32, 3, 1),
             nn.ReLU(),
@@ -40,4 +40,4 @@ class SimpleConv(nn.Module):
         return self._net(x)
 
 
-__all__ = ["SimpleConv"]
+__all__ = ["MnistSimpleNet"]

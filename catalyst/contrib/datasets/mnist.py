@@ -1,4 +1,3 @@
-# flake8: noqa
 from typing import Any, Callable, Dict, List, Optional
 import os
 
@@ -7,10 +6,25 @@ from torch.utils.data import Dataset
 
 from catalyst.contrib.datasets.functional import (
     download_and_extract_archive,
-    read_image_file,
-    read_label_file,
+    read_sn3_pascalvincent_tensor,
 )
 from catalyst.data.dataset.metric_learning import MetricLearningTrainDataset, QueryGalleryDataset
+
+
+def _read_label_file(path):
+    with open(path, "rb") as f:
+        x = read_sn3_pascalvincent_tensor(f, strict=False)
+    assert x.dtype == torch.uint8
+    assert x.ndimension() == 1
+    return x.long()
+
+
+def _read_image_file(path):
+    with open(path, "rb") as f:
+        x = read_sn3_pascalvincent_tensor(f, strict=False)
+    assert x.dtype == torch.uint8
+    assert x.ndimension() == 3
+    return x
 
 
 class MNIST(Dataset):
@@ -162,12 +176,12 @@ class MNIST(Dataset):
         print("Processing...")
 
         training_set = (
-            read_image_file(os.path.join(self.raw_folder, "train-images-idx3-ubyte")),
-            read_label_file(os.path.join(self.raw_folder, "train-labels-idx1-ubyte")),
+            _read_image_file(os.path.join(self.raw_folder, "train-images-idx3-ubyte")),
+            _read_label_file(os.path.join(self.raw_folder, "train-labels-idx1-ubyte")),
         )
         test_set = (
-            read_image_file(os.path.join(self.raw_folder, "t10k-images-idx3-ubyte")),
-            read_label_file(os.path.join(self.raw_folder, "t10k-labels-idx1-ubyte")),
+            _read_image_file(os.path.join(self.raw_folder, "t10k-images-idx3-ubyte")),
+            _read_label_file(os.path.join(self.raw_folder, "t10k-labels-idx1-ubyte")),
         )
         with open(os.path.join(self.processed_folder, self.training_file), "wb") as f:
             torch.save(training_set, f)

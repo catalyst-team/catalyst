@@ -97,9 +97,7 @@ def run(command):
 
 
 def run_and_read_all(run_lambda, command):
-    """
-    Runs command using run_lambda; reads and returns entire output if rc is 0
-    """
+    """Runs command using run_lambda; reads and returns entire output if rc is 0"""
     rc, out, _ = run_lambda(command)
     if rc != 0:
         return None
@@ -107,9 +105,7 @@ def run_and_read_all(run_lambda, command):
 
 
 def run_and_parse_first_match(run_lambda, command, regex):
-    """
-    Runs command using run_lambda, returns the first regex match if it exists
-    """
+    """Runs command using run_lambda, returns the first regex match if it exists"""
     rc, out, _ = run_lambda(command)
     if rc != 0:
         return None
@@ -180,10 +176,7 @@ def get_running_cuda_version(run_lambda):
 
 
 def get_cudnn_version(run_lambda):
-    """
-    This will return a list of libcudnn.so;
-    it"s hard to tell which one is being used
-    """
+    """This will return a list of libcudnn.so; it"s hard to tell which one is being used"""
     if get_platform() == "win32":
         cudnn_cmd = "where /R '%CUDA_PATH%\\bin' cudnn*.dll"  # noqa: WPS342
     elif get_platform() == "darwin":
@@ -262,9 +255,7 @@ def check_release_file(run_lambda):
 
 
 def get_os(run_lambda):
-    """
-    Returns OS info.
-    """
+    """Returns OS info."""
     platform = get_platform()
 
     if platform == "win32" or platform == "cygwin":
@@ -294,10 +285,7 @@ def get_os(run_lambda):
 
 
 def get_pip_packages(run_lambda):
-    """
-    Returns `pip list` output. Note: will also find conda-installed pytorch
-    and numpy packages.
-    """
+    """Returns `pip list` output. Note: also finds conda-installed pytorch and numpy packages."""
     # People generally have `pip` as `pip` or `pip3`
     def run_with_pip(pip):
         if get_platform() == "win32":
