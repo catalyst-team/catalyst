@@ -13,6 +13,7 @@ from catalyst.utils.loaders import get_native_batch_from_loaders
 from catalyst.utils.misc import get_fn_argsnames
 from catalyst.utils.scripts import prepare_config_api_components
 from catalyst.utils.torch import any2device, get_requires_grad, set_requires_grad, ForwardOverrideModel
+from catalyst.utils.model_loading import get_model_file_name, load_experiment
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -158,19 +159,11 @@ def trace_model_from_checkpoint(
     Returns:
         the traced model
     """
-    config_path = logdir / "configs" / "_config.json"
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
-    logging.info("Load config")
-    config: Dict[str, dict] = load_config(config_path)
-
-    # Get expdir name
-    config_expdir = Path(config["args"]["expdir"])
-    # We will use copy of expdir from logs for reproducibility
-    expdir = Path(logdir) / "code" / config_expdir.name
 
     logger.info("Import experiment and runner from logdir")
     experiment: ConfigExperiment = None
-    experiment, runner, _ = prepare_config_api_components(expdir=expdir, config=config)
+    experiment, runner = load_experiment(logdir)
 
     logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:
@@ -295,44 +288,6 @@ def trace_model_from_runner(
     return traced_model
 
 
-def get_trace_name(
-    method_name: str,
-    mode: str = "eval",
-    requires_grad: bool = False,
-    opt_level: str = None,
-    additional_string: str = None,
-) -> str:
-    """Creates a file name for the traced model.
-
-    Args:
-        method_name: model's method name
-        mode: ``train`` or ``eval``
-        requires_grad: flag if model was traced with gradients
-        opt_level: opt_level if model was traced in FP16
-        additional_string: any additional information
-
-    Returns:
-        str: Filename for traced model to be saved.
-    """
-    file_name = "traced"
-    if additional_string is not None:
-        file_name += f"-{additional_string}"
-
-    file_name += f"-{method_name}"
-    if mode == "train":
-        file_name += "-in_train"
-
-    if requires_grad:
-        file_name += "-with_grad"
-
-    if opt_level is not None:
-        file_name += "-opt_{opt_level}"
-
-    file_name += ".pth"
-
-    return file_name
-
-
 def save_traced_model(
     model: jit.ScriptModule,
     logdir: Union[str, Path] = None,
@@ -364,7 +319,8 @@ def save_traced_model(
           is specified.
     """
     if out_model is None:
-        file_name = get_trace_name(
+        file_name = get_model_file_name(
+            prefix="traced",
             method_name=method_name,
             mode=mode,
             requires_grad=requires_grad,
@@ -423,7 +379,6 @@ __all__ = [
     "trace_model",
     "trace_model_from_checkpoint",
     "trace_model_from_runner",
-    "get_trace_name",
     "save_traced_model",
     "load_traced_model",
 ]
