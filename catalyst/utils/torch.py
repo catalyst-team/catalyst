@@ -482,6 +482,21 @@ def convert_labels2list(labels: Union[Tensor, List[int]]) -> List[int]:
     return labels_list
 
 
+class ForwardOverrideModel(nn.Module):
+    """Model that calls specified method instead of forward.
+
+    (Workaround, single method tracing is not supported)
+    """
+
+    def __init__(self, model, method_name):
+        super().__init__()
+        self.model = model
+        self.method_name = method_name
+
+    def forward(self, *args, **kwargs):
+        return getattr(self.model, self.method_name)(*args, **kwargs)
+
+
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
@@ -503,4 +518,5 @@ __all__ = [
     "get_optimal_inner_init",
     "outer_init",
     "reset_weights_if_possible",
+    "ForwardOverrideModel",
 ]

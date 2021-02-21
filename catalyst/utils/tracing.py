@@ -12,7 +12,7 @@ from catalyst.utils.distributed import assert_fp16_available, get_nn_from_ddp_mo
 from catalyst.utils.loaders import get_native_batch_from_loaders
 from catalyst.utils.misc import get_fn_argsnames
 from catalyst.utils.scripts import prepare_config_api_components
-from catalyst.utils.torch import any2device, get_requires_grad, set_requires_grad
+from catalyst.utils.torch import any2device, get_requires_grad, set_requires_grad, ForwardOverrideModel
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -38,21 +38,6 @@ def _get_input_argnames(fn: Callable[..., Any], exclude: List[str] = None) -> Li
     return get_fn_argsnames(fn, exclude=exclude)
 
 
-class _ForwardOverrideModel(nn.Module):
-    """Model that calls specified method instead of forward.
-
-    (Workaround, single method tracing is not supported)
-    """
-
-    def __init__(self, model, method_name):
-        super().__init__()
-        self.model = model
-        self.method_name = method_name
-
-    def forward(self, *args, **kwargs):
-        return getattr(self.model, self.method_name)(*args, **kwargs)
-
-
 class _TracingModelWrapper(nn.Module):
     """Wrapper that traces model with batch instead of calling it.
 
@@ -66,7 +51,7 @@ class _TracingModelWrapper(nn.Module):
         self.tracing_result: jit.ScriptModule
 
     def __call__(self, *args, **kwargs):
-        method_model = _ForwardOverrideModel(self.model, self.method_name)
+        method_model = ForwardOverrideModel(self.model, self.method_name)
 
         try:
             assert len(args) == 0, "only KV support implemented"

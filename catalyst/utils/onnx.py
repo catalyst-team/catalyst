@@ -6,6 +6,8 @@ import torch
 
 from catalyst.settings import IS_ONNX_AVAILABLE
 
+from catalyst.utils.torch import ForwardOverrideModel
+
 if IS_ONNX_AVAILABLE:
     from onnxruntime.quantization import quantize_dynamic, QuantType
 
@@ -13,6 +15,7 @@ if IS_ONNX_AVAILABLE:
 def convert_to_onnx(
     model: torch.nn.Module,
     input_shape: Union[List, Tuple, torch.Size],
+    method: str = "forward",
     input_names: Iterable = None,
     output_names: List[str] = None,
     file="model.onnx",
@@ -20,6 +23,8 @@ def convert_to_onnx(
     opset_version: int = 9,
     do_constant_folding: bool = False,
 ):
+    if method != "forward":
+        model = ForwardOverrideModel(model=model, method_name=method)
     torch.onnx.export(
         model,
         input_shape,
