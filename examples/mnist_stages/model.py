@@ -1,3 +1,4 @@
+# flake8: noqa
 import torch
 from torch import nn
 
@@ -5,29 +6,31 @@ from catalyst.contrib.nn import Normalize
 from catalyst.contrib.nn.modules import Flatten
 
 
-class MnistSimpleNet(nn.Module):
+class SimpleNet(nn.Module):
     """Simple MNIST convolutional network for test purposes."""
 
-    def __init__(self, features_dim: int, normalize: bool = True):
+    def __init__(self, num_hidden1=128, num_hidden2=64):
         """
         Args:
-            features_dim: size of the output tensor
+            num_hidden1: size of the first hidden representation
+            num_hidden2: size of the second hidden representation
         """
         super().__init__()
-        layers = [
+        self.conv_net = nn.Sequential(
             nn.Conv2d(1, 32, 3, 1),
             nn.ReLU(),
             nn.Conv2d(32, 64, 3, 1),
             nn.ReLU(),
             nn.MaxPool2d(2),
             Flatten(),
-            nn.Linear(9216, 128),
+        )
+        self.linear_net = nn.Sequential(
+            nn.Linear(9216, num_hidden1),
             nn.ReLU(),
-            nn.Linear(128, features_dim),
-        ]
-        if normalize:
-            layers.append(Normalize())
-        self._net = nn.Sequential(*layers)
+            nn.Linear(num_hidden1, num_hidden2),
+            Normalize(),
+        )
+        self._net = nn.Sequential(self.conv_net, self.linear_net)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -40,4 +43,4 @@ class MnistSimpleNet(nn.Module):
         return self._net(x)
 
 
-__all__ = ["MnistSimpleNet"]
+__all__ = ["SimpleNet"]

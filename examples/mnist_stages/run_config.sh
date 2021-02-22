@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-EXPDIR=cifar_stages
+EXPDIR=mnist_stages
 catalyst-dl run --config=${EXPDIR}/config.yml

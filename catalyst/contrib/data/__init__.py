@@ -11,4 +11,3 @@ from catalyst.contrib.data.reader import (
     ReaderCompose,
 )
 from catalyst.contrib.data.cv import *
-from catalyst.contrib.data.nlp import *

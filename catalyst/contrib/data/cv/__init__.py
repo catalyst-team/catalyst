@@ -1,17 +1,7 @@
 # flake8: noqa
 import logging
 
-from torch.jit.frontend import UnsupportedNodeError
-
 from catalyst.settings import SETTINGS
-
-from catalyst.contrib.data.cv.transforms.torch import (
-    Compose,
-    Normalize,
-    ToTensor,
-    normalize,
-    to_tensor,
-)
 
 logger = logging.getLogger(__name__)
 

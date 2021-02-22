@@ -292,12 +292,12 @@ class HydraRunner(IRunner):
         return loaders
 
     @staticmethod
-    def _get_model(params: DictConfig) -> RunnerModel:
+    def get_model_(params: DictConfig) -> RunnerModel:
         params = deepcopy(params)
         is_key_value = params._key_value or False
         if is_key_value:
             model = {
-                key: HydraRunner._get_model(value) for key, value in params.items()  # noqa: WPS437
+                key: HydraRunner.get_model_(value) for key, value in params.items()  # noqa: WPS437
             }
             # model = nn.ModuleDict(model)
         else:
@@ -308,16 +308,16 @@ class HydraRunner(IRunner):
         """Returns the model for a given stage."""
         assert "model" in self._config, "config must contain 'model' key"
         model_params: DictConfig = self._config.model
-        model: RunnerModel = self._get_model(model_params)
+        model: RunnerModel = self.get_model_(model_params)
         return model
 
     @staticmethod
-    def _get_criterion(params: DictConfig) -> RunnerCriterion:
+    def get_criterion_(params: DictConfig) -> RunnerCriterion:
         params = deepcopy(params)
         is_key_value = params._key_value or False
         if is_key_value:
             criterion = {
-                key: HydraRunner._get_criterion(value)  # noqa: WPS437
+                key: HydraRunner.get_criterion_(value)  # noqa: WPS437
                 for key, value in params.items()
             }
         else:
@@ -329,10 +329,10 @@ class HydraRunner(IRunner):
         if "criterion" not in self._config.stages[stage]:
             return None
         criterion_params: DictConfig = self._config.stages[stage].criterion
-        criterion = self._get_criterion(criterion_params)
+        criterion = self.get_criterion_(criterion_params)
         return criterion
 
-    def _get_optimizer(self, model: RunnerModel, stage: str, params: DictConfig,) -> Optimizer:
+    def get_optimizer_(self, model: RunnerModel, stage: str, params: DictConfig,) -> Optimizer:
         # @TODO 1: refactor; this method is too long
         params = deepcopy(params)
         # learning rate linear scaling
@@ -390,14 +390,14 @@ class HydraRunner(IRunner):
                 assert optimizer_key not in params, "keyword reserved"
                 params[optimizer_key] = key
 
-                optimizer[key] = self._get_optimizer(model=model, stage=stage, params=params)
+                optimizer[key] = self.get_optimizer_(model=model, stage=stage, params=params)
         else:
-            optimizer = self._get_optimizer(model=model, stage=stage, params=optimizer_params)
+            optimizer = self.get_optimizer_(model=model, stage=stage, params=optimizer_params)
 
         return optimizer
 
     @staticmethod
-    def _get_scheduler(*, optimizer: RunnerOptimizer, params: DictConfig) -> RunnerScheduler:
+    def get_scheduler_(*, optimizer: RunnerOptimizer, params: DictConfig) -> RunnerScheduler:
         params = deepcopy(params)
         is_key_value = params._key_value or False
         optimizer_key = params._optimizer or None
@@ -406,7 +406,7 @@ class HydraRunner(IRunner):
         if is_key_value:
             scheduler: Dict[str, Scheduler] = {}
             for key, scheduler_params in params.items():
-                scheduler[key] = HydraRunner._get_scheduler(  # noqa: WPS437
+                scheduler[key] = HydraRunner.get_scheduler_(  # noqa: WPS437
                     optimizer=optimizer, params=scheduler_params
                 )
         else:
@@ -419,7 +419,7 @@ class HydraRunner(IRunner):
         if "scheduler" not in self._config.stages[stage]:
             return None
         scheduler_params: DictConfig = self._config.stages[stage].scheduler
-        scheduler = self._get_scheduler(optimizer=optimizer, params=scheduler_params)
+        scheduler = self.get_scheduler_(optimizer=optimizer, params=scheduler_params)
         return scheduler
 
     @staticmethod

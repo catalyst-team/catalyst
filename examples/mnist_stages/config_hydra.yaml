@@ -8,8 +8,8 @@ shared:
   minimize_valid_metric: False
 
 args:
-  expdir: "cifar_stages"
-  logdir: "./logs/cifar_stages_hydra"
+  expdir: "mnist_stages"
+  logdir: "./logs/mnist_stages_hydra"
   seed: ${shared.seed}
   distributed: False
   apex: False
@@ -22,7 +22,7 @@ args:
   benchmark: False
 
 runner:
-  _target_: cifar_stages.runner.CustomSupervisedHydraRunner
+  _target_: mnist_stages.runner.CustomSupervisedHydraRunner
   input_key: "features"
   output_key: "logits"
   target_key: "targets"
@@ -38,7 +38,7 @@ loggers:
     _target_: catalyst.loggers.ConsoleLogger
 
 model:
-  _target_: cifar_stages.SimpleNet
+  _target_: mnist_stages.SimpleNet
 
 stages:
   train:

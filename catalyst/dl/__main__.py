@@ -3,18 +3,18 @@ from collections import OrderedDict
 import logging
 
 from catalyst.__version__ import __version__
-from catalyst.dl.scripts import run, swa, trace
+from catalyst.dl.scripts import run, swa  # , trace
 from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
-COMMANDS = OrderedDict([("run", run), ("swa", swa), ("trace", trace)])
+COMMANDS = OrderedDict([("run", run), ("swa", swa)])  # ("trace", trace)
 
 
-if SETTINGS.IS_QUANTIZATION_AVAILABLE:
-    from catalyst.dl.scripts import quantize
-
-    COMMANDS["quantize"] = quantize
+# if SETTINGS.IS_QUANTIZATION_AVAILABLE:
+#     from catalyst.dl.scripts import quantize
+#
+#     COMMANDS["quantize"] = quantize
 
 try:
     import optuna  # noqa: F401
