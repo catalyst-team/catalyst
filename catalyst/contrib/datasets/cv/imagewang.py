@@ -1,4 +1,4 @@
-from catalyst.contrib.datasets.cv.functional import ImageClassificationDataset
+from catalyst.contrib.datasets.cv.misc import ImageClassificationDataset
 
 
 class Imagewang(ImageClassificationDataset):

@@ -419,7 +419,7 @@ def detach(tensor: torch.Tensor) -> np.ndarray:
     return tensor.cpu().detach().numpy()
 
 
-def trim_tensors(tensors):
+def trim_tensors(tensors: Tensor):
     """
     Trim padding off of a batch of tensors to the smallest possible length.
     Should be used with `catalyst.data.DynamicLenBatchSampler`.
@@ -441,17 +441,17 @@ def trim_tensors(tensors):
     return tensors
 
 
-def normalize(samples: Tensor) -> Tensor:
+def normalize(tensors: Tensor) -> Tensor:
     """
     Args:
-        samples: tensor with shape of [n_samples, features_dim]
+        tensors: tensor with shape of [n_samples, features_dim]
 
     Returns:
         normalized tensor with the same shape
     """
-    norms = torch.norm(samples, p=2, dim=1).unsqueeze(1)
-    samples = samples / (norms + torch.finfo(torch.float32).eps)
-    return samples
+    norms = torch.norm(tensors, p=2, dim=1).unsqueeze(1)
+    tensors = tensors / (norms + torch.finfo(torch.float32).eps)
+    return tensors
 
 
 def convert_labels2list(labels: Union[Tensor, List[int]]) -> List[int]:

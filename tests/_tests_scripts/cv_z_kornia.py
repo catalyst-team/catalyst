@@ -6,7 +6,7 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from catalyst import dl, metrics
-from catalyst.contrib.callbacks.kornia_callback import BatchTransformCallback
+from catalyst.contrib.callbacks.transform import BatchTransformCallback
 from catalyst.contrib.data.cv import ToTensor
 from catalyst.contrib.datasets import MNIST
 

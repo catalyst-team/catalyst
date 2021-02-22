@@ -12,7 +12,7 @@ from catalyst.core.engine import IEngine
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.runner import IRunner
 from catalyst.runners.runner import Runner
-from catalyst.typing import Criterion, Device, Model, Optimizer, RunnerModel, Scheduler
+from catalyst.typing import Criterion, Optimizer, RunnerModel, Scheduler
 
 logger = logging.getLogger(__name__)
 

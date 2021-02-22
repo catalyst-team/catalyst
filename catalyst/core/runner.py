@@ -1,7 +1,7 @@
 from typing import Any, Dict, Iterable, Mapping, Tuple
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
-from functools import lru_cache, partial
+from functools import lru_cache
 import logging
 
 import torch

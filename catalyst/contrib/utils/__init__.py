@@ -13,37 +13,29 @@ from catalyst.contrib.utils.compression import (
     unpack_if_needed,
 )
 
-# @TODO: remove
-from catalyst.contrib.utils.torch_extra import (
-    calculate_tp_fp_fn,
-    calculate_confusion_matrix_from_arrays,
-    calculate_confusion_matrix_from_tensors,
-)
-from catalyst.contrib.utils.parallel import (
-    parallel_imap,
-    tqdm_parallel_imap,
-    get_pool,
-)
-from catalyst.contrib.utils.serialization import deserialize, serialize
-
 try:
-    import matplotlib  # noqa: F401
+    import imageio  # noqa: F401
+    from skimage.color import label2rgb, rgb2gray  # noqa: F401
 
-    from catalyst.contrib.utils.visualization import (
-        plot_confusion_matrix,
-        render_figure_to_numpy,
-        render_figure_to_tensor,
+    from catalyst.contrib.utils.image import (
+        has_image_extension,
+        imread,
+        imwrite,
+        imsave,
+        mimread,
     )
 except ModuleNotFoundError as ex:
-    if SETTINGS.matplotlib_required:
+    if SETTINGS.cv_required:
         logger.warning(
-            "matplotlib is not available, to install matplotlib," " run `pip install matplotlib`."
+            "catalyst[cv] requirements are not available, to install them,"
+            " run `pip install catalyst[cv]`."
         )
         raise ex
 except ImportError as ex:
-    if SETTINGS.matplotlib_required:
+    if SETTINGS.cv_required:
         logger.warning(
-            "matplotlib is not available, to install matplotlib," " run `pip install matplotlib`."
+            "catalyst[cv] requirements are not available, to install them,"
+            " run `pip install catalyst[cv]`."
         )
         raise ex
 
@@ -62,9 +54,6 @@ try:
         separate_tags,
         get_dataset_labeling,
         split_dataframe,
-        merge_multiple_fold_csv,
-        read_multiple_dataframes,
-        read_csv_data,
         balance_classes,
         create_dataset,
         split_dataset_train_test,
@@ -85,12 +74,16 @@ except ImportError as ex:
         )
         raise ex
 
+
+from catalyst.contrib.utils.parallel import (
+    parallel_imap,
+    tqdm_parallel_imap,
+    get_pool,
+)
+
 try:
     import plotly  # noqa: F401
-    from catalyst.contrib.utils.plotly import (
-        plot_tensorboard_log,
-        plot_metrics,
-    )
+    from catalyst.contrib.utils.plotly import plot_metrics
 except ModuleNotFoundError as ex:
     if SETTINGS.plotly_required:
         logger.warning("plotly not available, to install plotly," " run `pip install plotly`.")
@@ -99,30 +92,26 @@ except ImportError as ex:
     if SETTINGS.plotly_required:
         logger.warning("plotly not available, to install plotly," " run `pip install plotly`.")
         raise ex
+
+
+from catalyst.contrib.utils.serialization import deserialize, serialize
 
 try:
-    from git import Repo as repo  # noqa: N813 F401
-    from prompt_toolkit import prompt  # noqa: F401
+    import matplotlib  # noqa: F401
 
-    from catalyst.contrib.utils.wizard import (
-        clone_pipeline,
-        run_wizard,
-        Wizard,
+    from catalyst.contrib.utils.visualization import (
+        plot_confusion_matrix,
+        render_figure_to_tensor,
     )
 except ModuleNotFoundError as ex:
-    if SETTINGS.ml_required:
+    if SETTINGS.matplotlib_required:
         logger.warning(
-            "catalyst[ml] requirements are not available, to install them,"
-            " run `pip install catalyst[ml]`."
+            "matplotlib is not available, to install matplotlib," " run `pip install matplotlib`."
         )
         raise ex
 except ImportError as ex:
-    if SETTINGS.ml_required:
+    if SETTINGS.matplotlib_required:
         logger.warning(
-            "catalyst[ml] requirements are not available, to install them,"
-            " run `pip install catalyst[ml]`."
+            "matplotlib is not available, to install matplotlib," " run `pip install matplotlib`."
         )
         raise ex
-
-from catalyst.contrib.utils.cv import *
-from catalyst.contrib.utils.nlp import *

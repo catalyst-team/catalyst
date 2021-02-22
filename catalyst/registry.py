@@ -9,7 +9,7 @@ Registry = REGISTRY.add
 
 
 def _transforms_loader(r: registry.Registry):
-    from catalyst.contrib.data.cv.transforms import torch as t
+    from catalyst.data import transforms as t
 
     r.add_from_module(t, prefix=["catalyst.", "C."])
 

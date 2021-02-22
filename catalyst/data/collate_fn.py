@@ -15,8 +15,7 @@ class FilteringCollateFn:
     def __init__(self, *keys):
         """
         Args:
-            keys: Keys for values that will not be
-                converted to tensor and stacked
+            keys: Keys for values that will not be converted to tensor and stacked
         """
         self.keys = keys
 

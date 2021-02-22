@@ -8,10 +8,10 @@ from pathlib import Path
 
 import optuna
 
+from catalyst.dl.scripts.functional import parse_args_uargs
 from catalyst.runners.config import ConfigRunner
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, maybe_recursive_call, set_global_seed
-from catalyst.utils.parser import parse_args_uargs
 from catalyst.utils.scripts import dump_code, get_config_runner
 from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import prepare_cudnn
@@ -51,19 +51,19 @@ def build_args(parser: ArgumentParser):
     #     choices=["best", "last"],
     #     default=None,
     # )
-    parser.add_argument("--seed", type=int, default=42)
-    boolean_flag(
-        parser,
-        "apex",
-        default=os.getenv("USE_APEX", "0") == "1",
-        help="Enable/disable using of Apex extension",
-    )
-    boolean_flag(
-        parser,
-        "amp",
-        default=os.getenv("USE_AMP", "0") == "1",
-        help="Enable/disable using of PyTorch AMP extension",
-    )
+    # parser.add_argument("--seed", type=int, default=42)
+    # boolean_flag(
+    #     parser,
+    #     "apex",
+    #     default=os.getenv("USE_APEX", "0") == "1",
+    #     help="Enable/disable using of Apex extension",
+    # )
+    # boolean_flag(
+    #     parser,
+    #     "amp",
+    #     default=os.getenv("USE_AMP", "0") == "1",
+    #     help="Enable/disable using of PyTorch AMP extension",
+    # )
     # boolean_flag(
     #     parser,
     #     "distributed",

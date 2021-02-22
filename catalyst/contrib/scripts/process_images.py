@@ -18,7 +18,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from catalyst.contrib.utils.cv.image import has_image_extension, imread, imwrite
+from catalyst.contrib.utils.image import has_image_extension, imread, imwrite
 from catalyst.contrib.utils.parallel import get_pool, tqdm_parallel_imap
 from catalyst.utils.misc import boolean_flag
 

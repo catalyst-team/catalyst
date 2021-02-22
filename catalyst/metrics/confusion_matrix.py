@@ -6,7 +6,7 @@ import torch
 from catalyst.metrics.metric import IMetric
 
 
-class ConfusionMetric(IMetric):
+class ConfusionMatrixMetric(IMetric):
     def __init__(self, num_classes: int, normalized: bool = False, compute_on_call: bool = True):
         """ConfusionMatrix constructs a confusion matrix for a multiclass classification problems.
 
@@ -92,4 +92,4 @@ class ConfusionMetric(IMetric):
             return self.conf
 
 
-__all__ = ["ConfusionMetric"]
+__all__ = ["ConfusionMatrixMetric"]

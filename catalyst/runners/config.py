@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 from collections import OrderedDict
 from copy import deepcopy
 from functools import partial
@@ -14,18 +14,15 @@ from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallbac
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
-from catalyst.core.trial import get_trial_by_params, ITrial
-from catalyst.engines import DeviceEngine, IEngine, process_engine
+from catalyst.core.trial import ITrial
+from catalyst.engines import IEngine, process_engine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.registry import REGISTRY
-from catalyst.runners.functional import do_lr_linear_scaling, get_model_parameters
+from catalyst.runners.misc import do_lr_linear_scaling, get_model_parameters
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
-    Criterion,
-    Model,
-    Optimizer,
     RunnerCriterion,
     RunnerModel,
     RunnerOptimizer,
@@ -249,13 +246,13 @@ class ConfigRunner(IRunner):
     #     return loaders
 
     @staticmethod
-    def _get_model(**params) -> RunnerModel:
+    def get_model_(**params) -> RunnerModel:
         params = deepcopy(params)
         is_key_value = params.pop("_key_value", False)
 
         if is_key_value:
             model = {
-                model_key: ConfigRunner._get_model(**model_params)  # noqa: WPS437
+                model_key: ConfigRunner.get_model_(**model_params)  # noqa: WPS437
                 for model_key, model_params in params.items()
             }
             model = nn.ModuleDict(model)
@@ -267,17 +264,17 @@ class ConfigRunner(IRunner):
         """Returns the model for a given stage."""
         assert "model" in self._config, "config must contain 'model' key"
         model_params: Dict = self._config["model"]
-        model: RunnerModel = self._get_model(**model_params)
+        model: RunnerModel = self.get_model_(**model_params)
         return model
 
     @staticmethod
-    def _get_criterion(**params) -> RunnerCriterion:
+    def get_criterion_(**params) -> RunnerCriterion:
         params = deepcopy(params)
         key_value_flag = params.pop("_key_value", False)
 
         if key_value_flag:
             criterion = {
-                key: ConfigRunner._get_criterion(**key_params)  # noqa: WPS437
+                key: ConfigRunner.get_criterion_(**key_params)  # noqa: WPS437
                 for key, key_params in params.items()
             }
         else:
@@ -289,10 +286,10 @@ class ConfigRunner(IRunner):
         if "criterion" not in self._stage_config[stage]:
             return None
         criterion_params = get_by_keys(self._stage_config, stage, "criterion", default={})
-        criterion = self._get_criterion(**criterion_params)
+        criterion = self.get_criterion_(**criterion_params)
         return criterion
 
-    def _get_optimizer(self, model: RunnerModel, stage: str, **params) -> RunnerOptimizer:
+    def get_optimizer_(self, model: RunnerModel, stage: str, **params) -> RunnerOptimizer:
         # @TODO 1: refactor; this method is too long
 
         # learning rate linear scaling
@@ -350,14 +347,14 @@ class ConfigRunner(IRunner):
                 assert optimizer_key not in params, "keyword reserved"
                 params[optimizer_key] = key
 
-                optimizer[key] = self._get_optimizer(model=model, stage=stage, **params)
+                optimizer[key] = self.get_optimizer_(model=model, stage=stage, **params)
         else:
-            optimizer = self._get_optimizer(model=model, stage=stage, **optimizer_params)
+            optimizer = self.get_optimizer_(model=model, stage=stage, **optimizer_params)
 
         return optimizer
 
     @staticmethod
-    def _get_scheduler(*, optimizer: RunnerOptimizer, **params) -> RunnerScheduler:
+    def get_scheduler_(*, optimizer: RunnerOptimizer, **params) -> RunnerScheduler:
         params = deepcopy(params)
 
         is_key_value = params.pop("_key_value", False)
@@ -367,7 +364,7 @@ class ConfigRunner(IRunner):
         if is_key_value:
             scheduler: Dict[str, Scheduler] = {}
             for key, scheduler_params in params.items():
-                scheduler[key] = ConfigRunner._get_scheduler(  # noqa: WPS437
+                scheduler[key] = ConfigRunner.get_scheduler_(  # noqa: WPS437
                     **scheduler_params, optimizer=optimizer
                 )
         else:
@@ -379,7 +376,7 @@ class ConfigRunner(IRunner):
         if "scheduler" not in self._stage_config[stage]:
             return None
         scheduler_params = get_by_keys(self._stage_config, stage, "scheduler", default={})
-        scheduler = self._get_scheduler(optimizer=optimizer, **scheduler_params)
+        scheduler = self.get_scheduler_(optimizer=optimizer, **scheduler_params)
         return scheduler
 
     @staticmethod
