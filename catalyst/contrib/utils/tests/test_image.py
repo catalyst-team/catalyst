@@ -1,12 +1,4 @@
-import numpy as np
-import torch
-
 from catalyst.contrib.utils.image import imread
-
-# from catalyst.contrib.utils.visualization import tensor_to_ndimage
-from catalyst.data.transforms import _IMAGENET_MEAN  # noqa: WPS450
-from catalyst.data.transforms import _IMAGENET_STD  # noqa: WPS450
-from catalyst.data.transforms import normalize, to_tensor
 
 
 def test_imread():
