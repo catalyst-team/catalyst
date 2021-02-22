@@ -113,13 +113,6 @@ Parallel
     :undoc-members:
     :show-inheritance:
 
-Plotly
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.plotly
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Serialization
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.serialization
