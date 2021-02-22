@@ -11,14 +11,12 @@ from catalyst.utils.config import load_config
 from catalyst.utils.distributed import get_nn_from_ddp_module
 from catalyst.utils.loaders import get_native_batch_from_loaders
 from catalyst.utils.misc import get_fn_argsnames
-from catalyst.utils.scripts import prepare_config_api_components
+from catalyst.utils.scripts import prepare_config_api_components, get_config_runner
 from catalyst.utils.torch import any2device, get_requires_grad, set_requires_grad, ForwardOverrideModel
 from catalyst.utils.model_loading import get_model_file_name, load_experiment
 
 from catalyst.settings import IS_APEX_AVAILABLE
 
-if IS_APEX_AVAILABLE:
-    from apex import amp
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -169,13 +167,15 @@ def trace_model_from_checkpoint(
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
 
     logger.info("Import experiment and runner from logdir")
-    experiment, runner = load_experiment(logdir)
+    experiment: ConfigExperiment = None
+    experiment, runner, _ = get_config_runner(expdir=expdir, config=config)
+
 
     logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:
         stage = list(experiment.stages)[0]
 
-    model = experiment.get_model(stage)
+    model = experiment.get_model_(stage)
     checkpoint = load_checkpoint(checkpoint_path)
     unpack_checkpoint(checkpoint, model=model)
     runner.model, runner.device = model, device

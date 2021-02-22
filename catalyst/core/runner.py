@@ -1,28 +1,30 @@
-from typing import Any, Dict, Mapping, Tuple
+from typing import Any, Dict, Iterable, Mapping, Tuple
 from abc import ABC, abstractmethod
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from functools import lru_cache, partial
 import logging
 
 import torch
 import torch.distributed
 import torch.multiprocessing
-from torch.utils.data import DataLoader, DistributedSampler
+from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
-from catalyst.core.callback import Callback, CallbackScope, ICallback
+from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
-from catalyst.core.experiment import IExperiment
 from catalyst.core.functional import filter_callbacks_by_node, sort_callbacks_by_order
 from catalyst.core.logger import ILogger
 from catalyst.core.trial import ITrial
 from catalyst.engines.distributed import DistributedDataParallelEngine
 from catalyst.typing import (
+    Criterion,
     Device,
     Model,
+    Optimizer,
     RunnerCriterion,
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
+    Scheduler,
 )
 from catalyst.utils.loaders import validate_loaders
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
@@ -77,7 +79,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.model: RunnerModel = model
         # self._device = device
         self.engine: IEngine = engine
-        self.experiment: IExperiment = None
+        # self.experiment: IExperiment = None
         self.trial: ITrial = None
         # the data
         self.loaders: Dict[str, DataLoader] = None
@@ -99,7 +101,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.epoch_metrics: EPOCH_METRICS = defaultdict(None)
 
         # experiment info
-        self.experiment_key: str = None
+        self.run_key: str = None
         self.global_epoch_step: int = 0
         self.global_batch_step: int = 0
         self.global_sample_step: int = 0
@@ -132,13 +134,288 @@ class IRunner(ICallback, ILogger, ABC):
         self.need_early_stop: bool = False
         self.need_exception_reraise: bool = True
 
+    # @TODO: remove hotfix
+    @property
+    def device(self) -> Device:
+        """Returns the runner's device instance."""
+        return self.engine.device
+
+    @property
+    def seed(self) -> int:
+        """Experiment's seed for reproducibility."""
+        return 42
+
+    @property
+    def name(self) -> str:
+        # @TODO: return the hash from the IRunner instance
+        return "IRunner"
+
+    @property
+    def hparams(self) -> OrderedDict:
+        """
+        Returns hyper-parameters for current run.
+
+        Example::
+            >>> runner.hparams
+            OrderedDict([('optimizer', 'Adam'),
+             ('lr', 0.02),
+             ('betas', (0.9, 0.999)),
+             ('eps', 1e-08),
+             ('weight_decay', 0),
+             ('amsgrad', False),
+             ('train_batch_size', 32)])
+        """
+        return {}
+
+    @property
+    @abstractmethod
+    def stages(self) -> Iterable[str]:
+        """Experiment's stage names.
+
+        Example::
+
+            >>> runner.stages
+            ["pretraining", "finetuning"]
+        """
+        pass
+
+    def get_stage_len(self, stage: str) -> int:
+        return 1
+
+    def get_trial(self) -> ITrial:
+        return None
+
+    @abstractmethod
+    def get_engine(self) -> IEngine:
+        return None
+
+    def get_loggers(self) -> Dict[str, ILogger]:
+        return {}
+
+    def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
+        """Returns the datasets for a given stage and epoch.  # noqa: DAR401
+
+        .. note::
+            For Deep Learning cases you have the same dataset
+            during whole stage.
+
+            For Reinforcement Learning it's common to change the dataset
+            (experiment) every training epoch.
+
+        Args:
+            stage: stage name of interest,
+                like "pretrain" / "train" / "finetune" / etc
+            epoch: epoch index
+            **kwargs: additional parameters to use during
+                dataset creation
+
+        Returns:  # noqa: DAR202
+            OrderedDict[str, Dataset]: Ordered dictionary
+                with datasets for current stage and epoch.
+
+        .. note::
+            We need ordered dictionary to guarantee the correct dataflow
+            and order of our training datasets.
+            For example, to run train loader before validation one :)
+
+        Example::
+
+            >>> experiment.get_datasets(
+            >>>     stage="training",
+            >>>     in_csv_train="path/to/train/csv",
+            >>>     in_csv_valid="path/to/valid/csv",
+            >>> )
+            OrderedDict({
+                "train": CsvDataset(in_csv=in_csv_train, ...),
+                "valid": CsvDataset(in_csv=in_csv_valid, ...),
+            })
+
+
+        """
+        raise NotImplementedError
+
+    def get_samplers(self, stage: str = None):
+        raise NotImplementedError
+
+    def get_transforms(self, stage: str = None):
+        """Returns the data transforms for a given stage and dataset.
+
+        Args:
+            stage: stage name of interest,
+                like "pretrain" / "train" / "finetune" / etc
+            dataset: dataset name of interest,
+                like "train" / "valid" / "infer"
+
+        .. note::
+            For datasets/loaders naming please follow
+            :py:mod:`catalyst.core.runner` documentation.
+
+        Returns:  # noqa: DAR202
+            Data transformations to use for specified dataset.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        """Returns the loaders for a given stage.  # noqa: DAR401
+
+        .. note::
+            Wrapper for
+            :py:mod:`catalyst.core.experiment.IExperiment.get_datasets`.
+            For most of your experiments you need to rewrite `get_datasets`
+            method only.
+
+        Args:
+            stage: stage name of interest,
+                like "pretrain" / "train" / "finetune" / etc
+            epoch: epoch index
+
+        Returns:  # noqa: DAR202
+            OrderedDict[str, DataLoader]: Ordered dictionary
+                with loaders for current stage and epoch.
+
+        """
+        pass
+
+    @abstractmethod
+    def get_model(self, stage: str) -> Model:
+        """Returns the model for a given stage and epoch.
+
+        Example::
+
+            # suppose we have typical MNIST model, like
+            # nn.Sequential(nn.Linear(28*28, 128), nn.Linear(128, 10))
+            >>> runner.get_model(stage="train")
+            Sequential(
+             : Linear(in_features=784, out_features=128, bias=True)
+             : Linear(in_features=128, out_features=10, bias=True)
+            )
+
+        Args:
+            stage: stage name of interest
+                like "pretrain" / "train" / "finetune" / etc
+
+        Returns:  # noqa: DAR202
+            Model: model for a given stage.
+        """
+        pass
+
+    def get_criterion(self, stage: str) -> Criterion:
+        """Returns the criterion for a given stage and epoch.
+
+        Example::
+
+            # for typical classification task
+            >>> runner.get_criterion(stage="train")
+            nn.CrossEntropyLoss()
+
+        Args:
+            stage: stage name of interest
+                like "pretrain" / "train" / "finetune" / etc
+
+        Returns:  # noqa: DAR202
+            Criterion: criterion for a given stage.
+        """
+        return None
+
+    def get_optimizer(self, model: Model, stage: str) -> Optimizer:
+        """Returns the optimizer for a given stage and model.
+
+        Example::
+
+            >>> runner.get_optimizer(model=model, stage="train")
+            torch.optim.Adam(model.parameters())
+
+        Args:
+            stage: stage name of interest
+                like "pretrain" / "train" / "finetune" / etc
+            model: model to optimize with stage optimizer
+
+        Returns:  # noqa: DAR202
+            Optimizer: optimizer for a given stage and model.
+        """
+        return None
+
+    def get_scheduler(self, optimizer: Optimizer, stage: str) -> Scheduler:
+        """Returns the scheduler for a given stage and optimizer.
+
+        Example::
+            >>> runner.get_scheduler(stage="training", optimizer=optimizer)
+            torch.optim.lr_scheduler.StepLR(optimizer)
+
+        Args:
+            stage: stage name of interest
+                like "pretrain" / "train" / "finetune" / etc
+            optimizer: optimizer to schedule with stage scheduler
+
+        Returns:  # noqa: DAR202
+            Scheduler: scheduler for a given stage and optimizer.
+        """
+        return None
+
+    def get_model_(self) -> Model:
+        self.model = self.get_model(stage=self.stage_key)
+        return self.model
+
+    def get_criterion_(self) -> Criterion:
+        self.criterion = self.get_criterion(stage=self.stage_key)
+        return self.criterion
+
+    def get_optimizer_(self) -> Optimizer:
+        assert self.model is not None, "You need to setup model first"
+        self.optimizer = self.get_optimizer(stage=self.stage_key, model=self.model)
+        return self.optimizer
+
+    def get_scheduler_(self) -> Scheduler:
+        assert self.optimizer is not None, "You need to setup optimizer first"
+        self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
+        return self.scheduler
+
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
+        """Returns callbacks for a given stage.
+
+        .. note::
+            To learn more about Catalyst Callbacks mechanism, please follow
+            :py:mod:`catalyst.core.callback.Callback` documentation.
+
+        .. note::
+            We need ordered dictionary to guarantee the correct dataflow
+            and order of metrics optimization.
+            For example, to compute loss before optimization ;)
+
+        Args:
+            stage: stage name of interest
+                like "pretrain" / "train" / "finetune" / etc
+
+        Returns:  # noqa: DAR202
+            OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
+            with callbacks for current stage.
+
+        .. note::
+            To learn more about Catalyst Core concepts, please check out
+
+                - :py:mod:`catalyst.core.experiment.IExperiment`
+                - :py:mod:`catalyst.core.runner.IRunner`
+                - :py:mod:`catalyst.core.callback.Callback`
+
+        Args:
+            stage: stage name of interest,
+                like "pretrain" / "train" / "finetune" / etc
+
+        Returns:
+            OrderedDict[str, Callback]: Ordered dictionary
+                with callbacks for current stage.
+        """
+        return {}
+
     def log_metrics(self, *args, **kwargs) -> None:
         for logger in self.loggers.values():
             logger.log_metrics(
                 *args,
                 **kwargs,
                 # experiment info
-                experiment_key=self.experiment_key,
+                experiment_key=self.run_key,
                 global_sample_step=self.global_sample_step,
                 global_batch_step=self.global_batch_step,
                 global_epoch_step=self.global_epoch_step,
@@ -162,7 +439,7 @@ class IRunner(ICallback, ILogger, ABC):
                 *args,
                 **kwargs,
                 # experiment info
-                experiment_key=self.experiment_key,
+                experiment_key=self.run_key,
                 global_sample_step=self.global_sample_step,
                 global_batch_step=self.global_batch_step,
                 global_epoch_step=self.global_epoch_step,
@@ -186,7 +463,7 @@ class IRunner(ICallback, ILogger, ABC):
                 *args,
                 **kwargs,
                 # experiment info
-                experiment_key=self.experiment_key,
+                experiment_key=self.run_key,
             )
 
     def flush_log(self) -> None:
@@ -197,14 +474,35 @@ class IRunner(ICallback, ILogger, ABC):
         for logger in self.loggers.values():
             logger.close_log()
 
-    def on_experiment_start(self, runner: "IRunner"):
-        """Event handler for experiment start.
+    def _setup_loaders(self) -> None:
+        set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
+        loaders = self.get_loaders(stage=self.stage_key)
+        loaders = validate_loaders(loaders)
+        self.loaders = loaders
 
-        Args:
-            runner: IRunner instance.
-        """
-        assert self.experiment is not None
-        self.experiment_key = self.experiment.name
+    def _setup_components(self) -> None:
+        set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
+        (
+            self.model,
+            self.criterion,
+            self.optimizer,
+            self.scheduler,
+        ) = self.engine.init_components(
+            model_fn=self.get_model_,
+            criterion_fn=self.get_criterion_,
+            optimizer_fn=self.get_optimizer_,
+            scheduler_fn=self.get_scheduler_,
+        )
+
+    def _setup_callbacks(self):
+        set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
+        callbacks = self.get_callbacks(self.stage_key)
+        callbacks = filter_callbacks_by_node(callbacks)
+        callbacks = sort_callbacks_by_order(callbacks)
+        self.callbacks = callbacks
+
+    def on_experiment_start(self, runner: "IRunner"):
+        self.run_key = self.name
         self.global_epoch_step: int = 0
         self.global_batch_step: int = 0
         self.global_sample_step: int = 0
@@ -212,49 +510,36 @@ class IRunner(ICallback, ILogger, ABC):
         self.need_early_stop: bool = False
         self.need_exception_reraise: bool = True
 
-        self.trial = self.experiment.get_trial()
-        self.engine = self.experiment.get_engine()
-        self.loggers = self.experiment.get_loggers()
-        self.log_hparams(hparams=self.experiment.hparams)
+        self.trial = self.get_trial()
+        self.engine = self.get_engine()
+        self.loggers = self.get_loggers()
+        self.log_hparams(hparams=self.hparams)
 
     def on_stage_start(self, runner: "IRunner"):
-        """Event handler for stage start.
-
-        Args:
-            runner: IRunner instance.
-        """
         assert self.stage_key is not None
-        stage_params = self.experiment.get_stage_params(self.stage_key)
         self.is_infer_stage: bool = self.stage_key.startswith("infer")
-        self.stage_epoch_len = stage_params["num_epochs"]
+        self.stage_epoch_len = self.get_stage_len(stage=self.stage_key)
         self.stage_epoch_step: int = 0
         self.stage_batch_step: int = 0
         self.stage_sample_step: int = 0
+        self._setup_loaders()
+        self._setup_components()
+        self._setup_callbacks()
 
     def on_epoch_start(self, runner: "IRunner"):
-        """Event handler for epoch start.
-
-        Args:
-            runner: IRunner instance.
-
-        Raises:
-            RunnerException: if current DataLoader is empty.
-        """
         self.global_epoch_step += 1
         self.stage_epoch_step += 1
         self.epoch_metrics: Dict = defaultdict(None)
-        # @TODO: trick to save pure epoch-based metrics, like lr/momentum
+        # storage for pure epoch-based metrics, like lr/momentum
         self.epoch_metrics["_epoch_"] = {}
 
+        assert self.loaders is not None
+        for loader_key, loader in self.loaders.items():
+            if len(loader) == 0:
+                raise RunnerException(f"DataLoader with name {loader_key} is empty.")
+        set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
+
     def on_loader_start(self, runner: "IRunner"):
-        """Event handler for loader start.
-
-        Args:
-            runner: IRunner instance.
-
-        Raises:
-            RunnerException: if current DataLoader is empty.
-        """
         assert self.loader is not None
         self.is_train_loader: bool = self.loader_key.startswith("train")
         self.is_valid_loader: bool = self.loader_key.startswith("valid")
@@ -266,16 +551,15 @@ class IRunner(ICallback, ILogger, ABC):
         self.loader_sample_step: int = 0
         self.loader_metrics: Dict = defaultdict(None)
 
+        if self.loader_batch_len == 0:
+            raise NotImplementedError(f"DataLoader with name {self.loader_key} is empty.")
+        set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
+
         maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
         if isinstance(self.loader.sampler, DistributedSampler):
             self.loader.sampler.set_epoch(self.stage_epoch_step)
 
     def on_batch_start(self, runner: "IRunner"):
-        """Event handler for batch start.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.batch = self.engine.sync_device(tensor_or_module=self.batch)
 
         if isinstance(self.batch, dict):
@@ -292,69 +576,26 @@ class IRunner(ICallback, ILogger, ABC):
         self.batch_metrics: Dict = defaultdict(None)
 
     def on_batch_end(self, runner: "IRunner"):
-        """Event handler for batch end.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
-        """Event handler for loader end.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.log_metrics(metrics=self.loader_metrics, scope="loader")
         self.epoch_metrics[self.loader_key] = self.loader_metrics.copy()
 
     def on_epoch_end(self, runner: "IRunner"):
-        """Event handler for epoch end.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.log_metrics(metrics=self.epoch_metrics, scope="epoch")
         self.flush_log()
 
     def on_stage_end(self, runner: "IRunner"):
-        """Event handler for stage end.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.engine.deinit_components()
 
     def on_experiment_end(self, runner: "IRunner"):
-        """Event handler for experiment end.
-
-        Args:
-            runner: IRunner instance.
-        """
         self.close_log()
 
     def on_exception(self, runner: "IRunner"):
-        """Event handler for exception case.
-
-        Args:
-            runner: IRunner instance.
-
-        Raises:
-            exception: pipeline exception
-        """
         raise self.exception
 
     def _run_event(self, event: str) -> None:
-        """Inner method to run specified event on Runners' callbacks.
-
-        Args:
-            event(str): event name to run on callbacks.
-
-        .. note::
-            To learn more about Catalyst Callbacks mechanism, please follow
-            :py:mod:`catalyst.core.callback.Callback` documentation.
-
-        """
         if _has_str_intersections(event, ("_start",)):
             getattr(self, event)(self)
         for callback in self.callbacks.values():
@@ -373,13 +614,16 @@ class IRunner(ICallback, ILogger, ABC):
                 from DataLoader.
         """
         pass
-        # for callback in self.callbacks.values():
-        #     callback.handle_batch(self)
 
     def _run_batch(self) -> None:
         self._run_event("on_batch_start")
+
+        # NOTE: wrapped forward because need to scale forward propagation
+        # as it was noted in docs:
+        #   https://pytorch.org/docs/stable/notes/amp_examples.html#typical-mixed-precision-training
         # @TODO: handle_batch with Callback?
-        self.handle_batch(batch=self.batch)
+        with self.engine.autocast():
+            self.handle_batch(batch=self.batch)
         # self.handle_batch()
         self._run_event("on_batch_end")
 
@@ -387,6 +631,7 @@ class IRunner(ICallback, ILogger, ABC):
         self._run_event("on_loader_start")
         with torch.set_grad_enabled(self.is_train_loader):
             for self.loader_batch_step, self.batch in enumerate(self.loader):
+                # @TODO: could we move `with self.engine.autocast():` here?
                 self._run_batch()
                 if self.need_early_stop:
                     self.need_early_stop = False
@@ -420,7 +665,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     def _run_experiment(self) -> None:
         self._run_event("on_experiment_start")
-        for self.stage_key in self.experiment.stages:
+        for self.stage_key in self.stages:
             if self.engine.rank < 0:
                 # single-device branch (cpu, gpu, dp)
                 self._run_stage()
@@ -433,9 +678,8 @@ class IRunner(ICallback, ILogger, ABC):
                 # raise NotImplementedError()
         self._run_event("on_experiment_end")
 
-    def run(self, experiment: IExperiment = None) -> "IRunner":
-        """
-        Starts the experiment.
+    def run(self) -> "IRunner":
+        """Runs the experiment.
 
         Args:
             experiment: Experiment instance to use for Runner.
@@ -443,7 +687,7 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:
             self, `IRunner` instance after the experiment
         """
-        self.experiment = experiment or self.experiment
+        # self.experiment = experiment or self.experiment
         try:
             self._run_experiment()
         except (Exception, KeyboardInterrupt) as ex:
@@ -452,106 +696,4 @@ class IRunner(ICallback, ILogger, ABC):
         return self
 
 
-class IStageBasedRunner(IRunner):
-    """
-    Runner abstraction that suppose to have constant
-    datasources per stage.
-    """
-
-    def on_stage_start(self, runner: "IRunner") -> None:
-        """Event handler for stage start.
-
-        For the `IStageBasedRunner` case:
-
-        - prepares loaders - our datasources
-        - prepares model components - model, criterion, optimizer, scheduler
-        - prepares callbacks for the current stage
-
-        Args:
-            runner: IRunner instance.
-        """
-        super().on_stage_start(runner)
-        stage_params = self.experiment.get_stage_params(self.stage_key)
-
-        # seed fix during dataset creation for reproducibility
-        set_global_seed(self.experiment.seed + self.engine.rank + self.global_epoch_step)
-        loaders = self.experiment.get_loaders(stage=self.stage_key)
-        loaders = validate_loaders(loaders)
-        self.loaders = loaders
-
-        migrate_model_from_previous_stage = stage_params.get(
-            "migrate_model_from_previous_stage", True
-        )
-        # some custom logic is possible here
-        if self.model is not None and migrate_model_from_previous_stage:
-            model_fn = lambda: self.model
-        else:
-            model_fn = partial(self.experiment.get_model, stage=self.stage_key)
-
-        # @TODO: we need a better approach here
-        # seed fix during components creation for reproducibility
-        set_global_seed(self.experiment.seed + self.global_epoch_step)
-        (
-            self.model,
-            self.criterion,
-            self.optimizer,
-            self.scheduler,
-        ) = self.engine.init_components(
-            model_fn=model_fn,
-            criterion_fn=partial(self.experiment.get_criterion, stage=self.stage_key),
-            optimizer_fn=partial(self.experiment.get_optimizer, stage=self.stage_key),
-            scheduler_fn=partial(self.experiment.get_scheduler, stage=self.stage_key),
-        )
-
-        # @TODO: we could refactor here
-        migrate_callbacks_from_previous_stage = stage_params.get(
-            "migrate_callbacks_from_previous_stage", True
-        )
-        # seed fix during callbacks creation for reproducibility
-        set_global_seed(self.experiment.seed + self.engine.rank + self.global_epoch_step)
-        callbacks = self.experiment.get_callbacks(self.stage_key)
-        callbacks = filter_callbacks_by_node(callbacks)
-        callbacks = sort_callbacks_by_order(callbacks)
-        if migrate_callbacks_from_previous_stage:
-            for key, value in self.callbacks.items():
-                if value.scope == CallbackScope.experiment:
-                    callbacks[key] = value
-        callbacks = sort_callbacks_by_order(callbacks)
-        self.callbacks = callbacks
-
-    def on_epoch_start(self, runner: "IRunner"):
-        """Event handler for stage start.
-
-        Args:
-            runner: IRunner instance.
-
-        Raises:
-            RunnerException: if current DataLoader is empty.
-        """
-        super().on_epoch_start(runner)
-        assert self.loaders is not None
-        for loader_key, loader in self.loaders.items():
-            if len(loader) == 0:
-                raise RunnerException(f"DataLoader with name {loader_key} is empty.")
-
-    def on_loader_start(self, runner: "IRunner"):
-        """Event handler for loader start.
-
-        Args:
-            runner: IRunner instance.
-
-        Raises:
-            RunnerException: if current DataLoader is empty.
-        """
-        super().on_loader_start(runner)
-        self.loader_batch_len = len(self.loader)
-        if self.loader_batch_len == 0:
-            raise NotImplementedError(f"DataLoader with name {self.loader_key} is empty.")
-        set_global_seed(self.experiment.seed + self.engine.rank + self.global_epoch_step)
-
-    def on_stage_end(self, runner: "IRunner") -> None:
-        # clean process if DDP training or do nothing
-        self.engine.deinit_components()
-
-
-__all__ = ["IRunner", "IStageBasedRunner", "RunnerException"]
+__all__ = ["IRunner", "RunnerException"]

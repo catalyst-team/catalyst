@@ -99,7 +99,12 @@ def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> 
     else:
         runner.engine.unpack_checkpoint(checkpoint, model=runner.model)
 
-        print(f"loaded model checkpoint {filename}")
+        print(
+            f"model checkpoint {filename} loaded "
+            f"(global epoch {checkpoint['global_epoch_step']}, "
+            f"stage {checkpoint['stage_key']}, "
+            f"epoch {checkpoint['stage_epoch_step']})"
+        )
 
 
 def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
@@ -219,17 +224,23 @@ class CheckpointCallback(ICheckpointCallback):
 
     def __init__(
         self,
-        logdir: str,
-        loader_key: str,
-        metric_key: str,
-        minimize: bool = True,
+        logdir: str = None,
+        # model selection info
+        loader_key: str = None,
+        metric_key: str = None,
+        minimize: bool = None,
         min_delta: float = 1e-6,
         save_n_best: int = 1,
+        # loading info
         load_on_stage_start: Union[str, Dict[str, str]] = None,
         load_on_stage_end: Union[str, Dict[str, str]] = None,
-        resume: str = None,
-        resume_dir: str = None,
+        # resume: str = None,
+        # resume_dir: str = None,
+        # checkpointer info
         metrics_filename: str = "_metrics.json",
+        mode: str = "all",
+        use_logdir_postfix: bool = False,
+        use_runner_logdir: bool = False,
     ):
         """
         Args:
@@ -321,28 +332,50 @@ class CheckpointCallback(ICheckpointCallback):
             assert load_on_stage_start in possible_states
         if isinstance(load_on_stage_end, str):
             assert load_on_stage_end in possible_states
-        if resume_dir is not None:
-            assert resume is not None
+        # if resume_dir is not None:
+        #     assert resume is not None
 
+        if loader_key is not None or metric_key is not None:
+            assert loader_key is not None and metric_key is not None, (
+                "For checkpoint selection `CheckpointCallback` "
+                "requires both `loader_key` and `metric_key` specified."
+            )
+            self._use_model_selection = True
+            self.minimize = minimize if minimize is not None else True  # loss-oriented selection
+        else:
+            self._use_model_selection = False
+            self.minimize = False  # epoch-num-oriented selection
+
+        assert mode in (
+            "all",
+            "full",
+            "model",
+        ), "`CheckpointCallback` could work only in `all`, `full` or `model` modes."
+
+        # checkpointer info
         self.logdir = logdir
+        self.mode = mode
+        self.metrics_filename = metrics_filename
+        self.use_logdir_postfix = use_logdir_postfix
+        self.use_runner_logdir = use_runner_logdir
+        assert (
+            self.logdir is not None or self.use_runner_logdir
+        ), "CheckpointCallback requires specified `logdir`"
+
+        # model selection info
         self.loader_key = loader_key
         self.metric_key = metric_key
-        self.minimize = minimize
         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
-
         self.save_n_best = save_n_best
-        self.load_on_stage_start = load_on_stage_start
-        self.load_on_stage_end = load_on_stage_end
-
-        self.resume = resume
-        self.resume_dir = resume_dir
-
         # list with topN metrics [(score, filepath, stage_key, stage_epoch_step, epoch metrics)]
         self.top_best_metrics = []
         self.best_score = None
-        self.metrics_filename = metrics_filename
 
-        # self._keys_from_runner = ["resume", "resume_dir"]
+        # loading info
+        self.load_on_stage_start = load_on_stage_start
+        self.load_on_stage_end = load_on_stage_end
+        # self.resume = resume
+        # self.resume_dir = resume_dir
 
     def _pack_checkpoint(self, runner: "IRunner"):
         checkpoint = runner.engine.pack_checkpoint(
@@ -351,7 +384,7 @@ class CheckpointCallback(ICheckpointCallback):
             optimizer=runner.optimizer,
             scheduler=runner.scheduler,
             # experiment info
-            experiment_key=runner.experiment_key,
+            experiment_key=runner.run_key,
             global_epoch_step=runner.global_epoch_step,
             global_batch_step=runner.global_batch_step,
             global_sample_step=runner.global_sample_step,
@@ -361,7 +394,7 @@ class CheckpointCallback(ICheckpointCallback):
             stage_batch_step=runner.stage_batch_step,
             stage_sample_step=runner.stage_sample_step,
             # epoch info
-            epoch_metrics=dict(runner.epoch_metrics),
+            epoch_metrics={k: dict(v) for k, v in runner.epoch_metrics.items()},
             # loader info
             loader_key=runner.loader_key,
             loader_batch_step=runner.loader_batch_step,
@@ -375,37 +408,40 @@ class CheckpointCallback(ICheckpointCallback):
 
     def _save_checkpoint(
         self, runner: IRunner, checkpoint: Dict, is_best: bool, is_last: bool
-    ) -> Tuple[str, str]:
+    ) -> str:
         """
         Saves checkpoints: full with model/criterion/optimizer/scheduler
         and truncated with model only.
         """
         logdir = Path(f"{self.logdir}/")
         suffix = f"{runner.stage_key}.{runner.stage_epoch_step}"
+        checkpoint_path = None
 
-        full_checkpoint_path = _save_checkpoint(
-            runner=runner,
-            logdir=logdir,
-            checkpoint=checkpoint,
-            suffix=f"{suffix}_full",
-            is_best=is_best,
-            is_last=is_last,
-            special_suffix="_full",
-        )
-        exclude = ["criterion", "optimizer", "scheduler"]
-        checkpoint_path = _save_checkpoint(
-            runner=runner,
-            checkpoint={
-                key: value
-                for key, value in checkpoint.items()
-                if all(z not in key for z in exclude)
-            },
-            logdir=logdir,
-            suffix=suffix,
-            is_best=is_best,
-            is_last=is_last,
-        )
-        return (full_checkpoint_path, checkpoint_path)
+        if self.mode in ("all", "full"):
+            checkpoint_path = _save_checkpoint(
+                runner=runner,
+                logdir=logdir,
+                checkpoint=checkpoint,
+                suffix=f"{suffix}_full",
+                is_best=is_best,
+                is_last=is_last,
+                special_suffix="_full",
+            )
+        if self.mode in ("all", "model"):
+            exclude = ["criterion", "optimizer", "scheduler"]
+            checkpoint_path = _save_checkpoint(
+                runner=runner,
+                checkpoint={
+                    key: value
+                    for key, value in checkpoint.items()
+                    if all(z not in key for z in exclude)
+                },
+                logdir=logdir,
+                suffix=suffix,
+                is_best=is_best,
+                is_last=is_last,
+            )
+        return checkpoint_path
 
     def _truncate_checkpoints(self) -> None:
         self.top_best_metrics = sorted(
@@ -448,43 +484,49 @@ class CheckpointCallback(ICheckpointCallback):
         Args:
             runner: current runner
         """
+        # @TODO: very tricky hack
+        if self.logdir is None and self.use_runner_logdir:
+            self.logdir = getattr(runner, "_logdir", None)
+            if self.use_logdir_postfix:
+                self.logdir = os.path.join(self.logdir, "checkpoints")
 
-        # if getattr(runner, "resume", None) is not None:
-        #     self.resume = runner.resume
-        #     runner.resume = None
-        # elif getattr(runner, "autoresume", None) is not None:
-        #     self.resume_dir = runner.logdir / "checkpoints"
-        #     self.resume = f"{runner.autoresume}_full.pth"
-        #     runner.autoresume = None
-
-        # for key in self._keys_from_runner:
-        #     value = getattr(runner, key, None)
-        #     if value is not None:
-        #         setattr(self, key, value)
-
-        if self.resume_dir is not None:
-            self.resume = str(self.resume_dir) + "/" + str(self.resume)
-
-        if self.resume is not None:
-            _load_runner(logdir=self.logdir, runner=runner, mapping=self.resume, load_full=True)
-            self.resume = None
-        else:
-            checkpoint_exists = False
-            need_load_full = False
-            if isinstance(self.load_on_stage_start, str):
-                checkpoint_exists = os.path.isfile(f"{self.logdir}/{self.load_on_stage_start}.pth")
-                need_load_full = self.load_on_stage_start.endswith("full")
-            elif isinstance(self.load_on_stage_start, dict):
-                required_files = _get_required_files(self.logdir, self.load_on_stage_start).keys()
-                checkpoint_exists = all(os.path.isfile(file) for file in required_files)
-
-            if self.load_on_stage_start is not None and checkpoint_exists:
-                _load_runner(
-                    logdir=self.logdir,
-                    runner=runner,
-                    mapping=self.load_on_stage_start,
-                    load_full=need_load_full,
-                )
+    #
+    #     if getattr(runner, "resume", None) is not None:
+    #         self.resume = runner.resume
+    #         runner.resume = None
+    #     elif getattr(runner, "autoresume", None) is not None:
+    #         self.resume_dir = runner.logdir / "checkpoints"
+    #         self.resume = f"{runner.autoresume}_full.pth"
+    #         runner.autoresume = None
+    #
+    #     for key in self._keys_from_runner:
+    #         value = getattr(runner, key, None)
+    #         if value is not None:
+    #             setattr(self, key, value)
+    #
+    #     if self.resume_dir is not None:
+    #         self.resume = str(self.resume_dir) + "/" + str(self.resume)
+    #
+    #     if self.resume is not None:
+    #         _load_runner(logdir=self.logdir, runner=runner, mapping=self.resume, load_full=True)
+    #         self.resume = None
+    #     else:
+    #         checkpoint_exists = False
+    #         need_load_full = False
+    #         if isinstance(self.load_on_stage_start, str):
+    #             checkpoint_exists = os.path.isfile(f"{self.logdir}/{self.load_on_stage_start}.pth")
+    #             need_load_full = self.load_on_stage_start.endswith("full")
+    #         elif isinstance(self.load_on_stage_start, dict):
+    #             required_files = _get_required_files(self.logdir, self.load_on_stage_start).keys()
+    #             checkpoint_exists = all(os.path.isfile(file) for file in required_files)
+    #
+    #         if self.load_on_stage_start is not None and checkpoint_exists:
+    #             _load_runner(
+    #                 logdir=self.logdir,
+    #                 runner=runner,
+    #                 mapping=self.load_on_stage_start,
+    #                 load_full=need_load_full,
+    #             )
 
     def on_epoch_end(self, runner: "IRunner") -> None:
         """
@@ -496,7 +538,13 @@ class CheckpointCallback(ICheckpointCallback):
         if runner.stage_key.startswith("infer"):
             return
 
-        score = runner.epoch_metrics[self.loader_key][self.metric_key]
+        if self._use_model_selection:
+            # score model based on the specified metric
+            score = runner.epoch_metrics[self.loader_key][self.metric_key]
+        else:
+            # score model based on epoch number
+            score = runner.global_epoch_step
+
         is_best = False
         if self.best_score is None or self.is_better(score, self.best_score):
             self.best_score = score
@@ -506,7 +554,7 @@ class CheckpointCallback(ICheckpointCallback):
             # pack checkpoint
             checkpoint = self._pack_checkpoint(runner)
             # save checkpoint
-            _, checkpoint_path = self._save_checkpoint(
+            checkpoint_path = self._save_checkpoint(
                 runner=runner, checkpoint=checkpoint, is_best=is_best, is_last=True,
             )
             # add metrics to records
@@ -543,7 +591,7 @@ class CheckpointCallback(ICheckpointCallback):
             # pack checkpoint
             checkpoint = self._pack_checkpoint(runner)
             # save checkpoint
-            _, checkpoint_path = self._save_checkpoint(
+            checkpoint_path = self._save_checkpoint(
                 runner=runner,
                 checkpoint=checkpoint,
                 is_best=True,  # will duplicate current (last) as best

@@ -11,8 +11,7 @@ def cmc_score_count(
 
     Args:
         distances: distance matrix shape of (n_embeddings_x, n_embeddings_y)
-        conformity_matrix: binary matrix with 1 on same label pos
-            and 0 otherwise
+        conformity_matrix: binary matrix with 1 on same label pos and 0 otherwise
         topk: number of top examples for cumulative score counting
 
     Returns:
@@ -43,8 +42,7 @@ def cmc_score(
             embeddings of the objects in querry
         gallery_embeddings: tensor shape of (n_embeddings, embedding_dim)
             embeddings of the objects in gallery
-        conformity_matrix: binary matrix with 1 on same label pos
-            and 0 otherwise
+        conformity_matrix: binary matrix with 1 on same label pos and 0 otherwise
         topk: number of top examples for cumulative score counting
 
     Returns:

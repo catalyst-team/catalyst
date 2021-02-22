@@ -371,4 +371,4 @@ def trevsky(
 
 jaccard = iou
 
-__all__ = ["iou", "jaccard", "dice", "trevsky"]
+__all__ = ["iou", "jaccard", "dice", "trevsky", "get_segmentation_statistics"]

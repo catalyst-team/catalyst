@@ -14,16 +14,12 @@ from catalyst import dl
 from catalyst.engines.amp import AMPEngine
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .test_device_engine import (  # SupervisedRunner,
-    DummyDataset,
-    DummyModel,
-    LossMinimizationCallback,
-)
+from .test_device import DummyDataset, DummyModel, LossMinimizationCallback  # SupervisedRunner,
 
 logger = logging.getLogger(__name__)
 
 
-class SupervisedRunner(dl.IStageBasedRunner):
+class SupervisedRunner(dl.IRunner):
     def handle_batch(self, batch):
         x, y = batch
 
@@ -106,10 +102,9 @@ class CustomExperiment(dl.IExperiment):
             ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            # TODO: fix issue with pickling wrapped model's forward function
-            # "checkpoint": dl.CheckpointCallback(
-            #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
-            # ),
+            "checkpoint": dl.CheckpointCallback(
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            ),
             # "check": DeviceCheckCallback(),
             "check2": LossMinimizationCallback("loss"),
             "logits_type_checker": TensorTypeChecker("logits"),

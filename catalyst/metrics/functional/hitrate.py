@@ -19,14 +19,14 @@ def hitrate(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> Li
 
     Args:
         outputs (torch.Tensor):
-            Tensor weith predicted score
+            Tensor with predicted score
             size: [batch_size, slate_length]
             model outputs, logits
         targets (torch.Tensor):
             Binary tensor with ground truth.
             1 means the item is relevant
             for the user and 0 not relevant
-            size: [batch_szie, slate_length]
+            size: [batch_size, slate_length]
             ground truth, labels
         topk (List[int]):
             Parameter fro evaluation on top-k items

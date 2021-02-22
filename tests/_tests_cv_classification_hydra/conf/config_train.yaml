@@ -1,4 +1,4 @@
-vals:
+shared:
   dataset_root: './data'
   train_batch_size: 64
   train_num_workers: 1
@@ -25,7 +25,7 @@ args:
   logdir: "./tests/logs/_tests_cv_classification_hydra"
   resume: null
   autoresume: null
-  seed: ${vals.seed}
+  seed: ${shared.seed}
   distributed: False
   apex: False
   amp: False
@@ -58,28 +58,28 @@ stages:
     params:
       main_metric: accuracy01
       minimize_metric: False
-      num_epochs: ${vals.num_epochs}
+      num_epochs: ${shared.num_epochs}
       valid_loader: valid
 
     datasets:
       train:
         _target_: catalyst.contrib.datasets.MNIST
-        root: ${vals.dataset_root}
+        root: ${shared.dataset_root}
         train: True
         download: True
       valid:
         _target_: catalyst.contrib.datasets.MNIST
-        root: ${vals.dataset_root}
+        root: ${shared.dataset_root}
         train: False
         download: True
 
     loaders:
       train:
-        batch_size: ${vals.train_batch_size}
-        num_workers: ${vals.train_num_workers}
+        batch_size: ${shared.train_batch_size}
+        num_workers: ${shared.train_num_workers}
       valid:
-        batch_size: ${vals.valid_batch_size}
-        num_workers: ${vals.valid_num_workers}
+        batch_size: ${shared.valid_batch_size}
+        num_workers: ${shared.valid_num_workers}
 
     transforms:
       train:
@@ -93,20 +93,20 @@ stages:
 
     optimizers:
       adam:
-        _target_: ${vals.optimizer.target}
+        _target_: ${shared.optimizer.target}
         models:
           - simplenet
-        lr: ${vals.optimizer.lr}
-        weight_decay: ${vals.optimizer.weight_decay}
+        lr: ${shared.optimizer.lr}
+        weight_decay: ${shared.optimizer.weight_decay}
 
     schedulers:
       one_cycle_lr_with_warmup:
-        _target_: ${vals.scheduler.target}
+        _target_: ${shared.scheduler.target}
         optimizer: adam
-        num_steps: ${vals.num_epochs}
-        warmup_steps: ${vals.scheduler.warmup_steps}
-        lr_range: ${vals.scheduler.lr_range}
-        momentum_range: ${vals.scheduler.momentum_range}
+        num_steps: ${shared.num_epochs}
+        warmup_steps: ${shared.scheduler.warmup_steps}
+        lr_range: ${shared.scheduler.lr_range}
+        momentum_range: ${shared.scheduler.momentum_range}
 
     callbacks:
       loss:

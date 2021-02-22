@@ -59,11 +59,11 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
         optimizer=optimizer,
         callbacks=callbacks,
         loaders={"train": train_loader, "valid": val_loader},
-        minimize_metric=False,
+        minimize_valid_metric=False,
         verbose=True,
         valid_loader="valid",
         num_epochs=100,
-        main_metric="cmc01",
+        valid_metric="cmc01",
     )
     return runner.best_valid_metrics["cmc01"]
 

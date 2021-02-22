@@ -101,7 +101,7 @@ def main():
             dl.OptimizerCallback(optimizer_key="generator", metric_key="loss_generator"),
             dl.OptimizerCallback(optimizer_key="discriminator", metric_key="loss_discriminator"),
         ],
-        main_metric="loss_generator",
+        valid_metric="loss_generator",
         num_epochs=20,
         verbose=True,
         logdir="./logs_gan",

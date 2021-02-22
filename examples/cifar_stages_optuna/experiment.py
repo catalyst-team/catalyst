@@ -41,7 +41,7 @@ class Experiment(ConfigExperiment):
         Returns:
             model
         """
-        model = super().get_model(stage=stage)
+        model = super().get_model_(stage=stage)
         if isinstance(model, torch.nn.DataParallel):
             model = model.module
 
