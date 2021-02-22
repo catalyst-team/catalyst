@@ -36,7 +36,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
             Used for per-batch logging. default: True
             prefix: metric prefix
             suffix: metric suffix
-            class_dim: indicates class dimention (K) for ``outputs`` and
+            class_dim: indicates class dimension (K) for ``outputs`` and
             ``targets`` tensors (default = 1)
             weights: class weights
             class_names: class names

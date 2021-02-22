@@ -54,7 +54,7 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.contrib.data.cv import ToTensor
+from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 model = torch.nn.Linear(28 * 28, 10)
@@ -304,7 +304,7 @@ import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.contrib.data.cv import ToTensor
+from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 model = torch.nn.Linear(28 * 28, 10)
@@ -357,7 +357,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.contrib.data.cv import ToTensor
+from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 class ClassifyAE(nn.Module):
@@ -430,7 +430,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.contrib.data.cv import ToTensor
+from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 LOG_SCALE_MAX = 2
@@ -520,7 +520,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.contrib.data.cv import ToTensor
+from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 class ClassifyUnet(nn.Module):
@@ -596,12 +596,12 @@ from torch.utils.data import DataLoader
 
 from catalyst import data, dl, utils
 from catalyst.contrib import datasets, models, nn
-import catalyst.contrib.data.cv.transforms.torch as t
+from catalyst.data.transforms import Compose, Normalize, ToTensor
 
 
 # 1. train and valid datasets
 dataset_root = "."
-transforms = t.Compose([t.ToTensor(), t.Normalize((0.1307,), (0.3081,))])
+transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
 dataset_train = datasets.MnistMLDataset(root=dataset_root, download=True, transform=transforms)
 sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)
@@ -611,7 +611,7 @@ dataset_val = datasets.MnistQGDataset(root=dataset_root, transform=transforms, g
 val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
 
 # 2. model and optimizer
-model = models.SimpleConv(features_dim=16)
+model = models.MnistSimpleNet(features_dim=16)
 optimizer = Adam(model.parameters(), lr=0.001)
 
 # 3. criterion with triplets sampling
@@ -653,7 +653,7 @@ from torch import nn
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.cv import ToTensor
+from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
 
@@ -901,7 +901,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 from catalyst import dl, metrics, utils
-from catalyst.contrib.data.cv import ToTensor
+from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 class ClassifyAE(nn.Module):
@@ -1027,7 +1027,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.contrib.data.cv import ToTensor
+from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn import Flatten
     

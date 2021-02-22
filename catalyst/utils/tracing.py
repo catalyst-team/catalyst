@@ -8,15 +8,11 @@ from torch import jit, nn
 from catalyst.typing import Device, Model
 from catalyst.utils.checkpoint import load_checkpoint, pack_checkpoint, unpack_checkpoint
 from catalyst.utils.config import load_config
-from catalyst.utils.distributed import get_nn_from_ddp_module
+from catalyst.utils.distributed import assert_fp16_available, get_nn_from_ddp_module
 from catalyst.utils.loaders import get_native_batch_from_loaders
 from catalyst.utils.misc import get_fn_argsnames
-from catalyst.utils.scripts import prepare_config_api_components, get_config_runner
-from catalyst.utils.torch import any2device, get_requires_grad, set_requires_grad, ForwardOverrideModel
-from catalyst.utils.model_loading import get_model_file_name, load_experiment
-
-from catalyst.settings import IS_APEX_AVAILABLE
-
+from catalyst.utils.scripts import get_config_runner
+from catalyst.utils.torch import any2device, get_requires_grad, set_requires_grad
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -170,12 +166,11 @@ def trace_model_from_checkpoint(
     experiment: ConfigExperiment = None
     experiment, runner, _ = get_config_runner(expdir=expdir, config=config)
 
-
     logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:
         stage = list(experiment.stages)[0]
 
-    model = experiment.get_model_(stage)
+    model = experiment._get_model(stage)
     checkpoint = load_checkpoint(checkpoint_path)
     unpack_checkpoint(checkpoint, model=model)
     runner.model, runner.device = model, device

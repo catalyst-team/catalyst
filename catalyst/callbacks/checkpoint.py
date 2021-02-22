@@ -94,7 +94,10 @@ def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> 
         )
 
         print(
-            f"loaded state checkpoint {filename}."
+            f"full checkpoint {filename} loaded "
+            f"(global epoch {checkpoint['global_epoch_step']}, "
+            f"stage {checkpoint['stage_key']}, "
+            f"epoch {checkpoint['stage_epoch_step']})"
         )
     else:
         runner.engine.unpack_checkpoint(checkpoint, model=runner.model)

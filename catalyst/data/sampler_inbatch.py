@@ -19,9 +19,7 @@ TLabels = Union[List[int], Tensor]
 
 
 class IInbatchTripletSampler(ABC):
-    """
-    An abstraction of inbatch triplet sampler.
-    """
+    """An abstraction of inbatch triplet sampler."""
 
     @abstractmethod
     def _check_input_labels(self, labels: List[int]) -> None:
@@ -193,7 +191,7 @@ class HardTripletsSampler(InBatchTripletsSampler):
         assert features.shape[0] == len(labels)
 
         if self._norm_required:
-            features = normalize(samples=features.detach())
+            features = normalize(tensors=features.detach())
 
         dist_mat = torch.cdist(x1=features, x2=features, p=2)
 

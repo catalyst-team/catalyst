@@ -1,11 +1,3 @@
-"""
-AdamP
-Copyright (c) 2020-present NAVER Corp.
-MIT license
-
-Original source code: https://github.com/clovaai/AdamP
-"""
-
 import math
 
 import torch
@@ -43,6 +35,8 @@ class AdamP(Optimizer):
         https://arxiv.org/abs/1412.6980
     .. _Slowing Down the Weight Norm Increase in Momentum-based Optimizers:
         https://arxiv.org/abs/2006.08217
+
+    Original source code: https://github.com/clovaai/AdamP
     """
 
     def __init__(

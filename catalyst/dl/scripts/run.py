@@ -6,11 +6,11 @@ import os
 from pathlib import Path
 import sys
 
+from catalyst.dl.scripts.functional import parse_args_uargs
 from catalyst.runners.config import ConfigRunner
 from catalyst.settings import IS_HYDRA_AVAILABLE
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, set_global_seed
-from catalyst.utils.parser import parse_args_uargs
 from catalyst.utils.scripts import dump_code, get_config_runner
 from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import prepare_cudnn

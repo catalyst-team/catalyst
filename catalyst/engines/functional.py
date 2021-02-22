@@ -1,9 +1,26 @@
 from typing import Any, List, Union
 import pickle
 import re
+import socket
 
 import torch
 import torch.distributed as dist
+
+
+# TODO: add tests for this method
+def get_available_port() -> str:
+    """Find any free available port to use for training.
+
+    Returns:
+        string with available port.
+    """
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    sock.bind(("", 0))
+    port = sock.getsockname()[1]
+    sock.close()
+
+    return port
 
 
 def sum_reduce(tensor: torch.Tensor) -> torch.Tensor:

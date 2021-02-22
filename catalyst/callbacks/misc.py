@@ -293,7 +293,6 @@ __all__ = [
     "TimerCallback",
     "TqdmCallback",
     "CheckRunCallback",
-    "MetricHandler",
     "IBatchMetricHandlerCallback",
     "IEpochMetricHandlerCallback",
     "EarlyStoppingCallback",

@@ -23,8 +23,7 @@ def _convert_label_to_similarity(normed_features: Tensor, labels: Tensor) -> Tup
 
 class CircleLoss(nn.Module):
     """
-    CircleLoss from `Circle Loss: A Unified Perspective
-    of Pair Similarity Optimization`_ paper.
+    CircleLoss from `Circle Loss: A Unified Perspective of Pair Similarity Optimization`_ paper.
 
     Adapter from:
     https://github.com/TinyZeaMays/CircleLoss

@@ -1,7 +1,7 @@
 from typing import Any, Dict, Iterable, Mapping, Tuple
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
-from functools import lru_cache, partial
+from functools import lru_cache
 import logging
 
 import torch
@@ -58,8 +58,8 @@ class IRunner(ICallback, ILogger, ABC):
     .. note::
         To learn more about Catalyst Core concepts, please check out
 
-            - :py:mod:`catalyst.core.experiment.IExperiment`
             - :py:mod:`catalyst.core.runner.IRunner`
+            - :py:mod:`catalyst.core.engine.IEngine`
             - :py:mod:`catalyst.core.callback.Callback`
     """
 
@@ -319,7 +319,7 @@ class IRunner(ICallback, ILogger, ABC):
         """
         return None
 
-    def get_optimizer(self, model: Model, stage: str) -> Optimizer:
+    def get_optimizer(self, stage: str, model: Model) -> Optimizer:
         """Returns the optimizer for a given stage and model.
 
         Example::
@@ -337,7 +337,7 @@ class IRunner(ICallback, ILogger, ABC):
         """
         return None
 
-    def get_scheduler(self, optimizer: Optimizer, stage: str) -> Scheduler:
+    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
         """Returns the scheduler for a given stage and optimizer.
 
         Example::
@@ -354,20 +354,20 @@ class IRunner(ICallback, ILogger, ABC):
         """
         return None
 
-    def get_model_(self) -> Model:
+    def _get_model(self) -> Model:
         self.model = self.get_model(stage=self.stage_key)
         return self.model
 
-    def get_criterion_(self) -> Criterion:
+    def _get_criterion(self) -> Criterion:
         self.criterion = self.get_criterion(stage=self.stage_key)
         return self.criterion
 
-    def get_optimizer_(self) -> Optimizer:
+    def _get_optimizer(self) -> Optimizer:
         assert self.model is not None, "You need to setup model first"
         self.optimizer = self.get_optimizer(stage=self.stage_key, model=self.model)
         return self.optimizer
 
-    def get_scheduler_(self) -> Scheduler:
+    def _get_scheduler(self) -> Scheduler:
         assert self.optimizer is not None, "You need to setup optimizer first"
         self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
         return self.scheduler
@@ -391,13 +391,6 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR202
             OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
             with callbacks for current stage.
-
-        .. note::
-            To learn more about Catalyst Core concepts, please check out
-
-                - :py:mod:`catalyst.core.experiment.IExperiment`
-                - :py:mod:`catalyst.core.runner.IRunner`
-                - :py:mod:`catalyst.core.callback.Callback`
 
         Args:
             stage: stage name of interest,
@@ -488,10 +481,10 @@ class IRunner(ICallback, ILogger, ABC):
             self.optimizer,
             self.scheduler,
         ) = self.engine.init_components(
-            model_fn=self.get_model_,
-            criterion_fn=self.get_criterion_,
-            optimizer_fn=self.get_optimizer_,
-            scheduler_fn=self.get_scheduler_,
+            model_fn=self._get_model,
+            criterion_fn=self._get_criterion,
+            optimizer_fn=self._get_optimizer,
+            scheduler_fn=self._get_scheduler,
         )
 
     def _setup_callbacks(self):

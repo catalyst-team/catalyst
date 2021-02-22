@@ -39,7 +39,7 @@ def run_ml_pipeline(sampler_inbatch: data.IInbatchTripletSampler) -> float:
     val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
 
     # 2. model and optimizer
-    model = models.SimpleConv(features_dim=16)
+    model = models.MnistSimpleNet(features_dim=16)
     optimizer = Adam(model.parameters(), lr=0.0005)
 
     # 3. criterion with triplets sampling

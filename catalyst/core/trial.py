@@ -1,4 +1,3 @@
-from typing import Dict
 from abc import ABC
 
 
@@ -12,10 +11,4 @@ class ITrial(ABC):
     pass
 
 
-# could it be a Union[supported trials?]
-class Trial(ITrial):
-    pass
-
-
-def get_trial_by_params(trial_params: Dict):
-    return Trial()
+__all__ = ["ITrial"]

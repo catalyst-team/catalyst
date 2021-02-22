@@ -8,7 +8,7 @@ Callbacks
    :local:
 
 
-Main
+Run
 ----------------------
 .. automodule:: catalyst.callbacks
     :members:
@@ -17,296 +17,159 @@ Main
 
 BatchOverfitCallback
 ~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.batch_overfit
+.. autoclass:: catalyst.callbacks.batch_overfit.BatchOverfitCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-Checkpoint
+CheckpointCallback
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.checkpoint
+.. autoclass:: catalyst.callbacks.checkpoint.CheckpointCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-Control Flow
+ControlFlowCallback
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.control_flow
+.. autoclass:: catalyst.callbacks.control_flow.ControlFlowCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
 Criterion
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.criterion
+.. autoclass:: catalyst.callbacks.criterion.CriterionCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-Early Stop
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.early_stop
+Metric – BatchMetricCallback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.metric.BatchMetricCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-Exception
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.exception
+Metric – LoaderMetricCallback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.metric.LoaderMetricCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-Logging
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.logging
+Misc – CheckRunCallback
+~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.misc.CheckRunCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-Metric
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metric
+Misc – EarlyStoppingCallback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.misc.EarlyStoppingCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-Optimizer
+Misc – TimerCallback
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.optimizer
+.. autoclass:: catalyst.callbacks.misc.TimerCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
+Misc – TqdmCallback
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.misc.TqdmCallback
+    :members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
+OptimizerCallback
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.optimizer.OptimizerCallback
+    :members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
+OptunaPruningCallback
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.optuna.OptunaPruningCallback
+    :members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
 PeriodicLoaderCallback
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.periodic_loader
+.. autoclass:: catalyst.callbacks.periodic_loader.PeriodicLoaderCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-Pruning
+PruningCallback
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.pruning
+.. autoclass:: catalyst.callbacks.pruning.PruningCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-Quantization
+.. Quantization
+
+Scheduler – SchedulerCallback
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.scheduler.SchedulerCallback
+    :members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
+Scheduler – LRFinder
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.quantization
+.. autoclass:: catalyst.callbacks.scheduler.LRFinder
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-Scheduler
+.. Tracing
+
+BatchTransformCallback
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.scheduler
+.. autoclass:: catalyst.callbacks.transform.BatchTransformCallback
     :members:
-    :undoc-members:
-    :show-inheritance:
-
-Timer
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.timer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Tracing
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.tracing
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Validation
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.validation
-    :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
 
-Metrics
+Metric
 ----------------------
 .. automodule:: catalyst.callbacks.metrics
     :members:
     :show-inheritance:
 
 
-Accuracy
+AccuracyCallback
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.accuracy
+.. autoclass:: catalyst.callbacks.metrics.accuracy.AccuracyCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-AUC
+AUCCallback
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.auc
+.. autoclass:: catalyst.callbacks.metrics.auc.AUCCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-CMC score
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.cmc_score
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. Classification
 
-Dice
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.dice
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-F1 score
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.f1_score
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-IOU
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.iou
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MRR
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.mrr
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Perplexity
-~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.perplexity
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Precision
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.precision
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Recall
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.recall
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Global precision, recall and F1-score
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.callbacks.metrics.ppv_tpr_f1
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Contrib
-----------------------
-.. automodule:: catalyst.contrib.callbacks
-    :members:
-    :show-inheritance:
-
-
-AlchemyLogger
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.alchemy_logger
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. CMC score
 
 ConfusionMatrixCallback
 ~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.confusion_matrix_logger
+.. autoclass:: catalyst.callbacks.metrics.confusion_matrix.ConfusionMatrixCallback
     :members:
-    :undoc-members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-CutmixCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.cutmix_callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. Segmentation
 
-GradNormLogger
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.gradnorm_logger
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-InferCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.inference_callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-BatchTransformCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.kornia_transform
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-InferMaskCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.mask_inference
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-DrawMasksCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.draw_masks_callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MixupCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.mixup_callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-NeptuneLogger
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.neptune_logger
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-OptunaCallback
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.optuna_callback
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-TelegramLogger
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.telegram_logger
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-WandbLogger
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.callbacks.wandb_logger
-    :members:
-    :undoc-members:
-    :show-inheritance:

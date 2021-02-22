@@ -4,7 +4,7 @@ shared:  # Пример
   key2: &key2 value2
 
 
-model_params:  # REQUIRED KEYWORD, параметры модели (моделей)
+model:  # REQUIRED KEYWORD, параметры модели (моделей)
   _key_value: False  # KEYWORD, если True, то моделей может быть несколько и тогда их нужно обернуть еще в key-value
 
   _target_: ModelName  # REQUIRED KEYWORD Имя класса. Сам класс будет сконструирован в registry по этому имени
@@ -23,13 +23,13 @@ args:  # REQUIRED KEYWORD, различные аргументы для Catalyst
   check: False  # KEYWORD, если True, то Catalyst делает только 3 эпохи (чтобы проверить работоспособность пайплайна, по умолчанию False)
 
 
-runner_params:  # OPTIONAL KEYWORD, параметры для инициализации Runner
+runner:  # OPTIONAL KEYWORD, параметры для инициализации Runner
   # Например для SupervisedRunner
   input_key: "features"  # Пример
   output_key: null  # Пример
 
 
-engine_params:  # OPTIONAL KEYWORD, параметры для distributed training и NVIDIA Apex
+engine:  # OPTIONAL KEYWORD, параметры для distributed training и NVIDIA Apex
   rank: -1  # Rank для distributed training
   opt_level: O1  # Пример для NVIDIA Apex
   syncbn: False  # KEYWORD нужно ли преобразовывать BatchNorm в SyncBatchNorm (по умолчанию False)
@@ -37,19 +37,19 @@ engine_params:  # OPTIONAL KEYWORD, параметры для distributed traini
 
 
 stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, для обучения и/или инфера. Содержат ключевые слова с параметрами, которые применятся ко всем стейджам, так и сами имена стейджей
-  data_params:  # KEYWORD, параметры передаваемые в `ConfigExperiment.get_datasets(...)` (для всех стейджей)
+  data:  # KEYWORD, параметры передаваемые в `ConfigExperiment.get_datasets(...)` (для всех стейджей)
     batch_size: 1  # KEYWORD, размер батча для всех стейджей
     num_workers: 1  # KEYWORD, количество параллельных процессов для DataLoader
     drop_last: False  # KEYWORD, параметр для DataLoader (по умолчанию False)
     per_gpu_scaling: False  # KEYWORD, если True, то увеличивает батчсайз и количество воркеров пропорционально количиству видеокарт (для distributed увеличивает только батчсайз)
-    loaders_params:  # KEYWORD, параметры для лоадеров, опционально
+    loaders:  # KEYWORD, параметры для лоадеров, опционально
       # Например
       train:
         num_workers: 10  # Переопределит значение для этого конкретного лоадера (train)
         drop_last: True
       valid:  # Переопределит значение для valid лоадера
         batch_size: 32
-    samplers_params:  # KEYWORD, параметры sampler для каждого лоадера, такое же API, как в loaders_params
+    samplers:  # KEYWORD, параметры sampler для каждого лоадера, такое же API, как в loaders
       # Пример
       train:  # только для train лоадера
         _target_: MiniEpochSampler  # KEYWORD, имя для sampler
@@ -62,7 +62,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     key_for_data: value  # Пример
 
 
-  transform_params:
+  transform:
     _key_value: True  # KEYWORD, если True, то для каждого датасета (e.g. train/valid/infer) можно определить свои трансформации и тогда их нужно обернуть еще в key-value
 
     train:  # трансформация только для train датасета
@@ -87,7 +87,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     infer: *transform  # трансформация только для infer датасета
 
 
-  stage_params:  # REQUIRED KEYWORD, параметры для всех стейджей
+  stage:  # REQUIRED KEYWORD, параметры для всех стейджей
     main_metric: &main_metric accuracy01  # REQUIRED KEYWORD, имя метрики, по которой будут отбираться чекпоинты
     minimize_metric: False  # REQUIRED KEYWORD, флаг, нужно ли минимизировать `main_metric`
     num_epochs: 2  # KEYWORD, Количество эпох во всех стейджах
@@ -96,16 +96,16 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
       classes: ["one", "two", "three"]  # Пример
       key: value  # Пример
 
-  criterion_params:  # REQUIRED KEYWORD, параметры для лосс-функции
+  criterion:  # REQUIRED KEYWORD, параметры для лосс-функции
     _key_value: False  # KEYWORD, если True, то лосс-функций может быть несколько и тогда их нужно обернуть еще в key-value
 
     _target_: BCEWithLogitsLoss  # REQUIRED KEYWORD, имя лосс функции
     # на этом уровне могут лежать параметры для __init__ данной лосс-функции, например
     reduction: sum
 
-  optimizer_params:  # REQUIRED KEYWORD, параметры для оптимизатора
+  optimizer:  # REQUIRED KEYWORD, параметры для оптимизатора
     _key_value: False  # KEYWORD, если True, то оптимизаторов может быть несколько и тогда их нужно обернуть еще в key-value
-    layerwise_params:  # KEYWORD, параметры оптимайзера для разных слоев сети, опционально
+    layerwise:  # KEYWORD, параметры оптимайзера для разных слоев сети, опционально
       conv1.*:  # регулярное выражение с именем слоя
         lr: 0.001
         weight_decay: 0.0003
@@ -121,7 +121,7 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     lr: 0.003
     weight_decay: 0.0001
 
-  scheduler_params:  # REQUIRED KEYWORD, параметры для lr-scheduler
+  scheduler:  # REQUIRED KEYWORD, параметры для lr-scheduler
     _key_value: False  # KEYWORD, если True, то lr-scheduler может быть несколько и тогда их нужно обернуть еще в key-value
 
     _target_: StepLR  # REQUIRED KEYWORD, имя lr-scheduler
@@ -130,10 +130,10 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
     gamma: 0.3
 
   stage1:  # Все, что не ключевое слово, расценивается, как имя стейджа. Для тренировки в Catalyst требуется хотябы один стейдж. Имя может быть произвольным
-    stage_params:  # Вы можете переопределить любые параметры, для конкретного стейджа, например
+    stage:  # Вы можете переопределить любые параметры, для конкретного стейджа, например
       num_epochs: 3
 
-    callbacks_params:  # REQUIRED KEYWORD, самая важная часть, тут записываются все коллбеки для данного стейджа
+    callbacks:  # REQUIRED KEYWORD, самая важная часть, тут записываются все коллбеки для данного стейджа
     # коллбеки записываются через key-value
       loss:
         _target_: CriterionCallback  # KEYWORD имя коллбека
@@ -148,10 +148,10 @@ stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, дл
         save_n_best: 3
 
   finetune:  # Пример второго стейджа обучения, тут мы можем изменить наши параметры
-    stage_params:  # Вы можете переопределить любые параметры, для конкретного стейджа, например
+    stage:  # Вы можете переопределить любые параметры, для конкретного стейджа, например
       num_epochs: 1
 
-    optimizer_params:  # Пример, переопределенного оптимизатора
+    optimizer:  # Пример, переопределенного оптимизатора
       load_from_previous_stage: True  # KEYWORD, флаг, который говорит, что нужно загрузить статистики с прошлой стадии
       _target_: Adam
       lr: 0.001

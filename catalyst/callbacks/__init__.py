@@ -1,9 +1,6 @@
 # flake8: noqa
 
-from catalyst.settings import (
-    IS_QUANTIZATION_AVAILABLE,
-    IS_PRUNING_AVAILABLE,
-)
+from catalyst.settings import IS_QUANTIZATION_AVAILABLE, IS_PRUNING_AVAILABLE, IS_OPTUNA_AVAILABLE
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import ICheckpointCallback, CheckpointCallback

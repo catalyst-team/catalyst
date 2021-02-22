@@ -60,7 +60,7 @@ Full description of configs with comments:
     - configuration files usage example
     - local and docker runs
     - metrics visualization with tensorboard
-1. [features – model training with stages](cifar_stages)
+1. [features – model training with stages](mnist_stages)
     - pipeline example with stages
 
 ----

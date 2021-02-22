@@ -53,9 +53,6 @@ class WingLoss(nn.Module):
     It has been proposed in `Wing Loss for Robust Facial Landmark Localisation
     with Convolutional Neural Networks`_.
 
-    Examples:
-        @TODO: Docs. Contribution is welcome.
-
     Adapted from:
     https://github.com/BloodAxe/pytorch-toolbelt
 

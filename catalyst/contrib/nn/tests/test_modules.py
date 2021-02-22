@@ -12,6 +12,8 @@ from catalyst.contrib.nn.modules import (
     SubCenterArcFace,
 )
 
+EPS = 1e-3
+
 
 def normalize(m: np.ndarray) -> np.ndarray:
     m_s = np.sqrt((m ** 2).sum(axis=1))[:, np.newaxis]  # for each row
@@ -57,7 +59,7 @@ def test_softmax():
 
     expected = features @ weight.T + bias
     actual = layer(torch.from_numpy(features)).detach().numpy()
-    assert np.allclose(expected, actual)
+    assert np.allclose(expected, actual, atol=EPS)
 
 
 def _check_layer(layer):
@@ -140,7 +142,7 @@ def test_arcface_with_cross_entropy_loss():
         .detach()
         .numpy()
     )
-    assert np.allclose(expected_loss, actual)
+    assert np.allclose(expected_loss, actual, atol=EPS)
 
     loss_fn = nn.CrossEntropyLoss(reduction="mean")
 
@@ -152,7 +154,7 @@ def test_arcface_with_cross_entropy_loss():
         .detach()
         .numpy()
     )
-    assert np.isclose(expected_loss.mean(), actual)
+    assert np.isclose(expected_loss.mean(), actual, atol=EPS)
 
     loss_fn = nn.CrossEntropyLoss(reduction="sum")
 
@@ -164,7 +166,7 @@ def test_arcface_with_cross_entropy_loss():
         .detach()
         .numpy()
     )
-    assert np.isclose(expected_loss.sum(), actual)
+    assert np.isclose(expected_loss.sum(), actual, atol=EPS)
 
 
 def test_cosface_with_cross_entropy_loss():
@@ -213,7 +215,7 @@ def test_cosface_with_cross_entropy_loss():
         .detach()
         .numpy()
     )
-    assert np.allclose(expected_loss, actual)
+    assert np.allclose(expected_loss, actual, atol=EPS)
 
     loss_fn = nn.CrossEntropyLoss(reduction="mean")
 
@@ -225,7 +227,7 @@ def test_cosface_with_cross_entropy_loss():
         .detach()
         .numpy()
     )
-    assert np.isclose(expected_loss.mean(), actual)
+    assert np.isclose(expected_loss.mean(), actual, atol=EPS)
 
     loss_fn = nn.CrossEntropyLoss(reduction="sum")
 
@@ -237,7 +239,7 @@ def test_cosface_with_cross_entropy_loss():
         .detach()
         .numpy()
     )
-    assert np.isclose(expected_loss.sum(), actual)
+    assert np.isclose(expected_loss.sum(), actual, atol=EPS)
 
 
 def test_curricularface_with_cross_entropy_loss():
@@ -301,7 +303,7 @@ def test_curricularface_with_cross_entropy_loss():
         .numpy()
     )
 
-    assert np.allclose(expected_loss, actual)
+    assert np.allclose(expected_loss, actual, atol=EPS)
 
     # reinitialize layer (t is changed)
     layer = CurricularFace(emb_size, n_classes, s, m)
@@ -317,7 +319,7 @@ def test_curricularface_with_cross_entropy_loss():
         .numpy()
     )
 
-    assert np.isclose(expected_loss.mean(), actual)
+    assert np.isclose(expected_loss.mean(), actual, atol=EPS)
 
     # reinitialize layer (t is changed)
     layer = CurricularFace(emb_size, n_classes, s, m)
@@ -332,4 +334,4 @@ def test_curricularface_with_cross_entropy_loss():
         .detach()
         .numpy()
     )
-    assert np.isclose(expected_loss.sum(), actual)
+    assert np.isclose(expected_loss.sum(), actual, atol=EPS)
