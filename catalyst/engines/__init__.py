@@ -52,9 +52,7 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
     elif (
         engine == "cpu"
         or engine == "cuda"
-        or (
-            re.match(r"cuda\:\d", engine) and int(engine.split(":")[1]) < torch.cuda.device_count()
-        )
+        or (re.match(r"cuda\:\d", engine) and int(engine.split(":")[1]) < torch.cuda.device_count())
     ):
         use_engine = DeviceEngine(engine)
     else:

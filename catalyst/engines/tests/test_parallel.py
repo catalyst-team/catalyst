@@ -31,9 +31,7 @@ class CustomRunner(IRunner):
 
     def get_callbacks(self, stage: str) -> Dict[str, Callback]:
         return {
-            "criterion": CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
+            "criterion": CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
