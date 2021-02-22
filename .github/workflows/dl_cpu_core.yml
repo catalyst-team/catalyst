@@ -96,6 +96,7 @@ jobs:
           pytest catalyst/metrics
           pytest catalyst/tools
           pytest catalyst/utils
+          pip install -e .
           cd examples && bash mnist_stages/run_config.sh && cd ..
           cd examples && bash mnist_stages/run_hydra.sh && cd ..
           cd examples && bash mnist_stages/run_tune.sh && cd ..
