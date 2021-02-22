@@ -58,8 +58,8 @@ class IRunner(ICallback, ILogger, ABC):
     .. note::
         To learn more about Catalyst Core concepts, please check out
 
-            - :py:mod:`catalyst.core.experiment.IExperiment`
             - :py:mod:`catalyst.core.runner.IRunner`
+            - :py:mod:`catalyst.core.engine.IEngine`
             - :py:mod:`catalyst.core.callback.Callback`
     """
 
@@ -391,13 +391,6 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR202
             OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
             with callbacks for current stage.
-
-        .. note::
-            To learn more about Catalyst Core concepts, please check out
-
-                - :py:mod:`catalyst.core.experiment.IExperiment`
-                - :py:mod:`catalyst.core.runner.IRunner`
-                - :py:mod:`catalyst.core.callback.Callback`
 
         Args:
             stage: stage name of interest,

@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl
 from catalyst.callbacks import OptunaPruningCallback
-from catalyst.contrib.data.cv import ToTensor
+from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.modules import Flatten
 from catalyst.dl import AccuracyCallback
@@ -39,7 +39,7 @@ def test_optuna():
                     num_classes=10, input_key="logits", target_key="targets"
                 ),
             },
-            num_epochs=10,
+            num_epochs=2,
             valid_metric="accuracy01",
             minimize_valid_metric=False,
         )
@@ -49,5 +49,5 @@ def test_optuna():
         direction="maximize",
         pruner=optuna.pruners.MedianPruner(n_startup_trials=1, n_warmup_steps=0, interval_steps=1),
     )
-    study.optimize(objective, n_trials=5, timeout=300)
+    study.optimize(objective, n_trials=3, timeout=300)
     assert True
