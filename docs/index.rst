@@ -261,5 +261,8 @@ Indices and tables
     api/contrib
     api/core
     api/data
+    api/engines
+    api/loggers
+    api/metrics
 
 

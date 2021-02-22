@@ -10,6 +10,7 @@ def get_segmentation_statistics(
     """
     Computes true positive, false positive, false negative
     for a multilabel segmentation problem.
+
     Args:
         outputs: [N; K; ...] tensor that for each of the N examples
             indicates the probability of the example belonging to each of
@@ -19,9 +20,11 @@ def get_segmentation_statistics(
         class_dim: indicates class dimention (K) for
             ``outputs`` and ``targets`` tensors (default = 1)
         threshold: threshold for outputs binarization
+
     Returns:
         Segmentation stats
-    Examples:
+
+    Example:
         >>> size = 4
         >>> half_size = size // 2
         >>> shape = (1, 1, size, size)
@@ -80,6 +83,7 @@ def _get_region_based_metrics(
 ) -> torch.Tensor:
     """
     Get aggregated metric
+
     Args:
         outputs: [N; K; ...] tensor that for each of the N examples
             indicates the probability of the example belonging to each of
@@ -99,8 +103,9 @@ def _get_region_based_metrics(
              over all classes with weights. If mode='per-class', metric are
              calculated separately for all classes
         weights: class weights(for mode="weighted")
+
     Returns:
-        Metric
+        computed metric
     """
     assert mode in ["per-class", "micro", "macro", "weighted"]
     segmentation_stats = get_segmentation_statistics(
@@ -160,8 +165,8 @@ def iou(
     eps: float = 1e-7,
 ) -> torch.Tensor:
     """
-    Computes the iou/jaccard score,
-    iou score = intersection / union = tp / (tp + fp + fn)
+    Computes the iou/jaccard score, iou score = intersection / union = tp / (tp + fp + fn)
+
     Args:
         outputs: [N; K; ...] tensor that for each of the N examples
             indicates the probability of the example belonging to each of
@@ -174,17 +179,19 @@ def iou(
         threshold: threshold for outputs binarization
         mode: class summation strategy. Must be one of ['micro', 'macro',
             'weighted', 'per-class']. If mode='micro', classes are ignored,
-             and metric are calculated generally. If mode='macro', metric are
-             calculated per-class and than are averaged over all classes. If
-             mode='weighted', metric are calculated per-class and than summed
-             over all classes with weights. If mode='per-class', metric are
-             calculated separately for all classes
+            and metric are calculated generally. If mode='macro', metric are
+            calculated per-class and than are averaged over all classes. If
+            mode='weighted', metric are calculated per-class and than summed
+            over all classes with weights. If mode='per-class', metric are
+            calculated separately for all classes
         weights: class weights(for mode="weighted")
         eps: epsilon to avoid zero division
+
     Returns:
         IoU (Jaccard) score for each class(if mode='weighted') or
         aggregated IOU
-    Examples:
+
+    Example:
         >>> size = 4
         >>> half_size = size // 2
         >>> shape = (1, 1, size, size)
@@ -233,6 +240,7 @@ def dice(
     Computes the dice score,
     dice score = 2 * intersection / (intersection + union)) = \
     = 2 * tp / (2 * tp + fp + fn)
+
     Args:
         outputs: [N; K; ...] tensor that for each of the N examples
             indicates the probability of the example belonging to each of
@@ -245,16 +253,18 @@ def dice(
         threshold: threshold for outputs binarization
         mode: class summation strategy. Must be one of ['micro', 'macro',
             'weighted', 'per-class']. If mode='micro', classes are ignored,
-             and metric are calculated generally. If mode='macro', metric are
-             calculated per-class and than are averaged over all classes. If
-             mode='weighted', metric are calculated per-class and than summed
-             over all classes with weights. If mode='per-class', metric are
-             calculated separately for all classes
+            and metric are calculated generally. If mode='macro', metric are
+            calculated per-class and than are averaged over all classes. If
+            mode='weighted', metric are calculated per-class and than summed
+            over all classes with weights. If mode='per-class', metric are
+            calculated separately for all classes
         weights: class weights(for mode="weighted")
         eps: epsilon to avoid zero division
+
     Returns:
         Dice score for each class(if mode='weighted') or aggregated Dice
-    Examples:
+
+    Example:
         >>> size = 4
         >>> half_size = size // 2
         >>> shape = (1, 1, size, size)
@@ -304,6 +314,7 @@ def trevsky(
     """
     Computes the trevsky score,
     trevsky score = tp / (tp + fp * beta + fn * alpha)
+
     Args:
         outputs: [N; K; ...] tensor that for each of the N examples
             indicates the probability of the example belonging to each of
@@ -319,16 +330,18 @@ def trevsky(
         threshold: threshold for outputs binarization
         mode: class summation strategy. Must be one of ['micro', 'macro',
             'weighted', 'per-class']. If mode='micro', classes are ignored,
-             and metric are calculated generally. If mode='macro', metric are
-             calculated per-class and than are averaged over all classes. If
-             mode='weighted', metric are calculated per-class and than summed
-             over all classes with weights. If mode='per-class', metric are
-             calculated separately for all classes
+            and metric are calculated generally. If mode='macro', metric are
+            calculated per-class and than are averaged over all classes. If
+            mode='weighted', metric are calculated per-class and than summed
+            over all classes with weights. If mode='per-class', metric are
+            calculated separately for all classes
         weights: class weights(for mode="weighted")
         eps: epsilon to avoid zero division
+
     Returns:
         Trevsky score for each class(if mode='weighted') or aggregated score
-    Examples:
+
+    Example:
         >>> size = 4
         >>> half_size = size // 2
         >>> shape = (1, 1, size, size)
@@ -343,12 +356,12 @@ def trevsky(
         >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
         >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
         >>> trevsky(
-        >>>         outputs=pred,
-        >>>         targets=targets,
-        >>>         alpha=0.2,
-        >>>         class_dim=1,
-        >>>         threshold=0.5,
-        >>>         mode="per-class"
+        >>>     outputs=pred,
+        >>>     targets=targets,
+        >>>     alpha=0.2,
+        >>>     class_dim=1,
+        >>>     threshold=0.5,
+        >>>     mode="per-class"
         >>> )
         tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.8333])
     """

@@ -14,7 +14,7 @@ from catalyst.metrics.metric import (
 from catalyst.metrics.additive import AdditiveValueMetric
 from catalyst.metrics.confusion_matrix import ConfusionMatrixMetric
 
-from catalyst.metrics.accuracy import AccuracyMetric
+from catalyst.metrics.accuracy import AccuracyMetric, MultilabelAccuracyMetric
 from catalyst.metrics.auc import AUCMetric
 from catalyst.metrics.classification import (
     BinaryPrecisionRecallF1Metric,
