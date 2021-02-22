@@ -10,11 +10,16 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.engines.amp import DistributedDataParallelAMPEngine
+from catalyst.engines.apex import DistributedDataParallelApexEngine
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .misc import DummyDataset, DummyModel, LossMinimizationCallback, WorldSizeCheckCallback
-
+from .misc import (
+    DummyDataset,
+    DummyModel,
+    LossMinimizationCallback,
+    WorldSizeCheckCallback,
+    OPTTensorTypeChecker,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +28,17 @@ if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 
 
+OPT_LEVELS = ("O0", "O1", "O2", "O3")
+
+
 class CustomRunner(dl.IRunner):
-    def __init__(self, logdir):
+    def __init__(self, logdir, opt_level):
         super().__init__()
         self._logdir = logdir
+        self._opt_level = opt_level
 
     def get_engine(self) -> dl.IEngine:
-        return DistributedDataParallelAMPEngine()
+        return DistributedDataParallelApexEngine(opt_level=self._opt_level)
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
@@ -42,6 +51,7 @@ class CustomRunner(dl.IRunner):
             # "check": DeviceCheckCallback(),
             "check2": LossMinimizationCallback("loss", logger=logger),
             "check_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
+            "logits_type_checker": OPTTensorTypeChecker("logits", self._opt_level),
         }
 
     @property
@@ -84,17 +94,18 @@ class CustomRunner(dl.IRunner):
 @mark.skipif(
     not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
-def test_train_with_experiment_distributed_parallel_amp_device():
-    with TemporaryDirectory() as logdir:
-        runner = CustomRunner(logdir)
-        runner.run()
+def test_train_distributed_parallel_apex():
+    for opt_level in OPT_LEVELS:
+        with TemporaryDirectory() as logdir:
+            runner = CustomRunner(logdir, opt_level)
+            runner.run()
 
 
 @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
     not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
-def test_train_with_config_experiment_distributed_parallel_amp_device():
+def test_config_train_distributed_parallel_apex():
     pass
     # logdir = "./test_config_ddp_engine"
     # runner = SupervisedRunner()
