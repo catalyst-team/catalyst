@@ -1,0 +1,135 @@
+Utilities
+================================================
+
+.. toctree::
+   :titlesonly:
+
+.. contents::
+   :local:
+
+
+Main
+----------------------
+.. automodule:: catalyst.utils
+    :members:
+    :show-inheritance:
+
+Checkpoint
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.checkpoint
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Config
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.config
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Distributed
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.distributed
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Loaders
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.loaders
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Misc
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.misc
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Numpy
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.numpy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+.. catalyst.utils.pruning
+.. catalyst.utils.quantization
+
+
+Stochastic Weights Averaging (SWA)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.swa
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Torch
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.torch
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+.. catalyst.utils.tracing
+
+
+
+Contrib
+----------------------
+.. automodule:: catalyst.contrib.utils
+    :members:
+    :show-inheritance:
+
+Compression
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.compression
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Image
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.image
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Pandas
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.pandas
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Parallel
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.parallel
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Plotly
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.plotly
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Serialization
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.serialization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Visualization
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.visualization
+    :members:
+    :undoc-members:
+    :show-inheritance:

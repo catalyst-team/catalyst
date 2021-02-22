@@ -264,5 +264,7 @@ Indices and tables
     api/engines
     api/loggers
     api/metrics
-
+    api/runners
+    api/tools
+    api/utils
 
