@@ -8,7 +8,7 @@ from torch import jit, nn
 from catalyst.typing import Device, Model
 from catalyst.utils.checkpoint import load_checkpoint, pack_checkpoint, unpack_checkpoint
 from catalyst.utils.config import load_config
-from catalyst.utils.distributed import assert_fp16_available, get_nn_from_ddp_module
+from catalyst.utils.distributed import get_nn_from_ddp_module
 from catalyst.utils.loaders import get_native_batch_from_loaders
 from catalyst.utils.misc import get_fn_argsnames
 from catalyst.utils.scripts import prepare_config_api_components
