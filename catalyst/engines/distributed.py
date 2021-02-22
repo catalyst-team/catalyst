@@ -67,7 +67,9 @@ class DistributedDataParallelEngine(IEngine):
             return type(tensor_or_module)(self.sync_device(elem) for elem in tensor_or_module)
         elif torch.is_tensor(tensor_or_module):
             return tensor_or_module.to(self.device, non_blocking=True)
-        elif isinstance(tensor_or_module, (np.ndarray, np.void)) and tensor_or_module.dtype.fields is not None:
+        elif (
+            isinstance(tensor_or_module, (np.ndarray, np.void)) and tensor_or_module.dtype.fields is not None
+        ):
             return {k: self.sync_device(tensor_or_module[k]) for k in tensor_or_module.dtype.fields.keys()}
         elif isinstance(tensor_or_module, np.ndarray):
             return torch.tensor(tensor_or_module, device=self.device)
