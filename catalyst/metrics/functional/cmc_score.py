@@ -39,7 +39,7 @@ def cmc_score(
 
     Args:
         query_embeddings: tensor shape of (n_embeddings, embedding_dim)
-            embeddings of the objects in querry
+            embeddings of the objects in query
         gallery_embeddings: tensor shape of (n_embeddings, embedding_dim)
             embeddings of the objects in gallery
         conformity_matrix: binary matrix with 1 on same label pos and 0 otherwise
