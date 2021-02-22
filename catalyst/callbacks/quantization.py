@@ -1,4 +1,4 @@
-# @TODO: make the same API for tracing/onnx/pruning/quantization
+# # @TODO: make the same API for tracing/onnx/pruning/quantization
 # from typing import Dict, Optional, Set, TYPE_CHECKING, Union
 # from pathlib import Path
 #
@@ -6,7 +6,6 @@
 # from torch import quantization
 #
 # from catalyst.core.callback import Callback, CallbackOrder
-# from catalyst.callbacks.misc import IEpochMetricHandlerCallback
 # from catalyst.utils.quantization import save_quantized_model
 #
 # if TYPE_CHECKING:

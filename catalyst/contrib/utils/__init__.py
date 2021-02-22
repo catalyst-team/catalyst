@@ -81,18 +81,6 @@ from catalyst.contrib.utils.parallel import (
     get_pool,
 )
 
-try:
-    import plotly  # noqa: F401
-    from catalyst.contrib.utils.plotly import plot_metrics
-except ModuleNotFoundError as ex:
-    if SETTINGS.plotly_required:
-        logger.warning("plotly not available, to install plotly," " run `pip install plotly`.")
-        raise ex
-except ImportError as ex:
-    if SETTINGS.plotly_required:
-        logger.warning("plotly not available, to install plotly," " run `pip install plotly`.")
-        raise ex
-
 
 from catalyst.contrib.utils.serialization import deserialize, serialize
 

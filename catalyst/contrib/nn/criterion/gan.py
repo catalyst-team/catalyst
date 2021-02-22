@@ -1,5 +1,4 @@
 # flake8: noqa
-# TODO: refactor code, examples and docs
 import torch
 from torch import nn
 

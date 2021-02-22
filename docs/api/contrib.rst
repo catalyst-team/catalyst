@@ -22,15 +22,15 @@ Datasets
 
 MNIST
 ~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.datasets.mnist
-    :members:
+.. autoclass:: catalyst.contrib.datasets.mnist.MNIST
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
 MovieLens
 ~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.datasets.movielens
-    :members:
+.. autoclass:: catalyst.contrib.datasets.movielens.MovieLens
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
@@ -39,24 +39,67 @@ Computer Vision
 
 Imagenette
 """"""""""
-.. automodule:: catalyst.contrib.datasets.cv.imagenette
-    :members:
+.. autoclass:: catalyst.contrib.datasets.cv.imagenette.Imagenette
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
-Imagewoof
-"""""""""
-.. automodule:: catalyst.contrib.datasets.cv.imagewoof
-    :members:
+Imagenette160
+"""""""""""""
+.. autoclass:: catalyst.contrib.datasets.cv.imagenette.Imagenette160
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Imagenette320
+"""""""""""""
+.. autoclass:: catalyst.contrib.datasets.cv.imagenette.Imagenette320
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
 Imagewang
 """""""""
-.. automodule:: catalyst.contrib.datasets.cv.imagewang
-    :members:
+.. autoclass:: catalyst.contrib.datasets.cv.imagewang.Imagewang
+    :members: __init__
     :undoc-members:
     :show-inheritance:
+
+Imagewang160
+""""""""""""
+.. autoclass:: catalyst.contrib.datasets.cv.imagewang.Imagewang160
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Imagewang320
+""""""""""""
+.. autoclass:: catalyst.contrib.datasets.cv.imagewang.Imagewang320
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Imagewoof
+"""""""""
+.. autoclass:: catalyst.contrib.datasets.cv.imagewoof
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Imagewoof160
+""""""""""""
+.. autoclass:: catalyst.contrib.datasets.cv.Imagewoof160
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Imagewoof320
+""""""""""""
+.. autoclass:: catalyst.contrib.datasets.cv.Imagewoof320
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 
 
 NN
@@ -67,87 +110,74 @@ Extensions for ``torch.nn``
 Criterion
 ~~~~~~~~~~~~~~~~
 
-Cross entropy
-"""""""""""""
-.. automodule:: catalyst.contrib.nn.criterion.ce
-    :members:
+
+CircleLoss
+""""""""""
+.. autoclass:: catalyst.contrib.nn.criterion.circle.CircleLoss
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
-Circle
+DiceLoss
 """""""""
-.. automodule:: catalyst.contrib.nn.criterion.circle
-    :members:
+.. autoclass:: catalyst.contrib.nn.criterion.dice.DiceLoss
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
-Contrastive
+FocalLossBinary
+"""""""""""""""
+.. autoclass:: catalyst.contrib.nn.criterion.focal.FocalLossBinary
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+FocalLossMultiClass
+"""""""""""""""""""
+.. autoclass:: catalyst.contrib.nn.criterion.focal.FocalLossMultiClass
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+IoULoss
+"""""""""
+.. autoclass:: catalyst.contrib.nn.criterion.iou.IoULoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+MarginLoss
+""""""""""
+.. autoclass:: catalyst.contrib.nn.criterion.margin.MarginLoss
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+TrevskyLoss
 """""""""""
-.. automodule:: catalyst.contrib.nn.criterion.contrastive
-    :members:
+.. autoclass:: catalyst.contrib.nn.criterion.trevsky.TrevskyLoss
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
-Dice
-"""""""""
-.. automodule:: catalyst.contrib.nn.criterion.dice
-    :members:
+FocalTrevskyLoss
+""""""""""""""""
+.. autoclass:: catalyst.contrib.nn.criterion.trevsky.FocalTrevskyLoss
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
-Focal
-"""""""""
-.. automodule:: catalyst.contrib.nn.criterion.focal
-    :members:
+TripletMarginLossWithSampler
+""""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.nn.criterion.triplet.TripletMarginLossWithSampler
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
-GAN
+WingLoss
 """""""""
-.. automodule:: catalyst.contrib.nn.criterion.gan
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Huber
-"""""""""
-.. automodule:: catalyst.contrib.nn.criterion.huber
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-IOU
-"""""""""
-.. automodule:: catalyst.contrib.nn.criterion.iou
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Lovasz
-"""""""""
-.. automodule:: catalyst.contrib.nn.criterion.lovasz
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Margin
-"""""""""
-.. automodule:: catalyst.contrib.nn.criterion.margin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Triplet
-"""""""""
-.. automodule:: catalyst.contrib.nn.criterion.triplet
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Wing
-"""""""""
-.. automodule:: catalyst.contrib.nn.criterion.wing
-    :members:
+.. autoclass:: catalyst.contrib.nn.criterion.wing.WingLoss
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
@@ -169,12 +199,7 @@ Arc Margin Product
     :undoc-members:
     :show-inheritance:
 
-Common modules
-""""""""""""""""""""""""""""""""""""""""""
-.. automodule:: catalyst.contrib.nn.modules.common
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. catalyst.contrib.nn.modules.common
 
 CosFace and AdaCos
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -190,33 +215,32 @@ CurricularFace
     :undoc-members:
     :show-inheritance:
 
-Last-Mean-Average-Attention (LAMA)-Pooling
-""""""""""""""""""""""""""""""""""""""""""
-.. automodule:: catalyst.contrib.nn.modules.lama
-    :members:
+.. catalyst.contrib.nn.modules.lama
+.. catalyst.contrib.nn.modules.pooling
+.. catalyst.contrib.nn.modules.rms_norm
+
+
+sSE
+"""""""""
+.. autoclass:: catalyst.contrib.nn.modules.se.sSE
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
-Pooling
-""""""""""""""""""""
-.. automodule:: catalyst.contrib.nn.modules.pooling
-    :members:
+cSE
+"""""""""
+.. autoclass:: catalyst.contrib.nn.modules.se.cSE
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
-RMSNorm
-""""""""""""""""""""
-.. automodule:: catalyst.contrib.nn.modules.rms_norm
-    :members:
+scSE
+"""""""""
+.. autoclass:: catalyst.contrib.nn.modules.se.scSE
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
-SqueezeAndExcitation
-""""""""""""""""""""
-.. automodule:: catalyst.contrib.nn.modules.se
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 SoftMax
 """"""""""""""""""""""""""""""""""""""""""
@@ -230,50 +254,50 @@ Optimizers
 
 AdamP
 """""""""""""
-.. automodule:: catalyst.contrib.nn.optimizers.adamp
-    :members:
+.. autoclass:: catalyst.contrib.nn.optimizers.adamp.AdamP
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
 Lamb
 """"""""""""""""""""
-.. automodule:: catalyst.contrib.nn.optimizers.lamb
-    :members:
+.. autoclass:: catalyst.contrib.nn.optimizers.lamb.Lamb
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
 Lookahead
 """"""""""""""""""""
-.. automodule:: catalyst.contrib.nn.optimizers.lookahead
-    :members:
+.. autoclass:: catalyst.contrib.nn.optimizers.lookahead.Lookahead
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
 QHAdamW
 """"""""""""""""""""
-.. automodule:: catalyst.contrib.nn.optimizers.qhadamw
-    :members:
+.. autoclass:: catalyst.contrib.nn.optimizers.qhadamw.QHAdamW
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
 RAdam
 """"""""""""""""""""
-.. automodule:: catalyst.contrib.nn.optimizers.radam
-    :members:
+.. autoclass:: catalyst.contrib.nn.optimizers.radam.RAdam
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
 Ralamb
 """"""""""""""""""""
-.. automodule:: catalyst.contrib.nn.optimizers.ralamb
-    :members:
+.. autoclass:: catalyst.contrib.nn.optimizers.ralamb.Ralamb
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
 SGDP
 """""""""""""
-.. automodule:: catalyst.contrib.nn.optimizers.sgdp
-    :members:
+.. autoclass:: catalyst.contrib.nn.optimizers.sgdp.SGDP
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
@@ -281,52 +305,22 @@ SGDP
 Schedulers
 ~~~~~~~~~~~~~~~~
 
-.. automodule:: catalyst.contrib.nn.schedulers.base
+.. automodule:: catalyst.contrib.nn.schedulers
     :members:
     :undoc-members:
     :show-inheritance:
 
 OneCycleLRWithWarmup
 """"""""""""""""""""
-.. automodule:: catalyst.contrib.nn.schedulers.onecycle
-    :members:
+.. autoclass:: catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
-
-Models
---------------------
-
-Segmentation
-~~~~~~~~~~~~~~~~
-
-Unet
-""""""""""""""""
-.. automodule:: catalyst.contrib.models.cv.segmentation.unet
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Linknet
-""""""""""""""""
-.. automodule:: catalyst.contrib.models.cv.segmentation.linknet
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-FPNnet
-""""""""""""""""
-.. automodule:: catalyst.contrib.models.cv.segmentation.fpn
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-PSPnet
-""""""""""""""""
-.. automodule:: catalyst.contrib.models.cv.segmentation.psp
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. catalyst.contrib.models.cv.segmentation.unet
+.. catalyst.contrib.models.cv.segmentation.linknet
+.. catalyst.contrib.models.cv.segmentation.fpn
+.. catalyst.contrib.models.cv.segmentation.psp
 
 Scripts
 --------------------

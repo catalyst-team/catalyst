@@ -21,13 +21,6 @@ Checkpoint
     :undoc-members:
     :show-inheritance:
 
-Components
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.components
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Config
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.config
@@ -63,44 +56,13 @@ Numpy
     :undoc-members:
     :show-inheritance:
 
-Parser
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.parser
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. catalyst.utils.pruning
+.. catalyst.utils.quantization
 
-Pruning
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.pruning
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Quantization
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.quantization
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Scripts
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.scripts
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Stochastic Weights Averaging (SWA)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.swa
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Sys
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.sys
     :members:
     :undoc-members:
     :show-inheritance:
@@ -112,12 +74,9 @@ Torch
     :undoc-members:
     :show-inheritance:
 
-Tracing
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.tracing
-    :members:
-    :undoc-members:
-    :show-inheritance:
+
+.. catalyst.utils.tracing
+
 
 
 Contrib
@@ -129,6 +88,13 @@ Contrib
 Compression
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.compression
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Image
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.image
     :members:
     :undoc-members:
     :show-inheritance:
@@ -147,13 +113,6 @@ Parallel
     :undoc-members:
     :show-inheritance:
 
-Plotly
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.plotly
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Serialization
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.serialization
@@ -161,58 +120,9 @@ Serialization
     :undoc-members:
     :show-inheritance:
 
-Torch
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.torch_extra
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Visualization
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.visualization
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Wizard
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.wizard
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Computer Vision
--------------------------
-.. automodule:: catalyst.contrib.utils.cv
-    :members:
-    :show-inheritance:
-
-Image
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.cv.image
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Tensor
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.cv.tensor
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Natural language processing
--------------------------------------
-.. automodule:: catalyst.contrib.utils.nlp
-    :members:
-    :show-inheritance:
-
-Text
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.nlp.text
     :members:
     :undoc-members:
     :show-inheritance:

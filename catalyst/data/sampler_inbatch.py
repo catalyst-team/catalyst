@@ -19,9 +19,7 @@ TLabels = Union[List[int], Tensor]
 
 
 class IInbatchTripletSampler(ABC):
-    """
-    An abstraction of inbatch triplet sampler.
-    """
+    """An abstraction of inbatch triplet sampler."""
 
     @abstractmethod
     def _check_input_labels(self, labels: List[int]) -> None:
