@@ -94,7 +94,7 @@ class CustomRunner(dl.IRunner):
 @mark.skipif(
     not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
-def test_train_with_experiment_distributed_parallel_amp_device():
+def test_train_distributed_parallel_apex():
     for opt_level in OPT_LEVELS:
         with TemporaryDirectory() as logdir:
             runner = CustomRunner(logdir, opt_level)
@@ -105,7 +105,7 @@ def test_train_with_experiment_distributed_parallel_amp_device():
 @mark.skipif(
     not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
-def test_train_with_config_experiment_distributed_parallel_amp_device():
+def test_config_train_distributed_parallel_apex():
     pass
     # logdir = "./test_config_ddp_engine"
     # runner = SupervisedRunner()
