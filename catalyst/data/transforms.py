@@ -1,11 +1,9 @@
-"""
-This subpackage was borrowed from `torchvision`__.
-
-__ https://github.com/pytorch/vision
-"""
-
+# based on https://github.com/pytorch/vision
 import numpy as np
 import torch
+
+_IMAGENET_STD = (0.229, 0.224, 0.225)
+_IMAGENET_MEAN = (0.485, 0.456, 0.406)
 
 
 def to_tensor(pic: np.ndarray) -> torch.Tensor:
@@ -81,11 +79,11 @@ class Compose:
         """
         self.transforms = transforms
 
-    def __call__(self, img):
-        """@TODO: Docs. Contribution is welcome."""
+    def __call__(self, x):
+        """Applies several transforms to the data."""
         for t in self.transforms:
-            img = t(img)
-        return img
+            x = t(x)
+        return x
 
     def __repr__(self):
         """@TODO: Docs. Contribution is welcome."""

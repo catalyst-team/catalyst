@@ -100,4 +100,4 @@ def parse_args_uargs(args, unknown_args):
     return args_copy, config
 
 
-__all__ = ["parse_config_args", "parse_args_uargs"]
+__all__ = ["parse_config_args", parse_args_uargs()]

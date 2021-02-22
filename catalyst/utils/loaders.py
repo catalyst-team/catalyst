@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Iterable, Union
+from typing import Any, Callable, Dict, Iterable
 from collections import OrderedDict
 from copy import copy
 import warnings
@@ -71,49 +71,49 @@ def get_loader(
     return loader
 
 
-def get_native_batch_from_loader(loader: DataLoader, batch_index: int = 0):
-    """
-    Returns a batch from experiment loader
-
-    Args:
-        loader: Loader to get batch from
-        batch_index: Index of batch to take from dataset of the loader
-
-    Returns:
-        batch from loader
-    """
-    dataset = loader.dataset
-    collate_fn = loader.collate_fn
-    return collate_fn([dataset[batch_index]])
-
-
-def get_native_batch_from_loaders(
-    loaders: Dict[str, DataLoader], loader: Union[str, int] = 0, batch_index: int = 0,
-):
-    """
-    Returns a batch from experiment loaders by its index or name.
-
-    Args:
-        loaders (Dict[str, DataLoader]): Loaders list to get loader from
-        loader (Union[str, int]): Loader name or its index, default is zero
-        batch_index: Index of batch to take from dataset of the loader
-
-    Returns:
-        batch from loader
-
-    Raises:
-        TypeError: if loader parameter is not a string or an integer
-    """
-    if isinstance(loader, str):
-        loader_instance = loaders[loader]
-    elif isinstance(loader, int):
-        loader_instance = list(loaders.values())[loader]
-    else:
-        raise TypeError("Loader parameter must be a string or an integer")
-
-    output = get_native_batch_from_loader(loader=loader_instance, batch_index=batch_index)
-
-    return output
+# def get_native_batch_from_loader(loader: DataLoader, batch_index: int = 0):
+#     """
+#     Returns a batch from experiment loader
+#
+#     Args:
+#         loader: Loader to get batch from
+#         batch_index: Index of batch to take from dataset of the loader
+#
+#     Returns:
+#         batch from loader
+#     """
+#     dataset = loader.dataset
+#     collate_fn = loader.collate_fn
+#     return collate_fn([dataset[batch_index]])
+#
+#
+# def get_native_batch_from_loaders(
+#     loaders: Dict[str, DataLoader], loader: Union[str, int] = 0, batch_index: int = 0,
+# ):
+#     """
+#     Returns a batch from experiment loaders by its index or name.
+#
+#     Args:
+#         loaders (Dict[str, DataLoader]): Loaders list to get loader from
+#         loader (Union[str, int]): Loader name or its index, default is zero
+#         batch_index: Index of batch to take from dataset of the loader
+#
+#     Returns:
+#         batch from loader
+#
+#     Raises:
+#         TypeError: if loader parameter is not a string or an integer
+#     """
+#     if isinstance(loader, str):
+#         loader_instance = loaders[loader]
+#     elif isinstance(loader, int):
+#         loader_instance = list(loaders.values())[loader]
+#     else:
+#         raise TypeError("Loader parameter must be a string or an integer")
+#
+#     output = get_native_batch_from_loader(loader=loader_instance, batch_index=batch_index)
+#
+#     return output
 
 
 def _force_make_distributed_loader(loader: DataLoader) -> DataLoader:
@@ -150,14 +150,14 @@ def _force_make_distributed_loader(loader: DataLoader) -> DataLoader:
 def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
     """
     Check pytorch dataloaders for distributed setup.
-    Transfers them to distirbuted mode if necessary.
+    Transfers them to distributed mode if necessary.
     (Experimental feature)
 
     Args:
-        loaders (Dict[str, DataLoader]): dictionery with pytorch dataloaders
+        loaders (Dict[str, DataLoader]): dictionary with pytorch dataloaders
 
     Returns:
-        Dict[str, DataLoader]: dictionery
+        Dict[str, DataLoader]: dictionary
             with pytorch dataloaders (with distributed samplers if necessary)
     """
     from catalyst.data.sampler import DistributedSamplerWrapper
@@ -318,10 +318,7 @@ def get_loaders_from_params(
 
 
 __all__ = [
-    "get_native_batch_from_loader",
-    "get_native_batch_from_loaders",
     "get_loader",
     "validate_loaders",
     "get_loaders_from_params",
-    "validate_loaders",
 ]

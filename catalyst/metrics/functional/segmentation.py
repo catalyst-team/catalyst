@@ -36,10 +36,10 @@ def get_segmentation_statistics(
         >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
         >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
         >>> get_segmentation_statistics(
-        >>>                         outputs=pred,
-        >>>                         targets=targets,
-        >>>                         class_dim=1,
-        >>>                         threshold=0.5,
+        >>>     outputs=pred,
+        >>>     targets=targets,
+        >>>     class_dim=1,
+        >>>     threshold=0.5,
         >>> )
         (tensor([ 0.,  0.,  0., 16.,  8.,  4.]),
         tensor([0., 8., 0., 0., 0., 0.]),

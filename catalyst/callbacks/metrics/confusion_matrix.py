@@ -2,7 +2,7 @@ from typing import Dict, List, TYPE_CHECKING
 
 from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_tensor
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.metrics.confusion_matrix import ConfusionMetric
+from catalyst.metrics.confusion_matrix import ConfusionMatrixMetric
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -51,7 +51,7 @@ class ConfusionMatrixCallback(Callback):
         Args:
             runner: current runner
         """
-        self.confusion_matrix = ConfusionMetric(
+        self.confusion_matrix = ConfusionMatrixMetric(
             num_classes=self.num_classes, normalized=self.normalized
         )
 

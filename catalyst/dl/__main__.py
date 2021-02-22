@@ -30,22 +30,6 @@ except ImportError as ex:
         )
         raise ex
 
-try:
-    from git import Repo as repo  # noqa: N813 F401
-    from prompt_toolkit import prompt  # noqa: F401
-
-    from catalyst.dl.scripts import init
-
-    COMMANDS["init"] = init
-except ImportError as ex:
-    if SETTINGS.ml_required:
-        logger.warning(
-            "catalyst[ml] requirements are not available, to install them,"
-            " run `pip install catalyst[ml]`."
-        )
-        raise ex
-
-
 COMMANDS = OrderedDict(sorted(COMMANDS.items()))
 
 

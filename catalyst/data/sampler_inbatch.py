@@ -193,7 +193,7 @@ class HardTripletsSampler(InBatchTripletsSampler):
         assert features.shape[0] == len(labels)
 
         if self._norm_required:
-            features = normalize(samples=features.detach())
+            features = normalize(tensors=features.detach())
 
         dist_mat = torch.cdist(x1=features, x2=features, p=2)
 

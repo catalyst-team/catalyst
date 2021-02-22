@@ -1,6 +1,5 @@
 # flake8: noqa
-# @TODO: code formatting issue for 20.07 release
-from typing import List, Tuple, Union
+from typing import Tuple, Union
 import logging
 import os
 import pathlib
@@ -8,7 +7,7 @@ import tempfile
 
 import imageio
 import numpy as np
-from skimage.color import label2rgb, rgb2gray
+from skimage.color import rgb2gray  # label2rgb
 
 from catalyst.settings import SETTINGS
 
@@ -152,42 +151,42 @@ def mimread(
     return image
 
 
-def mimwrite_with_meta(uri, ims, meta, **kwargs):
-    """@TODO: Docs. Contribution is welcome."""
-    writer = imageio.get_writer(uri, mode="I", **kwargs)
-    writer.set_meta_data(meta)
-    with writer:
-        for i in ims:
-            writer.append_data(i)
+# def mimwrite_with_meta(uri, ims, meta, **kwargs):
+#     """@TODO: Docs. Contribution is welcome."""
+#     writer = imageio.get_writer(uri, mode="I", **kwargs)
+#     writer.set_meta_data(meta)
+#     with writer:
+#         for i in ims:
+#             writer.append_data(i)
 
 
-def mask_to_overlay_image(
-    image: np.ndarray, masks: List[np.ndarray], threshold: float = 0, mask_strength: float = 0.5,
-) -> np.ndarray:
-    """Draws every mask for with some color over image.
-
-    Args:
-        image: RGB image used as underlay for masks
-        masks: list of masks
-        threshold: threshold for masks binarization
-        mask_strength: opacity of colorized masks
-
-    Returns:
-        np.ndarray: HxWx3 image with overlay
-    """
-    h, w = image.shape[:2]
-    labels = np.zeros((h, w), np.uint8)
-
-    for idx, mask in enumerate(masks, start=1):
-        labels[mask > threshold] = idx
-
-    mask = label2rgb(labels, bg_label=0)
-
-    image = np.array(image) / 255.0
-    image_with_overlay = image * (1 - mask_strength) + mask * mask_strength
-    image_with_overlay = (image_with_overlay * 255).clip(0, 255).round().astype(np.uint8)
-
-    return image_with_overlay
+# def mask_to_overlay_image(
+#     image: np.ndarray, masks: List[np.ndarray], threshold: float = 0, mask_strength: float = 0.5,
+# ) -> np.ndarray:
+#     """Draws every mask for with some color over image.
+#
+#     Args:
+#         image: RGB image used as underlay for masks
+#         masks: list of masks
+#         threshold: threshold for masks binarization
+#         mask_strength: opacity of colorized masks
+#
+#     Returns:
+#         np.ndarray: HxWx3 image with overlay
+#     """
+#     h, w = image.shape[:2]
+#     labels = np.zeros((h, w), np.uint8)
+#
+#     for idx, mask in enumerate(masks, start=1):
+#         labels[mask > threshold] = idx
+#
+#     mask = label2rgb(labels, bg_label=0)
+#
+#     image = np.array(image) / 255.0
+#     image_with_overlay = image * (1 - mask_strength) + mask * mask_strength
+#     image_with_overlay = (image_with_overlay * 255).clip(0, 255).round().astype(np.uint8)
+#
+#     return image_with_overlay
 
 
 def has_image_extension(uri) -> bool:
@@ -208,7 +207,7 @@ __all__ = [
     "imread",
     "imwrite",
     "imsave",
-    "mask_to_overlay_image",
+    # "mask_to_overlay_image",
     "mimread",
-    "mimwrite_with_meta",
+    # "mimwrite_with_meta",
 ]

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 from collections import OrderedDict
 from copy import deepcopy
 from functools import partial
@@ -7,7 +7,6 @@ import os
 
 import hydra
 from omegaconf import DictConfig, OmegaConf
-from torch import nn
 from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
@@ -17,13 +16,12 @@ from catalyst.core import Callback
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
-from catalyst.core.trial import get_trial_by_params, ITrial
-from catalyst.engines import DeviceEngine, IEngine, process_engine
+from catalyst.core.trial import ITrial
+from catalyst.engines import IEngine, process_engine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
-from catalyst.registry import REGISTRY
-from catalyst.runners.functional import do_lr_linear_scaling, get_model_parameters
+from catalyst.runners.misc import do_lr_linear_scaling, get_model_parameters
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     Criterion,
@@ -36,7 +34,7 @@ from catalyst.typing import (
     Scheduler,
 )
 from catalyst.utils.loaders import get_loaders_from_params
-from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
+from catalyst.utils.misc import get_short_hash, get_utcnow_time
 
 logger = logging.getLogger(__name__)
 

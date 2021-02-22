@@ -38,24 +38,6 @@ if TYPE_CHECKING:
     from catalyst.core.callback import Callback
 
 
-def _resolve_bool_fp16(fp16: Union[Dict, bool]) -> Dict:
-    """Resolves fp16/distributed params usage.
-
-    Args:
-        fp16: fp16 params
-
-    Returns:
-        resolved version of fp16
-    """
-    if isinstance(fp16, bool):
-        if fp16:
-            return {"amp": True} if check_amp_available() else {"apex": True, "opt_level": "O1"}
-        else:
-            return {}
-    else:
-        return fp16
-
-
 def _get_default_engine():
     return DeviceEngine("cuda" if IS_CUDA_AVAILABLE else "cpu")
 
@@ -381,7 +363,7 @@ class Runner(IRunner):
         loader: DataLoader,
         model: Model = None,
         resume: str = None,
-        fp16: Union[Dict, bool] = None,
+        # fp16: Union[Dict, bool] = None,
         initial_seed: int = 42,
     ) -> Generator:
         """
@@ -411,7 +393,6 @@ class Runner(IRunner):
             checkpoint = load_checkpoint(resume)
             unpack_checkpoint(checkpoint, model=self.model)
 
-        self.experiment = None
         # @TODO: we need engine here
         self.model = self.engine.sync_device(self.model)
         maybe_recursive_call(self.model, "train", mode=False)

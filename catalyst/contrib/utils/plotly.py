@@ -1,5 +1,4 @@
 # flake8: noqa
-# TODO: add docs and move to pure contrib
 from typing import Dict, List, Optional, Union
 from collections import defaultdict
 from pathlib import Path
@@ -28,7 +27,7 @@ def _get_scatter(scalars: List[SummaryItem], name: str) -> go.Scatter:
     return go.Scatter(x=xs, y=ys, name=name)
 
 
-def plot_tensorboard_log(
+def _plot_tensorboard_log(
     logdir: Union[str, Path],
     step: Optional[str] = "batch",
     metrics: Optional[List[str]] = None,
@@ -97,9 +96,9 @@ def plot_metrics(
         width: the width of the whole resulting plot
 
     """
-    assert step in ["batch", "epoch",], f"Step should be either 'batch' or 'epoch', got '{step}'"
+    assert step in ["batch", "epoch"], f"Step should be either 'batch' or 'epoch', got '{step}'"
     metrics = metrics or ["loss"]
-    plot_tensorboard_log(logdir, step, metrics, height, width)
+    _plot_tensorboard_log(logdir, step, metrics, height, width)
 
 
-__all__ = ["plot_tensorboard_log", "plot_metrics"]
+__all__ = ["plot_metrics"]

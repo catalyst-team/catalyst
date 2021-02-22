@@ -1,10 +1,11 @@
 import numpy as np
 import torch
 
-from catalyst import utils
-from catalyst.contrib.data.cv import normalize, to_tensor
-from catalyst.contrib.utils.cv.tensor import _IMAGENET_MEAN  # noqa: WPS450
-from catalyst.contrib.utils.cv.tensor import _IMAGENET_STD  # noqa: WPS450
+from catalyst.contrib.utils.image import imread
+from catalyst.contrib.utils.visualization import tensor_to_ndimage
+from catalyst.data.transforms import _IMAGENET_MEAN  # noqa: WPS450
+from catalyst.data.transforms import _IMAGENET_STD  # noqa: WPS450
+from catalyst.data.transforms import normalize, to_tensor
 
 
 def test_imread():
@@ -27,9 +28,9 @@ def test_imread():
     )
 
     for uri in [jpg_rgb_uri, jpg_grs_uri, png_rgb_uri, png_grs_uri]:
-        img = utils.imread(uri)
+        img = imread(uri)
         assert img.shape == (400, 400, 3)
-        img = utils.imread(uri, grayscale=True)
+        img = imread(uri, grayscale=True)
         assert img.shape == (400, 400, 1)
 
 
@@ -41,12 +42,12 @@ def test_tensor_to_ndimage():
         [normalize(to_tensor(im), _IMAGENET_MEAN, _IMAGENET_STD) for im in orig_images], dim=0,
     )
 
-    byte_images = utils.tensor_to_ndimage(torch_images, dtype=np.uint8)
-    float_images = utils.tensor_to_ndimage(torch_images, dtype=np.float32)
+    byte_images = tensor_to_ndimage(torch_images, dtype=np.uint8)
+    float_images = tensor_to_ndimage(torch_images, dtype=np.float32)
 
     assert np.allclose(byte_images, orig_images)
     assert np.allclose(float_images, orig_images / 255, atol=1e-3, rtol=1e-3)
 
     assert np.allclose(
-        utils.tensor_to_ndimage(torch_images[0]), orig_images[0] / 255, atol=1e-3, rtol=1e-3,
+        tensor_to_ndimage(torch_images[0]), orig_images[0] / 255, atol=1e-3, rtol=1e-3,
     )

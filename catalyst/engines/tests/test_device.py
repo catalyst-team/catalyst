@@ -5,7 +5,6 @@ import logging
 from tempfile import TemporaryDirectory
 
 from pytest import mark
-
 import torch
 from torch.utils.data import DataLoader
 
@@ -16,12 +15,7 @@ from catalyst.engines.device import DeviceEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .misc import (
-    DeviceCheckCallback,
-    DummyDataset,
-    DummyModel,
-    LossMinimizationCallback,
-)
+from .misc import DeviceCheckCallback, DummyDataset, DummyModel, LossMinimizationCallback
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +31,9 @@ class CustomRunner(IRunner):
 
     def get_callbacks(self, stage: str) -> Dict[str, Callback]:
         return {
-            "criterion": CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
+            "criterion": CriterionCallback(
+                metric_key="loss", input_key="logits", target_key="targets"
+            ),
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(

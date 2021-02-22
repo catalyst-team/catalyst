@@ -8,7 +8,6 @@ from catalyst.metrics.functional.misc import (
     get_multilabel_statistics,
     get_default_topk_args,
 )
-from catalyst.metrics.functional.classification import precision_recall_fbeta_support
 
 from catalyst.metrics.functional.accuracy import accuracy, multilabel_accuracy
 from catalyst.metrics.functional.auc import auc
@@ -17,6 +16,7 @@ from catalyst.metrics.functional.average_precision import (
     mean_average_precision,
     binary_average_precision,
 )
+from catalyst.metrics.functional.classification import precision_recall_fbeta_support
 from catalyst.metrics.functional.cmc_score import cmc_score, cmc_score_count
 from catalyst.metrics.functional.f1_score import f1_score, fbeta_score
 from catalyst.metrics.functional.focal import (
