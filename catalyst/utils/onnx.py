@@ -48,15 +48,15 @@ def convert_to_onnx(
         output_names=output_names,
         dynamic_axes=dynamic_axes,
         do_constant_folding=do_constant_folding,
-        opset_version=opset_version
+        opset_version=opset_version,
     )
 
 
 def quantize_onnx_model(
     onnx_model_path: Union[Path, str],
     quantized_model_path: Union[Path, str],
-    qtype: str="qint8",
-    verbose: bool = False
+    qtype: str = "qint8",
+    verbose: bool = False,
 ) -> None:
     """Takes model converted to onnx runtime and applies pruning.
 
@@ -76,18 +76,18 @@ def quantize_onnx_model(
         "quint8": QuantType.QUInt8,
     }
     if qtype not in type_mapping.keys():
-        raise ValueError(
-            "type should be string one of 'quint8' or 'qint8'. Got {}".format(qtype)
-        )
-    quantize_dynamic(onnx_model_path,
-                     quantized_model_path,
-                     weight_type=type_mapping[qtype])
+        raise ValueError("type should be string one of 'quint8' or 'qint8'. Got {}".format(qtype))
+    quantize_dynamic(onnx_model_path, quantized_model_path, weight_type=type_mapping[qtype])
     if verbose:
-        v_str =\
-            "Model size before quantization (MB):"\
-            f"{os.path.getsize(onnx_model_path) / 2**20:.2f}\n"\
-            "Model size after quantization (MB): "\
+        v_str = (
+            "Model size before quantization (MB):"
+            f"{os.path.getsize(onnx_model_path) / 2**20:.2f}\n"
+            "Model size after quantization (MB): "
             f"{os.path.getsize(quantized_model_path) / 2**20:.2f}"
+        )
         print("Done.")
         print(v_str)
         print(f"Quantized model saved to {quantized_model_path}.")
+
+
+__all__ = ["convert_to_onnx", "quantize_onnx_model"]
