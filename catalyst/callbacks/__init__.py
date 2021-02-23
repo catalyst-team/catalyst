@@ -29,11 +29,11 @@ from catalyst.callbacks.metrics import *
 # if IS_QUANTIZATION_AVAILABLE:
 #     from catalyst.callbacks.quantization import DynamicQuantizationCallback
 
-# if IS_PRUNING_AVAILABLE:
-#     from catalyst.callbacks.pruning import PruningCallback
-from catalyst.settings import IS_OPTUNA_AVAILABLE
+if IS_PRUNING_AVAILABLE:
+    from catalyst.callbacks.pruning import PruningCallback
+
 
 if IS_OPTUNA_AVAILABLE:
-    from catalyst.contrib.callbacks.optuna_callback import OptunaPruningCallback
+    from catalyst.callbacks.optuna import OptunaPruningCallback
 
 # from catalyst.contrib.callbacks import *

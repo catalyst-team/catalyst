@@ -10,6 +10,7 @@ def get_segmentation_statistics(
     """
     Computes true positive, false positive, false negative
     for a multilabel segmentation problem.
+
     Args:
         outputs: [N; K; ...] tensor that for each of the N examples
             indicates the probability of the example belonging to each of
@@ -82,6 +83,7 @@ def _get_region_based_metrics(
 ) -> torch.Tensor:
     """
     Get aggregated metric
+
     Args:
         outputs: [N; K; ...] tensor that for each of the N examples
             indicates the probability of the example belonging to each of
@@ -238,6 +240,7 @@ def dice(
     Computes the dice score,
     dice score = 2 * intersection / (intersection + union)) = \
     = 2 * tp / (2 * tp + fp + fn)
+
     Args:
         outputs: [N; K; ...] tensor that for each of the N examples
             indicates the probability of the example belonging to each of
@@ -311,6 +314,7 @@ def trevsky(
     """
     Computes the trevsky score,
     trevsky score = tp / (tp + fp * beta + fn * alpha)
+    
     Args:
         outputs: [N; K; ...] tensor that for each of the N examples
             indicates the probability of the example belonging to each of
