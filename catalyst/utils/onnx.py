@@ -84,12 +84,10 @@ def quantize_onnx_model(
                      weight_type=type_mapping[qtype])
     if verbose:
         v_str =\
-            f"Model size before quantization (MB): {\
-                os.path.getsize(onnx_model_path) / 2**20:.2f\
-            }\n"\
-            f"Model size after quantization (MB): {\
-                os.path.getsize(quantized_model_path) / 2**20:.2f\
-            }"
+            "Model size before quantization (MB):"\
+            f"{os.path.getsize(onnx_model_path) / 2**20:.2f}\n"\
+            "Model size after quantization (MB): "\
+            f"{os.path.getsize(quantized_model_path) / 2**20:.2f}"
         print("Done.")
         print(v_str)
         print(f"Quantized model saved to {quantized_model_path}.")
