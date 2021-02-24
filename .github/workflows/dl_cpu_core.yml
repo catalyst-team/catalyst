@@ -89,10 +89,7 @@ jobs:
         run: |
           pytest catalyst/contrib
           pytest catalyst/data
-          pytest catalyst/engines/tests/test_distributed.py
-          pytest catalyst/engines/tests/test_device.py
-          pytest catalyst/engines/tests/test_functional.py
-          pytest catalyst/engines/tests/test_parallel.py
+          pytest catalyst/engines
           pytest catalyst/metrics
           pytest catalyst/tools
           pytest catalyst/utils

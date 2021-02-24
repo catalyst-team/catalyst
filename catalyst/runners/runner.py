@@ -198,8 +198,8 @@ class Runner(IRunner):
                     metric_key=self._valid_metric,
                     minimize=self._minimize_valid_metric,
                 )
-            else:
-                raise NotImplementedError("CheckpointCallback already exist")
+            # else:
+            #     raise NotImplementedError("CheckpointCallback already exist")
 
         # if self._valid_metric is not None:
         #     have_required_callback = False
