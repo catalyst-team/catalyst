@@ -87,6 +87,7 @@ jobs:
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
         run: |
+          pytest catalyst/callbacks
           pytest catalyst/contrib
           pytest catalyst/data
           pytest catalyst/engines

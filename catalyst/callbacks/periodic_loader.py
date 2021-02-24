@@ -141,16 +141,15 @@ class PeriodicLoaderCallback(Callback):
         runner.loaders = epoch_loaders
 
     def on_epoch_end(self, runner: "IRunner") -> None:
-        """Check if validation metric should be
-        dropped for current epoch.
+        """Check if validation metric should be dropped for current epoch.
 
         Args:
             runner: current runner
         """
         if self.valid_loader not in runner.loaders:
-            runner.epoch_metrics[self.valid_loader][self.valid_metric] = (
-                float("+inf") if self.minimize_metric else float("-inf")
-            )
+            runner.epoch_metrics[self.valid_loader] = {
+                self.valid_metric: float("+inf") if self.minimize_metric else float("-inf")
+            }
 
 
 __all__ = ["PeriodicLoaderCallback"]

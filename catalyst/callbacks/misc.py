@@ -16,6 +16,7 @@ class IBatchMetricHandlerCallback(ABC, Callback):
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
         self.metric_key = metric_key
+        self.best_score = None
 
     @abstractmethod
     def handle_score_is_better(self, runner: "IRunner"):
@@ -45,6 +46,7 @@ class IEpochMetricHandlerCallback(ABC, Callback):
         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
         self.loader_key = loader_key
         self.metric_key = metric_key
+        self.best_score = None
 
     @abstractmethod
     def handle_score_is_better(self, runner: "IRunner"):
