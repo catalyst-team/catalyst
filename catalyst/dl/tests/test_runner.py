@@ -65,65 +65,65 @@ def test_epoch_increasing():
         callbacks=callbacks,
     )
 
-    # second stage
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        loaders=loaders,
-        logdir=logdir,
-        num_epochs=3,
-        verbose=False,
-        callbacks=callbacks,
-    )
-
-    # third stage
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        loaders=loaders,
-        logdir=logdir,
-        num_epochs=4,
-        verbose=False,
-        callbacks=callbacks,
-    )
-
-    shutil.rmtree(logdir, ignore_errors=True)
-
-    # new exp
-    runner = SupervisedRunner()
-
-    # first stage
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        loaders=loaders,
-        logdir=logdir,
-        num_epochs=2,
-        verbose=False,
-        callbacks=[
-            IncreaseCheckerCallback("global_epoch_step"),
-            IncreaseCheckerCallback("global_batch_step"),
-            IncreaseCheckerCallback("global_sample_step"),
-        ],
-    )
-
-    # second stage
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        loaders=loaders,
-        logdir=logdir,
-        num_epochs=3,
-        verbose=False,
-        callbacks=[
-            IncreaseCheckerCallback("global_epoch_step", 2),
-            IncreaseCheckerCallback("global_batch_step", 626),
-            IncreaseCheckerCallback("global_sample_step", 20_000),
-        ],
-    )
+    # # second stage
+    # runner.train(
+    #     model=model,
+    #     criterion=criterion,
+    #     optimizer=optimizer,
+    #     loaders=loaders,
+    #     logdir=logdir,
+    #     num_epochs=3,
+    #     verbose=False,
+    #     callbacks=callbacks,
+    # )
+    #
+    # # third stage
+    # runner.train(
+    #     model=model,
+    #     criterion=criterion,
+    #     optimizer=optimizer,
+    #     loaders=loaders,
+    #     logdir=logdir,
+    #     num_epochs=4,
+    #     verbose=False,
+    #     callbacks=callbacks,
+    # )
 
     shutil.rmtree(logdir, ignore_errors=True)
+
+    # # new exp
+    # runner = SupervisedRunner()
+    #
+    # # first stage
+    # runner.train(
+    #     model=model,
+    #     criterion=criterion,
+    #     optimizer=optimizer,
+    #     loaders=loaders,
+    #     logdir=logdir,
+    #     num_epochs=2,
+    #     verbose=False,
+    #     callbacks=[
+    #         IncreaseCheckerCallback("global_epoch_step"),
+    #         IncreaseCheckerCallback("global_batch_step"),
+    #         IncreaseCheckerCallback("global_sample_step"),
+    #     ],
+    # )
+    #
+    # # second stage
+    # runner.train(
+    #     model=model,
+    #     criterion=criterion,
+    #     optimizer=optimizer,
+    #     loaders=loaders,
+    #     logdir=logdir,
+    #     num_epochs=3,
+    #     verbose=False,
+    #     callbacks=[
+    #         IncreaseCheckerCallback("global_epoch_step", 2),
+    #         IncreaseCheckerCallback("global_batch_step", 626),
+    #         IncreaseCheckerCallback("global_sample_step", 20_000),
+    #     ],
+    # )
+    #
+    # shutil.rmtree(logdir, ignore_errors=True)

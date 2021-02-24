@@ -49,5 +49,5 @@ def test_optuna():
         direction="maximize",
         pruner=optuna.pruners.MedianPruner(n_startup_trials=1, n_warmup_steps=0, interval_steps=1),
     )
-    study.optimize(objective, n_trials=3, timeout=300)
+    study.optimize(objective, n_trials=2, timeout=300)
     assert True

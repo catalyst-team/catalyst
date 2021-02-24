@@ -29,7 +29,9 @@ class DeviceEngine(IEngine):
     def world_size(self) -> int:
         return 1
 
-    def sync_device(self, tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module]) -> Any:
+    def sync_device(
+        self, tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module]
+    ) -> Any:
         if isinstance(tensor_or_module, dict):
             return {key: self.sync_device(value) for key, value in tensor_or_module.items()}
         elif isinstance(tensor_or_module, (list, tuple)):
@@ -37,9 +39,13 @@ class DeviceEngine(IEngine):
         elif torch.is_tensor(tensor_or_module):
             return tensor_or_module.to(self.device, non_blocking=True)
         elif (
-            isinstance(tensor_or_module, (np.ndarray, np.void)) and tensor_or_module.dtype.fields is not None
+            isinstance(tensor_or_module, (np.ndarray, np.void))
+            and tensor_or_module.dtype.fields is not None
         ):
-            return {k: self.sync_device(tensor_or_module[k]) for k in tensor_or_module.dtype.fields.keys()}
+            return {
+                k: self.sync_device(tensor_or_module[k])
+                for k in tensor_or_module.dtype.fields.keys()
+            }
         elif isinstance(tensor_or_module, np.ndarray):
             return torch.tensor(tensor_or_module, device=self.device)
         elif isinstance(tensor_or_module, nn.Module):
@@ -83,7 +89,9 @@ class DeviceEngine(IEngine):
     def optimizer_step(self, loss, model, optimizer) -> None:
         optimizer.step()
 
-    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,) -> Dict:
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
         # add data parallel support
         return {
             "model": model,
@@ -94,7 +102,13 @@ class DeviceEngine(IEngine):
         }
 
     def unpack_checkpoint(
-        self, checkpoint: Dict, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        checkpoint: Dict,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> None:
 
         if "model_state_dict" in checkpoint:

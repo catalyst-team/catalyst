@@ -1,6 +1,6 @@
 # flake8: noqa
 
-from typing import Any, Dict, List
+from typing import Dict
 import logging
 from tempfile import TemporaryDirectory
 
@@ -9,8 +9,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.engines.amp import AMPEngine
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_AMP_AVAILABLE, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 from .misc import (
     DeviceCheckCallback,
@@ -19,6 +18,9 @@ from .misc import (
     LossMinimizationCallback,
     TensorTypeChecker,
 )
+
+if IS_AMP_AVAILABLE:
+    from catalyst.engines.amp import AMPEngine
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +36,9 @@ class CustomRunner(dl.IRunner):
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
+            "criterion": dl.CriterionCallback(
+                metric_key="loss", input_key="logits", target_key="targets"
+            ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
@@ -93,7 +97,7 @@ def run_train_with_config_experiment_amp_device(device):
     pass
 
 
-@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+@mark.skipif(not IS_CUDA_AVAILABLE or not IS_AMP_AVAILABLE, reason="CUDA device is not available")
 def test_experiment_engine_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:
@@ -101,7 +105,7 @@ def test_experiment_engine_with_devices():
 
 
 @mark.skip("Config experiment is in development phase!")
-@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+@mark.skipif(not IS_CUDA_AVAILABLE or not IS_AMP_AVAILABLE, reason="CUDA device is not available")
 def test_config_experiment_engine_with_cuda():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:

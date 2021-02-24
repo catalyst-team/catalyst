@@ -86,13 +86,11 @@ class UploadCommand(Command):
 
 # Specific dependencies.
 extras = {
-    "cv": load_requirements("requirements/requirements-cv.txt"),
     "dev": load_requirements("requirements/requirements-dev.txt"),
-    # "ecosystem": load_requirements("requirements/requirements-ecosystem.txt"),
-    # "log": load_requirements("requirements/requirements-log.txt"),
+    "cv": load_requirements("requirements/requirements-cv.txt"),
     "ml": load_requirements("requirements/requirements-ml.txt"),
-    # "nlp": load_requirements("requirements/requirements-nlp.txt"),
     "optuna": load_requirements("requirements/requirements-optuna.txt"),
+    "hydra": load_requirements("requirements/requirements-hydra.txt"),
 }
 # extras["contrib"] = (
 #     extras["cv"]

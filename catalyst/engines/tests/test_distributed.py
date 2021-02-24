@@ -1,6 +1,6 @@
 # flake8: noqa
 
-from typing import Any, Dict, List
+from typing import Any, Dict
 import logging
 import os
 from tempfile import TemporaryDirectory
@@ -9,16 +9,14 @@ from pytest import mark
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
-from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.callbacks import CriterionCallback, OptimizerCallback
+from catalyst.core.callback import Callback
 from catalyst.core.runner import IRunner
 from catalyst.engines import DistributedDataParallelEngine
-from catalyst.engines.device import DeviceEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 from .misc import DummyDataset, DummyModel, LossMinimizationCallback, WorldSizeCheckCallback
-
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +35,9 @@ class CustomExperiment(IRunner):
 
     def get_callbacks(self, stage: str) -> Dict[str, Callback]:
         return {
-            "criterion": CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
+            "criterion": CriterionCallback(
+                metric_key="loss", input_key="logits", target_key="targets"
+            ),
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             # "checkpoint": dl.CheckpointCallback(
