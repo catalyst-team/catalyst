@@ -13,10 +13,10 @@ from catalyst.dl import Callback, CallbackOrder, ControlFlowCallback
 
 class _Runner:
     def __init__(self, stage, loader_key, global_epoch, epoch):
-        self.stage = stage
+        self.stage_key = stage
         self.loader_key = loader_key
-        self.global_epoch = global_epoch
-        self.epoch = epoch
+        self.global_epoch_step = global_epoch
+        self.stage_epoch_step = epoch
 
 
 class DummyCallback(Callback):
@@ -301,9 +301,7 @@ class TestControlFlowCallback(unittest.TestCase):
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
         for order in orders:
@@ -317,9 +315,7 @@ class TestControlFlowCallback(unittest.TestCase):
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
         order = random.choice(orders)
@@ -338,9 +334,7 @@ class TestControlFlowCallback(unittest.TestCase):
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
         order = random.choice(orders)
@@ -359,9 +353,7 @@ class TestControlFlowCallback(unittest.TestCase):
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
         order = random.choice(orders)
@@ -383,9 +375,7 @@ class TestControlFlowCallback(unittest.TestCase):
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
         order = random.choice(orders)
@@ -407,9 +397,7 @@ class TestControlFlowCallback(unittest.TestCase):
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
         order = random.choice(orders)
@@ -438,9 +426,7 @@ class TestControlFlowCallback(unittest.TestCase):
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
 
@@ -494,9 +480,7 @@ class TestControlFlowCallback(unittest.TestCase):
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
 
@@ -543,9 +527,7 @@ class TestControlFlowCallback(unittest.TestCase):
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
 
