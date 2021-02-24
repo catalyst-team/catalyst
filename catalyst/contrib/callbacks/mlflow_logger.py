@@ -1,6 +1,6 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
-from typing import Dict, List, TYPE_CHECKING, Any
+from typing import Any, Dict, List, TYPE_CHECKING
 
 import mlflow
 
@@ -17,16 +17,15 @@ if TYPE_CHECKING:
 
 
 class MLFlowLogger(Callback):
-
     def __init__(
-            self,
-            experiment: str,
-            metric_names: List[str] = None,
-            log_on_batch_end: bool = False,
-            log_on_epoch_end: bool = True,
-            tracking_uri: str = None,
-            registry_uri: str = None,
-            params: Dict[str, Any] = None
+        self,
+        experiment: str,
+        metric_names: List[str] = None,
+        log_on_batch_end: bool = False,
+        log_on_epoch_end: bool = True,
+        tracking_uri: str = None,
+        registry_uri: str = None,
+        params: Dict[str, Any] = None,
     ):
         """
         Args:
@@ -52,7 +51,7 @@ class MLFlowLogger(Callback):
             raise ValueError("You have to log something!")
 
         if (self.log_on_batch_end and not self.log_on_epoch_end) or (
-                not self.log_on_batch_end and self.log_on_epoch_end
+            not self.log_on_batch_end and self.log_on_epoch_end
         ):
             self.batch_log_suffix = ""
             self.epoch_log_suffix = ""
@@ -67,11 +66,7 @@ class MLFlowLogger(Callback):
         self.params = dict() if params is None else params
 
     def _log_metrics(
-            self,
-            metrics: Dict[str, float],
-            step: int,
-            mode: str,
-            suffix="",
+        self, metrics: Dict[str, float], step: int, mode: str, suffix="",
     ):
         if self.metrics_to_log is None:
             metrics_to_log = set(metrics.keys())
