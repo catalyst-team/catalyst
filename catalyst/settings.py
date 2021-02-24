@@ -64,6 +64,7 @@ class Settings(FrozenClass):
         # LOG
         log_required: bool = False,
         alchemy_required: Optional[bool] = None,
+        mlflow_required: Optional[bool] = None,
         neptune_required: Optional[bool] = None,
         wandb_required: Optional[bool] = None,
         plotly_required: Optional[bool] = None,
@@ -113,6 +114,9 @@ class Settings(FrozenClass):
         # [catalyst-log]
         self.alchemy_required: bool = self._optional_value(
             alchemy_required, default=log_required
+        )
+        self.mlflow_required: bool = self._optional_value(
+            mlflow_required, default=log_required
         )
         self.neptune_required: bool = self._optional_value(
             neptune_required, default=log_required

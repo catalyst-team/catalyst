@@ -92,6 +92,25 @@ except ImportError as ex:
 from catalyst.contrib.callbacks.mixup_callback import MixupCallback
 
 try:
+    import mlflow
+    from catalyst.contrib.callbacks.mlflow_logger import MLFlowLogger
+except ModuleNotFoundError as ex:
+    if SETTINGS.mlflow_required:
+        logger.warning(
+            "mlflow not available, to install mlflow, "
+            "run `pip install mlflow`."
+        )
+        raise ex
+except ImportError as ex:
+    if SETTINGS.mlflow_required:
+        logger.warning(
+            "mlflow not available, to install mlflow, "
+            "run `pip install mlflow`."
+        )
+        raise ex
+
+
+try:
     import neptune
     from catalyst.contrib.callbacks.neptune_logger import NeptuneLogger
 except ModuleNotFoundError as ex:
