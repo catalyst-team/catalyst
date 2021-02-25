@@ -1,7 +1,11 @@
 # Catalyst examples
 
-## Tutorials
+## Python API
 
+1. [demo notebook](<./notebooks/demo 21xx.ipynb>) [![Open In Colab](<https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo 21xx.ipynb>)
+    - minimal examples
+    - Runner customization
+    - DL and RL pipelines
 1. [classification tutorial](./notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
     - dataset preparation (raw images -> train/valid/infer splits)
     - augmentations usage example
@@ -21,30 +25,24 @@
     - tensorboard logs visualization
     - predictions visualization
     - Test-time augmentations with [ttach](https://github.com/qubvel/ttach) library
-    
-3.  [Pruning tutorial](notebooks/Pruning.ipynb)[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Pruning.ipynb)
+1.  [Pruning tutorial](notebooks/Pruning.ipynb)[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Pruning.ipynb)
     - Pruning intro
     - Lottery ticket hypothesis
     - Catalyst pruning callback
     - Loading training result from logs
 
-### Usage examples
-1. [features – classification](./notebooks/classification-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-example.ipynb)
-    - cifar10 classification model
-    - Runner usage example
-1. [features – segmentation](./notebooks/segmentation-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-example.ipynb)
-    - segmentation with unet
-    - model training and inference
-    - predictions visialization
-
 ----
 
-## Pipelines
+## Config API
 
 Full description of configs with comments:
 - [Eng](configs/config-description-eng.yml)
 - [Rus](configs/config-description-rus.yml)
 
+1. [MNIST with stage](mnist_stages)
+    - Config API run example
+    - Hydra API run example
+    - AutoML Tune example
 1. [classification pipeline](https://github.com/catalyst-team/classification)
     - classification model training and inference
     - different augmentations and stages usage
@@ -54,23 +52,3 @@ Full description of configs with comments:
     - model training and inference
     - different augmentations and stages usage
     - metrics visualization with tensorboard
-
-### Usage examples
-1. [features – model training](cifar_simple)
-    - configuration files usage example
-    - local and docker runs
-    - metrics visualization with tensorboard
-1. [features – model training with stages](mnist_stages)
-    - pipeline example with stages
-
-----
-
-### RL tutorials & pipelines
-For Reinforcement Learning examples check out our [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl)
-
-----
-
-
-### Contributions
-
-We supervise the **[Awesome Catalyst list](https://github.com/catalyst-team/awesome-catalyst-list)**. You can make a PR with your project to the list.
