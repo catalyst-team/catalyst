@@ -1,6 +1,6 @@
 import torch
 
-from catalyst.metrics.functional.segmentation import get_segmentation_statistics
+from catalyst.metrics.functional._segmentation import get_segmentation_statistics
 
 
 def test_segmentation_statistics():

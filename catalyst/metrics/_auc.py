@@ -2,8 +2,8 @@ from typing import Dict
 
 import torch
 
-from catalyst.metrics.functional.auc import auc
-from catalyst.metrics.metric import ICallbackLoaderMetric
+from catalyst.metrics._metric import ICallbackLoaderMetric
+from catalyst.metrics.functional._auc import auc
 
 
 class AUCMetric(ICallbackLoaderMetric):

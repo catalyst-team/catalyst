@@ -3,10 +3,10 @@ from typing import Dict, List, Optional, Tuple, Union
 import numpy as np
 import torch
 
-from catalyst.metrics.additive import AdditiveValueMetric
-from catalyst.metrics.functional.accuracy import accuracy, multilabel_accuracy
-from catalyst.metrics.functional.misc import get_default_topk_args
-from catalyst.metrics.metric import ICallbackBatchMetric
+from catalyst.metrics._additive import AdditiveValueMetric
+from catalyst.metrics._metric import ICallbackBatchMetric
+from catalyst.metrics.functional._accuracy import accuracy, multilabel_accuracy
+from catalyst.metrics.functional._misc import get_default_topk_args
 
 
 class AccuracyMetric(ICallbackBatchMetric):

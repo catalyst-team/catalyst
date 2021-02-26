@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 import pytest
 
-from catalyst.metrics.functional.classification import (
+from catalyst.metrics.functional._classification import (
     f1score,
     get_aggregated_metrics,
     precision,

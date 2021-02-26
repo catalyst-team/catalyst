@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 import numpy as np
 import torch
 
-from catalyst.metrics.functional.misc import get_multiclass_statistics
+from catalyst.metrics.functional._misc import get_multiclass_statistics
 
 
 def precision(tp: int, fp: int, zero_division: int = 0) -> float:

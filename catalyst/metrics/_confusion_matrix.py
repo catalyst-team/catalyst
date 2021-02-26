@@ -3,7 +3,7 @@ from typing import Any
 import numpy as np
 import torch
 
-from catalyst.metrics.metric import IMetric
+from catalyst.metrics._metric import IMetric
 
 
 class ConfusionMatrixMetric(IMetric):

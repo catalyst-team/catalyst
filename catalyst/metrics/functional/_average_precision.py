@@ -2,7 +2,7 @@ from typing import List, Optional
 
 import torch
 
-from catalyst.metrics.functional.misc import (
+from catalyst.metrics.functional._misc import (
     process_multilabel_components,
     process_recsys_components,
 )

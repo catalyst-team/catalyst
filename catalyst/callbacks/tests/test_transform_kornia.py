@@ -1,14 +1,21 @@
 import os
 
-from kornia import augmentation
+import pytest
 import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from catalyst import dl, metrics
-from catalyst.contrib.callbacks.transform import BatchTransformCallback
-from catalyst.contrib.data.cv import ToTensor
+from catalyst.callbacks.transform import BatchTransformCallback
 from catalyst.contrib.datasets import MNIST
+from catalyst.data.transforms import ToTensor
+
+try:
+    from kornia import augmentation
+
+    IS_KORNIA_AVAILABLE = True
+except ImportError:
+    IS_KORNIA_AVAILABLE = False
 
 
 class CustomRunner(dl.Runner):
@@ -42,7 +49,8 @@ class CustomRunner(dl.Runner):
             self.optimizer.zero_grad()
 
 
-def main():
+@pytest.mark.skipif(not IS_KORNIA_AVAILABLE, reason="Kornia not found")
+def test_transform_kornia():
     """Run few epochs to check ``BatchTransformCallback`` callback."""
     model = torch.nn.Linear(28 * 28, 10)
     optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
@@ -78,8 +86,3 @@ def main():
     # model inference
     for prediction in runner.predict_loader(loader=loaders["train"]):
         assert prediction.detach().cpu().numpy().shape[-1] == 10
-
-
-if __name__ == "__main__":
-    if os.getenv("USE_APEX", "0") == "0" and os.getenv("USE_DDP", "0") == "0":
-        main()

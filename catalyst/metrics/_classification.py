@@ -5,13 +5,13 @@ from functools import partial
 import numpy as np
 import torch
 
-from catalyst.metrics.functional.classification import get_aggregated_metrics, get_binary_metrics
-from catalyst.metrics.functional.misc import (
+from catalyst.metrics._metric import ICallbackBatchMetric
+from catalyst.metrics.functional._classification import get_aggregated_metrics, get_binary_metrics
+from catalyst.metrics.functional._misc import (
     get_binary_statistics,
     get_multiclass_statistics,
     get_multilabel_statistics,
 )
-from catalyst.metrics.metric import ICallbackBatchMetric
 
 
 class StatisticsMetric(ICallbackBatchMetric):

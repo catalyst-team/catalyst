@@ -2,9 +2,9 @@ from typing import Any, Dict, List
 
 import torch
 
-from catalyst.metrics.additive import AdditiveValueMetric
-from catalyst.metrics.functional.average_precision import mean_average_precision
-from catalyst.metrics.metric import ICallbackBatchMetric
+from catalyst.metrics._additive import AdditiveValueMetric
+from catalyst.metrics._metric import ICallbackBatchMetric
+from catalyst.metrics.functional._average_precision import mean_average_precision
 
 
 class MAPMetric(ICallbackBatchMetric):

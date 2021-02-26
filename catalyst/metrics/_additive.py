@@ -2,7 +2,7 @@ from typing import Tuple
 
 import numpy as np
 
-from catalyst.metrics.metric import IMetric
+from catalyst.metrics._metric import IMetric
 
 
 class AdditiveValueMetric(IMetric):

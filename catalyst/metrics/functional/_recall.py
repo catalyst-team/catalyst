@@ -2,10 +2,10 @@ from typing import Optional, Union
 
 import torch
 
-from catalyst.metrics.functional.classification import precision_recall_fbeta_support
+from catalyst.metrics.functional._classification import precision_recall_fbeta_support
 
 
-def precision(
+def recall(
     outputs: torch.Tensor,
     targets: torch.Tensor,
     argmax_dim: int = -1,
@@ -23,32 +23,32 @@ def precision(
         argmax_dim: int, that specifies dimension for argmax transformation
             in case of scores/probabilities in ``outputs``
         eps: float. Epsilon to avoid zero division.
-        num_classes: int, that specifies number of classes if it known
+        num_classes: int, that specifies number of classes if it known.
 
     Returns:
-        Tensor:
+        Tensor: recall for every class
 
     Examples:
-        >>> precision(
+        >>> recall(
         >>>     outputs=torch.tensor([
         >>>         [1, 0, 0],
         >>>         [0, 1, 0],
         >>>         [0, 0, 1],
         >>>     ]),
         >>>     targets=torch.tensor([0, 1, 2]),
-        >>>     beta=1,
         >>> )
         tensor([1., 1., 1.])
-        >>> precision(
+        >>> precision_recall_fbeta_support(
         >>>     outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),
         >>>     targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),
         >>> )
-        tensor([0.5000, 0.5000]
+        tensor([0.5000, 0.5000])
     """
-    precision_score, _, _, _, = precision_recall_fbeta_support(
+    _, recall_score, _, _ = precision_recall_fbeta_support(
         outputs=outputs, targets=targets, argmax_dim=argmax_dim, eps=eps, num_classes=num_classes,
     )
-    return precision_score
+
+    return recall_score
 
 
-__all__ = ["precision"]
+__all__ = ["recall"]

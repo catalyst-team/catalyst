@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import torch
 
-from catalyst.metrics.accuracy import AccuracyMetric, MultilabelAccuracyMetric
+from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
 
 
 @pytest.mark.parametrize(

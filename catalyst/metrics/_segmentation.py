@@ -3,13 +3,13 @@ from functools import partial
 
 import torch
 
-from catalyst.metrics.functional.segmentation import (
+from catalyst.metrics._metric import ICallbackBatchMetric
+from catalyst.metrics.functional._segmentation import (
     _dice,
     _iou,
     _trevsky,
     get_segmentation_statistics,
 )
-from catalyst.metrics.metric import ICallbackBatchMetric
 
 
 class RegionBasedMetric(ICallbackBatchMetric):
@@ -129,8 +129,6 @@ class RegionBasedMetric(ICallbackBatchMetric):
             for idx, value in enumerate(values):
                 weighted_metric += value * self.weights[idx]
             metrics[f"{self.prefix}/weighted"] = weighted_metric
-        # convert torch.Tensor to float
-        metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
 
     def compute_key_value(self) -> Dict[str, torch.Tensor]:
