@@ -38,7 +38,7 @@ except ModuleNotFoundError:
     IS_XLA_AVAILABLE = False
 
 try:
-    import onnx, onnxruntime  # noqa: F401
+    import onnx, onnxruntime  # noqa: F401, E401
 
     IS_ONNX_AVAILABLE = True
 except ImportError:
@@ -392,7 +392,7 @@ setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_APEX_AVAILABLE", IS_APEX_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_AMP_AVAILABLE", IS_AMP_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
-setattr(SETTINGS, "IS_ONNX_AVAILABLE", IS_ONNX_AVAILABLE)
+setattr(SETTINGS, "IS_ONNX_AVAILABLE", IS_ONNX_AVAILABLE)  # noqa: B010
 
 
 __all__ = [

@@ -314,7 +314,7 @@ def trevsky(
     """
     Computes the trevsky score,
     trevsky score = tp / (tp + fp * beta + fn * alpha)
-    
+
     Args:
         outputs: [N; K; ...] tensor that for each of the N examples
             indicates the probability of the example belonging to each of
