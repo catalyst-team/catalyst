@@ -187,10 +187,11 @@ class TqdmCallback(Callback):
 
     def on_batch_end(self, runner: "IRunner"):
         """Update tqdm progress bar at the end of each batch."""
+        batch_metrics = {k: float(v) for k, v in runner.batch_metrics.items()}
         self.tqdm.set_postfix(
             **{
                 k: "{:3.3f}".format(v) if v > 1e-3 else "{:1.3e}".format(v)
-                for k, v in sorted(runner.batch_metrics.items())
+                for k, v in sorted(batch_metrics.items())
             }
         )
         self.tqdm.update()

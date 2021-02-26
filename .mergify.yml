@@ -8,12 +8,8 @@ pull_request_rules:
       - "#approved-reviews-by>=2"
       - approved-reviews-by!=github-actions
       - status-success=codestyle (ubuntu-18.04, 3.6)
-      - status-success=dl-cpu-core (ubuntu-18.04, 3.6, minimal)
-      - status-success=dl-cpu-core (ubuntu-18.04, 3.6, latest)
-      - status-success=dl-cpu-cv (ubuntu-18.04, 3.6, minimal)
-      - status-success=dl-cpu-cv (ubuntu-18.04, 3.6, latest)
-      - status-success=dl-cpu-nlp (ubuntu-18.04, 3.6, minimal)
-      - status-success=dl-cpu-nlp (ubuntu-18.04, 3.6, latest)
+      - status-success=dl-cpu (ubuntu-18.04, 3.6, minimal)
+      - status-success=dl-cpu (ubuntu-18.04, 3.6, latest)
       - label!=WIP
     actions:
       merge:
@@ -23,12 +19,8 @@ pull_request_rules:
       - "#approved-reviews-by>=3"
       - approved-reviews-by=github-actions
       - status-success=codestyle (ubuntu-18.04, 3.6)
-      - status-success=dl-cpu-core (ubuntu-18.04, 3.6, minimal)
-      - status-success=dl-cpu-core (ubuntu-18.04, 3.6, latest)
-      - status-success=dl-cpu-cv (ubuntu-18.04, 3.6, minimal)
-      - status-success=dl-cpu-cv (ubuntu-18.04, 3.6, latest)
-      - status-success=dl-cpu-nlp (ubuntu-18.04, 3.6, minimal)
-      - status-success=dl-cpu-nlp (ubuntu-18.04, 3.6, latest)
+      - status-success=dl-cpu (ubuntu-18.04, 3.6, minimal)
+      - status-success=dl-cpu (ubuntu-18.04, 3.6, latest)
       - label!=WIP
     actions:
       merge:

@@ -50,6 +50,7 @@ class TensorboardLogger(ILogger):
     ) -> None:
         if scope == "batch":
             self._check_loader_key(loader_key=loader_key)
+            metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
                 metrics=metrics, step=global_batch_step, loader_key=loader_key, suffix="/batch"
             )

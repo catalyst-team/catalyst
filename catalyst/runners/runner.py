@@ -155,7 +155,7 @@ class Runner(IRunner):
             else self._criterion
         )
 
-    def get_optimizer(self, model: Model, stage: str) -> Optimizer:
+    def get_optimizer(self, stage: str, model: Model) -> Optimizer:
         """Returns the optimizer for a given stage."""
         return (
             self._optimizer(model)
@@ -163,7 +163,7 @@ class Runner(IRunner):
             else self._optimizer
         )
 
-    def get_scheduler(self, optimizer: Optimizer, stage: str) -> Scheduler:
+    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
         """Returns the scheduler for a given stage."""
         return (
             self._scheduler(optimizer)

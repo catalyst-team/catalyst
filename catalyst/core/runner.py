@@ -368,7 +368,7 @@ class IRunner(ICallback, ILogger, ABC):
         return self.optimizer
 
     def _get_scheduler(self) -> Scheduler:
-        assert self.optimizer is not None, "You need to setup optimizer first"
+        # assert self.optimizer is not None, "You need to setup optimizer first"
         self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
         return self.scheduler
 

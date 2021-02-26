@@ -6,27 +6,27 @@
 
 from catalyst.metrics.functional import *
 
-from catalyst.metrics.metric import (
+from catalyst.metrics._metric import (
     IMetric,
     ICallbackLoaderMetric,
     ICallbackBatchMetric,
 )
-from catalyst.metrics.additive import AdditiveValueMetric
-from catalyst.metrics.confusion_matrix import ConfusionMatrixMetric
+from catalyst.metrics._additive import AdditiveValueMetric
+from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
 
-from catalyst.metrics.accuracy import AccuracyMetric, MultilabelAccuracyMetric
-from catalyst.metrics.auc import AUCMetric
-from catalyst.metrics.classification import (
+from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
+from catalyst.metrics._auc import AUCMetric
+from catalyst.metrics._classification import (
     BinaryPrecisionRecallF1Metric,
     MulticlassPrecisionRecallF1SupportMetric,
     MultilabelPrecisionRecallF1SupportMetric,
 )
 
-from catalyst.metrics.hitrate import HitrateMetric
-from catalyst.metrics.ndcg import NDCGMetric
-from catalyst.metrics.map import MAPMetric
-from catalyst.metrics.mrr import MRRMetric
-from catalyst.metrics.segmentation import (
+from catalyst.metrics._hitrate import HitrateMetric
+from catalyst.metrics._ndcg import NDCGMetric
+from catalyst.metrics._map import MAPMetric
+from catalyst.metrics._mrr import MRRMetric
+from catalyst.metrics._segmentation import (
     RegionBasedMetric,
     IOUMetric,
     JaccardMetric,
