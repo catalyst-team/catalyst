@@ -20,10 +20,10 @@ def test_api():
     """
     model = torch.nn.Sequential(
         Flatten(),
-        torch.nn.Linear(28*28, 128),
+        torch.nn.Linear(28 * 28, 128),
         torch.nn.ReLU(),
         torch.nn.Linear(128, 64),
-        torch.nn.Linear(64, 10)
+        torch.nn.Linear(64, 10),
     )
     q_model = quantize_model(model)
     torch.save(model.state_dict(), "model.pth")
@@ -63,30 +63,23 @@ def test_accuracy():
     """
     model = torch.nn.Sequential(
         Flatten(),
-        torch.nn.Linear(28*28, 128),
+        torch.nn.Linear(28 * 28, 128),
         torch.nn.ReLU(),
         torch.nn.Linear(128, 64),
-        torch.nn.Linear(64, 10)
+        torch.nn.Linear(64, 10),
     )
     datasets = {
         "train": MNIST("./data", transform=ToTensor(), download=True),
-        "valid": MNIST("./data", transform=ToTensor(), train=False)
+        "valid": MNIST("./data", transform=ToTensor(), train=False),
     }
-    dataloaders = {
-        k: torch.utils.data.DataLoader(d, batch_size=32) for k, d in datasets.items()
-    }
+    dataloaders = {k: torch.utils.data.DataLoader(d, batch_size=32) for k, d in datasets.items()}
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
     runner = SupervisedRunner()
     runner.train(
         model=model,
         optimizer=optimizer,
         loaders=dataloaders,
-        callbacks = [
-            AccuracyCallback(
-                target_key="targets",
-                input_key="logits"
-            ),
-        ],
+        callbacks=[AccuracyCallback(target_key="targets", input_key="logits"),],
         num_epochs=4,
         criterion=torch.nn.CrossEntropyLoss(),
         valid_metric="accuracy01",
@@ -97,4 +90,3 @@ def test_accuracy():
     runner.model = q_model
     accuracy_after = loader_accuracy(runner, dataloaders["valid"])
     assert abs(accuracy_before - accuracy_after) < 0.01
-    
