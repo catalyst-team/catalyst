@@ -16,6 +16,7 @@ class IBatchMetricHandlerCallback(ABC, Callback):
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
         self.metric_key = metric_key
+        self.best_score = None
 
     @abstractmethod
     def handle_score_is_better(self, runner: "IRunner"):
@@ -45,6 +46,7 @@ class IEpochMetricHandlerCallback(ABC, Callback):
         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
         self.loader_key = loader_key
         self.metric_key = metric_key
+        self.best_score = None
 
     @abstractmethod
     def handle_score_is_better(self, runner: "IRunner"):
@@ -185,10 +187,11 @@ class TqdmCallback(Callback):
 
     def on_batch_end(self, runner: "IRunner"):
         """Update tqdm progress bar at the end of each batch."""
+        batch_metrics = {k: float(v) for k, v in runner.batch_metrics.items()}
         self.tqdm.set_postfix(
             **{
                 k: "{:3.3f}".format(v) if v > 1e-3 else "{:1.3e}".format(v)
-                for k, v in sorted(runner.batch_metrics.items())
+                for k, v in sorted(batch_metrics.items())
             }
         )
         self.tqdm.update()
@@ -293,7 +296,6 @@ __all__ = [
     "TimerCallback",
     "TqdmCallback",
     "CheckRunCallback",
-    "MetricHandler",
     "IBatchMetricHandlerCallback",
     "IEpochMetricHandlerCallback",
     "EarlyStoppingCallback",

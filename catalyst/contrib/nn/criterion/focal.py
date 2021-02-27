@@ -10,10 +10,7 @@ class FocalLossBinary(_Loss):
 
     It has been proposed in `Focal Loss for Dense Object Detection`_ paper.
 
-    @TODO: Docs (add `Example`). Contribution is welcome.
-
-    .. _Focal Loss for Dense Object Detection:
-        https://arxiv.org/abs/1708.02002
+    .. _Focal Loss for Dense Object Detection: https://arxiv.org/abs/1708.02002
     """
 
     def __init__(
@@ -62,15 +59,11 @@ class FocalLossBinary(_Loss):
 
 
 class FocalLossMultiClass(FocalLossBinary):
-    """Compute focal loss for multiclass problem.
-    Ignores targets having -1 label.
+    """Compute focal loss for multiclass problem. Ignores targets having -1 label.
 
     It has been proposed in `Focal Loss for Dense Object Detection`_ paper.
 
-    @TODO: Docs (add `Example`). Contribution is welcome.
-
-    .. _Focal Loss for Dense Object Detection:
-        https://arxiv.org/abs/1708.02002
+    .. _Focal Loss for Dense Object Detection: https://arxiv.org/abs/1708.02002
     """
 
     def forward(self, logits, targets):

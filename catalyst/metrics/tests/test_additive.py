@@ -3,7 +3,7 @@ from typing import Iterable
 import numpy as np
 import pytest
 
-from catalyst.metrics.additive import AdditiveValueMetric
+from catalyst.metrics._additive import AdditiveValueMetric
 
 
 @pytest.mark.parametrize(

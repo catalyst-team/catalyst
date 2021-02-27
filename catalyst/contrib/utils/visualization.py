@@ -152,7 +152,7 @@ def plot_confusion_matrix(
 
 
 def render_figure_to_tensor(figure):
-    """@TODO: Docs. Contribution is welcome."""
+    """Renders matplotlib"s figure to tensor."""
     import matplotlib
 
     matplotlib.use("Agg")

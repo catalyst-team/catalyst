@@ -212,7 +212,6 @@ class Callback(ICallback):
         - :py:mod:`catalyst.callbacks.criterion.CriterionCallback`
         - :py:mod:`catalyst.callbacks.optimizer.OptimizerCallback`
         - :py:mod:`catalyst.callbacks.scheduler.SchedulerCallback`
-        - :py:mod:`catalyst.callbacks.logging.TensorboardLogger`
         - :py:mod:`catalyst.callbacks.checkpoint.CheckpointCallback`
     """
 

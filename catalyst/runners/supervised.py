@@ -20,8 +20,6 @@ logger = logging.getLogger(__name__)
 class ISupervisedRunner(IRunner):
     def __init__(
         self,
-        # model: RunnerModel = None,
-        # engine: IEngine = None,
         input_key: Any = "features",
         output_key: Any = "logits",
         target_key: str = "targets",

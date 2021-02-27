@@ -141,12 +141,11 @@ More specific with additional requirements:
 
     pip install catalyst[ml]         # installs ML-based Catalyst
     pip install catalyst[cv]         # installs CV-based Catalyst
-    pip install catalyst[nlp]        # installs NLP-based Catalyst
     # master version installation
     pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 
 
-Catalyst is compatible with: Python 3.6+. PyTorch 1.1+.
+Catalyst is compatible with: Python 3.6+. PyTorch 1.3+.
 
 Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsystem for Linux.
 
@@ -212,10 +211,9 @@ Indices and tables
     :maxdepth: 2
     :hidden:
 
-    core/experiment
     core/runner
+    core/engine
     core/callback
-..    core/engine
 
 .. toctree::
     :caption: FAQ
@@ -263,13 +261,10 @@ Indices and tables
     api/contrib
     api/core
     api/data
-    api/experiments
+    api/engines
+    api/loggers
     api/metrics
-    api/registry
     api/runners
-    api/settings
     api/tools
-    api/typing
     api/utils
-
 

@@ -488,6 +488,7 @@ class CheckpointCallback(ICheckpointCallback):
             runner: current runner
         """
         # @TODO: very tricky hack
+        # @TODO: remove
         if self.logdir is None and self.use_runner_logdir:
             self.logdir = getattr(runner, "_logdir", None)
             if self.use_logdir_postfix:
