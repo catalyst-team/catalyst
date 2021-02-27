@@ -33,7 +33,7 @@ def quantize_model(
             model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype],
         )
     except RuntimeError:
-        torch.backends.quantized.engine = 'qnnpack'
+        torch.backends.quantized.engine = "qnnpack"
         quantized_model = quantization.quantize_dynamic(
             model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype],
         )
