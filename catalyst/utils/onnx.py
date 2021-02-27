@@ -29,11 +29,12 @@ def convert_to_onnx(
     Args:
         model (torch.nn.Module): [description]
         input_shape (Union[List, Tuple, torch.Size]): [description]
-        method_name (str, optional): [description]. Defaults to "forward".
+        method_name (str, optional): Forwarf pass method to be converted. Defaults to "forward".
         input_names (Iterable, optional): [description]. Defaults to None.
         output_names (List[str], optional): [description]. Defaults to None.
         file (str, optional): [description]. Defaults to "model.onnx".
-        dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): [description]. Defaults to None.
+        dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): [description].
+            Defaults to None.
         opset_version (int, optional): [description]. Defaults to 9.
         do_constant_folding (bool, optional): [description]. Defaults to False.
     """

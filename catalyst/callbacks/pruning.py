@@ -1,4 +1,3 @@
-# @TODO: make the same API for tracing/onnx/pruning/quantization
 from typing import Callable, List, Optional, TYPE_CHECKING, Union
 import warnings
 
