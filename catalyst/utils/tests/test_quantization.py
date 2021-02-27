@@ -15,6 +15,9 @@ from catalyst.runners import SupervisedRunner
 
 
 def test_api():
+    """
+    Test if model can be quantize through API.
+    """
     model = torch.nn.Sequential(
         Flatten(),
         torch.nn.Linear(28*28, 128),
@@ -33,6 +36,15 @@ def test_api():
 
 
 def loader_accuracy(runner, loader):
+    """Function to evaluate model.
+
+    Args:
+        runner ([type]): [description]
+        loader ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     correct, num_examples = 0, 0
     for batch in loader:
         batch = {
@@ -47,6 +59,8 @@ def loader_accuracy(runner, loader):
 
 
 def test_accuracy():
+    """Test if accuracy drops too low.
+    """
     model = torch.nn.Sequential(
         Flatten(),
         torch.nn.Linear(28*28, 128),
@@ -80,7 +94,7 @@ def test_accuracy():
     )
     accuracy_before = loader_accuracy(runner, dataloaders["valid"])
     q_model = quantize_model(model)
-    runner.model=q_model
+    runner.model = q_model
     accuracy_after = loader_accuracy(runner, dataloaders["valid"])
     assert abs(accuracy_before - accuracy_after) < 0.01
     

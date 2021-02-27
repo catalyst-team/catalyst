@@ -11,15 +11,10 @@ if IS_ONNX_AVAILABLE:
 
 
 def quantize_model(
-        model,
-        qconfig_spec=None,
-        dtype: Union[str, Optional[torch.dtype]] = "qint8",
+    model, qconfig_spec=None, dtype: Union[str, Optional[torch.dtype]] = "qint8",
 ):
     if isinstance(dtype, str):
-        type_mapping = {
-            "qint8": torch.qint8,
-            "quint8": torch.quint8
-        }
+        type_mapping = {"qint8": torch.qint8, "quint8": torch.quint8}
     quantized_model = quantization.quantize_dynamic(
         model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype],
     )
