@@ -79,7 +79,7 @@ def test_accuracy():
         model=model,
         optimizer=optimizer,
         loaders=dataloaders,
-        callbacks=[AccuracyCallback(target_key="targets", input_key="logits"),],
+        callbacks=[AccuracyCallback(target_key="targets", input_key="logits")],
         num_epochs=4,
         criterion=torch.nn.CrossEntropyLoss(),
         valid_metric="accuracy01",
