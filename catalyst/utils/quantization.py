@@ -1,5 +1,4 @@
 from typing import Optional, Union, Dict
-import logging
 
 import torch
 from torch import quantization
@@ -29,9 +28,16 @@ def quantize_model(
     """
     if isinstance(dtype, str):
         type_mapping = {"qint8": torch.qint8, "quint8": torch.quint8}
-    quantized_model = quantization.quantize_dynamic(
-        model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype],
-    )
+    try:
+        quantized_model = quantization.quantize_dynamic(
+            model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype],
+        )
+    except RuntimeError:
+        torch.backends.quantized.engine = 'qnnpack'
+        quantized_model = quantization.quantize_dynamic(
+            model.cpu(), qconfig_spec=qconfig_spec, dtype=type_mapping[dtype],
+        )
+
     return quantized_model
 
 
