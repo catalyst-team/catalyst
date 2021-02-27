@@ -6,7 +6,8 @@ from torch import jit, nn
 
 from catalyst.typing import Device, Model
 from catalyst.utils.misc import get_fn_argsnames
-from catalyst.utils.torch import set_requires_grad, ForwardOverrideModel
+from catalyst.utils.torch import set_requires_grad
+from catalyst.tools.forward_pass import ForwardOverrideMethod
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner

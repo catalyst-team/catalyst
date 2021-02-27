@@ -7,7 +7,7 @@ import torch
 
 from catalyst.settings import IS_ONNX_AVAILABLE
 
-from catalyst.utils.torch import ForwardOverrideModel
+from catalyst.tools.forward_pass import ForwardOverrideModel
 
 if IS_ONNX_AVAILABLE:
     from onnxruntime.quantization import quantize_dynamic, QuantType
