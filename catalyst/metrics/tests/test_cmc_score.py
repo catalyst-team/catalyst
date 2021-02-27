@@ -1,7 +1,7 @@
 from typing import Tuple, Iterable, Dict
 
 import pytest
-from catalyst.metrics.cmc_score import AccumulationMetric, CMCMetric
+from catalyst.metrics._cmc_score import AccumulationMetric, CMCMetric
 import numpy as np
 import torch
 
@@ -58,7 +58,7 @@ def test_accumulation(generate_batched_data) -> None:
         metric = AccumulationMetric(accumulative_fields=fields_names)
         metric.reset(num_batches=num_batches, num_samples=num_samples)
         for batch in batches:
-            metric.update(batch)
+            metric.update(**batch)
         for field_name in true_values:
             assert (true_values[field_name] == metric.storage[field_name]).all()
 
@@ -70,7 +70,7 @@ def test_accumulation_reset(generate_batched_data):
         for _ in range(5):
             metric.reset(num_batches=num_batches, num_samples=num_samples)
             for batch in batches:
-                metric.update(batch)
+                metric.update(**batch)
             for field_name in true_values:
                 assert (true_values[field_name] == metric.storage[field_name]).all()
 
@@ -85,7 +85,7 @@ def test_accumulation_dtype():
     }
     metric = AccumulationMetric(accumulative_fields=list(batch.keys()))
     metric.reset(num_samples=batch_size, num_batches=1)
-    metric.update(batch)
+    metric.update(**batch)
     for key in batch:
         assert (batch[key] == metric.storage[key]).all()
         assert batch[key].dtype == metric.storage[key].dtype
@@ -123,7 +123,7 @@ def test_cmc_score(batch, topk, true_values):
         embeddings_key="embeddings", labels_key="labels", is_query_key="is_query", topk_args=topk,
     )
     metric.reset(num_batches=1, num_samples=len(batch["embeddings"]))
-    metric.update(batch)
+    metric.update(**batch)
     values = metric.compute_key_value()
     for key in true_values:
         assert key in values

@@ -58,9 +58,6 @@ class MetricCallback(IMetricCallback):
                 kv_keys[key] = key
         return kv_keys
 
-    def on_loader_end(self, runner: "IRunner") -> None:
-        runner.loader_metrics.update(self.metric.compute_key_value())
-
     def _get_value_inputs(self, runner: "Runner") -> Tuple[torch.Tensor, torch.Tensor]:
         inputs, targets = runner.batch[self.input_key], runner.batch[self.target_key]
         inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
@@ -77,6 +74,10 @@ class MetricCallback(IMetricCallback):
 
     def on_loader_start(self, runner: "IRunner") -> None:
         raise NotImplementedError
+
+    def on_loader_end(self, runner: "IRunner") -> None:
+        metrics = self.metric.compute_key_value()
+        runner.loader_metrics.update(metrics)
 
 
 class BatchMetricCallback(MetricCallback):

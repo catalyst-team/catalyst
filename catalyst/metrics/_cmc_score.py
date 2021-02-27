@@ -1,9 +1,9 @@
 from collections import defaultdict
-from typing import Dict, Any, Optional, Iterable, Union, List
+from typing import Dict, Any, Iterable, List
 
 import torch
 
-from catalyst.metrics.functional.cmc_score import cmc_score
+from catalyst.metrics.functional._cmc_score import cmc_score
 from catalyst.metrics import ICallbackLoaderMetric
 
 
@@ -33,22 +33,22 @@ class AccumulationMetric(ICallbackLoaderMetric):
                 size=shape_type_dict[key]["shape"], dtype=shape_type_dict[key]["dtype"]
             )
 
-    def update(self, batch) -> None:
+    def update(self, **kwargs) -> None:
         if self.collected_batches == 0:
             shape_type_dict = {}
             for field_name in self.accumulative_fields:
                 shape_type_dict[field_name] = {}
                 shape_type_dict[field_name]["shape"] = (
-                    self.num_samples, *(batch[field_name].shape[1:])
+                    self.num_samples, *(kwargs[field_name].shape[1:])
                 )
-                shape_type_dict[field_name]["dtype"] = batch[field_name].dtype
+                shape_type_dict[field_name]["dtype"] = kwargs[field_name].dtype
             self._allocate_memory(shape_type_dict=shape_type_dict)
         bs = 0
         for field_name in self.accumulative_fields:
-            bs = batch[field_name].shape[0]
+            bs = kwargs[field_name].shape[0]
             self.storage[
                 field_name
-            ][self.tmp_idx: self.tmp_idx + bs, ...] = batch[field_name].detach().cpu()
+            ][self.tmp_idx: self.tmp_idx + bs, ...] = kwargs[field_name].detach().cpu()
         self.tmp_idx += bs
         self.collected_batches += 1
 
@@ -79,10 +79,14 @@ class CMCMetric(AccumulationMetric):
         self.metric_name = "cmc"
 
     def compute(self) -> List[float]:
-        query_embeddings = self.storage[self.embeddings_key][self.storage[self.is_query_key] == 1]
+        query_embeddings = self.storage[
+            self.embeddings_key
+        ][self.storage[self.is_query_key] == 1].float()
         query_labels = self.storage[self.labels_key][self.storage[self.is_query_key] == 1]
 
-        gallery_embeddings = self.storage[self.embeddings_key][self.storage[self.is_query_key] == 0]
+        gallery_embeddings = self.storage[
+            self.embeddings_key
+        ][self.storage[self.is_query_key] == 0].float()
         gallery_labels = self.storage[self.labels_key][self.storage[self.is_query_key] == 0]
 
         conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).bool()
