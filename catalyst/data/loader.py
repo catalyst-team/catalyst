@@ -227,7 +227,7 @@ class BatchPrefetchLoaderWrapper(ILoaderWrapper):
 
         class CustomRunner(dl.Runner):
 
-            def _handle_batch(self, batch):
+            def handle_batch(self, batch):
                 # model train/valid step
                 x, y = batch
                 y_hat = self.model(x.view(x.size(0), -1))

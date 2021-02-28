@@ -31,7 +31,7 @@ from catalyst.typing import (
 )
 from catalyst.utils import check_amp_available
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
-from catalyst.utils.loaders import get_loaders_from_params
+from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
 if TYPE_CHECKING:

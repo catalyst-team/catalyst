@@ -29,7 +29,7 @@ from catalyst.typing import (
     RunnerScheduler,
     Scheduler,
 )
-from catalyst.utils.loaders import get_loaders_from_params
+from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
 
 logger = logging.getLogger(__name__)

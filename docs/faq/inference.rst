@@ -32,7 +32,7 @@ Suppose you have the following classification pipeline:
             return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
         # <--- model inference step --->
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # model train/valid step
             x, y = batch
             y_hat = self.model(x.view(x.size(0), -1))

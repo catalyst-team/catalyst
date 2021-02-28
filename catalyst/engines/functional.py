@@ -6,6 +6,27 @@ import socket
 import torch
 import torch.distributed as dist
 
+# taken from https://github.com/catalyst-team/catalyst/blob/master/catalyst/utils/distributed.py#L157
+# def get_distributed_mean(value: Union[float, torch.Tensor]):
+#     """Computes distributed mean among all nodes."""
+#     if check_torch_distributed_initialized():
+#         # Fix for runtime warning:
+#         # To copy construct from a tensor, it is recommended to use
+#         # sourceTensor.clone().detach() or
+#         # sourceTensor.clone().detach().requires_grad_(True),
+#         # rather than torch.tensor(sourceTensor).
+#         if torch.is_tensor(value):
+#             value = value.clone().detach().to(device=f"cuda:{torch.cuda.current_device()}")
+#         else:
+#             value = torch.tensor(
+#                 value,
+#                 dtype=torch.float,
+#                 device=f"cuda:{torch.cuda.current_device()}",
+#                 requires_grad=False,
+#             )
+#         torch.distributed.all_reduce(value)
+#         value = float(value.item() / torch.distributed.get_world_size())
+#     return value
 
 # TODO: add tests for this method
 def get_available_port() -> str:

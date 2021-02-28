@@ -11,7 +11,11 @@ from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
 from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
-from catalyst.core.functional import filter_callbacks_by_node, sort_callbacks_by_order
+from catalyst.core.functional import (
+    filter_callbacks_by_node,
+    sort_callbacks_by_order,
+    validate_loaders,
+)
 from catalyst.core.logger import ILogger
 from catalyst.core.trial import ITrial
 from catalyst.engines.distributed import DistributedDataParallelEngine
@@ -26,7 +30,6 @@ from catalyst.typing import (
     RunnerScheduler,
     Scheduler,
 )
-from catalyst.utils.loaders import validate_loaders
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
 logger = logging.getLogger(__name__)

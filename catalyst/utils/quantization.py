@@ -3,11 +3,7 @@ from typing import Dict, Optional, Union
 import torch
 from torch import quantization
 
-from catalyst.settings import IS_ONNX_AVAILABLE
 from catalyst.typing import Model
-
-if IS_ONNX_AVAILABLE:
-    from catalyst.utils.onnx import quantize_onnx_model  # noqa: F401
 
 
 def quantize_model(
@@ -42,6 +38,3 @@ def quantize_model(
 __all__ = [
     "quantize_model",
 ]
-
-if IS_ONNX_AVAILABLE:
-    __all__.append("quantize_onnx_model")

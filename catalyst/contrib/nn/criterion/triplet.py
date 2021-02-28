@@ -6,7 +6,7 @@ from torch import nn, Tensor
 from torch.nn import TripletMarginLoss
 
 from catalyst.contrib.nn.criterion.functional import triplet_loss
-from catalyst.utils.torch import convert_labels2list
+from catalyst.utils.misc import convert_labels2list
 
 if TYPE_CHECKING:
     from catalyst.data.sampler_inbatch import IInbatchTripletSampler

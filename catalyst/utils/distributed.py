@@ -1,4 +1,3 @@
-from typing import Union
 from collections import OrderedDict
 import os
 import random
@@ -10,38 +9,18 @@ import torch
 from torch import nn
 import torch.distributed
 
-from catalyst.utils.misc import get_fn_default_params
 from catalyst.utils.torch import get_available_gpus
-
-
-def check_ddp_wrapped(model: nn.Module) -> bool:
-    """
-    Checks whether model is wrapped with DataParallel/DistributedDataParallel.
-    """
-    parallel_wrappers = nn.DataParallel, nn.parallel.DistributedDataParallel
-
-    # Check whether Apex is installed and if it is,
-    # add Apex's DistributedDataParallel to list of checked types
-    try:
-        from apex.parallel import DistributedDataParallel as apex_DDP
-
-        parallel_wrappers = parallel_wrappers + (apex_DDP,)
-    except ImportError:
-        pass
-
-    return isinstance(model, parallel_wrappers)
 
 
 def check_apex_available() -> bool:
     """Checks if apex is available."""
-    env_apex = os.getenv("USE_APEX", "1") == "1"
     try:
         import apex  # noqa: F401
         from apex import amp  # noqa: F401
 
-        return True and env_apex
+        return True
     except ImportError:
-        return False and env_apex
+        return False
 
 
 def check_amp_available() -> bool:
@@ -68,52 +47,20 @@ def assert_fp16_available() -> None:
     )
 
 
-def initialize_apex(model, optimizer=None, **engine_params):
-    """
-    Prepares model and optimizer for work with Nvidia Apex.
+def check_ddp_wrapped(model: nn.Module) -> bool:
+    """Checks whether model is wrapped with DataParallel/DistributedDataParallel."""
+    parallel_wrappers = nn.DataParallel, nn.parallel.DistributedDataParallel
 
-    Args:
-        model: torch model
-        optimizer: torch optimizer
-        **engine_params: extra params for ``apex.amp.initialize``
+    # Check whether Apex is installed and if it is,
+    # add Apex's DistributedDataParallel to list of checked types
+    try:
+        from apex.parallel import DistributedDataParallel as apex_DDP
 
-    Returns:
-        model and optimizer, wrapped with Nvidia Apex initialization
-    """
-    import apex
+        parallel_wrappers = parallel_wrappers + (apex_DDP,)
+    except ImportError:
+        pass
 
-    amp_params = get_fn_default_params(apex.amp.initialize, ["models", "optimizers"])
-    amp_params["opt_level"] = "O0"
-    for dp in engine_params:
-        if dp in amp_params:
-            amp_params[dp] = engine_params[dp]
-
-    # NVIDIA apex support only:
-    #  model: nn.Module or list of modules
-    #  optimizer: None, torch.Optimizer or list of optimizers
-    # while key-value is preferred in the `catalyst`.
-    # So if model/optimizer is a dict, convert it to lists of keys
-    # and values first, and then cast it back after apex initialization
-    model_keys, optimizer_keys = None, None
-    if isinstance(model, dict):
-        model_keys, model = list(model.keys()), list(model.values())
-    if isinstance(optimizer, dict):
-        optimizer_keys = list(optimizer.keys())
-        optimizer = list(optimizer.values())
-
-    amp_result = apex.amp.initialize(model, optimizer, **amp_params)
-    if optimizer is not None:
-        model, optimizer = amp_result
-    else:
-        model = amp_result
-
-    # convert model/optimizer back to dict if it needed
-    if model_keys is not None:
-        model = OrderedDict([(k, v) for k, v in zip(model_keys, model)])
-    if optimizer_keys is not None:
-        optimizers = [(k, v) for k, v in zip(optimizer_keys, optimizer)]
-        optimizer = OrderedDict(optimizers)
-    return model, optimizer
+    return isinstance(model, parallel_wrappers)
 
 
 def get_nn_from_ddp_module(model: nn.Module) -> nn.Module:
@@ -144,28 +91,6 @@ def get_rank() -> int:
         return torch.distributed.get_rank()
     else:
         return -1
-
-
-def get_distributed_mean(value: Union[float, torch.Tensor]):
-    """Computes distributed mean among all nodes."""
-    if check_torch_distributed_initialized():
-        # Fix for runtime warning:
-        # To copy construct from a tensor, it is recommended to use
-        # sourceTensor.clone().detach() or
-        # sourceTensor.clone().detach().requires_grad_(True),
-        # rather than torch.tensor(sourceTensor).
-        if torch.is_tensor(value):
-            value = value.clone().detach().to(device=f"cuda:{torch.cuda.current_device()}")
-        else:
-            value = torch.tensor(
-                value,
-                dtype=torch.float,
-                device=f"cuda:{torch.cuda.current_device()}",
-                requires_grad=False,
-            )
-        torch.distributed.all_reduce(value)
-        value = float(value.item() / torch.distributed.get_world_size())
-    return value
 
 
 # TODO: rename
@@ -256,10 +181,8 @@ __all__ = [
     "check_torch_distributed_initialized",
     "check_slurm_available",
     "assert_fp16_available",
-    "initialize_apex",
     "get_nn_from_ddp_module",
     "get_rank",
-    "get_distributed_mean",
     "get_distributed_env",
     "get_distributed_params",
     "get_slurm_params",
