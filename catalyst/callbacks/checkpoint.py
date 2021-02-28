@@ -491,7 +491,6 @@ class CheckpointCallback(ICheckpointCallback):
             if self.use_logdir_postfix:
                 self.logdir = os.path.join(self.logdir, "checkpoints")
 
-    #
     #     if getattr(runner, "resume", None) is not None:
     #         self.resume = runner.resume
     #         runner.resume = None

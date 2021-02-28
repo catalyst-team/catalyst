@@ -56,11 +56,11 @@ class HydraRunner(IRunner):
         self._timeit: bool = self._config.args.timeit
         self._check: bool = self._config.args.check
         self._overfit: bool = self._config.args.overfit
-        self._name: str = self._get_name_()
-        self._logdir: str = self._get_logdir_()
+        self._name: str = self._get_init_name()
+        self._logdir: str = self._get_init_logdir()
         self._trial = None  # @TODO: hack for catalyst-dl tune
 
-    def _get_name_(self) -> str:
+    def _get_init_name(self) -> str:
         timestamp = get_utcnow_time()
         config_hash = get_short_hash(self._config)
         default_name = f"{timestamp}-{config_hash}"
@@ -73,7 +73,7 @@ class HydraRunner(IRunner):
         logdir = f"{timestamp}.{config_hash}"
         return logdir
 
-    def _get_logdir_(self) -> str:  # noqa: WPS112
+    def _get_init_logdir(self) -> str:  # noqa: WPS112
         output = None
         exclude_tag = "none"
 

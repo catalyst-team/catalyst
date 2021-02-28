@@ -1,4 +1,4 @@
-from typing import Any, Dict, Iterable, Mapping, Tuple
+from typing import Any, Dict, Iterable, Mapping, Optional, Tuple
 from abc import ABC, abstractmethod
 from collections import defaultdict, OrderedDict
 from functools import lru_cache
@@ -32,7 +32,7 @@ from catalyst.typing import (
 )
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 BATCH_METRICS = Dict[str, float]
@@ -190,7 +190,7 @@ class IRunner(ICallback, ILogger, ABC):
         """@TODO: docs"""
         return 1
 
-    def get_trial(self) -> ITrial:
+    def get_trial(self) -> Optional[ITrial]:
         """@TODO: docs"""
         return None
 
@@ -311,7 +311,7 @@ class IRunner(ICallback, ILogger, ABC):
         """
         pass
 
-    def get_criterion(self, stage: str) -> Criterion:
+    def get_criterion(self, stage: str) -> Optional[Criterion]:
         """Returns the criterion for a given stage and epoch.
 
         Example::
@@ -329,7 +329,7 @@ class IRunner(ICallback, ILogger, ABC):
         """
         return None
 
-    def get_optimizer(self, stage: str, model: Model) -> Optimizer:
+    def get_optimizer(self, stage: str, model: Model) -> Optional[Optimizer]:
         """Returns the optimizer for a given stage and model.
 
         Example::
@@ -347,7 +347,7 @@ class IRunner(ICallback, ILogger, ABC):
         """
         return None
 
-    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
+    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Optional[Scheduler]:
         """Returns the scheduler for a given stage and optimizer.
 
         Example::
@@ -671,9 +671,9 @@ class IRunner(ICallback, ILogger, ABC):
             self.engine._rank = rank
             # self.engine._world_size = world_size
 
-            logger.warning(f"rank: {rank}")
-            logger.warning(f"world size: {world_size}")
-            logger.warning(f"engine: {self.engine}")
+            LOGGER.warning(f"rank: {rank}")
+            LOGGER.warning(f"world size: {world_size}")
+            LOGGER.warning(f"engine: {self.engine}")
 
         self._run_event("on_stage_start")
         while self.stage_epoch_step < self.stage_epoch_len:

@@ -1,6 +1,7 @@
 import codecs
 import gzip
 import hashlib
+import lzma
 import os
 import tarfile
 import zipfile
@@ -152,12 +153,8 @@ def _open_maybe_compressed_file(path):
     if not isinstance(path, torch._six.string_classes):  # noqa: WPS437
         return path
     if path.endswith(".gz"):
-        import gzip
-
         return gzip.open(path, "rb")
     if path.endswith(".xz"):
-        import lzma
-
         return lzma.open(path, "rb")
     return open(path, "rb")
 

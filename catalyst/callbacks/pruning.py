@@ -73,19 +73,19 @@ class PruningCallback(Callback):
         super().__init__(CallbackOrder.External)
         if isinstance(pruning_fn, str):
             if pruning_fn not in PRUNING_FN.keys():
-                raise Exception(
+                raise ValueError(
                     f"Pruning function should be in {PRUNING_FN.keys()}, "
                     "global pruning is not currently support."
                 )
             if "unstructured" not in pruning_fn:
                 if dim is None:
-                    raise Exception(
+                    raise ValueError(
                         "If you are using structured pruning you"
                         "need to specify dim in callback args"
                     )
                 if pruning_fn == "ln_structured":
                     if l_norm is None:
-                        raise Exception(
+                        raise ValueError(
                             "If you are using ln_unstructured you"
                             "need to specify n in callback args"
                         )

@@ -202,7 +202,7 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
             for metric_name, metric_value in zip(
                 ("precision", "recall", "f1", "support"), per_class
             )
-            for i in range(self.num_classes)
+            for i in range(self.num_classes)  # noqa: WPS361
         }
         kv_metrics.update(per_class_metrics)
         return kv_metrics
