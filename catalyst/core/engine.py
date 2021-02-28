@@ -39,6 +39,10 @@ class IEngine(ABC):
         # only for ddp
         pass
 
+    @property
+    def is_master_process(self) -> bool:
+        return True
+
     @abstractmethod
     def sync_device(self, tensor_or_module: Any) -> Any:
         pass
@@ -72,20 +76,12 @@ class IEngine(ABC):
         pass
 
     @abstractmethod
-    def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
-    ) -> Dict:
+    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,) -> Dict:
         pass
 
     @abstractmethod
     def unpack_checkpoint(
-        self,
-        checkpoint: Dict,
-        model=None,
-        criterion=None,
-        optimizer=None,
-        scheduler=None,
-        **kwargs,
+        self, checkpoint: Dict, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> None:
         pass
 
