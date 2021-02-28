@@ -1,3 +1,4 @@
+# flake8: noqa
 import torch
 
 from catalyst.metrics.functional._mrr import mrr, reciprocal_rank

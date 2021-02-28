@@ -5,7 +5,7 @@ import torch
 from catalyst.metrics.functional._misc import process_recsys_components
 
 
-def dcg(outputs: torch.Tensor, targets: torch.Tensor, gain_function="exp_rank",) -> torch.Tensor:
+def dcg(outputs: torch.Tensor, targets: torch.Tensor, gain_function="exp_rank") -> torch.Tensor:
     """
     Computes DCG@topk for the specified values of `k`.
     Graded relevance as a measure of  usefulness,

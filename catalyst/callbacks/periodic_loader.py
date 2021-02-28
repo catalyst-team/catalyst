@@ -134,7 +134,7 @@ class PeriodicLoaderCallback(Callback):
                 epoch_loaders[name] = loader
         if len(epoch_loaders) == 0:
             raise ValueError(f"There is no loaders in epoch {epoch_num}!")
-        first_loader = next(iter(epoch_loaders.keys()))
+        # first_loader = next(iter(epoch_loaders.keys()))
         # runner.valid_loader = (
         #     self.valid_loader if self.valid_loader in epoch_loaders else first_loader
         # )

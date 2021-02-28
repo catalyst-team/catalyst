@@ -71,7 +71,7 @@ class Conv3x3GNReLU(nn.Module):
         self.align_corners = align_corners
 
         self.block = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1, bias=False,),
+            nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=1, padding=1, bias=False),
             nn.GroupNorm(32, out_channels),
             nn.ReLU(inplace=True),
         )

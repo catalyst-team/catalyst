@@ -6,7 +6,10 @@ from catalyst.utils.config import save_config
 
 
 class CSVLogger(ILogger):
+    """@TODO: docs."""
+
     def __init__(self, logdir: str, use_logdir_postfix: bool = False):
+        """@TODO: docs."""
         if use_logdir_postfix:
             logdir = os.path.join(logdir, "logs")
         self.logdir = logdir
@@ -49,6 +52,7 @@ class CSVLogger(ILogger):
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
+        """@TODO: docs."""
         if scope == "epoch":
             for loader_key, per_loader_metrics in metrics.items():
                 if loader_key not in self.loggers.keys():
@@ -67,13 +71,16 @@ class CSVLogger(ILogger):
         # experiment info
         experiment_key: str = None,
     ) -> None:
+        """@TODO: docs."""
         save_config(config=hparams, path=os.path.join(self.logdir, "hparams.yml"))
 
     def flush_log(self) -> None:
+        """@TODO: docs."""
         for logger in self.loggers.values():
             logger.flush()
 
     def close_log(self) -> None:
+        """@TODO: docs."""
         for logger in self.loggers.values():
             logger.close()
 

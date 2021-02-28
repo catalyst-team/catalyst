@@ -147,7 +147,7 @@ def test_all_triplets_sampler(features_and_labels) -> None:  # noqa: WPS442
         check_triplets_consistency(ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels)
 
 
-def test_hard_sampler_from_features(features_and_labels,) -> None:  # noqa: WPS442
+def test_hard_sampler_from_features(features_and_labels) -> None:  # noqa: WPS442
     """
     Args:
         features_and_labels: features and valid labels
@@ -191,7 +191,7 @@ def test_hard_sampler_manual() -> None:
     labels = [0, 0, 1, 1]
 
     dist_mat = torch.tensor(
-        [[0.0, 0.3, 0.2, 0.4], [0.3, 0.0, 0.4, 0.8], [0.2, 0.4, 0.0, 0.5], [0.4, 0.8, 0.5, 0.0],]
+        [[0.0, 0.3, 0.2, 0.4], [0.3, 0.0, 0.4, 0.8], [0.2, 0.4, 0.0, 0.5], [0.4, 0.8, 0.5, 0.0]]
     )
 
     gt = {(0, 1, 2), (1, 0, 2), (2, 3, 0), (3, 2, 0)}
@@ -224,7 +224,7 @@ def test_hard_sampler_manual() -> None:
         ],
         [
             [1, 2, 3],
-            torch.tensor([[True, False, False], [False, True, False], [False, False, True],]),
+            torch.tensor([[True, False, False], [False, True, False], [False, False, True]]),
         ],
         [
             [1, 1, 1, 1, 2, 2, 2, 2],
@@ -265,7 +265,7 @@ def test_cluster_get_labels_mask(labels: List[int], expected: torch.Tensor) -> N
         ],
         [
             torch.tensor(
-                [[[1, 1, 1], [1, 3, 1]], [[2, 2, 6], [2, 6, 2]], [[3, 3, 3], [3, 3, 9]],],
+                [[[1, 1, 1], [1, 3, 1]], [[2, 2, 6], [2, 6, 2]], [[3, 3, 3], [3, 3, 9]]],
                 dtype=torch.float,
             ),
             torch.tensor([[[1, 1], [8, 8], [9, 9]]]),
@@ -303,7 +303,7 @@ def test_cluster_count_intra_class_distances(
                 [[0, 0, 0, 0], [3, 0, 0, 0], [0, 4, 0, 0], [0, 0, 0, 5]], dtype=torch.float,
             ),
             torch.tensor(
-                [[0, 9, 16, 25], [9, 0, 25, 34], [16, 25, 0, 41], [25, 34, 41, 0],],
+                [[0, 9, 16, 25], [9, 0, 25, 34], [16, 25, 0, 41], [25, 34, 41, 0]],
                 dtype=torch.float,
             )
             ** 0.5,
@@ -328,7 +328,7 @@ def test_cluster_count_inter_class_distances(mean_vectors, expected) -> None:
 @pytest.mark.parametrize(
     ["embed_dim", "labels", "expected_shape"],
     [
-        [128, [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3], [(4, 128), (4, 128), (4, 128)],],
+        [128, [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3], [(4, 128), (4, 128), (4, 128)]],
         [32, [1, 2, 3, 4, 5, 1, 2, 3, 4, 5], [(5, 32), (5, 32), (5, 32)]],
         [16, torch.tensor([0, 0, 1, 1]), [(2, 16), (2, 16), (2, 16)]],
     ],
@@ -369,7 +369,7 @@ def test_triplet_cluster_edge_case() -> None:
     # Create a list of random features for all the classes
     unique_features = torch.rand(size=(p, features_dim), dtype=torch.float)
 
-    labels = unique_labels.repeat((k,))
+    labels = unique_labels.repeat((k))
     features = unique_features.repeat((k, 1))
 
     hard_triplet_sampler = HardTripletsSampler()

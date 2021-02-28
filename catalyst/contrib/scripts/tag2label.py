@@ -92,7 +92,7 @@ def main(args, _=None):
     elif args.in_dir is not None:
         df = _prepare_df_from_dirs(args.in_dir, args.tag_column, recursive=args.recursive)
     else:
-        raise Exception
+        raise NotImplementedError("Script required the data.")
 
     if args.tag_delim is not None:
         df = separate_tags(df, tag_column=args.tag_column, tag_delim=args.tag_delim)

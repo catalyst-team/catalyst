@@ -50,7 +50,7 @@ class FPNHead(HeadSpec):
 
     def forward(self, x: List[torch.Tensor]) -> torch.Tensor:
         """Forward call."""
-        x = list(map(lambda block, features: block(features), self.segmentation_blocks, x,))
+        x = list(map(lambda block, features: block(features), self.segmentation_blocks, x))
         x = sum(x)
         x = self.head(x)
         if self.upsample_scale > 1:

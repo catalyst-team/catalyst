@@ -5,7 +5,7 @@ import logging
 from torch import jit, nn
 
 from catalyst.tools.forward_pass import ForwardOverrideModel
-from catalyst.typing import Device, Model
+from catalyst.typing import Model
 from catalyst.utils.misc import get_fn_argsnames
 from catalyst.utils.torch import set_requires_grad
 

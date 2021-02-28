@@ -1,7 +1,4 @@
-# @TODO: we still need to simplify the code here
-# too many additional functions, etc
-# could be refactored
-from typing import Dict, Tuple, TYPE_CHECKING, Union
+from typing import Dict, Union
 from collections import OrderedDict
 import os
 from pathlib import Path
@@ -11,9 +8,6 @@ from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.tools.metric_handler import MetricHandler
 from catalyst.utils.config import save_config
-
-if TYPE_CHECKING:
-    from catalyst.core.runner import IRunner
 
 
 def _save_checkpoint(
@@ -201,10 +195,10 @@ def _load_runner(
     Selects a loading method based on type of mapping.
 
     Args:
+        logdir: logdir with checkpoints
         runner: current runner
-        mapping (str or dict): mapping to use for loading
-        load_full: load a full model, used only
-            when mapping type is string
+        mapping: mapping to use for loading
+        load_full: load a full model, used only when mapping type is string
     """
     if isinstance(mapping, str):
         if mapping in {"best", "best_full", "last", "last_full"}:
@@ -247,18 +241,15 @@ class CheckpointCallback(ICheckpointCallback):
     ):
         """
         Args:
+            logdir: @TODO: docs.
+            loader_key: @TODO: docs.
+            metric_key: @TODO: docs.
+            minimize: @TODO: docs.
+            min_delta: @TODO: docs.
             save_n_best: number of best checkpoint to keep,
                 if ``0`` then  store only last state of model and
                 ``load_on_stage_end`` should be one of
                 ``last`` or ``last_full``.
-            resume: path to checkpoint to load
-                and initialize runner state
-            resume_dir: directory with checkpoints,
-                if specified in combination with ``resume``
-                than resume checkpoint will be loaded from ``resume_dir``
-            metrics_filename: filename to save metrics
-                in checkpoint folder.
-                Must ends on ``.json`` or ``.yml``
             load_on_stage_start (str or Dict[str, str]): load specified
                 state/model at stage start.
 
@@ -319,6 +310,12 @@ class CheckpointCallback(ICheckpointCallback):
                 and will be used the last runner.
 
                 **NOTE:** Loading will be performed always at stage end.
+            metrics_filename: filename to save metrics
+                in checkpoint folder.
+                Must ends on ``.json`` or ``.yml``
+            mode: @TODO: docs.
+            use_logdir_postfix: @TODO: docs.
+            use_runner_logdir: @TODO: docs.
         """
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         possible_states = {
@@ -470,7 +467,7 @@ class CheckpointCallback(ICheckpointCallback):
                 ("last", {**last_epoch_metrics, **{"_score_": last_epoch_score}}),
             ] + top_best_checkpoints
         else:
-            metrics = [("last", {**last_epoch_metrics, **{"_score_": last_epoch_score},},)]
+            metrics = [("last", {**last_epoch_metrics, **{"_score_": last_epoch_score}})]
         return OrderedDict(metrics)
 
     def on_stage_start(self, runner: "IRunner") -> None:
@@ -494,7 +491,6 @@ class CheckpointCallback(ICheckpointCallback):
             if self.use_logdir_postfix:
                 self.logdir = os.path.join(self.logdir, "checkpoints")
 
-    #
     #     if getattr(runner, "resume", None) is not None:
     #         self.resume = runner.resume
     #         runner.resume = None
@@ -518,10 +514,12 @@ class CheckpointCallback(ICheckpointCallback):
     #         checkpoint_exists = False
     #         need_load_full = False
     #         if isinstance(self.load_on_stage_start, str):
-    #             checkpoint_exists = os.path.isfile(f"{self.logdir}/{self.load_on_stage_start}.pth")
+    #             checkpoint_exists =
+    #               os.path.isfile(f"{self.logdir}/{self.load_on_stage_start}.pth")
     #             need_load_full = self.load_on_stage_start.endswith("full")
     #         elif isinstance(self.load_on_stage_start, dict):
-    #             required_files = _get_required_files(self.logdir, self.load_on_stage_start).keys()
+    #             required_files =
+    #               _get_required_files(self.logdir, self.load_on_stage_start).keys()
     #             checkpoint_exists = all(os.path.isfile(file) for file in required_files)
     #
     #         if self.load_on_stage_start is not None and checkpoint_exists:

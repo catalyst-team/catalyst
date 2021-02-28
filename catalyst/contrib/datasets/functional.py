@@ -1,6 +1,7 @@
 import codecs
 import gzip
 import hashlib
+import lzma
 import os
 import tarfile
 import zipfile
@@ -142,24 +143,24 @@ def _open_maybe_compressed_file(path):
     """Return a file object that possibly decompresses 'path' on the fly.
     Decompression occurs when argument `path` is a string
     and ends with '.gz' or '.xz'.
+
+    Args:
+        path: path
+
+    Returns:
+        file
     """
     if not isinstance(path, torch._six.string_classes):  # noqa: WPS437
         return path
     if path.endswith(".gz"):
-        import gzip
-
         return gzip.open(path, "rb")
     if path.endswith(".xz"):
-        import lzma
-
         return lzma.open(path, "rb")
     return open(path, "rb")
 
 
 def read_sn3_pascalvincent_tensor(path, strict=True):
-    """Read a SN3 file in "Pascal Vincent" format.
-    Argument may be a filename, compressed filename, or file object.
-    """
+    """Read a SN3 file in "Pascal Vincent" format."""
     # typemap
     if not hasattr(read_sn3_pascalvincent_tensor, "typemap"):
         read_sn3_pascalvincent_tensor.typemap = {

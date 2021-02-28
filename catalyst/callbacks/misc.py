@@ -12,7 +12,10 @@ EPS = 1e-8
 
 
 class IBatchMetricHandlerCallback(ABC, Callback):
+    """@TODO: docs"""
+
     def __init__(self, metric_key: str, minimize: bool = True, min_delta: float = 1e-6):
+        """@TODO: docs"""
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
         self.metric_key = metric_key
@@ -20,16 +23,20 @@ class IBatchMetricHandlerCallback(ABC, Callback):
 
     @abstractmethod
     def handle_score_is_better(self, runner: "IRunner"):
+        """@TODO: docs"""
         pass
 
     @abstractmethod
     def handle_score_is_not_better(self, runner: "IRunner"):
+        """@TODO: docs"""
         pass
 
     def on_loader_start(self, runner: "IRunner") -> None:
+        """@TODO: docs"""
         self.best_score = None
 
     def on_batch_end(self, runner: "IRunner") -> None:
+        """@TODO: docs"""
         score = runner.batch_metrics[self.metric_key]
         if self.best_score is None or self.is_better(score, self.best_score):
             self.best_score = score
@@ -39,9 +46,12 @@ class IBatchMetricHandlerCallback(ABC, Callback):
 
 
 class IEpochMetricHandlerCallback(ABC, Callback):
+    """@TODO: docs"""
+
     def __init__(
         self, loader_key: str, metric_key: str, minimize: bool = True, min_delta: float = 1e-6,
     ):
+        """@TODO: docs"""
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
         self.loader_key = loader_key
@@ -50,16 +60,20 @@ class IEpochMetricHandlerCallback(ABC, Callback):
 
     @abstractmethod
     def handle_score_is_better(self, runner: "IRunner"):
+        """@TODO: docs"""
         pass
 
     @abstractmethod
     def handle_score_is_not_better(self, runner: "IRunner"):
+        """@TODO: docs"""
         pass
 
     def on_stage_start(self, runner: "IRunner") -> None:
+        """@TODO: docs"""
         self.best_score = None
 
     def on_epoch_end(self, runner: "IRunner") -> None:
+        """@TODO: docs"""
         score = runner.epoch_metrics[self.loader_key][self.metric_key]
         if self.best_score is None or self.is_better(score, self.best_score):
             self.best_score = score
@@ -83,6 +97,7 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
         Args:
             patience: number of epochs with no improvement
                 after which training will be stopped.
+            loader_key: @TODO: docs
             metric_key: metric name to use for early stopping.
             minimize: if ``True`` then expected that metric should
                 decrease and early stopping will be performed only when metric
@@ -100,9 +115,11 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
         self.num_no_improvement_epochs = 0
 
     def handle_score_is_better(self, runner: "IRunner"):
+        """@TODO: docs"""
         self.num_no_improvement_epochs = 0
 
     def handle_score_is_not_better(self, runner: "IRunner"):
+        """@TODO: docs"""
         self.num_no_improvement_epochs += 1
         if self.num_no_improvement_epochs >= self.patience:
             # print(f"Early stop at {runner.epoch} epoch")

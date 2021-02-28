@@ -3,7 +3,6 @@
 from typing import Dict, Tuple
 import argparse
 from argparse import ArgumentParser
-import os
 from pathlib import Path
 
 import optuna
@@ -29,7 +28,7 @@ def build_args(parser: ArgumentParser):
         required=True,
     )
     parser.add_argument("--expdir", type=str, default=None)
-    parser.add_argument("--logdir", type=str, default=None)
+    # parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
     # parser.add_argument(
     #     "-j", "--num-workers", default=None, type=int, help="number of data loading workers",
