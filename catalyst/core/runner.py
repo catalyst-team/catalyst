@@ -150,6 +150,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     @property
     def name(self) -> str:
+        """@TODO: docs"""
         # @TODO: return the hash from the IRunner instance
         return "IRunner"
 
@@ -183,81 +184,85 @@ class IRunner(ICallback, ILogger, ABC):
         pass
 
     def get_stage_len(self, stage: str) -> int:
+        """@TODO: docs"""
         return 1
 
     def get_trial(self) -> ITrial:
+        """@TODO: docs"""
         return None
 
     @abstractmethod
     def get_engine(self) -> IEngine:
+        """@TODO: docs"""
         return None
 
     def get_loggers(self) -> Dict[str, ILogger]:
+        """@TODO: docs"""
         return {}
 
-    def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
-        """Returns the datasets for a given stage and epoch.  # noqa: DAR401
+    # def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
+    #     """Returns the datasets for a given stage and epoch.  # noqa: DAR401
+    #
+    #     .. note::
+    #         For Deep Learning cases you have the same dataset
+    #         during whole stage.
+    #
+    #         For Reinforcement Learning it's common to change the dataset
+    #         (experiment) every training epoch.
+    #
+    #     Args:
+    #         stage: stage name of interest,
+    #             like "pretrain" / "train" / "finetune" / etc
+    #         epoch: epoch index
+    #         **kwargs: additional parameters to use during
+    #             dataset creation
+    #
+    #     Returns:  # noqa: DAR202
+    #         OrderedDict[str, Dataset]: Ordered dictionary
+    #             with datasets for current stage and epoch.
+    #
+    #     .. note::
+    #         We need ordered dictionary to guarantee the correct dataflow
+    #         and order of our training datasets.
+    #         For example, to run train loader before validation one :)
+    #
+    #     Example::
+    #
+    #         >>> experiment.get_datasets(
+    #         >>>     stage="training",
+    #         >>>     in_csv_train="path/to/train/csv",
+    #         >>>     in_csv_valid="path/to/valid/csv",
+    #         >>> )
+    #         OrderedDict({
+    #             "train": CsvDataset(in_csv=in_csv_train, ...),
+    #             "valid": CsvDataset(in_csv=in_csv_valid, ...),
+    #         })
+    #
+    #
+    #     """
+    #     raise NotImplementedError
 
-        .. note::
-            For Deep Learning cases you have the same dataset
-            during whole stage.
-
-            For Reinforcement Learning it's common to change the dataset
-            (experiment) every training epoch.
-
-        Args:
-            stage: stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
-            epoch: epoch index
-            **kwargs: additional parameters to use during
-                dataset creation
-
-        Returns:  # noqa: DAR202
-            OrderedDict[str, Dataset]: Ordered dictionary
-                with datasets for current stage and epoch.
-
-        .. note::
-            We need ordered dictionary to guarantee the correct dataflow
-            and order of our training datasets.
-            For example, to run train loader before validation one :)
-
-        Example::
-
-            >>> experiment.get_datasets(
-            >>>     stage="training",
-            >>>     in_csv_train="path/to/train/csv",
-            >>>     in_csv_valid="path/to/valid/csv",
-            >>> )
-            OrderedDict({
-                "train": CsvDataset(in_csv=in_csv_train, ...),
-                "valid": CsvDataset(in_csv=in_csv_valid, ...),
-            })
-
-
-        """
-        raise NotImplementedError
-
-    def get_samplers(self, stage: str = None):
-        raise NotImplementedError
-
-    def get_transforms(self, stage: str = None):
-        """Returns the data transforms for a given stage and dataset.
-
-        Args:
-            stage: stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
-            dataset: dataset name of interest,
-                like "train" / "valid" / "infer"
-
-        .. note::
-            For datasets/loaders naming please follow
-            :py:mod:`catalyst.core.runner` documentation.
-
-        Returns:  # noqa: DAR202
-            Data transformations to use for specified dataset.
-
-        """
-        raise NotImplementedError
+    # def get_samplers(self, stage: str = None):
+    #     raise NotImplementedError
+    #
+    # def get_transforms(self, stage: str = None):
+    #     """Returns the data transforms for a given stage and dataset.
+    #
+    #     Args:
+    #         stage: stage name of interest,
+    #             like "pretrain" / "train" / "finetune" / etc
+    #         dataset: dataset name of interest,
+    #             like "train" / "valid" / "infer"
+    #
+    #     .. note::
+    #         For datasets/loaders naming please follow
+    #         :py:mod:`catalyst.core.runner` documentation.
+    #
+    #     Returns:  # noqa: DAR202
+    #         Data transformations to use for specified dataset.
+    #
+    #     """
+    #     raise NotImplementedError
 
     @abstractmethod
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":

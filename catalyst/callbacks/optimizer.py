@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, TYPE_CHECKING
+from typing import Dict, TYPE_CHECKING
 import logging
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
@@ -9,11 +9,6 @@ if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
 logger = logging.getLogger(__name__)
-
-try:
-    import torch_xla.core.xla_model as xm
-except ModuleNotFoundError:
-    pass
 
 
 def zero_grad(optimizer: Optimizer) -> None:

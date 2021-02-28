@@ -35,13 +35,13 @@ def import_module(expdir: Union[str, Path]):
         expdir = Path(expdir)
     sys.path.insert(0, str(expdir.absolute()))
     sys.path.insert(0, os.path.dirname(str(expdir.absolute())))
-    s = spec_from_file_location(
+    module_spec = spec_from_file_location(
         expdir.name,
         str(expdir.absolute() / "__init__.py"),
         submodule_search_locations=[expdir.absolute()],
     )
-    dir_module = module_from_spec(s)
-    s.loader.exec_module(dir_module)
+    dir_module = module_from_spec(module_spec)
+    module_spec.loader.exec_module(dir_module)
     sys.modules[expdir.name] = dir_module
     return dir_module
 
@@ -60,7 +60,7 @@ def get_config_runner(expdir: Path, config: Dict):
     config_copy = copy.deepcopy(config)
     if not isinstance(expdir, Path):
         expdir = Path(expdir)
-    m = import_module(expdir)
+    dir_module = import_module(expdir)  # noqa: F841
     # runner_fn = getattr(m, "Runner", None)
 
     runner_params = config_copy.get("runner", {})
