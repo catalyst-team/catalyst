@@ -110,7 +110,13 @@ class IEngine(ABC):
         pass
 
     def autocast(self, *args, **kwargs):
-        """AMP scaling context.
-        Default autocast context does not scale anything.
+        """AMP scaling context. Default autocast context does not scale anything.
+
+        Args:
+            *args: some args
+            **kwargs: some kwargs
+
+        Returns:
+            context
         """
         return nullcontext()

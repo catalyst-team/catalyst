@@ -9,9 +9,6 @@ from catalyst.core.runner import IRunner
 from catalyst.tools.metric_handler import MetricHandler
 from catalyst.utils.config import save_config
 
-if TYPE_CHECKING:
-    from catalyst.core.runner import IRunner
-
 
 def _save_checkpoint(
     checkpoint: Dict,
@@ -198,6 +195,7 @@ def _load_runner(
     Selects a loading method based on type of mapping.
 
     Args:
+        logdir: logdir with checkpoints
         runner: current runner
         mapping: mapping to use for loading
         load_full: load a full model, used only when mapping type is string

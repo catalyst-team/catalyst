@@ -1,3 +1,4 @@
+# flake8: noqa
 from typing import Dict, Iterable, List, Union
 
 import numpy as np

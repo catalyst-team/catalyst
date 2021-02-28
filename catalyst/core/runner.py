@@ -7,7 +7,7 @@ import logging
 import torch
 import torch.distributed
 import torch.multiprocessing
-from torch.utils.data import DataLoader, Dataset, DistributedSampler
+from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
@@ -168,6 +168,9 @@ class IRunner(ICallback, ILogger, ABC):
              ('weight_decay', 0),
              ('amsgrad', False),
              ('train_batch_size', 32)])
+
+        Returns:
+            dictionary with hyperparameters
         """
         return {}
 
@@ -279,7 +282,7 @@ class IRunner(ICallback, ILogger, ABC):
                 like "pretrain" / "train" / "finetune" / etc
             epoch: epoch index
 
-        Returns:  # noqa: DAR202
+        Returns:  # noqa: DAR201, DAR202
             OrderedDict[str, DataLoader]: Ordered dictionary
                 with loaders for current stage and epoch.
 
@@ -304,7 +307,7 @@ class IRunner(ICallback, ILogger, ABC):
             stage: stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
-        Returns:  # noqa: DAR202
+        Returns:  # noqa: DAR201, DAR202
             Model: model for a given stage.
         """
         pass
@@ -322,7 +325,7 @@ class IRunner(ICallback, ILogger, ABC):
             stage: stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
 
-        Returns:  # noqa: DAR202
+        Returns:  # noqa: DAR201, DAR202
             Criterion: criterion for a given stage.
         """
         return None
@@ -340,7 +343,7 @@ class IRunner(ICallback, ILogger, ABC):
                 like "pretrain" / "train" / "finetune" / etc
             model: model to optimize with stage optimizer
 
-        Returns:  # noqa: DAR202
+        Returns:  # noqa: DAR201, DAR202
             Optimizer: optimizer for a given stage and model.
         """
         return None
@@ -357,7 +360,7 @@ class IRunner(ICallback, ILogger, ABC):
                 like "pretrain" / "train" / "finetune" / etc
             optimizer: optimizer to schedule with stage scheduler
 
-        Returns:  # noqa: DAR202
+        Returns:  # noqa: DAR201, DAR202
             Scheduler: scheduler for a given stage and optimizer.
         """
         return None
@@ -411,6 +414,7 @@ class IRunner(ICallback, ILogger, ABC):
         return {}
 
     def log_metrics(self, *args, **kwargs) -> None:
+        """@TODO: docs."""
         for logger in self.loggers.values():
             logger.log_metrics(
                 *args,
@@ -435,6 +439,7 @@ class IRunner(ICallback, ILogger, ABC):
             )
 
     def log_image(self, *args, **kwargs) -> None:
+        """@TODO: docs."""
         for logger in self.loggers.values():
             logger.log_image(
                 *args,
@@ -459,6 +464,7 @@ class IRunner(ICallback, ILogger, ABC):
             )
 
     def log_hparams(self, *args, **kwargs) -> None:
+        """@TODO: docs."""
         for logger in self.loggers.values():
             logger.log_hparams(
                 *args,
@@ -468,10 +474,12 @@ class IRunner(ICallback, ILogger, ABC):
             )
 
     def flush_log(self) -> None:
+        """@TODO: docs."""
         for logger in self.loggers.values():
             logger.flush_log()
 
     def close_log(self) -> None:
+        """@TODO: docs."""
         for logger in self.loggers.values():
             logger.close_log()
 
@@ -503,6 +511,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.callbacks = callbacks
 
     def on_experiment_start(self, runner: "IRunner"):
+        """Event handler."""
         self.run_key = self.name
         self.global_epoch_step: int = 0
         self.global_batch_step: int = 0
@@ -517,6 +526,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.log_hparams(hparams=self.hparams)
 
     def on_stage_start(self, runner: "IRunner"):
+        """Event handler."""
         assert self.stage_key is not None
         self.is_infer_stage: bool = self.stage_key.startswith("infer")
         self.stage_epoch_len = self.get_stage_len(stage=self.stage_key)
@@ -528,6 +538,7 @@ class IRunner(ICallback, ILogger, ABC):
         self._setup_callbacks()
 
     def on_epoch_start(self, runner: "IRunner"):
+        """Event handler."""
         self.global_epoch_step += 1
         self.stage_epoch_step += 1
         self.epoch_metrics: Dict = defaultdict(None)
@@ -541,6 +552,7 @@ class IRunner(ICallback, ILogger, ABC):
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
 
     def on_loader_start(self, runner: "IRunner"):
+        """Event handler."""
         assert self.loader is not None
         self.is_train_loader: bool = self.loader_key.startswith("train")
         self.is_valid_loader: bool = self.loader_key.startswith("valid")
@@ -562,6 +574,7 @@ class IRunner(ICallback, ILogger, ABC):
             self.loader.sampler.set_epoch(self.stage_epoch_step)
 
     def on_batch_start(self, runner: "IRunner"):
+        """Event handler."""
         self.batch = self.engine.sync_device(tensor_or_module=self.batch)
 
         if isinstance(self.batch, dict):
@@ -578,23 +591,29 @@ class IRunner(ICallback, ILogger, ABC):
         self.batch_metrics: Dict = defaultdict(None)
 
     def on_batch_end(self, runner: "IRunner"):
+        """Event handler."""
         self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
+        """Event handler."""
         self.log_metrics(metrics=self.loader_metrics, scope="loader")
         self.epoch_metrics[self.loader_key] = self.loader_metrics.copy()
 
     def on_epoch_end(self, runner: "IRunner"):
+        """Event handler."""
         self.log_metrics(metrics=self.epoch_metrics, scope="epoch")
         self.flush_log()
 
     def on_stage_end(self, runner: "IRunner"):
+        """Event handler."""
         self.engine.deinit_components()
 
     def on_experiment_end(self, runner: "IRunner"):
+        """Event handler."""
         self.close_log()
 
     def on_exception(self, runner: "IRunner"):
+        """Event handler."""
         raise self.exception
 
     def _run_event(self, event: str) -> None:
@@ -683,13 +702,9 @@ class IRunner(ICallback, ILogger, ABC):
     def run(self) -> "IRunner":
         """Runs the experiment.
 
-        Args:
-            experiment: Experiment instance to use for Runner.
-
         Returns:
             self, `IRunner` instance after the experiment
         """
-        # self.experiment = experiment or self.experiment
         try:
             self._run_experiment()
         except (Exception, KeyboardInterrupt) as ex:

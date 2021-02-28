@@ -1,3 +1,4 @@
+# flake8: noqa
 import pytest  # noqa: F401
 import torch
 

@@ -8,12 +8,17 @@ class ForwardOverrideModel(nn.Module):
     """
 
     def __init__(self, model, method_name):
+        """@TODO: docs."""
         super().__init__()
         self.model = model
         self.method_name = method_name
 
     def forward(self, *args, **kwargs):
-        """forward pass
+        """Forward pass.
+
+        Args:
+            *args: some args
+            **kwargs: some kwargs
 
         Returns:
             output: specified method output
