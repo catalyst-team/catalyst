@@ -69,6 +69,7 @@ def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
 
 
 def _get_original_callback(callback: Callback) -> Callback:
+    """@TODO: docs"""
     while isinstance(callback, CallbackWrapper):
         callback = callback.callback
     return callback
@@ -150,6 +151,5 @@ __all__ = [
     "validate_loaders",
     "sort_callbacks_by_order",
     "filter_callbacks_by_node",
-    "_get_original_callback",
     "check_callback_isinstance",
 ]

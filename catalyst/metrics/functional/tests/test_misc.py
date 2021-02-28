@@ -11,7 +11,7 @@ from catalyst.metrics.functional._misc import (
 
 
 @pytest.mark.parametrize(
-    ["outputs", "targets", "tn_true", "fp_true", "fn_true", "tp_true", "support_true",],
+    ["outputs", "targets", "tn_true", "fp_true", "fn_true", "tp_true", "support_true"],
     [
         pytest.param(
             torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),
@@ -37,7 +37,7 @@ def test_get_binary_statistics(
 
 
 @pytest.mark.parametrize(
-    ["outputs", "targets", "tn_true", "fp_true", "fn_true", "tp_true", "support_true",],
+    ["outputs", "targets", "tn_true", "fp_true", "fn_true", "tp_true", "support_true"],
     [
         pytest.param(
             torch.tensor([[0, 1, 2, 3]]),
@@ -90,7 +90,7 @@ def test_get_multiclass_statistics(
 
 
 @pytest.mark.parametrize(
-    ["outputs", "targets", "tn_true", "fp_true", "fn_true", "tp_true", "support_true",],
+    ["outputs", "targets", "tn_true", "fp_true", "fn_true", "tp_true", "support_true"],
     [
         pytest.param(
             torch.tensor([[0, 0, 1, 1], [0, 1, 0, 1]]),

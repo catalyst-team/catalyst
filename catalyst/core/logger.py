@@ -29,6 +29,7 @@ class ILogger:
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
+        """@TODO: docs"""
         pass
 
     def log_image(
@@ -54,6 +55,7 @@ class ILogger:
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
+        """@TODO: docs"""
         pass
 
     def log_hparams(
@@ -63,12 +65,15 @@ class ILogger:
         # experiment info
         experiment_key: str = None,
     ) -> None:
+        """@TODO: docs"""
         pass
 
     def flush_log(self) -> None:
+        """@TODO: docs"""
         pass
 
     def close_log(self) -> None:
+        """@TODO: docs"""
         pass
 
 

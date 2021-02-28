@@ -17,7 +17,6 @@ def accuracy(
             with shape [bs; num_classes]
         targets: ground truth, labels
             with shape [bs; 1]
-        activation: activation to use for model output
         topk: `topk` for accuracy@topk computing
 
     Returns:

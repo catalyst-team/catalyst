@@ -231,7 +231,8 @@ class ControlFlowCallback(CallbackWrapper):
         filter_fn: Union[str, FILTER_FN] = None,
         use_global_epochs: bool = False,
     ):
-        """
+        """Init.
+
         Args:
             base_callback: callback to wrap
             epochs: epochs where

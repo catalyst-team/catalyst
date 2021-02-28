@@ -4,31 +4,35 @@ import torch
 
 from catalyst.metrics._additive import AdditiveValueMetric
 from catalyst.metrics._metric import ICallbackBatchMetric
-from catalyst.metrics.functional._misc import get_default_topk_args
 from catalyst.metrics.functional._ndcg import ndcg
 
 
 class NDCGMetric(ICallbackBatchMetric):
+    """@TODO: docs here"""
+
     def __init__(
         self,
-        topk_args: List[int] = [1],
+        topk_args: List[int] = None,
         compute_on_call: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
+        """@TODO: docs here"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_name_mean = f"{self.prefix}ndcg{self.suffix}"
         self.metric_name_std = f"{self.prefix}ndcg{self.suffix}/std"
-        self.topk_args: List[int] = topk_args
+        self.topk_args: List[int] = topk_args or [1]
         self.additive_metrics: List[AdditiveValueMetric] = [
             AdditiveValueMetric() for _ in range(len(self.topk_args))
         ]
 
     def reset(self) -> None:
+        """@TODO: docs here"""
         for metric in self.additive_metrics:
             metric.reset()
 
     def update(self, logits: torch.Tensor, targets: torch.Tensor) -> List[float]:
+        """@TODO: docs here"""
         values = ndcg(logits, targets, topk=self.topk_args)
         values = [v.item() for v in values]
         for value, metric in zip(values, self.additive_metrics):
@@ -36,6 +40,7 @@ class NDCGMetric(ICallbackBatchMetric):
         return values
 
     def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+        """@TODO: docs here"""
         values = self.update(logits=logits, targets=targets)
         output = {
             f"{self.prefix}ndcg{key:02d}{self.suffix}": value
@@ -45,10 +50,12 @@ class NDCGMetric(ICallbackBatchMetric):
         return output
 
     def compute(self) -> Any:
+        """@TODO: docs here"""
         means, stds = zip(*(metric.compute() for metric in self.additive_metrics))
         return means, stds
 
     def compute_key_value(self) -> Dict[str, float]:
+        """@TODO: docs here"""
         means, stds = self.compute()
         output_mean = {
             f"{self.prefix}ndcg{key:02d}{self.suffix}": value

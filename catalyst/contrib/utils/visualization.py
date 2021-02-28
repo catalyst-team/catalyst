@@ -5,7 +5,7 @@ import numpy as np
 import torch
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # noqa: E402
 
 
 def _image_to_tensor(image: np.ndarray) -> torch.Tensor:
@@ -51,8 +51,8 @@ def _image_to_tensor(image: np.ndarray) -> torch.Tensor:
 #     if denormalize:
 #         has_batch_dim = len(images.shape) == 4
 #
-#         mean = images.new_tensor(mean).view(*((1,) if has_batch_dim else ()), len(mean), 1, 1)
-#         std = images.new_tensor(std).view(*((1,) if has_batch_dim else ()), len(std), 1, 1)
+#         mean = images.new_tensor(mean).view(*((1) if has_batch_dim else ()), len(mean), 1, 1)
+#         std = images.new_tensor(std).view(*((1) if has_batch_dim else ()), len(std), 1, 1)
 #
 #         images = images * std + mean
 #
@@ -70,7 +70,7 @@ def _image_to_tensor(image: np.ndarray) -> torch.Tensor:
 
 
 def plot_confusion_matrix(
-    cm,
+    cm: np.ndarray,
     class_names=None,
     normalize=False,
     title="confusion matrix",
@@ -80,9 +80,22 @@ def plot_confusion_matrix(
     fontsize=32,
     colormap="Blues",
 ):
-    """
-    Render the confusion matrix and return matplotlib"s figure with it.
+    """Render the confusion matrix and return matplotlib"s figure with it.
     Normalization can be applied by setting `normalize=True`.
+
+    Args:
+        cm: numpy confusion matrix
+        class_names: class names
+        normalize: boolean flag to normalize confusion matrix
+        title: title
+        fname: filename to save confusion matrix
+        show: boolean flag for preview
+        figsize: matplotlib figure size
+        fontsize: matplotlib font size
+        colormap: matplotlib color map
+
+    Returns:
+        matplotlib figure
     """
     plt.ioff()
 

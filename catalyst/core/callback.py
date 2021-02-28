@@ -334,6 +334,8 @@ class CallbackWrapper(Callback):
 
 
 class CallbackList(Callback):
+    """@TODO: docs."""
+
     def __init__(
         self,
         callbacks: List[Callback],
@@ -341,6 +343,7 @@ class CallbackList(Callback):
         node: int = CallbackNode.all,
         scope: int = CallbackScope.stage,
     ):
+        """@TODO: docs."""
         super().__init__(order=order, node=node, scope=scope)
         self.callbacks = callbacks
 

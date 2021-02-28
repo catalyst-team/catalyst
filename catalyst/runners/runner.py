@@ -1,10 +1,10 @@
-from typing import Any, Dict, Generator, Iterable, List, Mapping, TYPE_CHECKING, Union
+from typing import Any, Dict, Generator, Iterable, List, Mapping, Union
 from collections import OrderedDict
 import os
 
 import torch
 from torch import nn, optim
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import DataLoader
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
@@ -29,13 +29,8 @@ from catalyst.typing import (
     RunnerScheduler,
     Scheduler,
 )
-from catalyst.utils import check_amp_available
-from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-
-if TYPE_CHECKING:
-    from catalyst.core.callback import Callback
 
 
 def _get_default_engine():
@@ -54,6 +49,7 @@ class Runner(IRunner):
     """Single-stage deep learning Runner with user-friendly API."""
 
     def __init__(self, *args, **kwargs):
+        """@TODO: docs."""
         super().__init__(*args, **kwargs)
         # the core
         self._model: RunnerModel = self.model
@@ -92,6 +88,7 @@ class Runner(IRunner):
 
     @property
     def name(self) -> str:
+        """@TODO: docs."""
         return "experiment" if self._trial is None else f"experiment_{self._trial.number}"
 
     @property
@@ -110,15 +107,19 @@ class Runner(IRunner):
         return [self._stage]
 
     def get_stage_len(self, stage: str) -> int:
+        """@TODO: docs."""
         return self._num_epochs
 
     def get_trial(self) -> ITrial:
+        """@TODO: docs."""
         return self._trial
 
     def get_engine(self) -> IEngine:
+        """@TODO: docs."""
         return self._engine or _get_default_engine()
 
     def get_loggers(self) -> Dict[str, ILogger]:
+        """@TODO: docs."""
         loggers = self._loggers or {}
         is_logger_exists = lambda logger_fn: any(
             isinstance(x, logger_fn) for x in loggers.values()
@@ -133,7 +134,7 @@ class Runner(IRunner):
             )
         return loggers
 
-    def get_loaders(self, stage: str,) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage."""
         self._loaders = _process_loaders(loaders=self._loaders, initial_seed=self.seed)
         return self._loaders
@@ -175,7 +176,7 @@ class Runner(IRunner):
             else self._scheduler
         )
 
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage."""
         callbacks = sort_callbacks_by_order(self._callbacks)
         is_callback_exists = lambda callback_fn: any(
@@ -190,21 +191,19 @@ class Runner(IRunner):
         if self._overfit and not is_callback_exists(BatchOverfitCallback):
             callbacks["_overfit"] = BatchOverfitCallback()
 
-        if self._logdir is not None:
-            if not is_callback_exists(ICheckpointCallback):
-                callbacks["_checkpoint"] = CheckpointCallback(
-                    logdir=os.path.join(self._logdir, "checkpoints"),
-                    loader_key=self._valid_loader,
-                    metric_key=self._valid_metric,
-                    minimize=self._minimize_valid_metric,
-                )
-            # else:
-            #     raise NotImplementedError("CheckpointCallback already exist")
+        if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
+            callbacks["_checkpoint"] = CheckpointCallback(
+                logdir=os.path.join(self._logdir, "checkpoints"),
+                loader_key=self._valid_loader,
+                metric_key=self._valid_metric,
+                minimize=self._minimize_valid_metric,
+            )
 
         # if self._valid_metric is not None:
         #     have_required_callback = False
         #     for callback in callbacks.values():
-        #         if isinstance(callback, CriterionCallback) and callback.metric_key == self._valid_metric:
+        #         if isinstance(callback, CriterionCallback)
+        #           and callback.metric_key == self._valid_metric:
         #             have_required_callback = True
         #     assert (
         #         have_required_callback
@@ -244,31 +243,28 @@ class Runner(IRunner):
         check: bool = False,
         overfit: bool = False,
         load_best_on_end: bool = False,
-        # engine extra params, @TODO: what to do with them?
-        # fp16: bool = False,
-        # ddp: bool = False,
+        # engine extra params,
+        fp16: bool = False,
+        ddp: bool = False,
     ) -> None:
         """
         Starts the train stage of the model.
 
         Args:
+            loaders: dictionary with one or several ``torch.utils.data.DataLoader``
+                for training, validation or inference
             model: model to train
+            engine: @TODO: docs
+            trial: @TODO: docs
             criterion: criterion function for training
             optimizer: optimizer for training
             scheduler: scheduler for training
-            datasets (OrderedDict[str, Union[Dataset, Dict, Any]]): dictionary
-                with one or several  ``torch.utils.data.Dataset``
-                for training, validation or inference
-                used for Loaders automatic creation
-                preferred way for distributed training setup
-            loaders (OrderedDict[str, DataLoader]): dictionary
-                with one or several ``torch.utils.data.DataLoader``
-                for training, validation or inference
-            callbacks (Union[List[Callback], OrderedDict[str, Callback]]):
-                list or dictionary with Catalyst callbacks
-            logdir: path to output directory
-            resume: path to checkpoint for model
+            callbacks: list or dictionary with Catalyst callbacks
+            loggers: @TODO: docs
+            seed: experiment's initial seed value
+            hparams: @TODO: docs
             num_epochs: number of training epochs
+            logdir: path to output directory
             valid_loader: loader name used to calculate
                 the metrics and save the checkpoints. For example,
                 you can pass `train` and then
@@ -277,36 +273,22 @@ class Runner(IRunner):
                 by which the checkpoints will be selected.
             minimize_valid_metric: flag to indicate whether
                 the ``valid_metric`` should be minimized or not.
-            verbose: if `True`, it displays the status of the training
-                to the console.
-            fp16: parameters for fp16/distributed training.
-                to use pytorch native amp - ``{"amp": True}``.
-                to use apex - ``{"apex": True, "opt_level": "O1", ...}``.
-                If fp16=True, params by default will be:
-                ``{"amp": True}`` if torch>=1.6.0,
-                ``{"apex": True, "opt_level": "O1", ...}`` if torch<1.6.0.
-                See https://nvidia.github.io/apex/amp.html#properties for
-                more params.
-            distributed: if `True` will start training
-                in distributed mode.
-                Note: Works only with python scripts. No jupyter support.
+            verbose: if `True`, it displays the status of the training to the console.
+            timeit: if True, computes the execution time
+                of training process and displays it to the console.
             check: if True, then only checks that pipeline is working
                 (3 epochs only with 3 batches per loader)
             overfit: if True, then takes only one batch per loader
                 for model overfitting, for advance usage please check
                 ``BatchOverfitCallback``
-            timeit: if True, computes the execution time
-                of training process and displays it to the console.
             load_best_on_end: if True, Runner will load
                 best checkpoint state (model, optimizer, etc)
                 according to validation metrics. Requires specified ``logdir``.
-            seed: experiment's initial seed value
-            state_kwargs: deprecated, use `stage_kwargs` instead
-
-        Raises:
-            NotImplementedError: if both `resume` and `CheckpointCallback`
-                already exist
+            fp16: boolean flag to use half-precision training
+            ddp: if `True` will start training in distributed mode.
+                Note: Works only with python scripts. No jupyter support.
         """
+        assert fp16 is False and ddp is False
         # experiment setup
         self._engine = engine
         self._trial = trial
@@ -362,8 +344,7 @@ class Runner(IRunner):
         *,
         loader: DataLoader,
         model: Model = None,
-        resume: str = None,
-        # fp16: Union[Dict, bool] = None,
+        # resume: str = None,
         initial_seed: int = 42,
     ) -> Generator:
         """
@@ -376,22 +357,18 @@ class Runner(IRunner):
         Args:
             loader: loader to predict
             model: model to use for prediction
-            resume: path to checkpoint to resume
-            fp16 (Union[Dict, bool]): fp16 settings (same as in `train`)
             initial_seed: seed to use before prediction
 
         Yields:
             bathes with model predictions
         """
-        # fp16 = _resolve_bool_fp16(fp16)
-
         if model is not None:
             self.model = model
         assert self.model is not None
 
-        if resume is not None:
-            checkpoint = load_checkpoint(resume)
-            unpack_checkpoint(checkpoint, model=self.model)
+        # if resume is not None:
+        #     checkpoint = load_checkpoint(resume)
+        #     unpack_checkpoint(checkpoint, model=self.model)
 
         # @TODO: we need engine here
         self.model = self.engine.sync_device(self.model)

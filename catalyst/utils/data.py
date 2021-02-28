@@ -55,7 +55,7 @@ def get_loader(
     """
     from catalyst.data.dataset import ListDataset
 
-    dataset = ListDataset(list_data=data_source, open_fn=open_fn, dict_transform=dict_transform,)
+    dataset = ListDataset(list_data=data_source, open_fn=open_fn, dict_transform=dict_transform)
     loader = torch.utils.data.DataLoader(
         dataset=dataset,
         sampler=sampler,

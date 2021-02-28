@@ -25,13 +25,13 @@ def fbeta_score(
         num_classes: int, that specifies number of classes if it known
 
     Raises:
-        Exception: If ``beta`` is a negative number.
+        ValueError: If ``beta`` is a negative number.
 
     Returns:
         float: F_1 score.
     """
     if beta < 0:
-        raise Exception("beta parameter should be non-negative")
+        raise ValueError("beta parameter should be non-negative")
 
     _p, _r, fbeta, _ = precision_recall_fbeta_support(
         outputs=outputs,

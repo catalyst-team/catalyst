@@ -13,8 +13,8 @@ from catalyst.dl import AccuracyCallback
 
 
 def test_optuna():
-    trainset = MNIST("./data", train=False, download=True, transform=ToTensor(),)
-    testset = MNIST("./data", train=False, download=True, transform=ToTensor(),)
+    trainset = MNIST("./data", train=False, download=True, transform=ToTensor())
+    testset = MNIST("./data", train=False, download=True, transform=ToTensor())
     loaders = {
         "train": DataLoader(trainset, batch_size=32),
         "valid": DataLoader(testset, batch_size=64),

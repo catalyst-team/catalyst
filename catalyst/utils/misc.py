@@ -225,25 +225,25 @@ def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
         return getattr(obj, key)[inner_key]
 
 
-def _get_key_str(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Any:
+def _get_key_str(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Any:
     return dictionary[key]
 
 
-def _get_key_list(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Dict:
+def _get_key_list(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
     result = {name: dictionary[name] for name in key}
     return result
 
 
-def _get_key_dict(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Dict:
+def _get_key_dict(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
     result = {key_out: dictionary[key_in] for key_in, key_out in key.items()}
     return result
 
 
-def _get_key_none(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Dict:
+def _get_key_none(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
     return {}
 
 
-def _get_key_all(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Dict:
+def _get_key_all(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
     return dictionary
 
 
@@ -443,6 +443,7 @@ def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
 
 
 def get_by_keys(dict_: dict, *keys: Any, default: Optional[T] = None) -> T:
+    """@TODO: docs."""
     if not isinstance(dict_, dict):
         raise ValueError()
 
