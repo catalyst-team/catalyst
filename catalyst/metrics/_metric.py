@@ -107,8 +107,8 @@ class ICallbackLoaderMetric(IMetric):
         (`on_loader_start` event).
 
         Args:
-            num_batches:
-            num_samples:
+            num_batches: @TODO: docs.
+            num_samples: @TODO: docs.
         """
         pass
 

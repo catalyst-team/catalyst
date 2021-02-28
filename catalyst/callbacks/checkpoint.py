@@ -1,4 +1,4 @@
-from typing import Dict, TYPE_CHECKING, Union
+from typing import Dict, Union
 from collections import OrderedDict
 import os
 from pathlib import Path

@@ -280,7 +280,6 @@ class IRunner(ICallback, ILogger, ABC):
         Args:
             stage: stage name of interest,
                 like "pretrain" / "train" / "finetune" / etc
-            epoch: epoch index
 
         Returns:  # noqa: DAR201, DAR202
             OrderedDict[str, DataLoader]: Ordered dictionary
