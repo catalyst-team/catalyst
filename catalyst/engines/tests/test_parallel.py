@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
+from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.engines import DataParallelEngine
 from catalyst.engines.device import DeviceEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
@@ -31,9 +32,7 @@ class CustomRunner(IRunner):
 
     def get_callbacks(self, stage: str) -> Dict[str, Callback]:
         return {
-            "criterion": CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
+            "criterion": CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
@@ -97,40 +96,41 @@ def run_train_with_experiment_parallel_device():
 
 
 def run_train_with_config_experiment_parallel_device():
-    pass
-    # dataset = DummyDataset(10)
-    # runner = SupervisedRunner()
-    # logdir = f"./test_dp_engine"
-    # exp = ConfigExperiment(
-    #     config={
-    #         "model_params": {"_target_": "DummyModel", "in_features": 4, "out_features": 1,},
-    #         "engine": "dp",
-    #         "args": {"logdir": logdir},
-    #         "stages": {
-    #             "data_params": {"batch_size": 4, "num_workers": 0},
-    #             "criterion_params": {"_target_": "MSELoss"},
-    #             "optimizer_params": {"_target_": "SGD", "lr": 1e-3},
-    #             "stage1": {
-    #                 "stage_params": {"num_epochs": 2},
-    #                 "callbacks_params": {
-    #                     "loss": {"_target_": "CriterionCallback"},
-    #                     "optimizer": {"_target_": "OptimizerCallback"},
-    #                     # "test_device": {
-    #                     #     "_target_": "DeviceCheckCallback",
-    #                     #     "assert_device": str(device),
-    #                     # },
-    #                     "test_loss_minimization": {"callback": "LossMinimizationCallback"},
-    #                 },
-    #             },
-    #         },
-    #     }
-    # )
-    # exp.get_datasets = lambda *args, **kwargs: {
-    #     "train": dataset,
-    #     "valid": dataset,
-    # }
-    # runner.run(exp)
-    # shutil.rmtree(logdir, ignore_errors=True)
+    device = "dp"
+    with TemporaryDirectory() as logdir:
+        dataset = DummyDataset(6)
+        runner = SupervisedConfigRunner(
+            config={
+                "args": {"logdir": logdir},
+                "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
+                "engine": {"engine": device},
+                "args": {"logdir": logdir},
+                "stages": {
+                    "stage1": {
+                        "num_epochs": 10,
+                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "criterion": {"_target_": "MSELoss"},
+                        "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                        "callbacks": {
+                            "criterion": {
+                                "_target_": "CriterionCallback",
+                                "metric_key": "loss",
+                                "input_key": "logits",
+                                "target_key": "targets",
+                            },
+                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            # "test_device": {"_target_": "DeviceCheckCallback", "assert_device": device},
+                            "test_loss_minimization": {"_target_": "LossMinimizationCallback", "key": "loss"},
+                        },
+                    },
+                },
+            }
+        )
+        runner.get_datasets = lambda *args, **kwargs: {
+            "train": dataset,
+            "valid": dataset,
+        }
+        runner.run()
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
@@ -138,7 +138,7 @@ def test_experiment_parallel_engine_with_cuda():
     run_train_with_experiment_parallel_device()
 
 
-@mark.skip("Config experiment is in development phase!")
+# @mark.skip("Config experiment is in development phase!")
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_config_experiment_engine_with_cuda():
     run_train_with_config_experiment_parallel_device()
