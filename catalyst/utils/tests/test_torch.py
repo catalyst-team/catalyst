@@ -28,7 +28,7 @@ def test_network_output():
             return z
 
     net = Net()
-    assert torch_utils.get_network_output(net, (20), (10)).shape == (1, 15)
+    assert torch_utils.get_network_output(net, (20, ), (10, )).shape == (1, 15)
 
     # case #3 - test net with key-value input
     class Net(nn.Module):
@@ -41,7 +41,7 @@ def test_network_output():
             return y
 
     net = Net()
-    input_shapes = {"x": (20)}
+    input_shapes = {"x": (20, )}
     assert torch_utils.get_network_output(net, **input_shapes).shape == (1, 10)
 
     # case #4 - test net with dict of variables input
@@ -55,5 +55,5 @@ def test_network_output():
             return y
 
     net = Net()
-    input_shapes = {"x": (20)}
+    input_shapes = {"x": (20, )}
     assert torch_utils.get_network_output(net, input_shapes).shape == (1, 10)
