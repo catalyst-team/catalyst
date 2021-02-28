@@ -180,7 +180,7 @@ def train_config_experiment(device):
     # logdir = f"./test_{device}_engine"
     # exp = ConfigExperiment(
     #     config={
-    #         "model_params": {"_target_": "DummyModel", "in_features": 4, "out_features": 1,},
+    #         "model_params": {"_target_": "DummyModel", "in_features": 4, "out_features": 1},
     #         "engine": str(device),
     #         "args": {"logdir": logdir},
     #         "stages": {
@@ -196,7 +196,7 @@ def train_config_experiment(device):
     #                         "_target_": "DeviceCheckCallback",
     #                         "assert_device": str(device),
     #                     },
-    #                     "test_loss_minimization": {"_target_": "LossMinimizationCallback",},
+    #                     "test_loss_minimization": {"_target_": "LossMinimizationCallback"},
     #                 },
     #             },
     #         },

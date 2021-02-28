@@ -34,7 +34,7 @@ class CircleLoss(nn.Module):
         >>> from catalyst.contrib.nn import CircleLoss
         >>>
         >>> features = F.normalize(torch.rand(256, 64, requires_grad=True))
-        >>> labels = torch.randint(high=10, size=(256,))
+        >>> labels = torch.randint(high=10, size=(256))
         >>> criterion = CircleLoss(margin=0.25, gamma=256)
         >>> criterion(features, labels)
 

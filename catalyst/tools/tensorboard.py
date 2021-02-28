@@ -130,7 +130,7 @@ class SummaryReader(Iterable):
         self,
         logdir: Union[str, Path],
         tag_filter: Optional[Iterable] = None,
-        types: Iterable = ("scalar",),
+        types: Iterable = ("scalar"),
     ):
         """Initalize new summary reader.
 

@@ -6,7 +6,7 @@ import torch
 from catalyst.metrics import DiceMetric, IOUMetric, TrevskyMetric
 
 base_outputs = torch.tensor([[0.8, 0.1, 0], [0, 0.4, 0.3], [0, 0, 1]])
-base_targets = torch.tensor([[1.0, 0, 0], [0, 1, 0], [1, 1, 0],])
+base_targets = torch.tensor([[1.0, 0, 0], [0, 1, 0], [1, 1, 0]])
 base_outputs = torch.stack([base_outputs, base_targets])[None, :, :, :]
 base_targets = torch.stack([base_targets, base_targets])[None, :, :, :]
 EPS = 1e-5
@@ -43,6 +43,7 @@ def test_dice_metric(
     batch_answer: Dict[str, float],
     total_answer: Dict[str, float],
 ):
+    """Docs."""
     metric = DiceMetric(weights=weights, class_names=class_names)
     batch_score = metric.update_key_value(outputs, targets)
     total_score = metric.compute_key_value()
@@ -85,6 +86,7 @@ def test_iou_metric(
     batch_answer: Dict[str, float],
     total_answer: Dict[str, float],
 ):
+    """Docs."""
     metric = IOUMetric(weights=weights, class_names=class_names)
     batch_score = metric.update_key_value(outputs, targets)
     total_score = metric.compute_key_value()
@@ -129,6 +131,7 @@ def test_trevsky_metric(
     batch_answer: Dict[str, float],
     total_answer: Dict[str, float],
 ):
+    """Docs."""
     metric = TrevskyMetric(alpha=alpha, weights=weights, class_names=class_names)
     batch_score = metric.update_key_value(outputs, targets)
     total_score = metric.compute_key_value()

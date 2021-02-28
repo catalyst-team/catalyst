@@ -51,8 +51,8 @@ def _image_to_tensor(image: np.ndarray) -> torch.Tensor:
 #     if denormalize:
 #         has_batch_dim = len(images.shape) == 4
 #
-#         mean = images.new_tensor(mean).view(*((1,) if has_batch_dim else ()), len(mean), 1, 1)
-#         std = images.new_tensor(std).view(*((1,) if has_batch_dim else ()), len(std), 1, 1)
+#         mean = images.new_tensor(mean).view(*((1) if has_batch_dim else ()), len(mean), 1, 1)
+#         std = images.new_tensor(std).view(*((1) if has_batch_dim else ()), len(std), 1, 1)
 #
 #         images = images * std + mean
 #

@@ -13,8 +13,8 @@ TEST_DATA_SIMPLE = (
     # (distance_matrix, conformity_matrix,
     #  topk, expected_value)
     (torch.tensor([[1, 2], [2, 1]]), torch.tensor([[0, 1], [1, 0]]), 1, 0.0),
-    (torch.tensor([[0, 0.5], [0.0, 0.5]]), torch.tensor([[0, 1], [1, 0]]), 1, 0.5,),
-    (torch.tensor([[0, 0.5], [0.0, 0.5]]), torch.tensor([[0, 1], [1, 0]]), 2, 1,),
+    (torch.tensor([[0, 0.5], [0.0, 0.5]]), torch.tensor([[0, 1], [1, 0]]), 1, 0.5),
+    (torch.tensor([[0, 0.5], [0.0, 0.5]]), torch.tensor([[0, 1], [1, 0]]), 2, 1),
     (
         torch.tensor([[1, 0.5, 0.2], [2, 3, 4], [0.4, 3, 4]]),
         torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
@@ -25,7 +25,7 @@ TEST_DATA_SIMPLE = (
 )
 
 TEST_DATA_LESS_SMALL = (
-    (torch.rand((10, 10)) + torch.tril(torch.ones((10, 10))), torch.eye(10), i, i / 10,)
+    (torch.rand((10, 10)) + torch.tril(torch.ones((10, 10))), torch.eye(10), i, i / 10)
     for i in range(1, 10)
 )
 
@@ -40,7 +40,7 @@ TEST_DATA_GREATER_SMALL = (
 )
 
 TEST_DATA_LESS_BIG = (
-    (torch.rand((100, 100)) + torch.tril(torch.ones((100, 100))), torch.eye(100), i, i / 100,)
+    (torch.rand((100, 100)) + torch.tril(torch.ones((100, 100))), torch.eye(100), i, i / 100)
     for i in range(1, 101, 10)
 )
 

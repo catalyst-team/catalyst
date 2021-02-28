@@ -31,7 +31,7 @@ def prepare_experiment():
     features = torch.randn((100, 100))
     labels = torch.distributions.Categorical(
         probs=torch.tensor([1 / 10 for _ in range(10)])
-    ).sample((100,))
+    ).sample((100))
     dataset = torch.utils.data.TensorDataset(features, labels)
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=64)
     return dataloader

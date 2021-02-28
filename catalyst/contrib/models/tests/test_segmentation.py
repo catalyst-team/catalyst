@@ -6,14 +6,14 @@ def check_unet(net_fn):
     # print(net)
     # print("-"*80)
     in_tensor = torch.Tensor(4, 3, 256, 256)
-    out_tensor_ = torch.Tensor(4, 1, 256, 256)
+    out_tensor_true = torch.Tensor(4, 1, 256, 256)
     # print(in_tensor.shape)
     # print("-"*80)
     out_tensor = net(in_tensor)
     # print(out_tensor.shape)
     # print("-"*80)
     # print(sum(p.numel() for p in net.parameters()))
-    assert out_tensor.shape == out_tensor_.shape, f"{net_fn} feels bad"
+    assert out_tensor.shape == out_tensor_true.shape, f"{net_fn} feels bad"
     print(f"{net_fn} feels good")
     return net
 

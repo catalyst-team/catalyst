@@ -601,7 +601,7 @@ from catalyst.data.transforms import Compose, Normalize, ToTensor
 
 # 1. train and valid datasets
 dataset_root = "."
-transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
+transforms = Compose([ToTensor(), Normalize((0.1307), (0.3081))])
 
 dataset_train = datasets.MnistMLDataset(root=dataset_root, download=True, transform=transforms)
 sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)

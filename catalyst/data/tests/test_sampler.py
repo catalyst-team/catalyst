@@ -112,7 +112,7 @@ def check_balance_batch_sampler_epoch(labels: List[int], p: int, k: int) -> None
     assert max(sampled_ids) <= len(labels) - 1
 
 
-def test_balance_batch_sampler(input_for_balance_batch_sampler,) -> None:  # noqa: WPS442
+def test_balance_batch_sampler(input_for_balance_batch_sampler) -> None:  # noqa: WPS442
     """
     Args:
         input_for_balance_batch_sampler: list of (labels, p, k)
@@ -135,7 +135,7 @@ def input_for_dynamic_balance_class_sampler() -> List[Tuple[list, float]]:
         # uniform class distribution
         np.array([0] * 10 + [1] * 10 + [2] * 10),
         # random class distribution
-        np.random.randint(0, 4, size=(200,)),
+        np.random.randint(0, 4, size=(200)),
     ]
     exp_lambda = np.linspace(0.1, 0.95, 11)
     input_cases = np.transpose(

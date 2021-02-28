@@ -133,7 +133,7 @@ class Runner(IRunner):
             )
         return loggers
 
-    def get_loaders(self, stage: str,) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage."""
         self._loaders = _process_loaders(loaders=self._loaders, initial_seed=self.seed)
         return self._loaders

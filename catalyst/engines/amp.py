@@ -1,12 +1,5 @@
-from typing import Any, Dict, Mapping, Union
-from contextlib import contextmanager
-
-import torch
-
 # TODO: works only with latest pytorch (1.7.1) - fix for older versions
 import torch.cuda.amp as amp
-import torch.distributed as dist
-import torch.nn as nn
 
 from catalyst.engines.device import DeviceEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine

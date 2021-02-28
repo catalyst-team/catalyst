@@ -7,7 +7,7 @@ from catalyst.metrics.functional import process_multilabel_components
 
 
 def accuracy(
-    outputs: torch.Tensor, targets: torch.Tensor, topk: Sequence[int] = (1,),
+    outputs: torch.Tensor, targets: torch.Tensor, topk: Sequence[int] = (1),
 ) -> Sequence[torch.Tensor]:
     """
     Computes multiclass accuracy@topk for the specified values of `topk`.

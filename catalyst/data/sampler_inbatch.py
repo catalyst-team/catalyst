@@ -276,7 +276,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         the batch relates to i-th class and False otherwise.
 
         Args:
-            labels: labels of the batch, shape (batch_size,)
+            labels: labels of the batch, shape (batch_size)
 
         Returns:
             matrix of indices of classes in batch
@@ -352,7 +352,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         Args:
             features: tensor of shape (batch_size; embed_dim) that contains
                 k samples for each of p classes
-            labels: labels of the batch, list or tensor of size (batch_size,)
+            labels: labels of the batch, list or tensor of size (batch_size)
 
         Returns:
             p triplets of (mean_vector, positive, negative_mean_vector)

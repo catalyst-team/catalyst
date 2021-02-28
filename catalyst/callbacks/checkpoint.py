@@ -470,7 +470,7 @@ class CheckpointCallback(ICheckpointCallback):
                 ("last", {**last_epoch_metrics, **{"_score_": last_epoch_score}}),
             ] + top_best_checkpoints
         else:
-            metrics = [("last", {**last_epoch_metrics, **{"_score_": last_epoch_score},},)]
+            metrics = [("last", {**last_epoch_metrics, **{"_score_": last_epoch_score}})]
         return OrderedDict(metrics)
 
     def on_stage_start(self, runner: "IRunner") -> None:

@@ -30,8 +30,8 @@ class StatisticsMetric(ICallbackBatchMetric):
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
-        """
-        Init params
+        """Init params
+
         Args:
             compute_on_call: if True, computes and returns metric value during metric call
             prefix:
@@ -52,7 +52,7 @@ class StatisticsMetric(ICallbackBatchMetric):
         elif mode == "multilabel":
             self.statistics_fn = get_multilabel_statistics
         else:
-            raise ValueError(f'Mode should be one of "binary", "multiclass", "multilabel".')
+            raise ValueError("Mode should be one of 'binary', 'multiclass', 'multilabel'")
 
         self.num_classes = num_classes
         self.statistics = None
@@ -60,7 +60,7 @@ class StatisticsMetric(ICallbackBatchMetric):
 
     def reset(self) -> None:
         """Reset all the statistics."""
-        self.statistics = defaultdict(lambda: np.zeros(shape=(self.num_classes,)))
+        self.statistics = defaultdict(lambda: np.zeros(shape=(self.num_classes)))
 
     def update(
         self, outputs: torch.Tensor, targets: torch.Tensor
@@ -111,6 +111,7 @@ class StatisticsMetric(ICallbackBatchMetric):
     def compute(self) -> Dict[str, Union[int, np.array]]:
         """
         Return accumulated statistics
+
         Returns:
             dict of statistics
         """
@@ -119,6 +120,7 @@ class StatisticsMetric(ICallbackBatchMetric):
     def compute_key_value(self) -> Dict[str, float]:
         """
         Return accumulated statistics
+
         Returns:
             dict of statistics
 
@@ -173,11 +175,11 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         Args:
             per_class: per-class metrics, array of shape (4, self.num_classes)
                 of precision, recall, f1 and support metrics
-            micro: micro averaged metrics, array of shape (self.num_classes,)
+            micro: micro averaged metrics, array of shape (self.num_classes)
                 of precision, recall, f1 and support metrics
-            macro: macro averaged metrics, array of shape (self.num_classes,)
+            macro: macro averaged metrics, array of shape (self.num_classes)
                 of precision, recall, f1 and support metrics
-            weighted: weighted averaged metrics, array of shape (self.num_classes,)
+            weighted: weighted averaged metrics, array of shape (self.num_classes)
                 of precision, recall, f1 and support metrics
 
         Returns:

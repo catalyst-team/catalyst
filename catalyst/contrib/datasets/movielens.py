@@ -248,7 +248,7 @@ class MovieLens(Dataset):
             3. Parse test data
             4. Save in the .pt with torch.save
         """
-        (train_raw, test_raw, item_metadata_raw, genres_raw,) = self._read_raw_movielens_data()
+        (train_raw, test_raw, item_metadata_raw, genres_raw) = self._read_raw_movielens_data()
 
         num_users, num_items = self._get_dimensions(self._parse(train_raw), self._parse(test_raw))
 

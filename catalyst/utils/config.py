@@ -82,7 +82,7 @@ def load_config(
     else:
         suffix = path.suffix
 
-    assert suffix in [".json", ".yml", ".yaml",], f"Unknown file format '{suffix}'"
+    assert suffix in [".json", ".yml", ".yaml"], f"Unknown file format '{suffix}'"
 
     config = None
     with path.open(encoding=encoding) as stream:
@@ -134,7 +134,7 @@ def save_config(
     else:
         suffix = path.suffix
 
-    assert suffix in [".json", ".yml", ".yaml",], f"Unknown file format '{suffix}'"
+    assert suffix in [".json", ".yml", ".yaml"], f"Unknown file format '{suffix}'"
 
     with path.open(encoding=encoding, mode="w") as stream:
         if suffix == ".json":

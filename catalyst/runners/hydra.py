@@ -332,7 +332,7 @@ class HydraRunner(IRunner):
         criterion = self.get_criterion_(criterion_params)
         return criterion
 
-    def get_optimizer_(self, model: RunnerModel, stage: str, params: DictConfig,) -> Optimizer:
+    def get_optimizer_(self, model: RunnerModel, stage: str, params: DictConfig) -> Optimizer:
         # @TODO 1: refactor; this method is too long
         params = deepcopy(params)
         # learning rate linear scaling

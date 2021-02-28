@@ -160,7 +160,7 @@
 #         max_length=max_length,
 #     )
 #
-#     dataloader = get_loader(df, open_fn, batch_size=batch_size, num_workers=num_workers,)
+#     dataloader = get_loader(df, open_fn, batch_size=batch_size, num_workers=num_workers)
 #
 #     features = {}
 #     dataloader = tqdm(dataloader) if args.verbose else dataloader

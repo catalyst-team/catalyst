@@ -378,14 +378,14 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
         tensor with network output
     """
 
-    def _rand_sample(input_shape,) -> Union[torch.Tensor, Dict[str, torch.Tensor]]:
+    def _rand_sample(input_shape) -> Union[torch.Tensor, Dict[str, torch.Tensor]]:
         if isinstance(input_shape, dict):
             input_t = {
-                key: torch.Tensor(torch.randn((1,) + key_input_shape))
+                key: torch.Tensor(torch.randn((1) + key_input_shape))
                 for key, key_input_shape in input_shape.items()
             }
         else:
-            input_t = torch.Tensor(torch.randn((1,) + input_shape))
+            input_t = torch.Tensor(torch.randn((1) + input_shape))
         return input_t
 
     input_args = [_rand_sample(input_shape) for input_shape in input_shapes_args]

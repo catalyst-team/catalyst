@@ -187,7 +187,7 @@
 #         requires_grad=requires_grad,
 #         opt_level=opt_level,
 #     )
-#     test_callback = _OnStageEndCheckModelTracedCallback(path=tracing_path, inputs=images,)
+#     test_callback = _OnStageEndCheckModelTracedCallback(path=tracing_path, inputs=images)
 #
 #     callbacks = collections.OrderedDict(
 #         loss=criterion_callback,

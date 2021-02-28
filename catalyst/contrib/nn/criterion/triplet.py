@@ -45,7 +45,7 @@ class TripletLoss(nn.Module):
         # We can just take the diagonal of `dot_product`.
         # This also provides more numerical stability
         # (the diagonal of the result will be exactly 0).
-        # shape (batch_size,)
+        # shape (batch_size)
         square = torch.mm(embeddings, embeddings.t())
         diag = torch.diag(square)
 
@@ -121,7 +121,7 @@ class TripletLoss(nn.Module):
         hardest negative to form a triplet.
 
         Args:
-            labels: labels of the batch, of size (batch_size,)
+            labels: labels of the batch, of size (batch_size)
             embeddings: tensor of shape (batch_size, embed_dim)
             margin: margin for triplet loss
             squared: Boolean. If true, output is the pairwise squared
@@ -158,7 +158,7 @@ class TripletLoss(nn.Module):
             1.0 - mask_anchor_negative
         )
 
-        # shape (batch_size,)
+        # shape (batch_size)
         hardest_negative_dist, _ = anchor_negative_dist.min(1, keepdim=True)
 
         # Combine biggest d(a, p) and smallest d(a, n) into final triplet loss
@@ -173,7 +173,7 @@ class TripletLoss(nn.Module):
 
         Args:
             embeddings: tensor of shape (batch_size, embed_dim)
-            targets: labels of the batch, of size (batch_size,)
+            targets: labels of the batch, of size (batch_size)
 
         Returns:
             torch.Tensor: scalar tensor containing the triplet loss
@@ -280,7 +280,7 @@ class TripletMarginLossWithSampler(nn.Module):
         """
         labels_list = convert_labels2list(labels)
 
-        (features_anchor, features_positive, features_negative,) = self._sampler_inbatch.sample(
+        (features_anchor, features_positive, features_negative) = self._sampler_inbatch.sample(
             features=features, labels=labels_list
         )
 

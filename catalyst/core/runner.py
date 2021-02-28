@@ -593,7 +593,7 @@ class IRunner(ICallback, ILogger, ABC):
         raise self.exception
 
     def _run_event(self, event: str) -> None:
-        if _has_str_intersections(event, ("_start",)):
+        if _has_str_intersections(event, ("_start")):
             getattr(self, event)(self)
         for callback in self.callbacks.values():
             getattr(callback, event)(self)
@@ -670,7 +670,7 @@ class IRunner(ICallback, ILogger, ABC):
                 # ddp-device branch
                 world_size = self.engine.world_size
                 torch.multiprocessing.spawn(
-                    self._run_stage, args=(world_size,), nprocs=world_size, join=True,
+                    self._run_stage, args=(world_size), nprocs=world_size, join=True,
                 )
                 # raise NotImplementedError()
         self._run_event("on_experiment_end")

@@ -226,11 +226,11 @@ def get_multiclass_statistics(
         outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes,
     )
 
-    tn = torch.zeros((num_classes,), device=outputs.device)
-    fp = torch.zeros((num_classes,), device=outputs.device)
-    fn = torch.zeros((num_classes,), device=outputs.device)
-    tp = torch.zeros((num_classes,), device=outputs.device)
-    support = torch.zeros((num_classes,), device=outputs.device)
+    tn = torch.zeros((num_classes), device=outputs.device)
+    fp = torch.zeros((num_classes), device=outputs.device)
+    fn = torch.zeros((num_classes), device=outputs.device)
+    tp = torch.zeros((num_classes), device=outputs.device)
+    support = torch.zeros((num_classes), device=outputs.device)
 
     for class_index in range(num_classes):
         (
@@ -289,11 +289,11 @@ def get_multilabel_statistics(
     assert outputs.shape == targets.shape
     num_classes = outputs.shape[-1]
 
-    tn = torch.zeros((num_classes,), device=outputs.device)
-    fp = torch.zeros((num_classes,), device=outputs.device)
-    fn = torch.zeros((num_classes,), device=outputs.device)
-    tp = torch.zeros((num_classes,), device=outputs.device)
-    support = torch.zeros((num_classes,), device=outputs.device)
+    tn = torch.zeros((num_classes), device=outputs.device)
+    fp = torch.zeros((num_classes), device=outputs.device)
+    fn = torch.zeros((num_classes), device=outputs.device)
+    tp = torch.zeros((num_classes), device=outputs.device)
+    support = torch.zeros((num_classes), device=outputs.device)
 
     for class_index in range(num_classes):
         class_outputs = outputs[..., class_index]

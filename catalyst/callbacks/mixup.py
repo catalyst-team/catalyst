@@ -26,7 +26,7 @@
 #         self,
 #         input_key: str = "targets",
 #         output_key: str = "logits",
-#         fields: List[str] = ("features",),
+#         fields: List[str] = ("features"),
 #         alpha=1.0,
 #         on_train_only=True,
 #         **kwargs

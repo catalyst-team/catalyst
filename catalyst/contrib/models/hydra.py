@@ -168,7 +168,7 @@ class Hydra(nn.Module):
                 if isinstance(head_params, int):
                     head_params = {"num_embeddings": head_params}
                 need_normalize = head_params.pop(Hydra.normalize_keyword, False)
-                block = [("embedding", nn.Embedding(embedding_dim=in_features, **head_params,),)]
+                block = [("embedding", nn.Embedding(embedding_dim=in_features, **head_params))]
                 if need_normalize:
                     block.append(("normalize", Normalize()))
 
