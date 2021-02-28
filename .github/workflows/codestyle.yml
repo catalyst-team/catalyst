@@ -112,4 +112,5 @@ jobs:
 
       - name: check codestyle
         run: |
+          catalyst-check-codestyle --line-length 99
           make check-docs

@@ -15,7 +15,7 @@ def get_one_hot(label: int, num_classes: int, smoothing: float = None) -> np.nda
             with Convolutional Neural Networks`` paper
 
     Returns:
-        np.ndarray: a one-hot vector with shape ``(num_classes,)``
+        np.ndarray: a one-hot vector with shape ``(num_classes)``
 
     .. _Bag of Tricks for Image Classification with
         Convolutional Neural Networks: https://arxiv.org/abs/1812.01187

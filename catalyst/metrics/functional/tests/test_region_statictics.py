@@ -1,3 +1,4 @@
+# flake8: noqa
 import torch
 
 from catalyst.metrics.functional._segmentation import get_segmentation_statistics

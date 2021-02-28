@@ -8,7 +8,7 @@ import torch.nn.functional as F
 _EPS = 1e-8
 
 
-def euclidean_distance(x: torch.Tensor, y: torch.Tensor = None,) -> torch.Tensor:
+def euclidean_distance(x: torch.Tensor, y: torch.Tensor = None) -> torch.Tensor:
     """@TODO: Docs. Contribution is welcome."""
     x_norm = (x ** 2).sum(1).unsqueeze(1)
     if y is not None:
@@ -22,7 +22,7 @@ def euclidean_distance(x: torch.Tensor, y: torch.Tensor = None,) -> torch.Tensor
     return dist
 
 
-def cosine_distance(x: torch.Tensor, z: Optional[torch.Tensor] = None,) -> torch.Tensor:
+def cosine_distance(x: torch.Tensor, z: Optional[torch.Tensor] = None) -> torch.Tensor:
     """Calculate cosine distance between x and z.
     @TODO: Docs. Contribution is welcome.
     """
@@ -36,7 +36,7 @@ def cosine_distance(x: torch.Tensor, z: Optional[torch.Tensor] = None,) -> torch
     return torch.sub(1, torch.mm(x, z.transpose(0, 1)))
 
 
-def batch_all(labels: torch.Tensor, exclude_negatives: bool = True,) -> torch.Tensor:
+def batch_all(labels: torch.Tensor, exclude_negatives: bool = True) -> torch.Tensor:
     """Create a 3D mask of all possible triplets.
     @TODO: Docs. Contribution is welcome.
     """

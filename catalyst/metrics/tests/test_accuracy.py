@@ -1,3 +1,4 @@
+# flake8: noqa
 from typing import Dict, Iterable, List, Union
 
 import numpy as np
@@ -32,7 +33,7 @@ from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
             },
         ),
         (
-            torch.tensor([[0.1, 0.2, 0.7, 0.0], [0.49, 0.51, 0.0, 0.0], [0.6, 0.3, 0.1, 0.0],],),
+            torch.tensor([[0.1, 0.2, 0.7, 0.0], [0.49, 0.51, 0.0, 0.0], [0.6, 0.3, 0.1, 0.0]]),
             torch.tensor([0, 1, 3]),
             4,
             [1, 3],
@@ -82,11 +83,11 @@ def test_accuracy(
                 torch.tensor([[0.8, 0.2], [1.0, 0.0]]),
                 torch.tensor([[0.55, 0.45]]),
             ],
-            [torch.tensor([0, 0]), torch.tensor([0, 0]), torch.tensor([1,]),],
+            [torch.tensor([0, 0]), torch.tensor([0, 0]), torch.tensor([1])],
             2,
             [1],
             [
-                {"accuracy01": 0.5, "accuracy": 0.5, "accuracy/std": 0.0, "accuracy01/std": 0.0,},
+                {"accuracy01": 0.5, "accuracy": 0.5, "accuracy/std": 0.0, "accuracy01/std": 0.0},
                 {
                     "accuracy01": 0.75,
                     "accuracy": 0.75,
@@ -102,8 +103,8 @@ def test_accuracy(
             ],
         ),
         (
-            [torch.tensor([[0.0, 0.0, 1.0], [0.0, 0.7, 0.3],]), torch.tensor([[0.0, 0.6, 0.4],])],
-            [torch.tensor([2, 2]), torch.tensor([0,])],
+            [torch.tensor([[0.0, 0.0, 1.0], [0.0, 0.7, 0.3]]), torch.tensor([[0.0, 0.6, 0.4]])],
+            [torch.tensor([2, 2]), torch.tensor([0])],
             3,
             [1, 2],
             [
@@ -169,11 +170,11 @@ def test_accuracy_update(
             ),
             torch.tensor([[0, 1, 1, 0], [1, 0, 1, 0], [0, 1, 0, 0], [0, 1, 0, 0]]),
             0.6,
-            {"accuracy": 0.75, "accuracy/std": 0,},
+            {"accuracy": 0.75, "accuracy/std": 0},
         ),
         (
-            torch.tensor([[0.4, 0.9, 0.2], [0.2, 0.8, 0.7], [0.7, 0.9, 0.5],]),
-            torch.tensor([[0, 1, 1], [1, 1, 1], [1, 1, 0],]),
+            torch.tensor([[0.4, 0.9, 0.2], [0.2, 0.8, 0.7], [0.7, 0.9, 0.5]]),
+            torch.tensor([[0, 1, 1], [1, 1, 1], [1, 1, 0]]),
             torch.tensor([0.5, 0.7, 0.6]),
             {"accuracy": 0.777778, "accuracy/std": 0},
         ),
@@ -210,33 +211,33 @@ def test_multilabel_accuracy(
             [
                 torch.tensor([[0, 1, 0], [1, 0, 1], [1, 1, 1]]),
                 torch.tensor([[1, 1, 1], [1, 0, 1], [1, 0, 0]]),
-                torch.tensor([[0, 0, 0],]),
+                torch.tensor([[0, 0, 0]]),
             ],
             [
                 torch.tensor([[0, 1, 1], [1, 0, 1], [1, 0, 1]]),
                 torch.tensor([[1, 1, 1], [0, 0, 1], [1, 0, 0]]),
-                torch.tensor([[0, 0, 0],]),
+                torch.tensor([[0, 0, 0]]),
             ],
             0.7,
             [0.777778, 0.833333, 0.857143],
         ),
         (
             [
-                torch.tensor([[0, 1, 0, 1], [1, 0, 1, 0],]),
-                torch.tensor([[1, 1, 1, 1], [1, 0, 1, 1],]),
-                torch.tensor([[0, 0, 0, 1], [0, 0, 1, 0],]),
+                torch.tensor([[0, 1, 0, 1], [1, 0, 1, 0]]),
+                torch.tensor([[1, 1, 1, 1], [1, 0, 1, 1]]),
+                torch.tensor([[0, 0, 0, 1], [0, 0, 1, 0]]),
             ],
             [
-                torch.tensor([[0, 1, 1, 1], [1, 0, 1, 0],]),
-                torch.tensor([[1, 1, 1, 1], [1, 0, 0, 0],]),
-                torch.tensor([[0, 1, 0, 1], [0, 0, 1, 0],]),
+                torch.tensor([[0, 1, 1, 1], [1, 0, 1, 0]]),
+                torch.tensor([[1, 1, 1, 1], [1, 0, 0, 0]]),
+                torch.tensor([[0, 1, 0, 1], [0, 0, 1, 0]]),
             ],
             0.8,
             [0.875, 0.8125, 0.833333],
         ),
         (
-            [torch.tensor([[0, 1], [1, 0], [1, 1]]), torch.tensor([[1, 1], [0, 0],]),],
-            [torch.tensor([[0, 1], [0, 0], [0, 0]]), torch.tensor([[1, 1], [1, 0],]),],
+            [torch.tensor([[0, 1], [1, 0], [1, 1]]), torch.tensor([[1, 1], [0, 0]])],
+            [torch.tensor([[0, 1], [0, 0], [0, 0]]), torch.tensor([[1, 1], [1, 0]])],
             torch.tensor([0.5, 0.6]),
             [0.5, 0.6],
         ),
@@ -271,33 +272,33 @@ def test_multilabel_accuracy_mean(
             [
                 torch.tensor([[0, 1, 0], [1, 0, 1], [1, 1, 1]]),
                 torch.tensor([[1, 1, 1], [1, 0, 1], [1, 0, 0]]),
-                torch.tensor([[0, 0, 0],]),
+                torch.tensor([[0, 0, 0]]),
             ],
             [
                 torch.tensor([[0, 1, 1], [1, 0, 1], [1, 0, 1]]),
                 torch.tensor([[1, 1, 1], [0, 0, 1], [1, 0, 0]]),
-                torch.tensor([[0, 0, 0],]),
+                torch.tensor([[0, 0, 0]]),
             ],
             0.7,
             [0, 0.057166, 0.079682],
         ),
         (
             [
-                torch.tensor([[0, 1, 0, 1], [1, 0, 1, 0],]),
-                torch.tensor([[1, 1, 1, 1], [1, 0, 1, 1],]),
-                torch.tensor([[0, 0, 0, 1], [0, 0, 1, 0],]),
+                torch.tensor([[0, 1, 0, 1], [1, 0, 1, 0]]),
+                torch.tensor([[1, 1, 1, 1], [1, 0, 1, 1]]),
+                torch.tensor([[0, 0, 0, 1], [0, 0, 1, 0]]),
             ],
             [
-                torch.tensor([[0, 1, 1, 1], [1, 0, 1, 0],]),
-                torch.tensor([[1, 1, 1, 1], [1, 0, 0, 0],]),
-                torch.tensor([[0, 1, 0, 1], [0, 0, 1, 0],]),
+                torch.tensor([[0, 1, 1, 1], [1, 0, 1, 0]]),
+                torch.tensor([[1, 1, 1, 1], [1, 0, 0, 0]]),
+                torch.tensor([[0, 1, 0, 1], [0, 0, 1, 0]]),
             ],
             0.8,
             [0, 0.06455, 0.0601929],
         ),
         (
-            [torch.tensor([[0, 1], [1, 0], [1, 1]]), torch.tensor([[1, 1], [0, 0],]),],
-            [torch.tensor([[0, 1], [0, 0], [0, 0]]), torch.tensor([[1, 1], [1, 0],]),],
+            [torch.tensor([[0, 1], [1, 0], [1, 1]]), torch.tensor([[1, 1], [0, 0]])],
+            [torch.tensor([[0, 1], [0, 0], [0, 0]]), torch.tensor([[1, 1], [1, 0]])],
             torch.tensor([0.5, 0.6]),
             [0, 0.129099],
         ),

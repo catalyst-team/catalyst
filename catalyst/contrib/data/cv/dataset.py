@@ -15,7 +15,7 @@ class ImageFolderDataset(PathsDataset):
 
     .. code-block:: bash
 
-        rootpat/
+        rootpath/
         |-- class1/  # folder of N images
         |   |-- image11
         |   |-- image12

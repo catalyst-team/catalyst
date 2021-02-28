@@ -112,7 +112,7 @@ def check_balance_batch_sampler_epoch(labels: List[int], p: int, k: int) -> None
     assert max(sampled_ids) <= len(labels) - 1
 
 
-def test_balance_batch_sampler(input_for_balance_batch_sampler,) -> None:  # noqa: WPS442
+def test_balance_batch_sampler(input_for_balance_batch_sampler) -> None:  # noqa: WPS442
     """
     Args:
         input_for_balance_batch_sampler: list of (labels, p, k)

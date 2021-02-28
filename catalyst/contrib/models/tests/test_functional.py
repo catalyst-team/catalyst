@@ -1,3 +1,4 @@
+# flake8: noqa
 from catalyst.contrib.models import get_convolution_net, get_linear_net
 
 

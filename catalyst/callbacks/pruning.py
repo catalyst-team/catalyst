@@ -1,4 +1,3 @@
-# @TODO: make the same API for tracing/onnx/pruning/quantization
 from typing import Callable, List, Optional, TYPE_CHECKING, Union
 import warnings
 
@@ -38,7 +37,6 @@ class PruningCallback(Callback):
         prune_on_epoch_end: Optional[bool] = False,
         prune_on_stage_end: Optional[bool] = True,
         remove_reparametrization_on_stage_end: Optional[bool] = True,
-        reinitialize_after_pruning: Optional[bool] = False,
         layers_to_prune: Optional[List[str]] = None,
         dim: Optional[int] = None,
         l_norm: Optional[int] = None,
@@ -75,19 +73,19 @@ class PruningCallback(Callback):
         super().__init__(CallbackOrder.External)
         if isinstance(pruning_fn, str):
             if pruning_fn not in PRUNING_FN.keys():
-                raise Exception(
+                raise ValueError(
                     f"Pruning function should be in {PRUNING_FN.keys()}, "
                     "global pruning is not currently support."
                 )
             if "unstructured" not in pruning_fn:
                 if dim is None:
-                    raise Exception(
+                    raise ValueError(
                         "If you are using structured pruning you"
                         "need to specify dim in callback args"
                     )
                 if pruning_fn == "ln_structured":
                     if l_norm is None:
-                        raise Exception(
+                        raise ValueError(
                             "If you are using ln_unstructured you"
                             "need to specify n in callback args"
                         )
@@ -111,7 +109,6 @@ class PruningCallback(Callback):
         self.remove_reparametrization_on_stage_end = remove_reparametrization_on_stage_end
         self.keys_to_prune = keys_to_prune
         self.amount = amount
-        self.reinitialize_after_pruning = reinitialize_after_pruning
         self.layers_to_prune = layers_to_prune
 
     def on_epoch_end(self, runner: "IRunner") -> None:
@@ -130,7 +127,6 @@ class PruningCallback(Callback):
                 keys_to_prune=self.keys_to_prune,
                 amount=self.amount,
                 layers_to_prune=self.layers_to_prune,
-                reinitialize_after_pruning=self.reinitialize_after_pruning,
             )
 
     def on_stage_end(self, runner: "IRunner") -> None:
@@ -150,7 +146,6 @@ class PruningCallback(Callback):
                 keys_to_prune=self.keys_to_prune,
                 amount=self.amount,
                 layers_to_prune=self.layers_to_prune,
-                reinitialize_after_pruning=self.reinitialize_after_pruning,
             )
         if self.remove_reparametrization_on_stage_end:
             remove_reparametrization(

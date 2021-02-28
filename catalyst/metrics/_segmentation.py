@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Callable, Dict, List, Optional
 from functools import partial
 
 import torch
@@ -13,9 +13,7 @@ from catalyst.metrics.functional._segmentation import (
 
 
 class RegionBasedMetric(ICallbackBatchMetric):
-    """
-    Logic class for all region based metrics, like IoU, Dice, Trevsky
-    """
+    """Logic class for all region based metrics, like IoU, Dice, Trevsky."""
 
     def __init__(
         self,
@@ -50,6 +48,21 @@ class RegionBasedMetric(ICallbackBatchMetric):
         self.weights = weights
         self.class_names = class_names
         self._checked_params = False
+
+    def _check_parameters(self):
+        # check class_names
+        if self.class_names is not None:
+            assert len(self.class_names) == len(self.statistics), (
+                f"the number of class names must be equal to the number of classes, got weights"
+                f" {len(self.class_names)} and classes: {len(self.statistics)}"
+            )
+        else:
+            self.class_names = [f"class_{idx}" for idx in range(1, len(self.statistics) + 1)]
+        if self.weights is not None:
+            assert len(self.weights) == len(self.statistics), (
+                f"the number of weights must be equal to the number of classes, got weights"
+                f" {len(self.weights)} and classes: {len(self.statistics)}"
+            )
 
     def reset(self):
         """Reset all statistics"""
@@ -86,21 +99,6 @@ class RegionBasedMetric(ICallbackBatchMetric):
 
         values = self.metric_fn(tp, fp, fn)
         return values
-
-    def _check_parameters(self):
-        # check class_names
-        if self.class_names is not None:
-            assert len(self.class_names) == len(self.statistics), (
-                f"the number of class names must be equal to the number of classes, got weights"
-                f" {len(self.class_names)} and classes: {len(self.statistics)}"
-            )
-        else:
-            self.class_names = [f"class_{idx}" for idx in range(1, len(self.statistics) + 1)]
-        if self.weights is not None:
-            assert len(self.weights) == len(self.statistics), (
-                f"the number of weights must be equal to the number of classes, got weights"
-                f" {len(self.weights)} and classes: {len(self.statistics)}"
-            )
 
     def update_key_value(
         self, outputs: torch.Tensor, targets: torch.Tensor
@@ -162,6 +160,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         return metrics
 
     def compute(self):
+        """@TODO: Docs."""
         return self.compute_key_value()
 
 

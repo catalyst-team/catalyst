@@ -59,7 +59,7 @@ class AugmentorCompose:
             dictionary: item from dataset
 
         Returns:
-            dict: dictionaty with augmented data
+            dict: dictionary with augmented data
         """
         results = {}
         for key, augment_fn in self.key2augment_fn.items():
@@ -93,7 +93,7 @@ class AugmentorKeys:
             dictionary: item from dataset
 
         Returns:
-            dict: dictionaty with augmented data
+            dict: dictionary with augmented data
         """
         # link keys from dict_ with augment_fn keys
         data = {fn_key: dictionary[dict_key] for dict_key, fn_key in self.dict2fn_dict.items()}

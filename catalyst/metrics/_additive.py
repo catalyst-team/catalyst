@@ -35,12 +35,14 @@ class AdditiveValueMetric(IMetric):
         self.num_samples = 0
 
     def update(self, value: float, num_samples: int) -> float:
-        """
-        Update mean metric value and std with new value.
+        """Update mean metric value and std with new value.
 
         Args:
             value: value to update mean and std with
             num_samples: number of value samples that metrics should be updated with
+
+        Returns:
+            last value
         """
         self.value = value
         self.n += 1

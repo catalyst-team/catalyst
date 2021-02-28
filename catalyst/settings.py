@@ -38,6 +38,14 @@ except ModuleNotFoundError:
     IS_XLA_AVAILABLE = False
 
 try:
+    import onnx  # noqa: F401, E401
+    import onnxruntime  # noqa: F401, E401
+
+    IS_ONNX_AVAILABLE = True
+except ImportError:
+    IS_ONNX_AVAILABLE = False
+
+try:
     import torch.nn.utils.prune as prune  # noqa: F401
 
     IS_PRUNING_AVAILABLE = True
@@ -178,6 +186,16 @@ class Settings(FrozenClass):
     def _optional_value(value, default):
         return value if value is not None else default
 
+    @staticmethod
+    def parse() -> "Settings":
+        """Parse and return the settings.
+
+        Returns:
+            Settings: Dictionary of the parsed and merged Settings.
+        """
+        kwargrs = MergedConfigParser(ConfigFileFinder("catalyst")).parse()
+        return Settings(**kwargrs)
+
     def type_hint(self, key: str):
         """Returns type hint for the specified ``key``.
 
@@ -189,16 +207,6 @@ class Settings(FrozenClass):
         """
         # return get_type_hints(self).get(key, None)
         return type(getattr(self, key, None))
-
-    @staticmethod
-    def parse() -> "Settings":
-        """Parse and return the settings.
-
-        Returns:
-            Settings: Dictionary of the parsed and merged Settings.
-        """
-        kwargrs = MergedConfigParser(ConfigFileFinder("catalyst")).parse()
-        return Settings(**kwargrs)
 
 
 DEFAULT_SETTINGS = Settings()
@@ -240,7 +248,7 @@ class ConfigFileFinder:
         return os.path.join(home_dir, config_file_basename)
 
     @staticmethod
-    def _read_config(*files: str,) -> Tuple[configparser.RawConfigParser, List[str]]:
+    def _read_config(*files: str) -> Tuple[configparser.RawConfigParser, List[str]]:
         config = configparser.RawConfigParser()
 
         found_files: List[str] = []
@@ -381,6 +389,11 @@ setattr(SETTINGS, "IS_PRUNING_AVAILABLE", IS_PRUNING_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_OPTUNA_AVAILABLE", IS_OPTUNA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_HYDRA_AVAILABLE", IS_HYDRA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_APEX_AVAILABLE", IS_APEX_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_AMP_AVAILABLE", IS_AMP_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
+setattr(SETTINGS, "IS_ONNX_AVAILABLE", IS_ONNX_AVAILABLE)  # noqa: B010
 
 
 __all__ = [
@@ -394,4 +407,5 @@ __all__ = [
     "IS_QUANTIZATION_AVAILABLE",
     "IS_OPTUNA_AVAILABLE",
     "IS_HYDRA_AVAILABLE",
+    "IS_ONNX_AVAILABLE",
 ]

@@ -1,3 +1,4 @@
+# flake8: noqa
 from unittest.mock import MagicMock, PropertyMock
 
 from catalyst.callbacks import EarlyStoppingCallback

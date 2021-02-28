@@ -78,8 +78,7 @@ def reduced_focal_loss(
         targets: tensor of the same shape as input
         threshold: threshold for focal reduction
         gamma: gamma for focal reduction
-        reduction (string, optional):
-            specifies the reduction to apply to the output:
+        reduction: specifies the reduction to apply to the output:
             ``"none"`` | ``"mean"`` | ``"sum"`` | ``"batchwise_mean"``.
             ``"none"``: no reduction will be applied,
             ``"mean"``: the sum of the output will be divided by the number of

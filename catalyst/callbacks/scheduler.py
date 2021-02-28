@@ -387,7 +387,7 @@ class LRFinder(ILRUpdater):
         elif scale == "linear":
             self._calc_lr = self._calc_lr_linear
         else:
-            raise Exception("Not supported")
+            raise NotImplementedError("Not supported")
 
     def _calc_lr_log(self):
         return self.init_lr * self.multiplier ** self.iteration
@@ -430,7 +430,7 @@ class LRFinder(ILRUpdater):
             runner: current runner
 
         Raises:
-            NotImplementedError: at the end of LRFinder
+            KeyboardInterrupt: at the end of LRFinder
         """
         super().on_batch_end(runner=runner)
         if self.iteration > self.num_steps:

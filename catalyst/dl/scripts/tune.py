@@ -3,7 +3,6 @@
 from typing import Dict, Tuple
 import argparse
 from argparse import ArgumentParser
-import os
 from pathlib import Path
 
 import optuna
@@ -12,8 +11,7 @@ from catalyst.dl.scripts.functional import parse_args_uargs
 from catalyst.runners.config import ConfigRunner
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, maybe_recursive_call, set_global_seed
-from catalyst.utils.scripts import dump_code, get_config_runner
-from catalyst.utils.sys import dump_environment
+from catalyst.utils.sys import dump_code, dump_environment, get_config_runner
 from catalyst.utils.torch import prepare_cudnn
 
 
@@ -30,7 +28,7 @@ def build_args(parser: ArgumentParser):
         required=True,
     )
     parser.add_argument("--expdir", type=str, default=None)
-    parser.add_argument("--logdir", type=str, default=None)
+    # parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
     # parser.add_argument(
     #     "-j", "--num-workers", default=None, type=int, help="number of data loading workers",

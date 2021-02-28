@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict
 from abc import ABC, abstractmethod
 
 
@@ -9,8 +9,7 @@ class IMetric(ABC):
         """Interface for all Metrics.
 
         Args:
-            compute_on_call:
-                Computes and returns metric value during metric call.
+            compute_on_call: Computes and returns metric value during metric call.
                 Used for per-batch logging. default: True
         """
         self.compute_on_call = compute_on_call
@@ -50,7 +49,7 @@ class IMetric(ABC):
         """
         pass
 
-    def __call__(self, *args, **kwargs) -> Any:
+    def __call__(self, *args, **kwargs) -> Any:  # noqa: CCE001
         """Computes the metric based on it's accumulated state.
 
         By default, this is called at the end of each batch
@@ -65,14 +64,17 @@ class IMetric(ABC):
 
 
 class ICallbackBatchMetric(IMetric):
-    # @TODO: do we need prefix/suffix here?
+    """@TODO: docs here"""
+
     def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+        """@TODO: docs here"""
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
         self.suffix = suffix or ""
 
     @abstractmethod
     def update_key_value(self, *args, **kwargs) -> Dict[str, float]:
+        """@TODO: docs here"""
         pass
 
     @abstractmethod
@@ -92,6 +94,7 @@ class ICallbackLoaderMetric(IMetric):
     """Interface for all Metrics."""
 
     def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+        """@TODO: docs here"""
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
         self.suffix = suffix or ""
@@ -102,6 +105,10 @@ class ICallbackLoaderMetric(IMetric):
 
         By default, this is called at the start of each loader
         (`on_loader_start` event).
+
+        Args:
+            num_batches: @TODO: docs.
+            num_samples: @TODO: docs.
         """
         pass
 

@@ -1,6 +1,6 @@
 # flake8: noqa
 
-from typing import Dict
+from typing import Any, Dict, List
 import logging
 import os
 from tempfile import TemporaryDirectory
@@ -103,7 +103,7 @@ def test_train_with_config_experiment_distributed_parallel_amp_device():
     # runner = SupervisedRunner()
     # exp = ConfigExperiment(
     #     config={
-    #         "model_params": {"_target_": "DummyModel", "in_features": 4, "out_features": 1,},
+    #         "model_params": {"_target_": "DummyModel", "in_features": 4, "out_features": 1},
     #         "engine": "ddp",
     #         "args": {"logdir": logdir},
     #         "stages": {

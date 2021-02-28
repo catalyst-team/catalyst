@@ -8,9 +8,9 @@ from sys import maxsize
 import numpy as np
 import torch
 from torch import Tensor
+from torch.nn import functional as F
 
-from catalyst.utils.misc import find_value_ids
-from catalyst.utils.torch import convert_labels2list, normalize
+from catalyst.utils.misc import convert_labels2list, find_value_ids
 
 # order in the triplets: (anchor, positive, negative)
 TTriplets = Tuple[Tensor, Tensor, Tensor]
@@ -73,6 +73,7 @@ class InBatchTripletsSampler(IInbatchTripletSampler):
         """
         The input must satisfy the conditions described in
         the class documentation.
+
         Args:
             labels: labels of the samples in the batch
         """
@@ -191,7 +192,7 @@ class HardTripletsSampler(InBatchTripletsSampler):
         assert features.shape[0] == len(labels)
 
         if self._norm_required:
-            features = normalize(tensors=features.detach())
+            features = F.normalize(features.detach(), p=2, dim=1)
 
         dist_mat = torch.cdist(x1=features, x2=features, p=2)
 
@@ -276,7 +277,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         the batch relates to i-th class and False otherwise.
 
         Args:
-            labels: labels of the batch, shape (batch_size,)
+            labels: labels of the batch, shape (batch_size)
 
         Returns:
             matrix of indices of classes in batch
@@ -352,7 +353,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         Args:
             features: tensor of shape (batch_size; embed_dim) that contains
                 k samples for each of p classes
-            labels: labels of the batch, list or tensor of size (batch_size,)
+            labels: labels of the batch, list or tensor of size (batch_size)
 
         Returns:
             p triplets of (mean_vector, positive, negative_mean_vector)

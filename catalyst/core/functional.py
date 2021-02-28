@@ -1,11 +1,75 @@
 from typing import Dict, List, Union
 from collections import OrderedDict
+from copy import copy
+import warnings
+
+from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackWrapper
 from catalyst.utils.distributed import get_rank
 
 
+def _force_make_distributed_loader(loader: DataLoader) -> DataLoader:
+    """
+    Transfers loader to distributed mode. Experimental feature.
+
+    Args:
+        loader: pytorch dataloder
+
+    Returns:
+        DataLoader: pytorch dataloder with distributed sampler.
+    """
+    from catalyst.data.sampler import DistributedSamplerWrapper
+
+    sampler = (
+        DistributedSampler(dataset=loader.dataset)
+        if getattr(loader, "sampler", None) is not None
+        else DistributedSamplerWrapper(sampler=loader.sampler)
+    )
+    loader = DataLoader(
+        dataset=copy(loader.dataset),
+        batch_size=loader.batch_size,
+        # shuffle=loader.shuffle,
+        sampler=sampler,
+        # batch_sampler=loader.batch_sampler,
+        num_workers=loader.num_workers,
+        # collate_fn=loader.collate_fn,
+        pin_memory=loader.pin_memory,
+        drop_last=loader.drop_last,
+    )
+    return loader
+
+
+def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
+    """
+    Check pytorch dataloaders for distributed setup.
+    Transfers them to distributed mode if necessary.
+    (Experimental feature)
+
+    Args:
+        loaders (Dict[str, DataLoader]): dictionary with pytorch dataloaders
+
+    Returns:
+        Dict[str, DataLoader]: dictionary
+            with pytorch dataloaders (with distributed samplers if necessary)
+    """
+    from catalyst.data.sampler import DistributedSamplerWrapper
+
+    rank = get_rank()
+    if rank >= 0:
+        for key, value in loaders.items():
+            if not isinstance(value.sampler, (DistributedSampler, DistributedSamplerWrapper)):
+                warnings.warn(
+                    "With distributed training setup, "
+                    "you need ``DistributedSampler`` for your ``DataLoader``."
+                    "Transferring to distributed mode. (Experimental feature)"
+                )
+                loaders[key] = _force_make_distributed_loader(value)
+    return loaders
+
+
 def _get_original_callback(callback: Callback) -> Callback:
+    """@TODO: docs"""
     while isinstance(callback, CallbackWrapper):
         callback = callback.callback
     return callback
@@ -84,8 +148,8 @@ def filter_callbacks_by_node(callbacks: Union[Dict, OrderedDict]) -> Union[Dict,
 
 
 __all__ = [
+    "validate_loaders",
     "sort_callbacks_by_order",
     "filter_callbacks_by_node",
-    "_get_original_callback",
     "check_callback_isinstance",
 ]

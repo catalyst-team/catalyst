@@ -103,7 +103,7 @@ def run_train_with_config_experiment_parallel_device():
     # logdir = f"./test_dp_engine"
     # exp = ConfigExperiment(
     #     config={
-    #         "model_params": {"_target_": "DummyModel", "in_features": 4, "out_features": 1,},
+    #         "model_params": {"_target_": "DummyModel", "in_features": 4, "out_features": 1},
     #         "engine": "dp",
     #         "args": {"logdir": logdir},
     #         "stages": {
