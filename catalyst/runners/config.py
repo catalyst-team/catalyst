@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
+from catalyst.core.callback import Callback
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
@@ -36,8 +37,11 @@ logger = logging.getLogger(__name__)
 
 
 class ConfigRunner(IRunner):
+    """@TODO: docs."""
+
     def __init__(self, config: Dict):
-        """
+        """@TODO: docs.
+
         Args:
             config: dictionary with parameters
         """
@@ -83,14 +87,17 @@ class ConfigRunner(IRunner):
 
     @property
     def logdir(self) -> str:
+        """@TODO: docs."""
         return self._logdir
 
     @property
     def seed(self) -> int:
+        """@TODO: docs."""
         return self._seed
 
     @property
     def name(self) -> str:
+        """@TODO: docs."""
         return self._name
 
     @property
@@ -105,21 +112,21 @@ class ConfigRunner(IRunner):
         return stages_keys
 
     def get_stage_len(self, stage: str) -> int:
+        """@TODO: docs."""
         return get_by_keys(self._stage_config, stage, "num_epochs", default=1)
 
     def get_trial(self) -> ITrial:
+        """@TODO: docs."""
         return self._trial
 
     def get_engine(self) -> IEngine:
+        """@TODO: docs."""
         engine_params = self._config.get("engine")
-        # @TODO: remove the trick
-        try:
-            engine = REGISTRY.get_from_params(**engine_params)
-        except:
-            engine = process_engine(**engine_params)
+        engine = REGISTRY.get_from_params(**engine_params)
         return engine
 
     def get_loggers(self) -> Dict[str, ILogger]:
+        """@TODO: docs."""
         loggers_params = self._config.get("loggers", {})
         loggers = {
             key: REGISTRY.get_from_params(**params) for key, params in loggers_params.items()
@@ -139,66 +146,8 @@ class ConfigRunner(IRunner):
 
         return loggers
 
-    # @staticmethod
-    # def _get_transform(**params) -> Callable:
-    #     key_value_flag = params.pop("_key_value", False)
-    #
-    #     if key_value_flag:
-    #         transforms_composition = {
-    #             transform_key: ConfigRunner._get_transform(**transform_params)  # noqa: WPS437
-    #             for transform_key, transform_params in params.items()
-    #         }
-    #
-    #         augmentors = {
-    #             key: Augmentor(dict_key=key, augment_fn=transform, input_key=key, output_key=key)
-    #             for key, transform in transforms_composition.items()
-    #         }
-    #         transform = AugmentorCompose(augmentors)
-    #     else:
-    #         if "transforms" in params:
-    #             transforms_composition = [
-    #                 ConfigRunner._get_transform(**transform_params)  # noqa: WPS437
-    #                 for transform_params in params["transforms"]
-    #             ]
-    #             params.update(transforms=transforms_composition)
-    #         transform = REGISTRY.get_from_params(**params)
-    #
-    #     return transform
-    #
-    # def get_transforms(self, stage: str = None, dataset: str = None) -> Callable:
-    #     """
-    #     Returns transform for a given stage and dataset.
-    #
-    #     Args:
-    #         stage: stage name
-    #         dataset: dataset name (e.g. "train", "valid"),
-    #             will be used only if the value of `_key_value`` is ``True``
-    #
-    #     Returns:
-    #         Callable: transform function
-    #     """
-    #     transform_params = get_by_keys(self.stages_config, stage, "transform", default={})
-    #
-    #     transform_params = deepcopy(transform_params)
-    #     key_value_flag = transform_params.pop("_key_value", False)
-    #     if key_value_flag:
-    #         transform_params = transform_params.get(dataset, {})
-    #
-    #     transform_fn = self._get_transform(**transform_params)
-    #     if transform_fn is None:
-    #
-    #         def transform_fn(dict_):  # noqa: WPS440
-    #             return dict_
-    #
-    #     elif not isinstance(transform_fn, AugmentorCompose):
-    #         transform_fn_origin = transform_fn
-    #
-    #         def transform_fn(dict_):  # noqa: WPS440
-    #             return transform_fn_origin(**dict_)
-    #
-    #     return transform_fn
-
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        """@TODO: docs."""
         loaders_params = dict(self._stage_config[stage]["loaders"])
         loaders = get_loaders_from_params(
             datasets_fn=partial(self.get_datasets, stage=stage),
@@ -208,51 +157,14 @@ class ConfigRunner(IRunner):
         )
         return loaders
 
-    # def get_loaders_(self, stage: str) -> "OrderedDict[str, DataLoader]":
-    #     """Returns the loaders for a given stage."""
-    #
-    #     # # @TODO: test case
-    #     # import os
-    #     #
-    #     # from torch.utils.data import DataLoader
-    #     #
-    #     # from catalyst.contrib.data.cv import ToTensor
-    #     # from catalyst.contrib.datasets import MNIST
-    #     #
-    #     # loaders = {
-    #     #     "train": DataLoader(
-    #     #         MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-    #     #     ),
-    #     #     "valid": DataLoader(
-    #     #         MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-    #     #     ),
-    #     # }
-    #     # return loaders
-    #
-    #     assert "loaders" in self._stage_config[stage], "stages config must contain 'loaders' key"
-    #     loaders_params = dict(self._stage_config[stage]["loaders"])
-    #
-    #     datasets_ = "datasets" in loaders_params
-    #     samplers_ = "samplers" in loaders_params
-    #     transforms_ = "transforms" in loaders_params
-    #     if datasets_ is not None and samplers_ is not None and transforms_ is not None:
-    #         raise NotImplementedError()
-    #         datasets = self.get_datasets_(stage=stage)
-    #         samplers = self.get_samplers_(stage=stage)
-    #         transforms = self.get_transforms_(stage=stage)
-    #     else:
-    #         loaders = self.get_loaders(stage=stage)
-    #
-    #     return loaders
-
     @staticmethod
-    def get_model_(**params) -> RunnerModel:
+    def _get_model_from_params(**params) -> RunnerModel:
         params = deepcopy(params)
         is_key_value = params.pop("_key_value", False)
 
         if is_key_value:
             model = {
-                model_key: ConfigRunner.get_model_(**model_params)  # noqa: WPS437
+                model_key: ConfigRunner._get_model_from_params(**model_params)  # noqa: WPS437
                 for model_key, model_params in params.items()
             }
             model = nn.ModuleDict(model)
@@ -264,17 +176,17 @@ class ConfigRunner(IRunner):
         """Returns the model for a given stage."""
         assert "model" in self._config, "config must contain 'model' key"
         model_params: Dict = self._config["model"]
-        model: RunnerModel = self.get_model_(**model_params)
+        model: RunnerModel = self._get_model_from_params(**model_params)
         return model
 
     @staticmethod
-    def get_criterion_(**params) -> RunnerCriterion:
+    def _get_criterion_from_params(**params) -> RunnerCriterion:
         params = deepcopy(params)
         key_value_flag = params.pop("_key_value", False)
 
         if key_value_flag:
             criterion = {
-                key: ConfigRunner.get_criterion_(**key_params)  # noqa: WPS437
+                key: ConfigRunner._get_criterion_from_params(**key_params)  # noqa: WPS437
                 for key, key_params in params.items()
             }
         else:
@@ -286,10 +198,12 @@ class ConfigRunner(IRunner):
         if "criterion" not in self._stage_config[stage]:
             return None
         criterion_params = get_by_keys(self._stage_config, stage, "criterion", default={})
-        criterion = self.get_criterion_(**criterion_params)
+        criterion = self._get_criterion_from_params(**criterion_params)
         return criterion
 
-    def get_optimizer_(self, model: RunnerModel, stage: str, **params) -> RunnerOptimizer:
+    def _get_optimizer_from_params(
+        self, model: RunnerModel, stage: str, **params
+    ) -> RunnerOptimizer:
         # @TODO 1: refactor; this method is too long
 
         # learning rate linear scaling
@@ -327,7 +241,6 @@ class ConfigRunner(IRunner):
         Args:
             model: model or a dict of models
             stage: current stage name
-            epoch: current epoch index
 
         Returns:
             optimizer for selected stage and epoch
@@ -347,14 +260,18 @@ class ConfigRunner(IRunner):
                 assert optimizer_key not in params, "keyword reserved"
                 params[optimizer_key] = key
 
-                optimizer[key] = self.get_optimizer_(model=model, stage=stage, **params)
+                optimizer[key] = self._get_optimizer_from_params(
+                    model=model, stage=stage, **params
+                )
         else:
-            optimizer = self.get_optimizer_(model=model, stage=stage, **optimizer_params)
+            optimizer = self._get_optimizer_from_params(
+                model=model, stage=stage, **optimizer_params
+            )
 
         return optimizer
 
     @staticmethod
-    def get_scheduler_(*, optimizer: RunnerOptimizer, **params) -> RunnerScheduler:
+    def _get_scheduler_from_params(*, optimizer: RunnerOptimizer, **params) -> RunnerScheduler:
         params = deepcopy(params)
 
         is_key_value = params.pop("_key_value", False)
@@ -364,7 +281,7 @@ class ConfigRunner(IRunner):
         if is_key_value:
             scheduler: Dict[str, Scheduler] = {}
             for key, scheduler_params in params.items():
-                scheduler[key] = ConfigRunner.get_scheduler_(  # noqa: WPS437
+                scheduler[key] = ConfigRunner._get_scheduler_from_params(  # noqa: WPS437
                     **scheduler_params, optimizer=optimizer
                 )
         else:
@@ -376,17 +293,17 @@ class ConfigRunner(IRunner):
         if "scheduler" not in self._stage_config[stage]:
             return None
         scheduler_params = get_by_keys(self._stage_config, stage, "scheduler", default={})
-        scheduler = self.get_scheduler_(optimizer=optimizer, **scheduler_params)
+        scheduler = self._get_scheduler_from_params(optimizer=optimizer, **scheduler_params)
         return scheduler
 
     @staticmethod
-    def _get_callback(**params):
+    def _get_callback_from_params(**params):
         params = deepcopy(params)
         wrapper_params = params.pop("_wrapper", None)
         callback = REGISTRY.get_from_params(**params)
         if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
-            callback = ConfigRunner._get_callback(**wrapper_params)  # noqa: WPS437
+            callback = ConfigRunner._get_callback_from_params(**wrapper_params)  # noqa: WPS437
         return callback
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
@@ -395,7 +312,7 @@ class ConfigRunner(IRunner):
 
         callbacks = OrderedDict(
             [
-                (key, self._get_callback(**callback_params))
+                (key, self._get_callback_from_params(**callback_params))
                 for key, callback_params in callbacks_params.items()
             ]
         )
@@ -421,6 +338,8 @@ class ConfigRunner(IRunner):
 
 
 class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
+    """@TODO: docs."""
+
     def __init__(
         self,
         config: Dict = None,
@@ -429,6 +348,7 @@ class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
         target_key: str = "targets",
         loss_key: str = "loss",
     ):
+        """@TODO: docs."""
         ISupervisedRunner.__init__(
             self,
             input_key=input_key,

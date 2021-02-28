@@ -54,6 +54,7 @@ class Runner(IRunner):
     """Single-stage deep learning Runner with user-friendly API."""
 
     def __init__(self, *args, **kwargs):
+        """@TODO: docs."""
         super().__init__(*args, **kwargs)
         # the core
         self._model: RunnerModel = self.model
@@ -92,6 +93,7 @@ class Runner(IRunner):
 
     @property
     def name(self) -> str:
+        """@TODO: docs."""
         return "experiment" if self._trial is None else f"experiment_{self._trial.number}"
 
     @property
@@ -110,15 +112,19 @@ class Runner(IRunner):
         return [self._stage]
 
     def get_stage_len(self, stage: str) -> int:
+        """@TODO: docs."""
         return self._num_epochs
 
     def get_trial(self) -> ITrial:
+        """@TODO: docs."""
         return self._trial
 
     def get_engine(self) -> IEngine:
+        """@TODO: docs."""
         return self._engine or _get_default_engine()
 
     def get_loggers(self) -> Dict[str, ILogger]:
+        """@TODO: docs."""
         loggers = self._loggers or {}
         is_logger_exists = lambda logger_fn: any(
             isinstance(x, logger_fn) for x in loggers.values()
@@ -175,7 +181,7 @@ class Runner(IRunner):
             else self._scheduler
         )
 
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage."""
         callbacks = sort_callbacks_by_order(self._callbacks)
         is_callback_exists = lambda callback_fn: any(
@@ -190,16 +196,13 @@ class Runner(IRunner):
         if self._overfit and not is_callback_exists(BatchOverfitCallback):
             callbacks["_overfit"] = BatchOverfitCallback()
 
-        if self._logdir is not None:
-            if not is_callback_exists(ICheckpointCallback):
-                callbacks["_checkpoint"] = CheckpointCallback(
-                    logdir=os.path.join(self._logdir, "checkpoints"),
-                    loader_key=self._valid_loader,
-                    metric_key=self._valid_metric,
-                    minimize=self._minimize_valid_metric,
-                )
-            # else:
-            #     raise NotImplementedError("CheckpointCallback already exist")
+        if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
+            callbacks["_checkpoint"] = CheckpointCallback(
+                logdir=os.path.join(self._logdir, "checkpoints"),
+                loader_key=self._valid_loader,
+                metric_key=self._valid_metric,
+                minimize=self._minimize_valid_metric,
+            )
 
         # if self._valid_metric is not None:
         #     have_required_callback = False

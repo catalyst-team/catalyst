@@ -105,6 +105,10 @@ class ICallbackLoaderMetric(IMetric):
 
         By default, this is called at the start of each loader
         (`on_loader_start` event).
+
+        Args:
+            num_batches:
+            num_samples:
         """
         pass
 

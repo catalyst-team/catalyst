@@ -9,6 +9,7 @@ from catalyst.metrics.functional._average_precision import mean_average_precisio
 
 class MAPMetric(ICallbackBatchMetric):
     """@TODO: docs here"""
+
     def __init__(
         self,
         topk_args: List[int] = None,

@@ -160,6 +160,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         return metrics
 
     def compute(self):
+        """@TODO: Docs."""
         return self.compute_key_value()
 
 

@@ -9,6 +9,7 @@ from catalyst.metrics.functional._mrr import mrr
 
 class MRRMetric(ICallbackBatchMetric):
     """@TODO: docs here"""
+
     def __init__(
         self,
         topk_args: List[int] = None,

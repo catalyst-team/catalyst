@@ -8,6 +8,7 @@ from catalyst.metrics.functional._auc import auc
 
 class AUCMetric(ICallbackLoaderMetric):
     """@TODO: docs here"""
+
     def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
         """@TODO: docs here"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)

@@ -73,6 +73,7 @@ class InBatchTripletsSampler(IInbatchTripletSampler):
         """
         The input must satisfy the conditions described in
         the class documentation.
+
         Args:
             labels: labels of the samples in the batch
         """

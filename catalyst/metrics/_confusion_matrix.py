@@ -8,6 +8,7 @@ from catalyst.metrics._metric import IMetric
 
 class ConfusionMatrixMetric(IMetric):
     """Constructs a confusion matrix for a multiclass classification problems."""
+
     def __init__(self, num_classes: int, normalized: bool = False, compute_on_call: bool = True):
         """Constructs a confusion matrix for a multiclass classification problems.
 

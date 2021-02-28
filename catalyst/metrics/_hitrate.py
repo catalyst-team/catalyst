@@ -9,6 +9,7 @@ from catalyst.metrics.functional._hitrate import hitrate
 
 class HitrateMetric(ICallbackBatchMetric):
     """@TODO: docs here"""
+
     def __init__(
         self,
         topk_args: List[int] = None,

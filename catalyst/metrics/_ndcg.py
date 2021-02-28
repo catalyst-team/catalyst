@@ -9,6 +9,7 @@ from catalyst.metrics.functional._ndcg import ndcg
 
 class NDCGMetric(ICallbackBatchMetric):
     """@TODO: docs here"""
+
     def __init__(
         self,
         topk_args: List[int] = None,
