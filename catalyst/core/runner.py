@@ -203,47 +203,43 @@ class IRunner(ICallback, ILogger, ABC):
         """@TODO: docs"""
         return {}
 
-    # def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
-    #     """Returns the datasets for a given stage and epoch.  # noqa: DAR401
-    #
-    #     .. note::
-    #         For Deep Learning cases you have the same dataset
-    #         during whole stage.
-    #
-    #         For Reinforcement Learning it's common to change the dataset
-    #         (experiment) every training epoch.
-    #
-    #     Args:
-    #         stage: stage name of interest,
-    #             like "pretrain" / "train" / "finetune" / etc
-    #         epoch: epoch index
-    #         **kwargs: additional parameters to use during
-    #             dataset creation
-    #
-    #     Returns:  # noqa: DAR202
-    #         OrderedDict[str, Dataset]: Ordered dictionary
-    #             with datasets for current stage and epoch.
-    #
-    #     .. note::
-    #         We need ordered dictionary to guarantee the correct dataflow
-    #         and order of our training datasets.
-    #         For example, to run train loader before validation one :)
-    #
-    #     Example::
-    #
-    #         >>> experiment.get_datasets(
-    #         >>>     stage="training",
-    #         >>>     in_csv_train="path/to/train/csv",
-    #         >>>     in_csv_valid="path/to/valid/csv",
-    #         >>> )
-    #         OrderedDict({
-    #             "train": CsvDataset(in_csv=in_csv_train, ...),
-    #             "valid": CsvDataset(in_csv=in_csv_valid, ...),
-    #         })
-    #
-    #
-    #     """
-    #     raise NotImplementedError
+    def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
+        """Returns the datasets for a given stage and epoch.  # noqa: DAR401
+
+        .. note::
+            For Deep Learning cases you have the same dataset
+            during whole stage.
+
+            For Reinforcement Learning it's common to change the dataset
+            (experiment) every training epoch.
+
+        Args:
+            stage: stage name of interest,
+                like "pretrain" / "train" / "finetune" / etc
+            epoch: epoch index
+            **kwargs: additional parameters to use during
+                dataset creation
+
+        Returns:  # noqa: DAR202
+            OrderedDict[str, Dataset]: Ordered dictionary
+                with datasets for current stage and epoch.
+
+        .. note::
+            We need ordered dictionary to guarantee the correct dataflow
+            and order of our training datasets.
+            For example, to run train loader before validation one :)
+
+        Example::
+
+            >>> runner.get_datasets(stage="training")
+            OrderedDict({
+                "train": CsvDataset(in_csv=in_csv_train, ...),
+                "valid": CsvDataset(in_csv=in_csv_valid, ...),
+            })
+
+
+        """
+        raise NotImplementedError
 
     # def get_samplers(self, stage: str = None):
     #     raise NotImplementedError
