@@ -192,12 +192,12 @@ class IRunner(ICallback, ILogger, ABC):
 
     def get_trial(self) -> Optional[ITrial]:
         """@TODO: docs"""
-        return None
+        return None  # noqa: WPS324
 
     @abstractmethod
     def get_engine(self) -> IEngine:
         """@TODO: docs"""
-        return None
+        return None  # noqa: WPS324
 
     def get_loggers(self) -> Dict[str, ILogger]:
         """@TODO: docs"""
@@ -267,7 +267,7 @@ class IRunner(ICallback, ILogger, ABC):
     #     """
     #     raise NotImplementedError
 
-    @abstractmethod
+    @abstractmethod  # noqa: WPS463
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage.  # noqa: DAR401
 
@@ -288,7 +288,7 @@ class IRunner(ICallback, ILogger, ABC):
         """
         pass
 
-    @abstractmethod
+    @abstractmethod  # noqa: WPS463
     def get_model(self, stage: str) -> Model:
         """Returns the model for a given stage and epoch.
 
@@ -327,7 +327,7 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR201, DAR202
             Criterion: criterion for a given stage.
         """
-        return None
+        return None  # noqa: WPS324
 
     def get_optimizer(self, stage: str, model: Model) -> Optional[Optimizer]:
         """Returns the optimizer for a given stage and model.
@@ -345,7 +345,7 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR201, DAR202
             Optimizer: optimizer for a given stage and model.
         """
-        return None
+        return None  # noqa: WPS324
 
     def get_scheduler(self, stage: str, optimizer: Optimizer) -> Optional[Scheduler]:
         """Returns the scheduler for a given stage and optimizer.
@@ -362,7 +362,7 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR201, DAR202
             Scheduler: scheduler for a given stage and optimizer.
         """
-        return None
+        return None  # noqa: WPS324
 
     def _get_model(self) -> Model:
         self.model = self.get_model(stage=self.stage_key)

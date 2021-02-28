@@ -62,7 +62,7 @@ def load_config(
         Union[Dict, List]: config
 
     Raises:
-        Exception: if path ``path`` doesn't exists
+        ValueError: if path ``path`` doesn't exists
             or file format is not YAML or JSON
 
     Adapted from
@@ -73,7 +73,7 @@ def load_config(
     path = Path(path)
 
     if not path.exists():
-        raise Exception(f"Path '{path}' doesn't exist!")
+        raise ValueError(f"Path '{path}' doesn't exist!")
 
     if data_format is not None:
         suffix = data_format.lower()

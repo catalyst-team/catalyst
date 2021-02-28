@@ -73,7 +73,7 @@ def precision_recall_fbeta_support(
     zero_division: int = 0,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
     """
-    Counts precision, recall, fbeta_score.
+    Counts precision_val, recall, fbeta_score.
 
     Args:
         outputs: A list of predicted elements
@@ -84,10 +84,10 @@ def precision_recall_fbeta_support(
             in case of scores/probabilities in ``outputs``
         num_classes: int, that specifies number of classes if it known.
         zero_division: int value, should be one of 0 or 1;
-            used for precision and recall computation
+            used for precision_val and recall computation
 
     Returns:
-        tuple of precision, recall, fbeta_score
+        tuple of precision_val, recall, fbeta_score
 
     Examples:
         >>> precision_recall_fbeta_support(
@@ -100,7 +100,7 @@ def precision_recall_fbeta_support(
         >>>     beta=1,
         >>> )
         (
-            tensor([1., 1., 1.]),  # precision per class
+            tensor([1., 1., 1.]),  # precision_val per class
             tensor([1., 1., 1.]),  # recall per class
             tensor([1., 1., 1.]),  # fbeta per class
             tensor([1., 1., 1.]),  # support per class
@@ -121,14 +121,14 @@ def precision_recall_fbeta_support(
         outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes,
     )
     # @TODO: sync between metrics
-    # precision = _precision(tp=tp, fp=fp, eps=eps, zero_division=zero_division)
-    precision = (tp + eps) / (fp + tp + eps)
-    recall = (tp + eps) / (fn + tp + eps)
-    numerator = (1 + beta ** 2) * precision * recall
-    denominator = beta ** 2 * precision + recall
+    # precision_val = _precision(tp=tp, fp=fp, eps=eps, zero_division=zero_division)
+    precision_val = (tp + eps) / (fp + tp + eps)
+    recall_val = (tp + eps) / (fn + tp + eps)
+    numerator = (1 + beta ** 2) * precision_val * recall_val
+    denominator = beta ** 2 * precision_val + recall_val
     fbeta = numerator / denominator
 
-    return precision, recall, fbeta, support
+    return precision_val, recall_val, fbeta, support
 
 
 def get_aggregated_metrics(
