@@ -38,6 +38,14 @@ except ModuleNotFoundError:
     IS_XLA_AVAILABLE = False
 
 try:
+    import onnx  # noqa: F401, E401
+    import onnxruntime
+
+    IS_ONNX_AVAILABLE = True
+except ImportError:
+    IS_ONNX_AVAILABLE = False
+
+try:
     import torch.nn.utils.prune as prune  # noqa: F401
 
     IS_PRUNING_AVAILABLE = True
@@ -381,6 +389,11 @@ setattr(SETTINGS, "IS_PRUNING_AVAILABLE", IS_PRUNING_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_OPTUNA_AVAILABLE", IS_OPTUNA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_HYDRA_AVAILABLE", IS_HYDRA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_APEX_AVAILABLE", IS_APEX_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_AMP_AVAILABLE", IS_AMP_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
+setattr(SETTINGS, "IS_ONNX_AVAILABLE", IS_ONNX_AVAILABLE)  # noqa: B010
 
 
 __all__ = [
@@ -394,4 +407,5 @@ __all__ = [
     "IS_QUANTIZATION_AVAILABLE",
     "IS_OPTUNA_AVAILABLE",
     "IS_HYDRA_AVAILABLE",
+    "IS_ONNX_AVAILABLE",
 ]

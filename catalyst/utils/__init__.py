@@ -122,4 +122,9 @@ from catalyst.utils.torch import (
 # )
 
 
+from catalyst.settings import IS_ONNX_AVAILABLE
+
+if IS_ONNX_AVAILABLE:
+    from catalyst.utils.onnx import quantize_onnx_model, convert_to_onnx
+
 from catalyst.contrib.utils import *

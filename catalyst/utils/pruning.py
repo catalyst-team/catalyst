@@ -3,8 +3,6 @@ from typing import Callable, List, Optional, Union
 from torch.nn import Module
 from torch.nn.utils import prune
 
-from catalyst.utils.torch import reset_weights_if_possible
-
 
 def prune_model(
     model: Module,
@@ -12,7 +10,6 @@ def prune_model(
     keys_to_prune: List[str],
     amount: Union[float, int],
     layers_to_prune: Optional[List[str]] = None,
-    reinitialize_after_pruning: Optional[bool] = False,
 ) -> None:
     """
     Prune model function can be used for pruning certain
@@ -38,8 +35,6 @@ def prune_model(
         layers_to_prune: list of strings - module names to be pruned.
             If None provided then will try to prune every module in
             model.
-        reinitialize_after_pruning: if True then will reinitialize model
-                after pruning. (Lottery Ticket Hypothesis check e.g.)
     """
     pruned_modules = 0
     for name, module in model.named_modules():
@@ -54,8 +49,6 @@ def prune_model(
 
     if pruned_modules == 0:
         raise Exception(f"There is no {keys_to_prune} key in your model")
-    if reinitialize_after_pruning:
-        model.apply(reset_weights_if_possible)
 
 
 def remove_reparametrization(
