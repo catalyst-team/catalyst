@@ -59,7 +59,7 @@ You could log any new metric in a stratforward way:
             # model inference step
             return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # model train/valid step
             x, y = batch
             y_hat = self.model(x.view(x.size(0), -1))

@@ -9,7 +9,7 @@
 # from torch.utils.data import DataLoader
 #
 # from catalyst.callbacks import CriterionCallback, OptimizerCallback, TracingCallback
-# from catalyst.contrib.data.cv import ToTensor
+# from catalyst.data.transforms import ToTensor
 # from catalyst.contrib.datasets import MNIST
 # from catalyst.core.callback import Callback, CallbackOrder
 # from catalyst.core.runner import IRunner

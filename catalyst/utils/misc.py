@@ -7,12 +7,11 @@ from datetime import datetime
 from hashlib import sha256
 import inspect
 from itertools import tee
-from pathlib import Path
 import random
-import shutil
 
 import numpy as np
 from packaging.version import parse, Version
+from torch import int as tint, long, short, Tensor
 
 T = TypeVar("T")
 
@@ -123,22 +122,6 @@ def is_exception(ex: Any) -> bool:
     return result
 
 
-def copy_directory(input_dir: Path, output_dir: Path) -> None:
-    """Recursively copies the input directory.
-
-    Args:
-        input_dir: input directory
-        output_dir: output directory
-    """
-    output_dir.mkdir(exist_ok=True, parents=True)
-    for path in input_dir.iterdir():
-        if path.is_dir():
-            path_name = path.name
-            copy_directory(path, output_dir / path_name)
-        else:
-            shutil.copy2(path, output_dir)
-
-
 def get_utcnow_time(format: str = None) -> str:
     """Return string with current utc time in chosen format.
 
@@ -152,24 +135,6 @@ def get_utcnow_time(format: str = None) -> str:
         format = "%y%m%d.%H%M%S"
     result = datetime.utcnow().strftime(format)
     return result
-
-
-def format_metric(name: str, value: float) -> str:
-    """Format metric.
-
-    Metric will be returned in the scientific format if 4
-    decimal chars are not enough (metric value lower than 1e-4).
-
-    Args:
-        name: metric name
-        value: value of metric
-
-    Returns:
-        str: formatted metric
-    """
-    if value < 1e-4:
-        return f"{name}={value:1.3e}"
-    return f"{name}={value:.4f}"
 
 
 def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
@@ -283,8 +248,7 @@ def _get_key_all(dictionary: dict, key: Optional[Union[str, List[str]]],) -> Dic
 
 
 def get_dictkey_auto_fn(key: Optional[Union[str, List[str]]]) -> Callable:
-    """Function generator for sub-dict preparation from dict
-    based on predefined keys.
+    """Function generator for sub-dict preparation from dict based on predefined keys.
 
     Args:
         key: keys
@@ -365,38 +329,6 @@ def flatten_dict(
         else:
             items.append((new_key, value))
     return collections.OrderedDict(items)
-
-
-def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str) -> Dict:
-    """
-    Splits dict into subdicts with spesicied ``prefixes``.
-    Keys, which don't startswith one of the prefixes go to ``extra_key``.
-
-    Examples:
-        >>> dct = {"train_v1": 1, "train_v2": 2, "not_train": 3}
-        >>> split_dict_to_subdicts(dct, prefixes=["train"], extra_key="_extra")
-        >>> {"train": {"v1": 1, "v2": 2}, "_extra": {"not_train": 3}}
-
-    Args:
-        dct: dictionary with keys with prefixes
-        prefixes: prefixes of interest, which we would like to reveal
-        extra_key: extra key to store everything else
-
-    Returns:
-        dictionary with subdictionaries with
-        ``prefixes`` and ``extra_key`` keys
-    """
-    subdicts = {}
-    extra_subdict = {
-        k: v for k, v in dct.items() if all(not k.startswith(prefix) for prefix in prefixes)
-    }
-    if len(extra_subdict) > 0:
-        subdicts[extra_key] = extra_subdict
-    for prefix in prefixes:
-        subdicts[prefix] = {
-            k.replace(f"{prefix}_", ""): v for k, v in dct.items() if k.startswith(prefix)
-        }
-    return subdicts
 
 
 def _make_hashable(o):
@@ -520,10 +452,36 @@ def get_by_keys(dict_: dict, *keys: Any, default: Optional[T] = None) -> T:
     return get_by_keys(dict_[key], *keys, default=default)
 
 
+def convert_labels2list(labels: Union[Tensor, List[int]]) -> List[int]:
+    """
+    This function allows to work with 2 types of indexing:
+    using a integer tensor and a list of indices.
+
+    Args:
+        labels: labels of batch samples
+
+    Returns:
+        labels of batch samples in the aligned format
+
+    Raises:
+        TypeError: if type of input labels is not tensor and list
+    """
+    if isinstance(labels, Tensor):
+        labels = labels.squeeze()
+        assert (len(labels.shape) == 1) and (
+            labels.dtype in [short, tint, long]
+        ), "Labels cannot be interpreted as indices."
+        labels_list = labels.tolist()
+    elif isinstance(labels, list):
+        labels_list = labels.copy()
+    else:
+        raise TypeError(f"Unexpected type of labels: {type(labels)}).")
+
+    return labels_list
+
+
 __all__ = [
     "boolean_flag",
-    "copy_directory",
-    "format_metric",
     "get_fn_default_params",
     "get_fn_argsnames",
     "get_utcnow_time",
@@ -534,7 +492,6 @@ __all__ = [
     "get_dictkey_auto_fn",
     "merge_dicts",
     "flatten_dict",
-    "split_dict_to_subdicts",
     "get_hash",
     "get_short_hash",
     "args_are_not_none",
@@ -542,4 +499,5 @@ __all__ = [
     "pairwise",
     "find_value_ids",
     "get_by_keys",
+    "convert_labels2list",
 ]

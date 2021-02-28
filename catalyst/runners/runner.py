@@ -31,7 +31,7 @@ from catalyst.typing import (
 )
 from catalyst.utils import check_amp_available
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
-from catalyst.utils.loaders import get_loaders_from_params
+from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
 if TYPE_CHECKING:
@@ -245,8 +245,8 @@ class Runner(IRunner):
         overfit: bool = False,
         load_best_on_end: bool = False,
         # engine extra params, @TODO: what to do with them?
-        # fp16: Union[Dict, bool] = None,
-        # distributed: bool = False,
+        # fp16: bool = False,
+        # ddp: bool = False,
     ) -> None:
         """
         Starts the train stage of the model.

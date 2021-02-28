@@ -1,16 +1,13 @@
-from typing import Any, Callable, List, TYPE_CHECKING
+from typing import Any, Callable, List
 import inspect
 import logging
 
 from torch import jit, nn
 
-from catalyst.tools.forward_pass import ForwardOverrideMethod
+from catalyst.tools.forward_pass import ForwardOverrideModel
 from catalyst.typing import Device, Model
 from catalyst.utils.misc import get_fn_argsnames
 from catalyst.utils.torch import set_requires_grad
-
-if TYPE_CHECKING:
-    from catalyst.core.runner import IRunner
 
 logger = logging.getLogger(__name__)
 
@@ -66,12 +63,10 @@ class _TracingModelWrapper(nn.Module):
 def trace_model(
     model: Model,
     predict_fn: Callable,
-    batch=None,
+    batch,
     method_name: str = "forward",
     mode: str = "eval",
     requires_grad: bool = False,
-    opt_level: str = None,
-    device: Device = "cpu",
     predict_params: dict = None,
 ) -> jit.ScriptModule:
     """Traces model using runner and batch.
@@ -85,8 +80,6 @@ def trace_model(
             used as entrypoint during tracing
         mode: Mode for model to trace (``train`` or ``eval``)
         requires_grad: Flag to use grads
-        opt_level: Apex FP16 init level, optional
-        device: Torch device
         predict_params: additional parameters for model forward
 
     Returns:
@@ -104,14 +97,14 @@ def trace_model(
 
     predict_params = predict_params or {}
 
-    tracer = _TracingModelWrapper(model, method_name)
+    wrapped_model = _TracingModelWrapper(model, method_name)
 
     getattr(model, mode)()
     set_requires_grad(model, requires_grad=requires_grad)
 
-    predict_fn(tracer, batch, **predict_params)
+    predict_fn(wrapped_model, batch, **predict_params)
 
-    return tracer.tracing_result
+    return wrapped_model.tracing_result
 
 
 __all__ = [

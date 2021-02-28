@@ -71,7 +71,7 @@ class CustomRunner(dl.Runner):
         # model inference step
         return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         # model train/valid step
         x, y = batch
         y_hat = self.model(x.view(x.size(0), -1))
@@ -317,7 +317,7 @@ loaders = {
 
 class CustomRunner(dl.Runner):
 
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         x, y = batch
         y_hat = self.model(x.view(x.size(0), -1))
 
@@ -384,7 +384,7 @@ loaders = {
 
 class CustomRunner(dl.Runner):
 
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         x, y = batch
         x = x.view(x.size(0), -1)
         y_hat, x_ = self.model(x)
@@ -473,7 +473,7 @@ loaders = {
 
 class CustomRunner(dl.Runner):
 
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         x, y = batch
         x = x.view(x.size(0), -1)
         y_hat, x_, loc, log_scale = self.model(x, deterministic=not self.is_train_loader)
@@ -548,7 +548,7 @@ loaders = {
 
 class CustomRunner(dl.Runner):
 
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         x, y = batch
         x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
         y_hat, x_ = self.model(x_noise)
@@ -691,7 +691,7 @@ loaders = {
 
 class CustomRunner(dl.Runner):
 
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         real_images, _ = batch
         batch_metrics = {}
         
@@ -920,7 +920,7 @@ class ClassifyAE(nn.Module):
 
 class CustomRunner(dl.Runner):
 
-    def _handle_batch(self, batch):
+    def handle_batch(self, batch):
         x, y = batch
         x = x.view(x.size(0), -1)
         y_hat, x_ = self.model(x)
