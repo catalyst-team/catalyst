@@ -34,19 +34,18 @@ OPT_LEVELS = ("O0", "O1", "O2", "O3")
 
 
 class CustomRunner(dl.IRunner):
-    def __init__(self, logdir, opt_level):
+    def __init__(self, logdir, opt_level, port="12345"):
         super().__init__()
         self._logdir = logdir
         self._opt_level = opt_level
+        self._port = port
 
     def get_engine(self) -> dl.IEngine:
-        return DistributedDataParallelApexEngine(opt_level=self._opt_level)
+        return DistributedDataParallelApexEngine(port=self._port, opt_level=self._opt_level)
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "criterion": dl.CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
+            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             # "checkpoint": dl.CheckpointCallback(
@@ -99,9 +98,9 @@ class CustomRunner(dl.IRunner):
     not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
 def test_train_distributed_parallel_apex():
-    for opt_level in OPT_LEVELS:
+    for idx, opt_level in enumerate(OPT_LEVELS):
         with TemporaryDirectory() as logdir:
-            runner = CustomRunner(logdir, opt_level)
+            runner = CustomRunner(logdir, opt_level, str(12345 + idx))
             runner.run()
 
 

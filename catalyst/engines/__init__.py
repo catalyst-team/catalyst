@@ -64,23 +64,34 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
     if isinstance(engine, str):
         engine = engine.strip().lower()
 
-    _amp_prefix = "amp-"
-    _apex_prefix = "apex-"
-    _apex_opt_levels = ("o0", "o1", "o2", "o3")
-
-    if engine.startswith(_amp_prefix) and IS_AMP_AVAILABLE and IS_CUDA_AVAILABLE:
-        # usage: amp-cuda:0 OR amp-cuda:N
-        use_engine = AMPEngine(engine[len(_amp_prefix) :])
-    elif engine.startswith(_apex_prefix) and IS_APEX_AVAILABLE and IS_CUDA_AVAILABLE:
-        # usage: apex-o1-cuda:0 OR apex-oN-cuda:M OR apex-cuda:0
+    if engine.startswith("amp") and IS_AMP_AVAILABLE and IS_CUDA_AVAILABLE:
+        # Usage:
+        #   amp-cuda:N  - amp with specified CUDA device
+        #   amp-ddp     - DDP with amp
         _engine_parts = engine.split("-")
-        if len(_engine_parts) >= 3 and _engine_parts[1] in _apex_opt_levels:
+        if _engine_parts[1] == "ddp":
+            use_engine = DistributedDataParallelAMPEngine()
+        else:
+            use_engine = AMPEngine(_engine_parts[1])
+    elif engine.startswith("apex") and IS_APEX_AVAILABLE and IS_CUDA_AVAILABLE:
+        # Usage:
+        #   apex-cuda:N     - apex with default opt level (O1) and specified CUDA device
+        #   apex-oN-cuda:M  - apex with specified opt level and specified CUDA device
+        #   apex-ddp        - DDP with apex with default opt level (O1)
+        #   apex-oN-ddp     - DPP with apex with specified opt level
+        _engine_parts = engine.split("-")
+        # parse string
+        if len(_engine_parts) >= 3 and _engine_parts[1] in {"o0", "o1", "o2", "o3"}:
             _opt_level = _engine_parts[1]
             _device = _engine_parts[2]
         else:
             _opt_level = "o1"
             _device = _engine_parts[1]
-        use_engine = APEXEngine(_device, _opt_level.upper())
+        # select engine
+        if _device == "ddp":
+            use_engine = DistributedDataParallelApexEngine(opt_level=_opt_level)
+        else:
+            use_engine = APEXEngine(_device, _opt_level.upper())
     elif engine == "dp" and NUM_CUDA_DEVICES > 1:
         use_engine = DataParallelEngine()
     elif engine == "ddp" and NUM_CUDA_DEVICES > 1:

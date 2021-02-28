@@ -32,6 +32,7 @@ from catalyst.typing import (
 )
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
+from catalyst.engines import process_engine
 
 logger = logging.getLogger(__name__)
 
@@ -299,7 +300,10 @@ class ConfigRunner(IRunner):
         callbacks_params = get_by_keys(self._stage_config, stage, "callbacks", default={})
 
         callbacks = OrderedDict(
-            [(key, self._get_callback(**callback_params)) for key, callback_params in callbacks_params.items()]
+            [
+                (key, self._get_callback_from_params(**callback_params))
+                for key, callback_params in callbacks_params.items()
+            ]
         )
 
         is_callback_exists = lambda callback_fn: any(

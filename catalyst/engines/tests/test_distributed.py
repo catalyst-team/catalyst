@@ -100,7 +100,6 @@ class MyConfigRunner(SupervisedConfigRunner):
         return {"train": self._dataset, "valid": self._dataset}
 
 
-# @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
     not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
