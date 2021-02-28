@@ -443,6 +443,7 @@ def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
 
 
 def get_by_keys(dict_: dict, *keys: Any, default: Optional[T] = None) -> T:
+    """@TODO: docs."""
     if not isinstance(dict_, dict):
         raise ValueError()
 

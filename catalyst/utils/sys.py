@@ -40,10 +40,10 @@ def import_module(expdir: Union[str, Path]):
         str(expdir.absolute() / "__init__.py"),
         submodule_search_locations=[expdir.absolute()],
     )
-    m = module_from_spec(s)
-    s.loader.exec_module(m)
-    sys.modules[expdir.name] = m
-    return m
+    dir_module = module_from_spec(s)
+    s.loader.exec_module(dir_module)
+    sys.modules[expdir.name] = dir_module
+    return dir_module
 
 
 def get_config_runner(expdir: Path, config: Dict):

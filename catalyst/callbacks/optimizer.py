@@ -311,6 +311,8 @@ class IOptimizerCallback(Callback):
 # - return gradient accumulation
 # - return optimizer lr/momentum logging
 class OptimizerCallback(IOptimizerCallback):
+    """@TODO: docs."""
+
     def __init__(
         self,
         metric_key: str,
@@ -319,6 +321,7 @@ class OptimizerCallback(IOptimizerCallback):
         accumulation_steps: int = 1,
         grad_clip_params: Dict = None,
     ):
+        """@TODO: docs."""
         super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
         self.metric_key = metric_key
         self.model_key = model_key
@@ -328,12 +331,14 @@ class OptimizerCallback(IOptimizerCallback):
         self.criterion = None
 
     def on_stage_start(self, runner: "IRunner") -> None:
+        """@TODO: docs."""
         self.model = get_attr(runner, key="model", inner_key=self.model_key)
         self.optimizer = get_attr(runner, key="optimizer", inner_key=self.optimizer_key)
         assert self.model is not None
         assert self.optimizer is not None
 
     def on_batch_end(self, runner: "IRunner"):
+        """@TODO: docs."""
         if runner.is_train_loader:
             loss = runner.batch_metrics[self.metric_key]
             runner.engine.zero_grad(loss, self.model, self.optimizer)

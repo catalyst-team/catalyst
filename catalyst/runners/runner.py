@@ -29,7 +29,6 @@ from catalyst.typing import (
     RunnerScheduler,
     Scheduler,
 )
-from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
@@ -363,7 +362,6 @@ class Runner(IRunner):
         Yields:
             bathes with model predictions
         """
-
         if model is not None:
             self.model = model
         assert self.model is not None

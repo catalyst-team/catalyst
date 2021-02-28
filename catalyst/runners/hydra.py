@@ -250,7 +250,6 @@ class HydraRunner(IRunner):
         Args:
             model: model or a dict of models
             stage: current stage name
-            epoch: current epoch index
 
         Returns:
             optimizer for selected stage and epoch

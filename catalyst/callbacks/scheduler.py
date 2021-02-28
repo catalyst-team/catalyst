@@ -430,7 +430,7 @@ class LRFinder(ILRUpdater):
             runner: current runner
 
         Raises:
-            NotImplementedError: at the end of LRFinder
+            KeyboardInterrupt: at the end of LRFinder
         """
         super().on_batch_end(runner=runner)
         if self.iteration > self.num_steps:
