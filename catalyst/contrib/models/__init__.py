@@ -25,14 +25,3 @@ except ImportError as ex:
             " to install dependencies, run `pip install catalyst[cv]`."
         )
         raise ex
-
-
-try:
-    from catalyst.contrib.models.nlp import *
-except ImportError as ex:
-    if SETTINGS.nlp_required:
-        logger.warning(
-            "some of catalyst-nlp dependencies not available,"
-            " to install dependencies, run `pip install catalyst[nlp]`."
-        )
-        raise ex

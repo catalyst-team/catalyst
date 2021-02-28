@@ -3,7 +3,7 @@ import math
 import numpy as np
 import torch
 
-from catalyst.metrics.functional.ndcg import dcg, ndcg
+from catalyst.metrics.functional._ndcg import dcg, ndcg
 
 
 def test_dcg():

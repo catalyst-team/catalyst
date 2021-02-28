@@ -395,28 +395,28 @@ def split_dataframe(
         dataframe = map_dataframe(dataframe, tag_column, class_column, tag2class)
 
     if class_column is not None:
-        result_dataframe = split_dataframe_on_stratified_folds(
+        df_all = split_dataframe_on_stratified_folds(
             dataframe, class_column=class_column, random_state=seed, n_folds=n_folds,
         )
     else:
-        result_dataframe = split_dataframe_on_folds(dataframe, random_state=seed, n_folds=n_folds)
+        df_all = split_dataframe_on_folds(dataframe, random_state=seed, n_folds=n_folds)
 
-    fold_series = result_dataframe["fold"]
+    fold_series = df_all["fold"]
 
     train_folds = folds_to_list(train_folds)
-    df_train = result_dataframe[fold_series.isin(train_folds)]
+    df_train = df_all[fold_series.isin(train_folds)]
 
     if valid_folds is None:
         mask = ~fold_series.isin(train_folds)
-        valid_folds = result_dataframe[mask]["fold"]
+        valid_folds = df_all[mask]["fold"]
 
     valid_folds = folds_to_list(valid_folds)
-    df_valid = result_dataframe[fold_series.isin(valid_folds)]
+    df_valid = df_all[fold_series.isin(valid_folds)]
 
     infer_folds = folds_to_list(infer_folds or [])
-    df_infer = result_dataframe[fold_series.isin(infer_folds)]
+    df_infer = df_all[fold_series.isin(infer_folds)]
 
-    return result_dataframe, df_train, df_valid, df_infer
+    return df_all, df_train, df_valid, df_infer
 
 
 # def merge_multiple_fold_csv(fold_name: str, paths: Optional[str]) -> pd.DataFrame:

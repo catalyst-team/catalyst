@@ -9,19 +9,26 @@ from catalyst.engines.device import DeviceEngine
 from catalyst.engines.parallel import DataParallelEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
 
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, IS_AMP_AVAILABLE, IS_APEX_AVAILABLE
+from catalyst.settings import (
+    IS_CUDA_AVAILABLE,
+    NUM_CUDA_DEVICES,
+    IS_AMP_AVAILABLE,
+    IS_APEX_AVAILABLE,
+)
 
 if IS_AMP_AVAILABLE:
-    from catalyst.engines.amp import AMPEngine
+    from catalyst.engines.amp import AMPEngine, DistributedDataParallelAMPEngine
 else:
     # replacement
     from catalyst.engines.device import DeviceEngine as AMPEngine
+    from catalyst.engines.distributed import DistributedDataParallelEngine as DistributedDataParallelAMPEngine
 
 if IS_APEX_AVAILABLE:
-    from catalyst.engines.apex import APEXEngine
+    from catalyst.engines.apex import APEXEngine, DistributedDataParallelApexEngine
 else:
     # replacement
     from catalyst.engines.device import DeviceEngine as APEXEngine
+    from catalyst.engines.distributed import DistributedDataParallelEngine as DistributedDataParallelApexEngine
 
 
 # TODO: add option to create other engines (amp/apex) from string

@@ -5,7 +5,7 @@ import re
 
 import numpy as np
 import torch
-from torch import int as tint, long, nn, short, Tensor
+from torch import nn, Tensor
 import torch.backends
 from torch.backends import cudnn
 
@@ -209,15 +209,6 @@ def get_available_gpus():
     return result
 
 
-def get_activation_fn(activation: str = None):
-    """Returns the activation function from ``torch.nn`` by its name."""
-    if activation is None or activation.lower() == "none":
-        activation_fn = lambda x: x  # noqa: E731
-    else:
-        activation_fn = torch.nn.__dict__[activation]()
-    return activation_fn
-
-
 def any2device(value, device: Device):
     """
     Move tensor, list of tensors, list of list of tensors,
@@ -336,7 +327,7 @@ def get_requires_grad(model: Model):
         model: model
 
     Returns:
-        requires_grad (Dict[str, bool]): value
+        requires_grad: value
     """
     requires_grad = {}
     for name, param in model.named_parameters():
@@ -357,7 +348,7 @@ def set_requires_grad(model: Model, requires_grad: Union[bool, Dict[str, bool]])
 
     Args:
         model: model
-        requires_grad (Union[bool, Dict[str, bool]]): value
+        requires_grad: value
     """
     if isinstance(requires_grad, dict):
         for name, param in model.named_parameters():
@@ -419,7 +410,7 @@ def detach(tensor: torch.Tensor) -> np.ndarray:
     return tensor.cpu().detach().numpy()
 
 
-def trim_tensors(tensors: Tensor):
+def trim_tensors(tensors: Tensor) -> List[torch.Tensor]:
     """
     Trim padding off of a batch of tensors to the smallest possible length.
     Should be used with `catalyst.data.DynamicLenBatchSampler`.
@@ -441,47 +432,6 @@ def trim_tensors(tensors: Tensor):
     return tensors
 
 
-def normalize(tensors: Tensor) -> Tensor:
-    """
-    Args:
-        tensors: tensor with shape of [n_samples, features_dim]
-
-    Returns:
-        normalized tensor with the same shape
-    """
-    norms = torch.norm(tensors, p=2, dim=1).unsqueeze(1)
-    tensors = tensors / (norms + torch.finfo(torch.float32).eps)
-    return tensors
-
-
-def convert_labels2list(labels: Union[Tensor, List[int]]) -> List[int]:
-    """
-    This function allows to work with 2 types of indexing:
-    using a integer tensor and a list of indices.
-
-    Args:
-        labels: labels of batch samples
-
-    Returns:
-        labels of batch samples in the aligned format
-
-    Raises:
-        TypeError: if type of input labels is not tensor and list
-    """
-    if isinstance(labels, Tensor):
-        labels = labels.squeeze()
-        assert (len(labels.shape) == 1) and (
-            labels.dtype in [short, tint, long]
-        ), "Labels cannot be interpreted as indices."
-        labels_list = labels.tolist()
-    elif isinstance(labels, list):
-        labels_list = labels.copy()
-    else:
-        raise TypeError(f"Unexpected type of labels: {type(labels)}).")
-
-    return labels_list
-
-
 __all__ = [
     "get_optimizable_params",
     "get_optimizer_momentum",
@@ -489,7 +439,6 @@ __all__ = [
     "set_optimizer_momentum",
     "get_device",
     "get_available_gpus",
-    "get_activation_fn",
     "any2device",
     "prepare_cudnn",
     "process_model_params",
@@ -498,8 +447,6 @@ __all__ = [
     "get_network_output",
     "detach",
     "trim_tensors",
-    "normalize",
-    "convert_labels2list",
     "get_optimal_inner_init",
     "outer_init",
     "reset_weights_if_possible",

@@ -1,6 +1,7 @@
 # flake8: noqa
 
 from typing import Any, Dict, List
+import logging
 import os
 from tempfile import TemporaryDirectory
 
@@ -9,10 +10,15 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.engines.amp import DistributedDataParallelAMPEngine
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_AMP_AVAILABLE, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .utils import DummyDataset, DummyModel, LossMinimizationCallback, WorldSizeCheckCallback
+from .misc import DummyDataset, DummyModel, LossMinimizationCallback, WorldSizeCheckCallback
+
+if IS_AMP_AVAILABLE:
+    from catalyst.engines.amp import DistributedDataParallelAMPEngine
+
+logger = logging.getLogger(__name__)
+
 
 if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
@@ -37,8 +43,8 @@ class CustomRunner(dl.IRunner):
             #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             # ),
             # "check": DeviceCheckCallback(),
-            "check2": LossMinimizationCallback("loss"),
-            "check_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES),
+            "check2": LossMinimizationCallback("loss", logger=logger),
+            "check_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
         }
 
     @property
@@ -62,20 +68,8 @@ class CustomRunner(dl.IRunner):
     def get_optimizer(self, model, stage: str):
         return torch.optim.Adam(model.parameters())
 
-    # TODO: fix this
-    def _get_optimizer(self, *args, **kwargs):
-        assert self.model is not None, "You need to setup model first"
-        self.optimizer = self.get_optimizer(stage=self.stage_key, model=self.model)
-        return self.optimizer
-
     def get_scheduler(self, optimizer, stage: str):
         return None
-
-    # TODO: fix this
-    def _get_scheduler(self, *args, **kwargs):
-        assert self.optimizer is not None, "You need to setup optimizer first"
-        self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
-        return self.scheduler
 
     def get_trial(self):
         return None

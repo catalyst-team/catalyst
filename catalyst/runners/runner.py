@@ -31,7 +31,7 @@ from catalyst.typing import (
 )
 from catalyst.utils import check_amp_available
 from catalyst.utils.checkpoint import load_checkpoint, unpack_checkpoint
-from catalyst.utils.loaders import get_loaders_from_params
+from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
 if TYPE_CHECKING:
@@ -155,7 +155,7 @@ class Runner(IRunner):
             else self._criterion
         )
 
-    def get_optimizer(self, model: Model, stage: str) -> Optimizer:
+    def get_optimizer(self, stage: str, model: Model) -> Optimizer:
         """Returns the optimizer for a given stage."""
         return (
             self._optimizer(model)
@@ -163,7 +163,7 @@ class Runner(IRunner):
             else self._optimizer
         )
 
-    def get_scheduler(self, optimizer: Optimizer, stage: str) -> Scheduler:
+    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Scheduler:
         """Returns the scheduler for a given stage."""
         return (
             self._scheduler(optimizer)
@@ -198,8 +198,8 @@ class Runner(IRunner):
                     metric_key=self._valid_metric,
                     minimize=self._minimize_valid_metric,
                 )
-            else:
-                raise NotImplementedError("CheckpointCallback already exist")
+            # else:
+            #     raise NotImplementedError("CheckpointCallback already exist")
 
         # if self._valid_metric is not None:
         #     have_required_callback = False
@@ -245,8 +245,8 @@ class Runner(IRunner):
         overfit: bool = False,
         load_best_on_end: bool = False,
         # engine extra params, @TODO: what to do with them?
-        # fp16: Union[Dict, bool] = None,
-        # distributed: bool = False,
+        # fp16: bool = False,
+        # ddp: bool = False,
     ) -> None:
         """
         Starts the train stage of the model.

@@ -1,5 +1,5 @@
 # flake8: noqa
-from catalyst.metrics.functional.misc import (
+from catalyst.metrics.functional._misc import (
     check_consistent_length,
     process_multilabel_components,
     process_recsys_components,
@@ -9,28 +9,28 @@ from catalyst.metrics.functional.misc import (
     get_default_topk_args,
 )
 
-from catalyst.metrics.functional.accuracy import accuracy, multilabel_accuracy
-from catalyst.metrics.functional.auc import auc
-from catalyst.metrics.functional.average_precision import (
+from catalyst.metrics.functional._accuracy import accuracy, multilabel_accuracy
+from catalyst.metrics.functional._auc import auc
+from catalyst.metrics.functional._average_precision import (
     average_precision,
     mean_average_precision,
     binary_average_precision,
 )
-from catalyst.metrics.functional.classification import precision_recall_fbeta_support
-from catalyst.metrics.functional.cmc_score import cmc_score, cmc_score_count
-from catalyst.metrics.functional.f1_score import f1_score, fbeta_score
-from catalyst.metrics.functional.focal import (
+from catalyst.metrics.functional._classification import precision_recall_fbeta_support
+from catalyst.metrics.functional._cmc_score import cmc_score, cmc_score_count
+from catalyst.metrics.functional._f1_score import f1_score, fbeta_score
+from catalyst.metrics.functional._focal import (
     sigmoid_focal_loss,
     reduced_focal_loss,
 )
-from catalyst.metrics.functional.hitrate import hitrate
-from catalyst.metrics.functional.segmentation import (
+from catalyst.metrics.functional._hitrate import hitrate
+from catalyst.metrics.functional._segmentation import (
     iou,
     dice,
     trevsky,
     get_segmentation_statistics,
 )
-from catalyst.metrics.functional.mrr import reciprocal_rank, mrr
-from catalyst.metrics.functional.ndcg import dcg, ndcg
-from catalyst.metrics.functional.precision import precision
-from catalyst.metrics.functional.recall import recall
+from catalyst.metrics.functional._mrr import reciprocal_rank, mrr
+from catalyst.metrics.functional._ndcg import dcg, ndcg
+from catalyst.metrics.functional._precision import precision
+from catalyst.metrics.functional._recall import recall

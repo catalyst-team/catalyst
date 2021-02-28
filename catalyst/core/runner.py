@@ -11,7 +11,11 @@ from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
 from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
-from catalyst.core.functional import filter_callbacks_by_node, sort_callbacks_by_order
+from catalyst.core.functional import (
+    filter_callbacks_by_node,
+    sort_callbacks_by_order,
+    validate_loaders,
+)
 from catalyst.core.logger import ILogger
 from catalyst.core.trial import ITrial
 from catalyst.engines.distributed import DistributedDataParallelEngine
@@ -26,7 +30,6 @@ from catalyst.typing import (
     RunnerScheduler,
     Scheduler,
 )
-from catalyst.utils.loaders import validate_loaders
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
 logger = logging.getLogger(__name__)
@@ -58,8 +61,8 @@ class IRunner(ICallback, ILogger, ABC):
     .. note::
         To learn more about Catalyst Core concepts, please check out
 
-            - :py:mod:`catalyst.core.experiment.IExperiment`
             - :py:mod:`catalyst.core.runner.IRunner`
+            - :py:mod:`catalyst.core.engine.IEngine`
             - :py:mod:`catalyst.core.callback.Callback`
     """
 
@@ -368,7 +371,7 @@ class IRunner(ICallback, ILogger, ABC):
         return self.optimizer
 
     def _get_scheduler(self) -> Scheduler:
-        assert self.optimizer is not None, "You need to setup optimizer first"
+        # assert self.optimizer is not None, "You need to setup optimizer first"
         self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
         return self.scheduler
 
@@ -391,13 +394,6 @@ class IRunner(ICallback, ILogger, ABC):
         Returns:  # noqa: DAR202
             OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
             with callbacks for current stage.
-
-        .. note::
-            To learn more about Catalyst Core concepts, please check out
-
-                - :py:mod:`catalyst.core.experiment.IExperiment`
-                - :py:mod:`catalyst.core.runner.IRunner`
-                - :py:mod:`catalyst.core.callback.Callback`
 
         Args:
             stage: stage name of interest,
@@ -544,6 +540,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.is_train_loader: bool = self.loader_key.startswith("train")
         self.is_valid_loader: bool = self.loader_key.startswith("valid")
         self.is_infer_loader: bool = self.loader_key.startswith("infer")
+        assert self.is_train_loader or self.is_valid_loader or self.is_infer_loader
         self.loader_batch_size: int = self.loader.batch_size
         self.loader_batch_len: int = len(self.loader)
         self.loader_sample_len: int = len(self.loader.dataset)

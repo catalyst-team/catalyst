@@ -4,7 +4,7 @@ from pathlib import Path
 
 from catalyst.contrib.data.cv.reader import ImageReader
 from catalyst.contrib.data.reader import ReaderCompose, ScalarReader
-from catalyst.contrib.utils.cv.image import has_image_extension
+from catalyst.contrib.utils.image import has_image_extension
 from catalyst.data.dataset.torch import PathsDataset
 
 
@@ -15,7 +15,7 @@ class ImageFolderDataset(PathsDataset):
 
     .. code-block:: bash
 
-        rootpat/
+        rootpath/
         |-- class1/  # folder of N images
         |   |-- image11
         |   |-- image12

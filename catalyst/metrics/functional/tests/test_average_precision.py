@@ -4,7 +4,7 @@ import math
 import numpy as np
 import torch
 
-from catalyst.metrics.functional.average_precision import (
+from catalyst.metrics.functional._average_precision import (
     average_precision,
     binary_average_precision,
     mean_average_precision,

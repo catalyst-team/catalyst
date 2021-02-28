@@ -24,7 +24,7 @@ Example of dataflow:
 
     class MyRunner:
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # on this step we also have self.input = batch = {"features": ..., "targets": ...}
             logits = self.model(batch["features"])
             loss = self.criterion(logits, batch["targets"])
@@ -60,7 +60,7 @@ very convenient to read, thanks to "automatic naming documentation" - keys for t
 
     class MyRunner:
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # on this step we also have self.input = batch = {"features": ..., "extra_features": ...,"targets": ...}
             logits = self.model(batch["features"], batch["extra_features"])
             loss = self.criterion(logits, batch["targets"])
@@ -91,7 +91,7 @@ you don't have to rewrite your code:
 
     class MyRunner:
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # on this step we also have self.input = batch = {"features": ..., "extra_features": ...,"targets": ...}
             logits = self.model(batch["features"])
             loss = self.criterion(logits, batch["targets"])
@@ -219,7 +219,7 @@ Suppose, you are using set of different metrics in your pipeline:
 
     class MyRunner:
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # on this step we also have self.input = batch = {"features": ..., "targets": ...}
             logits = self.model(batch["features"])
             loss = self.criterion(logits, batch["targets"])
@@ -245,7 +245,7 @@ as your model selection one you could do the following:
 
     class MyRunner:
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # on this step we also have self.input = batch = {"features": ..., "targets": ...}
             logits = self.model(batch["features"])
             loss = self.criterion(logits, batch["targets"])

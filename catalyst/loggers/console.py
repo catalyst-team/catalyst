@@ -4,7 +4,7 @@ from catalyst.core.logger import ILogger
 
 
 def _format_metrics(dct: Dict):
-    return " | ".join([f"{k}: {dct[k]}" for k in sorted(dct.keys())])
+    return " | ".join([f"{k}: {float(dct[k])}" for k in sorted(dct.keys())])
 
 
 class ConsoleLogger(ILogger):

@@ -1,5 +1,5 @@
 from catalyst.callbacks.metric import LoaderMetricCallback
-from catalyst.metrics.auc import AUCMetric
+from catalyst.metrics._auc import AUCMetric
 
 
 class AUCCallback(LoaderMetricCallback):

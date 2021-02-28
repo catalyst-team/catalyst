@@ -8,9 +8,9 @@ from sys import maxsize
 import numpy as np
 import torch
 from torch import Tensor
+from torch.nn import functional as F
 
-from catalyst.utils.misc import find_value_ids
-from catalyst.utils.torch import convert_labels2list, normalize
+from catalyst.utils.misc import convert_labels2list, find_value_ids
 
 # order in the triplets: (anchor, positive, negative)
 TTriplets = Tuple[Tensor, Tensor, Tensor]
@@ -19,9 +19,7 @@ TLabels = Union[List[int], Tensor]
 
 
 class IInbatchTripletSampler(ABC):
-    """
-    An abstraction of inbatch triplet sampler.
-    """
+    """An abstraction of inbatch triplet sampler."""
 
     @abstractmethod
     def _check_input_labels(self, labels: List[int]) -> None:
@@ -193,7 +191,7 @@ class HardTripletsSampler(InBatchTripletsSampler):
         assert features.shape[0] == len(labels)
 
         if self._norm_required:
-            features = normalize(tensors=features.detach())
+            features = F.normalize(features.detach(), p=2, dim=1)
 
         dist_mat = torch.cdist(x1=features, x2=features, p=2)
 

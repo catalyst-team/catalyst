@@ -1,9 +1,11 @@
 import itertools
 
+import matplotlib
 import numpy as np
 import torch
 
-# from catalyst.data.transforms import _IMAGENET_MEAN, _IMAGENET_STD  # noqa: WPS450
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 
 
 def _image_to_tensor(image: np.ndarray) -> torch.Tensor:
@@ -82,11 +84,6 @@ def plot_confusion_matrix(
     Render the confusion matrix and return matplotlib"s figure with it.
     Normalization can be applied by setting `normalize=True`.
     """
-    import matplotlib
-
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-
     plt.ioff()
 
     cmap = plt.cm.__dict__[colormap]
@@ -130,6 +127,7 @@ def plot_confusion_matrix(
     if show:
         plt.show()
 
+    plt.ion()
     return figure
 
 
@@ -152,12 +150,7 @@ def plot_confusion_matrix(
 
 
 def render_figure_to_tensor(figure):
-    """@TODO: Docs. Contribution is welcome."""
-    import matplotlib
-
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-
+    """Renders matplotlib"s figure to tensor."""
     plt.ioff()
 
     figure.canvas.draw()
@@ -167,6 +160,8 @@ def render_figure_to_tensor(figure):
     del figure
 
     image = _image_to_tensor(image)
+
+    plt.ion()
     return image
 
 
