@@ -34,9 +34,7 @@ class CustomRunner(dl.IRunner):
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "criterion": dl.CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
+            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
@@ -92,7 +90,42 @@ def run_train_with_experiment_amp_device(device):
 
 
 def run_train_with_config_experiment_amp_device(device):
-    pass
+    engine = "amp-{}".format(device)
+    with TemporaryDirectory() as logdir:
+        dataset = DummyDataset(6)
+        runner = dl.SupervisedConfigRunner(
+            config={
+                "args": {"logdir": logdir},
+                "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
+                "engine": {"engine": engine},
+                "args": {"logdir": logdir},
+                "stages": {
+                    "stage1": {
+                        "num_epochs": 10,
+                        "criterion": {"_target_": "MSELoss"},
+                        "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "callbacks": {
+                            "criterion": {
+                                "_target_": "CriterionCallback",
+                                "metric_key": "loss",
+                                "input_key": "logits",
+                                "target_key": "targets",
+                            },
+                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            "test_device": {"_target_": "DeviceCheckCallback", "assert_device": device},
+                            "test_loss_minimization": {"_target_": "LossMinimizationCallback", "key": "loss"},
+                            "test_logits_type": {"_target_": "TensorTypeChecker", "key": "logits"},
+                        },
+                    },
+                },
+            }
+        )
+        runner.get_datasets = lambda *args, **kwargs: {
+            "train": dataset,
+            "valid": dataset,
+        }
+        runner.run()
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
@@ -102,7 +135,7 @@ def test_experiment_engine_with_devices():
         run_train_with_experiment_amp_device(device)
 
 
-@mark.skip("Config experiment is in development phase!")
+# @mark.skip("Config experiment is in development phase!")
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_config_experiment_engine_with_cuda():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]

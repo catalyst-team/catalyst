@@ -16,6 +16,7 @@ from catalyst.engines import (
 from catalyst.engines.functional import all_gather, mean_reduce, sum_reduce
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
+
 if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 

@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
+from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.engines.apex import APEXEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
@@ -41,9 +42,7 @@ class CustomRunner(IRunner):
 
     def get_callbacks(self, stage: str) -> Dict[str, Callback]:
         return {
-            "criterion": CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
+            "criterion": CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             # TODO: fix issue with pickling wrapped model's forward function
@@ -100,7 +99,46 @@ def run_train_with_experiment_apex_device(device, opt_level):
 
 
 def run_train_with_config_experiment_apex_device(device, opt_level):
-    pass
+    engine = "apex-{opt}-{device}".format(opt=opt_level.lower(), device=device)
+    with TemporaryDirectory() as logdir:
+        dataset = DummyDataset(6)
+        runner = SupervisedConfigRunner(
+            config={
+                "args": {"logdir": logdir},
+                "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
+                "engine": {"engine": engine},
+                "args": {"logdir": logdir},
+                "stages": {
+                    "stage1": {
+                        "num_epochs": 10,
+                        "criterion": {"_target_": "MSELoss"},
+                        "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "callbacks": {
+                            "criterion": {
+                                "_target_": "CriterionCallback",
+                                "metric_key": "loss",
+                                "input_key": "logits",
+                                "target_key": "targets",
+                            },
+                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            "test_device": {"_target_": "DeviceCheckCallback", "assert_device": device},
+                            "test_loss_minimization": {"_target_": "LossMinimizationCallback", "key": "loss"},
+                            "test_opt_logits_type": {
+                                "_target_": "OPTTensorTypeChecker",
+                                "key": "logits",
+                                "opt_level": opt_level,
+                            },
+                        },
+                    },
+                },
+            }
+        )
+        runner.get_datasets = lambda *args, **kwargs: {
+            "train": dataset,
+            "valid": dataset,
+        }
+        runner.run()
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA devices is not available")
@@ -111,7 +149,7 @@ def test_apex_with_devices():
             run_train_with_experiment_apex_device(device, level)
 
 
-@mark.skip("Config experiment is in development phase!")
+# @mark.skip("Config experiment is in development phase!")
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA devices is not available")
 def test_config_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
