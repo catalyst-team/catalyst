@@ -7,11 +7,13 @@ from tempfile import TemporaryDirectory
 from pytest import mark
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
-from catalyst import dl
+from catalyst import dl, utils
 from catalyst.engines.device import DeviceEngine
+from catalyst.registry import REGISTRY
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 logger = logging.getLogger(__name__)
@@ -48,7 +50,8 @@ class DummyDataset(Dataset):
         return x, y
 
 
-class DummyModel(nn.Module):
+@REGISTRY.add
+class DummyModelFinetune(nn.Module):
     def __init__(self, in_features, hidden_features, out_features):
         super().__init__()
         self.in_features = in_features
@@ -58,7 +61,7 @@ class DummyModel(nn.Module):
 
     def forward(self, batch):
         x = self.layer1(batch)
-        x = nn.functional.relu(x)
+        x = F.relu(x)
         x = self.layer2(x)
         return x
 
@@ -94,34 +97,24 @@ class CheckRequiresGrad(dl.Callback):
         self.check_fn(runner.model, runner.stage_key)
 
 
-# experiment definition
-class CustomExperiment(dl.IExperiment):
+class CustomRunner(dl.IRunner):
     def __init__(self, logdir, device):
+        super().__init__()
         self._logdir = logdir
         self._device = device
 
-    @property
-    def seed(self) -> int:
-        return 73
+    def get_engine(self):
+        return DeviceEngine(self._device)
 
-    @property
-    def name(self) -> str:
-        return "experiment73"
-
-    @property
-    def hparams(self) -> Dict:
-        return {}
+    def get_loggers(self):
+        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
 
     @property
     def stages(self) -> List[str]:
         return ["train_freezed", "train_unfreezed"]
 
-    def get_stage_params(self, stage: str) -> Dict[str, Any]:
-        return {
-            "num_epochs": 10,
-            "migrate_model_from_previous_stage": False,
-            "migrate_callbacks_from_previous_stage": False,
-        }
+    def get_stage_len(self, stage: str) -> int:
+        return 3
 
     def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
         dataset = DummyDataset(6)
@@ -129,18 +122,22 @@ class CustomExperiment(dl.IExperiment):
         return {"train": loader, "valid": loader}
 
     def get_model(self, stage: str):
-        model = DummyModel(4, 3, 2)
+        if self.model is not None:
+            model = self.model
+        else:
+            model = DummyModelFinetune(4, 3, 2)
         if stage == "train_freezed":
             # freeze layer
-            for param in model.layer1.parameters():
-                param.requires_grad = False
+            utils.set_requires_grad(model.layer1, False)
+        else:
+            utils.set_requires_grad(model, True)
         return model
 
     def get_criterion(self, stage: str):
         return nn.MSELoss()
 
     def get_optimizer(self, stage: str, model):
-        return optim.SGD(model.parameters(), lr=1e-3)
+        return optim.Adam(model.parameters(), lr=1e-3)
 
     def get_scheduler(self, stage: str, optimizer):
         return None
@@ -159,21 +156,6 @@ class CustomExperiment(dl.IExperiment):
             "check_unfreezed": CheckRequiresGrad("layer1", "train_unfreezed", True),
         }
 
-    def get_engine(self):
-        return DeviceEngine(self._device)
-
-    def get_trial(self):
-        return None
-
-    def get_loggers(self):
-        return {
-            "console": dl.ConsoleLogger(),
-            "csv": dl.CSVLogger(logdir=self._logdir),
-        }
-
-
-# execute whole experiment
-class SupervisedRunner(dl.IRunner):
     def handle_batch(self, batch):
         x, y = batch
         logits = self.model(x)
@@ -187,10 +169,8 @@ class SupervisedRunner(dl.IRunner):
 
 def train_experiment(device):
     with TemporaryDirectory() as logdir:
-        runner = SupervisedRunner()
-        experiment = CustomExperiment(logdir, device)
-        experiment._logdir = logdir
-        runner.run(experiment)
+        runner = CustomRunner(logdir, device)
+        runner.run()
 
 
 def train_config_experiment(device):

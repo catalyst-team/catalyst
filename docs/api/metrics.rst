@@ -18,21 +18,21 @@ Metric API
 
 IMetric
 ~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.metric.IMetric
+.. autoclass:: catalyst.metrics._metric.IMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 ICallbackBatchMetric
 ~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.metric.ICallbackBatchMetric
+.. autoclass:: catalyst.metrics._metric.ICallbackBatchMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 ICallbackLoaderMetric
 ~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.metric.ICallbackLoaderMetric
+.. autoclass:: catalyst.metrics._metric.ICallbackLoaderMetric
     :members:
     :undoc-members:
     :show-inheritance:
@@ -42,14 +42,14 @@ General Metrics
 
 AdditiveValueMetric
 ~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.additive.AdditiveValueMetric
+.. autoclass:: catalyst.metrics._additive.AdditiveValueMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 ConfusionMatrixMetric
 ~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.confusion_matrix.ConfusionMatrixMetric
+.. autoclass:: catalyst.metrics._confusion_matrix.ConfusionMatrixMetric
     :members:
     :undoc-members:
     :show-inheritance:
@@ -60,105 +60,105 @@ Runner Metrics
 
 AccuracyMetric
 ~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.accuracy.AccuracyMetric
+.. autoclass:: catalyst.metrics._accuracy.AccuracyMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 MultilabelAccuracyMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.accuracy.MultilabelAccuracyMetric
+.. autoclass:: catalyst.metrics._accuracy.MultilabelAccuracyMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 AUCMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.auc.AUCMetric
+.. autoclass:: catalyst.metrics._auc.AUCMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 BinaryPrecisionRecallF1Metric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.classification.BinaryPrecisionRecallF1Metric
+.. autoclass:: catalyst.metrics._classification.BinaryPrecisionRecallF1Metric
     :members:
     :undoc-members:
     :show-inheritance:
 
 MulticlassPrecisionRecallF1SupportMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.classification.MulticlassPrecisionRecallF1SupportMetric
+.. autoclass:: catalyst.metrics._classification.MulticlassPrecisionRecallF1SupportMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 MultilabelPrecisionRecallF1SupportMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.classification.MultilabelPrecisionRecallF1SupportMetric
+.. autoclass:: catalyst.metrics._classification.MultilabelPrecisionRecallF1SupportMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 HitrateMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.hitrate.HitrateMetric
+.. autoclass:: catalyst.metrics._hitrate.HitrateMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 NDCGMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.ndcg.NDCGMetric
+.. autoclass:: catalyst.metrics._ndcg.NDCGMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 MAPMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.map.MAPMetric
+.. autoclass:: catalyst.metrics._map.MAPMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 MRRMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.mrr.MRRMetric
+.. autoclass:: catalyst.metrics._mrr.MRRMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 RegionBasedMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.segmentation.RegionBasedMetric
+.. autoclass:: catalyst.metrics._segmentation.RegionBasedMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 IOUMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.segmentation.IOUMetric
+.. autoclass:: catalyst.metrics._segmentation.IOUMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 JaccardMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.segmentation.JaccardMetric
+.. autoclass:: catalyst.metrics._segmentation.JaccardMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 DiceMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.segmentation.DiceMetric
+.. autoclass:: catalyst.metrics._segmentation.DiceMetric
     :members:
     :undoc-members:
     :show-inheritance:
 
 TrevskyMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics.segmentation.TrevskyMetric
+.. autoclass:: catalyst.metrics._segmentation.TrevskyMetric
     :members:
     :undoc-members:
     :show-inheritance:
@@ -169,84 +169,84 @@ Functional API
 
 Accuracy
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.accuracy
+.. automodule:: catalyst.metrics.functional._accuracy
     :members:
     :undoc-members:
     :show-inheritance:
 
 AUC
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.auc
+.. automodule:: catalyst.metrics.functional._auc
     :members:
     :undoc-members:
     :show-inheritance:
 
 Average Precision
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.average_precision
+.. automodule:: catalyst.metrics.functional._average_precision
     :members:
     :undoc-members:
     :show-inheritance:
 
 Classification
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.classification
+.. automodule:: catalyst.metrics.functional._classification
     :members:
     :undoc-members:
     :show-inheritance:
 
 CMC Score
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.cmc_score
+.. automodule:: catalyst.metrics.functional._cmc_score
     :members:
     :undoc-members:
     :show-inheritance:
 
 F1 score
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.f1_score
+.. automodule:: catalyst.metrics.functional._f1_score
     :members:
     :undoc-members:
     :show-inheritance:
 
 Focal
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.focal
+.. automodule:: catalyst.metrics.functional._focal
     :members:
     :undoc-members:
     :show-inheritance:
 
 Hitrate
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.hitrate
+.. automodule:: catalyst.metrics.functional._hitrate
     :members:
     :undoc-members:
     :show-inheritance:
 
 Misc
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.misc
+.. automodule:: catalyst.metrics.functional._misc
     :members:
     :undoc-members:
     :show-inheritance:
 
 MRR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.mrr
+.. automodule:: catalyst.metrics.functional._mrr
     :members:
     :undoc-members:
     :show-inheritance:
 
 NDCG
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.ndcg
+.. automodule:: catalyst.metrics.functional._ndcg
     :members:
     :undoc-members:
     :show-inheritance:
 
 Precision
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.precision
+.. automodule:: catalyst.metrics.functional._precision
     :members:
     :undoc-members:
     :show-inheritance:
@@ -260,7 +260,7 @@ Recall
 
 Segmentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional.segmentation
+.. automodule:: catalyst.metrics.functional._segmentation
     :members:
     :undoc-members:
     :show-inheritance:

@@ -1,7 +1,7 @@
 from typing import List
 
 from catalyst.callbacks.metric import BatchMetricCallback
-from catalyst.metrics.accuracy import AccuracyMetric
+from catalyst.metrics._accuracy import AccuracyMetric
 
 
 class AccuracyCallback(BatchMetricCallback):

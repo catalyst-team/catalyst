@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import torch
 
-from catalyst.metrics.functional.accuracy import accuracy, multilabel_accuracy
+from catalyst.metrics.functional._accuracy import accuracy, multilabel_accuracy
 
 BATCH_SIZE = 4
 NUM_CLASSES = 10

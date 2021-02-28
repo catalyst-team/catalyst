@@ -63,7 +63,7 @@ class APEXEngine(DeviceEngine):
             scaled_loss.backward()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
     ) -> Dict:
         return {
             "model": model,
@@ -242,3 +242,6 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         #   https://nvidia.github.io/apex/amp.html#checkpointing
         if "amp" in checkpoint:
             amp.load_state_dict(checkpoint["amp"])
+
+
+__all__ = ["APEXEngine", "DistributedDataParallelApexEngine"]

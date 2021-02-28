@@ -10,10 +10,12 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst import dl
-from catalyst.engines.amp import DistributedDataParallelAMPEngine
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_AMP_AVAILABLE, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 from .misc import DummyDataset, DummyModel, LossMinimizationCallback, WorldSizeCheckCallback
+
+if IS_AMP_AVAILABLE:
+    from catalyst.engines.amp import DistributedDataParallelAMPEngine
 
 logger = logging.getLogger(__name__)
 
