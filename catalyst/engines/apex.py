@@ -1,4 +1,5 @@
-from typing import Any, Dict, Mapping, Union
+# flake8: noqa
+from typing import Dict, Union
 from collections import OrderedDict
 
 import apex.amp as amp

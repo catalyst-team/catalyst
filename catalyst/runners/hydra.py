@@ -151,11 +151,10 @@ class HydraRunner(IRunner):
         Returns loaders for a given stage.
 
         Args:
-            stage: (str) stage name
-            epoch: (int) epoch number
+            stage: stage name
 
         Returns:
-            Dict[str, DataLoader]: loaders objects
+            Dict: loaders objects
 
         """
         loaders_params = self._config.stages[stage].loaders

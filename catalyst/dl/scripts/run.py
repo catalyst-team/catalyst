@@ -91,6 +91,7 @@ def parse_args():
 
 
 def config_main(args, unknown_args):
+    """Yaml config catalyst-dl run entry point."""
     args, config = parse_args_uargs(args, unknown_args)
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)

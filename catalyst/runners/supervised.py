@@ -194,7 +194,6 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         Returns:
             dictionary with stage callbacks
         """
-
         callbacks = super().get_callbacks(stage=stage)
         is_callback_exists = lambda callback_fn: any(
             check_callback_isinstance(x, callback_fn) for x in callbacks.values()

@@ -16,7 +16,7 @@ from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
-from catalyst.engines import IEngine, process_engine
+from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
