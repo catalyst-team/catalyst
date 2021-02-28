@@ -13,9 +13,7 @@ from catalyst.utils.quantization import quantize_model
 
 
 def test_api():
-    """
-    Test if model can be quantize through API.
-    """
+    """Test if model can be quantize through API"""
     model = torch.nn.Sequential(
         Flatten(),
         torch.nn.Linear(28 * 28, 128),
@@ -33,16 +31,8 @@ def test_api():
     os.remove("q_model.pth")
 
 
-def loader_accuracy(runner, loader):
-    """Function to evaluate model.
-
-    Args:
-        runner ([type]): [description]
-        loader ([type]): [description]
-
-    Returns:
-        [type]: [description]
-    """
+def _evaluate_loader_accuracy(runner, loader):
+    """Function to evaluate model."""
     correct, num_examples = 0, 0
     for batch in loader:
         batch = {
@@ -80,11 +70,12 @@ def test_accuracy():
         callbacks=[AccuracyCallback(target_key="targets", input_key="logits")],
         num_epochs=4,
         criterion=torch.nn.CrossEntropyLoss(),
+        valid_loader="valid",
         valid_metric="accuracy01",
         minimize_valid_metric=False,
     )
-    accuracy_before = loader_accuracy(runner, dataloaders["valid"])
+    accuracy_before = _evaluate_loader_accuracy(runner, dataloaders["valid"])
     q_model = quantize_model(model)
     runner.model = q_model
-    accuracy_after = loader_accuracy(runner, dataloaders["valid"])
+    accuracy_after = _evaluate_loader_accuracy(runner, dataloaders["valid"])
     assert abs(accuracy_before - accuracy_after) < 0.01
