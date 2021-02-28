@@ -42,7 +42,7 @@ def test_pruning():
         optimizer=optimizer,
         scheduler=scheduler,
         loaders=loaders,
-        logdir="./batch_overfit_logdir",
+        logdir="./logs/batch_overfit",
         num_epochs=1,
         verbose=False,
         callbacks=[dl.BatchOverfitCallback(train=1, valid=0.1)],

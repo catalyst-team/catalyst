@@ -245,8 +245,8 @@ class Runner(IRunner):
         overfit: bool = False,
         load_best_on_end: bool = False,
         # engine extra params, @TODO: what to do with them?
-        # fp16: Union[Dict, bool] = None,
-        # distributed: bool = False,
+        # fp16: bool = False,
+        # ddp: bool = False,
     ) -> None:
         """
         Starts the train stage of the model.

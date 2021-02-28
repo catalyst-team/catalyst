@@ -141,19 +141,17 @@ class LambdaReader(IReader):
 class ReaderCompose(object):
     """Abstraction to compose several readers into one open function."""
 
-    def __init__(self, readers: List[IReader], mixins: list = None):
+    def __init__(self, transforms: List[IReader]):
         """
         Args:
-            readers: list of reader to compose
+            transforms: list of reader to compose
             mixins: list of mixins to use
         """
-        self.readers = readers
-        self.mixins = mixins or []
+        self.transforms = transforms
 
     def __call__(self, element):
         """
-        Reads a row from your annotations dict
-        and applies all readers and mixins
+        Reads a row from your annotations dict and applies all readers and mixins
 
         Args:
             element: elem in your dataset.
@@ -162,10 +160,8 @@ class ReaderCompose(object):
             Value after applying all readers and mixins
         """
         result = {}
-        for reader_fn in self.readers:
-            result = {**result, **reader_fn(element)}
-        for mixin_fn in self.mixins:
-            result = {**result, **mixin_fn(result)}
+        for transform_fn in self.transforms:
+            result = {**result, **transform_fn(element)}
         return result
 
 
