@@ -1,8 +1,8 @@
 # flake8: noqa
 
 from typing import Any, Dict, List
-import os
 import logging
+import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -17,8 +17,8 @@ from .misc import (
     DummyDataset,
     DummyModel,
     LossMinimizationCallback,
-    WorldSizeCheckCallback,
     OPTTensorTypeChecker,
+    WorldSizeCheckCallback,
 )
 
 logger = logging.getLogger(__name__)
@@ -42,7 +42,9 @@ class CustomRunner(dl.IRunner):
 
     def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
         return {
-            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
+            "criterion": dl.CriterionCallback(
+                metric_key="loss", input_key="logits", target_key="targets"
+            ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             # "checkpoint": dl.CheckpointCallback(

@@ -1,17 +1,15 @@
 import os
 
 import numpy as np
-
 import pytest  # noqa: F401
-
 import torch
 
-from catalyst.utils.quantization import quantize_model
-from catalyst.contrib.nn import Flatten
-from catalyst.contrib.datasets import MNIST
-from catalyst.data.transforms import ToTensor
 from catalyst.callbacks import AccuracyCallback
+from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.nn import Flatten
+from catalyst.data.transforms import ToTensor
 from catalyst.runners import SupervisedRunner
+from catalyst.utils.quantization import quantize_model
 
 
 def test_api():

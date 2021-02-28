@@ -62,7 +62,9 @@ class APEXEngine(DeviceEngine):
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 
-    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,) -> Dict:
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
         return {
             "model": model,
             "criterion": criterion,
@@ -75,7 +77,13 @@ class APEXEngine(DeviceEngine):
         }
 
     def unpack_checkpoint(
-        self, checkpoint: Dict, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        checkpoint: Dict,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> None:
 
         if "model_state_dict" in checkpoint:
@@ -193,7 +201,9 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 
-    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,) -> Dict:
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
         _model = model.module if isinstance(model, APEX_DDP) else model
         return {
             "model": model,
@@ -207,7 +217,13 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         }
 
     def unpack_checkpoint(
-        self, checkpoint: Dict, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        checkpoint: Dict,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> None:
 
         if "model_state_dict" in checkpoint:

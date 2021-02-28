@@ -4,10 +4,10 @@ import logging
 
 from torch import jit, nn
 
+from catalyst.tools.forward_pass import ForwardOverrideMethod
 from catalyst.typing import Device, Model
 from catalyst.utils.misc import get_fn_argsnames
 from catalyst.utils.torch import set_requires_grad
-from catalyst.tools.forward_pass import ForwardOverrideMethod
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -105,7 +105,6 @@ def trace_model(
     predict_params = predict_params or {}
 
     tracer = _TracingModelWrapper(model, method_name)
-
 
     getattr(model, mode)()
     set_requires_grad(model, requires_grad=requires_grad)

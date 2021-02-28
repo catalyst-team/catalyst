@@ -67,7 +67,9 @@ class DeviceCheckCallback(Callback):
 
     def on_stage_start(self, runner: "IRunner"):
         model_device = next(runner.model.parameters()).device
-        self.logger.warning(f"DeviceCheckCallback: model device ({model_device}) - device ({self.device})")
+        self.logger.warning(
+            f"DeviceCheckCallback: model device ({model_device}) - device ({self.device})"
+        )
         assert model_device == self.device
 
 
@@ -91,7 +93,10 @@ class LossMinimizationCallback(Callback):
 
         container = [round(num, self.nums) for num in self.container]
         self.logger.warning(f"LossMinimizationCallback: {container}")
-        assert all(round(a, self.nums) >= round(b, self.nums) for a, b in zip(container[:-1], container[1:]))
+        assert all(
+            round(a, self.nums) >= round(b, self.nums)
+            for a, b in zip(container[:-1], container[1:])
+        )
 
         self.container = []
 
@@ -107,7 +112,8 @@ class WorldSizeCheckCallback(Callback):
         rank = runner.engine.rank
         world_size = runner.engine.world_size
         self.logger.warning(
-            f"WorldSizeCheckCallback: " f"expected world size ({self.world_size}) - actual ({world_size})"
+            f"WorldSizeCheckCallback: "
+            f"expected world size ({self.world_size}) - actual ({world_size})"
         )
         assert rank < self.world_size
         assert self.world_size == world_size
@@ -145,7 +151,9 @@ class OPTTensorTypeChecker(Callback):
         self.expected_type = OPT_TYPE_MAP[opt_level]
 
     def on_batch_end(self, runner):
-        check_tensor = runner.batch_metrics[self.key] if self.use_batch_metrics else runner.batch[self.key]
+        check_tensor = (
+            runner.batch_metrics[self.key] if self.use_batch_metrics else runner.batch[self.key]
+        )
         assert check_tensor.dtype == self.expected_type, (
             f"Wrong types for {self.opt_level} - actual is "
             f"'{check_tensor.dtype}' but expected is '{self.expected_type}'!"

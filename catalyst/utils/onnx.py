@@ -1,12 +1,10 @@
+from typing import Dict, Iterable, List, Tuple, Union
 import os
 from pathlib import Path
-
-from typing import Union, List, Tuple, Iterable, Dict
 
 import torch
 
 from catalyst.settings import IS_ONNX_AVAILABLE
-
 from catalyst.tools.forward_pass import ForwardOverrideModel
 
 if IS_ONNX_AVAILABLE:

@@ -1,17 +1,16 @@
-from pathlib import Path
 from typing import Dict
+from pathlib import Path
 
 from catalyst.utils import (
+    load_checkpoint,
     load_config,
     prepare_config_api_components,
-    load_checkpoint,
-    unpack_checkpoint
+    unpack_checkpoint,
 )
 
 
 def load_model(logdir: Path, checkpoint_name: str = "best", stage: str = None):
     checkpoint_path = logdir / "checkpoints" / f"{checkpoint_name}.pth"
-
 
     experiment, _ = load_experiment(logdir=logdir)
 
@@ -38,7 +37,7 @@ def load_experiment(logdir: Path):
 
 
 def get_model_file_name(
-    prefix: str, 
+    prefix: str,
     method_name: str = "forward",
     mode: str = "train",
     requires_grad: bool = False,
@@ -50,7 +49,7 @@ def get_model_file_name(
         file_name += f"-{additional_string}"
     if method_name != "forward":
         file_name += f"-{method_name}"
-       
+
     if mode == "train":
         file_name += "-in_train"
 

@@ -38,7 +38,8 @@ except ModuleNotFoundError:
     IS_XLA_AVAILABLE = False
 
 try:
-    import onnx, onnxruntime  # noqa: F401, E401
+    import onnx  # noqa: F401, E401
+    import onnxruntime
 
     IS_ONNX_AVAILABLE = True
 except ImportError:
@@ -406,5 +407,5 @@ __all__ = [
     "IS_QUANTIZATION_AVAILABLE",
     "IS_OPTUNA_AVAILABLE",
     "IS_HYDRA_AVAILABLE",
-    "IS_ONNX_AVAILABLE"
+    "IS_ONNX_AVAILABLE",
 ]

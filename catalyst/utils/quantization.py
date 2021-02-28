@@ -1,19 +1,17 @@
-from typing import Optional, Union, Dict
+from typing import Dict, Optional, Union
 
 import torch
 from torch import quantization
 
-from catalyst.typing import Model
 from catalyst.settings import IS_ONNX_AVAILABLE
+from catalyst.typing import Model
 
 if IS_ONNX_AVAILABLE:
     from catalyst.utils.onnx import quantize_onnx_model  # noqa: F401
 
 
 def quantize_model(
-    model: Model,
-    qconfig_spec: Dict = None,
-    dtype: Union[str, Optional[torch.dtype]] = "qint8",
+    model: Model, qconfig_spec: Dict = None, dtype: Union[str, Optional[torch.dtype]] = "qint8",
 ) -> Model:
     """Function to quantize model weights.
 

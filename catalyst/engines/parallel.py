@@ -28,7 +28,9 @@ class DataParallelEngine(DeviceEngine):
     #         return obj.to(self.device)
     #     # fmt: on
 
-    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,) -> Dict:
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
         # unwrap model
         _model = model.module if isinstance(model, nn.DataParallel) else model
         return super().pack_checkpoint(_model, criterion, optimizer, scheduler, **kwargs)
