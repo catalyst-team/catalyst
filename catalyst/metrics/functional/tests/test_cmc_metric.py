@@ -1,11 +1,15 @@
 # flake8: noqa
 from itertools import chain
+from typing import List, Tuple
 
 import numpy as np
 import pytest
 import torch
 
-from catalyst.metrics.functional._cmc_score import cmc_score_count
+from catalyst.metrics.functional._cmc_score import cmc_score_count, cmc_score
+
+
+TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
 
 EPS = 1e-4
 
@@ -75,3 +79,82 @@ def test_metric_greater(distance_matrix, conformity_matrix, topk, expected):
         distances=distance_matrix, conformity_matrix=conformity_matrix, topk=topk,
     )
     assert out + EPS >= expected
+
+
+@pytest.fixture
+def generate_samples_for_cmc_score() -> List[
+    Tuple[float, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]
+]:
+    """
+    Generate list of query and gallery data for cmc score testing.
+    """
+    data = []
+    for error_rate in [0.05, 0.1, 0.15, 0.2, 0.25, ]:
+        # generate params of the datasets
+        class_number = np.random.randint(low=2, high=10)
+        kq = np.random.randint(low=1000, high=1500)
+        kg = np.random.randint(low=500, high=1000)
+
+        def generate_samples(n_labels, samples_per_label):
+            samples = []
+            labels = []
+            # for each label generate dots that will be close to each other and
+            # distanced from samples of other classes
+            for i in range(n_labels):
+                tmp_samples = np.random.uniform(
+                    low=2 * i, high=2 * i + 0.2, size=(samples_per_label,)
+                )
+                samples = np.concatenate((samples, tmp_samples))
+                labels = np.concatenate((labels, [i] * samples_per_label))
+            return samples.reshape((-1, 1)), labels
+
+        query_embs, query_labels = generate_samples(n_labels=class_number, samples_per_label=kq)
+
+        gallery_embs, gallery_labels = generate_samples(
+            n_labels=class_number, samples_per_label=kg
+        )
+
+        # spoil generated gallery dataset: for each sample from data change
+        # label to any other one with probability error_rate
+        def confuse_labels(labels, error_rate):
+            unique_labels = set(labels)
+            size = len(labels)
+            for i in range(size):
+                if np.random.binomial(n=1, p=error_rate, size=1)[0]:
+                    labels[i] = np.random.choice(
+                        list(unique_labels - {labels[i]})
+                    )
+            return labels
+
+        gallery_labels = confuse_labels(gallery_labels, error_rate=error_rate)
+
+        query_embs = torch.tensor(query_embs)
+        gallery_embs = torch.tensor(gallery_embs)
+        query_labels = torch.tensor(query_labels, dtype=torch.long)
+        gallery_labels = torch.tensor(gallery_labels, dtype=torch.long)
+
+        data.append((error_rate, query_embs, query_labels, gallery_embs, gallery_labels,))
+    return data
+
+
+def test_cmc_score_with_samples(generate_samples_for_cmc_score):
+    """
+    Count cmc score callback for sets of well-separated data clusters labeled
+    with error_rate probability mistake.
+    """
+    for (
+        error_rate,
+        query_embs,
+        query_labels,
+        gallery_embs,
+        gallery_labels,
+    ) in generate_samples_for_cmc_score:
+        true_cmc_01 = 1 - error_rate
+        conformity_matrix = (query_labels.reshape((-1, 1)) == gallery_labels).to(TORCH_BOOL)
+        cmc = cmc_score(
+            query_embeddings=query_embs,
+            gallery_embeddings=gallery_embs,
+            conformity_matrix=conformity_matrix,
+            topk=1,
+        )
+        assert abs(cmc - true_cmc_01) <= 0.05
