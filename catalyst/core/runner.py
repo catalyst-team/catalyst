@@ -7,7 +7,7 @@ import logging
 import torch
 import torch.distributed
 import torch.multiprocessing
-from torch.utils.data import DataLoader, DistributedSampler
+from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
 from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
@@ -214,11 +214,7 @@ class IRunner(ICallback, ILogger, ABC):
             (experiment) every training epoch.
 
         Args:
-            stage: stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
-            epoch: epoch index
-            **kwargs: additional parameters to use during
-                dataset creation
+            stage: stage name of interest, like "pretrain" / "train" / "finetune" / etc
 
         Returns:  # noqa: DAR202
             OrderedDict[str, Dataset]: Ordered dictionary
