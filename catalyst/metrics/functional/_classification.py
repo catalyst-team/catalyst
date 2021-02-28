@@ -150,9 +150,9 @@ def get_aggregated_metrics(
         arrays of metrics: per-class, micro, macro, weighted averaging
     """
     num_classes = len(tp)
-    precision_values = np.zeros(shape=(num_classes))
-    recall_values = np.zeros(shape=(num_classes))
-    f1_values = np.zeros(shape=(num_classes))
+    precision_values = np.zeros(shape=(num_classes,))
+    recall_values = np.zeros(shape=(num_classes,))
+    f1_values = np.zeros(shape=(num_classes,))
 
     for i in range(num_classes):
         precision_values[i] = precision(tp=tp[i], fp=fp[i], zero_division=zero_division)

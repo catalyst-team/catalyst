@@ -51,7 +51,7 @@ def test_precision_recall_fbeta_support_binary(
         fbeta_true: test arg
         support_true: test arg
     """
-    (precision_score, recall_score, fbeta_score_value, support) = precision_recall_fbeta_support(
+    precision_score, recall_score, fbeta_score_value, support = precision_recall_fbeta_support(
         outputs=outputs, targets=targets
     )
 

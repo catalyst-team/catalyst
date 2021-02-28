@@ -114,7 +114,7 @@ def _all_gather(rank, world_size):
 
 
 def _run_test(fn, world_size):
-    mp.spawn(fn, args=(world_size), nprocs=world_size, join=True)
+    mp.spawn(fn, args=(world_size,), nprocs=world_size, join=True)
 
 
 @mark.skipif(NUM_CUDA_DEVICES < 2, reason="Need at least 2 CUDA device")

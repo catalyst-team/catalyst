@@ -34,7 +34,7 @@ def get_one_hot(label: int, num_classes: int, smoothing: float = None) -> np.nda
         ), f"If smoothing is specified it must be in (0; 1), got {smoothing}"
 
         smoothed = smoothing / float(num_classes - 1)
-        result = np.full((num_classes), smoothed, dtype=np.float32)
+        result = np.full((num_classes,), smoothed, dtype=np.float32)
         result[label] = 1.0 - smoothing
 
         return result

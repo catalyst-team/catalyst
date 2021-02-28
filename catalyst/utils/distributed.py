@@ -56,7 +56,7 @@ def check_ddp_wrapped(model: nn.Module) -> bool:
     try:
         from apex.parallel import DistributedDataParallel as apex_DDP
 
-        parallel_wrappers = parallel_wrappers + (apex_DDP)
+        parallel_wrappers = parallel_wrappers + (apex_DDP,)
     except ImportError:
         pass
 

@@ -213,7 +213,7 @@ class DynamicBalanceClassSampler(Sampler):
         >>> from torch.utils import data
 
         >>> features = torch.Tensor(np.random.random((200, 100)))
-        >>> labels = np.random.randint(0, 4, size=(200))
+        >>> labels = np.random.randint(0, 4, size=(200,))
         >>> sampler = DynamicBalanceClassSampler(labels)
         >>> labels = torch.LongTensor(labels)
         >>> dataset = data.TensorDataset(features, labels)
