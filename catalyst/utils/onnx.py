@@ -5,7 +5,7 @@ from pathlib import Path
 import torch
 
 from catalyst.settings import IS_ONNX_AVAILABLE
-from catalyst.tools.forward_pass import ForwardOverrideModel
+from catalyst.tools.forward_wrapper import ModelForwardWrapper
 
 if IS_ONNX_AVAILABLE:
     from onnxruntime.quantization import quantize_dynamic, QuantType
@@ -37,7 +37,7 @@ def convert_to_onnx(
         do_constant_folding (bool, optional): [description]. Defaults to False.
     """
     if method_name != "forward":
-        model = ForwardOverrideModel(model=model, method_name=method_name)
+        model = ModelForwardWrapper(model=model, method_name=method_name)
     torch.onnx.export(
         model,
         input_shape,
