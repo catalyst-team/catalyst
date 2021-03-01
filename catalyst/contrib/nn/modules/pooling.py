@@ -205,6 +205,54 @@ class GlobalConcatAttnPool2d(nn.Module):
         return in_features * 3
 
 
+class GeM2d(nn.Module):
+    """Implementation of
+    `GeM: Generalized Mean Pooling`_.
+
+    .. _GeM\: Generalized Mean Pooling:
+        https://arxiv.org/abs/1711.02512
+   """
+
+    def __init__(
+        self, p: float = 3.0, p_trainable: bool = False, eps: float = 1e-7
+    ):
+        """
+        Args:
+            p: The pooling parameter.
+                Default: 3.0
+            p_trainable: Whether the pooling parameter(p) should be trainable.
+                    Default: False
+            eps: epsilon for numerical stability.
+        """
+        super().__init__()
+        if p_trainable:
+            self.p = nn.Parameter(torch.ones(1) * p)
+
+        else:
+            self.p = p
+
+        self.eps = eps
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+
+        """Forward call."""
+
+        h, w = x.shape[2:]
+        x = x.clamp(min=self.eps).pow(self.p)
+
+        return F.avg_pool2d(x, kernel_size=(h, w)).pow(1.0 / self.p)
+
+    @staticmethod
+    def out_features(in_features):
+        """Returns number of channels produced by the pooling.
+        Args:
+            in_features: number of channels in the input sample
+        Returns:
+            number of output features
+        """
+        return in_features
+
+
 __all__ = [
     "GlobalAttnPool2d",
     "GlobalAvgAttnPool2d",
@@ -213,4 +261,5 @@ __all__ = [
     "GlobalConcatPool2d",
     "GlobalMaxAttnPool2d",
     "GlobalMaxPool2d",
+    "GeM2d",
 ]
