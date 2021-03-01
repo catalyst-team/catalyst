@@ -23,6 +23,7 @@ from catalyst.callbacks.scheduler import (
     ILRUpdater,
     LRFinder,
 )
+from catalyst.callbacks.aggregation import MetricAggregationCallback
 
 from catalyst.callbacks.metrics import *
 

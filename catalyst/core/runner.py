@@ -574,7 +574,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_loader_end(self, runner: "IRunner"):
         self.log_metrics(metrics=self.loader_metrics, scope="loader")
-        self.epoch_metrics[self.loader_key] = self.loader_metrics.copy()
+        self.epoch_metrics[self.loader_key] = {key: float(value) for key, value in self.loader_metrics.items()}
 
     def on_epoch_end(self, runner: "IRunner"):
         self.log_metrics(metrics=self.epoch_metrics, scope="epoch")
