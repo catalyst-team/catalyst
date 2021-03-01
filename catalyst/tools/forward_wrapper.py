@@ -1,7 +1,7 @@
 from torch import nn
 
 
-class ForwardOverrideModel(nn.Module):
+class ModelForwardWrapper(nn.Module):
     """Model that calls specified method instead of forward.
 
     (Workaround, single method tracing is not supported)
@@ -26,4 +26,4 @@ class ForwardOverrideModel(nn.Module):
         return getattr(self.model, self.method_name)(*args, **kwargs)
 
 
-__all__ = ["ForwardOverrideModel"]
+__all__ = ["ModelForwardWrapper"]
