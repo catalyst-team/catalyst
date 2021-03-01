@@ -28,16 +28,16 @@ Config
     :undoc-members:
     :show-inheritance:
 
-Distributed
+Data
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.distributed
+.. automodule:: catalyst.utils.data
     :members:
     :undoc-members:
     :show-inheritance:
 
-Loaders
+Distributed
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.loaders
+.. automodule:: catalyst.utils.distributed
     :members:
     :undoc-members:
     :show-inheritance:
@@ -56,13 +56,38 @@ Numpy
     :undoc-members:
     :show-inheritance:
 
-.. catalyst.utils.pruning
-.. catalyst.utils.quantization
+Onnx
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.onnx
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Pruning
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.pruning
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Quantization
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.quantization
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Stochastic Weights Averaging (SWA)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.swa
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Sys
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.sys
     :members:
     :undoc-members:
     :show-inheritance:
@@ -74,9 +99,12 @@ Torch
     :undoc-members:
     :show-inheritance:
 
-
-.. catalyst.utils.tracing
-
+Tracing
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.tracing
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 
 Contrib

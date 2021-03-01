@@ -1,3 +1,4 @@
+# flake8: noqa
 from typing import Dict, Iterable
 
 import pytest
@@ -289,8 +290,8 @@ def test_multiclass_metrics(
             },
         ),
         (
-            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0],]),
-            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0],]),
+            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]),
+            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]),
             4,
             0,
             {
@@ -322,8 +323,8 @@ def test_multiclass_metrics(
             },
         ),
         (
-            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0],]),
-            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0],]),
+            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]),
+            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]),
             4,
             1,
             {
@@ -416,7 +417,7 @@ def test_multiclass_metrics(
             },
         ),
         (
-            torch.tensor([[0, 1], [1, 0], [0, 1], [0, 0], [1, 1],]),
+            torch.tensor([[0, 1], [1, 0], [0, 1], [0, 0], [1, 1]]),
             torch.tensor([[1, 1], [1, 1], [0, 0], [0, 1], [1, 1]]),
             2,
             0,
@@ -474,7 +475,7 @@ def test_multilabel_metrics(
             torch.tensor([0, 1, 0, 1, 0, 1, 0, 1]),
             torch.tensor([1, 0, 1, 1, 0, 1, 0, 1]),
             0,
-            {"precision": 0.75, "recall": 0.6, "f1": 0.666667,},
+            {"precision": 0.75, "recall": 0.6, "f1": 0.666667},
         ),
         (
             torch.tensor([0, 1, 0, 1, 0, 1, 0, 1]),
@@ -486,13 +487,13 @@ def test_multilabel_metrics(
             torch.tensor([1, 1, 1, 0]),
             torch.tensor([0, 0, 0, 0]),
             0,
-            {"precision": 0, "recall": 0, "f1": 0,},
+            {"precision": 0, "recall": 0, "f1": 0},
         ),
         (
             torch.tensor([1, 1, 1, 0]),
             torch.tensor([0, 0, 0, 0]),
             1,
-            {"precision": 0, "recall": 1, "f1": 0,},
+            {"precision": 0, "recall": 1, "f1": 0},
         ),
     ),
 )
@@ -522,8 +523,8 @@ def test_binary_metrics(
     "outputs_list,targets_list,num_classes,zero_division,true_values",
     (
         (
-            [torch.tensor([1, 2, 3]), torch.tensor([0, 3, 4]), torch.tensor([4, 5]),],
-            [torch.tensor([1, 2, 4]), torch.tensor([0, 3, 4]), torch.tensor([5, 5]),],
+            [torch.tensor([1, 2, 3]), torch.tensor([0, 3, 4]), torch.tensor([4, 5])],
+            [torch.tensor([1, 2, 4]), torch.tensor([0, 3, 4]), torch.tensor([5, 5])],
             6,
             0,
             {
@@ -595,8 +596,8 @@ def test_update(
     "outputs_list,targets_list,num_classes,zero_division,update_true_values,compute_true_value",
     (
         (
-            [torch.tensor([0, 1, 2]), torch.tensor([2, 3]), torch.tensor([0, 1, 3]),],
-            [torch.tensor([0, 1, 1]), torch.tensor([2, 3]), torch.tensor([0, 1, 2]),],
+            [torch.tensor([0, 1, 2]), torch.tensor([2, 3]), torch.tensor([0, 1, 3])],
+            [torch.tensor([0, 1, 1]), torch.tensor([2, 3]), torch.tensor([0, 1, 2])],
             4,
             0,
             [
@@ -711,16 +712,8 @@ def test_update(
             },
         ),
         (
-            [
-                torch.tensor([0, 1, 2, 4,]),
-                torch.tensor([2, 3, 3, 2,]),
-                torch.tensor([0, 1, 3, 4]),
-            ],
-            [
-                torch.tensor([0, 1, 1, 4,]),
-                torch.tensor([2, 3, 3, 4,]),
-                torch.tensor([0, 1, 2, 4]),
-            ],
+            [torch.tensor([0, 1, 2, 4]), torch.tensor([2, 3, 3, 2]), torch.tensor([0, 1, 3, 4]),],
+            [torch.tensor([0, 1, 1, 4]), torch.tensor([2, 3, 3, 4]), torch.tensor([0, 1, 2, 4]),],
             5,
             1,
             [
@@ -1063,10 +1056,10 @@ def test_update_key_value_multilabel(
             [torch.tensor([0, 0, 1, 1]), torch.tensor([0, 1, 1])],
             0,
             [
-                {"precision": 0.5, "recall": 0.5, "f1": 0.5,},
-                {"precision": 1, "recall": 0.5, "f1": 0.666667,},
+                {"precision": 0.5, "recall": 0.5, "f1": 0.5},
+                {"precision": 1, "recall": 0.5, "f1": 0.666667},
             ],
-            {"precision": 0.666667, "recall": 0.5, "f1": 0.571429,},
+            {"precision": 0.666667, "recall": 0.5, "f1": 0.571429},
         ),
     ),
 )

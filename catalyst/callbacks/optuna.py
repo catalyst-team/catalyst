@@ -51,11 +51,14 @@ class OptunaPruningCallback(Callback):
         min_delta: float = 1e-6,
         trial: optuna.Trial = None,
     ):
-        """
-        This callback can be used for early stopping (pruning) unpromising runs.
+        """This callback can be used for early stopping (pruning) unpromising runs.
 
         Args:
-             trial: Optuna.Trial for experiment.
+            loader_key: @TODO: docs.
+            metric_key: @TODO: docs.
+            minimize: @TODO: docs.
+            min_delta: @TODO: docs.
+            trial:  Optuna.Trial for experiment.
         """
         super().__init__(CallbackOrder.External)
         self.loader_key = loader_key

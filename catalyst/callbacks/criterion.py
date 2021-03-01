@@ -1,6 +1,6 @@
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.metrics.additive import AdditiveValueMetric
+from catalyst.metrics._additive import AdditiveValueMetric
 from catalyst.utils.misc import get_attr
 
 
@@ -12,6 +12,8 @@ class ICriterionCallback(Callback):
 
 # @TODO: add KV support
 class CriterionCallback(ICriterionCallback):
+    """@TODO: docs."""
+
     def __init__(
         self, input_key: str, target_key: str, metric_key: str, criterion_key: str = None,
     ):
@@ -42,9 +44,11 @@ class CriterionCallback(ICriterionCallback):
         assert self.criterion is not None
 
     def on_loader_start(self, runner: "IRunner") -> None:
+        """@TODO: docs."""
         self.additive_metric.reset()
 
     def on_batch_end(self, runner: "IRunner"):
+        """@TODO: docs."""
         inputs, targets = runner.batch[self.input_key], runner.batch[self.target_key]
         inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
 
@@ -57,6 +61,7 @@ class CriterionCallback(ICriterionCallback):
         self.additive_metric.update(loss.detach().cpu(), len(targets))
 
     def on_loader_end(self, runner: "IRunner") -> None:
+        """@TODO: docs."""
         mean, std = self.additive_metric.compute()
         runner.loader_metrics.update({self.metric_key: mean, f"{self.metric_key}/std": std})
 

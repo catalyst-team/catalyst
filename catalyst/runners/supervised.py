@@ -8,6 +8,7 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
+from catalyst.core.callback import Callback
 from catalyst.core.engine import IEngine
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.runner import IRunner
@@ -18,10 +19,10 @@ logger = logging.getLogger(__name__)
 
 
 class ISupervisedRunner(IRunner):
+    """IRunner for experiments with supervised model."""
+
     def __init__(
         self,
-        # model: RunnerModel = None,
-        # engine: IEngine = None,
         input_key: Any = "features",
         output_key: Any = "logits",
         target_key: str = "targets",
@@ -117,6 +118,7 @@ class ISupervisedRunner(IRunner):
         return output
 
     def on_batch_start(self, runner: "IRunner"):
+        """Event handler."""
         self.batch = self._process_batch(self.batch)
         super().on_batch_start(runner)
 
@@ -172,8 +174,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
             call, override forward() method
 
         Args:
-            batch (Mapping[str, Any]): dictionary with data batches
-                from DataLoader.
+            batch: dictionary with data batch from DataLoader.
             **kwargs: additional kwargs to pass to the model
 
         Returns:
@@ -184,8 +185,15 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         output = self.forward(batch, **kwargs)
         return output
 
-    def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
+        """Prepares the callbacks for selected stage.
 
+        Args:
+            stage: stage name
+
+        Returns:
+            dictionary with stage callbacks
+        """
         callbacks = super().get_callbacks(stage=stage)
         is_callback_exists = lambda callback_fn: any(
             check_callback_isinstance(x, callback_fn) for x in callbacks.values()

@@ -117,7 +117,7 @@ class OneCycleLRWithWarmup(BatchScheduler):
 
     def _calculate_lr_momentum(self, warmup_steps: int, lr_annealing_steps: int, decay_steps: int):
         init_lr, max_lr, min_lr, final_lr = self.lr_range
-        (init_momentum, min_momentum, max_momentum, final_momentum,) = self.momentum_range
+        init_momentum, min_momentum, max_momentum, final_momentum = self.momentum_range
 
         lr_warmup = np.linspace(init_lr, max_lr, warmup_steps)
         lr_annealing = np.linspace(max_lr, min_lr, lr_annealing_steps)

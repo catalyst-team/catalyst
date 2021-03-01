@@ -32,7 +32,7 @@ Suppose you have the following classification pipeline:
             # model inference step
             return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # model train/valid step
             x, y = batch
             y_hat = self.model(x.view(x.size(0), -1))
@@ -97,7 +97,7 @@ Multi-model example:
             # model inference step
             return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # model train/valid step
             x, y = batch
             # <--- multi-model usage --->
@@ -168,7 +168,7 @@ Multi-optimizer example:
             # model inference step
             return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # model train/valid step
             x, y = batch
             # <--- multi-model/optimizer usage --->
@@ -240,7 +240,7 @@ Multi-criterion example:
             # model inference step
             return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # model train/valid step
             x, y = batch
             y_hat = self.model(x.view(x.size(0), -1))

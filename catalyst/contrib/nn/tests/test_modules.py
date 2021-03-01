@@ -282,7 +282,7 @@ def test_curricularface_with_cross_entropy_loss():
     sine = np.sqrt(1.0 - np.power(logit, 2))
     cos_theta_m = logit * np.cos(m) - sine * np.sin(m)
 
-    final_logit = np.where(logit > np.cos(np.pi - m), cos_theta_m, logit - np.sin(np.pi - m) * m,)
+    final_logit = np.where(logit > np.cos(np.pi - m), cos_theta_m, logit - np.sin(np.pi - m) * m)
 
     cos_mask = cosine > cos_theta_m
     hard = cosine[cos_mask]

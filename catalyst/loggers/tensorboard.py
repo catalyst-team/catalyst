@@ -11,6 +11,7 @@ class TensorboardLogger(ILogger):
     """Logger callback, translates ``runner.metric_manager`` to tensorboard."""
 
     def __init__(self, logdir: str, use_logdir_postfix: bool = False):
+        """@TODO: docs."""
         if use_logdir_postfix:
             logdir = os.path.join(logdir, "tensorboard")
         self.logdir = logdir
@@ -48,8 +49,10 @@ class TensorboardLogger(ILogger):
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
+        """@TODO: docs."""
         if scope == "batch":
             self._check_loader_key(loader_key=loader_key)
+            metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
                 metrics=metrics, step=global_batch_step, loader_key=loader_key, suffix="/batch"
             )
@@ -86,15 +89,18 @@ class TensorboardLogger(ILogger):
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
+        """@TODO: docs."""
         if scope == "loader":
             self._check_loader_key(loader_key=loader_key)
             self.loggers[loader_key].add_image(f"{tag}", image, global_step=global_epoch_step)
 
     def flush_log(self) -> None:
+        """@TODO: docs."""
         for logger in self.loggers.values():
             logger.flush()
 
     def close_log(self) -> None:
+        """@TODO: docs."""
         for logger in self.loggers.values():
             logger.close()
 

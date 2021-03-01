@@ -190,7 +190,7 @@ def _prefetch_map(
 
 def _prefetch_loader(loader: DataLoader, num_prefetches: int) -> Iterable:
     if torch.cuda.is_available():
-        return _prefetch_map(_any2cuda_non_blocking, loader, num_prefetches=num_prefetches,)
+        return _prefetch_map(_any2cuda_non_blocking, loader, num_prefetches=num_prefetches)
     else:
         return iter(loader)
 
@@ -227,7 +227,7 @@ class BatchPrefetchLoaderWrapper(ILoaderWrapper):
 
         class CustomRunner(dl.Runner):
 
-            def _handle_batch(self, batch):
+            def handle_batch(self, batch):
                 # model train/valid step
                 x, y = batch
                 y_hat = self.model(x.view(x.size(0), -1))

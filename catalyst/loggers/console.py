@@ -4,10 +4,12 @@ from catalyst.core.logger import ILogger
 
 
 def _format_metrics(dct: Dict):
-    return " | ".join([f"{k}: {dct[k]}" for k in sorted(dct.keys())])
+    return " | ".join([f"{k}: {float(dct[k])}" for k in sorted(dct.keys())])
 
 
 class ConsoleLogger(ILogger):
+    """@TODO: docs."""
+
     def log_metrics(
         self,
         metrics: Dict[str, float],
@@ -30,6 +32,7 @@ class ConsoleLogger(ILogger):
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
+        """@TODO: docs."""
         # if self.exclude is not None and scope in self.exclude:
         #     return
         # elif (
@@ -52,6 +55,7 @@ class ConsoleLogger(ILogger):
         # experiment info
         experiment_key: str = None,
     ) -> None:
+        """@TODO: docs."""
         print(f"Hparams ({experiment_key}): {hparams}")
 
 

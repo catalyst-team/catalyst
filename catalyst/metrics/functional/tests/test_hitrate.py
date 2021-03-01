@@ -1,7 +1,8 @@
+# flake8: noqa
 import numpy as np
 import torch
 
-from catalyst.metrics.functional.hitrate import hitrate
+from catalyst.metrics.functional._hitrate import hitrate
 
 
 def test_hitrate():

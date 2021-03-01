@@ -1,6 +1,7 @@
+# flake8: noqa
 import torch
 
-from catalyst.metrics.functional.mrr import mrr, reciprocal_rank
+from catalyst.metrics.functional._mrr import mrr, reciprocal_rank
 
 
 def test_reciprocal_rank():
