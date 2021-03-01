@@ -12,7 +12,7 @@ from catalyst.contrib.models.sequential import (
     ResidualWrapper,
     SequentialNet,
 )
-from catalyst.contrib.models.simple_conv import SimpleConv
+from catalyst.contrib.models.mnist import MnistSimpleNet
 
 logger = logging.getLogger(__name__)
 

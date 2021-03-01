@@ -72,9 +72,7 @@ class UploadCommand(Command):
             pass
 
         self.status("Building Source and Wheel (universal) distribution…")
-        os.system(
-            "{0} setup.py sdist bdist_wheel --universal".format(sys.executable)
-        )
+        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
 
         self.status("Uploading the package to PyPI via Twine…")
         os.system("twine upload dist/*")
@@ -88,22 +86,20 @@ class UploadCommand(Command):
 
 # Specific dependencies.
 extras = {
-    "cv": load_requirements("requirements/requirements-cv.txt"),
     "dev": load_requirements("requirements/requirements-dev.txt"),
-    "ecosystem": load_requirements("requirements/requirements-ecosystem.txt"),
-    "log": load_requirements("requirements/requirements-log.txt"),
+    "cv": load_requirements("requirements/requirements-cv.txt"),
     "ml": load_requirements("requirements/requirements-ml.txt"),
-    "nlp": load_requirements("requirements/requirements-nlp.txt"),
-    "tune": load_requirements("requirements/requirements-tune.txt"),
+    "optuna": load_requirements("requirements/requirements-optuna.txt"),
+    "hydra": load_requirements("requirements/requirements-hydra.txt"),
 }
-extras["contrib"] = (
-    extras["cv"]
-    + extras["ecosystem"]
-    + extras["log"]
-    + extras["ml"]
-    + extras["nlp"]
-    + extras["tune"]
-)
+# extras["contrib"] = (
+#     extras["cv"]
+#     + extras["ecosystem"]
+#     + extras["log"]
+#     + extras["ml"]
+#     + extras["nlp"]
+#     + extras["tune"]
+# )
 
 # Meta dependency groups.
 all_deps = []

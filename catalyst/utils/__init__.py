@@ -1,11 +1,6 @@
 # flake8: noqa
-"""
-All utils are gathered in :py:mod:`catalyst.utils` for easier access.
 
-.. note::
-    Everything from :py:mod:`catalyst.contrib.utils` is included in :py:mod:`catalyst.utils`
-"""
-
+from catalyst.settings import IS_HYDRA_AVAILABLE, IS_PRUNING_AVAILABLE, IS_QUANTIZATION_AVAILABLE
 
 from catalyst.utils.checkpoint import (
     load_checkpoint,
@@ -13,8 +8,11 @@ from catalyst.utils.checkpoint import (
     save_checkpoint,
     unpack_checkpoint,
 )
-from catalyst.utils.components import process_components
+
+# from catalyst.utils.components import process_components
 from catalyst.utils.config import load_config, save_config
+
+# @TODO: remove, rewrite, etc
 from catalyst.utils.distributed import (
     get_nn_from_ddp_module,
     get_slurm_params,
@@ -30,13 +28,19 @@ from catalyst.utils.distributed import (
     initialize_apex,
     assert_fp16_available,
 )
+
+if IS_HYDRA_AVAILABLE:
+    # @TODO: move to dl
+    from catalyst.utils.hydra_config import prepare_hydra_config
+
+
 from catalyst.utils.loaders import (
     get_loaders_from_params,
     validate_loaders,
     get_loader,
-    get_native_batch_from_loader,
-    get_native_batch_from_loaders,
 )
+
+# @TODO: cleanup
 from catalyst.utils.misc import (
     copy_directory,
     format_metric,
@@ -58,72 +62,64 @@ from catalyst.utils.misc import (
     make_tuple,
     pairwise,
     find_value_ids,
+    get_by_keys,
 )
 from catalyst.utils.numpy import get_one_hot
-from catalyst.utils.parser import parse_config_args, parse_args_uargs
-from catalyst.utils.scripts import (
-    import_module,
-    dump_code,
-    dump_python_files,
-    prepare_config_api_components,
-    dump_experiment_code,
-    distributed_cmd_run,
-)
+
+# @TODO: return
+# if IS_PRUNING_AVAILABLE:
+#     from catalyst.utils.pruning import prune_model, remove_reparametrization
+
+# @TODO: return
+# if IS_QUANTIZATION_AVAILABLE:
+#     from catalyst.utils.quantization import (
+#         save_quantized_model,
+#         quantize_model_from_checkpoint,
+#     )
+
+# from catalyst.utils.scripts import (
+#     import_module,
+#     dump_code,
+#     get_config_runner,
+# )
 from catalyst.utils.swa import (
     average_weights,
     get_averaged_weights_by_path_mask,
 )
-from catalyst.utils.sys import (
-    get_environment_vars,
-    list_conda_packages,
-    list_pip_packages,
-    dump_environment,
-)
+
+# from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import (
-    get_optimal_inner_init,
-    outer_init,
-    reset_weights_if_possible,
-    any2device,
-    get_activation_fn,
-    get_available_gpus,
-    get_device,
     get_optimizable_params,
     get_optimizer_momentum,
     get_optimizer_momentum_list,
+    set_optimizer_momentum,
+    get_device,
+    get_available_gpus,
+    get_activation_fn,
+    any2device,
     prepare_cudnn,
     process_model_params,
-    set_optimizer_momentum,
     get_requires_grad,
     set_requires_grad,
     get_network_output,
     detach,
     trim_tensors,
-)
-from catalyst.utils.tracing import (
-    trace_model,
-    trace_model_from_checkpoint,
-    trace_model_from_runner,
-    get_trace_name,
-    save_traced_model,
-    load_traced_model,
+    normalize,
+    convert_labels2list,
+    get_optimal_inner_init,
+    outer_init,
+    reset_weights_if_possible,
 )
 
-from catalyst.settings import IS_PRUNING_AVAILABLE
+# @TODO: return
+# from catalyst.utils.tracing import (
+#     trace_model,
+#     trace_model_from_checkpoint,
+#     trace_model_from_runner,
+#     get_trace_name,
+#     save_traced_model,
+#     load_traced_model,
+# )
 
-if IS_PRUNING_AVAILABLE:
-    from catalyst.utils.pruning import prune_model, remove_reparametrization
-
-from catalyst.settings import IS_QUANTIZATION_AVAILABLE
-
-if IS_QUANTIZATION_AVAILABLE:
-    from catalyst.utils.quantization import (
-        save_quantized_model,
-        quantize_model_from_checkpoint,
-    )
-
-from catalyst.settings import IS_HYDRA_AVAILABLE
-
-if IS_HYDRA_AVAILABLE:
-    from catalyst.utils.hydra_config import prepare_hydra_config
 
 from catalyst.contrib.utils import *

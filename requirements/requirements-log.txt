@@ -1,5 +1,0 @@
-alchemy
-plotly>=4.1.0
-neptune-client
-visdom
-wandb

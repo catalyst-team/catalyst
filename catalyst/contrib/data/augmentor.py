@@ -31,9 +31,7 @@ class Augmentor:
     def __call__(self, dict_: dict):
         """Applies the augmentation."""
         if self.input_key is not None:
-            output = self.augment_fn(
-                **{self.input_key: dict_[self.dict_key]}, **self.kwargs
-            )
+            output = self.augment_fn(**{self.input_key: dict_[self.dict_key]}, **self.kwargs)
         else:
             output = self.augment_fn(dict_[self.dict_key], **self.kwargs)
 
@@ -74,9 +72,7 @@ class AugmentorKeys:
     """Augmentation abstraction to match input and augmentations keys."""
 
     def __init__(
-        self,
-        dict2fn_dict: Union[Dict[str, str], List[str]],
-        augment_fn: Callable,
+        self, dict2fn_dict: Union[Dict[str, str], List[str]], augment_fn: Callable,
     ):
         """
         Args:
@@ -100,18 +96,12 @@ class AugmentorKeys:
             dict: dictionaty with augmented data
         """
         # link keys from dict_ with augment_fn keys
-        data = {
-            fn_key: dictionary[dict_key]
-            for dict_key, fn_key in self.dict2fn_dict.items()
-        }
+        data = {fn_key: dictionary[dict_key] for dict_key, fn_key in self.dict2fn_dict.items()}
 
         augmented = self.augment_fn(**data)
 
         # link keys from augment_fn back to dict_ keys
-        results = {
-            dict_key: augmented[fn_key]
-            for dict_key, fn_key in self.dict2fn_dict.items()
-        }
+        results = {dict_key: augmented[fn_key] for dict_key, fn_key in self.dict2fn_dict.items()}
 
         return {**dictionary, **results}
 

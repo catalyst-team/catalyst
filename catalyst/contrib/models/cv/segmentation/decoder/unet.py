@@ -6,9 +6,7 @@ import torch
 from torch import nn
 
 from catalyst.contrib.models.cv.segmentation.blocks.core import DecoderBlock
-from catalyst.contrib.models.cv.segmentation.blocks.unet import (
-    DecoderConcatBlock,
-)
+from catalyst.contrib.models.cv.segmentation.blocks.unet import DecoderConcatBlock
 from catalyst.contrib.models.cv.segmentation.decoder.core import DecoderSpec
 
 
@@ -66,12 +64,8 @@ class UNetDecoder(DecoderSpec):
         # features from encoders blocks
         reversed_features = list(reversed(x[:-1]))
 
-        for _i, (decoder_block, encoder_output) in enumerate(
-            zip(self.blocks, reversed_features)
-        ):
-            decoder_outputs.append(
-                decoder_block(decoder_outputs[-1], encoder_output)
-            )
+        for _i, (decoder_block, encoder_output) in enumerate(zip(self.blocks, reversed_features)):
+            decoder_outputs.append(decoder_block(decoder_outputs[-1], encoder_output))
 
         return decoder_outputs
 

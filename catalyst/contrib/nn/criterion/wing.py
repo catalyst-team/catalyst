@@ -34,9 +34,7 @@ def wing_loss(
     idx_smaller = diff_abs < width
     idx_bigger = diff_abs >= width
 
-    loss[idx_smaller] = width * torch.log(
-        1 + diff_abs[idx_smaller] / curvature
-    )
+    loss[idx_smaller] = width * torch.log(1 + diff_abs[idx_smaller] / curvature)
 
     c = width - width * math.log(1 + width / curvature)
     loss[idx_bigger] = loss[idx_bigger] - c
@@ -55,9 +53,6 @@ class WingLoss(nn.Module):
     It has been proposed in `Wing Loss for Robust Facial Landmark Localisation
     with Convolutional Neural Networks`_.
 
-    Examples:
-        @TODO: Docs. Contribution is welcome.
-
     Adapted from:
     https://github.com/BloodAxe/pytorch-toolbelt
 
@@ -65,21 +60,15 @@ class WingLoss(nn.Module):
         Neural Networks: https://arxiv.org/abs/1711.06753
     """
 
-    def __init__(
-        self, width: int = 5, curvature: float = 0.5, reduction: str = "mean"
-    ):
+    def __init__(self, width: int = 5, curvature: float = 0.5, reduction: str = "mean"):
         """
         Args:
             @TODO: Docs. Contribution is welcome.
         """
         super().__init__()
-        self.loss_fn = partial(
-            wing_loss, width=width, curvature=curvature, reduction=reduction
-        )
+        self.loss_fn = partial(wing_loss, width=width, curvature=curvature, reduction=reduction)
 
-    def forward(
-        self, outputs: torch.Tensor, targets: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """
         Args:
             @TODO: Docs. Contribution is welcome.

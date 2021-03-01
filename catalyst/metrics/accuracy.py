@@ -1,165 +1,194 @@
-from typing import Optional, Sequence, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
-
 import torch
 
-from catalyst.metrics.functional import process_multilabel_components
-from catalyst.utils.torch import get_activation_fn
+from catalyst.metrics.additive import AdditiveValueMetric
+from catalyst.metrics.functional.accuracy import accuracy, multilabel_accuracy
+from catalyst.metrics.functional.misc import get_default_topk_args
+from catalyst.metrics.metric import ICallbackBatchMetric
 
 
-def accuracy(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    topk: Sequence[int] = (1,),
-    activation: Optional[str] = None,
-) -> Sequence[torch.Tensor]:
+class AccuracyMetric(ICallbackBatchMetric):
     """
-    Computes multiclass accuracy@topk for the specified values of `topk`.
-
-    Args:
-        outputs: model outputs, logits
-            with shape [bs; num_classes]
-        targets: ground truth, labels
-            with shape [bs; 1]
-        activation: activation to use for model output
-        topk: `topk` for accuracy@topk computing
-
-    Returns:
-        list with computed accuracy@topk
-
-    Example:
-        >>> accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
-        >>>     ]),
-        >>>     targets=torch.tensor([0, 1, 2]),
-        >>> )
-        [tensor([1.])]
-        >>> accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 1, 0],
-        >>>     ]),
-        >>>     targets=torch.tensor([0, 1, 2]),
-        >>> )
-        [tensor([0.6667])]
-        >>> accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
-        >>>     ]),
-        >>>     targets=torch.tensor([0, 1, 2]),
-        >>>     topk=[1, 3],
-        >>> )
-        [tensor([1.]), tensor([1.])]
-        >>> accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 1, 0],
-        >>>     ]),
-        >>>     targets=torch.tensor([0, 1, 2]),
-        >>>     topk=[1, 3],
-        >>> )
-        [tensor([0.6667]), tensor([1.])]
+    This metric computes accuracy for multiclass classification case.
+    It computes mean value of accuracy and it's approximate std value
+    (note that it's not a real accuracy std but std of accuracy over batch mean values).
     """
-    activation_fn = get_activation_fn(activation)
-    outputs = activation_fn(outputs)
 
-    max_k = max(topk)
-    batch_size = targets.size(0)
+    def __init__(
+        self,
+        topk_args: List[int] = None,
+        num_classes: int = None,
+        compute_on_call: bool = True,
+        prefix: str = None,
+        suffix: str = None,
+    ):
+        """
+        Init AccuracyMetric
 
-    if len(outputs.shape) == 1 or outputs.shape[1] == 1:
-        # binary accuracy
-        pred = outputs.t()
-    else:
-        # multiclass accuracy
-        _, pred = outputs.topk(max_k, 1, True, True)  # noqa: WPS425
-        pred = pred.t()
-    correct = pred.eq(targets.long().view(1, -1).expand_as(pred))
+        Args:
+            topk_args: list of `topk` for accuracy@topk computing
+            num_classes: number of classes
+            compute_on_call: if True, computes and returns metric value during metric call
+            prefix: metric prefix
+            suffix: metric suffix
+        """
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        self.metric_name_mean = f"{self.prefix}accuracy{self.suffix}"
+        self.metric_name_std = f"{self.prefix}accuracy{self.suffix}/std"
+        self.topk_args: List[int] = topk_args or get_default_topk_args(num_classes)
+        self.additive_metrics: List[AdditiveValueMetric] = [
+            AdditiveValueMetric() for _ in range(len(self.topk_args))
+        ]
 
-    output = []
-    for k in topk:
-        correct_k = (
-            correct[:k].contiguous().view(-1).float().sum(0, keepdim=True)
-        )
-        output.append(correct_k.mul_(1.0 / batch_size))
-    return output
+    def reset(self) -> None:
+        """Reset all fields"""
+        for metric in self.additive_metrics:
+            metric.reset()
+
+    def update(self, logits: torch.Tensor, targets: torch.Tensor) -> List[float]:
+        """
+        Update metric value with accuracy for new data and return intermediate metrics values.
+
+        Args:
+            logits: tensor of logits
+            targets: tensor of targets
+
+        Returns:
+            list of accuracy@k values
+        """
+        values = accuracy(logits, targets, topk=self.topk_args)
+        values = [v.item() for v in values]
+        for value, metric in zip(values, self.additive_metrics):
+            metric.update(value, len(targets))
+        return values
+
+    def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+        """
+        Update metric value with accuracy for new data and return intermediate metrics
+        values in key-value format.
+
+        Args:
+            logits: tensor of logits
+            targets: tensor of targets
+
+        Returns:
+            dict of accuracy@k values
+        """
+        values = self.update(logits=logits, targets=targets)
+        output = {
+            f"{self.prefix}accuracy{key:02d}{self.suffix}": value
+            for key, value in zip(self.topk_args, values)
+        }
+        output[self.metric_name_mean] = output[f"{self.prefix}accuracy01{self.suffix}"]
+        return output
+
+    def compute(self) -> Tuple[List[float], List[float]]:
+        """
+        Compute accuracy for all data
+
+        Returns:
+            list of mean values, list of std values
+        """
+        means, stds = zip(*(metric.compute() for metric in self.additive_metrics))
+        return means, stds
+
+    def compute_key_value(self) -> Dict[str, float]:
+        """
+        Compute accuracy for all data and return results in key-value format
+
+        Returns:
+            dict of metrics
+        """
+        means, stds = self.compute()
+        output_mean = {
+            f"{self.prefix}accuracy{key:02d}{self.suffix}": value
+            for key, value in zip(self.topk_args, means)
+        }
+        output_std = {
+            f"{self.prefix}accuracy{key:02d}{self.suffix}/std": value
+            for key, value in zip(self.topk_args, stds)
+        }
+        output_mean[self.metric_name_mean] = output_mean[f"{self.prefix}accuracy01{self.suffix}"]
+        output_std[self.metric_name_std] = output_std[f"{self.prefix}accuracy01{self.suffix}/std"]
+        return {**output_mean, **output_std}
 
 
-def multilabel_accuracy(
-    outputs: torch.Tensor,
-    targets: torch.Tensor,
-    threshold: Union[float, torch.Tensor],
-) -> torch.Tensor:
+class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
     """
-    Computes multilabel accuracy for the specified activation and threshold.
-
-    Args:
-        outputs: NxK tensor that for each of the N examples
-            indicates the probability of the example belonging to each of
-            the K classes, according to the model.
-        targets: binary NxK tensort that encodes which of the K
-            classes are associated with the N-th input
-            (eg: a row [0, 1, 0, 1] indicates that the example is
-            associated with classes 2 and 4)
-        threshold: threshold for for model output
-
-    Returns:
-        computed multilabel accuracy
-
-    Example:
-        >>> multilabel_accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0],
-        >>>         [0, 1],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1, 0],
-        >>>         [0, 1],
-        >>>     ]),
-        >>>     threshold=0.5,
-        >>> )
-        tensor([1.])
-        >>> multilabel_accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1.0, 0.0],
-        >>>         [0.6, 1.0],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1, 0],
-        >>>         [0, 1],
-        >>>     ]),
-        >>>     threshold=0.5,
-        >>> )
-        tensor(0.7500)
-        >>> multilabel_accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1.0, 0.0],
-        >>>         [0.4, 1.0],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1, 0],
-        >>>         [0, 1],
-        >>>     ]),
-        >>>     threshold=0.5,
-        >>> )
-        tensor(1.0)
+    This metric computes accuracy for multilabel classification case.
+    It computes mean value of accuracy and it's approximate std value
+    (note that it's not a real accuracy std but std of accuracy over batch mean values).
     """
-    outputs, targets, _ = process_multilabel_components(
-        outputs=outputs, targets=targets
-    )
 
-    outputs = (outputs > threshold).long()
-    output = (targets.long() == outputs.long()).sum().float() / np.prod(
-        targets.shape
-    )
-    return output
+    def __init__(
+        self,
+        compute_on_call: bool = True,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None,
+        thresholds: Union[float, torch.Tensor] = 0.5,
+    ):
+        """
+        Init MultilabelAccuracyMetric
+
+        Args:
+            compute_on_call: if True, computes and returns metric value during metric call
+            prefix: metric prefix
+            suffix: metric suffix
+            thresholds: thresholds to predict labels
+        """
+        super().__init__(compute_on_call=compute_on_call)
+        self.prefix = prefix or ""
+        self.suffix = suffix or ""
+        self.metric_name_mean = f"{self.prefix}accuracy{self.suffix}"
+        self.metric_name_std = f"{self.prefix}accuracy{self.suffix}/std"
+        self.thresholds = thresholds
+
+    def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> float:
+        """
+        Update metric value with accuracy for new data and return intermediate metric value.
+
+        Args:
+            outputs: tensor of outputs
+            targets: tensor of true answers
+
+        Returns:
+            accuracy metric for outputs and targets
+        """
+        metric = multilabel_accuracy(
+            outputs=outputs, targets=targets, threshold=self.thresholds
+        ).item()
+        super().update(value=metric, num_samples=np.prod(targets.shape))
+        return metric
+
+    def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+        """
+        Update metric value with accuracy for new data and return intermediate metric
+        value in key-value format.
+
+        Args:
+            outputs: tensor of outputs
+            targets: tensor of true answers
+
+        Returns:
+            accuracy metric for outputs and targets
+        """
+        metric = self.update(outputs=outputs, targets=targets)
+        return {self.metric_name_mean: metric}
+
+    def compute_key_value(self) -> Dict[str, float]:
+        """
+        Compute accuracy for all data and return results in key-value format
+
+        Returns:
+            dict of metrics
+        """
+        metric_mean, metric_std = self.compute()
+        return {
+            self.metric_name_mean: metric_mean,
+            self.metric_name_std: metric_std,
+        }
 
 
-__all__ = ["accuracy", "multilabel_accuracy"]
+__all__ = ["AccuracyMetric", "MultilabelAccuracyMetric"]

@@ -85,16 +85,16 @@ data_transform = Compose(
     [
         Augmentor(
             dict_key="features",
-            augment_fn=lambda x: torch.from_numpy(
-                x.copy().astype(np.float32) / 255.0
-            ).unsqueeze_(0),
+            augment_fn=lambda x: torch.from_numpy(x.copy().astype(np.float32) / 255.0).unsqueeze_(
+                0
+            ),
         ),
         Augmentor(dict_key="features", augment_fn=Normalize((0.5,), (0.5,)),),
         Augmentor(
             dict_key="targets",
-            augment_fn=lambda x: torch.from_numpy(
-                x.copy().astype(np.float32) / 255.0
-            ).unsqueeze_(0),
+            augment_fn=lambda x: torch.from_numpy(x.copy().astype(np.float32) / 255.0).unsqueeze_(
+                0
+            ),
         ),
     ]
 )
@@ -123,9 +123,7 @@ logdir = "./logs/segmentation_notebook"
 model = Unet(num_classes=1, in_channels=1, num_channels=32, num_blocks=2)
 criterion = nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
-scheduler = torch.optim.lr_scheduler.MultiStepLR(
-    optimizer, milestones=[10, 20, 40], gamma=0.3
-)
+scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[10, 20, 40], gamma=0.3)
 
 # model runner
 runner = SupervisedRunner()
@@ -204,16 +202,14 @@ data_transform = Compose(
     [
         Augmentor(
             dict_key="features",
-            augment_fn=lambda x: torch.from_numpy(
-                x.copy().astype(np.float32) / 255.0
-            ).unsqueeze_(0),
+            augment_fn=lambda x: torch.from_numpy(x.copy().astype(np.float32) / 255.0).unsqueeze_(
+                0
+            ),
         ),
         Augmentor(dict_key="features", augment_fn=Normalize((0.5,), (0.5,)),),
         Augmentor(
             dict_key="targets",
-            augment_fn=lambda x: torch.from_numpy(
-                x.copy().astype(np.float32) / 255.0
-            ),
+            augment_fn=lambda x: torch.from_numpy(x.copy().astype(np.float32) / 255.0),
         ),
     ]
 )
@@ -247,14 +243,13 @@ data_transform = Compose(
     [
         Augmentor(
             dict_key="features",
-            augment_fn=lambda x: torch.from_numpy(
-                x.copy().astype(np.float32) / 255.0
-            ).unsqueeze_(0),
+            augment_fn=lambda x: torch.from_numpy(x.copy().astype(np.float32) / 255.0).unsqueeze_(
+                0
+            ),
         ),
         Augmentor(dict_key="features", augment_fn=Normalize((0.5,), (0.5,)),),
         Augmentor(
-            dict_key="targets",
-            augment_fn=lambda x: torch.from_numpy(transform_targets(x)),
+            dict_key="targets", augment_fn=lambda x: torch.from_numpy(transform_targets(x)),
         ),
     ]
 )

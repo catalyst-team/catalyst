@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 from enum import IntFlag
 
 if TYPE_CHECKING:
@@ -48,6 +48,14 @@ class ICallback:
             runner: IRunner instance.
         """
         pass
+
+    # def handle_batch(self, runner: "IRunner") -> None:
+    #     """Event handler for exception case.
+    #
+    #     Args:
+    #         runner: IRunner instance.
+    #     """
+    #     pass
 
     def on_batch_end(self, runner: "IRunner") -> None:
         """Event handler for batch end.
@@ -129,15 +137,10 @@ class CallbackOrder(IntFlag):
       like sum different losses into one.
     - **Optimizer** (60) - optimizer step,
       requires computed metrics for optimization.
-    - **Validation** (80) - validation step,
-      computes validation metrics subset based on all metrics.
-    - **Scheduler** (100) - scheduler step,
+    - **Scheduler** (80) - scheduler step,
       in `ReduceLROnPlateau` case
       requires computed validation metrics for optimizer schedule.
-    - **Logging** (120) - logging step,
-      logs metrics to Console/Tensorboard/Alchemy_,
-      requires computed metrics.
-    - **External** (200) - additional callbacks with custom logic,
+    - **External** (100) - additional callbacks with custom logic,
       like InferenceCallbacks
 
     Nevertheless, you always can create CustomCallback with any order,
@@ -157,10 +160,8 @@ class CallbackOrder(IntFlag):
     Metric = metric = 20  # noqa: WPS115
     MetricAggregation = metric_aggregation = 40  # noqa: WPS115
     Optimizer = optimizer = 60  # noqa: WPS115
-    Validation = validation = 80  # noqa: WPS115
-    Scheduler = scheduler = 100  # noqa: WPS115
-    Logging = logging = 120  # noqa: WPS115
-    External = external = 200  # noqa: WPS115
+    Scheduler = scheduler = 80  # noqa: WPS115
+    External = external = 100  # noqa: WPS115
 
 
 class CallbackScope(IntFlag):
@@ -211,15 +212,11 @@ class Callback(ICallback):
         - :py:mod:`catalyst.callbacks.criterion.CriterionCallback`
         - :py:mod:`catalyst.callbacks.optimizer.OptimizerCallback`
         - :py:mod:`catalyst.callbacks.scheduler.SchedulerCallback`
-        - :py:mod:`catalyst.callbacks.logging.TensorboardLogger`
         - :py:mod:`catalyst.callbacks.checkpoint.CheckpointCallback`
     """
 
     def __init__(
-        self,
-        order: int,
-        node: int = CallbackNode.all,
-        scope: int = CallbackScope.stage,
+        self, order: int, node: int = CallbackNode.all, scope: int = CallbackScope.stage,
     ):
         """Callback initializer.
 
@@ -245,13 +242,9 @@ class CallbackWrapper(Callback):
                 default ``True``
         """
         if base_callback is None or not isinstance(base_callback, Callback):
-            raise ValueError(
-                f"Expected callback but got - {type(base_callback)}!"
-            )
+            raise ValueError(f"Expected callback but got - {type(base_callback)}!")
         super().__init__(
-            order=base_callback.order,
-            node=base_callback.node,
-            scope=base_callback.scope,
+            order=base_callback.order, node=base_callback.node, scope=base_callback.scope,
         )
         self.callback = base_callback
         self._is_enabled = enable_callback
@@ -340,7 +333,130 @@ class CallbackWrapper(Callback):
             self.callback.on_exception(runner)
 
 
-WrapperCallback = CallbackWrapper
+class CallbackList(Callback):
+    def __init__(
+        self,
+        callbacks: List[Callback],
+        order: int,
+        node: int = CallbackNode.all,
+        scope: int = CallbackScope.stage,
+    ):
+        super().__init__(order=order, node=node, scope=scope)
+        self.callbacks = callbacks
+
+    def on_experiment_start(self, runner: "IRunner") -> None:
+        """Event handler for experiment start.
+
+        Args:
+            runner: IRunner instance.
+
+        .. note::
+            This event work only on IRunner.
+        """
+        for callback in self.callbacks:
+            callback.on_experiment_start(runner)
+
+    def on_stage_start(self, runner: "IRunner") -> None:
+        """Event handler for stage start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        for callback in self.callbacks:
+            callback.on_stage_start(runner)
+
+    def on_epoch_start(self, runner: "IRunner") -> None:
+        """Event handler for epoch start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        for callback in self.callbacks:
+            callback.on_epoch_start(runner)
+
+    def on_loader_start(self, runner: "IRunner") -> None:
+        """Event handler for loader start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        for callback in self.callbacks:
+            callback.on_loader_start(runner)
+
+    def on_batch_start(self, runner: "IRunner") -> None:
+        """Event handler for batch start.
+
+        Args:
+            runner: IRunner instance.
+        """
+        for callback in self.callbacks:
+            callback.on_batch_start(runner)
+
+    # def handle_batch(self, runner: "IRunner") -> None:
+    #     """Event handler for exception case.
+    #
+    #     Args:
+    #         runner: IRunner instance.
+    #     """
+    #     pass
+
+    def on_batch_end(self, runner: "IRunner") -> None:
+        """Event handler for batch end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        for callback in self.callbacks:
+            callback.on_batch_end(runner)
+
+    def on_loader_end(self, runner: "IRunner") -> None:
+        """Event handler for loader end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        for callback in self.callbacks:
+            callback.on_loader_end(runner)
+
+    def on_epoch_end(self, runner: "IRunner") -> None:
+        """Event handler for epoch end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        for callback in self.callbacks:
+            callback.on_epoch_end(runner)
+
+    def on_stage_end(self, runner: "IRunner") -> None:
+        """Event handler for stage end.
+
+        Args:
+            runner: IRunner instance.
+        """
+        for callback in self.callbacks:
+            callback.on_stage_end(runner)
+
+    def on_experiment_end(self, runner: "IRunner") -> None:
+        """Event handler for experiment end.
+
+        Args:
+            runner: IRunner instance.
+
+        .. note::
+            This event work only on IRunner.
+        """
+        for callback in self.callbacks:
+            callback.on_experiment_end(runner)
+
+    def on_exception(self, runner: "IRunner") -> None:
+        """Event handler for exception case.
+
+        Args:
+            runner: IRunner instance.
+        """
+        for callback in self.callbacks:
+            callback.on_exception(runner)
+
 
 __all__ = [
     "Callback",
@@ -348,4 +464,5 @@ __all__ = [
     "CallbackOrder",
     "CallbackScope",
     "CallbackWrapper",
+    "CallbackList",
 ]

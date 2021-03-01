@@ -4,13 +4,10 @@ from pathlib import Path
 
 from catalyst.contrib.data.cv.reader import ImageReader
 from catalyst.contrib.data.reader import ReaderCompose, ScalarReader
-from catalyst.contrib.utils.cv.image import has_image_extension
+from catalyst.contrib.utils.image import has_image_extension
 from catalyst.data.dataset.torch import PathsDataset
 
 
-# @TODO: change arch to primitives-based
-# contrib/data/... datasets/transforms/mixins/... cv/nlp
-# it's much easier to handle dependencies
 class ImageFolderDataset(PathsDataset):
     """
     Dataset class that derives targets from samples filesystem paths.
@@ -63,10 +60,7 @@ class ImageFolderDataset(PathsDataset):
                 [
                     ImageReader(input_key="image", rootpath=rootpath),
                     ScalarReader(
-                        input_key=target_key,
-                        output_key=target_key,
-                        dtype=int,
-                        default_value=-1,
+                        input_key=target_key, output_key=target_key, dtype=int, default_value=-1,
                     ),
                 ]
             ),

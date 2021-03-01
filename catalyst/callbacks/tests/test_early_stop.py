@@ -5,10 +5,12 @@ from catalyst.callbacks import EarlyStoppingCallback
 
 def test_patience1():
     """Tests EarlyStoppingCallback."""
-    early_stop = EarlyStoppingCallback(1)
+    early_stop = EarlyStoppingCallback(
+        patience=1, loader_key="valid", metric_key="loss", minimize=True
+    )
     runner = MagicMock()
-    type(runner).stage = PropertyMock(return_value="training")
-    type(runner).valid_metrics = PropertyMock(return_value={"loss": 0.001})
+    type(runner).stage_key = PropertyMock(return_value="training")
+    type(runner).epoch_metrics = PropertyMock(return_value={"valid": {"loss": 0.001}})
     stop_mock = PropertyMock(return_value=False)
     type(runner).need_early_stop = stop_mock
 

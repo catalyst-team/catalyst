@@ -6,33 +6,11 @@ from omegaconf import DictConfig
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.hydra_config import prepare_hydra_config
 from catalyst.utils.misc import set_global_seed
-from catalyst.utils.scripts import (
-    distributed_cmd_run,
-    dump_code,
-    import_module,
-)
+from catalyst.utils.scripts import dump_code, import_module
 from catalyst.utils.sys import dump_environment
 from catalyst.utils.torch import prepare_cudnn
 
 logger = logging.getLogger(__name__)
-
-
-def main_worker(cfg: DictConfig):
-    set_global_seed(cfg.args.seed)
-    prepare_cudnn(cfg.args.deterministic, cfg.args.benchmark)
-
-    import_module(hydra.utils.to_absolute_path(cfg.args.expdir))
-
-    experiment = hydra.utils.instantiate(cfg.experiment, cfg=cfg)
-    runner = hydra.utils.instantiate(cfg.runner)
-
-    if experiment.logdir is not None and get_rank() <= 0:
-        dump_environment(cfg, experiment.logdir)
-        dump_code(
-            hydra.utils.to_absolute_path(cfg.args.expdir), experiment.logdir
-        )
-
-    runner.run_experiment(experiment)
 
 
 @hydra.main()
@@ -45,7 +23,17 @@ def main(cfg: DictConfig):
 
     """
     cfg = prepare_hydra_config(cfg)
-    distributed_cmd_run(main_worker, cfg.args.distributed, cfg)
+    set_global_seed(cfg.args.seed)
+    prepare_cudnn(cfg.args.deterministic, cfg.args.benchmark)
+
+    import_module(hydra.utils.to_absolute_path(cfg.args.expdir))
+    runner = hydra.utils.instantiate(cfg.runner, cfg=cfg)
+
+    if get_rank() <= 0:
+        dump_environment(logdir=runner.logdir, config=cfg)
+        dump_code(expdir=hydra.utils.to_absolute_path(cfg.args.expdir), logdir=runner.logdir)
+
+    runner.run()
 
 
 __all__ = ["main"]

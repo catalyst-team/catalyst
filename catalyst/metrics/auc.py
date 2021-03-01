@@ -1,134 +1,40 @@
-from typing import Tuple
-
-import numpy as np
+from typing import Dict
 
 import torch
-from torch.nn import functional as F
+
+from catalyst.metrics.functional.auc import auc
+from catalyst.metrics.metric import ICallbackLoaderMetric
 
 
-def _binary_auc(
-    scores: torch.Tensor, targets: torch.Tensor
-) -> Tuple[float, np.ndarray, np.ndarray]:
-    """
-    Binary AUC computation.
+class AUCMetric(ICallbackLoaderMetric):
+    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        self.metric_name = f"{self.prefix}auc{self.suffix}"
+        self.scores = []
+        self.targets = []
 
-    Args:
-        scores: estimated scores from a model.
-        targets:ground truth (correct) target values.
+    def reset(self, num_batches, num_samples) -> None:
+        self.scores = []
+        self.targets = []
 
-    Returns:
-        Tuple[float, np.ndarray, np.ndarray]: measured roc-auc,
-        true positive rate, false positive rate
-    """
-    targets = targets.numpy()
+    def update(self, scores: torch.Tensor, targets: torch.Tensor) -> None:
+        self.scores.append(scores.cpu().detach())
+        self.targets.append(targets.cpu().detach())
 
-    # sorting the arrays
-    scores, sortind = torch.sort(scores, dim=0, descending=True)
-    scores = scores.numpy()
-    sortind = sortind.numpy()
+    def compute(self) -> torch.Tensor:
+        targets = torch.cat(self.targets)
+        scores = torch.cat(self.scores)
+        score = auc(outputs=scores, targets=targets)
+        return score
 
-    # creating the roc curve
-    tpr = np.zeros(shape=(scores.size + 1), dtype=np.float64)
-    fpr = np.zeros(shape=(scores.size + 1), dtype=np.float64)
-
-    for i in range(1, scores.size + 1):
-        if targets[sortind[i - 1]] == 1:
-            tpr[i] = tpr[i - 1] + 1
-            fpr[i] = fpr[i - 1]
-        else:
-            tpr[i] = tpr[i - 1]
-            fpr[i] = fpr[i - 1] + 1
-
-    tpr /= targets.sum() * 1.0  # noqa: WPS345
-    fpr /= (targets - 1.0).sum() * -1.0
-
-    # calculating area under curve using trapezoidal rule
-    n = tpr.shape[0]
-    h = fpr[1:n] - fpr[: n - 1]
-    sum_h = np.zeros(fpr.shape)
-    sum_h[: n - 1] = h
-    sum_h[1:n] += h
-    area = (sum_h * tpr).sum() / 2.0
-
-    return area, tpr, fpr
+    def compute_key_value(self) -> Dict[str, float]:
+        per_class_auc = self.compute()
+        output = {
+            f"{self.metric_name}/class_{i:02d}": value.item()
+            for i, value in enumerate(per_class_auc)
+        }
+        output[self.metric_name] = per_class_auc.mean().item()
+        return output
 
 
-def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-    """
-    AUC metric.
-
-    Args:
-        outputs: [data_len; num_classes] estimated scores from a model.
-        targets: [data_len; num_classes] ground truth (correct) target values.
-
-    Returns:
-        torch.Tensor: Tensor with [num_classes] shape of per-class-aucs
-
-    Example:
-        >>> auc(
-        >>>     outputs=torch.tensor([
-        >>>         [0.9, 0.1],
-        >>>         [0.1, 0.9],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1, 0],
-        >>>         [0, 1],
-        >>>     ]),
-        >>> )
-        tensor([1., 1.])
-        >>> auc(
-        >>>     outputs=torch.tensor([
-        >>>         [0.9],
-        >>>         [0.8],
-        >>>         [0.7],
-        >>>         [0.6],
-        >>>         [0.5],
-        >>>         [0.4],
-        >>>         [0.3],
-        >>>         [0.2],
-        >>>         [0.1],
-        >>>         [0.0],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [0],
-        >>>         [1],
-        >>>         [1],
-        >>>         [1],
-        >>>         [1],
-        >>>         [1],
-        >>>         [1],
-        >>>         [0],
-        >>>         [0],
-        >>>         [0],
-        >>>     ]),
-        >>> )
-        tensor([0.7500])
-    """
-    if len(outputs) == 0:
-        return 0.5
-
-    if len(outputs.shape) < 2:
-        outputs.unsqueeze_(dim=1)
-    if torch.max(outputs) > 1:
-        outputs = torch.sigmoid(outputs)
-    num_classes = outputs.shape[1]
-
-    if len(targets.shape) < 2:
-        targets = (
-            F.one_hot(targets, num_classes).float()
-            if num_classes > 1
-            else targets.unsqueeze_(dim=1)
-        )
-
-    assert outputs.shape == targets.shape
-
-    per_class_auc = []
-    for class_i in range(outputs.shape[1]):
-        per_class_auc.append(
-            _binary_auc(outputs[:, class_i], targets[:, class_i])[0]
-        )
-    output = torch.Tensor(per_class_auc)
-    return output
-
-
-__all__ = ["auc"]
+__all__ = ["AUCMetric"]

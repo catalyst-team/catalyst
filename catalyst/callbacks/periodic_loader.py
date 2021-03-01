@@ -1,6 +1,6 @@
+# @TODO: recheck the logic here
 from typing import Mapping, TYPE_CHECKING
 from collections import OrderedDict
-import copy
 
 from torch.utils.data import DataLoader
 
@@ -51,22 +51,25 @@ class PeriodicLoaderCallback(Callback):
 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(
+        self, valid_loader_key: str, valid_metric_key: str, minimize: bool = True, **kwargs
+    ):
         """
         Args:
             kwargs: loader names and their run periods.
         """
-        super().__init__(order=CallbackOrder.validation - 1)
+        super().__init__(order=CallbackOrder.internal)
 
-        self.valid_loader: str = None
+        self.valid_loader: str = valid_loader_key
+        self.valid_metric: str = valid_metric_key
+        self.minimize_metric: bool = minimize
         self.loaders: Mapping[str, DataLoader] = OrderedDict()
 
         self.loader_periods = {}
         for loader, period in kwargs.items():
             if not isinstance(period, (int, float)):
                 raise TypeError(
-                    "Expected loader period type is int/float "
-                    f"but got {type(period)}!"
+                    "Expected loader period type is int/float " f"but got {type(period)}!"
                 )
             period = int(period)
             if period < 0:
@@ -86,34 +89,23 @@ class PeriodicLoaderCallback(Callback):
         for name, loader in runner.loaders.items():
             self.loaders[name] = loader
         # stage validation loader
-        self.valid_loader = copy.copy(runner.valid_loader)
-        is_loaders_match = all(
-            loader in runner.loaders for loader in self.loader_periods.keys()
-        )
-        is_same_loaders_number = len(self.loader_periods) == len(
-            runner.loaders
-        )
+        is_loaders_match = all(loader in runner.loaders for loader in self.loader_periods.keys())
+        is_same_loaders_number = len(self.loader_periods) == len(runner.loaders)
         if is_same_loaders_number and is_loaders_match:
             # find potential epoch with zero loaders
             zero_loaders_epochs = list(
                 filter(
-                    lambda n: all(
-                        (p == 0 or n % p != 0)
-                        for p in self.loader_periods.values()
-                    ),
-                    range(1, runner.num_epochs + 1),
+                    lambda n: all((p == 0 or n % p != 0) for p in self.loader_periods.values()),
+                    range(1, runner.stage_epoch_len + 1),
                 )
             )
             if len(zero_loaders_epochs) > 0:
                 epoch_with_err = zero_loaders_epochs[0]
-                raise ValueError(
-                    f"There will be no loaders in epoch {epoch_with_err}!"
-                )
+                raise ValueError(f"There will be no loaders in epoch {epoch_with_err}!")
 
-        if self.loader_periods.get(runner.valid_loader, 1) < 1:
+        if self.loader_periods.get(self.valid_loader, 1) < 1:
             raise ValueError(
-                f"Period for a validation loader ('{runner.valid_loader}') "
-                "should be > 0!"
+                f"Period for a validation loader ('{self.valid_loader}') " "should be > 0!"
             )
 
     def on_epoch_start(self, runner: "IRunner") -> None:
@@ -132,7 +124,7 @@ class PeriodicLoaderCallback(Callback):
         Raises:
             ValueError: if there are no loaders in epoch
         """
-        epoch_num = runner.epoch
+        epoch_num = runner.stage_epoch_step
         # loaders to use in current epoch
         epoch_loaders = OrderedDict()
         for name, loader in self.loaders.items():
@@ -143,25 +135,21 @@ class PeriodicLoaderCallback(Callback):
         if len(epoch_loaders) == 0:
             raise ValueError(f"There is no loaders in epoch {epoch_num}!")
         first_loader = next(iter(epoch_loaders.keys()))
-        runner.valid_loader = (
-            self.valid_loader
-            if self.valid_loader in epoch_loaders
-            else first_loader
-        )
+        # runner.valid_loader = (
+        #     self.valid_loader if self.valid_loader in epoch_loaders else first_loader
+        # )
         runner.loaders = epoch_loaders
 
     def on_epoch_end(self, runner: "IRunner") -> None:
-        """Check if validation metric should be
-        dropped for current epoch.
+        """Check if validation metric should be dropped for current epoch.
 
         Args:
             runner: current runner
         """
-        valid_metric_name = f"{runner.valid_loader}_{runner.main_metric}"
         if self.valid_loader not in runner.loaders:
-            runner.epoch_metrics[valid_metric_name] = (
-                float("+inf") if runner.minimize_metric else float("-inf")
-            )
+            runner.epoch_metrics[self.valid_loader] = {
+                self.valid_metric: float("+inf") if self.minimize_metric else float("-inf")
+            }
 
 
 __all__ = ["PeriodicLoaderCallback"]

@@ -7,12 +7,7 @@ from torch import quantization
 from torch.nn import Module
 
 from catalyst.typing import Model
-from catalyst.utils import (
-    load_checkpoint,
-    load_config,
-    prepare_config_api_components,
-    unpack_checkpoint,
-)
+from catalyst.utils import get_config_runner, load_checkpoint, load_config, unpack_checkpoint
 
 if TYPE_CHECKING:
     from catalyst.experiments import ConfigExperiment
@@ -50,8 +45,7 @@ def save_quantized_model(
         if output is None:
             if logdir is None:
                 raise ValueError(
-                    "One of `logdir`, `out_dir` or `out_model` "
-                    "should be specified"
+                    "One of `logdir`, `out_dir` or `out_model` " "should be specified"
                 )
             output: Path = Path(logdir) / "quantized"
 
@@ -102,15 +96,13 @@ def quantize_model_from_checkpoint(
 
     logger.info("Import experiment and runner from logdir")
     experiment: ConfigExperiment = None
-    experiment, _, _ = prepare_config_api_components(
-        expdir=expdir, config=config
-    )
+    experiment, _, _ = get_config_runner(expdir=expdir, config=config)
 
     logger.info(f"Load model state from checkpoints/{checkpoint_name}.pth")
     if stage is None:
         stage = list(experiment.stages)[0]
 
-    model = experiment.get_model(stage)
+    model = experiment._get_model(stage)
     checkpoint = load_checkpoint(checkpoint_path)
     unpack_checkpoint(checkpoint, model=model)
 

@@ -36,9 +36,7 @@ class MNIST(_MNIST):
 class Experiment(ConfigExperiment):
     """``ConfigExperiment`` with MNIST dataset."""
 
-    def get_datasets(
-        self, stage: str, **kwargs
-    ) -> "OrderedDict[str, Dataset]":
+    def get_datasets(self, stage: str, **kwargs) -> "OrderedDict[str, Dataset]":
         """Provides train/validation subsets from MNIST dataset.
 
         Args:

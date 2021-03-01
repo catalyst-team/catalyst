@@ -1,3 +1,4 @@
+# @TODO: make the same API for tracing/onnx/pruning/quantization
 from typing import Callable, List, Optional, TYPE_CHECKING, Union
 import warnings
 
@@ -18,9 +19,7 @@ PRUNING_FN = {  # noqa: WPS407
 
 
 def _wrap_pruning_fn(pruning_fn, *args, **kwargs):
-    return lambda module, name, amount: pruning_fn(
-        module, name, amount, *args, **kwargs
-    )
+    return lambda module, name, amount: pruning_fn(module, name, amount, *args, **kwargs)
 
 
 class PruningCallback(Callback):
@@ -92,13 +91,9 @@ class PruningCallback(Callback):
                             "If you are using ln_unstructured you"
                             "need to specify n in callback args"
                         )
-                    self.pruning_fn = _wrap_pruning_fn(
-                        prune.ln_structured, dim=dim, n=l_norm
-                    )
+                    self.pruning_fn = _wrap_pruning_fn(prune.ln_structured, dim=dim, n=l_norm)
                 else:
-                    self.pruning_fn = _wrap_pruning_fn(
-                        PRUNING_FN[pruning_fn], dim=dim
-                    )
+                    self.pruning_fn = _wrap_pruning_fn(PRUNING_FN[pruning_fn], dim=dim)
             else:  # unstructured
                 self.pruning_fn = PRUNING_FN[pruning_fn]
         else:
@@ -113,9 +108,7 @@ class PruningCallback(Callback):
                 "You disabled pruning pruning both on epoch and stage end."
                 "Model won't be pruned by this callback."
             )
-        self.remove_reparametrization_on_stage_end = (
-            remove_reparametrization_on_stage_end
-        )
+        self.remove_reparametrization_on_stage_end = remove_reparametrization_on_stage_end
         self.keys_to_prune = keys_to_prune
         self.amount = amount
         self.reinitialize_after_pruning = reinitialize_after_pruning
@@ -130,7 +123,7 @@ class PruningCallback(Callback):
         Args:
             runner: runner for your experiment
         """
-        if self.prune_on_epoch_end and runner.num_epochs != runner.epoch:
+        if self.prune_on_epoch_end and runner.stage_epoch_step != runner.stage_epoch_len:
             prune_model(
                 model=runner.model,
                 pruning_fn=self.pruning_fn,
