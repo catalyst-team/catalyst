@@ -117,10 +117,11 @@ class ISupervisedRunner(IRunner):
         output = self._process_output(output)
         return output
 
-    # def on_batch_start(self, runner: "IRunner"):
-    #     """Event handler."""
-    #     self.batch = self._process_batch(self.batch)
-    #     super().on_batch_start(runner)
+    def on_batch_start(self, runner: "IRunner"):
+        """Event handler."""
+        # @TODO: could we remove the hack?
+        self.batch = self._process_batch(self.batch)
+        super().on_batch_start(runner)
 
     def handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
@@ -131,7 +132,7 @@ class ISupervisedRunner(IRunner):
             batch (Mapping[str, Any]): dictionary with data batches
                 from DataLoader.
         """
-        self.batch = self._process_batch(self.batch)
+        # self.batch = self._process_batch(self.batch)
         self.batch = {**batch, **self.forward(batch)}
 
 
