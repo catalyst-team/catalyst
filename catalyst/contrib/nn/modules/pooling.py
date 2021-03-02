@@ -214,27 +214,20 @@ class GeM2d(nn.Module):
     .. _GeM\: Generalized Mean Pooling:
         https://arxiv.org/abs/1711.02512
 
-    Example:
+    Examples:
 
-        >>>x = torch.randn(2,1280,8,8) #output of last convolutional layer of the network(in this case efficientnet-b0)
-        >>>gem_pool = GeM2d(p = 2.2 , p_trainable = False)
-        >>>op = gem_pool(x)
-        >>>op.shape
+        >>> x = torch.randn(2,1280,8,8) #output of last convolutional layer of the network
+        >>> gem_pool = GeM2d(p = 2.2 , p_trainable = False)
+        >>> op = gem_pool(x)
+        >>> op.shape
         torch.Size([1, 1280, 1, 1])
-
-        >>>op
+        >>> op
         tensor([[[[1.0660]],
-
              [[1.1599]],
-
              [[0.5934]],
-
              ...,
-
              [[0.6889]],
-
              [[1.0361]],
-
              [[0.9717]]]], grad_fn=<PowBackward0>)
 
    """
@@ -253,11 +246,13 @@ class GeM2d(nn.Module):
         super().__init__()
         if p_trainable:
             # if p_trainable is True and the value of p is set to math.inf or float("inf") then set self.p = math.inf (Since it will be max pooling as p-> inf)
-            self.p = (
-                nn.Parameter(torch.ones(1) * p)
-                if p not in [math.inf, float("inf")]
-                else math.inf
-            )
+
+            if p not in [math.inf, float("inf")]:
+
+                self.p = nn.Parameter(torch.ones(1) * p)
+            else:
+
+                self.p = math.inf
 
         else:
             self.p = p
