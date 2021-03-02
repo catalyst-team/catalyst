@@ -84,12 +84,20 @@ class IEngine(ABC):
         pass
 
     @abstractmethod
-    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,) -> Dict:
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
         pass
 
     @abstractmethod
     def unpack_checkpoint(
-        self, checkpoint: Dict, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        checkpoint: Dict,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> None:
         """@TODO: docs"""
         pass
