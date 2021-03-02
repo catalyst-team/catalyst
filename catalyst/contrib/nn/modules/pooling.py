@@ -1,5 +1,7 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
+import math
+
 import torch
 from torch import nn
 from torch.nn import functional as F
@@ -211,6 +213,30 @@ class GeM2d(nn.Module):
 
     .. _GeM\: Generalized Mean Pooling:
         https://arxiv.org/abs/1711.02512
+
+    Example:
+
+        >>>x = torch.randn(2,1280,8,8) #output of last convolutional layer of the network(in this case efficientnet-b0)
+        >>>gem_pool = GeM2d(p = 2.2 , p_trainable = False)
+        >>>op = gem_pool(x)
+        >>>op.shape
+        torch.Size([1, 1280, 1, 1])
+
+        >>>op
+        tensor([[[[1.0660]],
+
+             [[1.1599]],
+
+             [[0.5934]],
+
+             ...,
+
+             [[0.6889]],
+
+             [[1.0361]],
+
+             [[0.9717]]]], grad_fn=<PowBackward0>)
+
    """
 
     def __init__(
@@ -226,7 +252,12 @@ class GeM2d(nn.Module):
         """
         super().__init__()
         if p_trainable:
-            self.p = nn.Parameter(torch.ones(1) * p)
+            # if p_trainable is True and the value of p is set to math.inf or float("inf") then set self.p = math.inf (Since it will be max pooling as p-> inf)
+            self.p = (
+                nn.Parameter(torch.ones(1) * p)
+                if p not in [math.inf, float("inf")]
+                else math.inf
+            )
 
         else:
             self.p = p
@@ -238,9 +269,14 @@ class GeM2d(nn.Module):
         """Forward call."""
 
         h, w = x.shape[2:]
-        x = x.clamp(min=self.eps).pow(self.p)
 
-        return F.avg_pool2d(x, kernel_size=(h, w)).pow(1.0 / self.p)
+        if self.p in [math.inf, float("inf")]:
+            # if p-> inf return max pooled features
+            return F.max_pool2d(x, kernel_size=(h, w))
+
+        else:
+            x = x.clamp(min=self.eps).pow(self.p)
+            return F.avg_pool2d(x, kernel_size=(h, w)).pow(1.0 / self.p)
 
     @staticmethod
     def out_features(in_features):
