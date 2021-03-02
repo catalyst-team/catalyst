@@ -588,7 +588,9 @@ class IRunner(ICallback, ILogger, ABC):
     def on_loader_end(self, runner: "IRunner"):
         """Event handler."""
         self.log_metrics(metrics=self.loader_metrics, scope="loader")
-        self.epoch_metrics[self.loader_key] = {key: float(value) for key, value in self.loader_metrics.items()}
+        self.epoch_metrics[self.loader_key] = {
+            key: float(value) for key, value in self.loader_metrics.items()
+        }
 
     def on_epoch_end(self, runner: "IRunner"):
         """Event handler."""
