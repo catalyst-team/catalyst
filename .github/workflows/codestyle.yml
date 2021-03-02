@@ -108,9 +108,8 @@ jobs:
           pip list
         shell: bash
 # <- standard block end ->
-# catalyst-check-codestyle --line-length 99
 
       - name: check codestyle
         run: |
-          catalyst-check-codestyle --line-length 99
+          catalyst-check-codestyle
           make check-docs

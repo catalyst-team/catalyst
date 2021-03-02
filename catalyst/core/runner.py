@@ -597,7 +597,10 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler."""
-        self.engine.deinit_components()
+        from catalyst.utils.distributed import get_rank
+
+        if get_rank() == 0:
+            self.engine.deinit_components()
 
     def on_experiment_end(self, runner: "IRunner"):
         """Event handler."""
@@ -685,7 +688,7 @@ class IRunner(ICallback, ILogger, ABC):
                 # ddp-device branch
                 world_size = self.engine.world_size
                 torch.multiprocessing.spawn(
-                    self._run_stage, args=(world_size), nprocs=world_size, join=True,
+                    self._run_stage, args=(world_size,), nprocs=world_size, join=True,
                 )
                 # raise NotImplementedError()
         self._run_event("on_experiment_end")

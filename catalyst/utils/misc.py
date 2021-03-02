@@ -63,6 +63,7 @@ def set_global_seed(seed: int) -> None:
     else:
         torch.manual_seed(seed)
         if torch.cuda.is_available():
+            torch.cuda.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
     try:
         import tensorflow as tf

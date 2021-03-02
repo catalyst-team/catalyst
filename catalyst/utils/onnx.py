@@ -22,7 +22,7 @@ def convert_to_onnx(
     opset_version: int = 9,
     do_constant_folding: bool = False,
 ):
-    """TODO
+    """@TODO: docs.
 
     Args:
         model (torch.nn.Module): [description]
