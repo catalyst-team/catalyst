@@ -62,7 +62,7 @@ ml_required = false
 nlp_required = false
 tune_required = false
 nmslib_required = false
-pandas_required = true
+ml_required = true
 EOT
 
 # check if fail if requirements not installed

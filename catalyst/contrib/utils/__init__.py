@@ -92,14 +92,16 @@ try:
         render_figure_to_tensor,
     )
 except ModuleNotFoundError as ex:
-    if SETTINGS.matplotlib_required:
+    if SETTINGS.ml_required:
         logger.warning(
-            "matplotlib is not available, to install matplotlib," " run `pip install matplotlib`."
+            "catalyst[ml] requirements are not available, to install them,"
+            " run `pip install catalyst[ml]`."
         )
         raise ex
 except ImportError as ex:
-    if SETTINGS.matplotlib_required:
+    if SETTINGS.ml_required:
         logger.warning(
-            "matplotlib is not available, to install matplotlib," " run `pip install matplotlib`."
+            "catalyst[ml] requirements are not available, to install them,"
+            " run `pip install catalyst[ml]`."
         )
         raise ex

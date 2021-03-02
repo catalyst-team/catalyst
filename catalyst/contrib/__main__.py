@@ -68,18 +68,23 @@ try:
 
     COMMANDS["project-embeddings"] = project_embeddings
 except ModuleNotFoundError as ex:
-    if SETTINGS.pandas_required:
-        logger.error("pandas not available, to install pandas," " run `pip install pandas`.")
+    if SETTINGS.ml_required:
+        logger.error(
+            "catalyst[ml] requirements are not available, to install them,"
+            " run `pip install catalyst[ml]`."
+        )
         raise ex
 except ImportError as ex:
-    if SETTINGS.pandas_required:
-        logger.warning("pandas not available, to install pandas," " run `pip install pandas`.")
+    if SETTINGS.ml_required:
+        logger.error(
+            "catalyst[ml] requirements are not available, to install them,"
+            " run `pip install catalyst[ml]`."
+        )
         raise ex
 
 
 try:
     import pandas  # noqa: F401 F811
-    import scipy  # noqa: F401 F811
     import sklearn  # noqa: F401 F811
 
     from catalyst.contrib.scripts import split_dataframe, tag2label
@@ -147,28 +152,28 @@ try:
     COMMANDS["process-images"] = process_images
     # COMMANDS["image2embedding"] = image2embedding
 except ModuleNotFoundError as ex:  # noqa: WPS440
-    if SETTINGS.cv_required and SETTINGS.pandas_required:
-        logger.error(
-            "catalyst-cv/pandas are not available, to install them,"
-            + " run `pip install catalyst[cv] pandas`."
+    if SETTINGS.cv_required and SETTINGS.ml_required:
+        logger.warning(
+            "catalyst-cv/catalyst-ml are not available, to install them,"
+            + " run `pip install catalyst[cv] catalyst[ml]`."
         )
         raise ex
-    elif SETTINGS.cv_required or SETTINGS.pandas_required:
+    elif SETTINGS.cv_required or SETTINGS.ml_required:
         logger.warning(
-            "catalyst-cv/pandas are not available, to install them,"
-            + " run `pip install catalyst[cv] pandas`."
+            "catalyst-cv/catalyst-ml are not available, to install them,"
+            + " run `pip install catalyst[cv] catalyst[ml]`."
         )
 except ImportError as ex:  # noqa: WPS440
-    if SETTINGS.cv_required and SETTINGS.pandas_required:
-        logger.error(
-            "catalyst-cv/pandas are not available, to install them,"
-            + " run `pip install catalyst[cv] pandas`."
+    if SETTINGS.cv_required and SETTINGS.ml_required:
+        logger.warning(
+            "catalyst-cv/catalyst-ml are not available, to install them,"
+            + " run `pip install catalyst[cv] catalyst[ml]`."
         )
         raise ex
-    elif SETTINGS.cv_required or SETTINGS.pandas_required:
+    elif SETTINGS.cv_required or SETTINGS.ml_required:
         logger.warning(
-            "catalyst-cv/pandas are not available, to install them,"
-            + " run `pip install catalyst[cv] pandas`."
+            "catalyst-cv/catalyst-ml are not available, to install them,"
+            + " run `pip install catalyst[cv] catalyst[ml]`."
         )
 
 # try:
@@ -179,25 +184,25 @@ except ImportError as ex:  # noqa: WPS440
 #
 #     COMMANDS["text2embedding"] = text2embedding
 # except ModuleNotFoundError as ex:  # noqa: WPS440
-#     if SETTINGS.nlp_required and SETTINGS.pandas_required:
+#     if SETTINGS.nlp_required and SETTINGS.ml_required:
 #         logger.error(
 #             "catalyst-nlp/pandas are not available, to install them,"
 #             + " run `pip install catalyst[nlp] pandas`."
 #         )
 #         raise ex
-#     elif SETTINGS.nlp_required or SETTINGS.pandas_required:
+#     elif SETTINGS.nlp_required or SETTINGS.ml_required:
 #         logger.warning(
 #             "catalyst-nlp/pandas are not available, to install them,"
 #             + " run `pip install catalyst[nlp] pandas`."
 #         )
 # except ImportError as ex:  # noqa: WPS440
-#     if SETTINGS.nlp_required and SETTINGS.pandas_required:
+#     if SETTINGS.nlp_required and SETTINGS.ml_required:
 #         logger.error(
 #             "catalyst-nlp/pandas are not available, to install them,"
 #             + " run `pip install catalyst[nlp] pandas`."
 #         )
 #         raise ex
-#     elif SETTINGS.nlp_required or SETTINGS.pandas_required:
+#     elif SETTINGS.nlp_required or SETTINGS.ml_required:
 #         logger.warning(
 #             "catalyst-nlp/pandas are not available, to install them,"
 #             + " run `pip install catalyst[nlp] pandas`."

@@ -79,96 +79,44 @@ class Settings(FrozenClass):
 
     def __init__(  # noqa: D107
         self,
-        # CV
+        # [subpackages]
         cv_required: bool = False,
-        albumentations_required: Optional[bool] = None,
-        kornia_required: Optional[bool] = None,
-        segmentation_models_required: Optional[bool] = None,
-        use_libjpeg_turbo: bool = False,
-        # LOG
-        log_required: bool = False,
-        alchemy_required: Optional[bool] = None,
-        neptune_required: Optional[bool] = None,
-        wandb_required: Optional[bool] = None,
-        plotly_required: Optional[bool] = None,
-        # ML
         ml_required: bool = False,
-        ipython_required: Optional[bool] = None,
-        matplotlib_required: Optional[bool] = None,
-        scipy_required: Optional[bool] = None,
-        pandas_required: Optional[bool] = None,
-        sklearn_required: Optional[bool] = None,
-        git_required: Optional[bool] = None,
-        # NLP
-        nlp_required: bool = False,
-        transformers_required: Optional[bool] = None,
-        # TUNE
-        tune_required: bool = False,
+        # [integrations]
+        hydra_required: Optional[bool] = False,
+        # nmslib_required: Optional[bool] = False,
         optuna_required: Optional[bool] = None,
-        # KNN
-        nmslib_required: Optional[bool] = False,
-        # extras
+        # [logging]
+        # alchemy_required: Optional[bool] = None,
+        # neptune_required: Optional[bool] = None,
+        # mlflow_required: Optional[bool] = None,
+        # wandb_required: Optional[bool] = None,
+        # [extras]
         use_lz4: bool = False,
         use_pyarrow: bool = False,
-        telegram_logger_token: Optional[str] = None,
-        telegram_logger_chat_id: Optional[str] = None,
-        # HYDRA
-        hydra_required: Optional[bool] = False,
+        use_libjpeg_turbo: bool = False,
     ):
-        # [catalyst]
+        # [subpackages]
         self.cv_required: bool = cv_required
-        self.log_required: bool = log_required
         self.ml_required: bool = ml_required
-        self.nlp_required: bool = nlp_required
-        self.tune_required: bool = tune_required
 
-        # [catalyst-cv]
-        self.albumentations_required: bool = self._optional_value(
-            albumentations_required, default=cv_required
-        )
-        self.kornia_required: bool = self._optional_value(kornia_required, default=cv_required)
-        self.segmentation_models_required: bool = self._optional_value(
-            segmentation_models_required, default=cv_required
-        )
-        self.use_libjpeg_turbo: bool = use_libjpeg_turbo
+        # [integrations]
+        self.hydra_required: bool = hydra_required
+        # self.nmslib_required: bool = nmslib_required
+        self.optuna_required: bool = optuna_required
 
-        # [catalyst-log]
-        self.alchemy_required: bool = self._optional_value(alchemy_required, default=log_required)
-        self.neptune_required: bool = self._optional_value(neptune_required, default=log_required)
-        self.wandb_required: bool = self._optional_value(wandb_required, default=log_required)
-        self.plotly_required: bool = self._optional_value(plotly_required, default=log_required)
+        # [logging]
+        # self.alchemy_required: bool = alchemy_required
+        # self.neptune_required: bool = neptune_required
+        # self.mlflow_required: bool = mlflow_required
+        # self.wandb_required: bool = wandb_required
 
-        # [catalyst-ml]
-        self.scipy_required: bool = self._optional_value(scipy_required, default=ml_required)
-        self.matplotlib_required: bool = self._optional_value(
-            matplotlib_required, default=ml_required
-        )
-        self.pandas_required: bool = self._optional_value(pandas_required, default=ml_required)
-        self.sklearn_required: bool = self._optional_value(sklearn_required, default=ml_required)
-        self.ipython_required: bool = self._optional_value(ipython_required, default=ml_required)
-        self.git_required: bool = self._optional_value(git_required, default=ml_required)
-
-        # [catalyst-nlp]
-        self.transformers_required: bool = self._optional_value(
-            transformers_required, default=nlp_required
-        )
-
-        # [catalyst-tune]
-        self.optuna_required: bool = self._optional_value(optuna_required, default=tune_required)
-
-        # [catalyst-knn]
-        self.nmslib_required: bool = nmslib_required
-
-        # [catalyst-extras]
+        # [extras]
         self.use_lz4: bool = use_lz4
         self.use_pyarrow: bool = use_pyarrow
-        self.telegram_logger_token: str = telegram_logger_token
-        self.telegram_logger_chat_id: str = telegram_logger_chat_id
+        self.use_libjpeg_turbo: bool = use_libjpeg_turbo
 
-        # [catalyst-hydra]
-        self.hydra_required: bool = hydra_required
-
-        # [catalyst-global]
+        # [global]
         # stages
         self.stage_train_prefix: str = "train"
         self.stage_valid_prefix: str = "valid"

@@ -93,3 +93,4 @@ jobs:
           cd examples && bash mnist_stages/run_hydra.sh && cd ..
           cd examples && bash mnist_stages/run_tune.sh && cd ..
           bash bin/workflows/check_projector.sh
+          bash bin/workflows/check_settings.sh

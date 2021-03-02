@@ -25,8 +25,8 @@ try:
 except ImportError as ex:
     if SETTINGS.optuna_required:
         logger.warning(
-            "catalyst[tune] requirements are not available, to install them,"
-            " run `pip install catalyst[tune]`."
+            "catalyst[optuna] requirements are not available, to install them,"
+            " run `pip install catalyst[optuna]`."
         )
         raise ex
 
