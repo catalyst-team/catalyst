@@ -490,6 +490,10 @@ class IRunner(ICallback, ILogger, ABC):
         self._setup_loaders()
         self._setup_components()
         self._setup_callbacks()
+        self.log_hparams(
+            hparams=self.hparams,
+            scope=runner.stage_key
+        )
 
     def on_epoch_start(self, runner: "IRunner"):
         """Event handler."""

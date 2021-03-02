@@ -21,6 +21,7 @@ from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
+from catalyst.loggers.mlflow import MlflowLogger
 from catalyst.runners.misc import do_lr_linear_scaling, get_model_parameters
 from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
@@ -145,6 +146,8 @@ class HydraRunner(IRunner):
             loggers["_tensorboard"] = TensorboardLogger(
                 logdir=os.path.join(self._logdir, "tensorboard")
             )
+        if not is_logger_exists(MlflowLogger):
+            loggers["_mlflow"] = MlflowLogger()
 
         return loggers
 

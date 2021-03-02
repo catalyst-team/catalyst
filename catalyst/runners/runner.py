@@ -23,6 +23,7 @@ from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.runners.supervised import ISupervisedRunner
+from catalyst.loggers.mlflow import MlflowLogger
 from catalyst.settings import IS_CUDA_AVAILABLE
 from catalyst.typing import (
     Criterion,
@@ -143,6 +144,8 @@ class Runner(IRunner):
             loggers["_tensorboard"] = TensorboardLogger(
                 logdir=os.path.join(self._logdir, "tensorboard")
             )
+        if not is_logger_exists(MlflowLogger):
+            loggers["_mlflow"] = MlflowLogger()
         return loggers
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":

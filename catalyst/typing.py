@@ -3,10 +3,19 @@ All Catalyst custom types are defined in this module.
 """
 from typing import Dict, Union
 
+import numpy as np
+from pathlib import Path
+from numbers import Number
+import PIL
+
 import torch
 from torch import nn, optim
 from torch.optim import lr_scheduler
 from torch.utils import data
+
+Directory = Path
+File = Path
+Image = Union[PIL.Image.Image, np.ndarray]
 
 Model = nn.Module
 Criterion = nn.Module
@@ -22,6 +31,10 @@ RunnerOptimizer = Union[Optimizer, Dict[str, Optimizer]]
 RunnerScheduler = Union[Scheduler, Dict[str, Scheduler]]
 
 __all__ = [
+    "Number",
+    "Directory",
+    "File",
+    "Image",
     "Model",
     "Criterion",
     "Optimizer",
