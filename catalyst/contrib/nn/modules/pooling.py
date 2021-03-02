@@ -245,7 +245,7 @@ class GeM2d(nn.Module):
         """
         super().__init__()
         if p_trainable:
-            # if p_trainable is True and the value of p is set to math.inf or float("inf") then set self.p = math.inf (Since it will be max pooling as p-> inf)
+            # if p_trainable is True and the value of p is set to math.inf
 
             if p not in [math.inf, float("inf")]:
 
