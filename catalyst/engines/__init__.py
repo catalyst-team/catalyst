@@ -21,14 +21,18 @@ if IS_AMP_AVAILABLE:
 else:
     # replacement
     from catalyst.engines.device import DeviceEngine as AMPEngine
-    from catalyst.engines.distributed import DistributedDataParallelEngine as DistributedDataParallelAMPEngine
+    from catalyst.engines.distributed import (
+        DistributedDataParallelEngine as DistributedDataParallelAMPEngine,
+    )
 
 if IS_APEX_AVAILABLE:
     from catalyst.engines.apex import APEXEngine, DistributedDataParallelApexEngine
 else:
     # replacement
     from catalyst.engines.device import DeviceEngine as APEXEngine
-    from catalyst.engines.distributed import DistributedDataParallelEngine as DistributedDataParallelApexEngine
+    from catalyst.engines.distributed import (
+        DistributedDataParallelEngine as DistributedDataParallelApexEngine,
+    )
 
 
 # TODO: add option to create other engines (amp/apex) from string
@@ -115,3 +119,9 @@ __all__ = [
     "DistributedDataParallelEngine",
     "process_engine",
 ]
+
+if IS_AMP_AVAILABLE:
+    __all__ += ["AMPEngine", "DistributedDataParallelAMPEngine"]
+
+if IS_APEX_AVAILABLE:
+    __all__ += ["APEXEngine", "DistributedDataParallelApexEngine"]

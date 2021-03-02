@@ -32,19 +32,21 @@ class CustomExperiment(IRunner):
         self._logdir = logdir
 
     def get_engine(self):
-        return DistributedDataParallelEngine()
+        return DistributedDataParallelEngine(port="22222")
 
     def get_callbacks(self, stage: str) -> Dict[str, Callback]:
         return {
-            "criterion": CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
+            "criterion": CriterionCallback(
+                metric_key="loss", input_key="logits", target_key="targets"
+            ),
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             # "checkpoint": dl.CheckpointCallback(
             #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             # ),
             # "check": DeviceCheckCallback(),
-            "check2": LossMinimizationCallback("loss", logger=logger),
-            "check_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
+            "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
+            "test_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
         }
 
     @property
@@ -110,8 +112,9 @@ def test_config_ddp_engine():
             config={
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
-                "engine": {"engine": device},
+                "engine": {"_target_": "DistributedDataParallelEngine", "port": "33333"},
                 "args": {"logdir": logdir},
+                "loggers": {"console": {"_target_": "ConsoleLogger"}},
                 "stages": {
                     "stage1": {
                         "num_epochs": 10,
@@ -127,8 +130,11 @@ def test_config_ddp_engine():
                             },
                             "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
                             # "test_device": {"_target_": "DeviceCheckCallback", "assert_device": device},
-                            "test_loss_minimization": {"_target_": "LossMinimizationCallback", "key": "loss"},
-                            "check_world_size": {
+                            "test_loss_minimization": {
+                                "_target_": "LossMinimizationCallback",
+                                "key": "loss",
+                            },
+                            "test_world_size": {
                                 "_target_": "WorldSizeCheckCallback",
                                 "assert_world_size": NUM_CUDA_DEVICES,
                             },

@@ -32,14 +32,16 @@ class CustomRunner(IRunner):
 
     def get_callbacks(self, stage: str) -> Dict[str, Callback]:
         return {
-            "criterion": CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
+            "criterion": CriterionCallback(
+                metric_key="loss", input_key="logits", target_key="targets"
+            ),
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
             # "check": DeviceCheckCallback(),
-            "check2": LossMinimizationCallback("loss", logger=logger),
+            "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
         }
 
     @property
@@ -120,7 +122,10 @@ def run_train_with_config_experiment_parallel_device():
                             },
                             "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
                             # "test_device": {"_target_": "DeviceCheckCallback", "assert_device": device},
-                            "test_loss_minimization": {"_target_": "LossMinimizationCallback", "key": "loss"},
+                            "test_loss_minimization": {
+                                "_target_": "LossMinimizationCallback",
+                                "key": "loss",
+                            },
                         },
                     },
                 },
