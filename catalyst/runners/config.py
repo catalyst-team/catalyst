@@ -124,18 +124,19 @@ class ConfigRunner(IRunner):
         """@TODO: docs."""
         engine_params = self._config.get("engine")
 
-        # # @TODO: remove the trick
-        # try:
-        #     engine = REGISTRY.get_from_params(**engine_params)
-        # except:
-        engine = process_engine(**engine_params)
+        try:
+            engine = REGISTRY.get_from_params(**engine_params)
+        except:
+            engine = process_engine(**engine_params)
 
         return engine
 
     def get_loggers(self) -> Dict[str, ILogger]:
         """@TODO: docs."""
         loggers_params = self._config.get("loggers", {})
-        loggers = {key: REGISTRY.get_from_params(**params) for key, params in loggers_params.items()}
+        loggers = {
+            key: REGISTRY.get_from_params(**params) for key, params in loggers_params.items()
+        }
 
         is_logger_exists = lambda logger_fn: any(isinstance(x, logger_fn) for x in loggers.values())
         if not is_logger_exists(ConsoleLogger):
@@ -143,7 +144,9 @@ class ConfigRunner(IRunner):
         if self._logdir is not None and not is_logger_exists(CSVLogger):
             loggers["_csv"] = CSVLogger(logdir=self._logdir)
         if self._logdir is not None and not is_logger_exists(TensorboardLogger):
-            loggers["_tensorboard"] = TensorboardLogger(logdir=os.path.join(self._logdir, "tensorboard"))
+            loggers["_tensorboard"] = TensorboardLogger(
+                logdir=os.path.join(self._logdir, "tensorboard")
+            )
 
         return loggers
 
@@ -151,7 +154,10 @@ class ConfigRunner(IRunner):
         """@TODO: docs."""
         loaders_params = dict(self._stage_config[stage]["loaders"])
         loaders = get_loaders_from_params(
-            datasets_fn=partial(self.get_datasets, stage=stage), initial_seed=self.seed, stage=stage, **loaders_params,
+            datasets_fn=partial(self.get_datasets, stage=stage),
+            initial_seed=self.seed,
+            stage=stage,
+            **loaders_params,
         )
         return loaders
 
@@ -184,7 +190,8 @@ class ConfigRunner(IRunner):
 
         if key_value_flag:
             criterion = {
-                key: ConfigRunner.get_criterion_(**key_params) for key, key_params in params.items()  # noqa: WPS437
+                key: ConfigRunner.get_criterion_(**key_params)
+                for key, key_params in params.items()  # noqa: WPS437
             }
         else:
             criterion = REGISTRY.get_from_params(**params)
@@ -198,7 +205,9 @@ class ConfigRunner(IRunner):
         criterion = self._get_criterion_from_params(**criterion_params)
         return criterion
 
-    def _get_optimizer_from_params(self, model: RunnerModel, stage: str, **params) -> RunnerOptimizer:
+    def _get_optimizer_from_params(
+        self, model: RunnerModel, stage: str, **params
+    ) -> RunnerOptimizer:
         # @TODO 1: refactor; this method is too long
 
         # learning rate linear scaling
@@ -257,7 +266,9 @@ class ConfigRunner(IRunner):
 
                 optimizer[key] = self._get_optimizer_from_params(model=model, stage=stage, **params)
         else:
-            optimizer = self._get_optimizer_from_params(model=model, stage=stage, **optimizer_params)
+            optimizer = self._get_optimizer_from_params(
+                model=model, stage=stage, **optimizer_params
+            )
 
         return optimizer
 
@@ -272,7 +283,9 @@ class ConfigRunner(IRunner):
         if is_key_value:
             scheduler: Dict[str, Scheduler] = {}
             for key, scheduler_params in params.items():
-                scheduler[key] = ConfigRunner.get_scheduler_(**scheduler_params, optimizer=optimizer)  # noqa: WPS437
+                scheduler[key] = ConfigRunner.get_scheduler_(
+                    **scheduler_params, optimizer=optimizer
+                )  # noqa: WPS437
         else:
             scheduler = REGISTRY.get_from_params(**params, optimizer=optimizer)
         return scheduler
@@ -319,7 +332,9 @@ class ConfigRunner(IRunner):
             callbacks["_overfit"] = BatchOverfitCallback()
 
         if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
-            callbacks["_checkpoint"] = CheckpointCallback(logdir=os.path.join(self._logdir, "checkpoints"),)
+            callbacks["_checkpoint"] = CheckpointCallback(
+                logdir=os.path.join(self._logdir, "checkpoints"),
+            )
 
         return callbacks
 
@@ -337,7 +352,11 @@ class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
     ):
         """@TODO: docs."""
         ISupervisedRunner.__init__(
-            self, input_key=input_key, output_key=output_key, target_key=target_key, loss_key=loss_key,
+            self,
+            input_key=input_key,
+            output_key=output_key,
+            target_key=target_key,
+            loss_key=loss_key,
         )
         ConfigRunner.__init__(self, config=config)
 
