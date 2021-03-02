@@ -1,5 +1,5 @@
-import torch
 import numpy as np
+import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst import dl, utils
@@ -11,7 +11,7 @@ def prepare_experiment():
     utils.set_global_seed(42)
     num_samples, num_features, num_classes = int(1e4), int(1e1), 4
     X = torch.rand(num_samples, num_features)
-    y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
+    y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
     y = torch.nn.functional.one_hot(y, num_classes).double()
 
     # pytorch loaders
@@ -40,24 +40,28 @@ def test_aggregation_1():
         logdir="./logs/aggregation_1/",
         num_epochs=3,
         callbacks=[
-            dl.CriterionCallback(input_key="logits",
-                                 target_key="targets",
-                                 metric_key="loss_bce",
-                                 criterion_key="bce"),
-            dl.CriterionCallback(input_key="logits",
-                                 target_key="targets",
-                                 metric_key="loss_focal",
-                                 criterion_key="focal"),
+            dl.CriterionCallback(
+                input_key="logits",
+                target_key="targets",
+                metric_key="loss_bce",
+                criterion_key="bce",
+            ),
+            dl.CriterionCallback(
+                input_key="logits",
+                target_key="targets",
+                metric_key="loss_focal",
+                criterion_key="focal",
+            ),
             # loss aggregation
-            dl.MetricAggregationCallback(prefix='loss',
-                                         metrics={'loss_focal': 0.6, 'loss_bce': 0.4},
-                                         mode='weighted_sum'),
-        ]
+            dl.MetricAggregationCallback(
+                prefix="loss", metrics={"loss_focal": 0.6, "loss_bce": 0.4}, mode="weighted_sum"
+            ),
+        ],
     )
-    for loader in ['train', 'valid']:
+    for loader in ["train", "valid"]:
         metrics = runner.epoch_metrics[loader]
-        loss_1 = metrics['loss_bce'] * 0.4 + metrics['loss_focal'] * 0.6
-        loss_2 = metrics['loss']
+        loss_1 = metrics["loss_bce"] * 0.4 + metrics["loss_focal"] * 0.6
+        loss_2 = metrics["loss"]
         assert np.abs(loss_1 - loss_2) < 1e-5
 
 
@@ -70,8 +74,9 @@ def test_aggregation_2():
 
     def aggregation_function(metrics, runner):
         epoch = runner.stage_epoch_step
-        loss = (3 / 2 - epoch / 2) * metrics['loss_focal'] + (1 / 2 * epoch - 1 / 2) * metrics[
-            "loss_bce"]
+        loss = (3 / 2 - epoch / 2) * metrics["loss_focal"] + (1 / 2 * epoch - 1 / 2) * metrics[
+            "loss_bce"
+        ]
         return loss
 
     runner.train(
@@ -82,22 +87,25 @@ def test_aggregation_2():
         logdir="./logs/aggregation_2/",
         num_epochs=3,
         callbacks=[
-            dl.CriterionCallback(input_key="logits",
-                                 target_key="targets",
-                                 metric_key="loss_bce",
-                                 criterion_key="bce"),
-            dl.CriterionCallback(input_key="logits",
-                                 target_key="targets",
-                                 metric_key="loss_focal",
-                                 criterion_key="focal"),
+            dl.CriterionCallback(
+                input_key="logits",
+                target_key="targets",
+                metric_key="loss_bce",
+                criterion_key="bce",
+            ),
+            dl.CriterionCallback(
+                input_key="logits",
+                target_key="targets",
+                metric_key="loss_focal",
+                criterion_key="focal",
+            ),
             # loss aggregation
-            dl.MetricAggregationCallback(prefix='loss',
-                                         mode=aggregation_function),
-        ]
+            dl.MetricAggregationCallback(prefix="loss", mode=aggregation_function),
+        ],
     )
-    for loader in ['train', 'valid']:
+    for loader in ["train", "valid"]:
         metrics = runner.epoch_metrics[loader]
-        loss_1 = metrics['loss_bce']
-        loss_2 = metrics['loss']
+        loss_1 = metrics["loss_bce"]
+        loss_2 = metrics["loss"]
         assert np.abs(loss_1 - loss_2) < 1e-5
     return runner
