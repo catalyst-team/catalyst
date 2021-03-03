@@ -477,7 +477,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.trial = self.get_trial()
         self.engine = self.get_engine()
         self.loggers = self.get_loggers()
-        self.log_hparams(hparams=self.hparams)
+        self.log_hparams(hparams=self.hparams, scope="experiment")
 
     def on_stage_start(self, runner: "IRunner"):
         """Event handler."""
@@ -490,10 +490,7 @@ class IRunner(ICallback, ILogger, ABC):
         self._setup_loaders()
         self._setup_components()
         self._setup_callbacks()
-        self.log_hparams(
-            hparams=self.hparams,
-            scope=runner.stage_key
-        )
+        self.log_hparams(hparams=self.hparams, scope=runner.stage_key)
 
     def on_epoch_start(self, runner: "IRunner"):
         """Event handler."""

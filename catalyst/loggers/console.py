@@ -56,7 +56,8 @@ class ConsoleLogger(ILogger):
         experiment_key: str = None,
     ) -> None:
         """@TODO: docs."""
-        print(f"Hparams ({experiment_key}): {hparams}")
+        if scope == "experiment":
+            print(f"Hparams ({experiment_key}): {hparams}")
 
 
 __all__ = ["ConsoleLogger"]

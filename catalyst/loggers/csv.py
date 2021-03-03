@@ -72,7 +72,8 @@ class CSVLogger(ILogger):
         experiment_key: str = None,
     ) -> None:
         """@TODO: docs."""
-        save_config(config=hparams, path=os.path.join(self.logdir, "hparams.yml"))
+        if scope == "experiment":
+            save_config(config=hparams, path=os.path.join(self.logdir, "hparams.yml"))
 
     def flush_log(self) -> None:
         """@TODO: docs."""

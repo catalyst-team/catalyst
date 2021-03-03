@@ -2,12 +2,11 @@
 All Catalyst custom types are defined in this module.
 """
 from typing import Dict, Union
+from numbers import Number
+from pathlib import Path
 
 import numpy as np
-from pathlib import Path
-from numbers import Number
 import PIL
-
 import torch
 from torch import nn, optim
 from torch.optim import lr_scheduler
