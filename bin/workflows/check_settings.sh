@@ -10,8 +10,6 @@ pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-hydra.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
-pip uninstall -r requirements/requirements-onnx.txt -y
-pip uninstall -r requirements/requirements-onnx-gpu.txt -y
 pip uninstall -r requirements/requirements-optuna.txt -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
@@ -43,8 +41,6 @@ pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-hydra.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
-pip uninstall -r requirements/requirements-onnx.txt -y
-pip uninstall -r requirements/requirements-onnx-gpu.txt -y
 pip uninstall -r requirements/requirements-optuna.txt -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
@@ -124,8 +120,6 @@ pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-hydra.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
-pip uninstall -r requirements/requirements-onnx.txt -y
-pip uninstall -r requirements/requirements-onnx-gpu.txt -y
 pip uninstall -r requirements/requirements-optuna.txt -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
@@ -183,8 +177,6 @@ pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-hydra.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
-pip uninstall -r requirements/requirements-onnx.txt -y
-pip uninstall -r requirements/requirements-onnx-gpu.txt -y
 pip uninstall -r requirements/requirements-optuna.txt -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
@@ -222,8 +214,6 @@ pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-hydra.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
-pip uninstall -r requirements/requirements-onnx.txt -y
-pip uninstall -r requirements/requirements-onnx-gpu.txt -y
 pip uninstall -r requirements/requirements-optuna.txt -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \

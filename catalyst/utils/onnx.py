@@ -2,10 +2,13 @@ from typing import Dict, Iterable, List, Tuple, Union
 import os
 from pathlib import Path
 
-from onnxruntime.quantization import quantize_dynamic, QuantType
 import torch
 
+from catalyst.settings import SETTINGS
 from catalyst.tools.forward_wrapper import ModelForwardWrapper
+
+if SETTINGS.onnx_required:
+    from onnxruntime.quantization import quantize_dynamic, QuantType
 
 
 def convert_to_onnx(
@@ -24,7 +27,7 @@ def convert_to_onnx(
     Args:
         model (torch.nn.Module): [description]
         input_shape (Union[List, Tuple, torch.Size]): [description]
-        method_name (str, optional): Forwarf pass method to be converted. Defaults to "forward".
+        method_name (str, optional): Forward pass method to be converted. Defaults to "forward".
         input_names (Iterable, optional): [description]. Defaults to None.
         output_names (List[str], optional): [description]. Defaults to None.
         file (str, optional): [description]. Defaults to "model.onnx".

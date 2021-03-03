@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 import configparser
 import logging
 import os
@@ -86,111 +86,110 @@ except ModuleNotFoundError:
     IS_ML_AVAILABLE = False
 
 
+def _get_optional_value(is_required: Optional[bool], is_available: bool, assert_msg: str) -> bool:
+    if is_required is None:
+        return is_available
+    elif is_required:
+        assert is_available, assert_msg
+        return True
+    else:
+        return False
+
+
 class Settings(FrozenClass):
     """Catalyst settings."""
 
     def __init__(  # noqa: D107
         self,
         # [subpackages]
-        cv_required: bool = False,
-        ml_required: bool = False,
+        cv_required: Optional[bool] = None,
+        ml_required: Optional[bool] = None,
         # [integrations]
-        hydra_required: bool = False,
+        hydra_required: Optional[bool] = None,
         # nmslib_required: Optional[bool] = False,
-        optuna_required: bool = False,
+        optuna_required: Optional[bool] = None,
         # [engines]
-        amp_required: bool = False,
-        apex_required: bool = False,
-        xla_required: bool = False,
+        amp_required: Optional[bool] = None,
+        apex_required: Optional[bool] = None,
+        xla_required: Optional[bool] = None,
         # [dl-extras]
-        onnx_required: bool = False,
-        pruning_required: bool = False,
-        quantization_required: bool = False,
+        onnx_required: Optional[bool] = None,
+        pruning_required: Optional[bool] = None,
+        quantization_required: Optional[bool] = None,
         # [logging]
         # alchemy_required: Optional[bool] = None,
         # neptune_required: Optional[bool] = None,
         # mlflow_required: Optional[bool] = None,
         # wandb_required: Optional[bool] = None,
         # [extras]
-        use_lz4: bool = False,
-        use_pyarrow: bool = False,
-        use_libjpeg_turbo: bool = False,
+        use_lz4: Optional[bool] = None,
+        use_pyarrow: Optional[bool] = None,
+        use_libjpeg_turbo: Optional[bool] = None,
     ):
+        # True – use the package
+        # None – use the package if available
+        # False - block the package
         # [subpackages]
-        if cv_required:
-            assert IS_CV_AVAILABLE, (
-                "catalyst[cv] requirements are not available, to install them,"
-                " run `pip install catalyst[cv]`."
-            )
-        self.cv_required: bool = cv_required or IS_CV_AVAILABLE
-
-        if ml_required:
-            assert IS_ML_AVAILABLE, (
-                "catalyst[ml] requirements are not available, to install them,"
-                " run `pip install catalyst[ml]`."
-            )
-        self.ml_required: bool = ml_required or IS_ML_AVAILABLE
+        self.cv_required: bool = _get_optional_value(
+            cv_required,
+            IS_CV_AVAILABLE,
+            "catalyst[cv] is not available, to install it, run `pip install catalyst[cv]`.",
+        )
+        self.ml_required: bool = _get_optional_value(
+            ml_required,
+            IS_ML_AVAILABLE,
+            "catalyst[ml] is not available, to install it, run `pip install catalyst[ml]`.",
+        )
 
         # [integrations]
-        if hydra_required:
-            assert IS_HYDRA_AVAILABLE, (
-                "catalyst[hydra] requirements are not available, to install them,"
-                " run `pip install catalyst[hydra]`."
-            )
-        self.hydra_required: bool = hydra_required or IS_HYDRA_AVAILABLE
-
+        self.hydra_required: bool = _get_optional_value(
+            hydra_required,
+            IS_HYDRA_AVAILABLE,
+            "catalyst[hydra] is not available, to install it, run `pip install catalyst[hydra]`.",
+        )
         # self.nmslib_required: bool = nmslib_required
-
-        if optuna_required:
-            assert IS_OPTUNA_AVAILABLE, (
-                "catalyst[optuna] requirements are not available, to install them,"
-                " run `pip install catalyst[optuna]`."
-            )
-        self.optuna_required: bool = optuna_required or IS_OPTUNA_AVAILABLE
+        self.optuna_required: bool = _get_optional_value(
+            optuna_required,
+            IS_OPTUNA_AVAILABLE,
+            "catalyst[optuna] is not available, to install it, run `pip install catalyst[optuna]`.",
+        )
 
         # [engines]
-        if amp_required:
-            assert IS_AMP_AVAILABLE, (
-                "catalyst[amp] requirements are not available, to install them,"
-                " run `pip install catalyst[amp]`."
-            )
-        self.amp_required: bool = amp_required or IS_AMP_AVAILABLE
-
-        if apex_required:
-            assert IS_APEX_AVAILABLE, (
-                "catalyst[apex] requirements are not available, to install them,"
-                " run `pip install catalyst[apex]`."
-            )
-        self.apex_required: bool = apex_required or IS_APEX_AVAILABLE
-
-        if xla_required:
-            assert IS_XLA_AVAILABLE, (
-                "catalyst[xla] requirements are not available, to install them,"
-                " run `pip install catalyst[xla]`."
-            )
-        self.xla_required: bool = xla_required or IS_XLA_AVAILABLE
+        self.amp_required: bool = _get_optional_value(
+            amp_required,
+            IS_AMP_AVAILABLE,
+            "catalyst[amp] is not available, to install it, run `pip install catalyst[amp]`.",
+        )
+        self.apex_required: bool = _get_optional_value(
+            apex_required,
+            IS_APEX_AVAILABLE,
+            "catalyst[apex] is not available, to install it, run `pip install catalyst[apex]`.",
+        )
+        self.xla_required: bool = _get_optional_value(
+            xla_required,
+            IS_XLA_AVAILABLE,
+            "catalyst[xla] is not available, to install it, run `pip install catalyst[xla]`.",
+        )
 
         # [dl-extras]
-        if onnx_required:
-            assert IS_ONNX_AVAILABLE, (
-                "catalyst[onnx] requirements are not available, to install them,"
-                " run `pip install catalyst[onnx]` or `pip install catalyst[onnx-gpu]`."
-            )
-        self.onnx_required: bool = onnx_required or IS_ONNX_AVAILABLE
-
-        if pruning_required:
-            assert IS_PRUNING_AVAILABLE, (
-                "catalyst[pruning] requirements are not available, to install them,"
-                " run `pip install catalyst[pruning]`."
-            )
-        self.pruning_required: bool = pruning_required or IS_PRUNING_AVAILABLE
-
-        if quantization_required:
-            assert IS_QUANTIZATION_AVAILABLE, (
-                "catalyst[quantization] requirements are not available, to install them,"
-                " run `pip install catalyst[quantization]`."
-            )
-        self.quantization_required: bool = quantization_required or IS_QUANTIZATION_AVAILABLE
+        self.onnx_required: bool = _get_optional_value(
+            onnx_required,
+            IS_ONNX_AVAILABLE,
+            "catalyst[onnx] is not available, to install it, "
+            "run `pip install catalyst[onnx]` or `pip install catalyst[onnx-gpu]`.",
+        )
+        self.pruning_required: bool = _get_optional_value(
+            pruning_required,
+            IS_PRUNING_AVAILABLE,
+            "catalyst[pruning] is not available, to install it, "
+            "run `pip install catalyst[pruning]`.",
+        )
+        self.quantization_required: bool = _get_optional_value(
+            quantization_required,
+            IS_QUANTIZATION_AVAILABLE,
+            "catalyst[quantization] is not available, to install it, "
+            "run `pip install catalyst[quantization]`.",
+        )
 
         # [logging]
         # self.alchemy_required: bool = alchemy_required
@@ -199,9 +198,9 @@ class Settings(FrozenClass):
         # self.wandb_required: bool = wandb_required
 
         # [extras]
-        self.use_lz4: bool = use_lz4
-        self.use_pyarrow: bool = use_pyarrow
-        self.use_libjpeg_turbo: bool = use_libjpeg_turbo
+        self.use_lz4: bool = use_lz4 or False
+        self.use_pyarrow: bool = use_pyarrow or False
+        self.use_libjpeg_turbo: bool = use_libjpeg_turbo or False
 
         # [global]
         # stages
