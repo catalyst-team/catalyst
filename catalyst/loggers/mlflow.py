@@ -49,7 +49,7 @@ class MlflowLogger(ILogger):
     def __init__(
         self,
         experiment: str,
-        run: str,
+        run: Optional[str] = None,
         tracking_uri: Optional[str] = None,
         registry_uri: Optional[str] = None,
     ) -> None:
@@ -161,7 +161,7 @@ class MlflowLogger(ILogger):
             scope: On which scope log parameters.
             experiment_key: Experiment info.
         """
-        stages = set(hparams["stages"]) - STAGE_PARAMS - EXCLUDE_PARAMS
+        stages = set(hparams["stages"]) - set(STAGE_PARAMS) - set(EXCLUDE_PARAMS)
         self._multistage = len(stages) > 1
 
         if scope in stages:

@@ -144,8 +144,7 @@ class Runner(IRunner):
             loggers["_tensorboard"] = TensorboardLogger(
                 logdir=os.path.join(self._logdir, "tensorboard")
             )
-        if not is_logger_exists(MlflowLogger):
-            loggers["_mlflow"] = MlflowLogger()
+
         return loggers
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
