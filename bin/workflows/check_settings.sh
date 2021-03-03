@@ -327,9 +327,14 @@ EOT
 
 # check if fail if requirements not installed
 python -c """
-from catalyst.dl.__main__ import COMMANDS
+try:
+    from catalyst.dl.__main__ import COMMANDS
 
-assert not ('tune' in COMMANDS)
+    assert not ('tune' in COMMANDS)
+except (AttributeError, ImportError, AssertionError):
+    pass  # Ok
+else:
+    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
 pip install -r requirements/requirements-optuna.txt --quiet \
