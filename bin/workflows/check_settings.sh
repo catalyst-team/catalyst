@@ -54,13 +54,6 @@ hydra_required = false
 optuna_required = false
 EOT
 
-# check if fail if requirements not installed
-python -c """
-from catalyst.settings import SETTINGS
-
-assert SETTINGS.use_libjpeg_turbo == False
-"""
-
 python -c """
 try:
     from catalyst.contrib.dataset import cv as cv_data
@@ -108,9 +101,6 @@ python -c """
 from catalyst.contrib.data import cv as cv_data
 from catalyst.contrib.models import cv as cv_models
 from catalyst.contrib.utils import imread, imwrite
-from catalyst.contrib.__main__ import COMMANDS
-
-assert 'process-images' in COMMANDS
 """
 
 
@@ -172,6 +162,114 @@ assert (
 """
 
 ################################  pipeline 03  ################################
+# checking catalyst-(cv/ml) dependencies loading
+pip uninstall -r requirements/requirements-cv.txt -y
+pip uninstall -r requirements/requirements-dev.txt -y
+pip uninstall -r requirements/requirements-hydra.txt -y
+pip uninstall -r requirements/requirements-ml.txt -y
+pip uninstall -r requirements/requirements-optuna.txt -y
+pip install -r requirements/requirements.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
+
+cat <<EOT > .catalyst
+[catalyst]
+cv_required = true
+ml_required = true
+hydra_required = false
+optuna_required = false
+EOT
+
+python -c """
+try:
+    from catalyst.contrib.dataset import cv as cv_data
+except (AttributeError, ImportError, AssertionError):
+    pass  # Ok
+else:
+    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
+"""
+
+python -c """
+try:
+    from catalyst.contrib.models import cv as cv_models
+except (AttributeError, ImportError, AssertionError):
+    pass  # Ok
+else:
+    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
+"""
+
+python -c """
+try:
+    from catalyst.contrib.utils import imread, imwrite
+except (AttributeError, ImportError, AssertionError):
+    pass  # Ok
+else:
+    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
+"""
+
+python -c """
+try:
+    from catalyst.contrib.__main__ import COMMANDS
+
+    assert not ('process-images' in COMMANDS)
+except (AttributeError, ImportError, AssertionError):
+    pass  # Ok
+else:
+    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
+"""
+
+python -c """
+try:
+    from catalyst.contrib.utils import balance_classes, split_dataframe_train_test
+except (AttributeError, ImportError, AssertionError):
+    pass  # Ok
+else:
+    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
+"""
+
+python -c """
+try:
+    from catalyst.contrib.__main__ import COMMANDS
+
+    assert not (
+        'tag2label' in COMMANDS
+        or 'split-dataframe' in COMMANDS
+    )
+except (AttributeError, ImportError, AssertionError):
+    pass  # Ok
+else:
+    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
+"""
+
+
+pip install -r requirements/requirements-cv.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
+
+pip install -r requirements/requirements-ml.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
+
+python -c """
+from catalyst.contrib.data import cv as cv_data
+from catalyst.contrib.models import cv as cv_models
+from catalyst.contrib.utils import imread, imwrite
+from catalyst.contrib.__main__ import COMMANDS
+
+assert 'process-images' in COMMANDS
+"""
+
+python -c """
+from catalyst.contrib.utils import balance_classes, split_dataframe_train_test
+from catalyst.contrib.__main__ import COMMANDS
+
+assert (
+    'tag2label' in COMMANDS
+    and 'split-dataframe' in COMMANDS
+)
+"""
+
+################################  pipeline 04  ################################
 # checking catalyst-hydra dependencies loading
 pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-dev.txt -y
@@ -208,7 +306,7 @@ python -c """
 from catalyst.runners.hydra import HydraRunner, SupervisedHydraRunner
 """
 
-################################  pipeline 04  ################################
+################################  pipeline 05  ################################
 # checking catalyst-optuna dependencies loading
 pip uninstall -r requirements/requirements-cv.txt -y
 pip uninstall -r requirements/requirements-dev.txt -y

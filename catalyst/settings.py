@@ -60,6 +60,7 @@ except ModuleNotFoundError:
 
 try:
     import hydra  # noqa: F401
+    from omegaconf import DictConfig, OmegaConf  # noqa: F401
 
     IS_HYDRA_AVAILABLE = True
 except ModuleNotFoundError:
