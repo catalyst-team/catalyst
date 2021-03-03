@@ -1,8 +1,11 @@
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
 
 import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+
+if TYPE_CHECKING:
+    from catalyst.core.runner import IRunner
 
 
 class MetricAggregationCallback(Callback):
@@ -149,7 +152,7 @@ class MetricAggregationCallback(Callback):
             result = list(metrics.values())
         return result
 
-    def _process_metrics(self, metrics: Dict, runner: "IRunner"):
+    def _process_metrics(self, metrics: Dict, runner: "IRunner") -> None:
         if callable(self.mode):
             metric_aggregated = self.aggregation_fn(metrics, runner)
         else:
@@ -165,7 +168,7 @@ class MetricAggregationCallback(Callback):
         if self.scope == "batch":
             self._process_metrics(runner.batch_metrics, runner)
 
-    def on_loader_end(self, runner: "IRunner"):
+    def on_loader_end(self, runner: "IRunner") -> None:
         """Computes the metric and add it to the loader metrics.
         Args:
             runner: current runner
