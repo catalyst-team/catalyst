@@ -28,10 +28,10 @@ from catalyst.contrib import utils
 
 try:
     utils.imread
-except (AttributeError, ImportError):
+except (ImportError, AssertionError):
     pass  # Ok
 else:
-    raise AssertionError('\'ImportError\' expected')
+    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
 """
 
 

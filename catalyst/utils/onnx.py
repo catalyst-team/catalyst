@@ -2,13 +2,10 @@ from typing import Dict, Iterable, List, Tuple, Union
 import os
 from pathlib import Path
 
+from onnxruntime.quantization import quantize_dynamic, QuantType
 import torch
 
-from catalyst.settings import IS_ONNX_AVAILABLE
 from catalyst.tools.forward_wrapper import ModelForwardWrapper
-
-if IS_ONNX_AVAILABLE:
-    from onnxruntime.quantization import quantize_dynamic, QuantType
 
 
 def convert_to_onnx(
