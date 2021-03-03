@@ -18,7 +18,7 @@ from typing import Any, Dict, Optional
 
 import mlflow
 
-from catalyst.typing import Directory, File, Image, Number
+from catalyst.typing import Directory, File, Number
 
 EXPERIMENT_PARAMS = (
     "shared",
@@ -65,8 +65,6 @@ def mlflow_log_dict(dictionary: Dict[str, Any], prefix: str = "", log_type: Opti
             mlflow.log_artifact(value)
         elif isinstance(value, Number):
             mlflow.log_metric(name, value)
-        elif isinstance(value, Image):
-            mlflow.log_image(value, f"{name}.png")
         else:
             raise ValueError(f"Unknown type of logging value: {type(value)}")
 
