@@ -18,9 +18,7 @@ PRUNING_FN = {  # noqa: WPS407
 
 
 def _wrap_pruning_fn(pruning_fn, *args, **kwargs):
-    return lambda module, name, amount: pruning_fn(
-        module, name, amount, *args, **kwargs
-    )
+    return lambda module, name, amount: pruning_fn(module, name, amount, *args, **kwargs)
 
 
 class PruningCallback(Callback):
@@ -39,7 +37,6 @@ class PruningCallback(Callback):
         prune_on_epoch_end: Optional[bool] = False,
         prune_on_stage_end: Optional[bool] = True,
         remove_reparametrization_on_stage_end: Optional[bool] = True,
-        reinitialize_after_pruning: Optional[bool] = False,
         layers_to_prune: Optional[List[str]] = None,
         dim: Optional[int] = None,
         l_norm: Optional[int] = None,
@@ -76,29 +73,25 @@ class PruningCallback(Callback):
         super().__init__(CallbackOrder.External)
         if isinstance(pruning_fn, str):
             if pruning_fn not in PRUNING_FN.keys():
-                raise Exception(
+                raise ValueError(
                     f"Pruning function should be in {PRUNING_FN.keys()}, "
                     "global pruning is not currently support."
                 )
             if "unstructured" not in pruning_fn:
                 if dim is None:
-                    raise Exception(
+                    raise ValueError(
                         "If you are using structured pruning you"
                         "need to specify dim in callback args"
                     )
                 if pruning_fn == "ln_structured":
                     if l_norm is None:
-                        raise Exception(
+                        raise ValueError(
                             "If you are using ln_unstructured you"
                             "need to specify n in callback args"
                         )
-                    self.pruning_fn = _wrap_pruning_fn(
-                        prune.ln_structured, dim=dim, n=l_norm
-                    )
+                    self.pruning_fn = _wrap_pruning_fn(prune.ln_structured, dim=dim, n=l_norm)
                 else:
-                    self.pruning_fn = _wrap_pruning_fn(
-                        PRUNING_FN[pruning_fn], dim=dim
-                    )
+                    self.pruning_fn = _wrap_pruning_fn(PRUNING_FN[pruning_fn], dim=dim)
             else:  # unstructured
                 self.pruning_fn = PRUNING_FN[pruning_fn]
         else:
@@ -113,12 +106,9 @@ class PruningCallback(Callback):
                 "You disabled pruning pruning both on epoch and stage end."
                 "Model won't be pruned by this callback."
             )
-        self.remove_reparametrization_on_stage_end = (
-            remove_reparametrization_on_stage_end
-        )
+        self.remove_reparametrization_on_stage_end = remove_reparametrization_on_stage_end
         self.keys_to_prune = keys_to_prune
         self.amount = amount
-        self.reinitialize_after_pruning = reinitialize_after_pruning
         self.layers_to_prune = layers_to_prune
 
     def on_epoch_end(self, runner: "IRunner") -> None:
@@ -130,14 +120,13 @@ class PruningCallback(Callback):
         Args:
             runner: runner for your experiment
         """
-        if self.prune_on_epoch_end and runner.num_epochs != runner.epoch:
+        if self.prune_on_epoch_end and runner.stage_epoch_step != runner.stage_epoch_len:
             prune_model(
                 model=runner.model,
                 pruning_fn=self.pruning_fn,
                 keys_to_prune=self.keys_to_prune,
                 amount=self.amount,
                 layers_to_prune=self.layers_to_prune,
-                reinitialize_after_pruning=self.reinitialize_after_pruning,
             )
 
     def on_stage_end(self, runner: "IRunner") -> None:
@@ -157,7 +146,6 @@ class PruningCallback(Callback):
                 keys_to_prune=self.keys_to_prune,
                 amount=self.amount,
                 layers_to_prune=self.layers_to_prune,
-                reinitialize_after_pruning=self.reinitialize_after_pruning,
             )
         if self.remove_reparametrization_on_stage_end:
             remove_reparametrization(

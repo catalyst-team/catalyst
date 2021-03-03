@@ -37,9 +37,7 @@ class IReader:
         Returns:
             Data object used for your neural network
         """
-        raise NotImplementedError(
-            "You cannot apply a transformation using `BaseReader`"
-        )
+        raise NotImplementedError("You cannot apply a transformation using `BaseReader`")
 
 
 class ScalarReader(IReader):
@@ -75,8 +73,7 @@ class ScalarReader(IReader):
         self.smoothing = smoothing
         if self.one_hot_classes is not None and self.smoothing is not None:
             assert 0.0 < smoothing < 1.0, (
-                "If smoothing is specified it must be in (0; 1), "
-                + f"got {smoothing}"
+                "If smoothing is specified it must be in (0; 1), " + f"got {smoothing}"
             )
 
     def __call__(self, element):
@@ -92,9 +89,7 @@ class ScalarReader(IReader):
         """
         scalar = self.dtype(element.get(self.input_key, self.default_value))
         if self.one_hot_classes is not None:
-            scalar = get_one_hot(
-                scalar, self.one_hot_classes, smoothing=self.smoothing
-            )
+            scalar = get_one_hot(scalar, self.one_hot_classes, smoothing=self.smoothing)
         output = {self.output_key: scalar}
         return output
 
@@ -146,19 +141,17 @@ class LambdaReader(IReader):
 class ReaderCompose(object):
     """Abstraction to compose several readers into one open function."""
 
-    def __init__(self, readers: List[IReader], mixins: list = None):
+    def __init__(self, transforms: List[IReader]):
         """
         Args:
-            readers: list of reader to compose
+            transforms: list of reader to compose
             mixins: list of mixins to use
         """
-        self.readers = readers
-        self.mixins = mixins or []
+        self.transforms = transforms
 
     def __call__(self, element):
         """
-        Reads a row from your annotations dict
-        and applies all readers and mixins
+        Reads a row from your annotations dict and applies all readers and mixins
 
         Args:
             element: elem in your dataset.
@@ -167,10 +160,8 @@ class ReaderCompose(object):
             Value after applying all readers and mixins
         """
         result = {}
-        for reader_fn in self.readers:
-            result = {**result, **reader_fn(element)}
-        for mixin_fn in self.mixins:
-            result = {**result, **mixin_fn(result)}
+        for transform_fn in self.transforms:
+            result = {**result, **transform_fn(element)}
         return result
 
 

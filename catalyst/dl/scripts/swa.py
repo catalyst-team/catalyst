@@ -18,14 +18,9 @@ def build_args(parser: ArgumentParser):
         help="Pattern for models to average",
         dest="models_mask",
     )
+    parser.add_argument("--logdir", type=Path, default=None, help="Path to experiment logdir")
     parser.add_argument(
-        "--logdir", type=Path, default=None, help="Path to experiment logdir"
-    )
-    parser.add_argument(
-        "--output-path",
-        type=Path,
-        default="./swa.pth",
-        help="Path to save averaged model",
+        "--output-path", type=Path, default="./swa.pth", help="Path to save averaged model",
     )
 
     return parser
@@ -45,9 +40,7 @@ def main(args, _):
     models_mask: str = args.models_mask
     output_path: Path = args.output_path
 
-    averaged_weights = get_averaged_weights_by_path_mask(
-        path_mask=models_mask, logdir=logdir
-    )
+    averaged_weights = get_averaged_weights_by_path_mask(path_mask=models_mask, logdir=logdir)
 
     torch.save(averaged_weights, str(output_path))
 

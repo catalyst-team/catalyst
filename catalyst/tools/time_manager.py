@@ -1,6 +1,3 @@
-"""
-Simple timer.
-"""
 from time import time
 
 

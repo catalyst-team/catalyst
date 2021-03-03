@@ -22,9 +22,7 @@ def build_args(parser):
     Returns:
         updated parser
     """
-    parser.add_argument(
-        "--in-csv", type=str, default=None, help="Path to data in `.csv`."
-    )
+    parser.add_argument("--in-csv", type=str, default=None, help="Path to data in `.csv`.")
     parser.add_argument(
         "--in-dir",
         type=str,
@@ -34,23 +32,13 @@ def build_args(parser):
     )
 
     parser.add_argument(
-        "--out-dataset",
-        type=str,
-        default=None,
-        required=True,
-        help="Path to output dataframe",
+        "--out-dataset", type=str, default=None, required=True, help="Path to output dataframe",
     )
     parser.add_argument(
-        "--out-labeling",
-        type=str,
-        default=None,
-        required=True,
-        help="Path to output JSON",
+        "--out-labeling", type=str, default=None, required=True, help="Path to output JSON",
     )
 
-    parser.add_argument(
-        "--tag-column", type=str, default="tag", help="Target column name"
-    )
+    parser.add_argument("--tag-column", type=str, default="tag", help="Target column name")
     parser.add_argument(
         "--tag-delim",
         type=str,
@@ -89,13 +77,9 @@ def _prepare_df_from_dirs(in_dirs, tag_column_name, recursive: bool = False):
         if not in_dir.endswith("/"):
             in_dir = f"{in_dir}/"
 
-        dataset = create_dataset(
-            f"{in_dir}/**", process_fn=process_fn, recursive=recursive
-        )
+        dataset = create_dataset(f"{in_dir}/**", process_fn=process_fn, recursive=recursive)
 
-        dfs.append(
-            create_dataframe(dataset, columns=[tag_column_name, "filepath"])
-        )
+        dfs.append(create_dataframe(dataset, columns=[tag_column_name, "filepath"]))
 
     df = pd.concat(dfs).reset_index(drop=True)
     return df
@@ -106,16 +90,12 @@ def main(args, _=None):
     if args.in_csv is not None:
         df = pd.read_csv(args.in_csv)
     elif args.in_dir is not None:
-        df = _prepare_df_from_dirs(
-            args.in_dir, args.tag_column, recursive=args.recursive
-        )
+        df = _prepare_df_from_dirs(args.in_dir, args.tag_column, recursive=args.recursive)
     else:
-        raise Exception
+        raise NotImplementedError("Script required the data.")
 
     if args.tag_delim is not None:
-        df = separate_tags(
-            df, tag_column=args.tag_column, tag_delim=args.tag_delim
-        )
+        df = separate_tags(df, tag_column=args.tag_column, tag_delim=args.tag_delim)
 
     tag2lbl = get_dataset_labeling(df, args.tag_column)
     print("Num classes: ", len(tag2lbl))

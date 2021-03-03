@@ -1,46 +1,54 @@
-from typing import Callable, Dict, Tuple, TYPE_CHECKING, Union
+from typing import Dict, Union
 from collections import OrderedDict
 import os
 from pathlib import Path
+import shutil
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.utils.checkpoint import (
-    load_checkpoint,
-    pack_checkpoint,
-    save_checkpoint,
-    unpack_checkpoint,
-)
+from catalyst.core.runner import IRunner
+from catalyst.tools.metric_handler import MetricHandler
 from catalyst.utils.config import save_config
-from catalyst.utils.misc import is_exception
-
-if TYPE_CHECKING:
-    from catalyst.core.runner import IRunner
 
 
-def _pack_runner(runner: "IRunner"):
-    checkpoint = pack_checkpoint(
-        model=runner.model,
-        criterion=runner.criterion,
-        optimizer=runner.optimizer,
-        scheduler=runner.scheduler,
-        epoch_metrics=dict(runner.epoch_metrics),
-        valid_metrics=dict(runner.valid_metrics),
-        stage=runner.stage,
-        epoch=runner.epoch,
-        loader_key=runner.loader_key,
-        loader_batch_step=runner.loader_batch_step,
-        global_epoch=runner.global_epoch,
-        checkpoint_data=runner.checkpoint_data,
-        main_metric=runner.main_metric,
-        minimize_metric=runner.minimize_metric,
-        valid_loader=runner.valid_loader,
-    )
-    return checkpoint
+def _save_checkpoint(
+    checkpoint: Dict,
+    runner: "IRunner",
+    logdir: Union[Path, str],
+    suffix: str,
+    is_best: bool = False,
+    is_last: bool = False,
+    special_suffix: str = "",
+) -> Union[Path, str]:
+    """Saving checkpoint to a file.
+
+    Args:
+        checkpoint: data to save.
+        logdir: directory where checkpoint
+            should be stored.
+        suffix: checkpoint file name.
+        is_best: if ``True`` then also
+            will be generated best checkpoint file.
+        is_last: if ``True`` then also
+            will be generated last checkpoint file.
+        special_suffix: suffix to use for
+            saving best/last checkpoints.
+        save_fn: function to use for saving
+            data to file, default is ``torch.save``
+
+    Returns:
+        path to saved checkpoint
+    """
+    os.makedirs(logdir, exist_ok=True)
+    filename = f"{logdir}/{suffix}.pth"
+    runner.engine.save_checkpoint(checkpoint, filename)
+    if is_best:
+        shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
+    if is_last:
+        shutil.copyfile(filename, f"{logdir}/last{special_suffix}.pth")
+    return filename
 
 
-def _load_checkpoint(
-    *, filename, runner: "IRunner", load_full: bool = True
-) -> None:
+def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> None:
     """
     Load checkpoint from a file.
 
@@ -63,18 +71,15 @@ def _load_checkpoint(
         raise FileNotFoundError(f"No checkpoint found at {filename}!")
 
     print(f"=> Loading checkpoint {filename}")
-    checkpoint = load_checkpoint(filename)
+    checkpoint = runner.engine.load_checkpoint(filename)
 
-    if not runner.stage.startswith("infer") and load_full:
-        runner.stage = checkpoint["stage"]
-        runner.epoch = checkpoint["epoch"]
-        runner.global_epoch = checkpoint["global_epoch"]
-        # @TODO: should we also load,
-        # checkpoint_data, main_metric, minimize_metric, valid_loader ?
-        # epoch_metrics, valid_metrics ?
+    if not runner.stage_key.startswith("infer") and load_full:
+        runner.global_epoch_step = checkpoint["global_epoch_step"]
+        runner.global_batch_step = checkpoint["global_batch_step"]
+        runner.global_sample_step = checkpoint["global_sample_step"]
 
     if load_full:
-        unpack_checkpoint(
+        runner.engine.unpack_checkpoint(
             checkpoint,
             model=runner.model,
             criterion=runner.criterion,
@@ -83,20 +88,23 @@ def _load_checkpoint(
         )
 
         print(
-            f"loaded state checkpoint {filename} "
-            f"(global epoch {checkpoint['global_epoch']}, "
-            f"epoch {checkpoint['epoch']}, "
-            f"stage {checkpoint['stage']})"
+            f"full checkpoint {filename} loaded "
+            f"(global epoch {checkpoint['global_epoch_step']}, "
+            f"stage {checkpoint['stage_key']}, "
+            f"epoch {checkpoint['stage_epoch_step']})"
         )
     else:
-        unpack_checkpoint(
-            checkpoint, model=runner.model,
+        runner.engine.unpack_checkpoint(checkpoint, model=runner.model)
+
+        print(
+            f"model checkpoint {filename} loaded "
+            f"(global epoch {checkpoint['global_epoch_step']}, "
+            f"stage {checkpoint['stage_key']}, "
+            f"epoch {checkpoint['stage_epoch_step']})"
         )
 
-        print(f"loaded model checkpoint {filename}")
 
-
-def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
+def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
     """
     Generate required files for load model, criterion,
     scheduler, optimizer specified in ``load_map``.
@@ -121,9 +129,7 @@ def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
     experiment_parts = ["model"] + required_full_checkpoint
 
     # keep required parts
-    experiment_parts = list(
-        filter(lambda part: part in load_map, experiment_parts)
-    )
+    experiment_parts = list(filter(lambda part: part in load_map, experiment_parts))
 
     # avoid unnecessary loading
     if "model" in experiment_parts and len(experiment_parts) > 1:
@@ -138,14 +144,14 @@ def _required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
         if fname in default_states:
             if part in required_full_checkpoint and not required_full:
                 fname = fname + "_full"
-            fname = f"{logdir}/checkpoints/{fname}.pth"
+            fname = f"{logdir}/{fname}.pth"
         # in other case specified path to checkpoint
         required_files[fname] = required_files.get(fname, []) + [part]
     return required_files
 
 
 def _load_states_from_file_map(
-    *, runner: "IRunner", load_map: Dict[str, str]
+    *, logdir: str, runner: "IRunner", load_map: Dict[str, str]
 ) -> None:
     """
     Load state of a model, criterion, optimizer, scheduler
@@ -167,7 +173,7 @@ def _load_states_from_file_map(
         FileNotFoundError: when file/state specified in ``load_map``
             is not exist.
     """
-    required_files = _required_files(runner.logdir, load_map)
+    required_files = _get_required_files(logdir, load_map)
 
     for filename in required_files.keys():
         if not os.path.isfile(filename):
@@ -176,106 +182,74 @@ def _load_states_from_file_map(
     # extracting parts from files
     for filename, parts_to_load in required_files.items():
         print(f"=> Loading {', '.join(parts_to_load)} from {filename}")
-        checkpoint = load_checkpoint(filename)
+        checkpoint = runner.engine.load_checkpoint(filename)
         to_unpack = {part: getattr(runner, part) for part in parts_to_load}
-        unpack_checkpoint(checkpoint, **to_unpack)
+        runner.engine.unpack_checkpoint(checkpoint, **to_unpack)
         print(f"   loaded: {', '.join(parts_to_load)}")
 
 
+def _load_runner(
+    logdir: str, runner: "IRunner", mapping: Union[str, Dict[str, str]], load_full: bool = False,
+) -> None:
+    """
+    Selects a loading method based on type of mapping.
+
+    Args:
+        logdir: logdir with checkpoints
+        runner: current runner
+        mapping: mapping to use for loading
+        load_full: load a full model, used only when mapping type is string
+    """
+    if isinstance(mapping, str):
+        if mapping in {"best", "best_full", "last", "last_full"}:
+            checkpoint = f"{logdir}/{mapping}.pth"
+        else:
+            checkpoint = mapping
+        _load_checkpoint(filename=checkpoint, runner=runner, load_full=load_full)
+    elif isinstance(mapping, dict):
+        _load_states_from_file_map(logdir=logdir, runner=runner, load_map=mapping)
+
+
 class ICheckpointCallback(Callback):
-    """
-    Checkpoint callback interface, abstraction over model checkpointing step.
-    """
+    """Criterion callback interface, abstraction over checkpoint step."""
 
     pass
 
 
-class BaseCheckpointCallback(ICheckpointCallback):
-    """Base class for all checkpoint callbacks."""
-
-    def __init__(self, metrics_filename: str = "_metrics.json"):
-        """
-        Args:
-            metrics_filename: filename to save metrics
-                in checkpoint folder. Must ends on ``.json`` or ``.yml``
-        """
-        super().__init__(
-            order=CallbackOrder.external, node=CallbackNode.master
-        )
-        self.metrics_filename = metrics_filename
-        self.metrics: dict = {}
-
-    def _get_checkpoint_suffix(self, checkpoint: dict) -> str:
-        return "checkpoint"
-
-    def _save_metric(self, logdir: Union[str, Path], metrics: Dict) -> None:
-        save_config(metrics, f"{logdir}/checkpoints/{self.metrics_filename}")
-
-    def on_exception(self, runner: "IRunner"):
-        """
-        Expection handler.
-
-        Args:
-            runner: current runner
-
-        """
-        exception = runner.exception
-        if not is_exception(exception):
-            return
-
-        if runner.device.type == "xla":
-            from torch_xla.core.xla_model import save
-        else:
-            from torch import save
-
-        try:
-            checkpoint = _pack_runner(runner)
-            suffix = self._get_checkpoint_suffix(checkpoint)
-            suffix = f"{suffix}.exception_{exception.__class__.__name__}"
-            save_checkpoint(
-                logdir=Path(f"{runner.logdir}/checkpoints/"),
-                checkpoint=checkpoint,
-                suffix=suffix,
-                is_best=False,
-                is_last=False,
-                saver_fn=save,
-            )
-            metrics = self.metrics
-            metrics[suffix] = runner.valid_metrics
-            self._save_metric(runner.logdir, metrics)
-        except Exception:  # noqa: S110
-            pass
-
-
-class CheckpointCallback(BaseCheckpointCallback):
-    """
-    Checkpoint callback to save/restore your
-    model/criterion/optimizer/scheduler.
-    """
+class CheckpointCallback(ICheckpointCallback):
+    """Checkpoint callback to save/restore your model/criterion/optimizer/scheduler."""
 
     def __init__(
         self,
+        logdir: str = None,
+        # model selection info
+        loader_key: str = None,
+        metric_key: str = None,
+        minimize: bool = None,
+        min_delta: float = 1e-6,
         save_n_best: int = 1,
-        resume: str = None,
-        resume_dir: str = None,
-        metrics_filename: str = "_metrics.json",
+        # loading info
         load_on_stage_start: Union[str, Dict[str, str]] = None,
         load_on_stage_end: Union[str, Dict[str, str]] = None,
+        # resume: str = None,
+        # resume_dir: str = None,
+        # checkpointer info
+        metrics_filename: str = "_metrics.json",
+        mode: str = "all",
+        use_logdir_postfix: bool = False,
+        use_runner_logdir: bool = False,
     ):
         """
         Args:
+            logdir: @TODO: docs.
+            loader_key: @TODO: docs.
+            metric_key: @TODO: docs.
+            minimize: @TODO: docs.
+            min_delta: @TODO: docs.
             save_n_best: number of best checkpoint to keep,
                 if ``0`` then  store only last state of model and
                 ``load_on_stage_end`` should be one of
                 ``last`` or ``last_full``.
-            resume: path to checkpoint to load
-                and initialize runner state
-            resume_dir: directory with checkpoints,
-                if specified in combination with ``resume``
-                than resume checkpoint will be loaded from ``resume_dir``
-            metrics_filename: filename to save metrics
-                in checkpoint folder.
-                Must ends on ``.json`` or ``.yml``
             load_on_stage_start (str or Dict[str, str]): load specified
                 state/model at stage start.
 
@@ -336,8 +310,14 @@ class CheckpointCallback(BaseCheckpointCallback):
                 and will be used the last runner.
 
                 **NOTE:** Loading will be performed always at stage end.
+            metrics_filename: filename to save metrics
+                in checkpoint folder.
+                Must ends on ``.json`` or ``.yml``
+            mode: @TODO: docs.
+            use_logdir_postfix: @TODO: docs.
+            use_runner_logdir: @TODO: docs.
         """
-        super().__init__(metrics_filename)
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         possible_states = {
             None,
             "best",
@@ -352,202 +332,143 @@ class CheckpointCallback(BaseCheckpointCallback):
             assert load_on_stage_start in possible_states
         if isinstance(load_on_stage_end, str):
             assert load_on_stage_end in possible_states
-        if resume_dir is not None:
-            assert resume is not None
+        # if resume_dir is not None:
+        #     assert resume is not None
 
+        if loader_key is not None or metric_key is not None:
+            assert loader_key is not None and metric_key is not None, (
+                "For checkpoint selection `CheckpointCallback` "
+                "requires both `loader_key` and `metric_key` specified."
+            )
+            self._use_model_selection = True
+            self.minimize = minimize if minimize is not None else True  # loss-oriented selection
+        else:
+            self._use_model_selection = False
+            self.minimize = False  # epoch-num-oriented selection
+
+        assert mode in (
+            "all",
+            "full",
+            "model",
+        ), "`CheckpointCallback` could work only in `all`, `full` or `model` modes."
+
+        # checkpointer info
+        self.logdir = logdir
+        self.mode = mode
+        self.metrics_filename = metrics_filename
+        self.use_logdir_postfix = use_logdir_postfix
+        self.use_runner_logdir = use_runner_logdir
+        assert (
+            self.logdir is not None or self.use_runner_logdir
+        ), "CheckpointCallback requires specified `logdir`"
+
+        # model selection info
+        self.loader_key = loader_key
+        self.metric_key = metric_key
+        self.is_better = MetricHandler(minimize=minimize, min_delta=min_delta)
         self.save_n_best = save_n_best
-        self.resume = resume
-        self.resume_dir = resume_dir
+        # list with topN metrics [(score, filepath, stage_key, stage_epoch_step, epoch metrics)]
+        self.top_best_metrics = []
+        self.best_score = None
+
+        # loading info
         self.load_on_stage_start = load_on_stage_start
         self.load_on_stage_end = load_on_stage_end
+        # self.resume = resume
+        # self.resume_dir = resume_dir
 
-        self.top_best_metrics = []
-        self.metrics_history = []
+    def _pack_checkpoint(self, runner: "IRunner"):
+        checkpoint = runner.engine.pack_checkpoint(
+            model=runner.model,
+            criterion=runner.criterion,
+            optimizer=runner.optimizer,
+            scheduler=runner.scheduler,
+            # experiment info
+            experiment_key=runner.run_key,
+            global_epoch_step=runner.global_epoch_step,
+            global_batch_step=runner.global_batch_step,
+            global_sample_step=runner.global_sample_step,
+            # stage info
+            stage_key=runner.stage_key,
+            stage_epoch_step=runner.stage_epoch_step,
+            stage_batch_step=runner.stage_batch_step,
+            stage_sample_step=runner.stage_sample_step,
+            # epoch info
+            epoch_metrics={k: dict(v) for k, v in runner.epoch_metrics.items()},
+            # loader info
+            loader_key=runner.loader_key,
+            loader_batch_step=runner.loader_batch_step,
+            loader_sample_step=runner.loader_sample_step,
+            # checkpointer info
+            checkpointer_loader_key=self.loader_key,
+            checkpointer_metric_key=self.metric_key,
+            checkpointer_minimize=self.minimize,
+        )
+        return checkpoint
 
-        self._keys_from_state = ["resume", "resume_dir"]
-        self._save_fn: Callable = None
-
-    def _get_checkpoint_suffix(self, checkpoint: dict) -> str:
+    def _save_checkpoint(
+        self, runner: IRunner, checkpoint: Dict, is_best: bool, is_last: bool
+    ) -> str:
         """
-        Create checkpoint filename suffix based on checkpoint data.
-
-        Args:
-            checkpoint: checkpoint dict,
-                should contain ``stage`` and ``epoch`` keys.
-
-        Returns:
-            str: checkpoint suffix
+        Saves checkpoints: full with model/criterion/optimizer/scheduler
+        and truncated with model only.
         """
-        result = f"{checkpoint['stage']}.{checkpoint['epoch']}"
-        return result
+        logdir = Path(f"{self.logdir}/")
+        suffix = f"{runner.stage_key}.{runner.stage_epoch_step}"
+        checkpoint_path = None
 
-    def process_metrics(self, last_valid_metrics: Dict[str, float]) -> Dict:
-        """
-        Add last validation metrics to list of previous validation metrics
-        and keep ``save_n_best`` metrics.
-
-        Args:
-            last_valid_metrics: dict with metrics
-                from last validation step.
-
-        Returns:
-            OrderedDict: processed metrics
-        """
-        top_best_checkpoints = [
-            (Path(filepath).stem, valid_metric)
-            for (filepath, _, valid_metric) in self.top_best_metrics
-        ]
-        all_epochs_metrics = [
-            (f"epoch_{order_index}", valid_metric)
-            for (order_index, valid_metric) in enumerate(self.metrics_history)
-        ]
-        metrics = []
-        if self.save_n_best > 0:
-            best_valid_metrics = top_best_checkpoints[0][1]
-            metrics = (
-                [("best", best_valid_metrics), ("last", last_valid_metrics)]
-                + top_best_checkpoints
-                + all_epochs_metrics
+        if self.mode in ("all", "full"):
+            checkpoint_path = _save_checkpoint(
+                runner=runner,
+                logdir=logdir,
+                checkpoint=checkpoint,
+                suffix=f"{suffix}_full",
+                is_best=is_best,
+                is_last=is_last,
+                special_suffix="_full",
             )
-        else:
-            metrics = [("last", last_valid_metrics)]
-        self.metrics = OrderedDict(metrics)
-        return self.metrics
+        if self.mode in ("all", "model"):
+            exclude = ["criterion", "optimizer", "scheduler"]
+            checkpoint_path = _save_checkpoint(
+                runner=runner,
+                checkpoint={
+                    key: value
+                    for key, value in checkpoint.items()
+                    if all(z not in key for z in exclude)
+                },
+                logdir=logdir,
+                suffix=suffix,
+                is_best=is_best,
+                is_last=is_last,
+            )
+        return checkpoint_path
 
-    def truncate_checkpoints(self, minimize_metric: bool) -> None:
-        """
-        Keep ``save_n_best`` checkpoints based on main metric.
-
-        Args:
-            minimize_metric: if ``True`` then keep
-                ``save_n_best`` checkpoints with the lowest/highest values
-                of the main metric.
-        """
+    def _truncate_checkpoints(self) -> None:
         self.top_best_metrics = sorted(
-            self.top_best_metrics,
-            key=lambda x: x[1],
-            reverse=not minimize_metric,
+            self.top_best_metrics, key=lambda x: x[0], reverse=not self.minimize,
         )
         if len(self.top_best_metrics) > self.save_n_best:
             last_item = self.top_best_metrics.pop(-1)
-            last_filepath = Path(last_item[0])
-            last_filepaths = last_filepath.parent.glob(
-                last_filepath.name.replace(".pth", "*")
-            )
+            last_filepath = Path(last_item[1])
+            last_filepaths = last_filepath.parent.glob(last_filepath.name.replace(".pth", "*"))
             for filepath in last_filepaths:
                 os.remove(filepath)
 
-    def _save_checkpoint(
-        self,
-        logdir: Union[str, Path],
-        suffix: str,
-        checkpoint: Dict,
-        is_best: bool,
-        is_last: bool,
-    ) -> Tuple[str, str]:
-        """
-        Save checkpoint (simple and full).
-
-        Args:
-            logdir (str or Path object): directory for storing checkpoints
-            suffix: checkpoint suffix
-            checkpoint: dict with checkpoint data
-            is_best: indicator to save best checkpoint,
-                if true then will be saved two additional checkpoints -
-                ``best`` and ``best_full``.
-            is_last: indicator to save the last checkpoint,
-                if true then will be saved two additional checkpoints -
-                ``last`` and ``last_full``.
-        """
-        full_checkpoint_path = save_checkpoint(
-            logdir=Path(f"{logdir}/checkpoints/"),
-            checkpoint=checkpoint,
-            suffix=f"{suffix}_full",
-            is_best=is_best,
-            is_last=is_last,
-            special_suffix="_full",
-            saver_fn=self._save_fn,
-        )
-        exclude = ["criterion", "optimizer", "scheduler"]
-        checkpoint_path = save_checkpoint(
-            checkpoint={
-                key: value
-                for key, value in checkpoint.items()
-                if all(z not in key for z in exclude)
-            },
-            logdir=Path(f"{logdir}/checkpoints/"),
-            suffix=suffix,
-            is_best=is_best,
-            is_last=is_last,
-            saver_fn=self._save_fn,
-        )
-        return (full_checkpoint_path, checkpoint_path)
-
-    def process_checkpoint(
-        self,
-        logdir: Union[str, Path],
-        checkpoint: Dict,
-        is_best: bool,
-        main_metric: str = "loss",
-        minimize_metric: bool = True,
-    ) -> None:
-        """
-        Save checkpoint and metrics.
-
-        Args:
-            logdir (str or Path object): directory for storing checkpoints
-            checkpoint: dict with checkpoint data
-            is_best: indicator to save best checkpoint,
-                if true then will be saved two additional checkpoints -
-                ``best`` and ``best_full``.
-            main_metric: metric to use for selecting the best model
-            minimize_metric: indicator for selecting best metric,
-                if true then best metric will be the metric with
-                the lowest value, otherwise with the greatest value.
-        """
-        _, filepath = self._save_checkpoint(
-            logdir=logdir,
-            checkpoint=checkpoint,
-            suffix=self._get_checkpoint_suffix(checkpoint),
-            is_best=is_best,
-            is_last=True,
-        )
-        valid_metrics = checkpoint["valid_metrics"]
-        checkpoint_metric = valid_metrics[main_metric]
-        metrics_record = (filepath, checkpoint_metric, valid_metrics)
-        self.top_best_metrics.append(metrics_record)
-        self.metrics_history.append(metrics_record)
-        self.truncate_checkpoints(minimize_metric=minimize_metric)
-        metrics = self.process_metrics(valid_metrics)
-        self._save_metric(logdir, metrics)
-
-    @staticmethod
-    def _load_runner(
-        runner: "IRunner",
-        mapping: Union[str, Dict[str, str]],
-        load_full: bool = False,
-    ) -> None:
-        """
-        Selects a loading method based on type of mapping.
-
-        Args:
-            runner: current runner
-            mapping (str or dict): mapping to use for loading
-            load_full: load a full model, used only
-                when mapping type is string
-        """
-        if isinstance(mapping, str):
-            if mapping in {"best", "best_full", "last", "last_full"}:
-                checkpoint = f"{runner.logdir}/checkpoints/{mapping}.pth"
-            else:
-                checkpoint = mapping
-            _load_checkpoint(
-                filename=checkpoint, runner=runner, load_full=load_full,
-            )
-        elif isinstance(mapping, dict):
-            _load_states_from_file_map(
-                runner=runner, load_map=mapping,
-            )
+    def _prepare_metrics_log(self, last_epoch_score: float, last_epoch_metrics: Dict) -> Dict:
+        top_best_checkpoints = [
+            (Path(filepath).stem, {**epoch_metrics, **{"_score_": score}})
+            for (score, filepath, _, _, epoch_metrics) in self.top_best_metrics
+        ]
+        if self.save_n_best > 0:
+            best_epoch_score = top_best_checkpoints[0][0]
+            best_epoch_metrics = top_best_checkpoints[0][-1]
+            metrics = [
+                ("best", {**best_epoch_metrics, **{"_score_": best_epoch_score}}),
+                ("last", {**last_epoch_metrics, **{"_score_": last_epoch_score}}),
+            ] + top_best_checkpoints
+        else:
+            metrics = [("last", {**last_epoch_metrics, **{"_score_": last_epoch_score}})]
+        return OrderedDict(metrics)
 
     def on_stage_start(self, runner: "IRunner") -> None:
         """Setup model for stage.
@@ -563,55 +484,51 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             runner: current runner
         """
-        if runner.device.type == "xla":
-            from torch_xla.core.xla_model import save
-        else:
-            from torch import save
-        self._save_fn = save
+        # @TODO: very tricky hack
+        # @TODO: remove
+        if self.logdir is None and self.use_runner_logdir:
+            self.logdir = getattr(runner, "_logdir", None)
+            if self.use_logdir_postfix:
+                self.logdir = os.path.join(self.logdir, "checkpoints")
 
-        if getattr(runner, "resume", None) is not None:
-            self.resume = runner.resume
-            runner.resume = None
-        elif getattr(runner, "autoresume", None) is not None:
-            self.resume_dir = runner.logdir / "checkpoints"
-            self.resume = f"{runner.autoresume}_full.pth"
-            runner.autoresume = None
-
-        for key in self._keys_from_state:
-            value = getattr(runner, key, None)
-            if value is not None:
-                setattr(self, key, value)
-
-        if self.resume_dir is not None:
-            self.resume = str(self.resume_dir) + "/" + str(self.resume)
-
-        if self.resume is not None:
-            self._load_runner(runner, mapping=self.resume, load_full=True)
-            self.resume = None
-        else:
-            checkpoint_exists = False
-            need_load_full = False
-            if isinstance(self.load_on_stage_start, str):
-                checkpoint_exists = os.path.isfile(
-                    "{}/checkpoints/{}.pth".format(
-                        runner.logdir, self.load_on_stage_start
-                    )
-                )
-                need_load_full = self.load_on_stage_start.endswith("full")
-            elif isinstance(self.load_on_stage_start, dict):
-                required_files = _required_files(
-                    runner.logdir, self.load_on_stage_start
-                ).keys()
-                checkpoint_exists = all(
-                    os.path.isfile(file) for file in required_files
-                )
-
-            if self.load_on_stage_start is not None and checkpoint_exists:
-                self._load_runner(
-                    runner,
-                    mapping=self.load_on_stage_start,
-                    load_full=need_load_full,
-                )
+    #     if getattr(runner, "resume", None) is not None:
+    #         self.resume = runner.resume
+    #         runner.resume = None
+    #     elif getattr(runner, "autoresume", None) is not None:
+    #         self.resume_dir = runner.logdir / "checkpoints"
+    #         self.resume = f"{runner.autoresume}_full.pth"
+    #         runner.autoresume = None
+    #
+    #     for key in self._keys_from_runner:
+    #         value = getattr(runner, key, None)
+    #         if value is not None:
+    #             setattr(self, key, value)
+    #
+    #     if self.resume_dir is not None:
+    #         self.resume = str(self.resume_dir) + "/" + str(self.resume)
+    #
+    #     if self.resume is not None:
+    #         _load_runner(logdir=self.logdir, runner=runner, mapping=self.resume, load_full=True)
+    #         self.resume = None
+    #     else:
+    #         checkpoint_exists = False
+    #         need_load_full = False
+    #         if isinstance(self.load_on_stage_start, str):
+    #             checkpoint_exists =
+    #               os.path.isfile(f"{self.logdir}/{self.load_on_stage_start}.pth")
+    #             need_load_full = self.load_on_stage_start.endswith("full")
+    #         elif isinstance(self.load_on_stage_start, dict):
+    #             required_files =
+    #               _get_required_files(self.logdir, self.load_on_stage_start).keys()
+    #             checkpoint_exists = all(os.path.isfile(file) for file in required_files)
+    #
+    #         if self.load_on_stage_start is not None and checkpoint_exists:
+    #             _load_runner(
+    #                 logdir=self.logdir,
+    #                 runner=runner,
+    #                 mapping=self.load_on_stage_start,
+    #                 load_full=need_load_full,
+    #             )
 
     def on_epoch_end(self, runner: "IRunner") -> None:
         """
@@ -620,18 +537,42 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             runner: current runner
         """
-        if runner.stage.startswith("infer") or runner.is_distributed_worker:
+        if runner.stage_key.startswith("infer"):
             return
 
+        if self._use_model_selection:
+            # score model based on the specified metric
+            score = runner.epoch_metrics[self.loader_key][self.metric_key]
+        else:
+            # score model based on epoch number
+            score = runner.global_epoch_step
+
+        is_best = False
+        if self.best_score is None or self.is_better(score, self.best_score):
+            self.best_score = score
+            is_best = True
+
         if self.save_n_best > 0:
-            checkpoint = _pack_runner(runner)
-            self.process_checkpoint(
-                logdir=runner.logdir,
-                checkpoint=checkpoint,
-                is_best=runner.is_best_valid,
-                main_metric=runner.main_metric,
-                minimize_metric=runner.minimize_metric,
+            # pack checkpoint
+            checkpoint = self._pack_checkpoint(runner)
+            # save checkpoint
+            checkpoint_path = self._save_checkpoint(
+                runner=runner, checkpoint=checkpoint, is_best=is_best, is_last=True,
             )
+            # add metrics to records
+            metrics_record = (
+                float(score),
+                checkpoint_path,
+                runner.stage_key,
+                runner.stage_epoch_step,
+                dict(runner.epoch_metrics),
+            )
+            self.top_best_metrics.append(metrics_record)
+            # truncate checkpoints
+            self._truncate_checkpoints()
+            # save checkpoint metrics
+            metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
+            save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
 
     def on_stage_end(self, runner: "IRunner") -> None:
         """
@@ -641,35 +582,35 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             runner: current runner
         """
-        if runner.stage.startswith("infer") or runner.is_distributed_worker:
+        if runner.stage_key.startswith("infer"):
             return
+
+        # let's log Top-N base metrics
         log_message = "Top best models:\n"
         # store latest state
         if self.save_n_best == 0:
-            checkpoint = _pack_runner(runner)
-            _, filepath = self._save_checkpoint(
-                logdir=runner.logdir,
+            score = runner.epoch_metrics[self.loader_key][self.metric_key]
+            # pack checkpoint
+            checkpoint = self._pack_checkpoint(runner)
+            # save checkpoint
+            checkpoint_path = self._save_checkpoint(
+                runner=runner,
                 checkpoint=checkpoint,
-                suffix="last",
                 is_best=True,  # will duplicate current (last) as best
                 is_last=False,  # don't need that because current state is last
             )
-            metrics = self.process_metrics(checkpoint["valid_metrics"])
-            self._save_metric(runner.logdir, metrics)
-            main_metric_value = metrics["last"][runner.main_metric]
-            log_message += "{filepath}\t{metric:3.4f}".format(
-                filepath=filepath, metric=main_metric_value
-            )
+            # add metrics to records
+            # save checkpoint metrics
+            metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
+            save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
+            log_message += f"{checkpoint_path}\t{score:3.4f}"
         else:
             log_message += "\n".join(
-                [
-                    "{filepath}\t{metric:3.4f}".format(
-                        filepath=filepath, metric=checkpoint_metric
-                    )
-                    for filepath, checkpoint_metric, _ in self.top_best_metrics
-                ]
+                [f"{filepath}\t{score:3.4f}" for score, filepath, _, _, _ in self.top_best_metrics]
             )
         print(log_message)
+
+        # let's load runner state (model, criterion, optimizer, scheduler) if required
         not_required_load_states = {"last", "last_full"}
         if (
             isinstance(self.load_on_stage_end, str)
@@ -681,8 +622,9 @@ class CheckpointCallback(BaseCheckpointCallback):
                 if isinstance(self.load_on_stage_end, str)
                 else False
             )
-            self._load_runner(
-                runner,
+            _load_runner(
+                logdir=self.logdir,
+                runner=runner,
                 mapping=self.load_on_stage_end,
                 load_full=need_load_full,
             )
@@ -692,178 +634,7 @@ class CheckpointCallback(BaseCheckpointCallback):
                 for k, v in self.load_on_stage_end.items()
                 if v not in not_required_load_states
             }
-            self._load_runner(runner, mapping=to_load)
+            _load_runner(logdir=self.logdir, runner=runner, mapping=to_load)
 
 
-class IterationCheckpointCallback(BaseCheckpointCallback):
-    """Iteration checkpoint callback to save your model/criterion/optimizer."""
-
-    def __init__(
-        self,
-        save_n_last: int = 1,
-        period: int = 100,
-        stage_restart: bool = True,
-        metrics_filename: str = "_metrics_iter.json",
-        load_on_stage_end: str = "best_full",
-    ):
-        """
-        Args:
-            save_n_last: number of last checkpoint to keep
-            period: save the checkpoint every `period`
-            stage_restart: restart counter every stage or not
-            metrics_filename: filename to save metrics
-                in checkpoint folder. Must ends on ``.json`` or ``.yml``
-            load_on_stage_end: name of the model to load
-                at the end of the stage.
-                You can use ``best``, ``best_full`` (default)
-                to load the best model according to validation metrics,
-                or ``last`` ``last_full`` to use just the last one.
-        """
-        super().__init__(metrics_filename)
-        self.save_n_last = save_n_last
-        self.period = period
-        self.stage_restart = stage_restart
-        self._iteration_counter = 0
-        self.last_checkpoints = []
-        self.metrics_history = []
-        self.load_on_stage_end = load_on_stage_end
-        self._save_fn = None
-
-    def _get_checkpoint_suffix(self, checkpoint: dict) -> str:
-        """
-        Create checkpoint filename suffix based on checkpoint data.
-
-        Args:
-            checkpoint: checkpoint dict,
-                should contain ``stage`` and ``epoch`` keys.
-
-        Returns:
-            str: checkpoint suffix
-        """
-        result = (
-            f"{checkpoint['stage']}."
-            f"epoch.{checkpoint['epoch']}."
-            f"iter.{self._iteration_counter}"
-        )
-
-        return result
-
-    def process_metrics(self) -> Dict:
-        """Update metrics with last ``save_n_last`` checkpoints.
-
-        Returns:
-            updated metrics
-        """
-        n_last_checkpoints = [
-            (Path(filepath).stem, batch_values)
-            for (filepath, batch_values) in self.last_checkpoints
-        ]
-        all_epochs_metrics = [
-            (f"epoch_{order_index}", valid_metric)
-            for (order_index, valid_metric) in enumerate(self.metrics_history)
-        ]
-
-        metrics = OrderedDict(n_last_checkpoints + all_epochs_metrics)
-        self.metrics = metrics
-        return self.metrics
-
-    def truncate_checkpoints(self, **kwargs) -> None:
-        """Keep ``save_n_best`` checkpoints based on main metric.
-
-        Args:
-            **kwargs: extra params
-        """
-        if len(self.last_checkpoints) > self.save_n_last:
-            item = self.last_checkpoints.pop(0)
-            top_filepath = item[0]
-            os.remove(top_filepath)
-
-    def process_checkpoint(
-        self,
-        logdir: Union[str, Path],
-        checkpoint: Dict,
-        batch_metrics: Dict[str, float],
-    ):
-        """
-        Save checkpoint and metrics.
-
-        Args:
-            logdir (str or Path object): directory for storing checkpoints
-            checkpoint: dict with checkpoint data
-            batch_metrics: dict with metrics based on a few batches
-        """
-        filepath = save_checkpoint(
-            logdir=Path(f"{logdir}/checkpoints/"),
-            checkpoint=checkpoint,
-            suffix=self._get_checkpoint_suffix(checkpoint),
-            is_best=False,
-            is_last=False,
-            saver_fn=self._save_fn,
-        )
-
-        self.last_checkpoints.append((filepath, batch_metrics))
-        self.truncate_checkpoints()
-
-        self.metrics_history.append(batch_metrics)
-
-        metrics = self.process_metrics()
-        self._save_metric(logdir, metrics)
-        print(f"\nSaved checkpoint at {filepath}")
-
-    def on_stage_start(self, runner: "IRunner"):
-        """
-        Reset iterations counter.
-
-        Args:
-            runner: current runner
-        """
-        if self.stage_restart:
-            self._iteration_counter = 0
-
-        if runner.device.type == "xla":
-            from torch_xla.core.xla_model import save
-        else:
-            from torch import save
-        self._save_fn = save
-
-    def on_batch_end(self, runner: "IRunner"):
-        """
-        Save checkpoint based on batches count.
-
-        Args:
-            runner: current runner
-        """
-        self._iteration_counter += 1
-        if self._iteration_counter % self.period == 0:
-            checkpoint = _pack_runner(runner)
-            self.process_checkpoint(
-                logdir=runner.logdir,
-                checkpoint=checkpoint,
-                batch_metrics=runner.batch_metrics,
-            )
-
-    def on_stage_end(self, runner: "IRunner"):
-        """
-        Load model specified in ``load_on_stage_end``.
-
-        Args:
-            runner: current runner
-        """
-        if self.load_on_stage_end in ["best", "best_full"]:
-            resume = (
-                f"{runner.logdir}/checkpoints/{self.load_on_stage_end}.pth"
-            )
-            print(f"Loading {self.load_on_stage_end} model from {resume}")
-            _load_checkpoint(
-                filename=resume,
-                runner=runner,
-                load_full=self.load_on_stage_end.endswith("full"),
-            )
-
-
-__all__ = [
-    "CheckpointCallback",
-    "IterationCheckpointCallback",
-    "ICheckpointCallback",
-    "BaseCheckpointCallback",
-]
+__all__ = ["ICheckpointCallback", "CheckpointCallback"]

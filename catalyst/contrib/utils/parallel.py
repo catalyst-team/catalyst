@@ -1,4 +1,4 @@
-# description     :Multiprocessing and tqdm wrapper for easy paralelizing
+# description     :Multiprocessing and tqdm wrapper for easy parallelizing
 # author          :Vsevolod Poletaev
 # author_email    :poletaev.va@gmail.com
 # date            :20190822

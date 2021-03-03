@@ -1,3 +1,4 @@
+# @TODO: refactor based on engines
 from typing import Callable, Dict, Union
 import os
 from pathlib import Path
@@ -11,11 +12,7 @@ from catalyst.utils.misc import maybe_recursive_call
 
 
 def pack_checkpoint(
-    model: nn.Module = None,
-    criterion: nn.Module = None,
-    optimizer=None,
-    scheduler=None,
-    **kwargs,
+    model: nn.Module = None, criterion: nn.Module = None, optimizer=None, scheduler=None, **kwargs,
 ):
     """
     Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
@@ -43,13 +40,10 @@ def pack_checkpoint(
             )
     else:
         model_module = get_nn_from_ddp_module(model)
-        checkpoint["model_state_dict"] = maybe_recursive_call(
-            model_module, "state_dict"
-        )
+        checkpoint["model_state_dict"] = maybe_recursive_call(model_module, "state_dict")
 
     for dict2save, name2save in zip(
-        [criterion, optimizer, scheduler],
-        ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
     ):
         if dict2save is None:
             continue
@@ -86,14 +80,11 @@ def unpack_checkpoint(
     if model is not None:
         model = get_nn_from_ddp_module(model)
         maybe_recursive_call(
-            model,
-            "load_state_dict",
-            recursive_args=checkpoint["model_state_dict"],
+            model, "load_state_dict", recursive_args=checkpoint["model_state_dict"],
         )
 
     for dict2load, name2load in zip(
-        [criterion, optimizer, scheduler],
-        ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
     ):
         if dict2load is None:
             continue
@@ -115,7 +106,7 @@ def save_checkpoint(
     is_best: bool = False,
     is_last: bool = False,
     special_suffix: str = "",
-    saver_fn: Callable = torch.save,
+    save_fn: Callable = torch.save,
 ) -> Union[Path, str]:
     """Saving checkpoint to a file.
 
@@ -130,7 +121,7 @@ def save_checkpoint(
             will be generated last checkpoint file.
         special_suffix: suffix to use for
             saving best/last checkpoints.
-        saver_fn: function to use for saving
+        save_fn: function to use for saving
             data to file, default is ``torch.save``
 
     Returns:
@@ -138,7 +129,7 @@ def save_checkpoint(
     """
     os.makedirs(logdir, exist_ok=True)
     filename = f"{logdir}/{suffix}.pth"
-    saver_fn(checkpoint, filename)
+    save_fn(checkpoint, filename)
     if is_best:
         shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
     if is_last:
@@ -155,9 +146,7 @@ def load_checkpoint(filepath: str):
     Returns:
         checkpoint content
     """
-    checkpoint = torch.load(
-        filepath, map_location=lambda storage, loc: storage
-    )
+    checkpoint = torch.load(filepath, map_location=lambda storage, loc: storage)
     return checkpoint
 
 

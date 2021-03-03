@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class BatchOverfitCallback(Callback):
-    """Callback for ovefitting loaders with specified number of batches.
+    """Callback to overfit loaders with specified number of batches.
     By default we use ``1`` batch for loader.
 
     For example, if you have ``train``, ``train_additional``,
@@ -94,14 +94,12 @@ class BatchOverfitCallback(Callback):
         for loader, num_batches in kwargs.items():
             if not isinstance(num_batches, (int, float)):
                 raise TypeError(
-                    "Expected loader num_batches type is int/float "
-                    f"but got {type(num_batches)}"
+                    "Expected loader num_batches type is int/float " f"but got {type(num_batches)}"
                 )
             self.loader_batches[loader] = num_batches
 
     def on_epoch_start(self, runner: "IRunner") -> None:
-        """
-        Wraps loaders for current epoch.
+        """Wraps loaders for current epoch.
         If number-of-batches for loader is not provided then the first batch
         from loader will be used for overfitting.
 
@@ -114,23 +112,18 @@ class BatchOverfitCallback(Callback):
             num_batches = self.loader_batches.get(name, 1)
             if isinstance(num_batches, float):
                 num_batches = int(len(loader) * num_batches)
-            epoch_loaders[name] = BatchLimitLoaderWrapper(
-                loader=loader, num_batches=num_batches,
-            )
+            epoch_loaders[name] = BatchLimitLoaderWrapper(loader=loader, num_batches=num_batches)
 
         runner.loaders = epoch_loaders
 
     def on_epoch_end(self, runner: "IRunner"):
-        """
-        Unwraps loaders for current epoch.
+        """Unwraps loaders for current epoch.
 
         Args:
             runner: current runner
         """
         runner.loaders = {
-            key: value.origin
-            if isinstance(value, BatchLimitLoaderWrapper)
-            else value
+            key: value.origin if isinstance(value, BatchLimitLoaderWrapper) else value
             for key, value in runner.loaders.items()
         }
 

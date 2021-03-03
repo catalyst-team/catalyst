@@ -11,6 +11,7 @@ from torch.utils import data
 Model = nn.Module
 Criterion = nn.Module
 Optimizer = optim.Optimizer
+# @TODO: how to fix PyTorch? Union["lr_scheduler._LRScheduler", "lr_scheduler.ReduceLROnPlateau"]
 Scheduler = lr_scheduler._LRScheduler  # noqa: WPS437
 Dataset = data.Dataset
 Device = Union[str, torch.device]

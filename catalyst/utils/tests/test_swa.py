@@ -1,3 +1,4 @@
+# flake8: noqa
 import os
 from pathlib import Path
 import shutil
@@ -38,9 +39,7 @@ class TestSwa(unittest.TestCase):
 
     def test_averaging(self):
         """Test SWA method."""
-        weights = get_averaged_weights_by_path_mask(
-            logdir=Path("./"), path_mask="net*"
-        )
+        weights = get_averaged_weights_by_path_mask(logdir=Path("./"), path_mask="net*")
         torch.save(weights, str("./checkpoints/swa_weights.pth"))
         model = Net()
         model.load_state_dict(load_checkpoint("./checkpoints/swa_weights.pth"))

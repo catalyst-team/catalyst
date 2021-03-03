@@ -13,49 +13,26 @@ Core
     :show-inheritance:
 
 
-Experiment
-----------------------
-.. autoclass:: catalyst.core.experiment.IExperiment
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.core.experiment
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
 Runner
 ----------------------
+.. autoclass:: catalyst.core.runner.IRunner
+    :members: __init__, seed, hparams, stages, get_stage_len, get_trial, get_engine, get_loggers, get_datasets, get_loaders, get_model, get_criterion, get_optimizer, get_scheduler, get_callbacks, log_metrics, log_image, log_hparams, handle_batch, run
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :undoc-members:
+    :show-inheritance:
+
 .. autoclass:: catalyst.core.runner.RunnerException
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autoclass:: catalyst.core.runner.IRunner
-    :members:
+Engine
+----------------------
+.. autoclass:: catalyst.core.engine.IEngine
+    :members: __init__
+    :exclude-members:
     :undoc-members:
     :show-inheritance:
-
-.. autoclass:: catalyst.core.runner.IStageBasedRunner
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.core.runner
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-RunnerLegacy
-~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.legacy.IRunnerLegacy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Callback
 ----------------------
@@ -80,11 +57,21 @@ Callback
     :show-inheritance:
 
 .. autoclass:: catalyst.core.callback.CallbackWrapper
+    :members: __init__
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :undoc-members:
+    :show-inheritance:
+
+Logger
+----------------------
+.. autoclass:: catalyst.core.logger.ILogger
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.core.callback
+Trial
+----------------------
+.. autoclass:: catalyst.core.trial.ITrial
     :members:
     :undoc-members:
     :show-inheritance:
