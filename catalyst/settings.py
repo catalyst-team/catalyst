@@ -116,6 +116,19 @@ class Settings(FrozenClass):
         use_pyarrow: bool = False,
         use_libjpeg_turbo: bool = False,
     ):
+        # trick for config type hints parsing
+        # we need to somehow specify the type for each config variable
+        self.cv_required: bool = cv_required
+        self.ml_required: bool = ml_required
+        self.hydra_required: bool = hydra_required
+        self.optuna_required: bool = optuna_required
+        self.amp_required: bool = amp_required
+        self.apex_required: bool = apex_required
+        self.xla_required: bool = xla_required
+        self.onnx_required: bool = onnx_required
+        self.pruning_required: bool = pruning_required
+        self.quantization_required: bool = quantization_required
+
         # [subpackages]
         if cv_required:
             assert IS_CV_AVAILABLE, (
