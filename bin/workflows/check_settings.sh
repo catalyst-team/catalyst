@@ -28,7 +28,7 @@ from catalyst.contrib import utils
 
 try:
     utils.imread
-except (ImportError, AssertionError):
+except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
@@ -64,7 +64,7 @@ assert SETTINGS.use_libjpeg_turbo == False
 python -c """
 try:
     from catalyst.contrib.dataset import cv as cv_data
-except (ImportError, AssertionError):
+except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
@@ -73,7 +73,7 @@ else:
 python -c """
 try:
     from catalyst.contrib.models import cv as cv_models
-except (ImportError, AssertionError):
+except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
@@ -82,7 +82,7 @@ else:
 python -c """
 try:
     from catalyst.contrib.utils import imread, imwrite
-except (ImportError, AssertionError):
+except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
@@ -93,7 +93,7 @@ try:
     from catalyst.contrib.__main__ import COMMANDS
 
     assert not ('process-images' in COMMANDS)
-except (ImportError, AssertionError):
+except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
@@ -137,7 +137,7 @@ EOT
 python -c """
 try:
     from catalyst.contrib.utils import balance_classes, split_dataframe_train_test
-except (ImportError, AssertionError):
+except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
@@ -151,7 +151,7 @@ try:
         'tag2label' in COMMANDS
         or 'split-dataframe' in COMMANDS
     )
-except (ImportError, AssertionError):
+except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
@@ -194,7 +194,7 @@ EOT
 python -c """
 try:
     from catalyst.runners.hydra import HydraRunner, SupervisedHydraRunner
-except (ImportError, AssertionError):
+except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
     raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
