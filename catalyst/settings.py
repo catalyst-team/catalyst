@@ -152,7 +152,8 @@ class Settings(FrozenClass):
         self.optuna_required: bool = _get_optional_value(
             optuna_required,
             IS_OPTUNA_AVAILABLE,
-            "catalyst[optuna] is not available, to install it, run `pip install catalyst[optuna]`.",
+            "catalyst[optuna] is not available, to install it, "
+            "run `pip install catalyst[optuna]`.",
         )
 
         # [engines]
