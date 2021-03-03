@@ -13,6 +13,3 @@ tqdm>=4.33.0
 # it's much easier to maintain one general tb provider
 # rather than a bunch of framework-adapted alternatives
 tensorboardX>=2.1.0
-
-# extra dependencies handling
-packaging

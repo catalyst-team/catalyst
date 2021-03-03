@@ -13,19 +13,19 @@ from catalyst.utils.config import load_config, save_config
 
 from catalyst.utils.data import get_loaders_from_params, get_loader
 
-from catalyst.utils.distributed import (
-    get_nn_from_ddp_module,
-    get_slurm_params,
-    get_distributed_params,
-    get_distributed_env,
-    get_rank,
-    check_ddp_wrapped,
-    check_torch_distributed_initialized,
-    check_slurm_available,
-    check_apex_available,
-    check_amp_available,
-    assert_fp16_available,
-)
+# from catalyst.utils.distributed import (
+#     get_nn_from_ddp_module,
+#     get_slurm_params,
+#     get_distributed_params,
+#     get_distributed_env,
+#     get_rank,
+#     check_ddp_wrapped,
+#     check_torch_distributed_initialized,
+#     check_slurm_available,
+#     check_apex_available,
+#     check_amp_available,
+#     assert_fp16_available,
+# )
 
 from catalyst.utils.misc import (
     get_fn_default_params,

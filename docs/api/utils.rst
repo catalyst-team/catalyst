@@ -35,13 +35,6 @@ Data
     :undoc-members:
     :show-inheritance:
 
-Distributed
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.distributed
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Misc
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.misc

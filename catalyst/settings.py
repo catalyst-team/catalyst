@@ -3,7 +3,7 @@ import configparser
 import logging
 import os
 
-from packaging.version import parse, Version
+# from packaging.version import parse, Version
 import torch
 
 from catalyst.tools.frozen_class import FrozenClass
@@ -25,7 +25,12 @@ def _is_apex_avalilable():
 
 
 def _is_amp_available():
-    return IS_CUDA_AVAILABLE and parse(torch.__version__) >= Version("1.6.0")
+    try:
+        import torch.cuda.amp as amp  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
 
 
 def _is_xla_available():
