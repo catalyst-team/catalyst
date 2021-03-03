@@ -179,7 +179,7 @@ class Settings(FrozenClass):
         # self.nmslib_required: bool = nmslib_required
         self.optuna_required: bool = _get_optional_value(
             optuna_required,
-            _is_hydra_available,
+            _is_optuna_available,
             "catalyst[optuna] is not available, to install it, "
             "run `pip install catalyst[optuna]`.",
         )
