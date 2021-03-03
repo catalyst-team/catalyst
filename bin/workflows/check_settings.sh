@@ -24,7 +24,6 @@ optuna_required = false
 EOT
 
 python -c """
-from catalyst.contrib import callbacks
 from catalyst.contrib import utils
 
 try:
