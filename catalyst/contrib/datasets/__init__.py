@@ -8,8 +8,8 @@ from catalyst.contrib.datasets.mnist import (
     MNIST,
 )
 
-if SETTINGS.use_ml:
+if SETTINGS.ml_required:
     from catalyst.contrib.datasets.movielens import MovieLens
 
-if SETTINGS.use_cv:
+if SETTINGS.cv_required:
     from catalyst.contrib.datasets.cv import *

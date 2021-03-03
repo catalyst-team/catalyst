@@ -13,7 +13,7 @@ from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.sys import dump_code, dump_environment, get_config_runner
 from catalyst.utils.torch import prepare_cudnn
 
-if SETTINGS.use_hydra:
+if SETTINGS.hydra_required:
     from catalyst.dl.scripts.hydra_run import main as hydra_main
 
 
@@ -107,7 +107,7 @@ def config_main(args, unknown_args):
 def main(args, unknown_args):
     """Runs the ``catalyst-dl run`` script."""
     if args.hydra:
-        assert SETTINGS.use_hydra, (
+        assert SETTINGS.hydra_required, (
             "catalyst[hydra] requirements are not available, to install them,"
             " run `pip install catalyst[hydra]`."
         )

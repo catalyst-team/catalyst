@@ -50,13 +50,13 @@ from catalyst.utils.misc import (
 )
 from catalyst.utils.numpy import get_one_hot
 
-if SETTINGS.use_onnx:
+if SETTINGS.onnx_required:
     from catalyst.utils.onnx import quantize_onnx_model, convert_to_onnx
 
-if SETTINGS.use_pruning:
+if SETTINGS.pruning_required:
     from catalyst.utils.pruning import prune_model, remove_reparametrization
 
-if SETTINGS.use_quantization:
+if SETTINGS.quantization_required:
     from catalyst.utils.quantization import quantize_model
 
 from catalyst.utils.swa import (

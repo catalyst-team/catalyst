@@ -9,7 +9,7 @@ from catalyst.contrib.utils.compression import (
     unpack_if_needed,
 )
 
-if SETTINGS.use_cv:
+if SETTINGS.cv_required:
     from catalyst.contrib.utils.image import (
         has_image_extension,
         imread,
@@ -18,7 +18,7 @@ if SETTINGS.use_cv:
         mimread,
     )
 
-if SETTINGS.use_ml:
+if SETTINGS.ml_required:
     from catalyst.contrib.utils.pandas import (
         dataframe_to_list,
         folds_to_list,
@@ -46,7 +46,7 @@ from catalyst.contrib.utils.parallel import (
 
 from catalyst.contrib.utils.serialization import deserialize, serialize
 
-if SETTINGS.use_ml:
+if SETTINGS.ml_required:
     from catalyst.contrib.utils.visualization import (
         plot_confusion_matrix,
         render_figure_to_tensor,

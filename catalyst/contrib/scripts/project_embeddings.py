@@ -61,7 +61,7 @@ def parse_args():
 def _load_image_data(rootpath: str, paths: List, img_size: int):
     img_data = None
 
-    if SETTINGS.use_cv:
+    if SETTINGS.cv_required:
         import cv2
 
         def _load_image(filename, size):

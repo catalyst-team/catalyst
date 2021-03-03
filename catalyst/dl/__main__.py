@@ -13,7 +13,7 @@ COMMANDS = OrderedDict([("run", run), ("swa", swa)])  # ("trace", trace)
 #
 #     COMMANDS["quantize"] = quantize
 
-if SETTINGS.use_optuna:
+if SETTINGS.optuna_required:
 
     from catalyst.dl.scripts import tune
 

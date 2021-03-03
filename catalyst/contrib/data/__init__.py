@@ -14,5 +14,5 @@ from catalyst.contrib.data.reader import (
     ReaderCompose,
 )
 
-if SETTINGS.use_cv:
+if SETTINGS.cv_required:
     from catalyst.contrib.data.cv import ImageReader, MaskReader, ImageFolderDataset

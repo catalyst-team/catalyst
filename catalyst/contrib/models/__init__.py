@@ -14,5 +14,5 @@ from catalyst.contrib.models.sequential import (
 from catalyst.contrib.models.mnist import MnistSimpleNet
 
 
-if SETTINGS.use_cv:
+if SETTINGS.cv_required:
     from catalyst.contrib.models.cv import *

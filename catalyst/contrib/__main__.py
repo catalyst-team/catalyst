@@ -58,7 +58,7 @@ from catalyst.settings import SETTINGS
 
 COMMANDS = OrderedDict([("collect-env", collect_env)])
 
-if SETTINGS.use_ml:
+if SETTINGS.ml_required:
     from catalyst.contrib.scripts import project_embeddings, split_dataframe, tag2label
 
     COMMANDS["project-embeddings"] = project_embeddings
@@ -66,7 +66,7 @@ if SETTINGS.use_ml:
     COMMANDS["split-dataframe"] = split_dataframe
 
 
-if SETTINGS.use_cv and SETTINGS.use_ml:
+if SETTINGS.cv_required and SETTINGS.ml_required:
     from catalyst.contrib.scripts import process_images  # , image2embedding
 
     COMMANDS["process-images"] = process_images

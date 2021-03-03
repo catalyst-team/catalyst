@@ -7,7 +7,7 @@ from catalyst.runners.config import ConfigRunner, SupervisedConfigRunner
 from catalyst.settings import SETTINGS
 
 
-if SETTINGS.use_hydra:
+if SETTINGS.hydra_required:
     from catalyst.runners.hydra import HydraRunner, SupervisedHydraRunner
 
     __all__ = [

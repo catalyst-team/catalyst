@@ -91,6 +91,8 @@ extras = {
     "ml": load_requirements("requirements/requirements-ml.txt"),
     "hydra": load_requirements("requirements/requirements-hydra.txt"),
     "optuna": load_requirements("requirements/requirements-optuna.txt"),
+    "onnx": load_requirements("requirements/requirements-onnx.txt"),
+    "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
 }
 extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
 

@@ -116,33 +116,20 @@ class Settings(FrozenClass):
         use_pyarrow: bool = False,
         use_libjpeg_turbo: bool = False,
     ):
-        # trick for config type hints parsing
-        # we need to somehow specify the type for each config variable
-        self.cv_required: bool = cv_required
-        self.ml_required: bool = ml_required
-        self.hydra_required: bool = hydra_required
-        self.optuna_required: bool = optuna_required
-        self.amp_required: bool = amp_required
-        self.apex_required: bool = apex_required
-        self.xla_required: bool = xla_required
-        self.onnx_required: bool = onnx_required
-        self.pruning_required: bool = pruning_required
-        self.quantization_required: bool = quantization_required
-
         # [subpackages]
         if cv_required:
             assert IS_CV_AVAILABLE, (
                 "catalyst[cv] requirements are not available, to install them,"
                 " run `pip install catalyst[cv]`."
             )
-        self.use_cv: bool = cv_required or IS_CV_AVAILABLE
+        self.cv_required: bool = cv_required or IS_CV_AVAILABLE
 
         if ml_required:
             assert IS_ML_AVAILABLE, (
                 "catalyst[ml] requirements are not available, to install them,"
                 " run `pip install catalyst[ml]`."
             )
-        self.use_ml: bool = ml_required or IS_ML_AVAILABLE
+        self.ml_required: bool = ml_required or IS_ML_AVAILABLE
 
         # [integrations]
         if hydra_required:
@@ -150,7 +137,7 @@ class Settings(FrozenClass):
                 "catalyst[hydra] requirements are not available, to install them,"
                 " run `pip install catalyst[hydra]`."
             )
-        self.use_hydra: bool = hydra_required or IS_HYDRA_AVAILABLE
+        self.hydra_required: bool = hydra_required or IS_HYDRA_AVAILABLE
 
         # self.nmslib_required: bool = nmslib_required
 
@@ -159,7 +146,7 @@ class Settings(FrozenClass):
                 "catalyst[optuna] requirements are not available, to install them,"
                 " run `pip install catalyst[optuna]`."
             )
-        self.use_optuna: bool = optuna_required or IS_OPTUNA_AVAILABLE
+        self.optuna_required: bool = optuna_required or IS_OPTUNA_AVAILABLE
 
         # [engines]
         if amp_required:
@@ -167,43 +154,43 @@ class Settings(FrozenClass):
                 "catalyst[amp] requirements are not available, to install them,"
                 " run `pip install catalyst[amp]`."
             )
-        self.use_amp: bool = amp_required or IS_AMP_AVAILABLE
+        self.amp_required: bool = amp_required or IS_AMP_AVAILABLE
 
         if apex_required:
             assert IS_APEX_AVAILABLE, (
                 "catalyst[apex] requirements are not available, to install them,"
                 " run `pip install catalyst[apex]`."
             )
-        self.use_apex: bool = apex_required or IS_APEX_AVAILABLE
+        self.apex_required: bool = apex_required or IS_APEX_AVAILABLE
 
         if xla_required:
             assert IS_XLA_AVAILABLE, (
                 "catalyst[xla] requirements are not available, to install them,"
                 " run `pip install catalyst[xla]`."
             )
-        self.use_xla: bool = xla_required or IS_XLA_AVAILABLE
+        self.xla_required: bool = xla_required or IS_XLA_AVAILABLE
 
         # [dl-extras]
         if onnx_required:
             assert IS_ONNX_AVAILABLE, (
                 "catalyst[onnx] requirements are not available, to install them,"
-                " run `pip install catalyst[onnx]`."
+                " run `pip install catalyst[onnx]` or `pip install catalyst[onnx-gpu]`."
             )
-        self.use_onnx: bool = onnx_required or IS_ONNX_AVAILABLE
+        self.onnx_required: bool = onnx_required or IS_ONNX_AVAILABLE
 
         if pruning_required:
             assert IS_PRUNING_AVAILABLE, (
                 "catalyst[pruning] requirements are not available, to install them,"
                 " run `pip install catalyst[pruning]`."
             )
-        self.use_pruning: bool = pruning_required or IS_PRUNING_AVAILABLE
+        self.pruning_required: bool = pruning_required or IS_PRUNING_AVAILABLE
 
         if quantization_required:
             assert IS_QUANTIZATION_AVAILABLE, (
                 "catalyst[quantization] requirements are not available, to install them,"
                 " run `pip install catalyst[quantization]`."
             )
-        self.use_quantization: bool = quantization_required or IS_QUANTIZATION_AVAILABLE
+        self.quantization_required: bool = quantization_required or IS_QUANTIZATION_AVAILABLE
 
         # [logging]
         # self.alchemy_required: bool = alchemy_required

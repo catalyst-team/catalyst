@@ -27,10 +27,10 @@ from catalyst.callbacks.scheduler import (
 # if SETTINGS.use_quantization:
 #     from catalyst.callbacks.quantization import DynamicQuantizationCallback
 
-if SETTINGS.use_pruning:
+if SETTINGS.pruning_required:
     from catalyst.callbacks.pruning import PruningCallback
 
-if SETTINGS.use_optuna:
+if SETTINGS.optuna_required:
     from catalyst.callbacks.optuna import OptunaPruningCallback
 
 from catalyst.callbacks.metrics import *
