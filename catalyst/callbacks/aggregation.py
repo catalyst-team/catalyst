@@ -2,7 +2,7 @@ from typing import Any, Callable, Dict, List, Union
 
 import torch
 
-from catalyst.dl import Callback, CallbackNode, CallbackOrder
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 
 
 class MetricAggregationCallback(Callback):
