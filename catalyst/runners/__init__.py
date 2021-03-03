@@ -4,10 +4,10 @@ from catalyst.runners.runner import Runner
 from catalyst.runners.supervised import ISupervisedRunner, SupervisedRunner
 from catalyst.runners.config import ConfigRunner, SupervisedConfigRunner
 
-from catalyst.settings import IS_HYDRA_AVAILABLE
+from catalyst.settings import SETTINGS
 
 
-if IS_HYDRA_AVAILABLE:
+if SETTINGS.hydra_required:
     from catalyst.runners.hydra import HydraRunner, SupervisedHydraRunner
 
     __all__ = [

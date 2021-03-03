@@ -1,4 +1,4 @@
-name: catalyst
+name: intergations
 # <- standard block end ->
 on:
   push:
@@ -13,15 +13,15 @@ on:
 
 jobs:
   build:
-    name: dl-cpu
+    name: intergations
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       # max-parallel: 6
       matrix:
-        os: [ubuntu-18.04, macOS-10.15]  # windows-2019,
-        python-version: [3.6, 3.7, 3.8]
-        requirements: ['minimal', 'latest']
+        os: [ubuntu-18.04]  # windows-2019,
+        python-version: [3.7]
+        requirements: ['latest']
         exclude:
           # pypi problems
           - python-version: 3.8
@@ -87,8 +87,6 @@ jobs:
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
         run: |
-          pytest .
           pip install -e .
-          cd examples && bash mnist_stages/run_config.sh && cd ..
-          cd examples && bash mnist_stages/run_hydra.sh && cd ..
-          cd examples && bash mnist_stages/run_tune.sh && cd ..
+          bash bin/workflows/check_projector.sh
+          bash bin/workflows/check_settings.sh
