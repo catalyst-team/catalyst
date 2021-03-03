@@ -36,7 +36,6 @@ class MetricAggregationCallback(Callback):
             multiplier: scale factor for the aggregated metric.
         Examples:
             Loss is a weighted sum of cross entropy loss and binary cross entropy loss
-            >>> # flake8: noqa
             >>> import torch
             >>> from torch.utils.data import DataLoader, TensorDataset
             >>> from catalyst import dl
@@ -53,7 +52,8 @@ class MetricAggregationCallback(Callback):
             >>>
             >>> # model, criterion, optimizer, scheduler
             >>> model = torch.nn.Linear(num_features, num_classes)
-            >>> criterion = {"ce": torch.nn.CrossEntropyLoss(), "bce": torch.nn.BCEWithLogitsLoss()}
+            >>> criterion = {"ce": torch.nn.CrossEntropyLoss(),
+            >>>              "bce": torch.nn.BCEWithLogitsLoss()}
             >>> optimizer = torch.optim.Adam(model.parameters())
             >>> scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
             >>>
@@ -62,11 +62,12 @@ class MetricAggregationCallback(Callback):
             >>>         x, y = batch
             >>>         logits = self.model(x)
             >>>         num_classes = logits.shape[-1]
+            >>>         targets_onehot = torch.nn.functional.one_hot(y, num_classes=num_classes)
             >>>         self.batch = {
             >>>             "features": x,
             >>>             "logits": logits,
             >>>             "targets": y,
-            >>>             "targets_onehot": torch.nn.functional.one_hot(y, num_classes=num_classes).float()
+            >>>             "targets_onehot": targets_onehot.float()
             >>>         }
             >>>
             >>> # model training
@@ -163,6 +164,7 @@ class MetricAggregationCallback(Callback):
 
     def on_batch_end(self, runner: "IRunner") -> None:
         """Computes the metric and add it to the batch metrics.
+
         Args:
             runner: current runner
         """
@@ -171,6 +173,7 @@ class MetricAggregationCallback(Callback):
 
     def on_loader_end(self, runner: "IRunner") -> None:
         """Computes the metric and add it to the loader metrics.
+
         Args:
             runner: current runner
         """
