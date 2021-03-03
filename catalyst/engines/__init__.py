@@ -9,17 +9,12 @@ from catalyst.engines.device import DeviceEngine
 from catalyst.engines.parallel import DataParallelEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
 
-from catalyst.settings import (
-    IS_CUDA_AVAILABLE,
-    NUM_CUDA_DEVICES,
-    IS_APEX_AVAILABLE,
-    IS_AMP_AVAILABLE,
-)
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
-if IS_AMP_AVAILABLE:
+if SETTINGS.amp_required:
     from catalyst.engines.amp import AMPEngine, DistributedDataParallelAMPEngine
 
-if IS_APEX_AVAILABLE:
+if SETTINGS.apex_required:
     from catalyst.engines.apex import APEXEngine, DistributedDataParallelApexEngine
 
 

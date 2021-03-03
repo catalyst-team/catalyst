@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 import configparser
 import logging
 import os
@@ -11,87 +11,110 @@ from catalyst.tools.frozen_class import FrozenClass
 logger = logging.getLogger(__name__)
 
 IS_CUDA_AVAILABLE = torch.cuda.is_available()
-IS_AMP_AVAILABLE = IS_CUDA_AVAILABLE and parse(torch.__version__) >= Version("1.6.0")
 NUM_CUDA_DEVICES = torch.cuda.device_count()
 
-try:
-    import apex  # noqa: F401
-    from apex import amp  # noqa: F401
 
-    IS_APEX_AVAILABLE = True
-except ImportError:
-    IS_APEX_AVAILABLE = False
+def _is_apex_avalilable():
+    try:
+        import apex  # noqa: F401
+        from apex import amp  # noqa: F401
 
-try:
-    import torch_xla.core.xla_model as xm  # noqa: F401
-
-    IS_XLA_AVAILABLE = True
-except ModuleNotFoundError:
-    IS_XLA_AVAILABLE = False
-
-try:
-    import onnx  # noqa: F401, E401
-    import onnxruntime  # noqa: F401, E401
-
-    IS_ONNX_AVAILABLE = True
-except ImportError:
-    IS_ONNX_AVAILABLE = False
-
-try:
-    import torch.nn.utils.prune as prune  # noqa: F401
-
-    IS_PRUNING_AVAILABLE = True
-except ModuleNotFoundError:
-    IS_PRUNING_AVAILABLE = False
-
-try:
-    import torch.quantization  # noqa: F401
-
-    IS_QUANTIZATION_AVAILABLE = True
-except ModuleNotFoundError:
-    IS_QUANTIZATION_AVAILABLE = False
-
-try:
-    import optuna  # noqa: F401
-
-    IS_OPTUNA_AVAILABLE = True
-except ModuleNotFoundError:
-    IS_OPTUNA_AVAILABLE = False
-
-try:
-    import hydra  # noqa: F401
-    from omegaconf import DictConfig, OmegaConf  # noqa: F401
-
-    IS_HYDRA_AVAILABLE = True
-except ModuleNotFoundError:
-    IS_HYDRA_AVAILABLE = False
-
-try:
-    import cv2  # noqa: F401
-    import imageio  # noqa: F401
-    from skimage.color import label2rgb, rgb2gray  # noqa: F401
-    import torchvision  # noqa: F401
-
-    IS_CV_AVAILABLE = True
-except ModuleNotFoundError:
-    IS_CV_AVAILABLE = False
-
-try:
-    import matplotlib  # noqa: F401
-    import pandas  # noqa: F401
-    import scipy  # noqa: F401
-    import sklearn  # noqa: F401
-
-    IS_ML_AVAILABLE = True
-except ModuleNotFoundError:
-    IS_ML_AVAILABLE = False
+        return True
+    except ImportError:
+        return False
 
 
-def _get_optional_value(is_required: Optional[bool], is_available: bool, assert_msg: str) -> bool:
+def _is_amp_available():
+    return IS_CUDA_AVAILABLE and parse(torch.__version__) >= Version("1.6.0")
+
+
+def _is_xla_available():
+    try:
+        import torch_xla.core.xla_model as xm  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _is_onnx_available():
+    try:
+        import onnx  # noqa: F401, E401
+        import onnxruntime  # noqa: F401, E401
+
+        return True
+    except ImportError:
+        return False
+
+
+def _is_pruning_available():
+    try:
+        import torch.nn.utils.prune as prune  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _is_quantization_available():
+    try:
+        import torch.quantization  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _is_optuna_available():
+    try:
+        import optuna  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _is_hydra_available():
+    try:
+        import hydra  # noqa: F401
+        from omegaconf import DictConfig, OmegaConf  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _is_cv_available():
+    try:
+        import cv2  # noqa: F401
+        import imageio  # noqa: F401
+        from skimage.color import label2rgb, rgb2gray  # noqa: F401
+        import torchvision  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _is_ml_available():
+    try:
+        import matplotlib  # noqa: F401
+        import pandas  # noqa: F401
+        import scipy  # noqa: F401
+        import sklearn  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _get_optional_value(
+    is_required: Optional[bool], is_available_fn: Callable, assert_msg: str
+) -> bool:
     if is_required is None:
-        return is_available
+        return is_available_fn()
     elif is_required:
-        assert is_available, assert_msg
+        assert is_available_fn(), assert_msg
         return True
     else:
         return False
@@ -133,25 +156,25 @@ class Settings(FrozenClass):
         # [subpackages]
         self.cv_required: bool = _get_optional_value(
             cv_required,
-            IS_CV_AVAILABLE,
+            _is_cv_available,
             "catalyst[cv] is not available, to install it, run `pip install catalyst[cv]`.",
         )
         self.ml_required: bool = _get_optional_value(
             ml_required,
-            IS_ML_AVAILABLE,
+            _is_ml_available,
             "catalyst[ml] is not available, to install it, run `pip install catalyst[ml]`.",
         )
 
         # [integrations]
         self.hydra_required: bool = _get_optional_value(
             hydra_required,
-            IS_HYDRA_AVAILABLE,
+            _is_hydra_available,
             "catalyst[hydra] is not available, to install it, run `pip install catalyst[hydra]`.",
         )
         # self.nmslib_required: bool = nmslib_required
         self.optuna_required: bool = _get_optional_value(
             optuna_required,
-            IS_OPTUNA_AVAILABLE,
+            _is_hydra_available,
             "catalyst[optuna] is not available, to install it, "
             "run `pip install catalyst[optuna]`.",
         )
@@ -159,36 +182,36 @@ class Settings(FrozenClass):
         # [engines]
         self.amp_required: bool = _get_optional_value(
             amp_required,
-            IS_AMP_AVAILABLE,
+            _is_amp_available,
             "catalyst[amp] is not available, to install it, run `pip install catalyst[amp]`.",
         )
         self.apex_required: bool = _get_optional_value(
             apex_required,
-            IS_APEX_AVAILABLE,
+            _is_apex_avalilable,
             "catalyst[apex] is not available, to install it, run `pip install catalyst[apex]`.",
         )
         self.xla_required: bool = _get_optional_value(
             xla_required,
-            IS_XLA_AVAILABLE,
+            _is_xla_available,
             "catalyst[xla] is not available, to install it, run `pip install catalyst[xla]`.",
         )
 
         # [dl-extras]
         self.onnx_required: bool = _get_optional_value(
             onnx_required,
-            IS_ONNX_AVAILABLE,
+            _is_onnx_available,
             "catalyst[onnx] is not available, to install it, "
             "run `pip install catalyst[onnx]` or `pip install catalyst[onnx-gpu]`.",
         )
         self.pruning_required: bool = _get_optional_value(
             pruning_required,
-            IS_PRUNING_AVAILABLE,
+            _is_pruning_available,
             "catalyst[pruning] is not available, to install it, "
             "run `pip install catalyst[pruning]`.",
         )
         self.quantization_required: bool = _get_optional_value(
             quantization_required,
-            IS_QUANTIZATION_AVAILABLE,
+            _is_quantization_available,
             "catalyst[quantization] is not available, to install it, "
             "run `pip install catalyst[quantization]`.",
         )
@@ -416,19 +439,7 @@ class MergedConfigParser:
 
 SETTINGS = Settings.parse()
 setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "IS_APEX_AVAILABLE", IS_APEX_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "IS_AMP_AVAILABLE", IS_AMP_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
-setattr(SETTINGS, "IS_XLA_AVAILABLE", IS_XLA_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "IS_PRUNING_AVAILABLE", IS_PRUNING_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "IS_OPTUNA_AVAILABLE", IS_OPTUNA_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "IS_HYDRA_AVAILABLE", IS_HYDRA_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "IS_APEX_AVAILABLE", IS_APEX_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "IS_AMP_AVAILABLE", IS_AMP_AVAILABLE)  # noqa: B010
-setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
-setattr(SETTINGS, "IS_ONNX_AVAILABLE", IS_ONNX_AVAILABLE)  # noqa: B010
 
 
 __all__ = [
@@ -436,10 +447,4 @@ __all__ = [
     "Settings",
     "ConfigFileFinder",
     "MergedConfigParser",
-    "IS_PRUNING_AVAILABLE",
-    "IS_XLA_AVAILABLE",
-    "IS_QUANTIZATION_AVAILABLE",
-    "IS_OPTUNA_AVAILABLE",
-    "IS_HYDRA_AVAILABLE",
-    "IS_ONNX_AVAILABLE",
 ]
