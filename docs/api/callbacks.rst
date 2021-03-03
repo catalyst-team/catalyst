@@ -59,7 +59,7 @@ Metric – LoaderMetricCallback
 
 .. autoclass:: catalyst.callbacks.aggregation.MetricAggregationCallback
     :members:
-    :exclude-members: on_batch_end, on_loader_end
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
 Misc – CheckRunCallback
@@ -177,4 +177,3 @@ ConfusionMatrixCallback
     :show-inheritance:
 
 .. Segmentation
-
