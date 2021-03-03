@@ -22,9 +22,6 @@ from catalyst.utils.distributed import (
     check_ddp_wrapped,
     check_torch_distributed_initialized,
     check_slurm_available,
-    check_apex_available,
-    check_amp_available,
-    assert_fp16_available,
 )
 
 from catalyst.utils.misc import (

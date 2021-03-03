@@ -6,7 +6,7 @@ from catalyst.contrib.datasets import MNIST
 from catalyst.data.sampler import BalanceClassSampler
 from catalyst.data.transforms import ToTensor
 from catalyst.dl import IRunner, SupervisedConfigRunner
-from catalyst.settings import IS_HYDRA_AVAILABLE
+from catalyst.settings import SETTINGS
 
 
 class IRunnerMixin(IRunner):
@@ -52,7 +52,7 @@ class CustomSupervisedConfigRunner(IRunnerMixin, SupervisedConfigRunner):
     pass
 
 
-if IS_HYDRA_AVAILABLE:
+if SETTINGS.hydra_required:
     from catalyst.dl import SupervisedHydraRunner
 
     class CustomSupervisedHydraRunner(IRunnerMixin, SupervisedHydraRunner):
