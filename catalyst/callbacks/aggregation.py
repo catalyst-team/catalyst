@@ -34,8 +34,10 @@ class MetricAggregationCallback(Callback):
             scope: type of metric. Must be either ``batch``, ``loader`` or
                 ``epoch``
             multiplier: scale factor for the aggregated metric.
+
         Examples:
             Loss is a weighted sum of cross entropy loss and binary cross entropy loss
+
             >>> import torch
             >>> from torch.utils.data import DataLoader, TensorDataset
             >>> from catalyst import dl
