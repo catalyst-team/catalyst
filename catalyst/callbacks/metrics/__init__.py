@@ -1,32 +1,12 @@
 # flake8: noqa
 
-import logging
-
-logger = logging.getLogger(__name__)
-
 from catalyst.settings import SETTINGS
 
 from catalyst.callbacks.metrics.accuracy import AccuracyCallback
 from catalyst.callbacks.metrics.auc import AUCCallback
 
-try:
-    import matplotlib  # noqa: F401
-
+if SETTINGS.use_ml:
     from catalyst.callbacks.metrics.confusion_matrix import ConfusionMatrixCallback
-except ModuleNotFoundError as ex:
-    if SETTINGS.ml_required:
-        logger.warning(
-            "catalyst[ml] requirements are not available, to install them,"
-            " run `pip install catalyst[ml]`."
-        )
-        raise ex
-except ImportError as ex:
-    if SETTINGS.ml_required:
-        logger.warning(
-            "catalyst[ml] requirements are not available, to install them,"
-            " run `pip install catalyst[ml]`."
-        )
-        raise ex
 
 
 #

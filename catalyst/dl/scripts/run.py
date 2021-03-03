@@ -1,8 +1,4 @@
 #!/usr/bin/env python
-import logging
-
-logger = logging.getLogger(__name__)
-
 import argparse
 from argparse import ArgumentParser
 import os
@@ -11,29 +7,14 @@ import sys
 
 from catalyst.dl.scripts.functional import parse_args_uargs
 from catalyst.runners.config import ConfigRunner
-from catalyst.settings import IS_HYDRA_AVAILABLE, SETTINGS
+from catalyst.settings import SETTINGS
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.sys import dump_code, dump_environment, get_config_runner
 from catalyst.utils.torch import prepare_cudnn
 
-if IS_HYDRA_AVAILABLE or SETTINGS.hydra_required:
-    try:
-        from catalyst.dl.scripts.hydra_run import main as hydra_main
-    except ModuleNotFoundError as ex:
-        if SETTINGS.hydra_required:
-            logger.warning(
-                "catalyst[hydra] requirements are not available, to install them,"
-                " run `pip install catalyst[hydra]`."
-            )
-            raise ex
-    except ImportError as ex:
-        if SETTINGS.hydra_required:
-            logger.warning(
-                "catalyst[hydra] requirements are not available, to install them,"
-                " run `pip install catalyst[hydra]`."
-            )
-            raise ex
+if SETTINGS.use_hydra:
+    from catalyst.dl.scripts.hydra_run import main as hydra_main
 
 
 def build_args(parser: ArgumentParser):
@@ -126,7 +107,7 @@ def config_main(args, unknown_args):
 def main(args, unknown_args):
     """Runs the ``catalyst-dl run`` script."""
     if args.hydra:
-        assert IS_HYDRA_AVAILABLE, (
+        assert SETTINGS.use_hydra, (
             "catalyst[hydra] requirements are not available, to install them,"
             " run `pip install catalyst[hydra]`."
         )

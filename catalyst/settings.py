@@ -14,14 +14,6 @@ IS_CUDA_AVAILABLE = torch.cuda.is_available()
 IS_AMP_AVAILABLE = IS_CUDA_AVAILABLE and parse(torch.__version__) >= Version("1.6.0")
 NUM_CUDA_DEVICES = torch.cuda.device_count()
 
-
-try:
-    from git import Repo  # noqa: F401
-
-    IS_GIT_AVAILABLE = True
-except ImportError:
-    IS_GIT_AVAILABLE = False
-
 try:
     import apex  # noqa: F401
     from apex import amp  # noqa: F401
@@ -73,6 +65,26 @@ try:
 except ModuleNotFoundError:
     IS_HYDRA_AVAILABLE = False
 
+try:
+    import cv2  # noqa: F401
+    import imageio  # noqa: F401
+    from skimage.color import label2rgb, rgb2gray  # noqa: F401
+    import torchvision  # noqa: F401
+
+    IS_CV_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_CV_AVAILABLE = False
+
+try:
+    import matplotlib  # noqa: F401
+    import pandas  # noqa: F401
+    import scipy  # noqa: F401
+    import sklearn  # noqa: F401
+
+    IS_ML_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_ML_AVAILABLE = False
+
 
 class Settings(FrozenClass):
     """Catalyst settings."""
@@ -83,9 +95,17 @@ class Settings(FrozenClass):
         cv_required: bool = False,
         ml_required: bool = False,
         # [integrations]
-        hydra_required: Optional[bool] = False,
+        hydra_required: bool = False,
         # nmslib_required: Optional[bool] = False,
-        optuna_required: Optional[bool] = None,
+        optuna_required: bool = False,
+        # [engines]
+        amp_required: bool = False,
+        apex_required: bool = False,
+        xla_required: bool = False,
+        # [dl-extras]
+        onnx_required: bool = False,
+        pruning_required: bool = False,
+        quantization_required: bool = False,
         # [logging]
         # alchemy_required: Optional[bool] = None,
         # neptune_required: Optional[bool] = None,
@@ -97,13 +117,80 @@ class Settings(FrozenClass):
         use_libjpeg_turbo: bool = False,
     ):
         # [subpackages]
-        self.cv_required: bool = cv_required
-        self.ml_required: bool = ml_required
+        if cv_required:
+            assert IS_CV_AVAILABLE, (
+                "catalyst[cv] requirements are not available, to install them,"
+                " run `pip install catalyst[cv]`."
+            )
+        self.use_cv: bool = cv_required or IS_CV_AVAILABLE
+
+        if ml_required:
+            assert IS_ML_AVAILABLE, (
+                "catalyst[ml] requirements are not available, to install them,"
+                " run `pip install catalyst[ml]`."
+            )
+        self.use_ml: bool = ml_required or IS_ML_AVAILABLE
 
         # [integrations]
-        self.hydra_required: bool = hydra_required
+        if hydra_required:
+            assert IS_HYDRA_AVAILABLE, (
+                "catalyst[hydra] requirements are not available, to install them,"
+                " run `pip install catalyst[hydra]`."
+            )
+        self.use_hydra: bool = hydra_required or IS_HYDRA_AVAILABLE
+
         # self.nmslib_required: bool = nmslib_required
-        self.optuna_required: bool = optuna_required
+
+        if optuna_required:
+            assert IS_OPTUNA_AVAILABLE, (
+                "catalyst[optuna] requirements are not available, to install them,"
+                " run `pip install catalyst[optuna]`."
+            )
+        self.use_optuna: bool = optuna_required or IS_OPTUNA_AVAILABLE
+
+        # [engines]
+        if amp_required:
+            assert IS_AMP_AVAILABLE, (
+                "catalyst[amp] requirements are not available, to install them,"
+                " run `pip install catalyst[amp]`."
+            )
+        self.use_amp: bool = amp_required or IS_AMP_AVAILABLE
+
+        if apex_required:
+            assert IS_APEX_AVAILABLE, (
+                "catalyst[apex] requirements are not available, to install them,"
+                " run `pip install catalyst[apex]`."
+            )
+        self.use_apex: bool = apex_required or IS_APEX_AVAILABLE
+
+        if xla_required:
+            assert IS_XLA_AVAILABLE, (
+                "catalyst[xla] requirements are not available, to install them,"
+                " run `pip install catalyst[xla]`."
+            )
+        self.use_xla: bool = xla_required or IS_XLA_AVAILABLE
+
+        # [dl-extras]
+        if onnx_required:
+            assert IS_ONNX_AVAILABLE, (
+                "catalyst[onnx] requirements are not available, to install them,"
+                " run `pip install catalyst[onnx]`."
+            )
+        self.use_onnx: bool = onnx_required or IS_ONNX_AVAILABLE
+
+        if pruning_required:
+            assert IS_PRUNING_AVAILABLE, (
+                "catalyst[pruning] requirements are not available, to install them,"
+                " run `pip install catalyst[pruning]`."
+            )
+        self.use_pruning: bool = pruning_required or IS_PRUNING_AVAILABLE
+
+        if quantization_required:
+            assert IS_QUANTIZATION_AVAILABLE, (
+                "catalyst[quantization] requirements are not available, to install them,"
+                " run `pip install catalyst[quantization]`."
+            )
+        self.use_quantization: bool = quantization_required or IS_QUANTIZATION_AVAILABLE
 
         # [logging]
         # self.alchemy_required: bool = alchemy_required
@@ -327,7 +414,6 @@ class MergedConfigParser:
 
 
 SETTINGS = Settings.parse()
-setattr(SETTINGS, "IS_GIT_AVAILABLE", IS_GIT_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_APEX_AVAILABLE", IS_APEX_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_AMP_AVAILABLE", IS_AMP_AVAILABLE)  # noqa: B010
@@ -351,7 +437,6 @@ __all__ = [
     "MergedConfigParser",
     "IS_PRUNING_AVAILABLE",
     "IS_XLA_AVAILABLE",
-    "IS_GIT_AVAILABLE",
     "IS_QUANTIZATION_AVAILABLE",
     "IS_OPTUNA_AVAILABLE",
     "IS_HYDRA_AVAILABLE",
