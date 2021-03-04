@@ -13,27 +13,6 @@ from catalyst.utils.torch import set_requires_grad
 logger = logging.getLogger(__name__)
 
 
-class _TracingModelWrapper(nn.Module):
-    """Wrapper that traces model with batch instead of calling it.
-
-    (Workaround, to use native model batch handler)
-    """
-
-    def __init__(self, model, method_name):
-        super().__init__()
-        self.model = model
-        self.method_name = method_name
-        self.tracing_result: jit.ScriptModule
-
-    def __call__(self, *args, **kwargs):
-        method_model = ModelForwardWrapper(self.model, self.method_name)
-
-        self.tracing_result = jit.trace(method_model, *args, **kwargs)
-        output = self.model.forward(*args, **kwargs)
-
-        return output
-
-
 def trace_model(
     model: Model,
     batch: Union[Tuple[torch.Tensor], torch.Tensor],
