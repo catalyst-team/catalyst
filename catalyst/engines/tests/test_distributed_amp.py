@@ -9,7 +9,11 @@ from pytest import mark
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst import dl
+from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.loggers import ConsoleLogger, CSVLogger
+from catalyst.core.runner import IRunner
+from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 from .misc import DummyDataset, DummyModel, LossMinimizationCallback, WorldSizeCheckCallback
@@ -24,20 +28,20 @@ if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 
 
-class CustomRunner(dl.IRunner):
+class CustomRunner(IRunner):
     def __init__(self, logdir):
         super().__init__()
         self._logdir = logdir
 
-    def get_engine(self) -> dl.IEngine:
+    def get_engine(self):
         return DistributedDataParallelAMPEngine(port="22222")
 
-    def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
+    def get_callbacks(self, stage: str):
         return {
-            "criterion": dl.CriterionCallback(
+            "criterion": CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
-            "optimizer": dl.OptimizerCallback(metric_key="loss"),
+            "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             # "checkpoint": dl.CheckpointCallback(
             #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
@@ -75,7 +79,7 @@ class CustomRunner(dl.IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+        return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
 
     def handle_batch(self, batch):
         x, y = batch
@@ -93,7 +97,7 @@ def test_train_with_experiment_distributed_parallel_amp_device():
         runner.run()
 
 
-class MyConfigRunner(dl.SupervisedConfigRunner):
+class MyConfigRunner(SupervisedConfigRunner):
     _dataset = DummyDataset(6)
 
     def get_datasets(self, *args, **kwargs):
