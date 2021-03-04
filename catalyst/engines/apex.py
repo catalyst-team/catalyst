@@ -8,7 +8,7 @@ from torch import nn
 from catalyst.engines.device import DeviceEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
 from catalyst.settings import SETTINGS
-from catalyst.typing import RunnerModel, RunnerOptimizer
+from catalyst.typing import Criterion, Model, Optimizer, RunnerModel, RunnerOptimizer, Scheduler
 from catalyst.utils.misc import get_fn_default_params
 
 if SETTINGS.apex_required:
@@ -182,7 +182,12 @@ class APEXEngine(DeviceEngine):
             scaled_loss.backward()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
+        self,
+        model: Model = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        scheduler: Scheduler = None,
+        **kwargs,
     ) -> Dict:
         checkpoint = {"amp": amp.state_dict()}
         # main components
@@ -206,10 +211,10 @@ class APEXEngine(DeviceEngine):
     def unpack_checkpoint(
         self,
         checkpoint: Dict,
-        model=None,
-        criterion=None,
-        optimizer=None,
-        scheduler=None,
+        model: Model = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        scheduler: Scheduler = None,
         **kwargs,
     ) -> None:
 

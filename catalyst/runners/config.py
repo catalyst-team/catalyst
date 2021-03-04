@@ -122,12 +122,7 @@ class ConfigRunner(IRunner):
     def get_engine(self) -> IEngine:
         """@TODO: docs."""
         engine_params = self._config.get("engine")
-
-        try:
-            engine = REGISTRY.get_from_params(**engine_params)
-        except:
-            engine = process_engine(**engine_params)
-
+        engine = REGISTRY.get_from_params(**engine_params)
         return engine
 
     def get_loggers(self) -> Dict[str, ILogger]:

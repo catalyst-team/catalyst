@@ -2,6 +2,8 @@ from typing import Any, Dict
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 
+from catalyst.typing import Criterion, Model, Optimizer, Scheduler
+
 
 @contextmanager
 def nullcontext(enter_result=None):
@@ -42,6 +44,9 @@ class IEngine(ABC):
 
     @property
     def is_master_process(self) -> bool:
+        """Checks if a process is master process.
+        Should be implemented only for DDP setup in other cases should always return True.
+        """
         return True
 
     @abstractmethod
@@ -85,18 +90,24 @@ class IEngine(ABC):
 
     @abstractmethod
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        model: Model = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        scheduler: Scheduler = None,
+        **kwargs,
     ) -> Dict:
+        """@TODO: docs"""
         pass
 
     @abstractmethod
     def unpack_checkpoint(
         self,
         checkpoint: Dict,
-        model=None,
-        criterion=None,
-        optimizer=None,
-        scheduler=None,
+        model: Model = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        scheduler: Scheduler = None,
         **kwargs,
     ) -> None:
         """@TODO: docs"""

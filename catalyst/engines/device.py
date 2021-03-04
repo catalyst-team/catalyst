@@ -121,10 +121,10 @@ class DeviceEngine(IEngine):
     def unpack_checkpoint(
         self,
         checkpoint: Dict,
-        model=None,
-        criterion=None,
-        optimizer=None,
-        scheduler=None,
+        model: Model = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        scheduler: Scheduler = None,
         **kwargs,
     ) -> None:
 
