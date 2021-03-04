@@ -57,7 +57,6 @@ class CustomRunner(IRunner):
             "test_device": DeviceCheckCallback(self._device, logger=logger),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
             "test_logits_type": OPTTensorTypeChecker("logits", self._opt_level),
-            # "loss_type_checker": TensorTypeChecker("loss", True),
         }
 
     @property

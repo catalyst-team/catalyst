@@ -181,16 +181,24 @@ class APEXEngine(DeviceEngine):
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
     ) -> Dict:
-        return {
-            "model": model,
-            "criterion": criterion,
-            "optimizer": optimizer,
-            "scheduler": scheduler,
-            # NOTE: propper way to save state, docs:
-            #   https://nvidia.github.io/apex/amp.html#checkpointing
-            "amp": amp.state_dict(),
-            **kwargs,
-        }
+        checkpoint = {"amp": amp.state_dict()}
+        # main components
+        if model is not None:
+            if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)):
+                _model = model.module
+            else:
+                _model = model
+            checkpoint["model_state_dict"] = _model.state_dict()
+        if criterion is not None and isinstance(criterion, nn.Module):
+            checkpoint["criterion_state_dict"] = criterion.state_dict()
+        if optimizer is not None:
+            checkpoint["optimizer_state_dict"] = optimizer.state_dict()
+        if scheduler is not None:
+            checkpoint["scheduler_state_dict"] = scheduler.state_dict()
+        # other components
+        for key, value in kwargs.items():
+            checkpoint[key] = value
+        return checkpoint
 
     def unpack_checkpoint(
         self,

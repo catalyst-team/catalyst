@@ -100,6 +100,7 @@ class DeviceEngine(IEngine):
         **kwargs,
     ) -> Dict:
         checkpoint = {}
+        # main components
         if model is not None:
             if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)):
                 _model = model.module
@@ -112,8 +113,9 @@ class DeviceEngine(IEngine):
             checkpoint["optimizer_state_dict"] = optimizer.state_dict()
         if scheduler is not None:
             checkpoint["scheduler_state_dict"] = scheduler.state_dict()
-        for k, v in kwargs.items():
-            checkpoint[k] = v
+        # other components
+        for key, value in kwargs.items():
+            checkpoint[key] = value
         return checkpoint
 
     def unpack_checkpoint(
