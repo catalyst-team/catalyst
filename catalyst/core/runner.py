@@ -667,6 +667,9 @@ class IRunner(ICallback, ILogger, ABC):
             LOGGER.warning(f"world size: {world_size}")
             LOGGER.warning(f"engine: {self.engine}")
 
+            if rank != 0:
+                self.loggers = {}
+
         self._run_event("on_stage_start")
         while self.stage_epoch_step < self.stage_epoch_len:
             self._run_epoch()
