@@ -11,8 +11,8 @@ from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.core.runner import IRunner
+from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 

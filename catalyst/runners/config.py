@@ -132,7 +132,9 @@ class ConfigRunner(IRunner):
             key: REGISTRY.get_from_params(**params) for key, params in loggers_params.items()
         }
 
-        is_logger_exists = lambda logger_fn: any(isinstance(x, logger_fn) for x in loggers.values())
+        is_logger_exists = lambda logger_fn: any(
+            isinstance(x, logger_fn) for x in loggers.values()
+        )
         if not is_logger_exists(ConsoleLogger):
             loggers["_console"] = ConsoleLogger()
         if self._logdir is not None and not is_logger_exists(CSVLogger):
@@ -258,7 +260,9 @@ class ConfigRunner(IRunner):
                 assert optimizer_key not in params, "keyword reserved"
                 params[optimizer_key] = key
 
-                optimizer[key] = self._get_optimizer_from_params(model=model, stage=stage, **params)
+                optimizer[key] = self._get_optimizer_from_params(
+                    model=model, stage=stage, **params
+                )
         else:
             optimizer = self._get_optimizer_from_params(
                 model=model, stage=stage, **optimizer_params
