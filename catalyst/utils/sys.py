@@ -11,9 +11,10 @@ from subprocess import CalledProcessError
 import sys
 import warnings
 
+from torch.utils.tensorboard import SummaryWriter
+
 from catalyst.registry import REGISTRY
 from catalyst.settings import SETTINGS
-from catalyst.tools.tensorboard import SummaryWriter
 from catalyst.utils.config import save_config
 from catalyst.utils.misc import get_utcnow_time
 

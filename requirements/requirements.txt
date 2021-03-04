@@ -4,12 +4,3 @@ torch>=1.3.0
 
 # Config API
 PyYAML
-
-# progress bar
-tqdm>=4.33.0
-
-# for future development:
-# tensorboardX provides tensorboard support for any framework
-# it's much easier to maintain one general tb provider
-# rather than a bunch of framework-adapted alternatives
-tensorboardX>=2.1.0
