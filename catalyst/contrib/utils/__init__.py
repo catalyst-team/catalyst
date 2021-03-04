@@ -1,9 +1,5 @@
 # flake8: noqa
 
-import logging
-
-logger = logging.getLogger(__name__)
-
 from catalyst.settings import SETTINGS
 
 from catalyst.contrib.utils.compression import (
@@ -13,10 +9,7 @@ from catalyst.contrib.utils.compression import (
     unpack_if_needed,
 )
 
-try:
-    import imageio  # noqa: F401
-    from skimage.color import label2rgb, rgb2gray  # noqa: F401
-
+if SETTINGS.cv_required:
     from catalyst.contrib.utils.image import (
         has_image_extension,
         imread,
@@ -24,25 +17,8 @@ try:
         imsave,
         mimread,
     )
-except ModuleNotFoundError as ex:
-    if SETTINGS.cv_required:
-        logger.warning(
-            "catalyst[cv] requirements are not available, to install them,"
-            " run `pip install catalyst[cv]`."
-        )
-        raise ex
-except ImportError as ex:
-    if SETTINGS.cv_required:
-        logger.warning(
-            "catalyst[cv] requirements are not available, to install them,"
-            " run `pip install catalyst[cv]`."
-        )
-        raise ex
 
-try:
-    import sklearn  # noqa: F401 F811
-    import pandas  # noqa: F401 F811
-
+if SETTINGS.ml_required:
     from catalyst.contrib.utils.pandas import (
         dataframe_to_list,
         folds_to_list,
@@ -59,20 +35,6 @@ try:
         split_dataset_train_test,
         create_dataframe,
     )
-except ModuleNotFoundError as ex:
-    if SETTINGS.ml_required:
-        logger.warning(
-            "catalyst[ml] requirements are not available, to install them,"
-            " run `pip install catalyst[ml]`."
-        )
-        raise ex
-except ImportError as ex:
-    if SETTINGS.ml_required:
-        logger.warning(
-            "catalyst[ml] requirements are not available, to install them,"
-            " run `pip install catalyst[ml]`."
-        )
-        raise ex
 
 
 from catalyst.contrib.utils.parallel import (
@@ -84,22 +46,8 @@ from catalyst.contrib.utils.parallel import (
 
 from catalyst.contrib.utils.serialization import deserialize, serialize
 
-try:
-    import matplotlib  # noqa: F401
-
+if SETTINGS.ml_required:
     from catalyst.contrib.utils.visualization import (
         plot_confusion_matrix,
         render_figure_to_tensor,
     )
-except ModuleNotFoundError as ex:
-    if SETTINGS.matplotlib_required:
-        logger.warning(
-            "matplotlib is not available, to install matplotlib," " run `pip install matplotlib`."
-        )
-        raise ex
-except ImportError as ex:
-    if SETTINGS.matplotlib_required:
-        logger.warning(
-            "matplotlib is not available, to install matplotlib," " run `pip install matplotlib`."
-        )
-        raise ex

@@ -583,7 +583,9 @@ class IRunner(ICallback, ILogger, ABC):
     def on_loader_end(self, runner: "IRunner"):
         """Event handler."""
         self.log_metrics(metrics=self.loader_metrics, scope="loader")
-        self.epoch_metrics[self.loader_key] = self.loader_metrics.copy()
+        self.epoch_metrics[self.loader_key] = {
+            key: float(value) for key, value in self.loader_metrics.items()
+        }
 
     def on_epoch_end(self, runner: "IRunner"):
         """Event handler."""
@@ -592,7 +594,10 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler."""
-        self.engine.deinit_components()
+        from catalyst.utils.distributed import get_rank
+
+        if get_rank() == 0:
+            self.engine.deinit_components()
 
     def on_experiment_end(self, runner: "IRunner"):
         """Event handler."""
@@ -603,7 +608,7 @@ class IRunner(ICallback, ILogger, ABC):
         raise self.exception
 
     def _run_event(self, event: str) -> None:
-        if _has_str_intersections(event, ("_start")):
+        if _has_str_intersections(event, ("_start",)):
             getattr(self, event)(self)
         for callback in self.callbacks.values():
             getattr(callback, event)(self)

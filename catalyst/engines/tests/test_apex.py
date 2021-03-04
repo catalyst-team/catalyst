@@ -14,7 +14,7 @@ from catalyst.core.runner import IRunner
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.engines.apex import APEXEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
-from catalyst.settings import IS_APEX_AVAILABLE, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 from .misc import (
     DeviceCheckCallback,
@@ -24,7 +24,7 @@ from .misc import (
     OPTTensorTypeChecker,
 )
 
-if IS_APEX_AVAILABLE:
+if SETTINGS.apex_required:
     from catalyst.engines.apex import APEXEngine
 
 logger = logging.getLogger(__name__)
@@ -160,7 +160,9 @@ def test_apex_with_devices():
             run_train_with_experiment_apex_device(device, level)
 
 
-@mark.skipif(not IS_CUDA_AVAILABLE or not IS_APEX_AVAILABLE, reason="CUDA devices is not available")
+@mark.skipif(
+    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required, reason="CUDA devices is not available"
+)
 def test_config_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:

@@ -12,12 +12,12 @@ import sys
 import warnings
 
 from catalyst.registry import REGISTRY
-from catalyst.settings import IS_HYDRA_AVAILABLE
+from catalyst.settings import SETTINGS
 from catalyst.tools.tensorboard import SummaryWriter
 from catalyst.utils.config import save_config
 from catalyst.utils.misc import get_utcnow_time
 
-if IS_HYDRA_AVAILABLE:
+if SETTINGS.hydra_required:
     from omegaconf import DictConfig, OmegaConf
 
 
@@ -296,7 +296,7 @@ def dump_environment(logdir: str, config: Any = None, configs_path: List[str] = 
     config_dir = Path(logdir) / "configs"
     config_dir.mkdir(exist_ok=True, parents=True)
 
-    if IS_HYDRA_AVAILABLE and isinstance(config, DictConfig):
+    if SETTINGS.hydra_required and isinstance(config, DictConfig):
         with open(config_dir / "config.yaml", "w") as f:
             f.write(OmegaConf.to_yaml(config, resolve=True))
         config = OmegaConf.to_container(config, resolve=True)

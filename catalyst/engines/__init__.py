@@ -9,14 +9,9 @@ from catalyst.engines.device import DeviceEngine
 from catalyst.engines.parallel import DataParallelEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
 
-from catalyst.settings import (
-    IS_CUDA_AVAILABLE,
-    NUM_CUDA_DEVICES,
-    IS_AMP_AVAILABLE,
-    IS_APEX_AVAILABLE,
-)
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
-if IS_AMP_AVAILABLE:
+if SETTINGS.amp_required:
     from catalyst.engines.amp import AMPEngine, DistributedDataParallelAMPEngine
 else:
     # replacement
@@ -25,7 +20,7 @@ else:
         DistributedDataParallelEngine as DistributedDataParallelAMPEngine,
     )
 
-if IS_APEX_AVAILABLE:
+if SETTINGS.apex_required:
     from catalyst.engines.apex import APEXEngine, DistributedDataParallelApexEngine
 else:
     # replacement
@@ -68,7 +63,7 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
     if isinstance(engine, str):
         engine = engine.strip().lower()
 
-    if engine.startswith("amp") and IS_AMP_AVAILABLE and IS_CUDA_AVAILABLE:
+    if engine.startswith("amp") and SETTINGS.IS_AMP_AVAILABLE and IS_CUDA_AVAILABLE:
         # Usage:
         #   amp-cuda:N  - amp with specified CUDA device
         #   amp-ddp     - DDP with amp
@@ -77,7 +72,7 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
             use_engine = DistributedDataParallelAMPEngine()
         else:
             use_engine = AMPEngine(_engine_parts[1])
-    elif engine.startswith("apex") and IS_APEX_AVAILABLE and IS_CUDA_AVAILABLE:
+    elif engine.startswith("apex") and SETTINGS.IS_APEX_AVAILABLE and IS_CUDA_AVAILABLE:
         # Usage:
         #   apex-cuda:N     - apex with default opt level (O1) and specified CUDA device
         #   apex-oN-cuda:M  - apex with specified opt level and specified CUDA device
@@ -120,8 +115,8 @@ __all__ = [
     "process_engine",
 ]
 
-if IS_AMP_AVAILABLE:
+if SETTINGS.IS_AMP_AVAILABLE:
     __all__ += ["AMPEngine", "DistributedDataParallelAMPEngine"]
 
-if IS_APEX_AVAILABLE:
+if SETTINGS.IS_APEX_AVAILABLE:
     __all__ += ["APEXEngine", "DistributedDataParallelApexEngine"]

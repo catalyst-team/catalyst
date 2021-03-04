@@ -68,7 +68,7 @@ jobs:
           flake8 . | reviewdog -f=pep8 -reporter=github-pr-review
 
   build:
-    name: codestyle-pytest-docs
+    name: codestyle-and-docs
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -108,9 +108,8 @@ jobs:
           pip list
         shell: bash
 # <- standard block end ->
-# catalyst-check-codestyle --line-length 99
 
       - name: check codestyle
         run: |
-          catalyst-check-codestyle --line-length 99
+          catalyst-check-codestyle
           make check-docs
