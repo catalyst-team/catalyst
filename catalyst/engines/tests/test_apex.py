@@ -153,7 +153,7 @@ def run_train_with_config_experiment_apex_device(device, opt_level):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not IS_APEX_AVAILABLE, reason="CUDA devices is not available"
+    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required, reason="CUDA devices is not available"
 )
 def test_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
