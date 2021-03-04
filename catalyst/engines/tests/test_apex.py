@@ -104,14 +104,17 @@ def run_train_with_experiment_apex_device(device, opt_level):
 
 
 def run_train_with_config_experiment_apex_device(device, opt_level):
-    engine = "apex-{opt}-{device}".format(opt=opt_level.lower(), device=device)
     with TemporaryDirectory() as logdir:
         dataset = DummyDataset(6)
         runner = SupervisedConfigRunner(
             config={
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
-                "engine": {"engine": engine},
+                "engine": {
+                    "_target_": "APEXEngine",
+                    "device": device,
+                    "opt_level": opt_level.upper(),
+                },
                 "args": {"logdir": logdir},
                 "stages": {
                     "stage1": {

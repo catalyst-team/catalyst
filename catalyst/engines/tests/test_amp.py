@@ -94,14 +94,13 @@ def run_train_with_experiment_amp_device(device):
 
 
 def run_train_with_config_experiment_amp_device(device):
-    engine = "amp-{}".format(device)
     with TemporaryDirectory() as logdir:
         dataset = DummyDataset(6)
         runner = dl.SupervisedConfigRunner(
             config={
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
-                "engine": {"engine": engine},
+                "engine": {"_target_": "AMPEngine", "device": device},
                 "args": {"logdir": logdir},
                 "stages": {
                     "stage1": {

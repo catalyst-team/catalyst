@@ -154,7 +154,7 @@ class APEXEngine(DeviceEngine):
         # TODO: how could we do better?)
         # model
         model = model_fn()
-        model = _patch_forward(model)
+        # model = _patch_forward(model)
         model = self.sync_device(model)
 
         # criterion

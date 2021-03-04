@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 
 from catalyst.core.engine import IEngine
+from catalyst.typing import Model, Criterion, Optimizer, Scheduler
 
 
 # @TODO: merge it with DataParallel version?
@@ -91,16 +92,29 @@ class DeviceEngine(IEngine):
         optimizer.step()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        model: Model = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        scheduler: Scheduler = None,
+        **kwargs,
     ) -> Dict:
-        # add data parallel support
-        return {
-            "model": model,
-            "criterion": criterion,
-            "optimizer": optimizer,
-            "scheduler": scheduler,
-            **kwargs,
-        }
+        checkpoint = {}
+        if model is not None:
+            if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)):
+                _model = model.module
+            else:
+                _model = model
+            checkpoint["model_state_dict"] = _model.state_dict()
+        if criterion is not None and isinstance(criterion, nn.Module):
+            checkpoint["criterion_state_dict"] = criterion.state_dict()
+        if optimizer is not None:
+            checkpoint["optimizer_state_dict"] = optimizer.state_dict()
+        if scheduler is not None:
+            checkpoint["scheduler_state_dict"] = scheduler.state_dict()
+        for k, v in kwargs.items():
+            checkpoint[k] = v
+        return checkpoint
 
     def unpack_checkpoint(
         self,

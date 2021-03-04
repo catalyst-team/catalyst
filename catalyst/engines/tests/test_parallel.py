@@ -105,7 +105,7 @@ def run_train_with_config_experiment_parallel_device():
             config={
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
-                "engine": {"engine": device},
+                "engine": {"_target_": "DataParallelEngine"},
                 "args": {"logdir": logdir},
                 "stages": {
                     "stage1": {

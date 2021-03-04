@@ -1,5 +1,5 @@
 # flake8: noqa
-
+import os
 from typing import Any, Dict, List
 import logging
 from tempfile import TemporaryDirectory
@@ -16,9 +16,19 @@ from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .misc import DeviceCheckCallback, DummyDataset, DummyModel, LossMinimizationCallback
+from .misc import (
+    DeviceCheckCallback,
+    DummyDataset,
+    DummyModel,
+    LossMinimizationCallback,
+)
+
 
 logger = logging.getLogger(__name__)
+
+
+if NUM_CUDA_DEVICES > 1:
+    os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 
 # experiment definition
 class CustomRunner(IRunner):
@@ -94,7 +104,7 @@ def run_train_with_config_experiment_device(device):
             config={
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
-                "engine": {"engine": device},
+                "engine": {"_target_": "DeviceEngine", "device": device},
                 "args": {"logdir": logdir},
                 "stages": {
                     "stage1": {
@@ -137,7 +147,6 @@ def test_experiment_engine_with_devices():
         run_train_with_experiment_device(device)
 
 
-# @mark.skip("Config experiment is in development phase!")
 def test_config_experiment_engine_with_cpu():
     # will check on all available devices
     to_check_devices = ["cpu"] + [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
