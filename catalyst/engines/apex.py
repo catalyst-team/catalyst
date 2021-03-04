@@ -2,8 +2,6 @@
 from typing import Dict, Union
 from collections import OrderedDict
 
-import apex.amp as amp
-from apex.parallel import DistributedDataParallel as APEX_DDP
 import torch
 from torch import nn
 
@@ -11,6 +9,12 @@ from catalyst.engines.device import DeviceEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
 from catalyst.typing import RunnerModel, RunnerOptimizer
 from catalyst.utils.misc import get_fn_default_params
+from catalyst.settings import SETTINGS
+
+
+if SETTINGS.apex_required:
+    import apex.amp as amp
+    from apex.parallel import DistributedDataParallel as APEX_DDP
 
 
 def _initialize_apex(model, optimizer=None, **engine_params):
@@ -167,7 +171,7 @@ class APEXEngine(DeviceEngine):
 
         # from official docs:
         #   https://nvidia.github.io/apex/amp.html#opt-levels-and-properties
-        model, optimizer = amp.initialize(model, optimizer, opt_level=self.opt_level)
+        model, optimizer = _initialize_apex(model, optimizer, opt_level=self.opt_level)
 
         # scheduler
         scheduler = scheduler_fn()
@@ -306,14 +310,14 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         optimizer = optimizer_fn()
         optimizer = self.sync_device(optimizer)
 
-        # from official docs:
-        #   https://nvidia.github.io/apex/amp.html#opt-levels-and-properties
-        model, optimizer = amp.initialize(
+        model, optimizer = _wrap_into_data_parallel_with_apex(
             model,
             optimizer,
-            opt_level=self.opt_level,
-            keep_batchnorm_fp32=self.keep_batchnorm_fp32,
-            loss_scale=self.loss_scale,
+            distributed_params=dict(
+                opt_level=self.opt_level,
+                keep_batchnorm_fp32=self.keep_batchnorm_fp32,
+                loss_scale=self.loss_scale,
+            ),
         )
         model = APEX_DDP(model, delay_allreduce=self.delay_all_reduce)
 
