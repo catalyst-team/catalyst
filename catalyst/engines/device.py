@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 
 from catalyst.core.engine import IEngine
-from catalyst.typing import Model, Criterion, Optimizer, Scheduler
+from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 
 
 # @TODO: merge it with DataParallel version?

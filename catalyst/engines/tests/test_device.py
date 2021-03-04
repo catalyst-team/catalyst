@@ -1,7 +1,7 @@
 # flake8: noqa
-import os
 from typing import Any, Dict, List
 import logging
+import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -16,13 +16,7 @@ from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .misc import (
-    DeviceCheckCallback,
-    DummyDataset,
-    DummyModel,
-    LossMinimizationCallback,
-)
-
+from .misc import DeviceCheckCallback, DummyDataset, DummyModel, LossMinimizationCallback
 
 logger = logging.getLogger(__name__)
 
