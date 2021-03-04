@@ -5,11 +5,7 @@ import socket
 import subprocess
 
 import torch
-from torch import nn
 import torch.distributed
-
-from catalyst.settings import SETTINGS
-from catalyst.utils.torch import get_available_gpus
 
 
 def _is_torch_distributed_initialized() -> bool:
