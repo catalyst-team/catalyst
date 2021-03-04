@@ -1,27 +1,13 @@
 # flake8: noqa
-
 from catalyst.settings import SETTINGS
-
-from catalyst.utils.checkpoint import (
-    load_checkpoint,
-    pack_checkpoint,
-    save_checkpoint,
-    unpack_checkpoint,
-)
 
 from catalyst.utils.config import load_config, save_config
 
 from catalyst.utils.data import get_loaders_from_params, get_loader
 
 from catalyst.utils.distributed import (
-    get_nn_from_ddp_module,
-    get_slurm_params,
     get_distributed_params,
-    get_distributed_env,
     get_rank,
-    check_ddp_wrapped,
-    check_torch_distributed_initialized,
-    check_slurm_available,
 )
 
 from catalyst.utils.misc import (
