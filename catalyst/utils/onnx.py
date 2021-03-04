@@ -22,19 +22,20 @@ def convert_to_onnx(
     opset_version: int = 9,
     do_constant_folding: bool = False,
 ):
-    """@TODO: docs.
+    """Converts model to onnx runtime.
 
     Args:
-        model (torch.nn.Module): [description]
-        input_shape (Union[List, Tuple, torch.Size]): [description]
+        model (torch.nn.Module): model
+        input_shape (Union[List, Tuple, torch.Size]): shapes of inputs
         method_name (str, optional): Forward pass method to be converted. Defaults to "forward".
-        input_names (Iterable, optional): [description]. Defaults to None.
-        output_names (List[str], optional): [description]. Defaults to None.
-        file (str, optional): [description]. Defaults to "model.onnx".
-        dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): [description].
+        input_names (Iterable, optional): name of inputs in graph. Defaults to None.
+        output_names (List[str], optional): name of outputs in graph. Defaults to None.
+        file (str, optional): file to save. Defaults to "model.onnx".
+        dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): axes with dynamic shapes.
             Defaults to None.
-        opset_version (int, optional): [description]. Defaults to 9.
-        do_constant_folding (bool, optional): [description]. Defaults to False.
+        opset_version (int, optional): Defaults to 9.
+        do_constant_folding (bool, optional): If True, the constant-folding optimization
+            is applied to the model during export. Defaults to False.
     """
     if method_name != "forward":
         model = ModelForwardWrapper(model=model, method_name=method_name)
