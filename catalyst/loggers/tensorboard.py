@@ -2,7 +2,7 @@ from typing import Dict
 import os
 
 import numpy as np
-from torch.utils.tensorboard import SummaryWriter
+from tensorboardX import SummaryWriter
 
 from catalyst.core.logger import ILogger
 

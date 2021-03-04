@@ -11,7 +11,7 @@ from subprocess import CalledProcessError
 import sys
 import warnings
 
-from torch.utils.tensorboard import SummaryWriter
+from tensorboardX import SummaryWriter
 
 from catalyst.registry import REGISTRY
 from catalyst.settings import SETTINGS
