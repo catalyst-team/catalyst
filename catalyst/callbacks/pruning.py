@@ -4,21 +4,10 @@ import warnings
 from torch.nn.utils import prune
 
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.utils.pruning import prune_model, remove_reparametrization
+from catalyst.utils.pruning import prune_model, remove_reparametrization, get_pruning_fn
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
-
-PRUNING_FN = {  # noqa: WPS407
-    "l1_unstructured": prune.l1_unstructured,
-    "random_unstructured": prune.random_unstructured,
-    "ln_structured": prune.ln_structured,
-    "random_structured": prune.random_structured,
-}
-
-
-def _wrap_pruning_fn(pruning_fn, *args, **kwargs):
-    return lambda module, name, amount: pruning_fn(module, name, amount, *args, **kwargs)
 
 
 class PruningCallback(Callback):
@@ -61,8 +50,6 @@ class PruningCallback(Callback):
             remove_reparametrization_on_stage_end: if True then all
                 reparametrization pre-hooks and tensors with mask
                 will be removed on stage end.
-            reinitialize_after_pruning: if True then will reinitialize model
-                after pruning. (Lottery Ticket Hypothesis)
             layers_to_prune: list of strings - module names to be pruned.
                 If None provided then will try to prune every module in
                 model.
@@ -71,31 +58,11 @@ class PruningCallback(Callback):
             l_norm: if you are using ln_structured you need to specify l_norm.
         """
         super().__init__(CallbackOrder.External)
-        if isinstance(pruning_fn, str):
-            if pruning_fn not in PRUNING_FN.keys():
-                raise ValueError(
-                    f"Pruning function should be in {PRUNING_FN.keys()}, "
-                    "global pruning is not currently support."
-                )
-            if "unstructured" not in pruning_fn:
-                if dim is None:
-                    raise ValueError(
-                        "If you are using structured pruning you"
-                        "need to specify dim in callback args"
-                    )
-                if pruning_fn == "ln_structured":
-                    if l_norm is None:
-                        raise ValueError(
-                            "If you are using ln_unstructured you"
-                            "need to specify n in callback args"
-                        )
-                    self.pruning_fn = _wrap_pruning_fn(prune.ln_structured, dim=dim, n=l_norm)
-                else:
-                    self.pruning_fn = _wrap_pruning_fn(PRUNING_FN[pruning_fn], dim=dim)
-            else:  # unstructured
-                self.pruning_fn = PRUNING_FN[pruning_fn]
-        else:
-            self.pruning_fn = pruning_fn
+        self.prining_fn = get_pruning_fn(
+            pruning_fn=pruning_fn,
+            dim=dim,
+            l_norm=l_norm
+        )
         if keys_to_prune is None:
             keys_to_prune = ["weight"]
         self.prune_on_epoch_end = prune_on_epoch_end

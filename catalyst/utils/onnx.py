@@ -36,6 +36,28 @@ def convert_to_onnx(
         opset_version (int, optional): Defaults to 9.
         do_constant_folding (bool, optional): If True, the constant-folding optimization
             is applied to the model during export. Defaults to False.
+
+    Example:
+        .. code-block:: python
+
+           import torch
+
+           from catalyst.utils import convert_to_onnx
+
+           class LinModel(torch.nn.Module):
+               def __init__(self):
+                   super().__init__()
+                   self.lin1 = torch.nn.Linear(10, 10)
+                   self.lin2 = torch.nn.Linear(2, 10)
+
+               def forward(self, inp_1, inp_2):
+                   return self.lin1(inp_1), self.lin2(inp_2)
+            
+               def first_only(self, inp_1):
+                   return self.lin1(inp_1)
+           
+           lin_model = LinModel()
+           convert_to_onnx(model, input_shape=(1, 10), method_name="first_only")
     """
     if method_name != "forward":
         model = ModelForwardWrapper(model=model, method_name=method_name)
