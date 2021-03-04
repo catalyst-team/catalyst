@@ -3,12 +3,10 @@ import inspect
 import logging
 
 import torch
-from torch import jit, nn
+from torch import jit
 
 from catalyst.tools.forward_wrapper import ModelForwardWrapper
 from catalyst.typing import Model
-from catalyst.utils.misc import get_fn_argsnames
-from catalyst.utils.torch import set_requires_grad
 
 logger = logging.getLogger(__name__)
 
@@ -42,10 +40,10 @@ def trace_model(
 
                def forward(self, inp_1, inp_2):
                    return self.lin1(inp_1), self.lin2(inp_2)
-            
+
                def first_only(self, inp_1):
                    return self.lin1(inp_1)
-           
+
            lin_model = LinModel()
            traced_model = trace_model(
                lin_model, batch=torch.randn(1, 10), method_name="first_only"

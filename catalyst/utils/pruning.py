@@ -26,7 +26,7 @@ def get_pruning_fn(
                 `"l1_unstructured"`. See pytorch docs for more details.
         dim (int, optional): if you are using structured pruning method you need
                 to specify dimension. Defaults to None.
-        l_norm (int, optional): if you are using ln_structured you need to specify l_norm. 
+        l_norm (int, optional): if you are using ln_structured you need to specify l_norm.
             Defaults to None.
 
     Raises:
@@ -91,7 +91,7 @@ def prune_model(
             model.
         dim (int, optional): if you are using structured pruning method you need
                 to specify dimension. Defaults to None.
-        l_norm (int, optional): if you are using ln_structured you need to specify l_norm. 
+        l_norm (int, optional): if you are using ln_structured you need to specify l_norm.
             Defaults to None.
 
     Example:

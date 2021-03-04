@@ -31,8 +31,8 @@ def convert_to_onnx(
         input_names (Iterable, optional): name of inputs in graph. Defaults to None.
         output_names (List[str], optional): name of outputs in graph. Defaults to None.
         file (str, optional): file to save. Defaults to "model.onnx".
-        dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): axes with dynamic shapes.
-            Defaults to None.
+        dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): axes
+            with dynamic shapes. Defaults to None.
         opset_version (int, optional): Defaults to 9.
         do_constant_folding (bool, optional): If True, the constant-folding optimization
             is applied to the model during export. Defaults to False.
@@ -52,10 +52,10 @@ def convert_to_onnx(
 
                def forward(self, inp_1, inp_2):
                    return self.lin1(inp_1), self.lin2(inp_2)
-            
+
                def first_only(self, inp_1):
                    return self.lin1(inp_1)
-           
+
            lin_model = LinModel()
            convert_to_onnx(model, input_shape=(1, 10), method_name="first_only")
     """
