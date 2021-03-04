@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 
 OPT_LEVELS = (
     "O0",
-    # "O1",  # disabled because - AttributeError: 'NoneType' object has no attribute 'next_functions'
+    # "O1",  # disabled, issue: https://github.com/NVIDIA/apex/issues/694
     "O2",
     "O3",
 )
