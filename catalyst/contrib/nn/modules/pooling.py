@@ -204,13 +204,9 @@ class GlobalConcatAttnPool2d(nn.Module):
 
 
 class GeM2d(nn.Module):
-    """Implementation of
-    `GeM: Generalized Mean Pooling`_.
+    """Implementation of GeM: Generalized Mean Pooling.
 
-    .. _GeM\: Generalized Mean Pooling:
-        https://arxiv.org/abs/1711.02512
-
-    Examples:
+    Example:
 
         >>> x = torch.randn(2,1280,8,8) #output of last convolutional layer of the network
         >>> gem_pool = GeM2d(p = 2.2 , p_trainable = False)
@@ -256,9 +252,7 @@ class GeM2d(nn.Module):
         self.eps = eps
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-
         """Forward call."""
-
         h, w = x.shape[2:]
 
         if self.p in [math.inf, float("inf")]:
@@ -272,8 +266,10 @@ class GeM2d(nn.Module):
     @staticmethod
     def out_features(in_features):
         """Returns number of channels produced by the pooling.
+        
         Args:
-            in_features: number of channels in the input sample
+            in_features: number of channels in the input sample.
+            
         Returns:
             number of output features
         """
