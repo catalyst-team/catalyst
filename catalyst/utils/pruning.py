@@ -15,7 +15,9 @@ def _wrap_pruning_fn(pruning_fn, *args, **kwargs):
     return lambda module, name, amount: pruning_fn(module, name, amount, *args, **kwargs)
 
 
-def get_pruning_fn(pruning_fn: Union[str, Callable], dim: int = None, l_norm: int = None) -> Callable:
+def get_pruning_fn(
+    pruning_fn: Union[str, Callable], dim: int = None, l_norm: int = None
+) -> Callable:
     """[summary]
 
     Args:
@@ -44,18 +46,16 @@ def get_pruning_fn(pruning_fn: Union[str, Callable], dim: int = None, l_norm: in
         if "unstructured" not in pruning_fn:
             if dim is None:
                 raise ValueError(
-                    "If you are using structured pruning you"
-                    "need to specify dim in args"
+                    "If you are using structured pruning you" "need to specify dim in args"
                 )
             if pruning_fn == "ln_structured":
                 if l_norm is None:
                     raise ValueError(
-                        "If you are using ln_unstructured you"
-                        "need to specify l_norm in args"
+                        "If you are using ln_unstructured you" "need to specify l_norm in args"
                     )
                 pruning_fn = _wrap_pruning_fn(prune.ln_structured, dim=dim, n=l_norm)
             else:
-                    pruning_fn = _wrap_pruning_fn(PRUNING_FN[pruning_fn], dim=dim)
+                pruning_fn = _wrap_pruning_fn(PRUNING_FN[pruning_fn], dim=dim)
         else:  # unstructured
             pruning_fn = PRUNING_FN[pruning_fn]
     return pruning_fn
@@ -93,6 +93,11 @@ def prune_model(
                 to specify dimension. Defaults to None.
         l_norm (int, optional): if you are using ln_structured you need to specify l_norm. 
             Defaults to None.
+
+    Example:
+        .. code-block:: python
+
+           pruned_model = prune_model(model, pruning_fn="l1_unstructured")
 
     Raises:
         AttributeError: If layers_to_prune is not None, but there is
