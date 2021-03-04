@@ -9,7 +9,6 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
-from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.engines.device import DeviceEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
@@ -34,7 +33,7 @@ class CustomRunner(IRunner):
     def get_engine(self):
         return DeviceEngine(self._device)
 
-    def get_callbacks(self, stage: str) -> Dict[str, Callback]:
+    def get_callbacks(self, stage: str):
         return {
             "criterion": CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"

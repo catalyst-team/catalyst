@@ -9,7 +9,6 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
-from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.engines import DataParallelEngine
 from catalyst.engines.device import DeviceEngine
@@ -30,7 +29,7 @@ class CustomRunner(IRunner):
     def get_engine(self):
         return DataParallelEngine()
 
-    def get_callbacks(self, stage: str) -> Dict[str, Callback]:
+    def get_callbacks(self, stage: str):
         return {
             "criterion": CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
@@ -64,16 +63,6 @@ class CustomRunner(IRunner):
 
     def get_optimizer(self, model, stage: str):
         return torch.optim.Adam(model.parameters())
-
-    def handle_batch(self, batch):
-        x, y = batch
-        logits = self.model(x)
-
-        self.batch = {
-            "features": x,
-            "targets": y,
-            "logits": logits,
-        }
 
     def get_scheduler(self, optimizer, stage: str):
         return None

@@ -314,14 +314,22 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         optimizer = optimizer_fn()
         optimizer = self.sync_device(optimizer)
 
-        model, optimizer = _wrap_into_data_parallel_with_apex(
+        # model, optimizer = _wrap_into_data_parallel_with_apex(
+        #     model,
+        #     optimizer,
+        #     distributed_params=dict(
+        #         opt_level=self.opt_level,
+        #         keep_batchnorm_fp32=self.keep_batchnorm_fp32,
+        #         loss_scale=self.loss_scale,
+        #     ),
+        # )
+        # model = APEX_DDP(model, delay_allreduce=self.delay_all_reduce)
+        model, optimizer = amp.initialize(
             model,
             optimizer,
-            distributed_params=dict(
-                opt_level=self.opt_level,
-                keep_batchnorm_fp32=self.keep_batchnorm_fp32,
-                loss_scale=self.loss_scale,
-            ),
+            opt_level=self.opt_level,
+            keep_batchnorm_fp32=self.keep_batchnorm_fp32,
+            loss_scale=self.loss_scale,
         )
         model = APEX_DDP(model, delay_allreduce=self.delay_all_reduce)
 
@@ -336,17 +344,24 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
-        _model = model.module if isinstance(model, APEX_DDP) else model
-        return {
-            "model": model,
-            "criterion": criterion,
-            "optimizer": optimizer,
-            "scheduler": scheduler,
-            # NOTE: propper way to save state, docs:
-            #   https://nvidia.github.io/apex/amp.html#checkpointing
-            "amp": amp.state_dict(),
-            **kwargs,
-        }
+        checkpoint = {"amp": amp.state_dict()}
+        # main components
+        if model is not None:
+            if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel, APEX_DDP)):
+                _model = model.module
+            else:
+                _model = model
+            checkpoint["model_state_dict"] = _model.state_dict()
+        if criterion is not None and isinstance(criterion, nn.Module):
+            checkpoint["criterion_state_dict"] = criterion.state_dict()
+        if optimizer is not None:
+            checkpoint["optimizer_state_dict"] = optimizer.state_dict()
+        if scheduler is not None:
+            checkpoint["scheduler_state_dict"] = scheduler.state_dict()
+        # other components
+        for key, value in kwargs.items():
+            checkpoint[key] = value
+        return checkpoint
 
     def unpack_checkpoint(
         self,

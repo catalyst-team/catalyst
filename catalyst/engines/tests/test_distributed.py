@@ -9,8 +9,7 @@ from pytest import mark
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.callbacks import CriterionCallback, OptimizerCallback
-from catalyst.core.callback import Callback
+from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
 from catalyst.core.runner import IRunner
 from catalyst.engines import DistributedDataParallelEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
@@ -34,16 +33,16 @@ class CustomExperiment(IRunner):
     def get_engine(self):
         return DistributedDataParallelEngine(port="22222")
 
-    def get_callbacks(self, stage: str) -> Dict[str, Callback]:
+    def get_callbacks(self, stage: str):
         return {
             "criterion": CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            # "checkpoint": dl.CheckpointCallback(
-            #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
-            # ),
+            "checkpoint": CheckpointCallback(
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            ),
             # "check": DeviceCheckCallback(),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
             "test_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),

@@ -10,7 +10,6 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
-from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
@@ -54,10 +53,9 @@ class CustomRunner(IRunner):
             ),
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            # "checkpoint": dl.CheckpointCallback(
-            #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
-            # ),
-            # "check": DeviceCheckCallback(),
+            "checkpoint": CheckpointCallback(
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            ),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
             "test_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
             "test_logits_type": OPTTensorTypeChecker("logits", self._opt_level),

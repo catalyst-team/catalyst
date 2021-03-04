@@ -9,7 +9,6 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
-from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
@@ -29,7 +28,12 @@ if SETTINGS.apex_required:
 logger = logging.getLogger(__name__)
 
 
-OPT_LEVELS = ("O0", "O1", "O2", "O3")
+OPT_LEVELS = (
+    "O0",
+    # "O1",  # disabled because - AttributeError: 'NoneType' object has no attribute 'next_functions'
+    "O2",
+    "O3",
+)
 
 
 class CustomRunner(IRunner):
@@ -42,17 +46,16 @@ class CustomRunner(IRunner):
     def get_engine(self):
         return APEXEngine(self._device, self._opt_level)
 
-    def get_callbacks(self, stage: str) -> Dict[str, Callback]:
+    def get_callbacks(self, stage: str):
         return {
             "criterion": CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            # TODO: fix issue with pickling wrapped model's forward function
-            # "checkpoint": dl.CheckpointCallback(
-            #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
-            # ),
+            "checkpoint": CheckpointCallback(
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            ),
             "test_device": DeviceCheckCallback(self._device, logger=logger),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
             "test_logits_type": OPTTensorTypeChecker("logits", self._opt_level),
