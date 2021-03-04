@@ -63,7 +63,7 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
     if isinstance(engine, str):
         engine = engine.strip().lower()
 
-    if engine.startswith("amp") and SETTINGS.IS_AMP_AVAILABLE and IS_CUDA_AVAILABLE:
+    if engine.startswith("amp") and SETTINGS.amp_required and IS_CUDA_AVAILABLE:
         # Usage:
         #   amp-cuda:N  - amp with specified CUDA device
         #   amp-ddp     - DDP with amp
@@ -72,7 +72,7 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
             use_engine = DistributedDataParallelAMPEngine()
         else:
             use_engine = AMPEngine(_engine_parts[1])
-    elif engine.startswith("apex") and SETTINGS.IS_APEX_AVAILABLE and IS_CUDA_AVAILABLE:
+    elif engine.startswith("apex") and SETTINGS.apex_required and IS_CUDA_AVAILABLE:
         # Usage:
         #   apex-cuda:N     - apex with default opt level (O1) and specified CUDA device
         #   apex-oN-cuda:M  - apex with specified opt level and specified CUDA device
@@ -98,9 +98,7 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
     elif (
         engine == "cpu"
         or engine == "cuda"
-        or (
-            re.match(r"cuda\:\d", engine) and int(engine.split(":")[1]) < torch.cuda.device_count()
-        )
+        or (re.match(r"cuda\:\d", engine) and int(engine.split(":")[1]) < torch.cuda.device_count())
     ):
         use_engine = DeviceEngine(engine)
     else:
@@ -117,8 +115,8 @@ __all__ = [
     "process_engine",
 ]
 
-if SETTINGS.IS_AMP_AVAILABLE:
+if SETTINGS.amp_required:
     __all__ += ["AMPEngine", "DistributedDataParallelAMPEngine"]
 
-if SETTINGS.IS_APEX_AVAILABLE:
+if SETTINGS.apex_required:
     __all__ += ["APEXEngine", "DistributedDataParallelApexEngine"]
