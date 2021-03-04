@@ -7,10 +7,9 @@ from torch import nn
 
 from catalyst.engines.device import DeviceEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
+from catalyst.settings import SETTINGS
 from catalyst.typing import RunnerModel, RunnerOptimizer
 from catalyst.utils.misc import get_fn_default_params
-from catalyst.settings import SETTINGS
-
 
 if SETTINGS.apex_required:
     import apex.amp as amp
