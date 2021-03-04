@@ -46,6 +46,9 @@ class IEngine(ABC):
     def is_master_process(self) -> bool:
         """Checks if a process is master process.
         Should be implemented only for DDP setup in other cases should always return True.
+
+        Returns:
+            `True` if current process is a master process, othervise `False`.
         """
         return True
 
