@@ -11,9 +11,9 @@ from torch.utils.data import DataLoader
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.engines.apex import APEXEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
+from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 from .misc import (
@@ -152,7 +152,9 @@ def run_train_with_config_experiment_apex_device(device, opt_level):
         runner.run()
 
 
-@mark.skipif(not IS_CUDA_AVAILABLE or not IS_APEX_AVAILABLE, reason="CUDA devices is not available")
+@mark.skipif(
+    not IS_CUDA_AVAILABLE or not IS_APEX_AVAILABLE, reason="CUDA devices is not available"
+)
 def test_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:

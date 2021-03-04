@@ -150,7 +150,9 @@ def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]
     return required_files
 
 
-def _load_states_from_file_map(*, logdir: str, runner: "IRunner", load_map: Dict[str, str]) -> None:
+def _load_states_from_file_map(
+    *, logdir: str, runner: "IRunner", load_map: Dict[str, str]
+) -> None:
     """
     Load state of a model, criterion, optimizer, scheduler
     from files specified in ``load_map``.
@@ -186,7 +188,9 @@ def _load_states_from_file_map(*, logdir: str, runner: "IRunner", load_map: Dict
         print(f"   loaded: {', '.join(parts_to_load)}")
 
 
-def _load_runner(logdir: str, runner: "IRunner", mapping: Union[str, Dict[str, str]], load_full: bool = False,) -> None:
+def _load_runner(
+    logdir: str, runner: "IRunner", mapping: Union[str, Dict[str, str]], load_full: bool = False,
+) -> None:
     """
     Selects a loading method based on type of mapping.
 
@@ -354,7 +358,9 @@ class CheckpointCallback(ICheckpointCallback):
         self.metrics_filename = metrics_filename
         self.use_logdir_postfix = use_logdir_postfix
         self.use_runner_logdir = use_runner_logdir
-        assert self.logdir is not None or self.use_runner_logdir, "CheckpointCallback requires specified `logdir`"
+        assert (
+            self.logdir is not None or self.use_runner_logdir
+        ), "CheckpointCallback requires specified `logdir`"
 
         # model selection info
         self.loader_key = loader_key
@@ -400,7 +406,9 @@ class CheckpointCallback(ICheckpointCallback):
         )
         return checkpoint
 
-    def _save_checkpoint(self, runner: IRunner, checkpoint: Dict, is_best: bool, is_last: bool) -> str:
+    def _save_checkpoint(
+        self, runner: IRunner, checkpoint: Dict, is_best: bool, is_last: bool
+    ) -> str:
         """
         Saves checkpoints: full with model/criterion/optimizer/scheduler
         and truncated with model only.
@@ -423,7 +431,11 @@ class CheckpointCallback(ICheckpointCallback):
             exclude = ["criterion", "optimizer", "scheduler"]
             checkpoint_path = _save_checkpoint(
                 runner=runner,
-                checkpoint={key: value for key, value in checkpoint.items() if all(z not in key for z in exclude)},
+                checkpoint={
+                    key: value
+                    for key, value in checkpoint.items()
+                    if all(z not in key for z in exclude)
+                },
                 logdir=logdir,
                 suffix=suffix,
                 is_best=is_best,
@@ -432,7 +444,9 @@ class CheckpointCallback(ICheckpointCallback):
         return checkpoint_path
 
     def _truncate_checkpoints(self) -> None:
-        self.top_best_metrics = sorted(self.top_best_metrics, key=lambda x: x[0], reverse=not self.minimize,)
+        self.top_best_metrics = sorted(
+            self.top_best_metrics, key=lambda x: x[0], reverse=not self.minimize,
+        )
         if len(self.top_best_metrics) > self.save_n_best:
             last_item = self.top_best_metrics.pop(-1)
             last_filepath = Path(last_item[1])
@@ -606,13 +620,22 @@ class CheckpointCallback(ICheckpointCallback):
             and self.save_n_best > 0
         ):
             need_load_full = (
-                self.load_on_stage_end.endswith("full") if isinstance(self.load_on_stage_end, str) else False
+                self.load_on_stage_end.endswith("full")
+                if isinstance(self.load_on_stage_end, str)
+                else False
             )
             _load_runner(
-                logdir=self.logdir, runner=runner, mapping=self.load_on_stage_end, load_full=need_load_full,
+                logdir=self.logdir,
+                runner=runner,
+                mapping=self.load_on_stage_end,
+                load_full=need_load_full,
             )
         elif isinstance(self.load_on_stage_end, dict) and self.save_n_best > 0:
-            to_load = {k: v for k, v in self.load_on_stage_end.items() if v not in not_required_load_states}
+            to_load = {
+                k: v
+                for k, v in self.load_on_stage_end.items()
+                if v not in not_required_load_states
+            }
             _load_runner(logdir=self.logdir, runner=runner, mapping=to_load)
 
 

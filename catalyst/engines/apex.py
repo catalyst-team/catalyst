@@ -66,20 +66,28 @@ def _patch_forward(model):
     import apex
 
     input_caster_lambda = (
-        lambda tensor: tensor.to(apex.amp._amp_state.opt_properties.options["cast_model_type"])  # noqa: WPS437
+        lambda tensor: tensor.to(
+            apex.amp._amp_state.opt_properties.options["cast_model_type"]
+        )  # noqa: WPS437
         if tensor.is_floating_point()
         else tensor
     )
     output_caster_lambda = (
         lambda tensor: tensor.to(
-            apex.amp._amp_state.opt_properties.options.get("cast_model_outputs", torch.float32)  # noqa: WPS437
+            apex.amp._amp_state.opt_properties.options.get(
+                "cast_model_outputs", torch.float32
+            )  # noqa: WPS437
         )
         if tensor.is_floating_point()
         else tensor
     )
 
     def new_fwd(
-        *args, old_fwd=model.forward, input_caster=input_caster_lambda, output_caster=output_caster_lambda, **kwargs,
+        *args,
+        old_fwd=model.forward,
+        input_caster=input_caster_lambda,
+        output_caster=output_caster_lambda,
+        **kwargs,
     ):
         return apex.amp._initialize.applier(  # noqa: WPS437
             old_fwd(
@@ -96,7 +104,9 @@ def _patch_forward(model):
 # taken form https://github.com/catalyst-team/catalyst/blob/master/catalyst/utils/components.py
 # apex issue https://github.com/deepset-ai/FARM/issues/210
 # solution: https://github.com/NVIDIA/apex/issues/503#issuecomment-566181771
-def _wrap_into_data_parallel_with_apex(model: RunnerModel, optimizer: RunnerOptimizer, distributed_params: Dict):
+def _wrap_into_data_parallel_with_apex(
+    model: RunnerModel, optimizer: RunnerOptimizer, distributed_params: Dict
+):
     if isinstance(model, nn.Module):
         model = nn.Sequential(model)
         model, optimizer = _initialize_apex(model, optimizer, **distributed_params)
@@ -168,7 +178,9 @@ class APEXEngine(DeviceEngine):
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 
-    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs) -> Dict:
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
+    ) -> Dict:
         return {
             "model": model,
             "criterion": criterion,
@@ -181,7 +193,13 @@ class APEXEngine(DeviceEngine):
         }
 
     def unpack_checkpoint(
-        self, checkpoint: Dict, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        checkpoint: Dict,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> None:
 
         if "model_state_dict" in checkpoint:
@@ -299,7 +317,9 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 
-    def pack_checkpoint(self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,) -> Dict:
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
         _model = model.module if isinstance(model, APEX_DDP) else model
         return {
             "model": model,
@@ -313,7 +333,13 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         }
 
     def unpack_checkpoint(
-        self, checkpoint: Dict, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        checkpoint: Dict,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> None:
 
         if "model_state_dict" in checkpoint:

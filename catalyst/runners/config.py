@@ -16,7 +16,7 @@ from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
-from catalyst.engines import IEngine
+from catalyst.engines import IEngine, process_engine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
@@ -32,7 +32,6 @@ from catalyst.typing import (
 )
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
-from catalyst.engines import process_engine
 
 logger = logging.getLogger(__name__)
 
@@ -138,7 +137,9 @@ class ConfigRunner(IRunner):
             key: REGISTRY.get_from_params(**params) for key, params in loggers_params.items()
         }
 
-        is_logger_exists = lambda logger_fn: any(isinstance(x, logger_fn) for x in loggers.values())
+        is_logger_exists = lambda logger_fn: any(
+            isinstance(x, logger_fn) for x in loggers.values()
+        )
         if not is_logger_exists(ConsoleLogger):
             loggers["_console"] = ConsoleLogger()
         if self._logdir is not None and not is_logger_exists(CSVLogger):
@@ -264,7 +265,9 @@ class ConfigRunner(IRunner):
                 assert optimizer_key not in params, "keyword reserved"
                 params[optimizer_key] = key
 
-                optimizer[key] = self._get_optimizer_from_params(model=model, stage=stage, **params)
+                optimizer[key] = self._get_optimizer_from_params(
+                    model=model, stage=stage, **params
+                )
         else:
             optimizer = self._get_optimizer_from_params(
                 model=model, stage=stage, **optimizer_params

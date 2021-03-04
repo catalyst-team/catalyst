@@ -482,7 +482,12 @@ class IRunner(ICallback, ILogger, ABC):
 
     def _setup_components(self) -> None:
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
-        (self.model, self.criterion, self.optimizer, self.scheduler,) = self.engine.init_components(
+        (
+            self.model,
+            self.criterion,
+            self.optimizer,
+            self.scheduler,
+        ) = self.engine.init_components(
             model_fn=self._get_model,
             criterion_fn=self._get_criterion,
             optimizer_fn=self._get_optimizer,
