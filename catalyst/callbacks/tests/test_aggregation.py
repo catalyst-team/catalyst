@@ -109,4 +109,3 @@ def test_aggregation_2():
         loss_1 = metrics["loss_bce"]
         loss_2 = metrics["loss"]
         assert np.abs(loss_1 - loss_2) < 1e-5
-    return runner

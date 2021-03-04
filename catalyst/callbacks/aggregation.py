@@ -31,8 +31,7 @@ class MetricAggregationCallback(Callback):
                 metrics and runner and return aggregated metric. It can be
                 useful for complicated fine tuning with different losses that
                 depends on epochs and loader or something also
-            scope: type of metric. Must be either ``batch``, ``loader`` or
-                ``epoch``
+            scope: type of metric. Must be either ``batch`` or ``loader``
             multiplier: scale factor for the aggregated metric.
 
         Examples:
@@ -125,7 +124,7 @@ class MetricAggregationCallback(Callback):
                 "mode must be `sum`, `mean` " "or `weighted_sum` or `weighted_mean` or be Callable"
             )
 
-        assert scope in ("batch", "loader", "epoch")
+        assert scope in ("batch", "loader")
 
         if isinstance(metrics, str):
             metrics = [metrics]
@@ -154,6 +153,7 @@ class MetricAggregationCallback(Callback):
                 result = [metrics[key] for key in self.metrics]
         else:
             result = list(metrics.values())
+        result = [metric.float() for metric in result]
         return result
 
     def _process_metrics(self, metrics: Dict, runner: "IRunner") -> None:
