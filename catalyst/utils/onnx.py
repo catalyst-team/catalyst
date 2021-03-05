@@ -67,7 +67,7 @@ def convert_to_onnx(
 
     Raises:
         ImportError: when ``return_model`` is True, but onnx is not installed.
-    
+
     Returns:
         Union[None, "onnx"]: onnx model if return_model set to True.
     """
