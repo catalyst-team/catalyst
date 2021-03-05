@@ -23,7 +23,7 @@ def convert_to_onnx(
     opset_version: int = 9,
     do_constant_folding: bool = False,
     return_model: bool = False,
-) -> Union[None, "onnx model"]:
+):
     """Converts model to onnx runtime.
 
     Args:
