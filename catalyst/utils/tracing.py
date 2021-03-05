@@ -1,5 +1,4 @@
 from typing import Tuple, Union
-import inspect
 import logging
 
 import torch
@@ -15,7 +14,6 @@ def trace_model(
     model: Model,
     batch: Union[Tuple[torch.Tensor], torch.Tensor],
     method_name: str = "forward",
-    predict_params: dict = None,
 ) -> jit.ScriptModule:
     """Traces model using runner and batch.
 
@@ -49,13 +47,9 @@ def trace_model(
                lin_model, batch=torch.randn(1, 10), method_name="first_only"
            )
 
-
     Returns:
         jit.ScriptModule: Traced model
     """
-
-    predict_params = predict_params or {}
-
     wrapped_model = ModelForwardWrapper(model=model, method_name=method_name)
     traced = jit.trace(wrapped_model, example_inputs=batch)
     return traced
