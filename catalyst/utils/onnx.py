@@ -13,7 +13,7 @@ if SETTINGS.onnx_required:
 
 def convert_to_onnx(
     model: torch.nn.Module,
-    input_shape: Union[List, Tuple, torch.Size],
+    batch: torch.Tensor,
     method_name: str = "forward",
     input_names: Iterable = None,
     output_names: List[str] = None,
@@ -26,7 +26,7 @@ def convert_to_onnx(
 
     Args:
         model (torch.nn.Module): model
-        input_shape (Union[List, Tuple, torch.Size]): shapes of inputs
+        batch (Tensor): inputs
         method_name (str, optional): Forward pass method to be converted. Defaults to "forward".
         input_names (Iterable, optional): name of inputs in graph. Defaults to None.
         output_names (List[str], optional): name of outputs in graph. Defaults to None.
@@ -63,7 +63,7 @@ def convert_to_onnx(
         model = ModelForwardWrapper(model=model, method_name=method_name)
     torch.onnx.export(
         model,
-        input_shape,
+        batch,
         file,
         verbose=True,
         input_names=input_names,
