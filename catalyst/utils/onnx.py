@@ -23,7 +23,7 @@ def convert_to_onnx(
     opset_version: int = 9,
     do_constant_folding: bool = False,
     return_model: bool = False,
-):
+) -> Union[None, "onnx"]:
     """Converts model to onnx runtime.
 
     Args:
@@ -64,8 +64,12 @@ def convert_to_onnx(
            convert_to_onnx(
                model, batch=torch.randn((1, 10)), file="model.onnx", method_name="first_only"
            )
+
     Raises:
-        Exception: when ``return_model`` is True, but onnx is not installed.
+        ImportError: when ``return_model`` is True, but onnx is not installed.
+    
+    Returns:
+        Union[None, "onnx"]: onnx model if return_model set to True.
     """
     if method_name != "forward":
         model = ModelForwardWrapper(model=model, method_name=method_name)
@@ -82,7 +86,7 @@ def convert_to_onnx(
     )
     if return_model:
         if not SETTINGS.onnx_required:
-            raise Exception("To use onnx model you should install it with ``pip install onnx``")
+            raise ImportError("To use onnx model you should install it with ``pip install onnx``")
         return onnx.load(file)
 
 
