@@ -1,7 +1,6 @@
 import os
 
 import torch
-import pytest  # noqa: F401
 from torch import nn
 
 from catalyst.utils.onnx import convert_to_onnx
