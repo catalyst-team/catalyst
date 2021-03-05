@@ -14,10 +14,10 @@ if SETTINGS.onnx_required:
 def convert_to_onnx(
     model: torch.nn.Module,
     batch: torch.Tensor,
+    file: str,
     method_name: str = "forward",
     input_names: Iterable = None,
     output_names: List[str] = None,
-    file="model.onnx",
     dynamic_axes: Union[Dict[str, int], Dict[str, Dict[str, int]]] = None,
     opset_version: int = 9,
     do_constant_folding: bool = False,
@@ -27,10 +27,10 @@ def convert_to_onnx(
     Args:
         model (torch.nn.Module): model
         batch (Tensor): inputs
+        file (str, optional): file to save. Defaults to "model.onnx".
         method_name (str, optional): Forward pass method to be converted. Defaults to "forward".
         input_names (Iterable, optional): name of inputs in graph. Defaults to None.
         output_names (List[str], optional): name of outputs in graph. Defaults to None.
-        file (str, optional): file to save. Defaults to "model.onnx".
         dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): axes
             with dynamic shapes. Defaults to None.
         opset_version (int, optional): Defaults to 9.
@@ -57,7 +57,9 @@ def convert_to_onnx(
                    return self.lin1(inp_1)
 
            lin_model = LinModel()
-           convert_to_onnx(model, input_shape=(1, 10), method_name="first_only")
+           convert_to_onnx(
+               model, batch=torch.randn((1, 10)), file="model.onnx", method_name="first_only"
+           )
     """
     if method_name != "forward":
         model = ModelForwardWrapper(model=model, method_name=method_name)
