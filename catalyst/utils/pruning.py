@@ -30,9 +30,7 @@ def get_pruning_fn(
             Defaults to None.
 
     Raises:
-        ValueError: [description]
-        ValueError: [description]
-        ValueError: [description]
+        ValueError: If ``dim`` or ``l_norm`` is not defined when it's required.
 
     Returns:
         Callable: pruning_fn

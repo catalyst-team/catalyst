@@ -8,6 +8,7 @@ from catalyst.settings import SETTINGS
 from catalyst.tools.forward_wrapper import ModelForwardWrapper
 
 if SETTINGS.onnx_required:
+    import onnx
     from onnxruntime.quantization import quantize_dynamic, QuantType
 
 
@@ -21,7 +22,8 @@ def convert_to_onnx(
     dynamic_axes: Union[Dict[str, int], Dict[str, Dict[str, int]]] = None,
     opset_version: int = 9,
     do_constant_folding: bool = False,
-):
+    return_model: bool = False,
+) -> Union[None, "onnx model"]:
     """Converts model to onnx runtime.
 
     Args:
@@ -36,6 +38,8 @@ def convert_to_onnx(
         opset_version (int, optional): Defaults to 9.
         do_constant_folding (bool, optional): If True, the constant-folding optimization
             is applied to the model during export. Defaults to False.
+        return_model (bool, optional): If True then returns onnxruntime model (onnx required).
+            Defaults to False.
 
     Example:
         .. code-block:: python
@@ -60,6 +64,8 @@ def convert_to_onnx(
            convert_to_onnx(
                model, batch=torch.randn((1, 10)), file="model.onnx", method_name="first_only"
            )
+    Raises:
+        Exception: when ``return_model`` is True, but onnx is not installed.
     """
     if method_name != "forward":
         model = ModelForwardWrapper(model=model, method_name=method_name)
@@ -74,6 +80,12 @@ def convert_to_onnx(
         do_constant_folding=do_constant_folding,
         opset_version=opset_version,
     )
+    if return_model:
+        if not SETTINGS.onnx_required:
+            raise Exception(
+                "To use onnx model you should install it with ``pip install onnx``"
+            )
+        return onnx.load(file)
 
 
 def quantize_onnx_model(
