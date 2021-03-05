@@ -82,9 +82,7 @@ def convert_to_onnx(
     )
     if return_model:
         if not SETTINGS.onnx_required:
-            raise Exception(
-                "To use onnx model you should install it with ``pip install onnx``"
-            )
+            raise Exception("To use onnx model you should install it with ``pip install onnx``")
         return onnx.load(file)
 
 

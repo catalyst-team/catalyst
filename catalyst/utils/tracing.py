@@ -11,9 +11,7 @@ logger = logging.getLogger(__name__)
 
 
 def trace_model(
-    model: Model,
-    batch: Union[Tuple[torch.Tensor], torch.Tensor],
-    method_name: str = "forward",
+    model: Model, batch: Union[Tuple[torch.Tensor], torch.Tensor], method_name: str = "forward",
 ) -> jit.ScriptModule:
     """Traces model using runner and batch.
 
