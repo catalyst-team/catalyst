@@ -14,7 +14,9 @@ from catalyst.utils.torch import get_available_gpus
 
 def check_torch_distributed_initialized() -> bool:
     """Checks if torch.distributed is available and initialized."""
-    return torch.distributed.is_available() and torch.distributed.is_initialized()
+    return (
+        torch.distributed.is_available() and torch.distributed.is_initialized()
+    )
 
 
 def check_slurm_available():
@@ -123,7 +125,10 @@ def get_distributed_params():
 
 
 def get_distributed_env(
-    local_rank: int, rank: int, world_size: int, use_cuda_visible_devices: bool = True,
+    local_rank: int,
+    rank: int,
+    world_size: int,
+    use_cuda_visible_devices: bool = True,
 ):
     """Returns environment copy with extra distributed settings.
 

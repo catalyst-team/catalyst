@@ -4,7 +4,10 @@ from typing import List
 
 import torch
 
-from catalyst.contrib.models.cv.segmentation.blocks import EncoderBlock, EncoderDownsampleBlock
+from catalyst.contrib.models.cv.segmentation.blocks import (
+    EncoderBlock,
+    EncoderDownsampleBlock,
+)
 from catalyst.contrib.models.cv.segmentation.bridge.core import BridgeSpec
 
 

@@ -10,7 +10,11 @@ from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
-from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
+from catalyst.callbacks.misc import (
+    CheckRunCallback,
+    TimerCallback,
+    TqdmCallback,
+)
 from catalyst.core.callback import Callback
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.logger import ILogger
@@ -50,10 +54,18 @@ class ConfigRunner(IRunner):
         self._stage_config: Dict = self._config["stages"]
 
         self._seed: int = get_by_keys(self._config, "args", "seed", default=42)
-        self._verbose: bool = get_by_keys(self._config, "args", "verbose", default=False)
-        self._timeit: bool = get_by_keys(self._config, "args", "timeit", default=False)
-        self._check: bool = get_by_keys(self._config, "args", "check", default=False)
-        self._overfit: bool = get_by_keys(self._config, "args", "overfit", default=False)
+        self._verbose: bool = get_by_keys(
+            self._config, "args", "verbose", default=False
+        )
+        self._timeit: bool = get_by_keys(
+            self._config, "args", "timeit", default=False
+        )
+        self._check: bool = get_by_keys(
+            self._config, "args", "check", default=False
+        )
+        self._overfit: bool = get_by_keys(
+            self._config, "args", "overfit", default=False
+        )
         self._name: str = self._get_init_name()
         self._logdir: str = self._get_init_logdir()
         self._trial = None  # @TODO: hack for catalyst-dl tune
@@ -76,7 +88,9 @@ class ConfigRunner(IRunner):
         exclude_tag = "none"
 
         logdir: str = get_by_keys(self._config, "args", "logdir", default=None)
-        baselogdir: str = get_by_keys(self._config, "args", "baselogdir", default=None)
+        baselogdir: str = get_by_keys(
+            self._config, "args", "baselogdir", default=None
+        )
 
         if logdir is not None and logdir.lower() != exclude_tag:
             output = logdir
@@ -129,7 +143,8 @@ class ConfigRunner(IRunner):
         """@TODO: docs."""
         loggers_params = self._config.get("loggers", {})
         loggers = {
-            key: REGISTRY.get_from_params(**params) for key, params in loggers_params.items()
+            key: REGISTRY.get_from_params(**params)
+            for key, params in loggers_params.items()
         }
 
         is_logger_exists = lambda logger_fn: any(
@@ -139,7 +154,9 @@ class ConfigRunner(IRunner):
             loggers["_console"] = ConsoleLogger()
         if self._logdir is not None and not is_logger_exists(CSVLogger):
             loggers["_csv"] = CSVLogger(logdir=self._logdir)
-        if self._logdir is not None and not is_logger_exists(TensorboardLogger):
+        if self._logdir is not None and not is_logger_exists(
+            TensorboardLogger
+        ):
             loggers["_tensorboard"] = TensorboardLogger(
                 logdir=os.path.join(self._logdir, "tensorboard")
             )
@@ -164,7 +181,9 @@ class ConfigRunner(IRunner):
 
         if is_key_value:
             model = {
-                model_key: ConfigRunner._get_model_from_params(**model_params)  # noqa: WPS437
+                model_key: ConfigRunner._get_model_from_params(
+                    **model_params
+                )  # noqa: WPS437
                 for model_key, model_params in params.items()
             }
             model = nn.ModuleDict(model)
@@ -186,7 +205,9 @@ class ConfigRunner(IRunner):
 
         if key_value_flag:
             criterion = {
-                key: ConfigRunner._get_criterion_from_params(**key_params)  # noqa: WPS437
+                key: ConfigRunner._get_criterion_from_params(
+                    **key_params
+                )  # noqa: WPS437
                 for key, key_params in params.items()
             }
         else:
@@ -197,7 +218,9 @@ class ConfigRunner(IRunner):
         """Returns the criterion for a given stage."""
         if "criterion" not in self._stage_config[stage]:
             return None
-        criterion_params = get_by_keys(self._stage_config, stage, "criterion", default={})
+        criterion_params = get_by_keys(
+            self._stage_config, stage, "criterion", default={}
+        )
         criterion = self._get_criterion_from_params(**criterion_params)
         return criterion
 
@@ -248,7 +271,9 @@ class ConfigRunner(IRunner):
         if "optimizer" not in self._stage_config[stage]:
             return None
 
-        optimizer_params = get_by_keys(self._stage_config, stage, "optimizer", default={})
+        optimizer_params = get_by_keys(
+            self._stage_config, stage, "optimizer", default={}
+        )
         optimizer_params = deepcopy(optimizer_params)
         is_key_value = optimizer_params.pop("_key_value", False)
 
@@ -271,7 +296,9 @@ class ConfigRunner(IRunner):
         return optimizer
 
     @staticmethod
-    def _get_scheduler_from_params(*, optimizer: RunnerOptimizer, **params) -> RunnerScheduler:
+    def _get_scheduler_from_params(
+        *, optimizer: RunnerOptimizer, **params
+    ) -> RunnerScheduler:
         params = deepcopy(params)
 
         is_key_value = params.pop("_key_value", False)
@@ -281,19 +308,27 @@ class ConfigRunner(IRunner):
         if is_key_value:
             scheduler: Dict[str, Scheduler] = {}
             for key, scheduler_params in params.items():
-                scheduler[key] = ConfigRunner._get_scheduler_from_params(  # noqa: WPS437
+                scheduler[
+                    key
+                ] = ConfigRunner._get_scheduler_from_params(  # noqa: WPS437
                     **scheduler_params, optimizer=optimizer
                 )
         else:
             scheduler = REGISTRY.get_from_params(**params, optimizer=optimizer)
         return scheduler
 
-    def get_scheduler(self, optimizer: RunnerOptimizer, stage: str) -> RunnerScheduler:
+    def get_scheduler(
+        self, optimizer: RunnerOptimizer, stage: str
+    ) -> RunnerScheduler:
         """Returns the scheduler for a given stage."""
         if "scheduler" not in self._stage_config[stage]:
             return None
-        scheduler_params = get_by_keys(self._stage_config, stage, "scheduler", default={})
-        scheduler = self._get_scheduler_from_params(optimizer=optimizer, **scheduler_params)
+        scheduler_params = get_by_keys(
+            self._stage_config, stage, "scheduler", default={}
+        )
+        scheduler = self._get_scheduler_from_params(
+            optimizer=optimizer, **scheduler_params
+        )
         return scheduler
 
     @staticmethod
@@ -303,12 +338,16 @@ class ConfigRunner(IRunner):
         callback = REGISTRY.get_from_params(**params)
         if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
-            callback = ConfigRunner._get_callback_from_params(**wrapper_params)  # noqa: WPS437
+            callback = ConfigRunner._get_callback_from_params(
+                **wrapper_params
+            )  # noqa: WPS437
         return callback
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage."""
-        callbacks_params = get_by_keys(self._stage_config, stage, "callbacks", default={})
+        callbacks_params = get_by_keys(
+            self._stage_config, stage, "callbacks", default={}
+        )
 
         callbacks = OrderedDict(
             [
@@ -318,7 +357,8 @@ class ConfigRunner(IRunner):
         )
 
         is_callback_exists = lambda callback_fn: any(
-            check_callback_isinstance(x, callback_fn) for x in callbacks.values()
+            check_callback_isinstance(x, callback_fn)
+            for x in callbacks.values()
         )
         if self._verbose and not is_callback_exists(TqdmCallback):
             callbacks["_verbose"] = TqdmCallback()
@@ -329,7 +369,9 @@ class ConfigRunner(IRunner):
         if self._overfit and not is_callback_exists(BatchOverfitCallback):
             callbacks["_overfit"] = BatchOverfitCallback()
 
-        if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
+        if self._logdir is not None and not is_callback_exists(
+            ICheckpointCallback
+        ):
             callbacks["_checkpoint"] = CheckpointCallback(
                 logdir=os.path.join(self._logdir, "checkpoints"),
             )

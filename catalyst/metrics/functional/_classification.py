@@ -118,7 +118,10 @@ def precision_recall_fbeta_support(
         )
     """
     tn, fp, fn, tp, support = get_multiclass_statistics(
-        outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes,
+        outputs=outputs,
+        targets=targets,
+        argmax_dim=argmax_dim,
+        num_classes=num_classes,
     )
     # @TODO: sync between metrics
     # precision_val = _precision(tp=tp, fp=fp, eps=eps, zero_division=zero_division)
@@ -132,7 +135,11 @@ def precision_recall_fbeta_support(
 
 
 def get_aggregated_metrics(
-    tp: np.array, fp: np.array, fn: np.array, support: np.array, zero_division: int = 0
+    tp: np.array,
+    fp: np.array,
+    fn: np.array,
+    support: np.array,
+    zero_division: int = 0,
 ) -> Tuple[np.array, np.array, np.array, np.array]:
     """
     Count precision, recall, f1 scores per-class and with macro, weighted and micro average
@@ -155,9 +162,15 @@ def get_aggregated_metrics(
     f1_values = np.zeros(shape=(num_classes,))
 
     for i in range(num_classes):
-        precision_values[i] = precision(tp=tp[i], fp=fp[i], zero_division=zero_division)
-        recall_values[i] = recall(tp=tp[i], fn=fn[i], zero_division=zero_division)
-        f1_values[i] = f1score(precision_value=precision_values[i], recall_value=recall_values[i])
+        precision_values[i] = precision(
+            tp=tp[i], fp=fp[i], zero_division=zero_division
+        )
+        recall_values[i] = recall(
+            tp=tp[i], fn=fn[i], zero_division=zero_division
+        )
+        f1_values[i] = f1score(
+            precision_value=precision_values[i], recall_value=recall_values[i]
+        )
 
     per_class = (
         precision_values,
@@ -181,8 +194,12 @@ def get_aggregated_metrics(
         None,
     )
 
-    micro_precision = precision(tp=tp.sum(), fp=fp.sum(), zero_division=zero_division)
-    micro_recall = recall(tp=tp.sum(), fn=fn.sum(), zero_division=zero_division)
+    micro_precision = precision(
+        tp=tp.sum(), fp=fp.sum(), zero_division=zero_division
+    )
+    micro_recall = recall(
+        tp=tp.sum(), fn=fn.sum(), zero_division=zero_division
+    )
     micro = (
         micro_precision,
         micro_recall,
@@ -211,7 +228,9 @@ def get_binary_metrics(
     """
     precision_value = precision(tp=tp, fp=fp, zero_division=zero_division)
     recall_value = recall(tp=tp, fn=fn, zero_division=zero_division)
-    f1_value = f1score(precision_value=precision_value, recall_value=recall_value)
+    f1_value = f1score(
+        precision_value=precision_value, recall_value=recall_value
+    )
     return precision_value, recall_value, f1_value
 
 

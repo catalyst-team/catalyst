@@ -59,10 +59,15 @@ def _upsample(
     align_corners: bool = True,
 ) -> torch.Tensor:
     if scale is None:
-        x = F.interpolate(x, size=size, mode=interpolation_mode, align_corners=align_corners)
+        x = F.interpolate(
+            x, size=size, mode=interpolation_mode, align_corners=align_corners
+        )
     else:
         x = F.interpolate(
-            x, scale_factor=scale, mode=interpolation_mode, align_corners=align_corners,
+            x,
+            scale_factor=scale,
+            mode=interpolation_mode,
+            align_corners=align_corners,
         )
     return x
 
@@ -70,7 +75,9 @@ def _upsample(
 class EncoderBlock(ABC, nn.Module):
     """@TODO: Docs (add description, `Example`). Contribution is welcome."""
 
-    def __init__(self, in_channels: int, out_channels: int, in_strides: int = None):
+    def __init__(
+        self, in_channels: int, out_channels: int, in_strides: int = None
+    ):
         """
         Args:
             @TODO: Docs. Contribution is welcome.
@@ -131,7 +138,9 @@ class DecoderBlock(ABC, nn.Module):
         return self.in_strides // 2 if self.in_strides is not None else None
 
     @abstractmethod
-    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, bottom: torch.Tensor, left: torch.Tensor
+    ) -> torch.Tensor:
         """Forward call."""
         pass
 

@@ -12,7 +12,12 @@ from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
-from .misc import DummyDataset, DummyModel, LossMinimizationCallback, WorldSizeCheckCallback
+from .misc import (
+    DummyDataset,
+    DummyModel,
+    LossMinimizationCallback,
+    WorldSizeCheckCallback,
+)
 
 if SETTINGS.amp_required:
     from catalyst.engines.amp import DistributedDataParallelAMPEngine
@@ -44,7 +49,9 @@ class CustomRunner(dl.IRunner):
             # ),
             # "check": DeviceCheckCallback(),
             "check2": LossMinimizationCallback("loss", logger=logger),
-            "check_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
+            "check_world_size": WorldSizeCheckCallback(
+                NUM_CUDA_DEVICES, logger=logger
+            ),
         }
 
     @property
@@ -75,7 +82,10 @@ class CustomRunner(dl.IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+        return {
+            "console": dl.ConsoleLogger(),
+            "csv": dl.CSVLogger(logdir=self._logdir),
+        }
 
     def handle_batch(self, batch):
         x, y = batch
@@ -85,7 +95,8 @@ class CustomRunner(dl.IRunner):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_train_with_experiment_distributed_parallel_amp_device():
     with TemporaryDirectory() as logdir:
@@ -95,7 +106,8 @@ def test_train_with_experiment_distributed_parallel_amp_device():
 
 @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_train_with_config_experiment_distributed_parallel_amp_device():
     pass

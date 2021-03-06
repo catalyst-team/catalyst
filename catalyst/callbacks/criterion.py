@@ -15,7 +15,11 @@ class CriterionCallback(ICriterionCallback):
     """@TODO: docs."""
 
     def __init__(
-        self, input_key: str, target_key: str, metric_key: str, criterion_key: str = None,
+        self,
+        input_key: str,
+        target_key: str,
+        metric_key: str,
+        criterion_key: str = None,
     ):
         """
         Args:
@@ -40,7 +44,9 @@ class CriterionCallback(ICriterionCallback):
         Args:
             runner: current runner
         """
-        self.criterion = get_attr(runner, key="criterion", inner_key=self.criterion_key)
+        self.criterion = get_attr(
+            runner, key="criterion", inner_key=self.criterion_key
+        )
         assert self.criterion is not None
 
     def on_loader_start(self, runner: "IRunner") -> None:
@@ -49,8 +55,14 @@ class CriterionCallback(ICriterionCallback):
 
     def on_batch_end(self, runner: "IRunner"):
         """@TODO: docs."""
-        inputs, targets = runner.batch[self.input_key], runner.batch[self.target_key]
-        inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
+        inputs, targets = (
+            runner.batch[self.input_key],
+            runner.batch[self.target_key],
+        )
+        inputs, targets = (
+            runner.engine.sync_tensor(inputs),
+            runner.engine.sync_tensor(targets),
+        )
 
         # NOTE: similar to amp guides in docs
         # https://pytorch.org/docs/stable/notes/amp_examples.html
@@ -63,7 +75,9 @@ class CriterionCallback(ICriterionCallback):
     def on_loader_end(self, runner: "IRunner") -> None:
         """@TODO: docs."""
         mean, std = self.additive_metric.compute()
-        runner.loader_metrics.update({self.metric_key: mean, f"{self.metric_key}/std": std})
+        runner.loader_metrics.update(
+            {self.metric_key: mean, f"{self.metric_key}/std": std}
+        )
 
 
 __all__ = ["ICriterionCallback", "CriterionCallback"]

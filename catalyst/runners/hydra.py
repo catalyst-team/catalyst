@@ -11,7 +11,11 @@ from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
-from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
+from catalyst.callbacks.misc import (
+    CheckRunCallback,
+    TimerCallback,
+    TqdmCallback,
+)
 from catalyst.core import Callback
 from catalyst.core.functional import check_callback_isinstance
 from catalyst.core.logger import ILogger
@@ -130,7 +134,10 @@ class HydraRunner(IRunner):
     def get_loggers(self) -> Dict[str, ILogger]:
         """@TODO: docs."""
         loggers_params = self._config.loggers or {}
-        loggers = {key: hydra.utils.instantiate(params) for key, params in loggers_params.items()}
+        loggers = {
+            key: hydra.utils.instantiate(params)
+            for key, params in loggers_params.items()
+        }
 
         is_logger_exists = lambda logger_fn: any(
             isinstance(x, logger_fn) for x in loggers.values()
@@ -139,7 +146,9 @@ class HydraRunner(IRunner):
             loggers["_console"] = ConsoleLogger()
         if self._logdir is not None and not is_logger_exists(CSVLogger):
             loggers["_csv"] = CSVLogger(logdir=self._logdir)
-        if self._logdir is not None and not is_logger_exists(TensorboardLogger):
+        if self._logdir is not None and not is_logger_exists(
+            TensorboardLogger
+        ):
             loggers["_tensorboard"] = TensorboardLogger(
                 logdir=os.path.join(self._logdir, "tensorboard")
             )
@@ -194,7 +203,9 @@ class HydraRunner(IRunner):
         is_key_value = params._key_value or False
         if is_key_value:
             criterion = {
-                key: HydraRunner._get_criterion_from_params(value)  # noqa: WPS437
+                key: HydraRunner._get_criterion_from_params(
+                    value
+                )  # noqa: WPS437
                 for key, value in params.items()
             }
         else:
@@ -240,7 +251,9 @@ class HydraRunner(IRunner):
         )
 
         # instantiate optimizer
-        optimizer: Optimizer = hydra.utils.instantiate(params, params=model_params)
+        optimizer: Optimizer = hydra.utils.instantiate(
+            params, params=model_params
+        )
         return optimizer
 
     def get_optimizer(self, model: RunnerModel, stage: str) -> RunnerOptimizer:
@@ -290,7 +303,9 @@ class HydraRunner(IRunner):
         if is_key_value:
             scheduler: Dict[str, Scheduler] = {}
             for key, scheduler_params in params.items():
-                scheduler[key] = HydraRunner._get_scheduler_from_params(  # noqa: WPS437
+                scheduler[
+                    key
+                ] = HydraRunner._get_scheduler_from_params(  # noqa: WPS437
                     optimizer=optimizer, params=scheduler_params
                 )
         else:
@@ -298,12 +313,16 @@ class HydraRunner(IRunner):
 
         return scheduler
 
-    def get_scheduler(self, optimizer: RunnerOptimizer, stage: str) -> RunnerScheduler:
+    def get_scheduler(
+        self, optimizer: RunnerOptimizer, stage: str
+    ) -> RunnerScheduler:
         """Returns the schedulers for a given stage."""
         if "scheduler" not in self._config.stages[stage]:
             return None
         scheduler_params: DictConfig = self._config.stages[stage].scheduler
-        scheduler = self._get_scheduler_from_params(optimizer=optimizer, params=scheduler_params)
+        scheduler = self._get_scheduler_from_params(
+            optimizer=optimizer, params=scheduler_params
+        )
         return scheduler
 
     @staticmethod
@@ -316,7 +335,9 @@ class HydraRunner(IRunner):
         callback = callback_class(**params)
         if wrapper_params is not None:
             wrapper_params["base_callback"] = callback
-            callback = HydraRunner._get_callback_from_params(**wrapper_params)  # noqa: WPS437
+            callback = HydraRunner._get_callback_from_params(
+                **wrapper_params
+            )  # noqa: WPS437
         return callback
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
@@ -329,7 +350,8 @@ class HydraRunner(IRunner):
         }
 
         is_callback_exists = lambda callback_fn: any(
-            check_callback_isinstance(x, callback_fn) for x in callbacks.values()
+            check_callback_isinstance(x, callback_fn)
+            for x in callbacks.values()
         )
         if self._verbose and not is_callback_exists(TqdmCallback):
             callbacks["_verbose"] = TqdmCallback()
@@ -340,7 +362,9 @@ class HydraRunner(IRunner):
         if self._overfit and not is_callback_exists(BatchOverfitCallback):
             callbacks["_overfit"] = BatchOverfitCallback()
 
-        if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
+        if self._logdir is not None and not is_callback_exists(
+            ICheckpointCallback
+        ):
             callbacks["_checkpoint"] = CheckpointCallback(
                 logdir=os.path.join(self._logdir, "checkpoints"),
             )

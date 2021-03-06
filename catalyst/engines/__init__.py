@@ -12,10 +12,16 @@ from catalyst.engines.distributed import DistributedDataParallelEngine
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 if SETTINGS.amp_required:
-    from catalyst.engines.amp import AMPEngine, DistributedDataParallelAMPEngine
+    from catalyst.engines.amp import (
+        AMPEngine,
+        DistributedDataParallelAMPEngine,
+    )
 
 if SETTINGS.apex_required:
-    from catalyst.engines.apex import APEXEngine, DistributedDataParallelApexEngine
+    from catalyst.engines.apex import (
+        APEXEngine,
+        DistributedDataParallelApexEngine,
+    )
 
 
 # TODO: add option to create other engines (amp/apex) from string
@@ -59,7 +65,8 @@ def process_engine(engine: Union[str, IEngine, None] = None) -> IEngine:
         engine == "cpu"
         or engine == "cuda"
         or (
-            re.match(r"cuda\:\d", engine) and int(engine.split(":")[1]) < torch.cuda.device_count()
+            re.match(r"cuda\:\d", engine)
+            and int(engine.split(":")[1]) < torch.cuda.device_count()
         )
     ):
         use_engine = DeviceEngine(engine)

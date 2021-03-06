@@ -12,7 +12,9 @@ from catalyst.utils.torch import set_requires_grad
 logger = logging.getLogger(__name__)
 
 
-def _get_input_argnames(fn: Callable[..., Any], exclude: List[str] = None) -> List[str]:
+def _get_input_argnames(
+    fn: Callable[..., Any], exclude: List[str] = None
+) -> List[str]:
     """
     Function to get input argument names of function.
 
@@ -24,7 +26,9 @@ def _get_input_argnames(fn: Callable[..., Any], exclude: List[str] = None) -> Li
         List[str]: List of input argument names
     """
     argspec = inspect.getfullargspec(fn)
-    assert argspec.varargs is None and argspec.varkw is None, "not supported by PyTorch"
+    assert (
+        argspec.varargs is None and argspec.varkw is None
+    ), "not supported by PyTorch"
 
     return get_fn_argsnames(fn, exclude=exclude)
 

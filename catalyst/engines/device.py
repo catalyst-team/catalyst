@@ -31,12 +31,18 @@ class DeviceEngine(IEngine):
         return 1
 
     def sync_device(
-        self, tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module]
+        self,
+        tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module],
     ) -> Any:
         if isinstance(tensor_or_module, dict):
-            return {key: self.sync_device(value) for key, value in tensor_or_module.items()}
+            return {
+                key: self.sync_device(value)
+                for key, value in tensor_or_module.items()
+            }
         elif isinstance(tensor_or_module, (list, tuple)):
-            return type(tensor_or_module)(self.sync_device(elem) for elem in tensor_or_module)
+            return type(tensor_or_module)(
+                self.sync_device(elem) for elem in tensor_or_module
+            )
         elif torch.is_tensor(tensor_or_module):
             return tensor_or_module.to(self.device, non_blocking=True)
         elif (
@@ -59,7 +65,11 @@ class DeviceEngine(IEngine):
         return tensor
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         # @TODO: how could we do better?)
         # @TODO: should we move this logic to the Runner?
@@ -91,7 +101,12 @@ class DeviceEngine(IEngine):
         optimizer.step()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> Dict:
         # add data parallel support
         return {

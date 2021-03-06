@@ -28,11 +28,17 @@ class FocalLossBinary(_Loss):
 
         if reduced:
             self.loss_fn = partial(
-                metrics.reduced_focal_loss, gamma=gamma, threshold=threshold, reduction=reduction,
+                metrics.reduced_focal_loss,
+                gamma=gamma,
+                threshold=threshold,
+                reduction=reduction,
             )
         else:
             self.loss_fn = partial(
-                metrics.sigmoid_focal_loss, gamma=gamma, alpha=alpha, reduction=reduction,
+                metrics.sigmoid_focal_loss,
+                gamma=gamma,
+                alpha=alpha,
+                reduction=reduction,
             )
 
     def forward(self, logits, targets):
@@ -85,7 +91,9 @@ class FocalLossMultiClass(FocalLossBinary):
             not_ignored = targets != self.ignore
 
         for class_id in range(num_classes):
-            cls_label_target = (targets == (class_id + 0)).long()  # noqa: WPS345
+            cls_label_target = (
+                targets == (class_id + 0)
+            ).long()  # noqa: WPS345
             cls_label_input = logits[..., class_id]
 
             if self.ignore is not None:

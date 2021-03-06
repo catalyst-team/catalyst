@@ -28,12 +28,18 @@ def build_parser() -> ArgumentParser:
     Returns:
         parser
     """
-    parser = ArgumentParser("catalyst-dl", formatter_class=RawTextHelpFormatter)
-    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}")
+    parser = ArgumentParser(
+        "catalyst-dl", formatter_class=RawTextHelpFormatter
+    )
+    parser.add_argument(
+        "-v", "--version", action="version", version=f"%(prog)s {__version__}"
+    )
     all_commands = ", \n".join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
     subparsers = parser.add_subparsers(
-        metavar="{command}", dest="command", help=f"available commands: \n{all_commands}",
+        metavar="{command}",
+        dest="command",
+        help=f"available commands: \n{all_commands}",
     )
     subparsers.required = True
 

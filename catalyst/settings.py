@@ -306,13 +306,17 @@ class ConfigFileFinder:
             home_dir = os.path.expanduser("~")
             config_file_basename = f".{program_name}"
         else:
-            home_dir = os.environ.get("XDG_CONFIG_HOME", os.path.expanduser("~/.config"))
+            home_dir = os.environ.get(
+                "XDG_CONFIG_HOME", os.path.expanduser("~/.config")
+            )
             config_file_basename = program_name
 
         return os.path.join(home_dir, config_file_basename)
 
     @staticmethod
-    def _read_config(*files: str) -> Tuple[configparser.RawConfigParser, List[str]]:
+    def _read_config(
+        *files: str,
+    ) -> Tuple[configparser.RawConfigParser, List[str]]:
         config = configparser.RawConfigParser()
 
         found_files: List[str] = []
@@ -342,7 +346,9 @@ class ConfigFileFinder:
         found_config_files = False
         while tail and not found_config_files:
             for project_filename in self.project_filenames:
-                filename = os.path.abspath(os.path.join(parent, project_filename))
+                filename = os.path.abspath(
+                    os.path.join(parent, project_filename)
+                )
                 if os.path.exists(filename):
                     yield filename
                     found_config_files = True
@@ -402,9 +408,12 @@ class MergedConfigParser:
         self.config_finder = config_finder
 
     def _normalize_value(self, option, value):
-        final_value = option.normalize(value, self.config_finder.local_directory)
+        final_value = option.normalize(
+            value, self.config_finder.local_directory
+        )
         logger.debug(
-            f"{value} has been normalized to {final_value}" f" for option '{option.config_name}'",
+            f"{value} has been normalized to {final_value}"
+            f" for option '{option.config_name}'",
         )
         return final_value
 
@@ -419,7 +428,9 @@ class MergedConfigParser:
             for option_name in config_parser.options(self.program_name):
                 type_ = DEFAULT_SETTINGS.type_hint(option_name)
                 method = type2method.get(type_, config_parser.get)
-                config_dict[option_name] = method(self.program_name, option_name)
+                config_dict[option_name] = method(
+                    self.program_name, option_name
+                )
 
         return config_dict
 

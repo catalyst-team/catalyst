@@ -9,7 +9,12 @@ from catalyst.metrics._metric import IMetric
 class ConfusionMatrixMetric(IMetric):
     """Constructs a confusion matrix for a multiclass classification problems."""
 
-    def __init__(self, num_classes: int, normalized: bool = False, compute_on_call: bool = True):
+    def __init__(
+        self,
+        num_classes: int,
+        normalized: bool = False,
+        compute_on_call: bool = True,
+    ):
         """Constructs a confusion matrix for a multiclass classification problems.
 
         Args:
@@ -64,7 +69,9 @@ class ConfusionMatrixMetric(IMetric):
             assert (targets >= 0).all() and (
                 targets <= 1
             ).all(), "in one-hot encoding, target values should be 0 or 1"
-            assert (targets.sum(1) == 1).all(), "multilabel setting is not supported"
+            assert (
+                targets.sum(1) == 1
+            ).all(), "multilabel setting is not supported"
             targets = np.argmax(targets, 1)
         else:
             assert (predictions.max() < self.num_classes) and (

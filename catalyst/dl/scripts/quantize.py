@@ -5,7 +5,10 @@ from argparse import ArgumentParser
 import logging
 from pathlib import Path
 
-from catalyst.utils.quantization import quantize_model_from_checkpoint, save_quantized_model
+from catalyst.utils.quantization import (
+    quantize_model_from_checkpoint,
+    save_quantized_model,
+)
 
 
 def build_args(parser: ArgumentParser):
@@ -19,7 +22,10 @@ def build_args(parser: ArgumentParser):
         metavar="CHECKPOINT_NAME",
     )
     parser.add_argument(
-        "--out-dir", type=Path, default=None, help="Output directory to save traced model",
+        "--out-dir",
+        type=Path,
+        default=None,
+        help="Output directory to save traced model",
     )
     parser.add_argument(
         "--out-model",
@@ -40,7 +46,10 @@ def build_args(parser: ArgumentParser):
     )
 
     parser.add_argument(
-        "--backend", type=str, default=None, help="Defines backend for quantization",
+        "--backend",
+        type=str,
+        default=None,
+        help="Defines backend for quantization",
     )
 
     return parser
@@ -65,7 +74,10 @@ def main(args, _):
         logging.basicConfig(level=logging.WARNING)
 
     quantized_model = quantize_model_from_checkpoint(
-        logdir, checkpoint_name=checkpoint_name, stage=args.stage, backend=args.backend,
+        logdir,
+        checkpoint_name=checkpoint_name,
+        stage=args.stage,
+        backend=args.backend,
     )
 
     save_quantized_model(

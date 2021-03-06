@@ -86,14 +86,18 @@ def parse_args_uargs(args, unknown_args):
         config_part = load_config(config_path, ordered=True)
         config = merge_dicts(config, config_part)
 
-    config, args_copy = parse_config_args(config=config, args=args_copy, unknown_args=unknown_args)
+    config, args_copy = parse_config_args(
+        config=config, args=args_copy, unknown_args=unknown_args
+    )
 
     # hack with argparse in config
     config_args = config.get("args", None)
     if config_args is not None:
         for key, value in config_args.items():
             arg_value = getattr(args_copy, key, None)
-            if arg_value is None or (key in ["logdir", "baselogdir"] and arg_value == ""):
+            if arg_value is None or (
+                key in ["logdir", "baselogdir"] and arg_value == ""
+            ):
                 arg_value = value
             setattr(args_copy, key, arg_value)
 

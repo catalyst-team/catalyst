@@ -24,7 +24,10 @@ if SETTINGS.use_libjpeg_turbo:
             _test_img = jpeg.JPEG(fp.name).decode()
 
     except ImportError as ex:
-        logger.warning("jpeg4py not available. " "To install jpeg4py, run `pip install jpeg4py`.")
+        logger.warning(
+            "jpeg4py not available. "
+            "To install jpeg4py, run `pip install jpeg4py`."
+        )
         raise ex
     except OSError as ex:
         logger.warning(
@@ -65,7 +68,9 @@ def imread(
         rootpath = str(rootpath)
         uri = uri if uri.startswith(rootpath) else os.path.join(rootpath, uri)
 
-    if SETTINGS.use_libjpeg_turbo and uri.endswith(("jpg", "JPG", "jpeg", "JPEG")):
+    if SETTINGS.use_libjpeg_turbo and uri.endswith(
+        ("jpg", "JPG", "jpeg", "JPEG")
+    ):
         img = jpeg.JPEG(uri).decode()
     else:
         # @TODO: add tiff support, currently – jpg and png

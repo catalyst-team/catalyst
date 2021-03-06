@@ -4,13 +4,18 @@ import argparse
 from argparse import ArgumentParser
 from pathlib import Path
 
-from catalyst.utils.tracing import save_traced_model, trace_model_from_checkpoint
+from catalyst.utils.tracing import (
+    save_traced_model,
+    trace_model_from_checkpoint,
+)
 
 
 def build_args(parser: ArgumentParser):
     """Builds the command line parameters."""
     parser.add_argument("logdir", type=Path, help="Path to model logdir")
-    parser.add_argument("--method", "-m", default="forward", help="Model method to trace")
+    parser.add_argument(
+        "--method", "-m", default="forward", help="Model method to trace"
+    )
     parser.add_argument(
         "--checkpoint",
         "-c",
@@ -19,7 +24,10 @@ def build_args(parser: ArgumentParser):
         metavar="CHECKPOINT_NAME",
     )
     parser.add_argument(
-        "--out-dir", type=Path, default=None, help="Output directory to save traced model",
+        "--out-dir",
+        type=Path,
+        default=None,
+        help="Output directory to save traced model",
     )
     parser.add_argument(
         "--out-model",
@@ -41,7 +49,10 @@ def build_args(parser: ArgumentParser):
         help="If true, model will be traced with `requires_grad_(True)`",
     )
     parser.add_argument(
-        "--opt-level", type=str, default=None, help="Opt level for FP16 (optional)",
+        "--opt-level",
+        type=str,
+        default=None,
+        help="Opt level for FP16 (optional)",
     )
 
     parser.add_argument(
@@ -52,7 +63,10 @@ def build_args(parser: ArgumentParser):
     )
 
     parser.add_argument(
-        "--loader", type=str, default=None, help="Loader name to get the batch from",
+        "--loader",
+        type=str,
+        default=None,
+        help="Loader name to get the batch from",
     )
 
     return parser

@@ -66,7 +66,12 @@ class IMetric(ABC):
 class ICallbackBatchMetric(IMetric):
     """@TODO: docs here"""
 
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+    def __init__(
+        self,
+        compute_on_call: bool = True,
+        prefix: str = None,
+        suffix: str = None,
+    ):
         """@TODO: docs here"""
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
@@ -93,7 +98,12 @@ class ICallbackBatchMetric(IMetric):
 class ICallbackLoaderMetric(IMetric):
     """Interface for all Metrics."""
 
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+    def __init__(
+        self,
+        compute_on_call: bool = True,
+        prefix: str = None,
+        suffix: str = None,
+    ):
         """@TODO: docs here"""
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""

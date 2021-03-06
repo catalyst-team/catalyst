@@ -45,7 +45,9 @@ class ImageClassificationDataset(ImageFolderDataset):
     # list of (url, md5 hash) tuples representing files to download
     resources: Iterable[Tuple[str, str]] = None
 
-    def __init__(self, root: str, train: bool = True, download: bool = False, **kwargs):
+    def __init__(
+        self, root: str, train: bool = True, download: bool = False, **kwargs
+    ):
         """Constructor method for the ``ImageClassificationDataset`` class.
 
         Args:
@@ -64,7 +66,9 @@ class ImageClassificationDataset(ImageFolderDataset):
             # download files
             for url, md5 in self.resources:
                 filename = url.rpartition("/")[2]
-                download_and_extract_archive(url, download_root=root, filename=filename, md5=md5)
+                download_and_extract_archive(
+                    url, download_root=root, filename=filename, md5=md5
+                )
 
         rootpath = os.path.join(root, self.name, "train" if train else "val")
         super().__init__(rootpath=rootpath, **kwargs)

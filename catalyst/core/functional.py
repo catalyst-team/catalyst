@@ -58,7 +58,9 @@ def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
     rank = get_rank()
     if rank >= 0:
         for key, value in loaders.items():
-            if not isinstance(value.sampler, (DistributedSampler, DistributedSamplerWrapper)):
+            if not isinstance(
+                value.sampler, (DistributedSampler, DistributedSamplerWrapper)
+            ):
                 warnings.warn(
                     "With distributed training setup, "
                     "you need ``DistributedSampler`` for your ``DataLoader``."
@@ -115,13 +117,16 @@ def sort_callbacks_by_order(
         output = OrderedDict([(i, value) for i, value in enumerate(output)])
     else:
         raise TypeError(
-            f"Callbacks must be either Dict/OrderedDict or list, " f"got {type(callbacks)}"
+            f"Callbacks must be either Dict/OrderedDict or list, "
+            f"got {type(callbacks)}"
         )
 
     return output
 
 
-def filter_callbacks_by_node(callbacks: Union[Dict, OrderedDict]) -> Union[Dict, OrderedDict]:
+def filter_callbacks_by_node(
+    callbacks: Union[Dict, OrderedDict]
+) -> Union[Dict, OrderedDict]:
     """
     Filters callbacks based on running node.
     Deletes worker-only callbacks from ``CallbackNode.Master``
@@ -138,11 +143,15 @@ def filter_callbacks_by_node(callbacks: Union[Dict, OrderedDict]) -> Union[Dict,
     rank = get_rank()
     if rank == 0:  # master node
         # remove worker-only callbacks on master node
-        for k in list(filter(lambda c: output[c].node == CallbackNode.worker, output)):
+        for k in list(
+            filter(lambda c: output[c].node == CallbackNode.worker, output)
+        ):
             del output[k]
     elif rank > 0:  # worker node
         # remove master-only callbacks on worker nodes
-        for k in list(filter(lambda c: output[c].node == CallbackNode.master, output)):
+        for k in list(
+            filter(lambda c: output[c].node == CallbackNode.master, output)
+        ):
             del output[k]
     return output
 

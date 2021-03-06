@@ -100,7 +100,9 @@ class GlobalAttnPool2d(nn.Module):
 
         activation_fn = REGISTRY.get_if_str(activation_fn)
         self.attn = nn.Sequential(
-            nn.Conv2d(in_features, 1, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.Conv2d(
+                in_features, 1, kernel_size=1, stride=1, padding=0, bias=False
+            ),
             activation_fn(),
         )
 
@@ -222,8 +224,10 @@ class GeM2d(nn.Module):
              [[1.0361]],
              [[0.9717]]]], grad_fn=<PowBackward0>)
     """
-    
-    def __init__(self, p: float = 3.0, p_trainable: bool = False, eps: float = 1e-7):
+
+    def __init__(
+        self, p: float = 3.0, p_trainable: bool = False, eps: float = 1e-7
+    ):
         """
         Args:
             p: The pooling parameter.

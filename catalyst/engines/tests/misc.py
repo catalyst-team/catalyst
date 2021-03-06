@@ -171,7 +171,9 @@ class OPTTensorTypeChecker(Callback):
     def on_batch_end(self, runner):
         """Docs."""
         check_tensor = (
-            runner.batch_metrics[self.key] if self.use_batch_metrics else runner.batch[self.key]
+            runner.batch_metrics[self.key]
+            if self.use_batch_metrics
+            else runner.batch[self.key]
         )
         assert check_tensor.dtype == self.expected_type, (
             f"Wrong types for {self.opt_level} - actual is "
