@@ -6,11 +6,7 @@ import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.metrics import (
-    ICallbackBatchMetric,
-    ICallbackLoaderMetric,
-    IMetric,
-)
+from catalyst.metrics import ICallbackBatchMetric, ICallbackLoaderMetric, IMetric
 
 
 class IMetricCallback(Callback, ABC):
