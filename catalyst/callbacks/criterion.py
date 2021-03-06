@@ -50,13 +50,14 @@ class CriterionCallback(ICriterionCallback):
     def on_batch_end(self, runner: "IRunner"):
         """@TODO: docs."""
         inputs, targets = runner.batch[self.input_key], runner.batch[self.target_key]
-        inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
+        # inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
 
         # NOTE: similar to amp guides in docs
         # https://pytorch.org/docs/stable/notes/amp_examples.html
         with runner.engine.autocast():
             loss = self.criterion(inputs, targets)
 
+        loss = runner.engine.sync_tensor(loss, "mean")
         runner.batch_metrics.update({self.metric_key: loss})
         self.additive_metric.update(loss.detach().cpu(), len(targets))
 
