@@ -7,11 +7,7 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
-from catalyst.engines import (
-    DataParallelEngine,
-    DeviceEngine,
-    DistributedDataParallelEngine,
-)
+from catalyst.engines import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
 from catalyst.engines.functional import all_gather, mean_reduce, sum_reduce
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
