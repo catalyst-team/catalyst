@@ -1,6 +1,6 @@
 # flake8: noqa
 
-from catalyst.settings import IS_PRUNING_AVAILABLE, IS_QUANTIZATION_AVAILABLE, IS_ONNX_AVAILABLE
+from catalyst.settings import SETTINGS
 
 from catalyst.utils.checkpoint import (
     load_checkpoint,
@@ -22,9 +22,6 @@ from catalyst.utils.distributed import (
     check_ddp_wrapped,
     check_torch_distributed_initialized,
     check_slurm_available,
-    check_apex_available,
-    check_amp_available,
-    assert_fp16_available,
 )
 
 from catalyst.utils.misc import (
@@ -50,13 +47,13 @@ from catalyst.utils.misc import (
 )
 from catalyst.utils.numpy import get_one_hot
 
-if IS_ONNX_AVAILABLE:
+if SETTINGS.onnx_required:
     from catalyst.utils.onnx import quantize_onnx_model, convert_to_onnx
 
-if IS_PRUNING_AVAILABLE:
+if SETTINGS.pruning_required:
     from catalyst.utils.pruning import prune_model, remove_reparametrization
 
-if IS_QUANTIZATION_AVAILABLE:
+if SETTINGS.quantization_required:
     from catalyst.utils.quantization import quantize_model
 
 from catalyst.utils.swa import (
