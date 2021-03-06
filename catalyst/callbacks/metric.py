@@ -12,8 +12,6 @@ from catalyst.metrics import (
     IMetric,
 )
 
-TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
-
 
 class IMetricCallback(Callback, ABC):
     """Metric callback interface, abstraction over metric step."""
@@ -69,13 +67,17 @@ class MetricCallback(IMetricCallback):
         self._validate_metric(metric=metric)
         self._metric_update_method = self.metric.update
 
+        kv_types = (dict, list, tuple)
+
         is_value_input = isinstance(input_key, str)
         is_value_targets = isinstance(target_key, str)
+        is_key_value_input = isinstance(input_key, kv_types)
+        is_key_value_targets = isinstance(target_key, kv_types)
 
         if is_value_input and is_value_targets:
             self._get_inputs = self._get_value_inputs
             self._update_metric = self._update_value_metric
-        elif not is_value_input and not is_value_targets:
+        elif is_key_value_input and is_key_value_targets:
             self._get_inputs = self._get_key_value_inputs
             self._update_metric = self._update_key_value_metric
         else:
@@ -123,7 +125,7 @@ class MetricCallback(IMetricCallback):
         return kv_keys
 
     def _get_value_inputs(
-        self, runner: "Runner"
+        self, runner: "IRunner"
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Get data from batch in value input case
@@ -145,7 +147,7 @@ class MetricCallback(IMetricCallback):
         return inputs, targets
 
     def _get_key_value_inputs(
-        self, runner: "Runner"
+        self, runner: "IRunner"
     ) -> Dict[str, torch.Tensor]:
         """
         Get data from batch in key-value input case

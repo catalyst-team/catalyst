@@ -8,7 +8,7 @@ import torch
 from catalyst.metrics._cmc_score import AccumulationMetric, CMCMetric
 
 
-@pytest.fixture()
+@pytest.fixture()  # noqa: WPS320
 def generate_batched_data() -> Iterable[
     Tuple[
         Iterable[str],
@@ -65,7 +65,7 @@ def generate_batched_data() -> Iterable[
     return batched_data
 
 
-def test_accumulation(generate_batched_data) -> None:
+def test_accumulation(generate_batched_data) -> None:  # noqa: WPS442
     """
     Check if AccumulationMetric accumulates all the data correctly along one loader
     """
@@ -86,7 +86,7 @@ def test_accumulation(generate_batched_data) -> None:
             ).all()
 
 
-def test_accumulation_reset(generate_batched_data):
+def test_accumulation_reset(generate_batched_data):  # noqa: WPS442
     """Check if AccumulationMetric accumulates all the data correctly with multiple resets"""
     for (
         fields_names,

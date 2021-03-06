@@ -20,6 +20,7 @@ NUM_SAMPLES = 200
 
 class DummyModel(nn.Module):
     """Dummy model"""
+
     def __init__(self, num_features: int, num_classes: int) -> None:
         super().__init__()
         self.model = nn.Sequential(
@@ -46,11 +47,11 @@ class DummyModel(nn.Module):
         (
             "inputs_test",
             "logits_test",
-            {"inputs_test": "inputs_test", "logits_test": "logits_test",},
+            {"inputs_test": "inputs_test", "logits_test": "logits_test"},
         ),
         (
-            ["test_1", "test_2", "test_3",],
-            ["test_4",],
+            ["test_1", "test_2", "test_3"],
+            ["test_4"],
             {
                 "test_1": "test_1",
                 "test_2": "test_2",
@@ -59,13 +60,13 @@ class DummyModel(nn.Module):
             },
         ),
         (
-            {"test_1": "test_2", "test_3": "test_4",},
-            ["test_5",],
-            {"test_1": "test_2", "test_3": "test_4", "test_5": "test_5",},
+            {"test_1": "test_2", "test_3": "test_4"},
+            ["test_5"],
+            {"test_1": "test_2", "test_3": "test_4", "test_5": "test_5"},
         ),
         (
-            {"test_1": "test_2", "test_3": "test_4",},
-            {"test_5": "test_6", "test_7": "test_8",},
+            {"test_1": "test_2", "test_3": "test_4"},
+            {"test_5": "test_6", "test_7": "test_8"},
             {
                 "test_1": "test_2",
                 "test_3": "test_4",

@@ -9,8 +9,6 @@ import torch
 from catalyst.metrics.functional._cmc_score import cmc_score_count, cmc_score
 
 
-TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
-
 EPS = 1e-4
 
 TEST_DATA_SIMPLE = (
@@ -150,7 +148,7 @@ def test_cmc_score_with_samples(generate_samples_for_cmc_score):
         gallery_labels,
     ) in generate_samples_for_cmc_score:
         true_cmc_01 = 1 - error_rate
-        conformity_matrix = (query_labels.reshape((-1, 1)) == gallery_labels).to(TORCH_BOOL)
+        conformity_matrix = (query_labels.reshape((-1, 1)) == gallery_labels).to(torch.bool)
         cmc = cmc_score(
             query_embeddings=query_embs,
             gallery_embeddings=gallery_embs,
