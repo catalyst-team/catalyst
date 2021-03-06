@@ -25,7 +25,7 @@ if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 
 
-class CustomExperiment(IRunner):
+class CustomRunner(IRunner):
     def __init__(self, logdir):
         super().__init__()
         self._logdir = logdir
@@ -90,7 +90,7 @@ class CustomExperiment(IRunner):
 )
 def test_ddp_engine():
     with TemporaryDirectory() as logdir:
-        runner = CustomExperiment(logdir)
+        runner = CustomRunner(logdir)
         runner.run()
 
 
