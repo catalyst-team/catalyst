@@ -26,9 +26,7 @@ class AccumulationMetric(ICallbackLoaderMetric):
             suffix: metric's suffix
             accumulative_fields: list of keys to accumulate data from batch
         """
-        super().__init__(
-            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix
-        )
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.accumulative_fields = accumulative_fields
         self.storage = None
         self.num_samples = None
@@ -59,8 +57,7 @@ class AccumulationMetric(ICallbackLoaderMetric):
         self.storage = defaultdict(torch.Tensor)
         for key in shape_type_dict:
             self.storage[key] = torch.empty(
-                size=shape_type_dict[key]["shape"],
-                dtype=shape_type_dict[key]["dtype"],
+                size=shape_type_dict[key]["shape"], dtype=shape_type_dict[key]["dtype"],
             )
 
     def update(self, **kwargs) -> None:
@@ -83,9 +80,9 @@ class AccumulationMetric(ICallbackLoaderMetric):
         bs = 0
         for field_name in self.accumulative_fields:
             bs = kwargs[field_name].shape[0]
-            self.storage[field_name][
-                self.collected_samples : self.collected_samples + bs, ...
-            ] = (kwargs[field_name].detach().cpu())
+            self.storage[field_name][self.collected_samples : self.collected_samples + bs, ...] = (
+                kwargs[field_name].detach().cpu()
+            )
         self.collected_samples += bs
         self.collected_batches += 1
 
@@ -132,6 +129,85 @@ class CMCMetric(AccumulationMetric):
             labels_key: key of label tensor in batch
             is_query_key: key of query flag tensor in batch
             topk_args: list of k, specifies which cmc@k should be calculated
+
+        Examples:
+            >>> from collections import OrderedDict
+            >>> from torch.optim import Adam
+            >>> from torch.utils.data import DataLoader
+            >>> from catalyst.contrib import nn
+            >>> from catalyst.contrib.datasets import MnistMLDataset, MnistQGDataset
+            >>> from catalyst.data import BalanceBatchSampler, HardTripletsSampler
+            >>> from catalyst.dl import ControlFlowCallback, LoaderMetricCallback, SupervisedRunner
+            >>> from catalyst.metrics import CMCMetric
+            >>>
+            >>> dataset_root = "."
+            >>>
+            >>> # download dataset for train and val, create loaders
+            >>> dataset_train = MnistMLDataset(root=dataset_root, download=True, transform=None)
+            >>> sampler = BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)
+            >>> train_loader = DataLoader(
+            >>>     dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size
+            >>> )
+            >>> dataset_val = MnistQGDataset(root=dataset_root, transform=None, gallery_fraq=0.2)
+            >>> val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
+            >>>
+            >>> # model, optimizer, criterion
+            >>> model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 100))
+            >>> optimizer = Adam(model.parameters())
+            >>> sampler_inbatch = HardTripletsSampler(norm_required=False)
+            >>> criterion = nn.TripletMarginLossWithSampler(
+            >>>     margin=0.5, sampler_inbatch=sampler_inbatch
+            >>> )
+            >>>
+            >>> # metric initialization
+            >>> metric = CMCMetric(topk_args=(1, 3), embeddings_key="embeddings")
+            >>>
+            >>> # batch data processing
+            >>> class CustomRunner(SupervisedRunner):
+            >>>     def handle_batch(self, batch):
+            >>>         if self.loader_key == "train":
+            >>>             images, targets = batch["features"].float(), batch["targets"].long()
+            >>>             features = model(images)
+            >>>             self.batch = {
+            >>>                 "embeddings": features,
+            >>>                 "targets": targets,
+            >>>             }
+            >>>         else:
+            >>>             images, targets, is_query = (
+            >>>                 batch["features"].float(),
+            >>>                 batch["targets"].long(),
+            >>>                 batch["is_query"].bool(),
+            >>>             )
+            >>>             features = model(images)
+            >>>             self.batch = {
+            >>>                 "embeddings": features,
+            >>>                 "targets": targets,
+            >>>                 "is_query": is_query,
+            >>>             }
+            >>>
+            >>> # training
+            >>> runner = CustomRunner(input_key="features", output_key="embeddings")
+            >>> runner.train(
+            >>>     model=model,
+            >>>     criterion=criterion,
+            >>>     optimizer=optimizer,
+            >>>     callbacks=OrderedDict(
+            >>>         {
+            >>>             "cmc": ControlFlowCallback(
+            >>>                 LoaderMetricCallback(
+            >>>                     metric,
+            >>>                     input_key=["embeddings", "is_query"],
+            >>>                     target_key=["targets"]
+            >>>                 ),
+            >>>                 loaders="valid",
+            >>>             ),
+            >>>         }
+            >>>     ),
+            >>>     loaders=OrderedDict({"train": train_loader, "valid": val_loader}),
+            >>>     valid_loader="valid",
+            >>>     verbose=True,
+            >>>     num_epochs=3,
+            >>> )
         """
         super().__init__(
             compute_on_call=compute_on_call,
@@ -142,7 +218,7 @@ class CMCMetric(AccumulationMetric):
         self.embeddings_key = embeddings_key
         self.labels_key = labels_key
         self.is_query_key = is_query_key
-        self.topk_args = topk_args or (1, )
+        self.topk_args = topk_args or (1,)
         self.metric_name = f"{self.prefix}cmc{self.suffix}"
 
     def compute(self) -> List[float]:
@@ -163,9 +239,7 @@ class CMCMetric(AccumulationMetric):
         gallery_embeddings = embeddings[~query_mask]
         gallery_labels = labels[~query_mask]
 
-        conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).to(
-            torch.bool
-        )
+        conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).to(torch.bool)
 
         metrics = []
         for k in self.topk_args:
@@ -188,8 +262,7 @@ class CMCMetric(AccumulationMetric):
         """
         values = self.compute()
         kv_metrics = {
-            f"{self.metric_name}{k:02d}": value
-            for k, value in zip(self.topk_args, values)
+            f"{self.metric_name}{k:02d}": value for k, value in zip(self.topk_args, values)
         }
         return kv_metrics
 

@@ -6,17 +6,13 @@ import torch
 
 from catalyst.metrics._cmc_score import AccumulationMetric, CMCMetric
 
+COMPLEX_OUTPUT_TYPE = Iterable[
+    Tuple[Iterable[str], int, int, Iterable[Dict[str, torch.Tensor]], Dict[str, torch.Tensor]]
+]
 
-@pytest.fixture()  # noqa: WPS320
-def generate_batched_data() -> Iterable[
-    Tuple[
-        Iterable[str],
-        int,
-        int,
-        Iterable[Dict[str, torch.Tensor]],
-        Dict[str, torch.Tensor],
-    ]
-]:
+
+@pytest.fixture()
+def generate_batched_data() -> COMPLEX_OUTPUT_TYPE:
     """
     Generate batched data of different shapes for accumulation metric test.
 
@@ -29,9 +25,7 @@ def generate_batched_data() -> Iterable[
         num_fields = np.random.randint(low=1, high=20)
         fields_names = [f"field_{i}" for i in range(num_fields)]
         fields_shapes = {
-            field_name: np.random.randint(
-                low=1, high=5, size=np.random.randint(low=1, high=5)
-            )
+            field_name: np.random.randint(low=1, high=5, size=np.random.randint(low=1, high=5))
             for field_name in fields_names
         }
         true_values = {field_name: None for field_name in fields_names}
@@ -46,21 +40,15 @@ def generate_batched_data() -> Iterable[
             batch_data = {}
             for field_name in fields_names:
                 data = torch.randint(
-                    low=10,
-                    high=1000,
-                    size=(batch_size, *fields_shapes[field_name]),
+                    low=10, high=1000, size=(batch_size, *fields_shapes[field_name]),
                 )
                 if true_values[field_name] is None:
                     true_values[field_name] = data
                 else:
-                    true_values[field_name] = torch.cat(
-                        (true_values[field_name], data)
-                    )
+                    true_values[field_name] = torch.cat((true_values[field_name], data))
                 batch_data[field_name] = data
             batches.append(batch_data)
-        batched_data.append(
-            (fields_names, num_batches, num_samples, batches, true_values)
-        )
+        batched_data.append((fields_names, num_batches, num_samples, batches, true_values))
     return batched_data
 
 
@@ -68,41 +56,25 @@ def test_accumulation(generate_batched_data) -> None:  # noqa: WPS442
     """
     Check if AccumulationMetric accumulates all the data correctly along one loader
     """
-    for (
-        fields_names,
-        num_batches,
-        num_samples,
-        batches,
-        true_values,
-    ) in generate_batched_data:
+    for (fields_names, num_batches, num_samples, batches, true_values) in generate_batched_data:
         metric = AccumulationMetric(accumulative_fields=fields_names)
         metric.reset(num_batches=num_batches, num_samples=num_samples)
         for batch in batches:
             metric.update(**batch)
         for field_name in true_values:
-            assert (
-                true_values[field_name] == metric.storage[field_name]
-            ).all()
+            assert (true_values[field_name] == metric.storage[field_name]).all()
 
 
 def test_accumulation_reset(generate_batched_data):  # noqa: WPS442
     """Check if AccumulationMetric accumulates all the data correctly with multiple resets"""
-    for (
-        fields_names,
-        num_batches,
-        num_samples,
-        batches,
-        true_values,
-    ) in generate_batched_data:
+    for (fields_names, num_batches, num_samples, batches, true_values) in generate_batched_data:
         metric = AccumulationMetric(accumulative_fields=fields_names)
         for _ in range(5):
             metric.reset(num_batches=num_batches, num_samples=num_samples)
             for batch in batches:
                 metric.update(**batch)
             for field_name in true_values:
-                assert (
-                    true_values[field_name] == metric.storage[field_name]
-                ).all()
+                assert (true_values[field_name] == metric.storage[field_name]).all()
 
 
 def test_accumulation_dtype():
@@ -110,9 +82,7 @@ def test_accumulation_dtype():
     batch_size = 10
     batch = {
         "field_int": torch.randint(low=0, high=5, size=(batch_size, 5)),
-        "field_bool": torch.randint(
-            low=0, high=2, size=(batch_size, 10), dtype=torch.bool
-        ),
+        "field_bool": torch.randint(low=0, high=2, size=(batch_size, 10), dtype=torch.bool),
         "field_float32": torch.rand(size=(batch_size, 4), dtype=torch.float32),
     }
     metric = AccumulationMetric(accumulative_fields=list(batch.keys()))
@@ -139,23 +109,20 @@ def test_accumulation_dtype():
                         [0, 1, 1, 0],
                     ]
                 ).float(),
-                "labels": torch.tensor([0, 0, 1, 1, 0, 1, 1, ]),
-                "is_query": torch.tensor([1, 1, 1, 1, 0, 0, 0, ]).bool(),
+                "labels": torch.tensor([0, 0, 1, 1, 0, 1, 1]),
+                "is_query": torch.tensor([1, 1, 1, 1, 0, 0, 0]).bool(),
             },
             (1, 3),
-            {"cmc01": 0.75, "cmc03": 1.0, },
+            {"cmc01": 0.75, "cmc03": 1.0},
         ),
     ),
 )
 def test_cmc_score(
-        batch: Dict[str, torch.Tensor], topk: Iterable[int], true_values: Dict[str, float]
+    batch: Dict[str, torch.Tensor], topk: Iterable[int], true_values: Dict[str, float]
 ) -> None:
     """Check if CMCMetric output has valid format"""
     metric = CMCMetric(
-        embeddings_key="embeddings",
-        labels_key="labels",
-        is_query_key="is_query",
-        topk_args=topk,
+        embeddings_key="embeddings", labels_key="labels", is_query_key="is_query", topk_args=topk,
     )
     metric.reset(num_batches=1, num_samples=len(batch["embeddings"]))
     metric.update(**batch)

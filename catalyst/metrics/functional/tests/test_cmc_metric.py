@@ -86,7 +86,13 @@ def generate_samples_for_cmc_score() -> List[
     Generate list of query and gallery data for cmc score testing.
     """
     data = []
-    for error_rate in [0.05, 0.1, 0.15, 0.2, 0.25, ]:
+    for error_rate in [
+        0.05,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+    ]:
         # generate params of the datasets
         class_number = np.random.randint(low=2, high=10)
         kq = np.random.randint(low=1000, high=1500)
@@ -118,9 +124,7 @@ def generate_samples_for_cmc_score() -> List[
             size = len(labels)
             for i in range(size):
                 if np.random.binomial(n=1, p=error_rate, size=1)[0]:
-                    labels[i] = np.random.choice(
-                        list(unique_labels - {labels[i]})
-                    )
+                    labels[i] = np.random.choice(list(unique_labels - {labels[i]}))
             return labels
 
         gallery_labels = confuse_labels(gallery_labels, error_rate=error_rate)

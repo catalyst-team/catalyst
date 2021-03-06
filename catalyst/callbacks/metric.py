@@ -44,6 +44,10 @@ class IMetricCallback(Callback, ABC):
 
 
 class MetricCallback(IMetricCallback):
+    """
+    MetricCallback is a base implementation of callback that updates metrics over batch or loader
+    """
+
     def __init__(
         self,
         metric: Union[ICallbackBatchMetric, ICallbackLoaderMetric],
@@ -97,9 +101,7 @@ class MetricCallback(IMetricCallback):
         assert isinstance(metric, IMetric)
 
     @staticmethod
-    def _convert_keys_to_kv(
-        keys: Union[str, Iterable[str], Dict[str, str]]
-    ) -> Dict[str, str]:
+    def _convert_keys_to_kv(keys: Union[str, Iterable[str], Dict[str, str]]) -> Dict[str, str]:
         """
         Convert keys to key-value format
 
@@ -120,9 +122,7 @@ class MetricCallback(IMetricCallback):
                 kv_keys[key] = key
         return kv_keys
 
-    def _get_value_inputs(
-        self, runner: "IRunner"
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    def _get_value_inputs(self, runner: "IRunner") -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Get data from batch in value input case
 
@@ -142,9 +142,7 @@ class MetricCallback(IMetricCallback):
         )
         return inputs, targets
 
-    def _get_key_value_inputs(
-        self, runner: "IRunner"
-    ) -> Dict[str, torch.Tensor]:
+    def _get_key_value_inputs(self, runner: "IRunner") -> Dict[str, torch.Tensor]:
         """
         Get data from batch in key-value input case
 
@@ -156,9 +154,7 @@ class MetricCallback(IMetricCallback):
         """
         kv_inputs = {}
         for key in self._keys:
-            kv_inputs[self._keys[key]] = runner.engine.sync_tensor(
-                runner.batch[key]
-            )
+            kv_inputs[self._keys[key]] = runner.engine.sync_tensor(runner.batch[key])
         return kv_inputs
 
     def _update_value_metric(
@@ -199,12 +195,15 @@ class MetricCallback(IMetricCallback):
         """
         self.metric.reset()
 
-    def on_batch_end(self, runner: "IRunner") -> None:
+    def on_batch_end(self, runner: "IRunner") -> Optional[Dict[str, float]]:
         """
         On batch end action: get data from runner's batch and update metrics with it
 
         Args:
             runner: current runner
+
+        Returns:
+            result of metrics update
         """
         metrics_inputs = self._get_inputs(runner=runner)
         return self._update_metric(metrics_inputs)
@@ -221,6 +220,8 @@ class MetricCallback(IMetricCallback):
 
 
 class BatchMetricCallback(MetricCallback):
+    """BatchMetricCallback implements batch-based metrics update and computation over loader"""
+
     def __init__(
         self,
         metric: Union[ICallbackBatchMetric, ICallbackLoaderMetric],
@@ -237,9 +238,7 @@ class BatchMetricCallback(MetricCallback):
             target_key: keys of tensors that should be used as targets in metric calculation
             log_on_batch: if True update runner's batch metrics every batch
         """
-        super().__init__(
-            metric=metric, input_key=input_key, target_key=target_key
-        )
+        super().__init__(metric=metric, input_key=input_key, target_key=target_key)
         self.log_on_batch = log_on_batch
         self._metric_update_method = self.metric.update_key_value
 
@@ -267,6 +266,8 @@ class BatchMetricCallback(MetricCallback):
 
 
 class LoaderMetricCallback(MetricCallback):
+    """LoaderMetricCallback implements loader-based metrics update and computation over loader"""
+
     @staticmethod
     def _validate_metric(metric: IMetric) -> None:
         """
@@ -286,8 +287,7 @@ class LoaderMetricCallback(MetricCallback):
             runner: current runner
         """
         self.metric.reset(
-            num_batches=runner.loader_batch_len,
-            num_samples=runner.loader_sample_len,
+            num_batches=runner.loader_batch_len, num_samples=runner.loader_sample_len,
         )
 
 
