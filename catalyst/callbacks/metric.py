@@ -65,7 +65,7 @@ class MetricCallback(IMetricCallback):
         super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
         self.metric = metric
         self._validate_metric(metric=metric)
-        self._metric_update_method = self.metric.update
+        self._metric_update_method = self.metric.update_key_value
 
         kv_types = (dict, tuple, list)
 
@@ -245,7 +245,6 @@ class BatchMetricCallback(MetricCallback):
             metric=metric, input_key=input_key, target_key=target_key
         )
         self.log_on_batch = log_on_batch
-        self._metric_update_method = self.metric.update_key_value
 
     @staticmethod
     def _validate_metric(metric: IMetric) -> None:
@@ -271,6 +270,25 @@ class BatchMetricCallback(MetricCallback):
 
 
 class LoaderMetricCallback(MetricCallback):
+    def __init__(
+        self,
+        metric: Union[ICallbackBatchMetric, ICallbackLoaderMetric],
+        input_key: Union[str, Iterable[str], Dict[str, str]],
+        target_key: Union[str, Iterable[str], Dict[str, str]],
+    ) -> None:
+        """
+        Init LoaderMetricCallback
+
+        Args:
+            metric: metric to calculate in callback
+            input_key: keys of tensors that should be used as inputs in metric calculation
+            target_key: keys of tensors that should be used as targets in metric calculation
+        """
+        super().__init__(
+            metric=metric, input_key=input_key, target_key=target_key
+        )
+        self._metric_update_method = metric.update
+
     @staticmethod
     def _validate_metric(metric: IMetric) -> None:
         """
