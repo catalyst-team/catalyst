@@ -4,10 +4,10 @@ from pathlib import Path
 
 import torch
 
-from catalyst.settings import SETTINGS
-from catalyst.tools.forward_wrapper import ModelForwardWrapper
+from catalyst.settings import IS_ONNX_AVAILABLE
+from catalyst.tools.forward_pass import ForwardOverrideModel
 
-if SETTINGS.onnx_required:
+if IS_ONNX_AVAILABLE:
     from onnxruntime.quantization import quantize_dynamic, QuantType
 
 
@@ -22,12 +22,12 @@ def convert_to_onnx(
     opset_version: int = 9,
     do_constant_folding: bool = False,
 ):
-    """@TODO: docs.
+    """TODO
 
     Args:
         model (torch.nn.Module): [description]
         input_shape (Union[List, Tuple, torch.Size]): [description]
-        method_name (str, optional): Forward pass method to be converted. Defaults to "forward".
+        method_name (str, optional): Forwarf pass method to be converted. Defaults to "forward".
         input_names (Iterable, optional): [description]. Defaults to None.
         output_names (List[str], optional): [description]. Defaults to None.
         file (str, optional): [description]. Defaults to "model.onnx".
@@ -37,7 +37,7 @@ def convert_to_onnx(
         do_constant_folding (bool, optional): [description]. Defaults to False.
     """
     if method_name != "forward":
-        model = ModelForwardWrapper(model=model, method_name=method_name)
+        model = ForwardOverrideModel(model=model, method_name=method_name)
     torch.onnx.export(
         model,
         input_shape,

@@ -8,7 +8,7 @@ import torch
 from catalyst.metrics._cmc_score import AccumulationMetric, CMCMetric
 
 
-@pytest.fixture()  # noqa: WPS320
+@pytest.fixture()
 def generate_batched_data() -> Iterable[
     Tuple[
         Iterable[str],
@@ -65,7 +65,7 @@ def generate_batched_data() -> Iterable[
     return batched_data
 
 
-def test_accumulation(generate_batched_data) -> None:  # noqa: WPS442
+def test_accumulation(generate_batched_data) -> None:
     """
     Check if AccumulationMetric accumulates all the data correctly along one loader
     """
@@ -86,7 +86,7 @@ def test_accumulation(generate_batched_data) -> None:  # noqa: WPS442
             ).all()
 
 
-def test_accumulation_reset(generate_batched_data):  # noqa: WPS442
+def test_accumulation_reset(generate_batched_data):
     """Check if AccumulationMetric accumulates all the data correctly with multiple resets"""
     for (
         fields_names,
@@ -140,18 +140,16 @@ def test_accumulation_dtype():
                         [0, 1, 1, 0],
                     ]
                 ).float(),
-                "labels": torch.tensor([0, 0, 1, 1, 0, 1, 1]),
-                "is_query": torch.tensor([1, 1, 1, 1, 0, 0, 0]).bool(),
+                "labels": torch.tensor([0, 0, 1, 1, 0, 1, 1, ]),
+                "is_query": torch.tensor([1, 1, 1, 1, 0, 0, 0, ]).bool(),
             },
             (1, 3),
-            {"cmc01": 0.75, "cmc03": 1.0},
+            {"cmc01": 0.75, "cmc03": 1.0, },
         ),
     ),
 )
 def test_cmc_score(
-    batch: Dict[str, torch.Tensor],
-    topk: Iterable[int],
-    true_values: Dict[str, float],
+        batch: Dict[str, torch.Tensor], topk: Iterable[int], true_values: Dict[str, float]
 ) -> None:
     """Check if CMCMetric output has valid format"""
     metric = CMCMetric(

@@ -1,23 +1,34 @@
 from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
+import logging
 
 from catalyst.__version__ import __version__
 from catalyst.dl.scripts import run, swa  # , trace
 from catalyst.settings import SETTINGS
 
+logger = logging.getLogger(__name__)
+
 COMMANDS = OrderedDict([("run", run), ("swa", swa)])  # ("trace", trace)
 
 
-# if SETTINGS.use_quantization:
+# if SETTINGS.IS_QUANTIZATION_AVAILABLE:
 #     from catalyst.dl.scripts import quantize
 #
 #     COMMANDS["quantize"] = quantize
 
-if SETTINGS.optuna_required:
+try:
+    import optuna  # noqa: F401
 
     from catalyst.dl.scripts import tune
 
     COMMANDS["tune"] = tune
+except ImportError as ex:
+    if SETTINGS.optuna_required:
+        logger.warning(
+            "catalyst[tune] requirements are not available, to install them,"
+            " run `pip install catalyst[tune]`."
+        )
+        raise ex
 
 COMMANDS = OrderedDict(sorted(COMMANDS.items()))
 

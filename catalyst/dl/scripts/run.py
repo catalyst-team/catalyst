@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+
 import argparse
 from argparse import ArgumentParser
 import os
@@ -7,13 +8,13 @@ import sys
 
 from catalyst.dl.scripts.functional import parse_args_uargs
 from catalyst.runners.config import ConfigRunner
-from catalyst.settings import SETTINGS
+from catalyst.settings import IS_HYDRA_AVAILABLE
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, set_global_seed
 from catalyst.utils.sys import dump_code, dump_environment, get_config_runner
 from catalyst.utils.torch import prepare_cudnn
 
-if SETTINGS.hydra_required:
+if IS_HYDRA_AVAILABLE:
     from catalyst.dl.scripts.hydra_run import main as hydra_main
 
 
@@ -107,10 +108,7 @@ def config_main(args, unknown_args):
 def main(args, unknown_args):
     """Runs the ``catalyst-dl run`` script."""
     if args.hydra:
-        assert SETTINGS.hydra_required, (
-            "catalyst[hydra] requirements are not available, to install them,"
-            " run `pip install catalyst[hydra]`."
-        )
+        assert IS_HYDRA_AVAILABLE, "Hydra is not available"
     if args.hydra:
         sys.argv.remove("run")
         sys.argv.remove("--hydra")

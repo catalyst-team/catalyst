@@ -1,13 +1,8 @@
 # flake8: noqa
 
-from catalyst.settings import SETTINGS
-
 from catalyst.callbacks.metrics.accuracy import AccuracyCallback
 from catalyst.callbacks.metrics.auc import AUCCallback
-
-if SETTINGS.ml_required:
-    from catalyst.callbacks.metrics.confusion_matrix import ConfusionMatrixCallback
-
+from catalyst.callbacks.metrics.confusion_matrix import ConfusionMatrixCallback
 
 #
 # from catalyst.callbacks.metrics.accuracy import (

@@ -12,6 +12,8 @@ from catalyst.metrics import (
     IMetric,
 )
 
+TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
+
 
 class IMetricCallback(Callback, ABC):
     """Metric callback interface, abstraction over metric step."""
@@ -65,19 +67,15 @@ class MetricCallback(IMetricCallback):
         super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
         self.metric = metric
         self._validate_metric(metric=metric)
-        self._metric_update_method = self.metric.update_key_value
-
-        kv_types = (dict, tuple, list)
+        self._metric_update_method = self.metric.update
 
         is_value_input = isinstance(input_key, str)
         is_value_targets = isinstance(target_key, str)
-        is_key_value_input = isinstance(input_key, kv_types)
-        is_key_value_targets = isinstance(target_key, kv_types)
 
         if is_value_input and is_value_targets:
             self._get_inputs = self._get_value_inputs
             self._update_metric = self._update_value_metric
-        elif is_key_value_input and is_key_value_targets:
+        elif not is_value_input and not is_value_targets:
             self._get_inputs = self._get_key_value_inputs
             self._update_metric = self._update_key_value_metric
         else:
@@ -125,7 +123,7 @@ class MetricCallback(IMetricCallback):
         return kv_keys
 
     def _get_value_inputs(
-        self, runner: "IRunner"
+        self, runner: "Runner"
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Get data from batch in value input case
@@ -147,7 +145,7 @@ class MetricCallback(IMetricCallback):
         return inputs, targets
 
     def _get_key_value_inputs(
-        self, runner: "IRunner"
+        self, runner: "Runner"
     ) -> Dict[str, torch.Tensor]:
         """
         Get data from batch in key-value input case
@@ -245,6 +243,7 @@ class BatchMetricCallback(MetricCallback):
             metric=metric, input_key=input_key, target_key=target_key
         )
         self.log_on_batch = log_on_batch
+        self._metric_update_method = self.metric.update_key_value
 
     @staticmethod
     def _validate_metric(metric: IMetric) -> None:
@@ -270,25 +269,6 @@ class BatchMetricCallback(MetricCallback):
 
 
 class LoaderMetricCallback(MetricCallback):
-    def __init__(
-        self,
-        metric: Union[ICallbackBatchMetric, ICallbackLoaderMetric],
-        input_key: Union[str, Iterable[str], Dict[str, str]],
-        target_key: Union[str, Iterable[str], Dict[str, str]],
-    ) -> None:
-        """
-        Init LoaderMetricCallback
-
-        Args:
-            metric: metric to calculate in callback
-            input_key: keys of tensors that should be used as inputs in metric calculation
-            target_key: keys of tensors that should be used as targets in metric calculation
-        """
-        super().__init__(
-            metric=metric, input_key=input_key, target_key=target_key
-        )
-        self._metric_update_method = metric.update
-
     @staticmethod
     def _validate_metric(metric: IMetric) -> None:
         """

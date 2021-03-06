@@ -89,18 +89,23 @@ extras = {
     "dev": load_requirements("requirements/requirements-dev.txt"),
     "cv": load_requirements("requirements/requirements-cv.txt"),
     "ml": load_requirements("requirements/requirements-ml.txt"),
-    "hydra": load_requirements("requirements/requirements-hydra.txt"),
     "optuna": load_requirements("requirements/requirements-optuna.txt"),
-    "onnx": load_requirements("requirements/requirements-onnx.txt"),
-    "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
+    "hydra": load_requirements("requirements/requirements-hydra.txt"),
 }
-extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
+# extras["contrib"] = (
+#     extras["cv"]
+#     + extras["ecosystem"]
+#     + extras["log"]
+#     + extras["ml"]
+#     + extras["nlp"]
+#     + extras["tune"]
+# )
 
 # Meta dependency groups.
-# all_deps = []
-# for group_name in extras:
-#     all_deps += extras[group_name]
-# extras["all"] = all_deps
+all_deps = []
+for group_name in extras:
+    all_deps += extras[group_name]
+extras["all"] = all_deps
 
 setup(
     name=NAME,

@@ -16,7 +16,7 @@ class BatchOverfitCallbackCheck(dl.Callback):
         assert len(runner.loaders[runner.loader_key]) == 32
 
 
-def _prepare_experiment():
+def prepare_experiment():
     # data
     utils.set_global_seed(42)
     num_samples, num_features = int(32e1), int(1e1)
@@ -33,8 +33,8 @@ def _prepare_experiment():
     return loaders, model, criterion, optimizer, scheduler
 
 
-def test_batch_overfit():
-    loaders, model, criterion, optimizer, scheduler = _prepare_experiment()
+def test_pruning():
+    loaders, model, criterion, optimizer, scheduler = prepare_experiment()
     runner = dl.SupervisedRunner()
     runner.train(
         model=model,

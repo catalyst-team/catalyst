@@ -6,6 +6,8 @@ import torch
 from catalyst.metrics import ICallbackLoaderMetric
 from catalyst.metrics.functional._cmc_score import cmc_score
 
+TORCH_BOOL = torch.bool if torch.__version__ > "1.1.0" else torch.ByteTensor
+
 
 class AccumulationMetric(ICallbackLoaderMetric):
     """This metric accumulates all the input data along loader"""
@@ -116,10 +118,10 @@ class CMCMetric(AccumulationMetric):
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
-        topk_args: Optional[Iterable[int]] = None,
         embeddings_key: str = "features",
         labels_key: str = "targets",
         is_query_key: str = "is_query",
+        topk_args: Iterable[int] = (1,),
     ) -> None:
         """
         Init CMCMetric
@@ -142,7 +144,7 @@ class CMCMetric(AccumulationMetric):
         self.embeddings_key = embeddings_key
         self.labels_key = labels_key
         self.is_query_key = is_query_key
-        self.topk_args = topk_args or (1, )
+        self.topk_args = topk_args
         self.metric_name = f"{self.prefix}cmc{self.suffix}"
 
     def compute(self) -> List[float]:
@@ -152,7 +154,7 @@ class CMCMetric(AccumulationMetric):
         Returns:
             list of metrics values
         """
-        query_mask = (self.storage[self.is_query_key] == 1).to(torch.bool)
+        query_mask = (self.storage[self.is_query_key] == 1).to(TORCH_BOOL)
 
         embeddings = self.storage[self.embeddings_key].float()
         labels = self.storage[self.labels_key]
@@ -164,7 +166,7 @@ class CMCMetric(AccumulationMetric):
         gallery_labels = labels[~query_mask]
 
         conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).to(
-            torch.bool
+            TORCH_BOOL
         )
 
         metrics = []
@@ -195,6 +197,5 @@ class CMCMetric(AccumulationMetric):
 
 
 __all__ = [
-    "AccumulationMetric",
     "CMCMetric",
 ]

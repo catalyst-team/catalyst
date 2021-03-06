@@ -4,7 +4,7 @@ import logging
 
 from torch import jit, nn
 
-from catalyst.tools.forward_wrapper import ModelForwardWrapper
+from catalyst.tools.forward_pass import ForwardOverrideModel
 from catalyst.typing import Model
 from catalyst.utils.misc import get_fn_argsnames
 from catalyst.utils.torch import set_requires_grad
@@ -42,7 +42,7 @@ class _TracingModelWrapper(nn.Module):
         self.tracing_result: jit.ScriptModule
 
     def __call__(self, *args, **kwargs):
-        method_model = ModelForwardWrapper(self.model, self.method_name)
+        method_model = ForwardOverrideModel(self.model, self.method_name)
 
         try:
             assert len(args) == 0, "only KV support implemented"

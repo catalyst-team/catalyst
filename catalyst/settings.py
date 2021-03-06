@@ -1,9 +1,9 @@
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 import configparser
 import logging
 import os
 
-# from packaging.version import parse, Version
+from packaging.version import parse, Version
 import torch
 
 from catalyst.tools.frozen_class import FrozenClass
@@ -11,118 +11,67 @@ from catalyst.tools.frozen_class import FrozenClass
 logger = logging.getLogger(__name__)
 
 IS_CUDA_AVAILABLE = torch.cuda.is_available()
+IS_AMP_AVAILABLE = IS_CUDA_AVAILABLE and parse(torch.__version__) >= Version("1.6.0")
 NUM_CUDA_DEVICES = torch.cuda.device_count()
 
 
-def _is_apex_avalilable():
-    try:
-        import apex  # noqa: F401
-        from apex import amp  # noqa: F401
+try:
+    from git import Repo  # noqa: F401
 
-        return True
-    except ImportError:
-        return False
+    IS_GIT_AVAILABLE = True
+except ImportError:
+    IS_GIT_AVAILABLE = False
 
+try:
+    import apex  # noqa: F401
+    from apex import amp  # noqa: F401
 
-def _is_amp_available():
-    try:
-        import torch.cuda.amp as amp  # noqa: F401
+    IS_APEX_AVAILABLE = True
+except ImportError:
+    IS_APEX_AVAILABLE = False
 
-        return True
-    except ModuleNotFoundError:
-        return False
+try:
+    import torch_xla.core.xla_model as xm  # noqa: F401
 
+    IS_XLA_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_XLA_AVAILABLE = False
 
-def _is_xla_available():
-    try:
-        import torch_xla.core.xla_model as xm  # noqa: F401
+try:
+    import onnx  # noqa: F401, E401
+    import onnxruntime  # noqa: F401, E401
 
-        return True
-    except ModuleNotFoundError:
-        return False
+    IS_ONNX_AVAILABLE = True
+except ImportError:
+    IS_ONNX_AVAILABLE = False
 
+try:
+    import torch.nn.utils.prune as prune  # noqa: F401
 
-def _is_onnx_available():
-    try:
-        import onnx  # noqa: F401, E401
-        import onnxruntime  # noqa: F401, E401
+    IS_PRUNING_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_PRUNING_AVAILABLE = False
 
-        return True
-    except ImportError:
-        return False
+try:
+    import torch.quantization  # noqa: F401
 
+    IS_QUANTIZATION_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_QUANTIZATION_AVAILABLE = False
 
-def _is_pruning_available():
-    try:
-        import torch.nn.utils.prune as prune  # noqa: F401
+try:
+    import optuna  # noqa: F401
 
-        return True
-    except ModuleNotFoundError:
-        return False
+    IS_OPTUNA_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_OPTUNA_AVAILABLE = False
 
+try:
+    import hydra  # noqa: F401
 
-def _is_quantization_available():
-    try:
-        import torch.quantization  # noqa: F401
-
-        return True
-    except ModuleNotFoundError:
-        return False
-
-
-def _is_optuna_available():
-    try:
-        import optuna  # noqa: F401
-
-        return True
-    except ModuleNotFoundError:
-        return False
-
-
-def _is_hydra_available():
-    try:
-        import hydra  # noqa: F401
-        from omegaconf import DictConfig, OmegaConf  # noqa: F401
-
-        return True
-    except ModuleNotFoundError:
-        return False
-
-
-def _is_cv_available():
-    try:
-        import cv2  # noqa: F401
-        import imageio  # noqa: F401
-        from skimage.color import label2rgb, rgb2gray  # noqa: F401
-        import torchvision  # noqa: F401
-
-        return True
-    except ModuleNotFoundError:
-        return False
-
-
-def _is_ml_available():
-    try:
-        import matplotlib  # noqa: F401
-        import pandas  # noqa: F401
-        import scipy  # noqa: F401
-        import sklearn  # noqa: F401
-
-        return True
-    except ModuleNotFoundError:
-        return False
-
-
-def _get_optional_value(
-    is_required: Optional[bool], is_available_fn: Callable, assert_msg: str
-) -> bool:
-    if is_required is None:
-        return is_available_fn()
-    elif is_required:
-        assert is_available_fn(), assert_msg
-        return True
-    else:
-        return False
+    IS_HYDRA_AVAILABLE = True
+except ModuleNotFoundError:
+    IS_HYDRA_AVAILABLE = False
 
 
 class Settings(FrozenClass):
@@ -130,109 +79,96 @@ class Settings(FrozenClass):
 
     def __init__(  # noqa: D107
         self,
-        # [subpackages]
-        cv_required: Optional[bool] = None,
-        ml_required: Optional[bool] = None,
-        # [integrations]
-        hydra_required: Optional[bool] = None,
-        # nmslib_required: Optional[bool] = False,
+        # CV
+        cv_required: bool = False,
+        albumentations_required: Optional[bool] = None,
+        kornia_required: Optional[bool] = None,
+        segmentation_models_required: Optional[bool] = None,
+        use_libjpeg_turbo: bool = False,
+        # LOG
+        log_required: bool = False,
+        alchemy_required: Optional[bool] = None,
+        neptune_required: Optional[bool] = None,
+        wandb_required: Optional[bool] = None,
+        plotly_required: Optional[bool] = None,
+        # ML
+        ml_required: bool = False,
+        ipython_required: Optional[bool] = None,
+        matplotlib_required: Optional[bool] = None,
+        scipy_required: Optional[bool] = None,
+        pandas_required: Optional[bool] = None,
+        sklearn_required: Optional[bool] = None,
+        git_required: Optional[bool] = None,
+        # NLP
+        nlp_required: bool = False,
+        transformers_required: Optional[bool] = None,
+        # TUNE
+        tune_required: bool = False,
         optuna_required: Optional[bool] = None,
-        # [engines]
-        amp_required: Optional[bool] = None,
-        apex_required: Optional[bool] = None,
-        xla_required: Optional[bool] = None,
-        # [dl-extras]
-        onnx_required: Optional[bool] = None,
-        pruning_required: Optional[bool] = None,
-        quantization_required: Optional[bool] = None,
-        # [logging]
-        # alchemy_required: Optional[bool] = None,
-        # neptune_required: Optional[bool] = None,
-        # mlflow_required: Optional[bool] = None,
-        # wandb_required: Optional[bool] = None,
-        # [extras]
-        use_lz4: Optional[bool] = None,
-        use_pyarrow: Optional[bool] = None,
-        use_libjpeg_turbo: Optional[bool] = None,
+        # KNN
+        nmslib_required: Optional[bool] = False,
+        # extras
+        use_lz4: bool = False,
+        use_pyarrow: bool = False,
+        telegram_logger_token: Optional[str] = None,
+        telegram_logger_chat_id: Optional[str] = None,
+        # HYDRA
+        hydra_required: Optional[bool] = False,
     ):
-        # True – use the package
-        # None – use the package if available
-        # False - block the package
-        # [subpackages]
-        self.cv_required: bool = _get_optional_value(
-            cv_required,
-            _is_cv_available,
-            "catalyst[cv] is not available, to install it, run `pip install catalyst[cv]`.",
+        # [catalyst]
+        self.cv_required: bool = cv_required
+        self.log_required: bool = log_required
+        self.ml_required: bool = ml_required
+        self.nlp_required: bool = nlp_required
+        self.tune_required: bool = tune_required
+
+        # [catalyst-cv]
+        self.albumentations_required: bool = self._optional_value(
+            albumentations_required, default=cv_required
         )
-        self.ml_required: bool = _get_optional_value(
-            ml_required,
-            _is_ml_available,
-            "catalyst[ml] is not available, to install it, run `pip install catalyst[ml]`.",
+        self.kornia_required: bool = self._optional_value(kornia_required, default=cv_required)
+        self.segmentation_models_required: bool = self._optional_value(
+            segmentation_models_required, default=cv_required
+        )
+        self.use_libjpeg_turbo: bool = use_libjpeg_turbo
+
+        # [catalyst-log]
+        self.alchemy_required: bool = self._optional_value(alchemy_required, default=log_required)
+        self.neptune_required: bool = self._optional_value(neptune_required, default=log_required)
+        self.wandb_required: bool = self._optional_value(wandb_required, default=log_required)
+        self.plotly_required: bool = self._optional_value(plotly_required, default=log_required)
+
+        # [catalyst-ml]
+        self.scipy_required: bool = self._optional_value(scipy_required, default=ml_required)
+        self.matplotlib_required: bool = self._optional_value(
+            matplotlib_required, default=ml_required
+        )
+        self.pandas_required: bool = self._optional_value(pandas_required, default=ml_required)
+        self.sklearn_required: bool = self._optional_value(sklearn_required, default=ml_required)
+        self.ipython_required: bool = self._optional_value(ipython_required, default=ml_required)
+        self.git_required: bool = self._optional_value(git_required, default=ml_required)
+
+        # [catalyst-nlp]
+        self.transformers_required: bool = self._optional_value(
+            transformers_required, default=nlp_required
         )
 
-        # [integrations]
-        self.hydra_required: bool = _get_optional_value(
-            hydra_required,
-            _is_hydra_available,
-            "catalyst[hydra] is not available, to install it, run `pip install catalyst[hydra]`.",
-        )
-        # self.nmslib_required: bool = nmslib_required
-        self.optuna_required: bool = _get_optional_value(
-            optuna_required,
-            _is_optuna_available,
-            "catalyst[optuna] is not available, to install it, "
-            "run `pip install catalyst[optuna]`.",
-        )
+        # [catalyst-tune]
+        self.optuna_required: bool = self._optional_value(optuna_required, default=tune_required)
 
-        # [engines]
-        self.amp_required: bool = _get_optional_value(
-            amp_required,
-            _is_amp_available,
-            "catalyst[amp] is not available, to install it, run `pip install catalyst[amp]`.",
-        )
-        self.apex_required: bool = _get_optional_value(
-            apex_required,
-            _is_apex_avalilable,
-            "catalyst[apex] is not available, to install it, run `pip install catalyst[apex]`.",
-        )
-        self.xla_required: bool = _get_optional_value(
-            xla_required,
-            _is_xla_available,
-            "catalyst[xla] is not available, to install it, run `pip install catalyst[xla]`.",
-        )
+        # [catalyst-knn]
+        self.nmslib_required: bool = nmslib_required
 
-        # [dl-extras]
-        self.onnx_required: bool = _get_optional_value(
-            onnx_required,
-            _is_onnx_available,
-            "catalyst[onnx] is not available, to install it, "
-            "run `pip install catalyst[onnx]` or `pip install catalyst[onnx-gpu]`.",
-        )
-        self.pruning_required: bool = _get_optional_value(
-            pruning_required,
-            _is_pruning_available,
-            "catalyst[pruning] is not available, to install it, "
-            "run `pip install catalyst[pruning]`.",
-        )
-        self.quantization_required: bool = _get_optional_value(
-            quantization_required,
-            _is_quantization_available,
-            "catalyst[quantization] is not available, to install it, "
-            "run `pip install catalyst[quantization]`.",
-        )
+        # [catalyst-extras]
+        self.use_lz4: bool = use_lz4
+        self.use_pyarrow: bool = use_pyarrow
+        self.telegram_logger_token: str = telegram_logger_token
+        self.telegram_logger_chat_id: str = telegram_logger_chat_id
 
-        # [logging]
-        # self.alchemy_required: bool = alchemy_required
-        # self.neptune_required: bool = neptune_required
-        # self.mlflow_required: bool = mlflow_required
-        # self.wandb_required: bool = wandb_required
+        # [catalyst-hydra]
+        self.hydra_required: bool = hydra_required
 
-        # [extras]
-        self.use_lz4: bool = use_lz4 or False
-        self.use_pyarrow: bool = use_pyarrow or False
-        self.use_libjpeg_turbo: bool = use_libjpeg_turbo or False
-
-        # [global]
+        # [catalyst-global]
         # stages
         self.stage_train_prefix: str = "train"
         self.stage_valid_prefix: str = "valid"
@@ -443,8 +379,21 @@ class MergedConfigParser:
 
 
 SETTINGS = Settings.parse()
+setattr(SETTINGS, "IS_GIT_AVAILABLE", IS_GIT_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_APEX_AVAILABLE", IS_APEX_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_AMP_AVAILABLE", IS_AMP_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
+setattr(SETTINGS, "IS_XLA_AVAILABLE", IS_XLA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_PRUNING_AVAILABLE", IS_PRUNING_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_QUANTIZATION_AVAILABLE", IS_QUANTIZATION_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_OPTUNA_AVAILABLE", IS_OPTUNA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_HYDRA_AVAILABLE", IS_HYDRA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_APEX_AVAILABLE", IS_APEX_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "IS_AMP_AVAILABLE", IS_AMP_AVAILABLE)  # noqa: B010
+setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
+setattr(SETTINGS, "IS_ONNX_AVAILABLE", IS_ONNX_AVAILABLE)  # noqa: B010
 
 
 __all__ = [
@@ -452,4 +401,11 @@ __all__ = [
     "Settings",
     "ConfigFileFinder",
     "MergedConfigParser",
+    "IS_PRUNING_AVAILABLE",
+    "IS_XLA_AVAILABLE",
+    "IS_GIT_AVAILABLE",
+    "IS_QUANTIZATION_AVAILABLE",
+    "IS_OPTUNA_AVAILABLE",
+    "IS_HYDRA_AVAILABLE",
+    "IS_ONNX_AVAILABLE",
 ]

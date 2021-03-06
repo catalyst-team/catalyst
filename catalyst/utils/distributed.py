@@ -4,12 +4,28 @@ import random
 import socket
 import subprocess
 
+from packaging.version import parse, Version
 import torch
 from torch import nn
 import torch.distributed
 
-from catalyst.settings import SETTINGS
 from catalyst.utils.torch import get_available_gpus
+
+
+def check_apex_available() -> bool:
+    """Checks if apex is available."""
+    try:
+        import apex  # noqa: F401
+        from apex import amp  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
+def check_amp_available() -> bool:
+    """Checks if torch.amp is available."""
+    return parse(torch.__version__) >= Version("1.6.0")
 
 
 def check_torch_distributed_initialized() -> bool:
@@ -22,16 +38,27 @@ def check_slurm_available():
     return "SLURM_JOB_NUM_NODES" in os.environ and "SLURM_NODEID" in os.environ
 
 
+def assert_fp16_available() -> None:
+    """Asserts for installed and available Apex FP16."""
+    assert torch.backends.cudnn.enabled, "fp16 mode requires cudnn backend to be enabled."
+
+    assert check_apex_available(), (
+        "NVidia Apex package must be installed. " "See https://github.com/NVIDIA/apex."
+    )
+
+
 def check_ddp_wrapped(model: nn.Module) -> bool:
     """Checks whether model is wrapped with DataParallel/DistributedDataParallel."""
     parallel_wrappers = nn.DataParallel, nn.parallel.DistributedDataParallel
 
     # Check whether Apex is installed and if it is,
     # add Apex's DistributedDataParallel to list of checked types
-    if SETTINGS.apex_required:
+    try:
         from apex.parallel import DistributedDataParallel as apex_DDP
 
         parallel_wrappers = parallel_wrappers + (apex_DDP,)
+    except ImportError:
+        pass
 
     return isinstance(model, parallel_wrappers)
 
@@ -149,8 +176,11 @@ def get_distributed_env(
 
 __all__ = [
     "check_ddp_wrapped",
+    "check_apex_available",
+    "check_amp_available",
     "check_torch_distributed_initialized",
     "check_slurm_available",
+    "assert_fp16_available",
     "get_nn_from_ddp_module",
     "get_rank",
     "get_distributed_env",

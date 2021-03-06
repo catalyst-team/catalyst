@@ -1,5 +1,6 @@
 from typing import List
 import argparse
+import logging
 import os
 from os import path
 
@@ -9,6 +10,8 @@ import torch
 
 from catalyst.settings import SETTINGS
 from catalyst.tools.tensorboard import SummaryWriter
+
+logger = logging.getLogger(__name__)
 
 
 def build_args(parser):
@@ -61,7 +64,7 @@ def parse_args():
 def _load_image_data(rootpath: str, paths: List, img_size: int):
     img_data = None
 
-    if SETTINGS.cv_required:
+    try:
         import cv2
 
         def _load_image(filename, size):
@@ -73,6 +76,18 @@ def _load_image_data(rootpath: str, paths: List, img_size: int):
         img_data = np.stack([_load_image(name, img_size) for name in image_names], axis=0)
         img_data = (img_data.transpose((0, 3, 1, 2)) / 255.0).astype(np.float32)  # noqa: WPS432
         img_data = torch.from_numpy(img_data)
+
+    except ImportError as ex:
+        if SETTINGS.cv_required:
+            logger.warning(
+                "some of catalyst-cv dependencies are not available,"
+                + " to install dependencies, run `pip install catalyst[cv]`."
+            )
+            raise ex
+        else:
+            logger.warning(
+                "opencv is not available" + " to install opencv, run `pip install opencv-python`."
+            )
 
     return img_data
 

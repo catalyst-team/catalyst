@@ -6,7 +6,7 @@ from torch.nn.utils import prune
 
 def prune_model(
     model: Module,
-    pruning_fn: Union[Callable, str],
+    pruning_fn: Callable,
     keys_to_prune: List[str],
     amount: Union[float, int],
     layers_to_prune: Optional[List[str]] = None,
