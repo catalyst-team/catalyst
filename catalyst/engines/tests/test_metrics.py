@@ -29,6 +29,7 @@ if NUM_CUDA_DEVICES > 1:
 
 _BATCH_SIZE = 2
 _WORKERS = 1
+_LR = 1e-3
 
 
 # experiment definition
@@ -47,7 +48,6 @@ class CustomDeviceRunner(IRunner):
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
             "optimizer": OptimizerCallback(metric_key="loss"),
-            # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
@@ -71,10 +71,10 @@ class CustomDeviceRunner(IRunner):
         return AllwaysSameModel()
 
     def get_criterion(self, stage: str):
-        return torch.nn.MSELoss()
+        return torch.nn.CrossEntropyLoss()
 
     def get_optimizer(self, model, stage: str):
-        return torch.optim.Adam(model.parameters())
+        return torch.optim.SGD(model.parameters(), lr=_LR)
 
     def get_scheduler(self, optimizer, stage: str):
         return None
@@ -89,7 +89,7 @@ class CustomDeviceRunner(IRunner):
         x, y = batch
         logits = self.model(x)
 
-        self.batch = {"features": x, "targets": y, "logits": logits}
+        self.batch = {"features": x, "targets": y.view(-1), "logits": logits}
 
 
 class CustomDDPRunner(IRunner):
@@ -127,10 +127,10 @@ class CustomDDPRunner(IRunner):
         return AllwaysSameModel()
 
     def get_criterion(self, stage: str):
-        return torch.nn.MSELoss()
+        return torch.nn.CrossEntropyLoss()
 
     def get_optimizer(self, model, stage: str):
-        return torch.optim.Adam(model.parameters())
+        return torch.optim.SGD(model.parameters(), lr=_LR)
 
     def get_scheduler(self, optimizer, stage: str):
         return None
@@ -145,7 +145,7 @@ class CustomDDPRunner(IRunner):
         x, y = batch
         logits = self.model(x)
 
-        self.batch = {"features": x, "targets": y, "logits": logits}
+        self.batch = {"features": x, "targets": y.view(-1), "logits": logits}
 
 
 class MyConfigRunner(SupervisedConfigRunner):
@@ -153,6 +153,12 @@ class MyConfigRunner(SupervisedConfigRunner):
 
     def get_datasets(self, *args, **kwargs):
         return {"train": self._dataset, "valid": self._dataset}
+
+    def handle_batch(self, batch):
+        x, y = batch
+        logits = self.model(x)
+
+        self.batch = {"features": x, "targets": y.view(-1), "logits": logits}
 
 
 def train_device_custom_runner(logdir, device):
@@ -175,8 +181,8 @@ def train_device_config_runner(logdir, device):
                         "batch_size": _BATCH_SIZE * NUM_CUDA_DEVICES,
                         "num_workers": _WORKERS,
                     },
-                    "criterion": {"_target_": "MSELoss"},
-                    "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                    "criterion": {"_target_": "CrossEntropyLoss"},
+                    "optimizer": {"_target_": "SGD", "lr": _LR},
                     "callbacks": {
                         "criterion": {
                             "_target_": "CriterionCallback",
@@ -202,13 +208,12 @@ def train_ddp_custom_runner(logdir):
     not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
 )
 def test_device_and_ddp_metrics():
-    # with TemporaryDirectory() as logdir:
-    logdir = "metrics_logs"
+    with TemporaryDirectory() as logdir:
+        # logdir = "metrics_logs"
+        device_logdir = os.path.join(logdir, "device_logs")
+        ddp_logdir = os.path.join(logdir, "ddp_logs")
 
-    device_logdir = os.path.join(logdir, "device_logs")
-    ddp_logdir = os.path.join(logdir, "ddp_logs")
+        device = "cuda:0"
+        train_device_custom_runner(device_logdir, device)
 
-    device = "cuda:0"
-    train_device_config_runner(device_logdir, device)
-
-    train_ddp_custom_runner(ddp_logdir)
+        train_ddp_custom_runner(ddp_logdir)

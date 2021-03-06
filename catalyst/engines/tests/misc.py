@@ -143,7 +143,7 @@ class TwoBlobsDataset(Dataset):
             dummy features and targets vector
         """
         x = torch.FloatTensor(self.points[index])
-        y = torch.FloatTensor([self.labels[index]])
+        y = torch.LongTensor([self.labels[index]])
         return x, y
 
 
