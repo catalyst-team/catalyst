@@ -58,7 +58,7 @@ class CriterionCallback(ICriterionCallback):
             loss = self.criterion(inputs, targets)
 
         runner.batch_metrics.update({self.metric_key: loss})
-        self.additive_metric.update(loss.item(), len(targets))
+        self.additive_metric.update(loss.detach().cpu(), len(targets))
 
     def on_loader_end(self, runner: "IRunner") -> None:
         """@TODO: docs."""

@@ -1,6 +1,6 @@
 # flake8: noqa
 
-from catalyst.settings import IS_QUANTIZATION_AVAILABLE, IS_PRUNING_AVAILABLE, IS_OPTUNA_AVAILABLE
+from catalyst.settings import SETTINGS
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import ICheckpointCallback, CheckpointCallback
@@ -23,14 +23,15 @@ from catalyst.callbacks.scheduler import (
     ILRUpdater,
     LRFinder,
 )
+from catalyst.callbacks.aggregation import MetricAggregationCallback
 
-from catalyst.callbacks.metrics import *
-
-# if IS_QUANTIZATION_AVAILABLE:
+# if SETTINGS.use_quantization:
 #     from catalyst.callbacks.quantization import DynamicQuantizationCallback
 
-if IS_PRUNING_AVAILABLE:
+if SETTINGS.pruning_required:
     from catalyst.callbacks.pruning import PruningCallback
 
-if IS_OPTUNA_AVAILABLE:
+if SETTINGS.optuna_required:
     from catalyst.callbacks.optuna import OptunaPruningCallback
+
+from catalyst.callbacks.metrics import *

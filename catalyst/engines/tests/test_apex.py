@@ -12,7 +12,7 @@ from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerC
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.loggers import ConsoleLogger, CSVLogger
-from catalyst.settings import IS_APEX_AVAILABLE, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 from .misc import (
     DeviceCheckCallback,
@@ -22,7 +22,7 @@ from .misc import (
     OPTTensorTypeChecker,
 )
 
-if IS_APEX_AVAILABLE:
+if SETTINGS.apex_required:
     from catalyst.engines.apex import APEXEngine
 
 logger = logging.getLogger(__name__)
@@ -106,7 +106,7 @@ def run_train_with_config_experiment_apex_device(device, opt_level):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not IS_APEX_AVAILABLE, reason="CUDA devices is not available"
+    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required, reason="CUDA devices is not available"
 )
 def test_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
@@ -117,7 +117,7 @@ def test_apex_with_devices():
 
 @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not IS_APEX_AVAILABLE, reason="CUDA devices is not available"
+    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required, reason="CUDA devices is not available"
 )
 def test_config_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]

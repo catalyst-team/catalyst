@@ -63,19 +63,6 @@ def _model_loader(r: registry.Registry):
 
     r.add_from_module(m)
 
-    # try:
-    #     import segmentation_models_pytorch as smp
-    #
-    #     r.add_from_module(smp, prefix="smp.")
-    # except ImportError as ex:
-    #     if SETTINGS.segmentation_models_required:
-    #         logger.warning(
-    #             "segmentation_models_pytorch not available,"
-    #             " to install segmentation_models_pytorch,"
-    #             " run `pip install segmentation-models-pytorch`."
-    #         )
-    #         raise ex
-
 
 REGISTRY.late_add(_model_loader)
 
