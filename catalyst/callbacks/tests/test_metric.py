@@ -3,7 +3,6 @@ from collections import OrderedDict
 from tempfile import TemporaryDirectory
 
 import pytest
-
 import torch
 from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset
