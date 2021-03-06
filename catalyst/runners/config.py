@@ -277,7 +277,7 @@ class ConfigRunner(IRunner):
         if is_key_value:
             scheduler: Dict[str, Scheduler] = {}
             for key, scheduler_params in params.items():
-                scheduler[key] = ConfigRunner.get_scheduler_(
+                scheduler[key] = ConfigRunner._get_scheduler_from_params(
                     **scheduler_params, optimizer=optimizer
                 )  # noqa: WPS437
         else:
