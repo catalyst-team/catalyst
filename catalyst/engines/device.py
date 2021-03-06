@@ -56,7 +56,7 @@ class DeviceEngine(IEngine):
         #     return tensor_or_module.to(self.device)
         return tensor_or_module
 
-    def sync_tensor(self, tensor: Any) -> Any:
+    def sync_tensor(self, tensor: Any, *args, **kwargs) -> Any:
         return tensor
 
     def init_components(
