@@ -9,7 +9,7 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst import data, dl
-from catalyst.callbacks.metric import BatchMetricCallback
+from catalyst.callbacks.metric import BatchMetricCallback, LoaderMetricCallback
 from catalyst.contrib import datasets, nn
 from catalyst.metrics import AccuracyMetric, CMCMetric
 
@@ -200,7 +200,7 @@ def test_metric_learning_pipeline():
         callbacks = OrderedDict(
             {
                 "cmc": dl.ControlFlowCallback(
-                    dl.LoaderMetricCallback(
+                    LoaderMetricCallback(
                         CMCMetric(topk_args=[1], embeddings_key="embeddings"),
                         input_key=["embeddings", "is_query"],
                         target_key=["targets"],

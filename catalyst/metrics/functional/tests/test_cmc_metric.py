@@ -1,12 +1,12 @@
 # flake8: noqa
-from itertools import chain
 from typing import List, Tuple
+from itertools import chain
 
 import numpy as np
 import pytest
 import torch
 
-from catalyst.metrics.functional._cmc_score import cmc_score_count, cmc_score
+from catalyst.metrics.functional._cmc_score import cmc_score, cmc_score_count
 
 
 EPS = 1e-4
