@@ -9,7 +9,7 @@ from catalyst.metrics.functional._average_precision import mean_average_precisio
 
 class MAPMetric(ICallbackBatchMetric):
     """ 
-    Calculate the Mean Average Precision for RecSys.
+    Calculate the Mean Average Precision (MAP) for RecSys.
     The precision metric summarizes the fraction of relevant items
     out of the whole the recommendation list.
 
