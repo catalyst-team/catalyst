@@ -271,3 +271,41 @@ class OPTTensorTypeChecker(Callback):
             f"Wrong types for {self.opt_level} - actual is "
             f"'{check_tensor.dtype}' but expected is '{self.expected_type}'!"
         )
+
+
+@REGISTRY.add
+class ModuleTypeChecker(Callback):
+    def __init__(self):
+        """Docs."""
+        super().__init__(CallbackOrder.Internal)
+
+    def _check_fn(self, model):
+        assert isinstance(model, nn.Module), f"Expected nn.Module but got - '{type(model)}' !"
+
+    def on_stage_start(self, runner):
+        self._check_fn(runner.model)
+
+    def on_batch_start(self, runner):
+        self._check_fn(runner.model)
+
+    def on_batch_end(self, runner):
+        self._check_fn(runner.model)
+
+    def on_stage_end(self, runner):
+        self._check_fn(runner.model)
+
+
+@REGISTRY.add
+class DataParallelTypeChecker(ModuleTypeChecker):
+    def _check_fn(self, model):
+        assert isinstance(
+            model, nn.parallel.DataParallel
+        ), f"Expected nn.parallel.DataParallel but got - '{type(model)}' !"
+
+
+@REGISTRY.add
+class DistributedDataParallelTypeChecker(ModuleTypeChecker):
+    def _check_fn(self, model):
+        assert isinstance(
+            model, nn.parallel.DistributedDataParallel
+        ), f"Expected nn.parallel.DistributedDataParallel but got - '{type(model)}' !"
