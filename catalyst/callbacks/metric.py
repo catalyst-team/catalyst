@@ -227,10 +227,10 @@ class BatchMetricCallback(MetricCallback):
         metrics_inputs = self._get_inputs(runner=runner)
         metrics = self._update_metric(metrics_inputs)
         if self.log_on_batch:
-            metrics = {
-                k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-                for k, v in metrics.items()
-            }
+            # metrics = {
+            #     k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+            #     for k, v in metrics.items()
+            # }
             runner.batch_metrics.update(metrics)
 
     def on_loader_end(self, runner: "IRunner") -> None:

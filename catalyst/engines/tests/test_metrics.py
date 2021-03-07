@@ -127,7 +127,7 @@ class CustomDeviceRunner(IRunnerMixin, IRunner):
     def get_engine(self):
         return DeviceEngine("cuda:0")
 
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, shuffle=False)
         return {"valid": loader}
@@ -137,7 +137,7 @@ class CustomDPRunner(IRunnerMixin, IRunner):
     def get_engine(self):
         return DataParallelEngine()
 
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+    def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, shuffle=False)
         return {"valid": loader}
@@ -147,7 +147,7 @@ class CustomDDPRunner(IRunnerMixin, IRunner):
     def get_engine(self):
         return DistributedDataParallelEngine(port="22222")
 
-    def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
+    def get_loaders(self, stage: str, epoch: int = None):
         dataset = TwoBlobsDataset()
         sampler = DistributedSampler(dataset=dataset, shuffle=True)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)

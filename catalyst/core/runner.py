@@ -561,14 +561,21 @@ class IRunner(ICallback, ILogger, ABC):
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
         # @TODO: should be on master-process only
-        # self.batch_metrics = {
-        #     k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-        #     for k, v in self.batch_metrics.items()
-        # }
+        # as far as we could `backward` any on other `batch_metrics` on the nodes during training,
+        # which means, it could not be synced before,
+        # we have to sync them in the end of the batch... here:
+        self.batch_metrics = {
+            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+            for k, v in self.batch_metrics.items()
+        }
         self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
         """Event handler."""
+        # self.loader_metrics = {
+        #     k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+        #     for k, v in self.loader_metrics.items()
+        # }
         self.log_metrics(metrics=self.loader_metrics, scope="loader")
         self.epoch_metrics[self.loader_key] = {
             key: float(value) for key, value in self.loader_metrics.items()
@@ -581,10 +588,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler."""
-        from catalyst.utils.distributed import get_rank
-
-        if get_rank() == 0:
-            self.engine.deinit_components()
+        self.engine.deinit_components()
 
     def on_experiment_end(self, runner: "IRunner"):
         """Event handler."""
@@ -642,7 +646,6 @@ class IRunner(ICallback, ILogger, ABC):
     def _run_stage(self, rank: int = -1, world_size: int = 1) -> None:
         if isinstance(self.engine, DistributedDataParallelEngine):
             self.engine.setup_process(rank=rank, world_size=world_size)
-            LOGGER.warning(f"engine: {self.engine}")
             if not self.engine.is_master_process:
                 self.loggers = {}
 
