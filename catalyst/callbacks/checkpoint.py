@@ -570,6 +570,7 @@ class CheckpointCallback(ICheckpointCallback):
                 dict(runner.epoch_metrics),
             )
             self.top_best_metrics.append(metrics_record)
+            # CALLBACK IS MASTER ONLY
             # truncate checkpoints
             self._truncate_checkpoints()
             # save checkpoint metrics

@@ -16,7 +16,13 @@ from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .misc import DummyDataset, DummyModel, LossMinimizationCallback, WorldSizeCheckCallback
+from .misc import (
+    DistributedDataParallelTypeChecker,
+    DummyDataset,
+    DummyModel,
+    LossMinimizationCallback,
+    WorldSizeCheckCallback,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -43,7 +49,7 @@ class CustomRunner(IRunner):
             "checkpoint": CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
-            # "check": DeviceCheckCallback(),
+            "test_nn_parallel_distributed_data_parallel": DistributedDataParallelTypeChecker(),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
             "test_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
         }
@@ -112,7 +118,6 @@ def test_config_ddp_engine():
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
                 "engine": {"_target_": "DistributedDataParallelEngine", "port": "33333"},
-                "args": {"logdir": logdir},
                 "loggers": {"console": {"_target_": "ConsoleLogger"}},
                 "stages": {
                     "stage1": {
@@ -128,7 +133,9 @@ def test_config_ddp_engine():
                                 "target_key": "targets",
                             },
                             "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
-                            # "test_device": {"_target_": "DeviceCheckCallback", "assert_device": device},
+                            "test_nn_parallel_distributed_data_parallel": {
+                                "_target_": "DistributedDataParallelTypeChecker"
+                            },
                             "test_loss_minimization": {
                                 "_target_": "LossMinimizationCallback",
                                 "key": "loss",

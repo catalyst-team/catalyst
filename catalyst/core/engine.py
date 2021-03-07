@@ -59,7 +59,7 @@ class IEngine(ABC):
         # return any2device(batch, self.device)
 
     @abstractmethod
-    def sync_tensor(self, tensor: Any) -> Any:
+    def sync_tensor(self, tensor: Any, mode: str) -> Any:
         """@TODO: docs"""
         pass
 

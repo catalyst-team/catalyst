@@ -18,7 +18,7 @@ from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 if SETTINGS.apex_required:
     from catalyst.engines.apex import DistributedDataParallelApexEngine
 
-from .misc import (
+from .misc import (  # DistributedDataParallelTypeChecker,
     DummyDataset,
     DummyModel,
     LossMinimizationCallback,
@@ -56,6 +56,7 @@ class CustomRunner(IRunner):
             "checkpoint": CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
+            # "test_nn_parallel_distributed_data_parallel": DistributedDataParallelTypeChecker(),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
             "test_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
             "test_logits_type": OPTTensorTypeChecker("logits", self._opt_level),
@@ -126,7 +127,6 @@ def _train_ddp_apex(port, logdir, opt_lvl):
                 "port": port,
                 "opt_level": opt,
             },
-            "args": {"logdir": logdir},
             "loggers": {"console": {"_target_": "ConsoleLogger"}},
             "stages": {
                 "stage1": {
@@ -142,7 +142,9 @@ def _train_ddp_apex(port, logdir, opt_lvl):
                             "target_key": "targets",
                         },
                         "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
-                        # "test_device": {"_target_": "DeviceCheckCallback", "assert_device": device},
+                        # "test_nn_parallel_distributed_data_parallel": {
+                        #     "_target_": "DistributedDataParallelTypeChecker"
+                        # },
                         "test_loss_minimization": {
                             "_target_": "LossMinimizationCallback",
                             "key": "loss",

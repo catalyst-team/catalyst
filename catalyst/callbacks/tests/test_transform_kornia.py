@@ -78,7 +78,7 @@ def test_transform_kornia():
         loaders=loaders,
         logdir="./logs",
         num_epochs=5,
-        verbose=True,
+        verbose=False,
         load_best_on_end=True,
         check=True,
         callbacks=[BatchTransformCallback(transrorms, input_key=0)],

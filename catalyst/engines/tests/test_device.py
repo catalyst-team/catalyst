@@ -15,7 +15,13 @@ from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .misc import DeviceCheckCallback, DummyDataset, DummyModel, LossMinimizationCallback
+from .misc import (
+    DeviceCheckCallback,
+    DummyDataset,
+    DummyModel,
+    LossMinimizationCallback,
+    ModuleTypeChecker,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +49,7 @@ class CustomRunner(IRunner):
             "checkpoint": CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
+            "test_nn_module": ModuleTypeChecker(),
             "test_device": DeviceCheckCallback(self._device, logger=logger),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
         }
@@ -113,6 +120,7 @@ def run_train_with_config_experiment_device(device):
                                 "target_key": "targets",
                             },
                             "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            "test_nn_module": {"_target_": "ModuleTypeChecker"},
                             "test_device": {
                                 "_target_": "DeviceCheckCallback",
                                 "assert_device": device,

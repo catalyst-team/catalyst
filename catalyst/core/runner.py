@@ -560,6 +560,14 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
+        # as far as we could `backward` anything from `batch_metrics` on the nodes during training,
+        # which means, it could not be synced before,
+        # we have to sync them in the end of the batch... here:
+        # @TODO: could be done better
+        self.batch_metrics = {
+            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+            for k, v in self.batch_metrics.items()
+        }
         self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
@@ -576,10 +584,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler."""
-        from catalyst.utils.distributed import get_rank
-
-        if get_rank() == 0:
-            self.engine.deinit_components()
+        self.engine.deinit_components()
 
     def on_experiment_end(self, runner: "IRunner"):
         """Event handler."""
@@ -611,21 +616,18 @@ class IRunner(ICallback, ILogger, ABC):
 
     def _run_batch(self) -> None:
         self._run_event("on_batch_start")
-
-        # NOTE: wrapped forward because need to scale forward propagation
-        # as it was noted in docs:
-        #   https://pytorch.org/docs/stable/notes/amp_examples.html#typical-mixed-precision-training
-        # @TODO: handle_batch with Callback?
-        with self.engine.autocast():
-            self.handle_batch(batch=self.batch)
+        self.handle_batch(batch=self.batch)
         self._run_event("on_batch_end")
 
     def _run_loader(self) -> None:
+        # NOTE: wrapped forward because need to scale forward propagation
+        # as it was noted in docs:
+        # https://pytorch.org/docs/stable/notes/amp_examples.html#typical-mixed-precision-training
         self._run_event("on_loader_start")
         with torch.set_grad_enabled(self.is_train_loader):
             for self.loader_batch_step, self.batch in enumerate(self.loader):
-                # @TODO: could we move `with self.engine.autocast():` here?
-                self._run_batch()
+                with self.engine.autocast():
+                    self._run_batch()
                 if self.need_early_stop:
                     self.need_early_stop = False
                     break
@@ -637,19 +639,10 @@ class IRunner(ICallback, ILogger, ABC):
             self._run_loader()
         self._run_event("on_epoch_end")
 
-    def _run_stage(self, rank=0, world_size=1) -> None:
-        # TODO: move this logic somewhere else
-        # NOTE: engine should be built elsewhere but not here
+    def _run_stage(self, rank: int = -1, world_size: int = 1) -> None:
         if isinstance(self.engine, DistributedDataParallelEngine):
-            self.engine._rank = rank
-            self.engine._world_size = world_size
-            self.engine.setup_process()
-
-            LOGGER.warning(f"rank: {rank}")
-            LOGGER.warning(f"world size: {world_size}")
-            LOGGER.warning(f"engine: {self.engine}")
-
-            if rank != 0:
+            self.engine.setup_process(rank=rank, world_size=world_size)
+            if not self.engine.is_master_process:
                 self.loggers = {}
 
         self._run_event("on_stage_start")
