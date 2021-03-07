@@ -63,7 +63,7 @@ class MetricCallback(IMetricCallback):
         """
         super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
         self.metric = metric
-        self._validate_metric(metric=metric)
+        assert isinstance(metric, IMetric)
         self._metric_update_method = self.metric.update
 
         kv_types = (dict, list, tuple)
@@ -88,16 +88,6 @@ class MetricCallback(IMetricCallback):
             **self._convert_keys_to_kv(input_key),
             **self._convert_keys_to_kv(target_key),
         }
-
-    @staticmethod
-    def _validate_metric(metric: IMetric) -> None:
-        """
-        Check if given metric can be used in this callback
-
-        Args:
-            metric: metric to check
-        """
-        assert isinstance(metric, IMetric)
 
     @staticmethod
     def _convert_keys_to_kv(keys: Union[str, Iterable[str], Dict[str, str]]) -> Dict[str, str]:
@@ -182,7 +172,7 @@ class BatchMetricCallback(MetricCallback):
 
     def __init__(
         self,
-        metric: Union[ICallbackBatchMetric, ICallbackLoaderMetric],
+        metric: ICallbackBatchMetric,
         input_key: Union[str, Iterable[str], Dict[str, str]],
         target_key: Union[str, Iterable[str], Dict[str, str]],
         log_on_batch: bool = True,
@@ -196,19 +186,9 @@ class BatchMetricCallback(MetricCallback):
             log_on_batch: if True update runner's batch metrics every batch
         """
         super().__init__(metric=metric, input_key=input_key, target_key=target_key)
+        assert isinstance(metric, ICallbackBatchMetric)
         self.log_on_batch = log_on_batch
         self._metric_update_method = self.metric.update_key_value
-
-    @staticmethod
-    def _validate_metric(metric: IMetric) -> None:
-        """
-        Check if metric is an instance of ICallbackBatchMetric and can be used in
-            BatchMetricCallback
-
-        Args:
-            metric: metric to check
-        """
-        assert isinstance(metric, ICallbackBatchMetric)
 
     def on_loader_start(self, runner: "IRunner") -> None:
         """On loader start action: reset metric values
@@ -227,10 +207,6 @@ class BatchMetricCallback(MetricCallback):
         metrics_inputs = self._get_inputs(runner=runner)
         metrics = self._update_metric(metrics_inputs)
         if self.log_on_batch:
-            # metrics = {
-            #     k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-            #     for k, v in metrics.items()
-            # }
             runner.batch_metrics.update(metrics)
 
     def on_loader_end(self, runner: "IRunner") -> None:
@@ -250,15 +226,13 @@ class BatchMetricCallback(MetricCallback):
 class LoaderMetricCallback(MetricCallback):
     """LoaderMetricCallback implements loader-based metrics update and computation over loader"""
 
-    @staticmethod
-    def _validate_metric(metric: IMetric) -> None:
-        """
-        Check if metric is an instance of ICallbackLoaderMetric and can be used in
-            LoaderMetricCallback
-
-        Args:
-            metric: metric to check
-        """
+    def __init__(
+        self,
+        metric: ICallbackLoaderMetric,
+        input_key: Union[str, Iterable[str], Dict[str, str]],
+        target_key: Union[str, Iterable[str], Dict[str, str]],
+    ):
+        super().__init__(metric=metric, input_key=input_key, target_key=target_key)
         assert isinstance(metric, ICallbackLoaderMetric)
 
     def on_loader_start(self, runner: "IRunner") -> None:

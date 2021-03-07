@@ -5,11 +5,12 @@ import logging
 import os
 import random
 from tempfile import TemporaryDirectory
+import time
 
 from pytest import mark
 import torch
 import torch.nn.functional as F
-from torch.utils.data import DataLoader, Dataset, DistributedSampler
+from torch.utils.data import DataLoader, Dataset, DistributedSampler, SequentialSampler
 
 from catalyst.callbacks import (
     AccuracyCallback,
@@ -39,6 +40,21 @@ if NUM_CUDA_DEVICES > 1:
 _BATCH_SIZE = 32
 _WORKERS = 1
 _LR = 1e-3
+
+
+class CustomDistributedSampler(DistributedSampler):
+    def __iter__(self):
+        indices = list(range(len(self.dataset)))  # type: ignore
+        indices = indices[self.rank:self.total_size:self.num_replicas]
+        return iter(indices)
+
+
+class CustomSampler(SequentialSampler):
+    def __iter__(self):
+        indices = list(range(len(self.data_source)))
+        # indices = indices[self.rank:self.total_size:self.num_replicas]
+        indices = indices[0 : len(self.data_source) : 2] + indices[1 : len(self.data_source) : 2]
+        return iter(indices)
 
 
 class LabelsCheck(Callback):
@@ -99,7 +115,7 @@ class IRunnerMixin(IRunner):
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
             "accuracy": AccuracyCallback(input_key="logits", target_key="targets", num_classes=1),
-            # "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
+            "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
             # "optimizer": OptimizerCallback(metric_key="loss"),
             # "checkpoint": CheckpointCallback(
             #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
@@ -129,7 +145,8 @@ class CustomDeviceRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
-        loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, shuffle=False)
+        sampler = CustomSampler(data_source=dataset)
+        loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}
 
 
@@ -139,7 +156,8 @@ class CustomDPRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
-        loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, shuffle=False)
+        sampler = CustomSampler(data_source=dataset)
+        loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}
 
 
@@ -149,7 +167,7 @@ class CustomDDPRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str, epoch: int = None):
         dataset = TwoBlobsDataset()
-        sampler = DistributedSampler(dataset=dataset, shuffle=True)
+        sampler = CustomDistributedSampler(dataset=dataset, shuffle=True)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}
 

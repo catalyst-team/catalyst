@@ -560,10 +560,10 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
-        # @TODO: should be on master-process only
-        # as far as we could `backward` any on other `batch_metrics` on the nodes during training,
+        # as far as we could `backward` anything from `batch_metrics` on the nodes during training,
         # which means, it could not be synced before,
         # we have to sync them in the end of the batch... here:
+        # @TODO: could be done better
         self.batch_metrics = {
             k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
             for k, v in self.batch_metrics.items()
@@ -572,10 +572,6 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_loader_end(self, runner: "IRunner"):
         """Event handler."""
-        # self.loader_metrics = {
-        #     k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-        #     for k, v in self.loader_metrics.items()
-        # }
         self.log_metrics(metrics=self.loader_metrics, scope="loader")
         self.epoch_metrics[self.loader_key] = {
             key: float(value) for key, value in self.loader_metrics.items()
