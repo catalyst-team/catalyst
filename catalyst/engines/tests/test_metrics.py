@@ -120,7 +120,7 @@ class IRunnerMixin(IRunner):
             # "checkpoint": CheckpointCallback(
             #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             # ),
-            "verbose": TqdmCallback(),
+            # "verbose": TqdmCallback(),
             "counter": LabelsCheck(
                 required_num=16 if isinstance(self.engine, DistributedDataParallelEngine) else 32
             ),

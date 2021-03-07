@@ -1,7 +1,6 @@
 # flake8: noqa
-from typing import Any, List, Union
+from typing import Any, List
 import pickle
-import re
 import socket
 
 import torch
@@ -77,18 +76,17 @@ def mean_reduce(tensor: torch.Tensor, world_size: int) -> torch.Tensor:
 def all_gather(data: Any) -> List[Any]:
     """Run all_gather on arbitrary picklable data (not necessarily tensors).
 
-    NOTE: if data on different devices then data in resulted list will
-        be on the same devices.
-
-    Source: 
-        https://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128
+    .. note::
+        if data on different devices then data in resulted list will be on the same devices.
+        Source: https://github.com/facebookresearch/detr/blob/master/util/misc.py#L88-L128
 
     Args:
         data: any picklable object
 
     Returns:
         list of data gathered from each process.
-    """  # noqa: W501,W505
+
+    """
     if not dist.is_available() or not dist.is_initialized():
         world_size = 1
     else:
@@ -127,3 +125,6 @@ def all_gather(data: Any) -> List[Any]:
         data_list.append(pickle.loads(buffer))
 
     return data_list
+
+
+__all__ = ["get_available_port", "sum_reduce", "mean_reduce", "all_gather"]

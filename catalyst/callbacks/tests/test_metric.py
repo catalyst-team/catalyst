@@ -99,7 +99,7 @@ def test_classification_pipeline():
             loaders=OrderedDict({"train": loader, "valid": loader}),
             logdir=logdir,
             num_epochs=3,
-            verbose=True,
+            verbose=False,
             valid_loader="valid",
             valid_metric="loss",
             minimize_valid_metric=True,
@@ -196,7 +196,7 @@ def test_metric_learning_pipeline():
             optimizer=optimizer,
             callbacks=callbacks,
             loaders=OrderedDict({"train": train_loader, "valid": val_loader}),
-            verbose=True,
+            verbose=False,
             valid_loader="valid",
             num_epochs=4,
         )

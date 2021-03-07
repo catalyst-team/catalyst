@@ -59,3 +59,6 @@ class DataParallelEngine(DeviceEngine):
     def save_checkpoint(self, checkpoint: Mapping[str, Any], path: str):
         # TODO: method for unpacking torch.nn.DataParallel
         torch.save(checkpoint, path)
+
+
+__all__ = ["DataParallelEngine"]

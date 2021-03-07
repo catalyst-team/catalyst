@@ -645,9 +645,6 @@ class IRunner(ICallback, ILogger, ABC):
             if not self.engine.is_master_process:
                 self.loggers = {}
 
-            if rank != 0:
-                self.loggers = {}
-
         self._run_event("on_stage_start")
         while self.stage_epoch_step < self.stage_epoch_len:
             self._run_epoch()

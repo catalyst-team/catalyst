@@ -192,3 +192,6 @@ class DistributedDataParallelEngine(IEngine):
 
     def load_checkpoint(self, path: str):
         return torch.load(path)
+
+
+__all__ = ["DistributedDataParallelEngine"]
