@@ -22,6 +22,7 @@ from catalyst.callbacks import (
 from catalyst.core.runner import IRunner
 from catalyst.engines.device import DeviceEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
+from catalyst.engines.parallel import DataParallelEngine
 from catalyst.engines.tests.misc import AllwaysSameModel, TwoBlobsDataset
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
@@ -34,12 +35,16 @@ if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 
 
-_BATCH_SIZE = 8
+_BATCH_SIZE = 32
 _WORKERS = 1
 _LR = 1e-3
 
 
 class IRunnerMixin(IRunner):
+    def __init__(self, logdir):
+        super().__init__()
+        self._logdir = logdir
+
     def get_loggers(self):
         return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
 
@@ -73,7 +78,7 @@ class IRunnerMixin(IRunner):
             "checkpoint": CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
-            "verbose": TqdmCallback()
+            "verbose": TqdmCallback(),
         }
 
     def handle_batch(self, batch):
@@ -89,15 +94,19 @@ class IRunnerMixin(IRunner):
         }
 
 
-# experiment definition
 class CustomDeviceRunner(IRunnerMixin, IRunner):
-    def __init__(self, logdir, device):
-        super().__init__()
-        self._logdir = logdir
-        self._device = device
-
     def get_engine(self):
-        return DeviceEngine(self._device)
+        return DeviceEngine("cuda:0")
+
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        dataset = TwoBlobsDataset()
+        loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, shuffle=False)
+        return {"valid": loader}
+
+
+class CustomDPRunner(IRunnerMixin, IRunner):
+    def get_engine(self):
+        return DataParallelEngine()
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         dataset = TwoBlobsDataset()
@@ -106,10 +115,6 @@ class CustomDeviceRunner(IRunnerMixin, IRunner):
 
 
 class CustomDDPRunner(IRunnerMixin, IRunner):
-    def __init__(self, logdir):
-        super().__init__()
-        self._logdir = logdir
-
     def get_engine(self):
         return DistributedDataParallelEngine(port="22222")
 
@@ -133,8 +138,20 @@ class MyConfigRunner(SupervisedConfigRunner):
         self.batch = {"features": x, "targets": y.view(-1), "logits": logits}
 
 
-def train_device_custom_runner(logdir, device):
-    runner = CustomDeviceRunner(logdir, device)
+def train_device_custom_runner(logdir):
+    runner = CustomDeviceRunner(logdir)
+    runner.run()
+    return runner.epoch_metrics
+
+
+def train_dp_custom_runner(logdir):
+    runner = CustomDPRunner(logdir)
+    runner.run()
+    return runner.epoch_metrics
+
+
+def train_ddp_custom_runner(logdir):
+    runner = CustomDDPRunner(logdir)
     runner.run()
     return runner.epoch_metrics
 
@@ -145,7 +162,6 @@ def train_device_config_runner(logdir, device):
             "args": {"logdir": logdir},
             "model": {"_target_": "AllwaysSameModel"},
             "engine": {"_target_": "DeviceEngine", "device": device},
-            "args": {"logdir": logdir},
             "loggers": {"console": {"_target_": "ConsoleLogger"}},
             "stages": {
                 "stage1": {
@@ -173,29 +189,24 @@ def train_device_config_runner(logdir, device):
     return runner.epoch_metrics
 
 
-def train_ddp_custom_runner(logdir):
-    runner = CustomDDPRunner(logdir)
-    runner.run()
-    return runner.epoch_metrics
-
-
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES == 2), reason="Number of CUDA devices is not 2",
 )
 def test_device_and_ddp_metrics():
     # we have to keep dataset_len, num_gpu and batch size synced
     # dataset is 64 points
-    # in DP setup we have 64 / (bs {8} * num_gpu {2}) = 4 iterations
-    # in DDP setup we have 64 / (bs {8} * num_gpu {2}) = 4 iterations
+    # in DP setup we have 64 / (bs {32} * num_gpu {1} ) = 2 iteration on 1 gpu
+    # in DDP setup we have 64 / (bs {32} * num_gpu {2}) = 1 iteration on 2 gpu
     with TemporaryDirectory() as logdir:
         # logdir = "metrics_logs"
         device_logdir = os.path.join(logdir, "device_logs")
+        dp_logdir = os.path.join(logdir, "dp_logs")
         ddp_logdir = os.path.join(logdir, "ddp_logs")
 
-        device = "cuda:0"
-        epoch_metrics1 = train_device_custom_runner(device_logdir, device)
-        epoch_metrics2 = train_ddp_custom_runner(ddp_logdir)
+        epoch_metrics1 = train_device_custom_runner(device_logdir)
+        epoch_metrics2 = train_dp_custom_runner(dp_logdir)
+        epoch_metrics3 = train_ddp_custom_runner(ddp_logdir)
 
         # print(f"epoch_metrics1: {epoch_metrics1}")
         # print(f"epoch_metrics2: {epoch_metrics2}")
-        # assert 0 == 1
+        assert 0 == 1

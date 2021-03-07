@@ -1,4 +1,3 @@
-# @TODO: add metric aggregation, etc callback
 from typing import Dict, Iterable, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 
@@ -177,35 +176,6 @@ class MetricCallback(IMetricCallback):
         """
         return self._metric_update_method(**kv_inputs)
 
-    def on_loader_start(self, runner: "IRunner") -> None:
-        """On loader start action: reset metric values
-
-        Args:
-            runner: current runner
-        """
-        self.metric.reset()
-
-    def on_batch_end(self, runner: "IRunner") -> None:
-        """On batch end action: get data from runner's batch and update metrics with it
-
-        Args:
-            runner: current runner
-
-        Returns:
-            result of metrics update
-        """
-        metrics_inputs = self._get_inputs(runner=runner)
-        self._update_metric(metrics_inputs)
-
-    def on_loader_end(self, runner: "IRunner") -> None:
-        """On loader end action: compute metric values and update runner's loader metrics with it
-
-        Args:
-            runner: current runner
-        """
-        metrics = self.metric.compute_key_value()
-        runner.loader_metrics.update(metrics)
-
 
 class BatchMetricCallback(MetricCallback):
     """BatchMetricCallback implements batch-based metrics update and computation over loader"""
@@ -240,6 +210,14 @@ class BatchMetricCallback(MetricCallback):
         """
         assert isinstance(metric, ICallbackBatchMetric)
 
+    def on_loader_start(self, runner: "IRunner") -> None:
+        """On loader start action: reset metric values
+
+        Args:
+            runner: current runner
+        """
+        self.metric.reset()
+
     def on_batch_end(self, runner: "IRunner") -> None:
         """On batch end action: update metric with new batch data and log it's value if necessary
 
@@ -248,12 +226,25 @@ class BatchMetricCallback(MetricCallback):
         """
         metrics_inputs = self._get_inputs(runner=runner)
         metrics = self._update_metric(metrics_inputs)
-        if self.log_on_batch and runner.engine.is_master_process:
+        if self.log_on_batch:
             metrics = {
                 k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
                 for k, v in metrics.items()
             }
             runner.batch_metrics.update(metrics)
+
+    def on_loader_end(self, runner: "IRunner") -> None:
+        """On loader end action: compute metric values and update runner's loader metrics with it
+
+        Args:
+            runner: current runner
+        """
+        metrics = self.metric.compute_key_value()
+        metrics = {
+            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+            for k, v in metrics.items()
+        }
+        runner.loader_metrics.update(metrics)
 
 
 class LoaderMetricCallback(MetricCallback):
@@ -279,6 +270,27 @@ class LoaderMetricCallback(MetricCallback):
         self.metric.reset(
             num_batches=runner.loader_batch_len, num_samples=runner.loader_sample_len,
         )
+
+    def on_batch_end(self, runner: "IRunner") -> None:
+        """On batch end action: get data from runner's batch and update metrics with it
+
+        Args:
+            runner: current runner
+
+        Returns:
+            result of metrics update
+        """
+        metrics_inputs = self._get_inputs(runner=runner)
+        self._update_metric(metrics_inputs)
+
+    def on_loader_end(self, runner: "IRunner") -> None:
+        """On loader end action: compute metric values and update runner's loader metrics with it
+
+        Args:
+            runner: current runner
+        """
+        metrics = self.metric.compute_key_value()
+        runner.loader_metrics.update(metrics)
 
 
 __all__ = [

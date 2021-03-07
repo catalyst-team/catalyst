@@ -1,3 +1,5 @@
+import torch
+
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.metrics._additive import AdditiveValueMetric
@@ -57,7 +59,12 @@ class CriterionCallback(ICriterionCallback):
     def on_loader_end(self, runner: "IRunner") -> None:
         """Event handler."""
         mean, std = self.additive_metric.compute()
-        runner.loader_metrics.update({self.metric_key: mean, f"{self.metric_key}/std": std})
+        metrics = {self.metric_key: mean, f"{self.metric_key}/std": std}
+        metrics = {
+            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+            for k, v in metrics.items()
+        }
+        runner.loader_metrics.update(metrics)
 
 
 __all__ = ["ICriterionCallback", "CriterionCallback"]

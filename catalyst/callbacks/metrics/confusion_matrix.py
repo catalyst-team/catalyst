@@ -65,7 +65,6 @@ class ConfusionMatrixCallback(Callback):
             runner.batch[self.input_key].detach(),
             runner.batch[self.target_key].detach(),
         )
-        inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
         self.confusion_matrix.update(predictions=inputs, targets=targets)
 
     def on_loader_end(self, runner: "IRunner"):

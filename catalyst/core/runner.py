@@ -560,8 +560,10 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
+        # @TODO: should be on master-process only
         # self.batch_metrics = {
-        #     k: self.engine.sync_tensor(v, "mean") for k, v in self.batch_metrics.items()
+        #     k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+        #     for k, v in self.batch_metrics.items()
         # }
         self.log_metrics(metrics=self.batch_metrics, scope="batch")
 

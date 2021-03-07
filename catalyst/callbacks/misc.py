@@ -183,11 +183,12 @@ class TimerCallback(Callback):
         self.timer.start("_timer/data_time")
 
 
+# @TODO: remove the changes
 class TqdmCallback(Callback):
     """Logs the params into console."""
 
     def __init__(self):
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.master)
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.tqdm: tqdm = None
         self.step = 0
 
@@ -206,6 +207,7 @@ class TqdmCallback(Callback):
     def on_batch_end(self, runner: "IRunner"):
         """Update tqdm progress bar at the end of each batch."""
         batch_metrics = {k: float(v) for k, v in runner.batch_metrics.items()}
+        print(batch_metrics)
         self.tqdm.set_postfix(
             **{
                 k: "{:3.3f}".format(v) if v > 1e-3 else "{:1.3e}".format(v)
