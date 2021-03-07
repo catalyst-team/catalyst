@@ -45,7 +45,19 @@ class DistributedDataParallelEngine(IEngine):
             f"rank={self._rank}, world_size={self._world_size})"
         )
 
-    def init_process(self):
+    @property
+    def rank(self) -> int:
+        return self._rank
+
+    @property
+    def world_size(self) -> int:
+        return self._world_size
+
+    @property
+    def is_master_process(self) -> bool:
+        return self._rank == 0
+
+    def setup_process(self):
         """Initialize DDP variables and processes."""
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
@@ -56,14 +68,6 @@ class DistributedDataParallelEngine(IEngine):
     def cleanup_process(self):
         """Clean DDP variables and processes."""
         dist.destroy_process_group()
-
-    @property
-    def rank(self) -> int:
-        return self._rank
-
-    @property
-    def world_size(self) -> int:
-        return self._world_size
 
     def sync_device(
         self, tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module]
@@ -111,17 +115,9 @@ class DistributedDataParallelEngine(IEngine):
             return mean_reduce(tensor, self.world_size)
 
     def init_components(
-        self,
-        model_fn=None,
-        criterion_fn=None,
-        optimizer_fn=None,
-        scheduler_fn=None,
-        # rank=None,
-        # world_size=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        # self._rank = rank
-        # self._world_size = world_size
-        self.init_process()
+        # self.setup_process()
 
         model = model_fn()
         model = self.sync_device(model)
@@ -136,14 +132,11 @@ class DistributedDataParallelEngine(IEngine):
         # scheduler
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
+        dist.barrier()
         return model, criterion, optimizer, scheduler
 
     def deinit_components(self):
-        # pass
         self.cleanup_process()
-
-    # def cleanup(self):
-    #     self.cleanup_process()
 
     def zero_grad(self, loss, model, optimizer) -> None:
         model.zero_grad()
@@ -153,6 +146,7 @@ class DistributedDataParallelEngine(IEngine):
 
     def optimizer_step(self, loss, model, optimizer) -> None:
         optimizer.step()
+        dist.barrier()
 
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,

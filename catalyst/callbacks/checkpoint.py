@@ -317,7 +317,7 @@ class CheckpointCallback(ICheckpointCallback):
             use_logdir_postfix: @TODO: docs.
             use_runner_logdir: @TODO: docs.
         """
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.master)
         possible_states = {
             None,
             "best",
@@ -484,6 +484,8 @@ class CheckpointCallback(ICheckpointCallback):
         Args:
             runner: current runner
         """
+        if runner.is_infer_stage:
+            return
         # @TODO: very tricky hack
         # @TODO: remove
         if self.logdir is None and self.use_runner_logdir:
@@ -537,7 +539,7 @@ class CheckpointCallback(ICheckpointCallback):
         Args:
             runner: current runner
         """
-        if runner.stage_key.startswith("infer"):
+        if runner.is_infer_stage:
             return
 
         if self._use_model_selection:
@@ -582,7 +584,7 @@ class CheckpointCallback(ICheckpointCallback):
         Args:
             runner: current runner
         """
-        if runner.stage_key.startswith("infer"):
+        if runner.is_infer_stage:
             return
 
         # let's log Top-N base metrics

@@ -6,6 +6,7 @@ import torch
 import torch.nn as nn
 
 from catalyst.core.engine import IEngine
+from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 
 
 # @TODO: merge it with DataParallel version?
@@ -55,7 +56,7 @@ class DeviceEngine(IEngine):
         #     return tensor_or_module.to(self.device)
         return tensor_or_module
 
-    def sync_tensor(self, tensor: Any) -> Any:
+    def sync_tensor(self, tensor: Any, *args, **kwargs) -> Any:
         return tensor
 
     def init_components(
@@ -91,24 +92,39 @@ class DeviceEngine(IEngine):
         optimizer.step()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        model: Model = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        scheduler: Scheduler = None,
+        **kwargs,
     ) -> Dict:
-        # add data parallel support
-        return {
-            "model": model,
-            "criterion": criterion,
-            "optimizer": optimizer,
-            "scheduler": scheduler,
-            **kwargs,
-        }
+        checkpoint = {}
+        # main components
+        if model is not None:
+            if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)):
+                _model = model.module
+            else:
+                _model = model
+            checkpoint["model_state_dict"] = _model.state_dict()
+        if criterion is not None and isinstance(criterion, nn.Module):
+            checkpoint["criterion_state_dict"] = criterion.state_dict()
+        if optimizer is not None:
+            checkpoint["optimizer_state_dict"] = optimizer.state_dict()
+        if scheduler is not None:
+            checkpoint["scheduler_state_dict"] = scheduler.state_dict()
+        # other components
+        for key, value in kwargs.items():
+            checkpoint[key] = value
+        return checkpoint
 
     def unpack_checkpoint(
         self,
         checkpoint: Dict,
-        model=None,
-        criterion=None,
-        optimizer=None,
-        scheduler=None,
+        model: Model = None,
+        criterion: Criterion = None,
+        optimizer: Optimizer = None,
+        scheduler: Scheduler = None,
         **kwargs,
     ) -> None:
 
