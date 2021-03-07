@@ -6,10 +6,11 @@ Catalyst
     :alt: Catalyst logo
 
 
-PyTorch framework for Deep Learning research and development.
-It focuses on reproducibility, rapid experimentation, and codebase reuse
-so you can create something new rather than write another regular train loop.
+PyTorch framework for Deep Learning R&D.
+--------------------------------------------------------------------------------
 
+It focuses on reproducibility, rapid experimentation, and codebase reuse
+so you can **create** something new rather than write another regular train loop.
 Break the cycle - use the Catalyst_!
 
 Project manifest_. Part of `PyTorch Ecosystem`_. Part of `Catalyst Ecosystem`_:
@@ -93,22 +94,29 @@ Step by step guide
 1. Start with `Catalyst 101 — Accelerated PyTorch`_ introduction.
 2. Check `minimal examples`_.
 3. Try `notebook tutorials with Google Colab`_.
-4. Read `blogposts`_ with use-cases and guides (and Config API intro).
-5. Go through advanced  `classification`_, `detection`_ and `segmentation`_ pipelines with Config API. More pipelines available under `projects section`_.
-6. Want more? See `Alchemy`_ and `Reaction`_ packages.
-7. For Catalyst.RL introduction, please follow `Catalyst.RL repo`_.
+4. Read `blogposts`_ with use-cases and guides.
+5. Learn machine learning with our `"Deep Learning with Catalyst" course`_.
+6. If you would like to contribute to the project, follow our `contribution guidelines`_.
+7. If you want to support the project, feel free to donate on `patreon page`_ or `write us`_ with your proposals.
+8. And do not forget to `join our slack`_ for collaboration.
 
 .. _`Catalyst 101 — Accelerated PyTorch`: https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff
+.. _`Kittylyst`: https://github.com/Scitator/kittylyst
 .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
 .. _`Notebook Tutorials with Google Colab`: https://github.com/catalyst-team/catalyst#tutorials
 .. _`blogposts`: https://github.com/catalyst-team/catalyst#blogposts
+.. _`"Deep Learning with Catalyst" course`: https://github.com/catalyst-team/dl-course
 .. _`classification`: https://github.com/catalyst-team/classification
 .. _`detection`: https://github.com/catalyst-team/detection
 .. _`segmentation`: https://github.com/catalyst-team/segmentation
 .. _`projects section`: https://github.com/catalyst-team/catalyst#projects
-.. _Alchemy: https://github.com/catalyst-team/alchemy
-.. _Reaction: https://github.com/catalyst-team/reaction
-.. _Catalyst.RL repo: https://github.com/catalyst-team/catalyst-rl
+.. _`Alchemy`: https://github.com/catalyst-team/alchemy
+.. _`Reaction`: https://github.com/catalyst-team/reaction
+.. _`Catalyst.RL repo`: https://github.com/catalyst-team/catalyst-rl
+.. _`contribution guidelines`: https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md
+.. _`patreon page`: https://patreon.com/catalyst_team
+.. _`write us`: https://github.com/catalyst-team/catalyst#user-feedback
+.. _`join our slack`: https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw
 
 Overview
 ----------------------------------------
@@ -131,10 +139,12 @@ More specific with additional requirements:
 
 .. code:: bash
 
-    pip install catalyst[cv]         # installs CV-based catalyst
-    pip install catalyst[nlp]        # installs NLP-based catalyst
+    pip install catalyst[ml]         # installs ML-based Catalyst
+    pip install catalyst[cv]         # installs CV-based Catalyst
+    pip install catalyst[nlp]        # installs NLP-based Catalyst
+    pip install catalyst[tune]       # installs Catalyst+Optuna
     pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
-    # and master version installation
+    # master version installation
     pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 
 
@@ -185,14 +195,71 @@ Indices and tables
 
 
 .. toctree::
-    :caption: Overview
+    :caption: Getting started
     :maxdepth: 2
     :hidden:
 
     self
-    info/examples
-    info/distributed
-    info/contributing
+    getting_started/quickstart
+    Minimal examples <https://github.com/catalyst-team/catalyst#minimal-examples>
+    getting_started/migrating_from_other
+    Catalyst 101 — Accelerated PyTorch <https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff>
+    Catalyst 102 — Core Trinity <https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&sk=2aff824412e2f653587a30cd853b030c>
+
+.. toctree::
+    :caption: Tutorials
+    :maxdepth: 2
+    :hidden:
+
+    tutorials/ddp
+
+.. toctree::
+    :caption: Core
+    :maxdepth: 2
+    :hidden:
+
+    core/experiment
+    core/runner
+    core/callback
+..    core/engine
+
+.. toctree::
+    :caption: FAQ
+    :maxdepth: 2
+    :hidden:
+
+    faq/intro
+
+    faq/data
+    faq/lr_finder
+
+    faq/dp
+    faq/amp
+    faq/ddp
+    faq/slurm
+    faq/tpu
+
+    faq/multi_components
+    faq/early_stopping
+    faq/checkpointing
+    faq/debugging
+    faq/logging
+    faq/inference
+    faq/finetuning
+
+    faq/stages
+    faq/config_api
+    faq/optuna
+
+
+.. toctree::
+    :caption: Contribution guide
+    :maxdepth: 2
+    :hidden:
+
+    How to start <https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md>
+    Codestyle <https://github.com/catalyst-team/codestyle>
+    Acknowledgments <https://github.com/catalyst-team/catalyst#acknowledgments>
 
 
 .. toctree::

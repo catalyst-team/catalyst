@@ -1,4 +1,4 @@
-## Before submitting
+## Before submitting (checklist)
 
 - [ ] Was this discussed/approved via a Github issue? (no need for typos and docs improvements)
 - [ ] Did you read the [contribution guide](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md)?
@@ -40,3 +40,7 @@ Anyone in the community is free to review the PR once the tests have passed.
 If we didn't discuss your PR in Github issues there's a high chance it will not be merged.
 
 <!-- Thank you for your contribution! -->
+
+
+PS
+- [x] I know, that I could [join slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for pull request discussion.

@@ -7,7 +7,46 @@ if TYPE_CHECKING:
 
 
 class CheckRunCallback(Callback):
-    """Executes only a pipeline part from the ``Experiment``."""
+    """Executes only a pipeline part from the ``Experiment``.
+
+    Minimal working example (Notebook API):
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # data
+        num_samples, num_features = int(1e4), int(1e1)
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        # model training
+        runner = dl.SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=8,
+            verbose=True,
+            callbacks=[
+                dl.CheckRunCallback(num_batch_steps=3, num_epoch_steps=3)
+            ]
+        )
+
+    """
 
     def __init__(self, num_batch_steps: int = 3, num_epoch_steps: int = 2):
         """
@@ -41,24 +80,42 @@ class CheckRunCallback(Callback):
 class EarlyStoppingCallback(Callback):
     """Early exit based on metric.
 
-    Example of usage in notebook API:
+    Minimal working example (Notebook API):
 
     .. code-block:: python
 
-        runner = SupervisedRunner()
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # data
+        num_samples, num_features = int(1e4), int(1e1)
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        # model training
+        runner = dl.SupervisedRunner()
         runner.train(
-            ...
-            callbacks=[
-                ...
-                EarlyStoppingCallback(
-                    patience=5,
-                    metric="my_metric",
-                    minimize=True,
-                )
-                ...
-            ]
+          model=model,
+          criterion=criterion,
+          optimizer=optimizer,
+          scheduler=scheduler,
+          loaders=loaders,
+          logdir="./logdir",
+          num_epochs=8,
+          verbose=True,
+          callbacks=[
+            dl.EarlyStoppingCallback(patience=2, metric="loss", minimize=True)
+          ]
         )
-        ...
 
     Example of usage in config API:
 
@@ -120,7 +177,7 @@ class EarlyStoppingCallback(Callback):
         Args:
             runner: current runner
         """
-        if runner.stage_name.startswith("infer"):
+        if runner.stage.startswith("infer"):
             return
 
         score = runner.valid_metrics[self.metric]

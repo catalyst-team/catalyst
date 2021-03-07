@@ -59,20 +59,6 @@ Meter
     :undoc-members:
     :show-inheritance:
 
-AP Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.apmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-AUC Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.aucmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Average Value Meter
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.tools.meters.averagevaluemeter
@@ -80,37 +66,9 @@ Average Value Meter
     :undoc-members:
     :show-inheritance:
 
-Class Error Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.classerrormeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Confusion Meter
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.tools.meters.confusionmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Map Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.mapmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Moving Average Value Meter
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.movingaveragevaluemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MSE Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.msemeter
     :members:
     :undoc-members:
     :show-inheritance:

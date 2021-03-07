@@ -746,7 +746,7 @@ def test_loading_best_state_at_end_with_custom_scores():
             self.values = values
 
         def on_loader_end(self, runner: "IRunner") -> None:
-            score = self.values[runner.loader_name][runner.epoch]
+            score = self.values[runner.loader_key][runner.epoch]
             runner.loader_metrics["metric"] = score
 
     old_stdout = sys.stdout

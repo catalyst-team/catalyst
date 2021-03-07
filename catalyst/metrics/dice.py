@@ -1,51 +1,84 @@
-"""
-Dice metric.
-"""
+from functools import partial
 
 import numpy as np
 
 import torch
 
-from catalyst.utils.torch import get_activation_fn
-
 
 def dice(
     outputs: torch.Tensor,
     targets: torch.Tensor,
-    eps: float = 1e-7,
+    class_dim: int = 1,
     threshold: float = None,
-    activation: str = "Sigmoid",
-):
-    """Computes the dice metric.
+    eps: float = 1e-7,
+) -> torch.Tensor:
+    """Computes the dice score.
 
     Args:
-        outputs:  a list of predicted elements
-        targets: a list of elements that are to be predicted
-        eps: epsilon
+        outputs: [N; K; ...] tensor that for each of the N examples
+            indicates the probability of the example belonging to each of
+            the K classes, according to the model.
+        targets:  binary [N; K; ...] tensort that encodes which of the K
+            classes are associated with the N-th input
+        class_dim: indicates class dimention (K) for
+            ``outputs`` and ``targets`` tensors (default = 1)
         threshold: threshold for outputs binarization
-        activation: An torch.nn activation applied to the outputs.
-            Must be one of ["none", "Sigmoid", "Softmax2d"]
+        eps: epsilon to avoid zero division
 
     Returns:
-        float:  Dice score
-    """
-    activation_fn = get_activation_fn(activation)
-    outputs = activation_fn(outputs)
+        Dice score
 
+    Examples:
+        >>> size = 4
+        >>> half_size = size // 2
+        >>> shape = (1, 1, size, size)
+        >>> empty = torch.zeros(shape)
+        >>> full = torch.ones(shape)
+        >>> left = torch.ones(shape)
+        >>> left[:, :, :, half_size:] = 0
+        >>> right = torch.ones(shape)
+        >>> right[:, :, :, :half_size] = 0
+        >>> top_left = torch.zeros(shape)
+        >>> top_left[:, :, :half_size, :half_size] = 1
+        >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
+        >>> dice(
+        >>>     outputs=pred,
+        >>>     targets=targets,
+        >>>     class_dim=1,
+        >>>     threshold=0.5,
+        >>> )
+        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.66666])
+    """
     if threshold is not None:
         outputs = (outputs > threshold).float()
 
-    intersection = torch.sum(targets * outputs)
-    union = torch.sum(targets) + torch.sum(outputs)
+    num_dims = len(outputs.shape)
+    assert num_dims > 2, "shape mismatch, please check the docs for more info"
+    assert (
+        outputs.shape == targets.shape
+    ), "shape mismatch, please check the docs for more info"
+    dims = list(range(num_dims))
+    # support negative index
+    if class_dim < 0:
+        class_dim = num_dims + class_dim
+    dims.pop(class_dim)
+    sum_fn = partial(torch.sum, dim=dims)
+
+    intersection = sum_fn(targets * outputs)
+    union = sum_fn(targets) + sum_fn(outputs)
     # this looks a bit awkward but `eps * (union == 0)` term
     # makes sure that if I and U are both 0, than Dice == 1
     # and if U != 0 and I == 0 the eps term in numerator is zeroed out
     # i.e. (0 + eps) / (U - 0 + eps) doesn't happen
-    output_dice = (2 * intersection + eps * (union == 0)) / (union + eps)
+    dice_score = (2 * intersection + eps * (union == 0).float()) / (
+        union + eps
+    )
 
-    return output_dice
+    return dice_score
 
 
+# @TODO: remove
 def calculate_dice(
     true_positives: np.array,
     false_positives: np.array,

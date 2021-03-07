@@ -27,7 +27,7 @@ class BatchOverfitCallbackCheck(dl.Callback):
         # 320 samples with 32 batch size
         # -> 1 batch size = 32
         # -> 0.1 portion = 32
-        assert len(runner.loaders[runner.loader_name]) == 32
+        assert len(runner.loaders[runner.loader_key]) == 32
 
 
 # model training

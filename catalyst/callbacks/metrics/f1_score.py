@@ -1,5 +1,11 @@
+from typing import List
+
 from catalyst.callbacks.metric import BatchMetricCallback
-from catalyst.metrics.f1_score import f1_score
+from catalyst.metrics.f1_score import fbeta_score
+from catalyst.metrics.functional import (
+    wrap_class_metric2dict,
+    wrap_metric_fn_with_activation,
+)
 
 
 class F1ScoreCallback(BatchMetricCallback):
@@ -10,10 +16,10 @@ class F1ScoreCallback(BatchMetricCallback):
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "f1_score",
-        beta: float = 1.0,
-        eps: float = 1e-7,
-        threshold: float = None,
-        activation: str = "Sigmoid",
+        activation: str = "Softmax",
+        per_class: bool = False,
+        class_args: List[str] = None,
+        **kwargs,
     ):
         """
         Args:
@@ -21,22 +27,32 @@ class F1ScoreCallback(BatchMetricCallback):
                 specifies our ``y_true``
             output_key: output key to use for iou calculation;
                 specifies our ``y_pred``
-            prefix: key to store in logs
-            beta: beta param for f_score
-            eps: epsilon to avoid zero division
-            threshold: threshold for outputs binarization
+            prefix: key for the metric's name
             activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax2d'``
+                Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
+            per_class: boolean flag to log per class metrics,
+                or use mean/macro statistics otherwise
+            class_args: class names to display in the logs.
+                If None, defaults to indices for each class, starting from 0
+            **kwargs: key-value params to pass to the metric
+
+        .. note::
+            For ``**kwargs`` info, please follow
+            ``catalyst.callbacks.metric.BatchMetricCallback`` and
+            ``catalyst.metrics.f1_score.fbeta_score`` docs
         """
+        metric_fn = wrap_metric_fn_with_activation(
+            metric_fn=fbeta_score, activation=activation
+        )
+        metric_fn = wrap_class_metric2dict(
+            metric_fn, per_class=per_class, class_args=class_args
+        )
         super().__init__(
             prefix=prefix,
-            metric_fn=f1_score,
+            metric_fn=metric_fn,
             input_key=input_key,
             output_key=output_key,
-            beta=beta,
-            eps=eps,
-            threshold=threshold,
-            activation=activation,
+            **kwargs,
         )
 
 

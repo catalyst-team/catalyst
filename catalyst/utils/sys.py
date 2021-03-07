@@ -10,8 +10,12 @@ import sys
 import warnings
 
 from catalyst.contrib.tools.tensorboard import SummaryWriter
+from catalyst.settings import IS_HYDRA_AVAILABLE
 from catalyst.utils.config import save_config
 from catalyst.utils.misc import get_utcnow_time
+
+if IS_HYDRA_AVAILABLE:
+    from omegaconf import DictConfig, OmegaConf
 
 
 def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
@@ -158,7 +162,7 @@ def list_conda_packages() -> str:
 
 
 def dump_environment(
-    experiment_config: Dict, logdir: str, configs_path: List[str] = None,
+    experiment_config: Any, logdir: str, configs_path: List[str] = None,
 ) -> None:
     """
     Saves config, environment variables and package list in JSON into logdir.
@@ -174,6 +178,13 @@ def dump_environment(
     ]
     config_dir = Path(logdir) / "configs"
     config_dir.mkdir(exist_ok=True, parents=True)
+
+    if IS_HYDRA_AVAILABLE and isinstance(experiment_config, DictConfig):
+        with open(config_dir / "config.yaml", "w") as f:
+            f.write(OmegaConf.to_yaml(experiment_config, resolve=True))
+        experiment_config = OmegaConf.to_container(
+            experiment_config, resolve=True
+        )
 
     environment = get_environment_vars()
 

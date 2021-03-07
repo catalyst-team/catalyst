@@ -21,9 +21,11 @@ Steps to reproduce the behavior:
 
 
 #### Code sample
-<!-- Ideally attach a minimal code sample to reproduce the decried issue. 
-Minimal means having the shortest code but still preserving the bug. -->
-
+<!-- 
+Ideally attach a minimal code sample to reproduce the decried issue. 
+Minimal means having the shortest code but still preserving the bug. 
+You could use minimal examples - https://github.com/catalyst-team/catalyst#minimal-examples.
+-->
 
 #### Screenshots
 <!-- If applicable, add screenshots to help explain your problem.  -->
@@ -59,3 +61,12 @@ cuDNN version: No CUDA
 
 ### Additional context
 <!-- Add any other context about the problem here. -->
+
+
+### Checklist
+- [ ] bug description.
+- [ ] steps to reproduce.
+- [ ] expected behavior.
+- [ ] environment.
+- [ ] code sample / screenshots.
+- [x] I know, that I could [join Catalyst slack (#__questions channel)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for issue discussion.

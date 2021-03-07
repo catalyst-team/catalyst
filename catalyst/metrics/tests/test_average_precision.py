@@ -3,12 +3,12 @@ import math
 
 import torch
 
-from catalyst.utils.metrics import average_precision
+from catalyst.metrics.precision import average_precision
 
 
 def test_average_precision_base():
     """
-    Tests for catalyst.utils.metrics.average_precision metric.
+    Tests for catalyst.metrics.average_precision metric.
     """
     outputs = torch.Tensor([0.1, 0.4, 0.35, 0.8])
     targets = torch.Tensor([0, 0, 1, 1])
@@ -20,7 +20,7 @@ def test_average_precision_base():
 
 def test_average_precision_weighted():
     """
-    Tests for catalyst.utils.metrics.average_precision metric.
+    Tests for catalyst.metrics.average_precision metric.
     """
     target = torch.Tensor([0, 1, 0, 1])
     output = torch.Tensor([0.1, 0.2, 0.3, 4])

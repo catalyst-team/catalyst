@@ -25,10 +25,10 @@ def _pack_runner(runner: "IRunner"):
         scheduler=runner.scheduler,
         epoch_metrics=dict(runner.epoch_metrics),
         valid_metrics=dict(runner.valid_metrics),
-        stage_name=runner.stage_name,
+        stage=runner.stage,
         epoch=runner.epoch,
-        loader_name=runner.loader_name,
-        loader_step=runner.loader_batch_step,
+        loader_key=runner.loader_key,
+        loader_batch_step=runner.loader_batch_step,
         global_epoch=runner.global_epoch,
         checkpoint_data=runner.checkpoint_data,
         main_metric=runner.main_metric,
@@ -65,8 +65,8 @@ def _load_checkpoint(
     print(f"=> Loading checkpoint {filename}")
     checkpoint = load_checkpoint(filename)
 
-    if not runner.stage_name.startswith("infer") and load_full:
-        runner.stage_name = checkpoint["stage_name"]
+    if not runner.stage.startswith("infer") and load_full:
+        runner.stage = checkpoint["stage"]
         runner.epoch = checkpoint["epoch"]
         runner.global_epoch = checkpoint["global_epoch"]
         # @TODO: should we also load,
@@ -86,7 +86,7 @@ def _load_checkpoint(
             f"loaded state checkpoint {filename} "
             f"(global epoch {checkpoint['global_epoch']}, "
             f"epoch {checkpoint['epoch']}, "
-            f"stage {checkpoint['stage_name']})"
+            f"stage {checkpoint['stage']})"
         )
     else:
         unpack_checkpoint(
@@ -373,12 +373,12 @@ class CheckpointCallback(BaseCheckpointCallback):
 
         Args:
             checkpoint: checkpoint dict,
-                should contain ``stage_name`` and ``epoch`` keys.
+                should contain ``stage`` and ``epoch`` keys.
 
         Returns:
             str: checkpoint suffix
         """
-        result = f"{checkpoint['stage_name']}.{checkpoint['epoch']}"
+        result = f"{checkpoint['stage']}.{checkpoint['epoch']}"
         return result
 
     def process_metrics(self, last_valid_metrics: Dict[str, float]) -> Dict:
@@ -620,10 +620,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             runner: current runner
         """
-        if (
-            runner.stage_name.startswith("infer")
-            or runner.is_distributed_worker
-        ):
+        if runner.stage.startswith("infer") or runner.is_distributed_worker:
             return
 
         if self.save_n_best > 0:
@@ -644,10 +641,7 @@ class CheckpointCallback(BaseCheckpointCallback):
         Args:
             runner: current runner
         """
-        if (
-            runner.stage_name.startswith("infer")
-            or runner.is_distributed_worker
-        ):
+        if runner.stage.startswith("infer") or runner.is_distributed_worker:
             return
         log_message = "Top best models:\n"
         # store latest state
@@ -741,13 +735,13 @@ class IterationCheckpointCallback(BaseCheckpointCallback):
 
         Args:
             checkpoint: checkpoint dict,
-                should contain ``stage_name`` and ``epoch`` keys.
+                should contain ``stage`` and ``epoch`` keys.
 
         Returns:
             str: checkpoint suffix
         """
         result = (
-            f"{checkpoint['stage_name']}."
+            f"{checkpoint['stage']}."
             f"epoch.{checkpoint['epoch']}."
             f"iter.{self._iteration_counter}"
         )

@@ -4,7 +4,14 @@ import numpy as np
 import torch
 import torch.nn as nn
 
-from catalyst.contrib.nn.modules import ArcFace, CosFace, SoftMax
+from catalyst.contrib.nn.modules import (
+    AdaCos,
+    ArcFace,
+    CosFace,
+    CurricularFace,
+    SoftMax,
+    SubCenterArcFace,
+)
 
 
 def normalize(m: np.ndarray) -> np.ndarray:
@@ -54,6 +61,37 @@ def test_softmax():
     expected = features @ weight.T + bias
     actual = layer(torch.from_numpy(features)).detach().numpy()
     assert np.allclose(expected, actual)
+
+
+def _check_layer(layer):
+    embedding = torch.randn(3, 5, requires_grad=True)
+    target = torch.empty(3, dtype=torch.long).random_(10)
+
+    output = layer(embedding, target)
+    assert output.shape == (3, 10)
+
+    output = layer(embedding)
+    assert output.shape == (3, 10)
+
+
+def test_arcface_iference_mode():
+    _check_layer(ArcFace(5, 10, s=1.31, m=0.5))
+
+
+def test_subcenter_arcface_iference_mode():
+    _check_layer(SubCenterArcFace(5, 10, s=1.31, m=0.35, k=2))
+
+
+def test_cosface_iference_mode():
+    _check_layer(CosFace(5, 10, s=1.31, m=0.1))
+
+
+def test_adacos_iference_mode():
+    _check_layer(AdaCos(5, 10))
+
+
+def test_curricularface_iference_mode():
+    _check_layer(CurricularFace(5, 10, s=1.31, m=0.5))
 
 
 def test_arcface_with_cross_entropy_loss():
@@ -200,6 +238,106 @@ def test_cosface_with_cross_entropy_loss():
     loss_fn = nn.CrossEntropyLoss(reduction="sum")
 
     expected_loss = cross_entropy(feats, mask, 1)
+    actual = (
+        loss_fn(
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
+        )
+        .detach()
+        .numpy()
+    )
+    assert np.isclose(expected_loss.sum(), actual)
+
+
+def test_curricularface_with_cross_entropy_loss():
+    emb_size = 4
+    n_classes = 3
+    s = 3.0
+    m = 0.1
+
+    # fmt: off
+    features = np.array(
+        [
+            [1, 2, 3, 4],
+            [5, 6, 7, 8],
+        ],
+        dtype="f",
+    )
+    target = np.array([0, 2], dtype="l")
+    mask = np.array([[1, 0, 0], [0, 0, 1]], dtype="l")  # one_hot(target)
+
+    weight = np.array(
+        [
+            [0.1, 0.2, 0.3, 0.4],
+            [1.1, 3.2, 5.3, 0.4],
+            [0.1, 0.2, 6.3, 0.4],
+        ],
+        dtype="f",
+    )
+    # fmt: on
+
+    layer = CurricularFace(emb_size, n_classes, s, m)
+    layer.weight.data = torch.from_numpy(weight.T)
+    loss_fn = nn.CrossEntropyLoss(reduction="none")
+
+    normalized_features = normalize(features)  # 2x4
+    normalized_projection = normalize(weight)  # 3x4
+
+    cosine = normalized_features @ normalized_projection.T  # 2x4 * 4x3 = 2x3
+    logit = cosine[mask.astype(np.bool)].reshape(-1, 1)
+
+    sine = np.sqrt(1.0 - np.power(logit, 2))
+    cos_theta_m = logit * np.cos(m) - sine * np.sin(m)
+
+    final_logit = np.where(
+        logit > np.cos(np.pi - m), cos_theta_m, logit - np.sin(np.pi - m) * m,
+    )
+
+    cos_mask = cosine > cos_theta_m
+    hard = cosine[cos_mask]
+
+    t = np.mean(logit) * 0.01 - (1 - 0.01) * 0
+
+    cosine[cos_mask] = hard * (t + hard)  # 2x3
+    for r, c in enumerate(target):
+        cosine[r, c] = final_logit[r, 0]
+    cosine = cosine * s  # 2x3
+
+    expected_loss = cross_entropy(cosine, mask, 1)
+    actual = (
+        loss_fn(
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
+        )
+        .detach()
+        .numpy()
+    )
+
+    assert np.allclose(expected_loss, actual)
+
+    # reinitialize layer (t is changed)
+    layer = CurricularFace(emb_size, n_classes, s, m)
+    layer.weight.data = torch.from_numpy(weight.T)
+    loss_fn = nn.CrossEntropyLoss(reduction="mean")
+
+    expected_loss = cross_entropy(cosine, mask, 1)
+    actual = (
+        loss_fn(
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
+        )
+        .detach()
+        .numpy()
+    )
+
+    assert np.isclose(expected_loss.mean(), actual)
+
+    # reinitialize layer (t is changed)
+    layer = CurricularFace(emb_size, n_classes, s, m)
+    layer.weight.data = torch.from_numpy(weight.T)
+    loss_fn = nn.CrossEntropyLoss(reduction="sum")
+
+    expected_loss = cross_entropy(cosine, mask, 1)
     actual = (
         loss_fn(
             layer(torch.from_numpy(features), torch.LongTensor(target)),

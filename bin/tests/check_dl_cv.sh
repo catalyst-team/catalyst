@@ -34,7 +34,7 @@ python -c """
 from catalyst import utils
 metrics = utils.load_config('$LOGFILE')
 # assert metrics['stage1.2']['loss'] < metrics['stage1.1']['loss']
-assert metrics['stage1.1']['loss'] < 2.0
+assert metrics['stage1.1']['loss'] < 2.2
 assert metrics['stage1.2']['loss'] < 3.3
 """
 
@@ -601,6 +601,66 @@ fi
 
 ## remove logs
 rm -rf ./tests/logs/_tests_cv_segmentation
+
+
+################################  pipeline 23  ################################
+echo 'pipeline 23'
+python3 -m pip install hydra-core
+
+EXPDIR=./tests/_tests_cv_classification_hydra
+LOGDIR=./tests/logs/_tests_cv_classification_hydra
+LOGFILE=${LOGDIR}/checkpoints/_metrics.json
+
+PYTHONPATH=./examples:.:${PYTHONPATH} \
+  python catalyst/dl/scripts/run.py \
+  --hydra \
+  --config-dir ${EXPDIR} \
+  --config-name conf/config_train.yaml \
+  args.expdir=${EXPDIR} \
+  args.logdir=${LOGDIR} \
+  args.check=1
+
+if [[ ! (-f "$LOGFILE" && -r "$LOGFILE") ]]; then
+    echo "File $LOGFILE does not exist"
+    exit 1
+fi
+
+cat $LOGFILE
+echo 'pipeline 23'
+python -c """
+from catalyst import utils
+metrics = utils.load_config('$LOGFILE')
+# assert metrics['train.2']['loss'] < metrics['train.1']['loss']
+assert metrics['train.1']['loss'] < 2.0
+assert metrics['train.2']['loss'] < 3.3
+"""
+
+if [[ "$USE_DDP" != "1" ]]; then
+    PYTHONPATH=./examples:.:${PYTHONPATH} \
+      python catalyst/dl/scripts/run.py \
+      --hydra \
+      --config-dir ${EXPDIR} \
+      --config-name conf/config_infer.yaml \
+      args.expdir=${EXPDIR} \
+      args.logdir=${LOGDIR} \
+      args.resume=${LOGDIR}/checkpoints/best.pth \
+      vals.out_dir="." \
+      vals.out_prefix="predictions/"
+
+    cat $LOGFILE
+    echo 'pipeline 23 - infer'
+    python -c """
+import numpy as np
+data = np.load('${LOGDIR}/predictions/infer.logits.npy')
+print(data.shape)
+assert data.shape == (10000, 10)
+"""
+
+fi
+
+rm -rf ${LOGDIR}
+
+python3 -m pip uninstall -y hydra-core
 
 
 ################################  pipeline 99  ################################

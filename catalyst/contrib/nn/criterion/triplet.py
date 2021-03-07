@@ -6,7 +6,7 @@ from torch import nn, Tensor
 from torch.nn import TripletMarginLoss
 
 from catalyst.contrib.nn.criterion.functional import triplet_loss
-from catalyst.data.utils import convert_labels2list
+from catalyst.utils.torch import convert_labels2list
 
 if TYPE_CHECKING:
     from catalyst.data.sampler_inbatch import IInbatchTripletSampler
@@ -286,7 +286,7 @@ class TripletMarginLossWithSampler(nn.Module):
     ) -> Tensor:
         """
         Args:
-            features: features with the shape of [batch_size, features_dim]
+            features: features with shape [batch_size, features_dim]
             labels: labels of samples having batch_size elements
 
         Returns: loss value

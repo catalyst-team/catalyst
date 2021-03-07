@@ -9,8 +9,8 @@ import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.tools.meters.averagevaluemeter import AverageValueMeter
-from catalyst.utils.dict import get_dictkey_auto_fn
 from catalyst.utils.distributed import get_distributed_mean
+from catalyst.utils.misc import get_dictkey_auto_fn
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -243,6 +243,9 @@ class BatchMetricCallback(IBatchMetricCallback):
             **metrics_kwargs: extra metric params
                 to pass for metric computation
         """
+        # @TODO:
+        # - add ~(transform: Callable = lambda x: x) for runner
+        # - add ~(transform: Callable = lambda x: x) for metrics output
         super().__init__(
             prefix=prefix,
             input_key=input_key,
@@ -498,7 +501,7 @@ class MetricManagerCallback(Callback):
             value = value.mean
             runner.loader_metrics[key] = value
         for key, value in runner.loader_metrics.items():
-            runner.epoch_metrics[f"{runner.loader_name}_{key}"] = value
+            runner.epoch_metrics[f"{runner.loader_key}_{key}"] = value
 
 
 # backward compatibility

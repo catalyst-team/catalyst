@@ -3,8 +3,7 @@
 import argparse
 from pathlib import Path
 
-from catalyst.utils.pipelines import clone_pipeline
-from catalyst.utils.wizard import run_wizard
+from catalyst.contrib.utils.wizard import clone_pipeline, run_wizard
 
 
 def build_args(parser):
@@ -14,7 +13,7 @@ def build_args(parser):
         "--pipeline",
         type=str,
         default=None,
-        choices=["empty", "classification", "segmentation", "detection"],
+        choices=["empty", "classification", "detection", "segmentation"],
         help="select a Catalyst pipeline",
     )
     parser.add_argument(

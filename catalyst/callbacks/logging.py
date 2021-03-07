@@ -8,8 +8,7 @@ from tqdm import tqdm
 from catalyst.callbacks.formatters import TxtMetricsFormatter
 from catalyst.contrib.tools.tensorboard import SummaryWriter
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.utils.dict import split_dict_to_subdicts
-from catalyst.utils.misc import is_exception
+from catalyst.utils.misc import is_exception, split_dict_to_subdicts
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -66,7 +65,7 @@ class VerboseLogger(ILoggerCallback):
         self.tqdm = tqdm(
             total=runner.loader_len,
             desc=f"{runner.epoch}/{runner.num_epochs}"
-            f" * Epoch ({runner.loader_name})",
+            f" * Epoch ({runner.loader_key})",
             leave=True,
             ncols=0,
             file=sys.stdout,
@@ -222,9 +221,9 @@ class TensorboardLogger(ILoggerCallback):
 
     def on_loader_start(self, runner: "IRunner"):
         """Prepare tensorboard writers for the current stage."""
-        if runner.loader_name not in self.loggers:
-            log_dir = os.path.join(runner.logdir, f"{runner.loader_name}_log")
-            self.loggers[runner.loader_name] = SummaryWriter(log_dir)
+        if runner.loader_key not in self.loggers:
+            log_dir = os.path.join(runner.logdir, f"{runner.loader_key}_log")
+            self.loggers[runner.loader_key] = SummaryWriter(log_dir)
 
     def on_batch_end(self, runner: "IRunner"):
         """Translate batch metrics to tensorboard."""
@@ -232,7 +231,7 @@ class TensorboardLogger(ILoggerCallback):
             return
 
         if self.log_on_batch_end:
-            mode = runner.loader_name
+            mode = runner.loader_key
             metrics = runner.batch_metrics
             self._log_metrics(
                 metrics=metrics,
@@ -274,9 +273,110 @@ class TensorboardLogger(ILoggerCallback):
             logger.close()
 
 
+class CSVLogger(ILoggerCallback):
+    """Logs metrics to csv file on epoch end"""
+
+    def __init__(
+        self, metric_names: List[str] = None,
+    ):
+        """
+        Args:
+            metric_names: list of metric names to log,
+                if none - logs everything
+        """
+        super().__init__(order=CallbackOrder.logging, node=CallbackNode.master)
+        self.metrics_to_log = metric_names
+
+        self.loggers = {}
+        self.header_created = {}
+
+    def on_loader_start(self, runner: "IRunner") -> None:
+        """
+        On loader start action.
+
+        Args:
+            runner: current runner
+        """
+        if runner.loader_key not in self.loggers:
+            log_dir = os.path.join(runner.logdir, f"{runner.loader_key}_log")
+            os.makedirs(log_dir, exist_ok=True)
+            self.loggers[runner.loader_key] = open(
+                os.path.join(log_dir, "logs.csv"), "a+"
+            )
+            self.header_created[runner.loader_key] = False
+
+    def _log_metrics(
+        self, metrics: Dict[str, float], step: int, loader_key: str
+    ):
+        if self.metrics_to_log is None:
+            metrics_to_log = sorted(metrics.keys())
+        else:
+            metrics_to_log = self.metrics_to_log
+
+        log_line_csv = f"{step},"
+        for metric in metrics_to_log:
+            log_line_csv += str(metrics[metric]) + ","
+        log_line_csv = (
+            log_line_csv[:-1] + "\n"
+        )  # replace last "," with new line
+        self.loggers[loader_key].write(log_line_csv)
+
+    def _make_header(self, metrics: Dict[str, float], loader_key: str):
+        if self.metrics_to_log is None:
+            metrics_to_log = sorted(metrics.keys())
+        else:
+            metrics_to_log = self.metrics_to_log
+        log_line_header = "step,"
+        for metric in metrics_to_log:
+            log_line_header += metric + ","
+        log_line_header = (
+            log_line_header[:-1] + "\n"
+        )  # replace last "," with new line
+        self.loggers[loader_key].write(log_line_header)
+
+    def on_epoch_end(self, runner: "IRunner"):
+        """
+        Logs metrics here
+
+        Args:
+            runner: runner for experiment
+        """
+        if runner.logdir is None:
+            return
+        per_loader_metrics = split_dict_to_subdicts(
+            dct=runner.epoch_metrics,
+            prefixes=list(runner.loaders.keys()),
+            extra_key="_base",
+        )
+        for loader_key, per_loader_metrics in per_loader_metrics.items():
+            if "base" in loader_key:
+                continue
+            if not self.header_created[loader_key]:
+                self._make_header(
+                    metrics=per_loader_metrics, loader_key=loader_key
+                )
+                self.header_created[loader_key] = True
+            self._log_metrics(
+                metrics=per_loader_metrics,
+                step=runner.global_epoch,
+                loader_key=loader_key,
+            )
+
+    def on_stage_end(self, runner: "IRunner") -> None:
+        """
+        Closes loggers
+
+        Args:
+            runner: runner for experiment
+        """
+        for _k, logger in self.loggers.items():
+            logger.close()
+
+
 __all__ = [
     "ILoggerCallback",
     "ConsoleLogger",
     "TensorboardLogger",
     "VerboseLogger",
+    "CSVLogger",
 ]

@@ -1,5 +1,4 @@
 # flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 from typing import Tuple
 
 import numpy as np
@@ -11,7 +10,15 @@ _IMAGENET_MEAN = (0.485, 0.456, 0.406)
 
 
 def tensor_from_rgb_image(image: np.ndarray) -> torch.Tensor:
-    """@TODO: Docs. Contribution is welcome."""
+    """
+    Creates tensor from RGB image.
+
+    Args:
+        image: RGB image stored as np.ndarray
+
+    Returns:
+        tensor
+    """
     image = np.moveaxis(image, -1, 0)
     image = np.ascontiguousarray(image)
     image = torch.from_numpy(image)

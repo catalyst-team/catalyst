@@ -27,7 +27,6 @@ stages:
       image:
         transform: A.Compose
         transforms:
-          - transform: catalyst.TensorToImage
           - transform: A.Normalize
             mean: [0.1307]
             std: [0.3081]
@@ -35,7 +34,6 @@ stages:
     valid:
       transform: A.Compose
       transforms:
-        - transform: catalyst.TensorToImage
         - transform: A.Normalize
           mean: [0.1307]
           std: [0.3081]

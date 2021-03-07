@@ -16,7 +16,10 @@ assignees: Scitator, bagxi, Ditwoo
 
 
 ### Proposal
-<!-- A clear and concise description of what you want to happen. -->
+<!-- 
+A clear and concise description of what you want to happen.
+You could use minimal examples - https://github.com/catalyst-team/catalyst#minimal-examples. 
+-->
 
 
 ### Alternatives
@@ -25,3 +28,10 @@ assignees: Scitator, bagxi, Ditwoo
 
 ### Additional context
 <!-- Add any other context or screenshots about the feature request here. -->
+
+
+### Checklist
+- [ ] feature proposal description.
+- [ ] motivation.
+- [ ] extra proposal context / proposal alternatives review.
+- [x] I know, that I could [join Catalyst slack (#__questions channel)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for issue discussion.

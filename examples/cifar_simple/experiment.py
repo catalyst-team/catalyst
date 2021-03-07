@@ -8,15 +8,11 @@ from catalyst.dl import ConfigExperiment
 
 
 class Experiment(ConfigExperiment):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """Docs? Contribution is welcome"""
 
     @staticmethod
     def get_transforms(stage: str = None, mode: str = None):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Docs? Contribution is welcome"""
         return transforms.Compose(
             [
                 transforms.ToTensor(),
@@ -25,9 +21,7 @@ class Experiment(ConfigExperiment):
         )
 
     def get_datasets(self, stage: str, **kwargs):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Docs? Contribution is welcome"""
         datasets = OrderedDict()
 
         trainset = torchvision.datasets.CIFAR10(

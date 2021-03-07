@@ -5,7 +5,7 @@
 Contributing is quite easy: suggest ideas and make them done.
 We use [GitHub issues](https://github.com/catalyst-team/catalyst/issues) for bug reports and feature requests.
 
-Every good PR is usually consists of:
+Every good PR usually consists of:
 - feature implementation :)
 - documentation to describe this feature to other people
 - tests to ensure everything is implemented correctly
@@ -46,10 +46,21 @@ If you are not familiar with creating a Pull Request, here are some guides:
 
 1. Install requirements
     ```
-    brew install bash # for MacOS users, as we need bash version >= 4.0.0
+    # for MacOS users, as we need bash version >= 4.0.0, wget and gnu-based sed
+    brew install bash wget gnu-sed
+
+    # It is often useful to have one or more Python environments 
+    # where you can experiment with different combinations 
+    # of packages without affecting your main installation. 
+    # Create the virtual conda environment
+    conda create --name catalyst_dev
+    conda activate catalyst_dev
+    
+    # Install the required dependencies√
     pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
-    # for easy-to-go development, we suggest to install extra dependencies
-    pip install -r requirements/requirements-ml.txt -r requirements/requirements-cv.txt -r requirements/requirements-nlp.txt
+    
+    # for easy-to-go development, we suggest installing extra dependencies
+    pip install -r requirements/requirements-cv.txt -r requirements/requirements-nlp.txt
     ```
 2. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
@@ -68,7 +79,10 @@ Do not forget to check the codestyle for your PR with
 catalyst-make-codestyle && catalyst-check-codestyle
 ```
 
-Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean.
+Make sure to have your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean:
+```bash
+pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
+```
 
 #### Unit tests
 
@@ -114,7 +128,7 @@ in python and check values or something similar) or `<logdir>/log.txt`.
 ## Documentation
 
 Catalyst uses [Google style](http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_google.html) for formatting [docstrings](https://github.com/google/styleguide/blob/gh-pages/pyguide.md#38-comments-and-docstrings).
-Length of line inside docstrings block must be limited to 80 characters to fit into Jupyter documentation popups.
+Length of a line inside docstrings block must be limited to 80 characters to fit into Jupyter documentation popups.
 
 How to setup Google style documentation style in PyCharm:
 [![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/third_party_pics/pycharm-google-style.png)](https://github.com/catalyst-team/catalyst)
@@ -129,10 +143,10 @@ rm -rf ./builds; REMOVE_BUILDS=0 make check-docs
 
 Now you can open them into your browser, for example with
 ```bash
-vivaldi-stable ./builds/index.html
+open ./builds/index.html
 ```
 
-If you have some issues with building docs - please make sure that you installed required pip packages.
+If you have some issues with building docs - please make sure that you installed the required pip packages.
 
 ##### Check that you have written working docs with Docker
 

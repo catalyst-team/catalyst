@@ -1,42 +1,35 @@
-from typing import TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 
 import numpy as np
 
 from catalyst.callbacks.metric import BatchMetricCallback
-from catalyst.contrib.utils.confusion_matrix import (
+from catalyst.contrib.utils.torch_extra import (
     calculate_confusion_matrix_from_tensors,
     calculate_tp_fp_fn,
 )
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.metrics.dice import calculate_dice, dice
+from catalyst.metrics.functional import (
+    wrap_class_metric2dict,
+    wrap_metric_fn_with_activation,
+)
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
 
 class DiceCallback(BatchMetricCallback):
-    """Dice metric callback.
-
-    Args:
-        input_key: input key to use for iou calculation
-            specifies our ``y_true``
-        output_key: output key to use for iou calculation;
-            specifies our ``y_pred``
-        prefix: key to store in logs
-        eps: epsilon to avoid zero division
-        threshold: threshold for outputs binarization
-        activation: An torch.nn activation applied to the outputs.
-            Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
-    """
+    """Dice metric callback."""
 
     def __init__(
         self,
         input_key: str = "targets",
         output_key: str = "logits",
         prefix: str = "dice",
-        eps: float = 1e-7,
-        threshold: float = None,
         activation: str = "Sigmoid",
+        per_class: bool = False,
+        class_args: List[str] = None,
+        **kwargs,
     ):
         """
         Args:
@@ -45,25 +38,37 @@ class DiceCallback(BatchMetricCallback):
             output_key: output key to use for iou calculation;
                 specifies our ``y_pred``
             prefix: key to store in logs
-            eps: epsilon to avoid zero division
-            threshold: threshold for outputs binarization
             activation: An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+                Must be one of ``'none'``, ``'Sigmoid'``, or ``'Softmax'``
+            per_class: boolean flag to log per class metrics,
+                or use mean/macro statistics otherwise
+            class_args: class names to display in the logs.
+                If None, defaults to indices for each class, starting from 0
+            **kwargs: key-value params to pass to the metric
+
+        .. note::
+            For ``**kwargs`` info, please follow
+            ``catalyst.callbacks.metric.BatchMetricCallback`` and
+            ``catalyst.metrics.dice.dice`` docs
         """
+        metric_fn = wrap_metric_fn_with_activation(
+            metric_fn=dice, activation=activation
+        )
+        metric_fn = wrap_class_metric2dict(
+            metric_fn, per_class=per_class, class_args=class_args
+        )
         super().__init__(
             prefix=prefix,
-            metric_fn=dice,
+            metric_fn=metric_fn,
             input_key=input_key,
             output_key=output_key,
-            eps=eps,
-            threshold=threshold,
-            activation=activation,
+            **kwargs,
         )
 
 
 class MultiClassDiceMetricCallback(Callback):
     """
-    Global Multi-Class Dice Metric Callback: calculates the exact
+    Global multiclass Dice Metric Callback: calculates the exact
     dice score across multiple batches. This callback is good for getting
     the dice score with small batch sizes where the batchwise dice is noisier.
     """
@@ -117,7 +122,7 @@ class MultiClassDiceMetricCallback(Callback):
             self.confusion_matrix += confusion_matrix
 
     def on_loader_end(self, runner: "IRunner"):
-        """@TODO: Docs. Contribution is welcome.
+        """Logs dice scores to the ``loader_metrics``.
 
         Args:
             runner: current runner

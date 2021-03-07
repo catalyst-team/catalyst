@@ -21,6 +21,12 @@
     - tensorboard logs visualization
     - predictions visualization
     - Test-time augmentations with [ttach](https://github.com/qubvel/ttach) library
+    
+3.  [Pruning tutorial](notebooks/Pruning.ipynb)[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/Pruning.ipynb)
+    - Pruning intro
+    - Lottery ticket hypothesis
+    - Catalyst pruning callback
+    - Loading training result from logs
 
 ### Usage examples
 1. [features – classification](./notebooks/classification-example.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-example.ipynb)
@@ -56,11 +62,6 @@ Full description of configs with comments:
     - metrics visualization with tensorboard
 1. [features – model training with stages](cifar_stages)
     - pipeline example with stages
-1. [features - vanilla GAN on MNIST](mnist_gan)
-    - experiment with multiple phases & models & optimizers
-1. [features - Text classification with DistilBert](distilbert_text_classification)
-    - DistilBERT model
-    - Kaggle kernel with the same example
 
 ----
 
@@ -68,9 +69,6 @@ Full description of configs with comments:
 For Reinforcement Learning examples check out our [Catalyst.RL repo](https://github.com/catalyst-team/catalyst-rl)
 
 ----
-
-### Catalyst-info
-[Link](https://github.com/catalyst-team/catalyst-info)
 
 
 ### Contributions

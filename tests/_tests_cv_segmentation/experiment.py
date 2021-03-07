@@ -12,9 +12,7 @@ from catalyst.dl import ConfigExperiment
 
 
 class Experiment(ConfigExperiment):
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """Docs? Contribution is welcome."""
 
     def get_datasets(
         self,
@@ -24,9 +22,7 @@ class Experiment(ConfigExperiment):
         valid_size: float,
         **kwargs
     ):
-        """
-        @TODO: Docs. Contribution is welcome
-        """
+        """Docs? Contribution is welcome."""
         images = np.array(sorted(Path(image_path).glob("*.jpg")))
         masks = np.array(sorted(Path(mask_path).glob("*.gif")))
         indices = np.arange(len(images))

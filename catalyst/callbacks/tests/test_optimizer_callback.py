@@ -14,6 +14,7 @@ class DummyRunner:
         self.batch_metrics = {"loss": loss_value}
         self.is_train_loader = True
         self.optimizer = optimizer
+        self.experiment = None
         self.device = torch.device("cpu")
 
     def get_attr(self, key, *args, **kwargs):

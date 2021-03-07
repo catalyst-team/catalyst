@@ -3,7 +3,7 @@
 import torch
 from torch import nn
 
-from catalyst.utils.initialization import outer_init
+from catalyst.utils.torch import outer_init
 
 
 class TemporalLastPooling(nn.Module):

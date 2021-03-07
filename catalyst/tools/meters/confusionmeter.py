@@ -10,8 +10,8 @@ from catalyst.tools.meters import meter
 
 class ConfusionMeter(meter.Meter):
     """
-    ConfusionMeter constructs a confusion matrix for a multi-class
-    classification problems. It does not support multi-label, multi-class
+    ConfusionMeter constructs a confusion matrix for a multiclass
+    classification problems. It does not support multilabel, multiclass
     problems: for such problems, please use MultiLabelConfusionMeter.
     """
 
@@ -71,7 +71,7 @@ class ConfusionMeter(meter.Meter):
             ).all(), "in one-hot encoding, target values should be 0 or 1"
             assert (
                 target.sum(1) == 1
-            ).all(), "multi-label setting is not supported"
+            ).all(), "multilabel setting is not supported"
             target = np.argmax(target, 1)
         else:
             assert (predicted.max() < self.k) and (

@@ -1,8 +1,9 @@
-from typing import Optional
+from typing import Optional, Union
 
 import torch
 
-from catalyst.metrics.functional import preprocess_multi_label_metrics
+from catalyst.metrics import precision_recall_fbeta_support
+from catalyst.metrics.functional import process_multilabel_components
 
 
 def average_precision(
@@ -25,10 +26,17 @@ def average_precision(
     Returns:
         torch.Tensor: tensor of [K; ] shape,
         with average precision for K classes
+
+    Examples:
+        >>> average_precision(
+        >>>     outputs=torch.Tensor([0.1, 0.4, 0.35, 0.8]),
+        >>>     targets=torch.Tensor([0, 0, 1, 1]),
+        >>> )
+        tensor([0.8333])
     """
     # outputs - [bs; num_classes] with scores
     # targets - [bs; num_classes] with binary labels
-    outputs, targets, weights = preprocess_multi_label_metrics(
+    outputs, targets, weights = process_multilabel_components(
         outputs=outputs, targets=targets, weights=weights,
     )
     if outputs.numel() == 0:
@@ -66,4 +74,54 @@ def average_precision(
     return ap
 
 
-__all__ = ["average_precision"]
+def precision(
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    argmax_dim: int = -1,
+    eps: float = 1e-7,
+    num_classes: Optional[int] = None,
+) -> Union[float, torch.Tensor]:
+    """
+    Multiclass precision metric.
+
+    Args:
+        outputs: estimated targets as predicted by a model
+            with shape [bs; ..., (num_classes or 1)]
+        targets: ground truth (correct) target values
+            with shape [bs; ..., 1]
+        argmax_dim: int, that specifies dimension for argmax transformation
+            in case of scores/probabilities in ``outputs``
+        eps: float. Epsilon to avoid zero division.
+        num_classes: int, that specifies number of classes if it known
+
+    Returns:
+        Tensor:
+
+    Examples:
+        >>> precision(
+        >>>     outputs=torch.tensor([
+        >>>         [1, 0, 0],
+        >>>         [0, 1, 0],
+        >>>         [0, 0, 1],
+        >>>     ]),
+        >>>     targets=torch.tensor([0, 1, 2]),
+        >>>     beta=1,
+        >>> )
+        tensor([1., 1., 1.])
+        >>> precision(
+        >>>     outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),
+        >>>     targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),
+        >>> )
+        tensor([0.5000, 0.5000]
+    """
+    precision_score, _, _, _, = precision_recall_fbeta_support(
+        outputs=outputs,
+        targets=targets,
+        argmax_dim=argmax_dim,
+        eps=eps,
+        num_classes=num_classes,
+    )
+    return precision_score
+
+
+__all__ = ["average_precision", "precision"]

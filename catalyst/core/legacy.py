@@ -1,4 +1,5 @@
 # flake8: noqa
+from typing import Any
 import warnings
 
 
@@ -73,6 +74,34 @@ class IRunnerLegacy:
         return self.loader_batch_step
 
     @property
+    def loader_name(self):
+        """Alias for `runner.loader_key`.
+
+        .. warning::
+            Deprecated, saved for backward compatibility.
+            Please use `runner.loader_key` instead.
+        """
+        warnings.warn(
+            "`loader_name` was deprecated, please use `loader_key` instead",
+            DeprecationWarning,
+        )
+        return self.loader_key
+
+    @property
+    def stage_name(self):
+        """Alias for `runner.stage`.
+
+        .. warning::
+            Deprecated, saved for backward compatibility.
+            Please use `runner.stage` instead.
+        """
+        warnings.warn(
+            "`stage_name` was deprecated, please use `stage` instead",
+            DeprecationWarning,
+        )
+        return self.stage
+
+    @property
     def state(self):
         """Alias for `runner`.
 
@@ -81,7 +110,7 @@ class IRunnerLegacy:
             Please use `runner` instead.
         """
         warnings.warn(
-            "`runner.state` was deprecated, " "please use `runner` instead",
+            "`runner.state` was deprecated, please use `runner` instead",
             DeprecationWarning,
         )
         return self
