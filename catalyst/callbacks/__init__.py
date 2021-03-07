@@ -6,7 +6,7 @@ from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import ICheckpointCallback, CheckpointCallback
 from catalyst.callbacks.control_flow import ControlFlowCallback
 from catalyst.callbacks.criterion import ICriterionCallback, CriterionCallback
-from catalyst.callbacks.metric import IMetricCallback, BatchMetricCallback, LoaderMetricCallback
+from catalyst.callbacks.metric import BatchMetricCallback, IMetricCallback, LoaderMetricCallback
 from catalyst.callbacks.misc import (
     TimerCallback,
     TqdmCallback,
