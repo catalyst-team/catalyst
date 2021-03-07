@@ -10,7 +10,11 @@ import optuna
 from catalyst.dl.scripts.functional import parse_args_uargs
 from catalyst.runners.config import ConfigRunner
 from catalyst.utils.distributed import get_rank
-from catalyst.utils.misc import boolean_flag, maybe_recursive_call, set_global_seed
+from catalyst.utils.misc import (
+    boolean_flag,
+    maybe_recursive_call,
+    set_global_seed,
+)
 from catalyst.utils.sys import dump_code, dump_environment, get_config_runner
 from catalyst.utils.torch import prepare_cudnn
 
@@ -122,12 +126,16 @@ def main(args, unknown_args):
     # optuna objective
     def objective(trial: optuna.trial):
         trial, trial_config = _process_trial_config(trial, config.copy())
-        runner: ConfigRunner = get_config_runner(expdir=Path(args.expdir), config=trial_config)
+        runner: ConfigRunner = get_config_runner(
+            expdir=Path(args.expdir), config=trial_config
+        )
         # @TODO: here we need better solution.
         runner._trial = trial  # noqa: WPS437
 
         if get_rank() <= 0:
-            dump_environment(logdir=runner.logdir, config=config, configs_path=args.configs)
+            dump_environment(
+                logdir=runner.logdir, config=config, configs_path=args.configs
+            )
             dump_code(expdir=args.expdir, logdir=runner.logdir)
 
         runner.run()

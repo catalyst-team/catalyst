@@ -65,7 +65,9 @@ def get_config_runner(expdir: Path, config: Dict):
 
     runner_params = config_copy.get("runner", {})
     runner_from_config = runner_params.pop("_target_", None)
-    assert runner_from_config is not None, "You should specify the ConfigRunner."
+    assert (
+        runner_from_config is not None
+    ), "You should specify the ConfigRunner."
     runner_fn = REGISTRY.get(runner_from_config)
     # assert any(
     #     x is None for x in (runner_fn, runner_from_config)
@@ -177,7 +179,10 @@ def dump_code(logdir: Union[str, Path], expdir: Union[str, Path] = None):
 
 def _decode_dict(dictionary: Dict[str, Union[bytes, str]]) -> Dict[str, str]:
     """Decode bytes values in the dictionary to UTF-8."""
-    result = {k: v.decode("UTF-8") if type(v) == bytes else v for k, v in dictionary.items()}
+    result = {
+        k: v.decode("UTF-8") if type(v) == bytes else v
+        for k, v in dictionary.items()
+    }
     return result
 
 
@@ -200,7 +205,9 @@ def _get_environment_vars() -> Dict[str, Any]:
         try:
             git_branch = (
                 subprocess.check_output(
-                    "git rev-parse --abbrev-ref HEAD".split(), shell=True, stderr=devnull,
+                    "git rev-parse --abbrev-ref HEAD".split(),
+                    shell=True,
+                    stderr=devnull,
                 )
                 .strip()
                 .decode("UTF-8")
@@ -209,7 +216,9 @@ def _get_environment_vars() -> Dict[str, Any]:
                 "git rev-parse HEAD".split(), shell=True, stderr=devnull
             )
             git_origin_commit = subprocess.check_output(
-                f"git rev-parse origin/{git_branch}".split(), shell=True, stderr=devnull,
+                f"git rev-parse origin/{git_branch}".split(),
+                shell=True,
+                stderr=devnull,
             )
 
             git = {
@@ -259,7 +268,9 @@ def _list_conda_packages() -> str:
         with open(os.devnull, "w") as devnull:
             try:
                 result = (
-                    subprocess.check_output("conda list --export".split(), stderr=devnull)
+                    subprocess.check_output(
+                        "conda list --export".split(), stderr=devnull
+                    )
                     .strip()
                     .decode("UTF-8")
                 )
@@ -282,7 +293,9 @@ def _list_conda_packages() -> str:
     return result
 
 
-def dump_environment(logdir: str, config: Any = None, configs_path: List[str] = None) -> None:
+def dump_environment(
+    logdir: str, config: Any = None, configs_path: List[str] = None
+) -> None:
     """
     Saves config, environment variables and package list in JSON into logdir.
 
@@ -292,7 +305,9 @@ def dump_environment(logdir: str, config: Any = None, configs_path: List[str] = 
         configs_path: path(s) to config
     """
     configs_path = configs_path or []
-    configs_path = [Path(path) for path in configs_path if isinstance(path, str)]
+    configs_path = [
+        Path(path) for path in configs_path if isinstance(path, str)
+    ]
     config_dir = Path(logdir) / "configs"
     config_dir.mkdir(exist_ok=True, parents=True)
 

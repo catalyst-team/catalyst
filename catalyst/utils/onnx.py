@@ -86,7 +86,9 @@ def convert_to_onnx(
     )
     if return_model:
         if not SETTINGS.onnx_required:
-            raise ImportError("To use onnx model you should install it with ``pip install onnx``")
+            raise ImportError(
+                "To use onnx model you should install it with ``pip install onnx``"
+            )
         return onnx.load(file)
 
 
@@ -114,8 +116,14 @@ def quantize_onnx_model(
         "quint8": QuantType.QUInt8,
     }
     if qtype not in type_mapping.keys():
-        raise ValueError("type should be string one of 'quint8' or 'qint8'. Got {}".format(qtype))
-    quantize_dynamic(onnx_model_path, quantized_model_path, weight_type=type_mapping[qtype])
+        raise ValueError(
+            "type should be string one of 'quint8' or 'qint8'. Got {}".format(
+                qtype
+            )
+        )
+    quantize_dynamic(
+        onnx_model_path, quantized_model_path, weight_type=type_mapping[qtype]
+    )
     if verbose:
         v_str = (
             "Model size before quantization (MB):"

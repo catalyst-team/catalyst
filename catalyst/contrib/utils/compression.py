@@ -15,7 +15,9 @@ if SETTINGS.use_lz4:
     try:
         import lz4.frame
     except ImportError as ex:
-        logger.warning("lz4 not available, to install lz4, run `pip install lz4`.")
+        logger.warning(
+            "lz4 not available, to install lz4, run `pip install lz4`."
+        )
         raise ex
 
 

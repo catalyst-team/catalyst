@@ -16,7 +16,12 @@ from catalyst.engines import DistributedDataParallelEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .misc import DummyDataset, DummyModel, LossMinimizationCallback, WorldSizeCheckCallback
+from .misc import (
+    DummyDataset,
+    DummyModel,
+    LossMinimizationCallback,
+    WorldSizeCheckCallback,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -45,7 +50,9 @@ class CustomExperiment(IRunner):
             # ),
             # "check": DeviceCheckCallback(),
             "check2": LossMinimizationCallback("loss", logger=logger),
-            "check_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
+            "check_world_size": WorldSizeCheckCallback(
+                NUM_CUDA_DEVICES, logger=logger
+            ),
         }
 
     @property
@@ -76,7 +83,10 @@ class CustomExperiment(IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
+        return {
+            "console": ConsoleLogger(),
+            "csv": CSVLogger(logdir=self._logdir),
+        }
 
     def handle_batch(self, batch):
         x, y = batch
@@ -86,7 +96,8 @@ class CustomExperiment(IRunner):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_train_with_experiment_distributed_parallel_device():
     with TemporaryDirectory() as logdir:
@@ -96,7 +107,8 @@ def test_train_with_experiment_distributed_parallel_device():
 
 @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_train_with_config_experiment_distributed_parallel_device():
     pass

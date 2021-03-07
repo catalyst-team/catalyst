@@ -101,7 +101,9 @@ class MetricAggregationCallback(Callback):
             >>>     ]
             >>> )
         """
-        super().__init__(order=CallbackOrder.metric_aggregation, node=CallbackNode.all)
+        super().__init__(
+            order=CallbackOrder.metric_aggregation, node=CallbackNode.all
+        )
 
         if prefix is None or not isinstance(prefix, str):
             raise ValueError("prefix must be str")
@@ -121,7 +123,8 @@ class MetricAggregationCallback(Callback):
                 )
         elif not callable(mode):
             raise NotImplementedError(
-                "mode must be `sum`, `mean` " "or `weighted_sum` or `weighted_mean` or be Callable"
+                "mode must be `sum`, `mean` "
+                "or `weighted_sum` or `weighted_mean` or be Callable"
             )
 
         assert scope in ("batch", "loader")
@@ -136,19 +139,28 @@ class MetricAggregationCallback(Callback):
         self.multiplier = multiplier
 
         if mode in ("sum", "weighted_sum", "weighted_mean"):
-            self.aggregation_fn = lambda x: torch.sum(torch.stack(x)) * multiplier
+            self.aggregation_fn = (
+                lambda x: torch.sum(torch.stack(x)) * multiplier
+            )
             if mode == "weighted_mean":
                 weights_sum = sum(metrics.items())
-                self.metrics = {key: weight / weights_sum for key, weight in metrics.items()}
+                self.metrics = {
+                    key: weight / weights_sum
+                    for key, weight in metrics.items()
+                }
         elif mode == "mean":
-            self.aggregation_fn = lambda x: torch.mean(torch.stack(x)) * multiplier
+            self.aggregation_fn = (
+                lambda x: torch.mean(torch.stack(x)) * multiplier
+            )
         elif callable(mode):
             self.aggregation_fn = mode
 
     def _preprocess(self, metrics: Any) -> List[float]:
         if self.metrics is not None:
             if self.mode == "weighted_sum":
-                result = [metrics[key] * value for key, value in self.metrics.items()]
+                result = [
+                    metrics[key] * value for key, value in self.metrics.items()
+                ]
             else:
                 result = [metrics[key] for key in self.metrics]
         else:

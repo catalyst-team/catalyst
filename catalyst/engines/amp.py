@@ -30,7 +30,11 @@ class AMPEngine(DeviceEngine):
         self.scaler.update()
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         """@TODO: docs."""
         # TODO: how could we do better?)

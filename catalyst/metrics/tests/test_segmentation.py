@@ -133,7 +133,9 @@ def test_trevsky_metric(
     total_answer: Dict[str, float],
 ):
     """Docs."""
-    metric = TrevskyMetric(alpha=alpha, weights=weights, class_names=class_names)
+    metric = TrevskyMetric(
+        alpha=alpha, weights=weights, class_names=class_names
+    )
     batch_score = metric.update_key_value(outputs, targets)
     total_score = metric.compute_key_value()
     for key, value in batch_answer.items():

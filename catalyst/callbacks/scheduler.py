@@ -7,7 +7,10 @@ from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.typing import Optimizer
 from catalyst.utils.misc import get_attr
-from catalyst.utils.torch import get_optimizer_momentum, get_optimizer_momentum_list
+from catalyst.utils.torch import (
+    get_optimizer_momentum,
+    get_optimizer_momentum_list,
+)
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -130,12 +133,18 @@ class SchedulerCallback(ISchedulerCallback):
         else:
             scheduler.step()
 
-        lr_list = [param_group["lr"] for param_group in scheduler.optimizer.param_groups]
+        lr_list = [
+            param_group["lr"]
+            for param_group in scheduler.optimizer.param_groups
+        ]
         momentum_list = get_optimizer_momentum_list(scheduler.optimizer)
         return lr_list, momentum_list
 
     def _update_lr_and_momentum_in_metrics_dict(
-        self, metrics_dict: dict, lr_list: List[float], momentum_list: List[Union[float, None]],
+        self,
+        metrics_dict: dict,
+        lr_list: List[float],
+        momentum_list: List[Union[float, None]],
     ):
         """Update learning rate and momentum in metrics_dict
         (consider only 0-th param group)
@@ -149,12 +158,18 @@ class SchedulerCallback(ISchedulerCallback):
         lr = lr_list[0]
         momentum = momentum_list[0]
 
-        lr_key = f"lr/{self.scheduler_key}" if self.scheduler_key is not None else "lr"
+        lr_key = (
+            f"lr/{self.scheduler_key}"
+            if self.scheduler_key is not None
+            else "lr"
+        )
         metrics_dict[lr_key] = lr
 
         if momentum is not None:
             momentum_key = (
-                f"momentum/{self.scheduler_key}" if self.scheduler_key is not None else "momentum"
+                f"momentum/{self.scheduler_key}"
+                if self.scheduler_key is not None
+                else "momentum"
             )
             metrics_dict[momentum_key] = momentum
 
@@ -165,7 +180,9 @@ class SchedulerCallback(ISchedulerCallback):
             runner: current runner
         """
         lr_list, momentum_list = self._scheduler_step(scheduler=self.scheduler)
-        self._update_lr_and_momentum_in_metrics_dict(runner.batch_metrics, lr_list, momentum_list)
+        self._update_lr_and_momentum_in_metrics_dict(
+            runner.batch_metrics, lr_list, momentum_list
+        )
 
     def make_epoch_step(self, runner: "IRunner") -> None:
         """Perform scheduler step and update epoch metrics
@@ -174,7 +191,9 @@ class SchedulerCallback(ISchedulerCallback):
             runner: current runner
         """
         if self._use_metric_reduction:
-            reduced_metric = runner.epoch_metrics[self.loader_key][self.metric_key]
+            reduced_metric = runner.epoch_metrics[self.loader_key][
+                self.metric_key
+            ]
         else:
             reduced_metric = None
         lr_list, momentum_list = self._scheduler_step(
@@ -191,11 +210,17 @@ class SchedulerCallback(ISchedulerCallback):
         Args:
             runner: current runner
         """
-        self.scheduler = get_attr(runner, key="scheduler", inner_key=self.scheduler_key)
+        self.scheduler = get_attr(
+            runner, key="scheduler", inner_key=self.scheduler_key
+        )
         assert self.scheduler is not None
 
-        if isinstance(self.scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
-            assert self.loader_key is not None and self.metric_key is not None, (
+        if isinstance(
+            self.scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau
+        ):
+            assert (
+                self.loader_key is not None and self.metric_key is not None
+            ), (
                 "For `ReduceLROnPlateau` scheduler `SchedulerCallback` "
                 "required both `loader_key` and `metric_key` specified"
             )
@@ -206,7 +231,10 @@ class SchedulerCallback(ISchedulerCallback):
             else:
                 self.mode = "epoch"
 
-        if isinstance(self.scheduler, OneCycleLRWithWarmup) and self.mode == "batch":
+        if (
+            isinstance(self.scheduler, OneCycleLRWithWarmup)
+            and self.mode == "batch"
+        ):
             self.scheduler.reset()
         assert self.mode is not None
 

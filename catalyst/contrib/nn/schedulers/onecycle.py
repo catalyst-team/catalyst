@@ -69,9 +69,13 @@ class OneCycleLRWithWarmup(BatchScheduler):
         if init_momentum is None:
             init_momentum = get_optimizer_momentum(optimizer)
 
-        warmup_steps = self._calculate_warmup(num_steps, warmup_steps, warmup_fraction)
+        warmup_steps = self._calculate_warmup(
+            num_steps, warmup_steps, warmup_fraction
+        )
 
-        decay_steps = self._calculate_decay(num_steps, decay_steps, decay_fraction)
+        decay_steps = self._calculate_decay(
+            num_steps, decay_steps, decay_fraction
+        )
 
         lr_annealing_steps = num_steps - (warmup_steps + decay_steps)
 
@@ -88,15 +92,20 @@ class OneCycleLRWithWarmup(BatchScheduler):
             final_momentum,
         )
 
-        self._calculate_lr_momentum(warmup_steps, lr_annealing_steps, decay_steps)
+        self._calculate_lr_momentum(
+            warmup_steps, lr_annealing_steps, decay_steps
+        )
 
         self.total_groups = len(optimizer.param_groups)
         super().__init__(optimizer)
 
-    def _calculate_warmup(self, num_steps: int, warmup_steps: int, warmup_fraction: float):
+    def _calculate_warmup(
+        self, num_steps: int, warmup_steps: int, warmup_fraction: float
+    ):
         if warmup_fraction is not None:
             assert 0.0 <= warmup_fraction < 1.0 and warmup_steps == 0, (
-                "You should pass either warmup_steps or " "warmup_fraction in range [0; 1) "
+                "You should pass either warmup_steps or "
+                "warmup_fraction in range [0; 1) "
             )
             warmup_steps = int(num_steps * warmup_fraction)
 
@@ -104,10 +113,13 @@ class OneCycleLRWithWarmup(BatchScheduler):
         self.has_warmup = warmup_steps != 0
         return self.warmup_steps
 
-    def _calculate_decay(self, num_steps: int, decay_steps: int, decay_fraction: float):
+    def _calculate_decay(
+        self, num_steps: int, decay_steps: int, decay_fraction: float
+    ):
         if decay_fraction is not None:
             assert 0.0 <= decay_fraction < 1.0 and decay_steps == 0, (
-                "You should pass either decay_steps or " "decay_fraction in range [0; 1) "
+                "You should pass either decay_steps or "
+                "decay_fraction in range [0; 1) "
             )
             decay_steps = int(num_steps * decay_fraction)
 
@@ -115,21 +127,36 @@ class OneCycleLRWithWarmup(BatchScheduler):
         self.has_decay = decay_steps != 0
         return self.decay_steps
 
-    def _calculate_lr_momentum(self, warmup_steps: int, lr_annealing_steps: int, decay_steps: int):
+    def _calculate_lr_momentum(
+        self, warmup_steps: int, lr_annealing_steps: int, decay_steps: int
+    ):
         init_lr, max_lr, min_lr, final_lr = self.lr_range
-        init_momentum, min_momentum, max_momentum, final_momentum = self.momentum_range
+        (
+            init_momentum,
+            min_momentum,
+            max_momentum,
+            final_momentum,
+        ) = self.momentum_range
 
         lr_warmup = np.linspace(init_lr, max_lr, warmup_steps)
         lr_annealing = np.linspace(max_lr, min_lr, lr_annealing_steps)
         lr_decay = np.linspace(min_lr, final_lr, decay_steps)
 
-        self.learning_rates = np.concatenate((lr_warmup, lr_annealing, lr_decay))
+        self.learning_rates = np.concatenate(
+            (lr_warmup, lr_annealing, lr_decay)
+        )
 
         momentum_decay = np.linspace(init_momentum, min_momentum, warmup_steps)
-        momentum_annealing = np.linspace(min_momentum, max_momentum, lr_annealing_steps)
-        momentum_warmup = np.linspace(max_momentum, final_momentum, decay_steps)
+        momentum_annealing = np.linspace(
+            min_momentum, max_momentum, lr_annealing_steps
+        )
+        momentum_warmup = np.linspace(
+            max_momentum, final_momentum, decay_steps
+        )
 
-        self.momentums = np.concatenate((momentum_decay, momentum_annealing, momentum_warmup))
+        self.momentums = np.concatenate(
+            (momentum_decay, momentum_annealing, momentum_warmup)
+        )
 
     def _get_steps_lr_momentum(self, step_num: int):
         if step_num < len(self.learning_rates):
@@ -165,10 +192,14 @@ class OneCycleLRWithWarmup(BatchScheduler):
 
     def reset(self):
         """@TODO: Docs. Contribution is welcome."""
-        self._calculate_lr_momentum(self.warmup_steps, self.lr_annealing_steps, self.decay_steps)
+        self._calculate_lr_momentum(
+            self.warmup_steps, self.lr_annealing_steps, self.decay_steps
+        )
         self.last_epoch = 0
 
-    def recalculate(self, loader_batch_len: int, current_batch_step: int) -> None:
+    def recalculate(
+        self, loader_batch_len: int, current_batch_step: int
+    ) -> None:
         """Recalculates total num_steps for ``batch`` mode.
 
         Args:
@@ -179,7 +210,9 @@ class OneCycleLRWithWarmup(BatchScheduler):
         lr_annealing_steps = self.lr_annealing_steps * loader_batch_len
         decay_steps = self.decay_steps * loader_batch_len
 
-        self._calculate_lr_momentum(warmup_steps, lr_annealing_steps, decay_steps)
+        self._calculate_lr_momentum(
+            warmup_steps, lr_annealing_steps, decay_steps
+        )
         self.last_epoch = current_batch_step * loader_batch_len
 
 

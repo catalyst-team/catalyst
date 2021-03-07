@@ -41,7 +41,9 @@ class IRunnerMixin(IRunner):
             if mode == "train":
                 dataset = {
                     "dataset": dataset,
-                    "sampler": BalanceClassSampler(labels=dataset.targets, mode=320),
+                    "sampler": BalanceClassSampler(
+                        labels=dataset.targets, mode=320
+                    ),
                 }
             datasets[mode] = dataset
 

@@ -339,7 +339,9 @@ class IRunner(ICallback, ILogger, ABC):
         """
         return None  # noqa: WPS324
 
-    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Optional[Scheduler]:
+    def get_scheduler(
+        self, stage: str, optimizer: Optimizer
+    ) -> Optional[Scheduler]:
         """Returns the scheduler for a given stage and optimizer.
 
         Example::
@@ -366,12 +368,16 @@ class IRunner(ICallback, ILogger, ABC):
 
     def _get_optimizer(self) -> Optimizer:
         assert self.model is not None, "You need to setup model first"
-        self.optimizer = self.get_optimizer(stage=self.stage_key, model=self.model)
+        self.optimizer = self.get_optimizer(
+            stage=self.stage_key, model=self.model
+        )
         return self.optimizer
 
     def _get_scheduler(self) -> Scheduler:
         # assert self.optimizer is not None, "You need to setup optimizer first"
-        self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
+        self.scheduler = self.get_scheduler(
+            stage=self.stage_key, optimizer=self.optimizer
+        )
         return self.scheduler
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
@@ -539,7 +545,9 @@ class IRunner(ICallback, ILogger, ABC):
         assert self.loaders is not None
         for loader_key, loader in self.loaders.items():
             if len(loader) == 0:
-                raise RunnerException(f"DataLoader with name {loader_key} is empty.")
+                raise RunnerException(
+                    f"DataLoader with name {loader_key} is empty."
+                )
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
 
     def on_loader_start(self, runner: "IRunner"):
@@ -548,7 +556,11 @@ class IRunner(ICallback, ILogger, ABC):
         self.is_train_loader: bool = self.loader_key.startswith("train")
         self.is_valid_loader: bool = self.loader_key.startswith("valid")
         self.is_infer_loader: bool = self.loader_key.startswith("infer")
-        assert self.is_train_loader or self.is_valid_loader or self.is_infer_loader
+        assert (
+            self.is_train_loader
+            or self.is_valid_loader
+            or self.is_infer_loader
+        )
         self.loader_batch_size: int = self.loader.batch_size
         self.loader_batch_len: int = len(self.loader)
         self.loader_sample_len: int = len(self.loader.dataset)
@@ -557,7 +569,9 @@ class IRunner(ICallback, ILogger, ABC):
         self.loader_metrics: Dict = defaultdict(None)
 
         if self.loader_batch_len == 0:
-            raise NotImplementedError(f"DataLoader with name {self.loader_key} is empty.")
+            raise NotImplementedError(
+                f"DataLoader with name {self.loader_key} is empty."
+            )
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
 
         maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
@@ -690,7 +704,10 @@ class IRunner(ICallback, ILogger, ABC):
                 # ddp-device branch
                 world_size = self.engine.world_size
                 torch.multiprocessing.spawn(
-                    self._run_stage, args=(world_size,), nprocs=world_size, join=True,
+                    self._run_stage,
+                    args=(world_size,),
+                    nprocs=world_size,
+                    join=True,
                 )
                 # raise NotImplementedError()
         self._run_event("on_experiment_end")

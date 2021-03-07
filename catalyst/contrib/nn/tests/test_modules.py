@@ -1,13 +1,17 @@
 # flake8: noqa
+import math
+
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from catalyst.contrib.nn.modules import (
     AdaCos,
     ArcFace,
     CosFace,
     CurricularFace,
+    GeM2d,
     SoftMax,
     SubCenterArcFace,
 )
@@ -25,7 +29,9 @@ def softmax(x: np.ndarray) -> np.ndarray:
     return e_x / e_x.sum(1)[:, np.newaxis]  # for each row
 
 
-def cross_entropy(preds: np.ndarray, targs: np.ndarray, axis: int = 1) -> float:
+def cross_entropy(
+    preds: np.ndarray, targs: np.ndarray, axis: int = 1
+) -> float:
     return -(targs * np.log(softmax(preds))).sum(axis)
 
 
@@ -137,7 +143,8 @@ def test_arcface_with_cross_entropy_loss():
     expected_loss = cross_entropy(feats, mask, 1)
     actual = (
         loss_fn(
-            layer(torch.from_numpy(features), torch.LongTensor(target)), torch.LongTensor(target),
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
         )
         .detach()
         .numpy()
@@ -149,7 +156,8 @@ def test_arcface_with_cross_entropy_loss():
     expected_loss = cross_entropy(feats, mask, 1)
     actual = (
         loss_fn(
-            layer(torch.from_numpy(features), torch.LongTensor(target)), torch.LongTensor(target),
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
         )
         .detach()
         .numpy()
@@ -161,7 +169,8 @@ def test_arcface_with_cross_entropy_loss():
     expected_loss = cross_entropy(feats, mask, 1)
     actual = (
         loss_fn(
-            layer(torch.from_numpy(features), torch.LongTensor(target)), torch.LongTensor(target),
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
         )
         .detach()
         .numpy()
@@ -210,7 +219,8 @@ def test_cosface_with_cross_entropy_loss():
     expected_loss = cross_entropy(feats, mask, 1)
     actual = (
         loss_fn(
-            layer(torch.from_numpy(features), torch.LongTensor(target)), torch.LongTensor(target),
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
         )
         .detach()
         .numpy()
@@ -222,7 +232,8 @@ def test_cosface_with_cross_entropy_loss():
     expected_loss = cross_entropy(feats, mask, 1)
     actual = (
         loss_fn(
-            layer(torch.from_numpy(features), torch.LongTensor(target)), torch.LongTensor(target),
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
         )
         .detach()
         .numpy()
@@ -234,7 +245,8 @@ def test_cosface_with_cross_entropy_loss():
     expected_loss = cross_entropy(feats, mask, 1)
     actual = (
         loss_fn(
-            layer(torch.from_numpy(features), torch.LongTensor(target)), torch.LongTensor(target),
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
         )
         .detach()
         .numpy()
@@ -282,7 +294,9 @@ def test_curricularface_with_cross_entropy_loss():
     sine = np.sqrt(1.0 - np.power(logit, 2))
     cos_theta_m = logit * np.cos(m) - sine * np.sin(m)
 
-    final_logit = np.where(logit > np.cos(np.pi - m), cos_theta_m, logit - np.sin(np.pi - m) * m)
+    final_logit = np.where(
+        logit > np.cos(np.pi - m), cos_theta_m, logit - np.sin(np.pi - m) * m
+    )
 
     cos_mask = cosine > cos_theta_m
     hard = cosine[cos_mask]
@@ -297,7 +311,8 @@ def test_curricularface_with_cross_entropy_loss():
     expected_loss = cross_entropy(cosine, mask, 1)
     actual = (
         loss_fn(
-            layer(torch.from_numpy(features), torch.LongTensor(target)), torch.LongTensor(target),
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
         )
         .detach()
         .numpy()
@@ -313,7 +328,8 @@ def test_curricularface_with_cross_entropy_loss():
     expected_loss = cross_entropy(cosine, mask, 1)
     actual = (
         loss_fn(
-            layer(torch.from_numpy(features), torch.LongTensor(target)), torch.LongTensor(target),
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
         )
         .detach()
         .numpy()
@@ -329,9 +345,64 @@ def test_curricularface_with_cross_entropy_loss():
     expected_loss = cross_entropy(cosine, mask, 1)
     actual = (
         loss_fn(
-            layer(torch.from_numpy(features), torch.LongTensor(target)), torch.LongTensor(target),
+            layer(torch.from_numpy(features), torch.LongTensor(target)),
+            torch.LongTensor(target),
         )
         .detach()
         .numpy()
     )
     assert np.isclose(expected_loss.sum(), actual, atol=EPS)
+
+
+def test_gem():
+    bs = 4
+    output_conv_filters = 1280
+    conv_output = torch.randn(bs, output_conv_filters, 8, 8)
+    eps = 1e-7
+
+    h, w = conv_output.shape[2:]
+
+    # p_trainable is False with constant p
+    p = 2.2
+    op = conv_output.clamp(min=eps).pow(p)
+    op = F.avg_pool2d(op, kernel_size=(h, w)).pow(1.0 / p)
+
+    gem = GeM2d(p=p, p_trainable=False)
+    gem_op = gem(conv_output)
+
+    assert gem_op.shape == (bs, output_conv_filters, 1, 1)
+    assert torch.all(op.eq(gem_op))
+
+    # p_trainable is True with constant p
+    p = nn.Parameter(torch.ones(1) * p)
+    op = conv_output.clamp(min=eps).pow(p)
+    op = F.avg_pool2d(op, kernel_size=(h, w)).pow(1.0 / p)
+
+    gem = GeM2d(p=p, p_trainable=True)
+    gem_op = gem(conv_output)
+
+    assert gem_op.shape == (bs, output_conv_filters, 1, 1)
+    assert torch.all(op.eq(gem_op))
+
+    # p-> inf so we need max pooled features , p_trainable is False
+    p = math.inf
+
+    op = F.max_pool2d(conv_output, kernel_size=(h, w))
+
+    gem = GeM2d(p=math.inf, p_trainable=False)
+    gem_op = gem(conv_output)
+
+    assert gem_op.shape == (bs, output_conv_filters, 1, 1)
+    assert torch.all(op.eq(gem_op))
+
+    # p->inf and p_trainable is True
+
+    p = nn.Parameter(torch.ones(1) * p)
+
+    op = F.max_pool2d(conv_output, kernel_size=(h, w))
+
+    gem = GeM2d(p=math.inf, p_trainable=True)
+    gem_op = gem(conv_output)
+
+    assert gem_op.shape == (bs, output_conv_filters, 1, 1)
+    assert torch.all(op.eq(gem_op))

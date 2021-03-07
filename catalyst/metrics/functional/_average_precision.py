@@ -9,7 +9,9 @@ from catalyst.metrics.functional._misc import (
 
 
 def binary_average_precision(
-    outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None,
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    weights: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
     """Computes the average precision.
 
@@ -67,12 +69,16 @@ def binary_average_precision(
         precision = tp.div(rg)
 
         # compute average precision
-        ap[class_i] = precision[correct.bool()].sum() / max(float(correct.sum()), 1)
+        ap[class_i] = precision[correct.bool()].sum() / max(
+            float(correct.sum()), 1
+        )
 
     return ap
 
 
-def average_precision(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+def average_precision(
+    outputs: torch.Tensor, targets: torch.Tensor
+) -> torch.Tensor:
     """
     Calculate the Average Precision for RecSys.
     The precision metric summarizes the fraction of relevant items
@@ -127,12 +133,14 @@ def average_precision(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Ten
     precisions = torch.zeros_like(targets_sort_by_outputs)
 
     for index in range(outputs.size(1)):
-        precisions[:, index] = torch.sum(targets_sort_by_outputs[:, : (index + 1)], dim=1) / float(
-            index + 1
-        )
+        precisions[:, index] = torch.sum(
+            targets_sort_by_outputs[:, : (index + 1)], dim=1
+        ) / float(index + 1)
 
     only_relevant_precision = precisions * targets_sort_by_outputs
-    ap_score = only_relevant_precision.sum(dim=1) / ((only_relevant_precision != 0).sum(dim=1))
+    ap_score = only_relevant_precision.sum(dim=1) / (
+        (only_relevant_precision != 0).sum(dim=1)
+    )
     ap_score[torch.isnan(ap_score)] = 0
     return ap_score
 
@@ -189,4 +197,8 @@ def mean_average_precision(
     return results
 
 
-__all__ = ["binary_average_precision", "mean_average_precision", "average_precision"]
+__all__ = [
+    "binary_average_precision",
+    "mean_average_precision",
+    "average_precision",
+]

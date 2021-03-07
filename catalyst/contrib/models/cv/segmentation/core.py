@@ -8,7 +8,11 @@ from torch import nn
 
 from catalyst.contrib.models.cv.segmentation.bridge import BridgeSpec
 from catalyst.contrib.models.cv.segmentation.decoder import DecoderSpec
-from catalyst.contrib.models.cv.segmentation.encoder import EncoderSpec, ResnetEncoder, UnetEncoder
+from catalyst.contrib.models.cv.segmentation.encoder import (
+    EncoderSpec,
+    ResnetEncoder,
+    UnetEncoder,
+)
 from catalyst.contrib.models.cv.segmentation.head import HeadSpec
 
 
@@ -79,7 +83,11 @@ class UnetSpec(UnetMetaSpec):
         )
 
         super().__init__(
-            encoder=encoder, bridge=bridge, decoder=decoder, head=head, state_dict=state_dict,
+            encoder=encoder,
+            bridge=bridge,
+            decoder=decoder,
+            head=head,
+            state_dict=state_dict,
         )
 
     def _get_components(
@@ -113,14 +121,20 @@ class ResnetUnetSpec(UnetMetaSpec):
         decoder_params = decoder_params or {}
         head_params = head_params or {}
 
-        encoder = ResnetEncoder(arch=arch, pretrained=pretrained, **encoder_params)
+        encoder = ResnetEncoder(
+            arch=arch, pretrained=pretrained, **encoder_params
+        )
 
         encoder, bridge, decoder, head = self._get_components(
             encoder, num_classes, bridge_params, decoder_params, head_params
         )
 
         super().__init__(
-            encoder=encoder, bridge=bridge, decoder=decoder, head=head, state_dict=state_dict,
+            encoder=encoder,
+            bridge=bridge,
+            decoder=decoder,
+            head=head,
+            state_dict=state_dict,
         )
 
     def _get_components(

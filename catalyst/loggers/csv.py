@@ -20,14 +20,20 @@ class CSVLogger(ILogger):
         log_line_header = "step,"
         for metric in sorted(metrics.keys()):
             log_line_header += metric + ","
-        log_line_header = log_line_header[:-1] + "\n"  # replace last "," with new line
+        log_line_header = (
+            log_line_header[:-1] + "\n"
+        )  # replace last "," with new line
         self.loggers[loader_key].write(log_line_header)
 
-    def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str):
+    def _log_metrics(
+        self, metrics: Dict[str, float], step: int, loader_key: str
+    ):
         log_line_csv = f"{step},"
         for metric in sorted(metrics.keys()):
             log_line_csv += str(metrics[metric]) + ","
-        log_line_csv = log_line_csv[:-1] + "\n"  # replace last "," with new line
+        log_line_csv = (
+            log_line_csv[:-1] + "\n"
+        )  # replace last "," with new line
         self.loggers[loader_key].write(log_line_csv)
 
     def log_metrics(
@@ -59,9 +65,13 @@ class CSVLogger(ILogger):
                     self.loggers[loader_key] = open(
                         os.path.join(self.logdir, f"{loader_key}.csv"), "a+"
                     )
-                    self._make_header(metrics=per_loader_metrics, loader_key=loader_key)
+                    self._make_header(
+                        metrics=per_loader_metrics, loader_key=loader_key
+                    )
                 self._log_metrics(
-                    metrics=per_loader_metrics, step=stage_epoch_step, loader_key=loader_key,
+                    metrics=per_loader_metrics,
+                    step=stage_epoch_step,
+                    loader_key=loader_key,
                 )
 
     def log_hparams(
@@ -72,7 +82,9 @@ class CSVLogger(ILogger):
         experiment_key: str = None,
     ) -> None:
         """@TODO: docs."""
-        save_config(config=hparams, path=os.path.join(self.logdir, "hparams.yml"))
+        save_config(
+            config=hparams, path=os.path.join(self.logdir, "hparams.yml")
+        )
 
     def flush_log(self) -> None:
         """@TODO: docs."""

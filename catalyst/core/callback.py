@@ -216,7 +216,10 @@ class Callback(ICallback):
     """
 
     def __init__(
-        self, order: int, node: int = CallbackNode.all, scope: int = CallbackScope.stage,
+        self,
+        order: int,
+        node: int = CallbackNode.all,
+        scope: int = CallbackScope.stage,
     ):
         """Callback initializer.
 
@@ -242,9 +245,13 @@ class CallbackWrapper(Callback):
                 default ``True``
         """
         if base_callback is None or not isinstance(base_callback, Callback):
-            raise ValueError(f"Expected callback but got - {type(base_callback)}!")
+            raise ValueError(
+                f"Expected callback but got - {type(base_callback)}!"
+            )
         super().__init__(
-            order=base_callback.order, node=base_callback.node, scope=base_callback.scope,
+            order=base_callback.order,
+            node=base_callback.node,
+            scope=base_callback.scope,
         )
         self.callback = base_callback
         self._is_enabled = enable_callback

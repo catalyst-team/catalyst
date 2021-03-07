@@ -11,7 +11,9 @@ def test_patience1():
     )
     runner = MagicMock()
     type(runner).stage_key = PropertyMock(return_value="training")
-    type(runner).epoch_metrics = PropertyMock(return_value={"valid": {"loss": 0.001}})
+    type(runner).epoch_metrics = PropertyMock(
+        return_value={"valid": {"loss": 0.001}}
+    )
     stop_mock = PropertyMock(return_value=False)
     type(runner).need_early_stop = stop_mock
 

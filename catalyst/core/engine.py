@@ -53,7 +53,11 @@ class IEngine(ABC):
 
     @abstractmethod
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         """@TODO: docs"""
         pass
@@ -81,7 +85,12 @@ class IEngine(ABC):
 
     @abstractmethod
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> Dict:
         """@TODO: docs"""
         pass

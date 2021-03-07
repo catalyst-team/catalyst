@@ -19,9 +19,15 @@ def build_args(parser):
         modified parser
     """
     parser.add_argument(
-        "--in-csv", type=Path, dest="in_csv", help="Path to the csv to split", required=True,
+        "--in-csv",
+        type=Path,
+        dest="in_csv",
+        help="Path to the csv to split",
+        required=True,
     )
-    parser.add_argument("-n", "--num-folds", type=int, default=5, help="Number of result folds")
+    parser.add_argument(
+        "-n", "--num-folds", type=int, default=5, help="Number of result folds"
+    )
     parser.add_argument(
         "-t",
         "--train-folds",
@@ -48,11 +54,17 @@ def build_args(parser):
     )
 
     parser.add_argument(
-        "--out-csv", type=str, help="Output CSV path for train and valid parts", required=True,
+        "--out-csv",
+        type=str,
+        help="Output CSV path for train and valid parts",
+        required=True,
     )
 
     parser.add_argument(
-        "--tag2class", type=str, default=None, help="Path to YAML or JSON of label mappings",
+        "--tag2class",
+        type=str,
+        default=None,
+        help="Path to YAML or JSON of label mappings",
     )
     parser.add_argument(
         "--tag-column",
@@ -62,11 +74,18 @@ def build_args(parser):
         help="Column of labels (works in pair with `--tag2class` flag)",
     )
     parser.add_argument(
-        "--class-column", type=str, default=None, dest="class_column", help="Column of classes",
+        "--class-column",
+        type=str,
+        default=None,
+        dest="class_column",
+        help="Column of classes",
     )
 
     parser.add_argument(
-        "--seed", type=int, default=42, help="Random seed for split folds",  # noqa: WPS432
+        "--seed",
+        type=int,
+        default=42,
+        help="Random seed for split folds",  # noqa: WPS432
     )
 
     return parser
@@ -84,11 +103,25 @@ def main(args, uargs=None):
     """Run the ``catalyst-contrib split-dataframe`` script."""
     dataframe = pd.read_csv(args.in_csv)
 
-    train_folds = folds_to_list(args.train_folds) if args.train_folds is not None else None
-    valid_folds = folds_to_list(args.valid_folds) if args.valid_folds is not None else None
-    infer_folds = folds_to_list(args.infer_folds) if args.infer_folds is not None else None
+    train_folds = (
+        folds_to_list(args.train_folds)
+        if args.train_folds is not None
+        else None
+    )
+    valid_folds = (
+        folds_to_list(args.valid_folds)
+        if args.valid_folds is not None
+        else None
+    )
+    infer_folds = (
+        folds_to_list(args.infer_folds)
+        if args.infer_folds is not None
+        else None
+    )
 
-    tag2class = json.load(open(args.tag2class)) if args.tag2class is not None else None
+    tag2class = (
+        json.load(open(args.tag2class)) if args.tag2class is not None else None
+    )
 
     df_all, train, valid, infer = split_dataframe(
         dataframe,

@@ -72,15 +72,22 @@ class OptimizerCallback(IOptimizerCallback):
             self._prefix_momentum = "momentum"
 
     def _get_lr_momentum_stats(self) -> Dict:
-        lr_list = [param_group["lr"] for param_group in self.optimizer.param_groups]
+        lr_list = [
+            param_group["lr"] for param_group in self.optimizer.param_groups
+        ]
         momentum_list = get_optimizer_momentum_list(self.optimizer)
-        stats = {self._prefix_lr: lr_list[0], self._prefix_momentum: momentum_list[0]}
+        stats = {
+            self._prefix_lr: lr_list[0],
+            self._prefix_momentum: momentum_list[0],
+        }
         return stats
 
     def on_stage_start(self, runner: "IRunner") -> None:
         """Event handler."""
         self.model = get_attr(runner, key="model", inner_key=self.model_key)
-        self.optimizer = get_attr(runner, key="optimizer", inner_key=self.optimizer_key)
+        self.optimizer = get_attr(
+            runner, key="optimizer", inner_key=self.optimizer_key
+        )
         assert self.model is not None
         assert self.optimizer is not None
 
@@ -88,7 +95,9 @@ class OptimizerCallback(IOptimizerCallback):
         """Event handler."""
         if runner.is_train_loader:
             self._accumulation_counter += 1
-            need_gradient_step = self._accumulation_counter % self.accumulation_steps == 0
+            need_gradient_step = (
+                self._accumulation_counter % self.accumulation_steps == 0
+            )
 
             loss = runner.batch_metrics[self.metric_key]
             runner.engine.backward_loss(loss, self.model, self.optimizer)

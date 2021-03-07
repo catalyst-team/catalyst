@@ -20,7 +20,9 @@ class RAdam(Optimizer):
         https://arxiv.org/abs/1908.03265
     """
 
-    def __init__(self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0):
+    def __init__(
+        self, params, lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=0
+    ):
         """@TODO: Docs. Contribution is welcome."""
         defaults = {
             "lr": lr,
@@ -59,7 +61,9 @@ class RAdam(Optimizer):
                     continue
                 grad = p.grad.data.float()
                 if grad.is_sparse:
-                    raise RuntimeError("RAdam does not support sparse gradients")
+                    raise RuntimeError(
+                        "RAdam does not support sparse gradients"
+                    )
 
                 p_data_fp32 = p.data.float()
 
@@ -71,7 +75,9 @@ class RAdam(Optimizer):
                     state["exp_avg_sq"] = torch.zeros_like(p_data_fp32)
                 else:
                     state["exp_avg"] = state["exp_avg"].type_as(p_data_fp32)
-                    state["exp_avg_sq"] = state["exp_avg_sq"].type_as(p_data_fp32)
+                    state["exp_avg_sq"] = state["exp_avg_sq"].type_as(
+                        p_data_fp32
+                    )
 
                 exp_avg, exp_avg_sq = state["exp_avg"], state["exp_avg_sq"]
                 beta1, beta2 = group["betas"]
@@ -87,7 +93,9 @@ class RAdam(Optimizer):
                     buffered[0] = state["step"]
                     beta2_t = beta2 ** state["step"]
                     n_sma_max = 2 / (1 - beta2) - 1
-                    n_sma = n_sma_max - 2 * state["step"] * beta2_t / (1 - beta2_t)
+                    n_sma = n_sma_max - 2 * state["step"] * beta2_t / (
+                        1 - beta2_t
+                    )
                     buffered[1] = n_sma
 
                     # more conservative since it's an approximated value
@@ -110,7 +118,9 @@ class RAdam(Optimizer):
                     buffered[2] = step_size
 
                 if group["weight_decay"] != 0:
-                    p_data_fp32.add_(-group["weight_decay"] * group["lr"], p_data_fp32)
+                    p_data_fp32.add_(
+                        -group["weight_decay"] * group["lr"], p_data_fp32
+                    )
 
                 # more conservative since it's an approximated value
                 if n_sma >= 5:
