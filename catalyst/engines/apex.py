@@ -301,10 +301,6 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         # rank=None,
         # world_size=None,
     ):
-        # self._rank = rank
-        # self._world_size = world_size
-        self.setup_process()
-
         model = model_fn()
         model = self.sync_device(model)
 

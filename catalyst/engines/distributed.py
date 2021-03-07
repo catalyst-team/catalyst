@@ -57,8 +57,10 @@ class DistributedDataParallelEngine(IEngine):
     def is_master_process(self) -> bool:
         return self._rank == 0
 
-    def setup_process(self):
+    def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes."""
+        self._rank = rank
+        self._world_size = world_size
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
         dist.init_process_group(self.backend, rank=self.rank, world_size=self.world_size)
@@ -95,21 +97,21 @@ class DistributedDataParallelEngine(IEngine):
         return tensor_or_module
 
     # @TODO: add all_gather
-    def sync_tensor(self, tensor: torch.Tensor, sync_type="mean"):
+    def sync_tensor(self, tensor: torch.Tensor, mode: str):
         """Synchronize tensor.
 
         Args:
-            tensor (torch.Tensor): tensor to sync across the processes.
-            sync_type (str): tensor synchronization type,
+            tensor: tensor to sync across the processes.
+            mode: tensor synchronization type,
                 should be one of 'sum' or 'mean'.
                 Default is 'mean'.
 
         Returns:
             torch.Tensor with synchronized values.
         """
-        if sync_type not in {"sum", "mean"}:
-            raise ValueError(f"Unknown sync_type '{sync_type}'")
-        if sync_type == "sum":
+        if mode not in {"sum", "mean"}:
+            raise ValueError(f"Unknown sync_type '{mode}'")
+        if mode == "sum":
             return sum_reduce(tensor)
         else:
             return mean_reduce(tensor, self.world_size)

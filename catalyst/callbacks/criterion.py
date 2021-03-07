@@ -44,25 +44,18 @@ class CriterionCallback(ICriterionCallback):
         assert self.criterion is not None
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """@TODO: docs."""
+        """Event handler."""
         self.additive_metric.reset()
 
     def on_batch_end(self, runner: "IRunner"):
-        """@TODO: docs."""
+        """Event handler."""
         inputs, targets = runner.batch[self.input_key], runner.batch[self.target_key]
-        # inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
-
-        # NOTE: similar to amp guides in docs
-        # https://pytorch.org/docs/stable/notes/amp_examples.html
-        with runner.engine.autocast():
-            loss = self.criterion(inputs, targets)
-
-        loss = runner.engine.sync_tensor(loss, "mean")
+        loss = self.criterion(inputs, targets)
         runner.batch_metrics.update({self.metric_key: loss})
         self.additive_metric.update(loss.detach().cpu(), len(targets))
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        """@TODO: docs."""
+        """Event handler."""
         mean, std = self.additive_metric.compute()
         runner.loader_metrics.update({self.metric_key: mean, f"{self.metric_key}/std": std})
 

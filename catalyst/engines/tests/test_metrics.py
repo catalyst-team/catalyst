@@ -17,6 +17,7 @@ from catalyst.callbacks import (
     CheckpointCallback,
     CriterionCallback,
     OptimizerCallback,
+    TqdmCallback,
 )
 from catalyst.core.runner import IRunner
 from catalyst.engines.device import DeviceEngine
@@ -33,21 +34,12 @@ if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 
 
-_BATCH_SIZE = 4
+_BATCH_SIZE = 8
 _WORKERS = 1
 _LR = 1e-3
 
 
-# experiment definition
-class CustomDeviceRunner(IRunner):
-    def __init__(self, logdir, device):
-        super().__init__()
-        self._logdir = logdir
-        self._device = device
-
-    def get_engine(self):
-        return DeviceEngine(self._device)
-
+class IRunnerMixin(IRunner):
     def get_loggers(self):
         return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
 
@@ -58,11 +50,6 @@ class CustomDeviceRunner(IRunner):
     def get_stage_len(self, stage: str) -> int:
         return 1
 
-    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        dataset = TwoBlobsDataset()
-        loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, shuffle=False)
-        return {"valid": loader}
-
     def get_model(self, stage: str):
         return AllwaysSameModel()
 
@@ -81,11 +68,12 @@ class CustomDeviceRunner(IRunner):
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
             "accuracy": AccuracyCallback(input_key="logits", target_key="targets", num_classes=1),
-            "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
+            # "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
             "optimizer": OptimizerCallback(metric_key="loss"),
             "checkpoint": CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
+            "verbose": TqdmCallback()
         }
 
     def handle_batch(self, batch):
@@ -101,7 +89,23 @@ class CustomDeviceRunner(IRunner):
         }
 
 
-class CustomDDPRunner(IRunner):
+# experiment definition
+class CustomDeviceRunner(IRunnerMixin, IRunner):
+    def __init__(self, logdir, device):
+        super().__init__()
+        self._logdir = logdir
+        self._device = device
+
+    def get_engine(self):
+        return DeviceEngine(self._device)
+
+    def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
+        dataset = TwoBlobsDataset()
+        loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, shuffle=False)
+        return {"valid": loader}
+
+
+class CustomDDPRunner(IRunnerMixin, IRunner):
     def __init__(self, logdir):
         super().__init__()
         self._logdir = logdir
@@ -109,58 +113,11 @@ class CustomDDPRunner(IRunner):
     def get_engine(self):
         return DistributedDataParallelEngine(port="22222")
 
-    def get_loggers(self):
-        return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
-
-    @property
-    def stages(self):
-        return ["train"]
-
-    def get_stage_len(self, stage: str) -> int:
-        return 1
-
     def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
         dataset = TwoBlobsDataset()
         sampler = DistributedSampler(dataset=dataset, shuffle=False)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}
-
-    def get_model(self, stage: str):
-        return AllwaysSameModel()
-
-    def get_criterion(self, stage: str):
-        return torch.nn.CrossEntropyLoss()
-
-    def get_optimizer(self, model, stage: str):
-        return torch.optim.SGD(model.parameters(), lr=_LR)
-
-    def get_scheduler(self, optimizer, stage: str):
-        return None
-
-    def get_callbacks(self, stage: str):
-        return {
-            "criterion": CriterionCallback(
-                metric_key="loss", input_key="logits", target_key="targets"
-            ),
-            "accuracy": AccuracyCallback(input_key="logits", target_key="targets", num_classes=1),
-            "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
-            "optimizer": OptimizerCallback(metric_key="loss"),
-            "checkpoint": CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
-            ),
-        }
-
-    def handle_batch(self, batch):
-        x, y = batch
-        logits = self.model(x)
-
-        self.batch = {
-            "features": x,
-            "targets": y.view(-1),
-            "targets_onehot": F.one_hot(y.view(-1), 2).to(torch.float32),
-            "logits": logits,
-            "scores": torch.sigmoid(logits),
-        }
 
 
 class MyConfigRunner(SupervisedConfigRunner):
@@ -228,8 +185,8 @@ def train_ddp_custom_runner(logdir):
 def test_device_and_ddp_metrics():
     # we have to keep dataset_len, num_gpu and batch size synced
     # dataset is 64 points
-    # in DP setup we have 64 / bs {4} = 16 iterations
-    # in DDP setup we have 64 / (bs {4} * num_gpu {2}) = 8 iterations
+    # in DP setup we have 64 / (bs {8} * num_gpu {2}) = 4 iterations
+    # in DDP setup we have 64 / (bs {8} * num_gpu {2}) = 4 iterations
     with TemporaryDirectory() as logdir:
         # logdir = "metrics_logs"
         device_logdir = os.path.join(logdir, "device_logs")
