@@ -25,7 +25,7 @@ from catalyst.core.runner import IRunner
 from catalyst.engines.device import DeviceEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
 from catalyst.engines.parallel import DataParallelEngine
-from catalyst.engines.tests.misc import AllwaysSameModel, TwoBlobsDataset
+from catalyst.engines.tests.misc import TwoBlobsDataset
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
