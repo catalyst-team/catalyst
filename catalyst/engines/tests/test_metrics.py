@@ -223,7 +223,7 @@ def train_ddp_custom_runner(logdir):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or NUM_CUDA_DEVICES != 2, reason="Number of CUDA devices is not 2",
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES == 2), reason="Number of CUDA devices is not 2",
 )
 def test_device_and_ddp_metrics():
     # we have to keep dataset_len, num_gpu and batch size synced
