@@ -13,7 +13,7 @@ class NDCGMetric(ICallbackBatchMetric):
     score given model outputs and targets
     The precision metric summarizes the fraction of relevant items
 
-    Compute mean value of map and it's approximate std value
+    Compute mean value of ndcg and it's approximate std value
     """
 
     def __init__(
@@ -47,14 +47,14 @@ class NDCGMetric(ICallbackBatchMetric):
 
     def update(self, logits: torch.Tensor, targets: torch.Tensor) -> List[float]:
         """
-        Update metric value with map for new data and return intermediate metrics values.
+        Update metric value with ndcg for new data and return intermediate metrics values.
 
         Args:
             logits (torch.Tensor): tensor of logits
             targets (torch.Tensor): tensor of targets
 
         Returns:
-            list of map@k values
+            list of ndcg@k values
         """
         values = ndcg(logits, targets, topk=self.topk_args)
         values = [v.item() for v in values]
@@ -64,7 +64,7 @@ class NDCGMetric(ICallbackBatchMetric):
 
     def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         """
-        Update metric value with accuracy for new data and return intermediate metrics
+        Update metric value with ndcg for new data and return intermediate metrics
         values in key-value format.
 
         Args:
@@ -72,7 +72,7 @@ class NDCGMetric(ICallbackBatchMetric):
             targets (torch.Tensor): tensor of targets
 
         Returns:
-            dict of accuracy@k values
+            dict of ndcg@k values
         """
         values = self.update(logits=logits, targets=targets)
         output = {
@@ -84,7 +84,7 @@ class NDCGMetric(ICallbackBatchMetric):
 
     def compute(self) -> Any:
         """
-        Compute accuracy for all data
+        Compute ndcg for all data
 
         Returns:
             list of mean values, list of std values

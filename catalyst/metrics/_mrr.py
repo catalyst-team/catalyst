@@ -64,7 +64,7 @@ class MRRMetric(ICallbackBatchMetric):
 
     def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
         """
-        Update metric value with accuracy for new data and return intermediate metrics
+        Update metric value with mrr for new data and return intermediate metrics
         values in key-value format.
 
         Args:
@@ -72,7 +72,7 @@ class MRRMetric(ICallbackBatchMetric):
             targets (torch.Tensor): tensor of targets
 
         Returns:
-            dict of accuracy@k values
+            dict of mrr@k values
         """
         values = self.update(logits=logits, targets=targets)
         output = {
@@ -84,7 +84,7 @@ class MRRMetric(ICallbackBatchMetric):
 
     def compute(self) -> Any:
         """
-        Compute accuracy for all data
+        Compute mrr for all data
 
         Returns:
             list of mean values, list of std values
