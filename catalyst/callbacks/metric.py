@@ -250,9 +250,6 @@ class LoaderMetricCallback(MetricCallback):
 
         Args:
             runner: current runner
-
-        Returns:
-            result of metrics update
         """
         metrics_inputs = self._get_inputs(runner=runner)
         self._update_metric(metrics_inputs)
