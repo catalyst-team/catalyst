@@ -69,10 +69,7 @@ class DistributedDataParallelEngine(IEngine):
 
     def cleanup_process(self):
         """Clean DDP variables and processes."""
-        from catalyst.utils.distributed import get_rank
-
-        if get_rank() == 0:
-            dist.destroy_process_group()
+        dist.destroy_process_group()
 
     def sync_device(
         self, tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module]

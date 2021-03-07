@@ -570,13 +570,12 @@ class CheckpointCallback(ICheckpointCallback):
                 dict(runner.epoch_metrics),
             )
             self.top_best_metrics.append(metrics_record)
-            # do operations only from master process
-            if runner.engine.is_master_process:
-                # truncate checkpoints
-                self._truncate_checkpoints()
-                # save checkpoint metrics
-                metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
-                save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
+            # CALLBACK IS MASTER ONLY
+            # truncate checkpoints
+            self._truncate_checkpoints()
+            # save checkpoint metrics
+            metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
+            save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
 
     def on_stage_end(self, runner: "IRunner") -> None:
         """
