@@ -19,6 +19,7 @@ from catalyst.callbacks import (
     OptimizerCallback,
     TqdmCallback,
 )
+from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, CallbackScope
 from catalyst.core.runner import IRunner
 from catalyst.engines.device import DeviceEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
@@ -38,6 +39,31 @@ if NUM_CUDA_DEVICES > 1:
 _BATCH_SIZE = 32
 _WORKERS = 1
 _LR = 1e-3
+
+
+class LabelsCheck(Callback):
+    def __init__(self, required_num: int):
+        super().__init__(CallbackOrder.external, CallbackNode.all, CallbackScope.stage)
+        self.counter = 0
+        self.counter2 = 0
+        self.counter3 = 0
+        self.required_num = required_num
+
+    def on_loader_start(self, runner: "IRunner") -> None:
+        self.counter = 0
+        self.counter2 = 0
+        self.counter3 = 0
+
+    def on_batch_end(self, runner: "IRunner") -> None:
+        self.counter += torch.sum(runner.batch["targets"]).detach().cpu().item()
+        self.counter2 += (
+            torch.sum(torch.argmax(runner.batch["logits"], dim=1)).detach().cpu().item()
+        )
+        self.counter3 += len(runner.batch["logits"])
+
+    def on_loader_end(self, runner: "IRunner") -> None:
+        print(f"{runner.engine}, {self.counter}, {self.counter2}, {self.counter3}")
+        # assert self.counter == self.required_num, f"{runner.engine}, {self.counter}"
 
 
 class IRunnerMixin(IRunner):
@@ -74,11 +100,14 @@ class IRunnerMixin(IRunner):
             ),
             "accuracy": AccuracyCallback(input_key="logits", target_key="targets", num_classes=1),
             # "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
-            "optimizer": OptimizerCallback(metric_key="loss"),
-            "checkpoint": CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
-            ),
+            # "optimizer": OptimizerCallback(metric_key="loss"),
+            # "checkpoint": CheckpointCallback(
+            #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            # ),
             "verbose": TqdmCallback(),
+            "counter": LabelsCheck(
+                required_num=16 if isinstance(self.engine, DistributedDataParallelEngine) else 32
+            ),
         }
 
     def handle_batch(self, batch):
@@ -120,7 +149,7 @@ class CustomDDPRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
         dataset = TwoBlobsDataset()
-        sampler = DistributedSampler(dataset=dataset, shuffle=False)
+        sampler = DistributedSampler(dataset=dataset, shuffle=True)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}
 
@@ -204,8 +233,11 @@ def test_device_and_ddp_metrics():
         ddp_logdir = os.path.join(logdir, "ddp_logs")
 
         epoch_metrics1 = train_device_custom_runner(device_logdir)
+        print("=" * 80)
         epoch_metrics2 = train_dp_custom_runner(dp_logdir)
+        print("=" * 80)
         epoch_metrics3 = train_ddp_custom_runner(ddp_logdir)
+        print("=" * 80)
 
         # print(f"epoch_metrics1: {epoch_metrics1}")
         # print(f"epoch_metrics2: {epoch_metrics2}")
