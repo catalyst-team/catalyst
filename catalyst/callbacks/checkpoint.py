@@ -317,7 +317,7 @@ class CheckpointCallback(ICheckpointCallback):
             use_logdir_postfix: @TODO: docs.
             use_runner_logdir: @TODO: docs.
         """
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.master)
         possible_states = {
             None,
             "best",
@@ -484,6 +484,8 @@ class CheckpointCallback(ICheckpointCallback):
         Args:
             runner: current runner
         """
+        if runner.is_infer_stage:
+            return
         # @TODO: very tricky hack
         # @TODO: remove
         if self.logdir is None and self.use_runner_logdir:
@@ -537,7 +539,7 @@ class CheckpointCallback(ICheckpointCallback):
         Args:
             runner: current runner
         """
-        if runner.stage_key.startswith("infer"):
+        if runner.is_infer_stage:
             return
 
         if self._use_model_selection:
@@ -568,13 +570,11 @@ class CheckpointCallback(ICheckpointCallback):
                 dict(runner.epoch_metrics),
             )
             self.top_best_metrics.append(metrics_record)
-            # do operations only from master process
-            if runner.engine.is_master_process:
-                # truncate checkpoints
-                self._truncate_checkpoints()
-                # save checkpoint metrics
-                metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
-                save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
+            # truncate checkpoints
+            self._truncate_checkpoints()
+            # save checkpoint metrics
+            metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
+            save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
 
     def on_stage_end(self, runner: "IRunner") -> None:
         """
@@ -584,7 +584,7 @@ class CheckpointCallback(ICheckpointCallback):
         Args:
             runner: current runner
         """
-        if runner.stage_key.startswith("infer"):
+        if runner.is_infer_stage:
             return
 
         # let's log Top-N base metrics

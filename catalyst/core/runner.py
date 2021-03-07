@@ -377,15 +377,6 @@ class IRunner(ICallback, ILogger, ABC):
     def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
         """Returns callbacks for a given stage.
 
-        .. note::
-            To learn more about Catalyst Callbacks mechanism, please follow
-            :py:mod:`catalyst.core.callback.Callback` documentation.
-
-        .. note::
-            We need ordered dictionary to guarantee the correct dataflow
-            and order of metrics optimization.
-            For example, to compute loss before optimization ;)
-
         Args:
             stage: stage name of interest
                 like "pretrain" / "train" / "finetune" / etc
@@ -394,13 +385,14 @@ class IRunner(ICallback, ILogger, ABC):
             OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
             with callbacks for current stage.
 
-        Args:
-            stage: stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
+        .. note::
+            To learn more about Catalyst Callbacks mechanism, please follow
+            :py:mod:`catalyst.core.callback.Callback` documentation.
 
-        Returns:
-            OrderedDict[str, Callback]: Ordered dictionary
-                with callbacks for current stage.
+        .. note::
+            We need ordered dictionary to guarantee the correct dataflow
+            and order of metrics optimization.
+            For example, to compute loss before optimization ;)
         """
         return {}
 
@@ -636,7 +628,6 @@ class IRunner(ICallback, ILogger, ABC):
         # @TODO: handle_batch with Callback?
         with self.engine.autocast():
             self.handle_batch(batch=self.batch)
-        # self.handle_batch()
         self._run_event("on_batch_end")
 
     def _run_loader(self) -> None:
@@ -661,7 +652,8 @@ class IRunner(ICallback, ILogger, ABC):
         # NOTE: engine should be built elsewhere but not here
         if isinstance(self.engine, DistributedDataParallelEngine):
             self.engine._rank = rank
-            # self.engine._world_size = world_size
+            self.engine._world_size = world_size
+            self.engine.setup_process()
 
             LOGGER.warning(f"rank: {rank}")
             LOGGER.warning(f"world size: {world_size}")
@@ -681,15 +673,15 @@ class IRunner(ICallback, ILogger, ABC):
     def _run_experiment(self) -> None:
         self._run_event("on_experiment_start")
         for self.stage_key in self.stages:
-            if self.engine.rank < 0:
-                # single-device branch (cpu, gpu, dp)
-                self._run_stage()
-            else:
+            if isinstance(self.engine, DistributedDataParallelEngine):
                 # ddp-device branch
                 world_size = self.engine.world_size
                 torch.multiprocessing.spawn(
                     self._run_stage, args=(world_size,), nprocs=world_size, join=True,
                 )
+            else:
+                # single-device branch (cpu, gpu, dp)
+                self._run_stage()
         self._run_event("on_experiment_end")
 
     def run(self) -> "IRunner":
