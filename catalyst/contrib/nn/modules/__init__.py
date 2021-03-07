@@ -28,6 +28,7 @@ from catalyst.contrib.nn.modules.pooling import (
     GlobalConcatPool2d,
     GlobalMaxAttnPool2d,
     GlobalMaxPool2d,
+    GeM2d
 )
 from catalyst.contrib.nn.modules.rms_norm import RMSNorm
 from catalyst.contrib.nn.modules.se import (
