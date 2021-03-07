@@ -58,7 +58,7 @@ class MetricAggregationCallback(Callback):
             >>> optimizer = torch.optim.Adam(model.parameters())
             >>> scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
             >>>
-            >>> class CustomSupervisedRunner(dl.Runner):
+            >>> class CustomRunner(dl.Runner):
             >>>     def handle_batch(self, batch):
             >>>         x, y = batch
             >>>         logits = self.model(x)
@@ -72,7 +72,7 @@ class MetricAggregationCallback(Callback):
             >>>         }
             >>>
             >>> # model training
-            >>> runner = CustomSupervisedRunner()
+            >>> runner = CustomRunner()
             >>> runner.train(
             >>>     model=model,
             >>>     criterion=criterion,

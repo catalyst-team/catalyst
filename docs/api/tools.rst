@@ -8,7 +8,6 @@ Tools
    :local:
 
 
-
 FrozenClass
 ----------------------
 .. autoclass:: catalyst.tools.frozen_class.FrozenClass
@@ -23,16 +22,16 @@ MetricHandler
     :undoc-members:
     :show-inheritance:
 
-Registry
+ModelForwardWrapper
 ----------------------
-.. autoclass:: catalyst.tools.registry.Registry
+.. autoclass:: catalyst.tools.forward_wrapper.ModelForwardWrapper
     :members:
     :undoc-members:
     :show-inheritance:
 
-Tensorboard – SummaryReader
----------------------------
-.. autoclass:: catalyst.tools.tensorboard.SummaryReader
+Registry
+----------------------
+.. autoclass:: catalyst.tools.registry.Registry
     :members:
     :undoc-members:
     :show-inheritance:
