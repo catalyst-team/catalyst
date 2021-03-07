@@ -6,7 +6,7 @@ from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import ICheckpointCallback, CheckpointCallback
 from catalyst.callbacks.control_flow import ControlFlowCallback
 from catalyst.callbacks.criterion import ICriterionCallback, CriterionCallback
-from catalyst.callbacks.metric import IMetricCallback, BatchMetricCallback, LoaderMetricCallback
+from catalyst.callbacks.metric import BatchMetricCallback, IMetricCallback, LoaderMetricCallback
 from catalyst.callbacks.misc import (
     TimerCallback,
     TqdmCallback,
@@ -15,6 +15,7 @@ from catalyst.callbacks.misc import (
     IEpochMetricHandlerCallback,
     EarlyStoppingCallback,
 )
+from catalyst.callbacks.metric_aggregation import MetricAggregationCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.periodic_loader import PeriodicLoaderCallback
 from catalyst.callbacks.scheduler import (
@@ -23,7 +24,6 @@ from catalyst.callbacks.scheduler import (
     ILRUpdater,
     LRFinder,
 )
-from catalyst.callbacks.aggregation import MetricAggregationCallback
 
 # if SETTINGS.use_quantization:
 #     from catalyst.callbacks.quantization import DynamicQuantizationCallback

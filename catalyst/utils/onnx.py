@@ -1,4 +1,4 @@
-from typing import Dict, Iterable, List, Tuple, Union
+from typing import Dict, Iterable, List, Union
 import os
 from pathlib import Path
 
@@ -8,39 +8,74 @@ from catalyst.settings import SETTINGS
 from catalyst.tools.forward_wrapper import ModelForwardWrapper
 
 if SETTINGS.onnx_required:
+    import onnx
     from onnxruntime.quantization import quantize_dynamic, QuantType
 
 
 def convert_to_onnx(
     model: torch.nn.Module,
-    input_shape: Union[List, Tuple, torch.Size],
+    batch: torch.Tensor,
+    file: str,
     method_name: str = "forward",
     input_names: Iterable = None,
     output_names: List[str] = None,
-    file="model.onnx",
     dynamic_axes: Union[Dict[str, int], Dict[str, Dict[str, int]]] = None,
     opset_version: int = 9,
     do_constant_folding: bool = False,
-):
-    """@TODO: docs.
+    return_model: bool = False,
+) -> Union[None, "onnx"]:
+    """Converts model to onnx runtime.
 
     Args:
-        model (torch.nn.Module): [description]
-        input_shape (Union[List, Tuple, torch.Size]): [description]
+        model (torch.nn.Module): model
+        batch (Tensor): inputs
+        file (str, optional): file to save. Defaults to "model.onnx".
         method_name (str, optional): Forward pass method to be converted. Defaults to "forward".
-        input_names (Iterable, optional): [description]. Defaults to None.
-        output_names (List[str], optional): [description]. Defaults to None.
-        file (str, optional): [description]. Defaults to "model.onnx".
-        dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): [description].
-            Defaults to None.
-        opset_version (int, optional): [description]. Defaults to 9.
-        do_constant_folding (bool, optional): [description]. Defaults to False.
+        input_names (Iterable, optional): name of inputs in graph. Defaults to None.
+        output_names (List[str], optional): name of outputs in graph. Defaults to None.
+        dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): axes
+            with dynamic shapes. Defaults to None.
+        opset_version (int, optional): Defaults to 9.
+        do_constant_folding (bool, optional): If True, the constant-folding optimization
+            is applied to the model during export. Defaults to False.
+        return_model (bool, optional): If True then returns onnxruntime model (onnx required).
+            Defaults to False.
+
+    Example:
+        .. code-block:: python
+
+           import torch
+
+           from catalyst.utils import convert_to_onnx
+
+           class LinModel(torch.nn.Module):
+               def __init__(self):
+                   super().__init__()
+                   self.lin1 = torch.nn.Linear(10, 10)
+                   self.lin2 = torch.nn.Linear(2, 10)
+
+               def forward(self, inp_1, inp_2):
+                   return self.lin1(inp_1), self.lin2(inp_2)
+
+               def first_only(self, inp_1):
+                   return self.lin1(inp_1)
+
+           lin_model = LinModel()
+           convert_to_onnx(
+               model, batch=torch.randn((1, 10)), file="model.onnx", method_name="first_only"
+           )
+
+    Raises:
+        ImportError: when ``return_model`` is True, but onnx is not installed.
+
+    Returns:
+        Union[None, "onnx"]: onnx model if return_model set to True.
     """
     if method_name != "forward":
         model = ModelForwardWrapper(model=model, method_name=method_name)
     torch.onnx.export(
         model,
-        input_shape,
+        batch,
         file,
         verbose=True,
         input_names=input_names,
@@ -49,6 +84,10 @@ def convert_to_onnx(
         do_constant_folding=do_constant_folding,
         opset_version=opset_version,
     )
+    if return_model:
+        if not SETTINGS.onnx_required:
+            raise ImportError("To use onnx model you should install it with ``pip install onnx``")
+        return onnx.load(file)
 
 
 def quantize_onnx_model(

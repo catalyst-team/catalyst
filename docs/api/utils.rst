@@ -14,13 +14,6 @@ Main
     :members:
     :show-inheritance:
 
-Checkpoint
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.checkpoint
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Config
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.config
