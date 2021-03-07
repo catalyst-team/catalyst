@@ -3,6 +3,7 @@ from typing import Any, Dict, Mapping, Union
 
 import torch
 import torch.nn as nn
+from torch.nn.parallel import DataParallel as DP
 
 from catalyst.engines.device import DeviceEngine
 
@@ -28,6 +29,25 @@ class DataParallelEngine(DeviceEngine):
     #     else:
     #         return obj.to(self.device)
     #     # fmt: on
+
+    def init_components(
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+    ):
+        model = model_fn()
+        model = self.sync_device(model)
+        model = DP(model)
+
+        # criterion
+        criterion = criterion_fn()
+        criterion = self.sync_device(criterion)
+        # optimizer
+        optimizer = optimizer_fn()
+        optimizer = self.sync_device(optimizer)
+        # scheduler
+        scheduler = scheduler_fn()
+        scheduler = self.sync_device(scheduler)
+
+        return model, criterion, optimizer, scheduler
 
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
