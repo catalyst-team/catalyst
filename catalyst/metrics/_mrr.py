@@ -94,7 +94,7 @@ class MRRMetric(ICallbackBatchMetric):
 
     def compute_key_value(self) -> Dict[str, float]:
         """
-        Compute map for all data and return results in key-value format
+        Compute mrr for all data and return results in key-value format
 
         Returns:
             dict of metrics
