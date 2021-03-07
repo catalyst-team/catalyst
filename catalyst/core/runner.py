@@ -378,21 +378,11 @@ class IRunner(ICallback, ILogger, ABC):
         """Returns callbacks for a given stage.
 
         Args:
-            stage: stage name of interest
-                like "pretrain" / "train" / "finetune" / etc
+            stage: stage name of interest like "pretrain" / "train" / "finetune" / etc
 
-        Returns:  # noqa: DAR202
+        Returns:
             OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
             with callbacks for current stage.
-
-        .. note::
-            To learn more about Catalyst Callbacks mechanism, please follow
-            :py:mod:`catalyst.core.callback.Callback` documentation.
-
-        .. note::
-            We need ordered dictionary to guarantee the correct dataflow
-            and order of metrics optimization.
-            For example, to compute loss before optimization ;)
         """
         return {}
 
