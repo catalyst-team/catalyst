@@ -25,7 +25,7 @@ from catalyst.core.runner import IRunner
 from catalyst.engines.device import DeviceEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
 from catalyst.engines.parallel import DataParallelEngine
-from catalyst.engines.tests.misc import TwoBlobsDataset
+from catalyst.engines.tests.misc import TwoBlobsDataset, TwoBlobsModel
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
@@ -45,7 +45,7 @@ _LR = 1e-3
 class CustomDistributedSampler(DistributedSampler):
     def __iter__(self):
         indices = list(range(len(self.dataset)))  # type: ignore
-        indices = indices[self.rank:self.total_size:self.num_replicas]
+        indices = indices[self.rank : self.total_size : self.num_replicas]
         return iter(indices)
 
 
@@ -98,7 +98,7 @@ class IRunnerMixin(IRunner):
         return 1
 
     def get_model(self, stage: str):
-        return AllwaysSameModel()
+        return TwoBlobsModel()
 
     def get_criterion(self, stage: str):
         return torch.nn.CrossEntropyLoss()
@@ -259,4 +259,4 @@ def test_device_and_ddp_metrics():
 
         # print(f"epoch_metrics1: {epoch_metrics1}")
         # print(f"epoch_metrics2: {epoch_metrics2}")
-        assert 0 == 1
+        # assert 0 == 1

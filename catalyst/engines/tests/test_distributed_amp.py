@@ -120,7 +120,6 @@ def test_train_with_config_experiment_distributed_parallel_amp_device():
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
                 "engine": {"_target_": "DistributedDataParallelAMPEngine", "port": "33333"},
-                "args": {"logdir": logdir},
                 "loggers": {"console": {"_target_": "ConsoleLogger"}},
                 "stages": {
                     "stage1": {

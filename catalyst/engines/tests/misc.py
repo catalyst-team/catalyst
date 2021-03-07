@@ -150,6 +150,30 @@ class TwoBlobsDataset(Dataset):
 
 
 @REGISTRY.add
+class TwoBlobsModel(nn.Module):
+    """Docs"""
+
+    def __init__(self, *args, **kwargs):
+        """Docs."""
+        super().__init__()
+        self.in_features = 4
+        self.out_features = 2
+        self.layers = nn.Linear(self.in_features, self.out_features)
+        # set initial layers weights
+        weights = torch.nn.Parameter(
+            torch.FloatTensor(
+                [[0.3429, 0.0886, 0.4281, -0.0090], [-0.1003, -0.2247, -0.2584, -0.1986]],
+            )
+        )
+        weights.requires_grad = True
+        self.layers.weight = weights
+
+    def forward(self, batch):
+        """Docs"""
+        return self.layers(batch)
+
+
+@REGISTRY.add
 class DeviceCheckCallback(Callback):
     """Docs."""
 

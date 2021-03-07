@@ -118,7 +118,6 @@ def test_config_ddp_engine():
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
                 "engine": {"_target_": "DistributedDataParallelEngine", "port": "33333"},
-                "args": {"logdir": logdir},
                 "loggers": {"console": {"_target_": "ConsoleLogger"}},
                 "stages": {
                     "stage1": {

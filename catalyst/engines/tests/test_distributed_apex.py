@@ -127,7 +127,6 @@ def _train_ddp_apex(port, logdir, opt_lvl):
                 "port": port,
                 "opt_level": opt,
             },
-            "args": {"logdir": logdir},
             "loggers": {"console": {"_target_": "ConsoleLogger"}},
             "stages": {
                 "stage1": {
