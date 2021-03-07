@@ -2,7 +2,11 @@ from typing import Callable, List, Optional, TYPE_CHECKING, Union
 import warnings
 
 from catalyst.core.callback import Callback, CallbackOrder
-from catalyst.utils.pruning import get_pruning_fn, prune_model, remove_reparametrization
+from catalyst.utils.pruning import (
+    get_pruning_fn,
+    prune_model,
+    remove_reparametrization,
+)
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -56,7 +60,9 @@ class PruningCallback(Callback):
             l_norm: if you are using ln_structured you need to specify l_norm.
         """
         super().__init__(CallbackOrder.External)
-        self.pruning_fn = get_pruning_fn(pruning_fn=pruning_fn, dim=dim, l_norm=l_norm)
+        self.pruning_fn = get_pruning_fn(
+            pruning_fn=pruning_fn, dim=dim, l_norm=l_norm
+        )
         if keys_to_prune is None:
             keys_to_prune = ["weight"]
         self.prune_on_epoch_end = prune_on_epoch_end
@@ -67,7 +73,9 @@ class PruningCallback(Callback):
                 "You disabled pruning pruning both on epoch and stage end."
                 "Model won't be pruned by this callback."
             )
-        self.remove_reparametrization_on_stage_end = remove_reparametrization_on_stage_end
+        self.remove_reparametrization_on_stage_end = (
+            remove_reparametrization_on_stage_end
+        )
         self.keys_to_prune = keys_to_prune
         self.amount = amount
         self.layers_to_prune = layers_to_prune
@@ -81,7 +89,10 @@ class PruningCallback(Callback):
         Args:
             runner: runner for your experiment
         """
-        if self.prune_on_epoch_end and runner.stage_epoch_step != runner.stage_epoch_len:
+        if (
+            self.prune_on_epoch_end
+            and runner.stage_epoch_step != runner.stage_epoch_len
+        ):
             prune_model(
                 model=runner.model,
                 pruning_fn=self.pruning_fn,

@@ -36,10 +36,17 @@ class IoULoss(nn.Module):
         super().__init__()
         assert mode in ["micro", "macro", "weighted"]
         self.loss_fn = partial(
-            iou, eps=eps, class_dim=class_dim, threshold=None, mode=mode, weights=weights,
+            iou,
+            eps=eps,
+            class_dim=class_dim,
+            threshold=None,
+            mode=mode,
+            weights=weights,
         )
 
-    def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> torch.Tensor:
         """Calculates loss between ``logits`` and ``target`` tensors."""
         iou_score = self.loss_fn(outputs, targets)
         return 1 - iou_score

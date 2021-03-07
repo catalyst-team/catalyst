@@ -8,7 +8,11 @@ from pytest import mark
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
+from catalyst.callbacks import (
+    CheckpointCallback,
+    CriterionCallback,
+    OptimizerCallback,
+)
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.engines import DataParallelEngine
@@ -37,7 +41,11 @@ class CustomRunner(IRunner):
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
             # "check": DeviceCheckCallback(),
             "check2": LossMinimizationCallback("loss", logger=logger),
@@ -81,7 +89,10 @@ class CustomRunner(IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
+        return {
+            "console": ConsoleLogger(),
+            "csv": CSVLogger(logdir=self._logdir),
+        }
 
     def handle_batch(self, batch):
         x, y = batch

@@ -48,9 +48,13 @@ class EventsFileReader(Iterable):
         """
         data = self._events_file.read(size)
         if data is None:
-            raise NotImplementedError("Reading of a stream in non-blocking mode")
+            raise NotImplementedError(
+                "Reading of a stream in non-blocking mode"
+            )
         if 0 < len(data) < size:
-            raise EventReadingException("The size of read data is less than requested size")
+            raise EventReadingException(
+                "The size of read data is less than requested size"
+            )
         if len(data) == 0:
             return None
         return data
@@ -98,7 +102,9 @@ class EventsFileReader(Iterable):
             yield event
 
 
-SummaryItem = namedtuple("SummaryItem", ["tag", "step", "wall_time", "value", "type"])
+SummaryItem = namedtuple(
+    "SummaryItem", ["tag", "step", "wall_time", "value", "type"]
+)
 
 
 def _get_scalar(value) -> Optional[np.ndarray]:
@@ -149,7 +155,9 @@ class SummaryReader(Iterable):
     def _check_type_names(self):
         if self._types is None:
             return
-        if not all(type_name in self._DECODERS.keys() for type_name in self._types):
+        if not all(
+            type_name in self._DECODERS.keys() for type_name in self._types
+        ):
             raise ValueError("Invalid type name")
 
     def _decode_events(self, events: Iterable) -> Optional[SummaryItem]:
@@ -176,7 +184,11 @@ class SummaryReader(Iterable):
                     data = decoder(value)
                     if data is not None:
                         yield SummaryItem(
-                            tag=tag, step=step, wall_time=wall_time, value=data, type=value_type,
+                            tag=tag,
+                            step=step,
+                            wall_time=wall_time,
+                            value=data,
+                            type=value_type,
                         )
                 else:
                     yield None
@@ -205,7 +217,9 @@ class SummaryReader(Iterable):
                 yield from (
                     item
                     for item in self._decode_events(reader)
-                    if item is not None and self._check_tag(item.tag) and item.type in self._types
+                    if item is not None
+                    and self._check_tag(item.tag)
+                    and item.type in self._types
                 )
 
 

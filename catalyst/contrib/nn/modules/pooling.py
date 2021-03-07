@@ -102,7 +102,9 @@ class GlobalAttnPool2d(nn.Module):
 
         activation_fn = REGISTRY.get_if_str(activation_fn)
         self.attn = nn.Sequential(
-            nn.Conv2d(in_features, 1, kernel_size=1, stride=1, padding=0, bias=False),
+            nn.Conv2d(
+                in_features, 1, kernel_size=1, stride=1, padding=0, bias=False
+            ),
             activation_fn(),
         )
 
@@ -277,7 +279,6 @@ class GeM2d(nn.Module):
         return in_features
 
 
-
 __all__ = [
     "GlobalAttnPool2d",
     "GlobalAvgAttnPool2d",
@@ -286,5 +287,5 @@ __all__ = [
     "GlobalConcatPool2d",
     "GlobalMaxAttnPool2d",
     "GlobalMaxPool2d",
-    "GeM2d"
+    "GeM2d",
 ]

@@ -26,7 +26,9 @@ class AccumulationMetric(ICallbackLoaderMetric):
             suffix: metric's suffix
             accumulative_fields: list of keys to accumulate data from batch
         """
-        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        super().__init__(
+            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix
+        )
         self.accumulative_fields = accumulative_fields
         self.storage = None
         self.num_samples = None
@@ -57,7 +59,8 @@ class AccumulationMetric(ICallbackLoaderMetric):
         self.storage = defaultdict(torch.Tensor)
         for key in shape_type_dict:
             self.storage[key] = torch.empty(
-                size=shape_type_dict[key]["shape"], dtype=shape_type_dict[key]["dtype"],
+                size=shape_type_dict[key]["shape"],
+                dtype=shape_type_dict[key]["dtype"],
             )
 
     def update(self, **kwargs) -> None:
@@ -80,9 +83,9 @@ class AccumulationMetric(ICallbackLoaderMetric):
         bs = 0
         for field_name in self.accumulative_fields:
             bs = kwargs[field_name].shape[0]
-            self.storage[field_name][self.collected_samples : self.collected_samples + bs, ...] = (
-                kwargs[field_name].detach().cpu()
-            )
+            self.storage[field_name][
+                self.collected_samples : self.collected_samples + bs, ...
+            ] = (kwargs[field_name].detach().cpu())
         self.collected_samples += bs
         self.collected_batches += 1
 
@@ -239,7 +242,9 @@ class CMCMetric(AccumulationMetric):
         gallery_embeddings = embeddings[~query_mask]
         gallery_labels = labels[~query_mask]
 
-        conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).to(torch.bool)
+        conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).to(
+            torch.bool
+        )
 
         metrics = []
         for k in self.topk_args:
@@ -262,7 +267,8 @@ class CMCMetric(AccumulationMetric):
         """
         values = self.compute()
         kv_metrics = {
-            f"{self.metric_name}{k:02d}": value for k, value in zip(self.topk_args, values)
+            f"{self.metric_name}{k:02d}": value
+            for k, value in zip(self.topk_args, values)
         }
         return kv_metrics
 

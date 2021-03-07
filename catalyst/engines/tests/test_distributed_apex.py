@@ -54,8 +54,12 @@ class CustomRunner(dl.IRunner):
             # ),
             # "check": DeviceCheckCallback(),
             "check2": LossMinimizationCallback("loss", logger=logger),
-            "check_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
-            "logits_type_checker": OPTTensorTypeChecker("logits", self._opt_level),
+            "check_world_size": WorldSizeCheckCallback(
+                NUM_CUDA_DEVICES, logger=logger
+            ),
+            "logits_type_checker": OPTTensorTypeChecker(
+                "logits", self._opt_level
+            ),
         }
 
     @property
@@ -86,7 +90,10 @@ class CustomRunner(dl.IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+        return {
+            "console": dl.ConsoleLogger(),
+            "csv": dl.CSVLogger(logdir=self._logdir),
+        }
 
     def handle_batch(self, batch):
         x, y = batch
@@ -96,7 +103,8 @@ class CustomRunner(dl.IRunner):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_train_distributed_parallel_apex():
     for opt_level in OPT_LEVELS:
@@ -107,7 +115,8 @@ def test_train_distributed_parallel_apex():
 
 @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_config_train_distributed_parallel_apex():
     pass

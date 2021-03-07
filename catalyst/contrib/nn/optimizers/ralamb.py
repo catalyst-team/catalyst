@@ -71,7 +71,9 @@ class Ralamb(Optimizer):
                     continue
                 grad = p.grad.data.float()
                 if grad.is_sparse:
-                    raise RuntimeError("Ralamb does not support sparse gradients")
+                    raise RuntimeError(
+                        "Ralamb does not support sparse gradients"
+                    )
 
                 p_data_fp32 = p.data.float()
 
@@ -83,7 +85,9 @@ class Ralamb(Optimizer):
                     state["exp_avg_sq"] = torch.zeros_like(p_data_fp32)
                 else:
                     state["exp_avg"] = state["exp_avg"].type_as(p_data_fp32)
-                    state["exp_avg_sq"] = state["exp_avg_sq"].type_as(p_data_fp32)
+                    state["exp_avg_sq"] = state["exp_avg_sq"].type_as(
+                        p_data_fp32
+                    )
 
                 exp_avg, exp_avg_sq = state["exp_avg"], state["exp_avg_sq"]
                 beta1, beta2 = group["betas"]
@@ -103,7 +107,9 @@ class Ralamb(Optimizer):
                     buffered[0] = state["step"]
                     beta2_t = beta2 ** state["step"]
                     n_sma_max = 2 / (1 - beta2) - 1
-                    n_sma = n_sma_max - 2 * state["step"] * beta2_t / (1 - beta2_t)
+                    n_sma = n_sma_max - 2 * state["step"] * beta2_t / (
+                        1 - beta2_t
+                    )
                     buffered[1] = n_sma
 
                     # more conservative since it"s an approximated value
@@ -122,13 +128,17 @@ class Ralamb(Optimizer):
                     buffered[2] = radam_step_size
 
                 if group["weight_decay"] != 0:
-                    p_data_fp32.add_(-group["weight_decay"] * group["lr"], p_data_fp32)
+                    p_data_fp32.add_(
+                        -group["weight_decay"] * group["lr"], p_data_fp32
+                    )
 
                 # more conservative since it"s an approximated value
                 radam_step = p_data_fp32.clone()
                 if n_sma >= 5:
                     denom = exp_avg_sq.sqrt().add_(group["eps"])
-                    radam_step.addcdiv_(-radam_step_size * group["lr"], exp_avg, denom)
+                    radam_step.addcdiv_(
+                        -radam_step_size * group["lr"], exp_avg, denom
+                    )
                 else:
                     radam_step.add_(-radam_step_size * group["lr"], exp_avg)
 
@@ -145,10 +155,14 @@ class Ralamb(Optimizer):
 
                 if n_sma >= 5:
                     p_data_fp32.addcdiv_(
-                        -radam_step_size * group["lr"] * trust_ratio, exp_avg, denom,
+                        -radam_step_size * group["lr"] * trust_ratio,
+                        exp_avg,
+                        denom,
                     )
                 else:
-                    p_data_fp32.add_(-radam_step_size * group["lr"] * trust_ratio, exp_avg)
+                    p_data_fp32.add_(
+                        -radam_step_size * group["lr"] * trust_ratio, exp_avg
+                    )
 
                 p.data.copy_(p_data_fp32)
 

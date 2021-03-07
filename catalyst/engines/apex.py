@@ -27,7 +27,9 @@ def _initialize_apex(model, optimizer=None, **engine_params):
     """
     import apex
 
-    amp_params = get_fn_default_params(apex.amp.initialize, ["models", "optimizers"])
+    amp_params = get_fn_default_params(
+        apex.amp.initialize, ["models", "optimizers"]
+    )
     amp_params["opt_level"] = "O0"
     for dp in engine_params:
         if dp in amp_params:
@@ -67,7 +69,9 @@ def _patch_forward(model):
 
     input_caster_lambda = (
         lambda tensor: tensor.to(
-            apex.amp._amp_state.opt_properties.options["cast_model_type"]  # noqa: WPS437
+            apex.amp._amp_state.opt_properties.options[
+                "cast_model_type"
+            ]  # noqa: WPS437
         )
         if tensor.is_floating_point()
         else tensor
@@ -91,8 +95,12 @@ def _patch_forward(model):
     ):
         return apex.amp._initialize.applier(  # noqa: WPS437
             old_fwd(
-                *apex.amp._initialize.applier(args, input_caster),  # noqa: WPS437
-                **apex.amp._initialize.applier(kwargs, input_caster),  # noqa: WPS437
+                *apex.amp._initialize.applier(
+                    args, input_caster
+                ),  # noqa: WPS437
+                **apex.amp._initialize.applier(
+                    kwargs, input_caster
+                ),  # noqa: WPS437
             ),
             output_caster,
         )
@@ -109,12 +117,16 @@ def _wrap_into_data_parallel_with_apex(
 ):
     if isinstance(model, nn.Module):
         model = nn.Sequential(model)
-        model, optimizer = _initialize_apex(model, optimizer, **distributed_params)
+        model, optimizer = _initialize_apex(
+            model, optimizer, **distributed_params
+        )
         model = torch.nn.DataParallel(model[0])
         model = _patch_forward(model)
     elif isinstance(model, dict):
         model = {k: nn.Sequential(v) for k, v in model.items()}
-        model, optimizer = _initialize_apex(model, optimizer, **distributed_params)
+        model, optimizer = _initialize_apex(
+            model, optimizer, **distributed_params
+        )
         model = {k: nn.DataParallel(v[0]) for k, v in model.items()}
         model = {k: _patch_forward(v) for k, v in model.items()}
     else:
@@ -149,7 +161,11 @@ class APEXEngine(DeviceEngine):
         return f"{self.__class__.__name__}(device='{self.device}',opt_level='{self.opt_level}')"
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         # TODO: how could we do better?)
         # model
@@ -166,7 +182,9 @@ class APEXEngine(DeviceEngine):
 
         # from official docs:
         #   https://nvidia.github.io/apex/amp.html#opt-levels-and-properties
-        model, optimizer = amp.initialize(model, optimizer, opt_level=self.opt_level)
+        model, optimizer = amp.initialize(
+            model, optimizer, opt_level=self.opt_level
+        )
 
         # scheduler
         scheduler = scheduler_fn()
@@ -178,7 +196,12 @@ class APEXEngine(DeviceEngine):
             scaled_loss.backward()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs
+        self,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> Dict:
         return {
             "model": model,
@@ -317,7 +340,12 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             scaled_loss.backward()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> Dict:
         _model = model.module if isinstance(model, APEX_DDP) else model
         return {

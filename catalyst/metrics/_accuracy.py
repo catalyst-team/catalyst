@@ -34,10 +34,14 @@ class AccuracyMetric(ICallbackBatchMetric):
             prefix: metric prefix
             suffix: metric suffix
         """
-        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        super().__init__(
+            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix
+        )
         self.metric_name_mean = f"{self.prefix}accuracy{self.suffix}"
         self.metric_name_std = f"{self.prefix}accuracy{self.suffix}/std"
-        self.topk_args: List[int] = topk_args or get_default_topk_args(num_classes)
+        self.topk_args: List[int] = topk_args or get_default_topk_args(
+            num_classes
+        )
         self.additive_metrics: List[AdditiveValueMetric] = [
             AdditiveValueMetric() for _ in range(len(self.topk_args))
         ]
@@ -47,7 +51,9 @@ class AccuracyMetric(ICallbackBatchMetric):
         for metric in self.additive_metrics:
             metric.reset()
 
-    def update(self, logits: torch.Tensor, targets: torch.Tensor) -> List[float]:
+    def update(
+        self, logits: torch.Tensor, targets: torch.Tensor
+    ) -> List[float]:
         """
         Update metric value with accuracy for new data and return intermediate metrics values.
 
@@ -64,7 +70,9 @@ class AccuracyMetric(ICallbackBatchMetric):
             metric.update(value, len(targets))
         return values
 
-    def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+    def update_key_value(
+        self, logits: torch.Tensor, targets: torch.Tensor
+    ) -> Dict[str, float]:
         """
         Update metric value with accuracy for new data and return intermediate metrics
         values in key-value format.
@@ -81,7 +89,9 @@ class AccuracyMetric(ICallbackBatchMetric):
             f"{self.prefix}accuracy{key:02d}{self.suffix}": value
             for key, value in zip(self.topk_args, values)
         }
-        output[self.metric_name_mean] = output[f"{self.prefix}accuracy01{self.suffix}"]
+        output[self.metric_name_mean] = output[
+            f"{self.prefix}accuracy01{self.suffix}"
+        ]
         return output
 
     def compute(self) -> Tuple[List[float], List[float]]:
@@ -91,7 +101,9 @@ class AccuracyMetric(ICallbackBatchMetric):
         Returns:
             list of mean values, list of std values
         """
-        means, stds = zip(*(metric.compute() for metric in self.additive_metrics))
+        means, stds = zip(
+            *(metric.compute() for metric in self.additive_metrics)
+        )
         return means, stds
 
     def compute_key_value(self) -> Dict[str, float]:
@@ -110,8 +122,12 @@ class AccuracyMetric(ICallbackBatchMetric):
             f"{self.prefix}accuracy{key:02d}{self.suffix}/std": value
             for key, value in zip(self.topk_args, stds)
         }
-        output_mean[self.metric_name_mean] = output_mean[f"{self.prefix}accuracy01{self.suffix}"]
-        output_std[self.metric_name_std] = output_std[f"{self.prefix}accuracy01{self.suffix}/std"]
+        output_mean[self.metric_name_mean] = output_mean[
+            f"{self.prefix}accuracy01{self.suffix}"
+        ]
+        output_std[self.metric_name_std] = output_std[
+            f"{self.prefix}accuracy01{self.suffix}/std"
+        ]
         return {**output_mean, **output_std}
 
 
@@ -162,7 +178,9 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
         super().update(value=metric, num_samples=np.prod(targets.shape))
         return metric
 
-    def update_key_value(self, outputs: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+    def update_key_value(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> Dict[str, float]:
         """
         Update metric value with accuracy for new data and return intermediate metric
         value in key-value format.

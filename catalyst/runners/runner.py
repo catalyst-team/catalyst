@@ -7,10 +7,20 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
-from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
-from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
+from catalyst.callbacks.checkpoint import (
+    CheckpointCallback,
+    ICheckpointCallback,
+)
+from catalyst.callbacks.misc import (
+    CheckRunCallback,
+    TimerCallback,
+    TqdmCallback,
+)
 from catalyst.core.callback import Callback
-from catalyst.core.functional import check_callback_isinstance, sort_callbacks_by_order
+from catalyst.core.functional import (
+    check_callback_isinstance,
+    sort_callbacks_by_order,
+)
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
@@ -89,7 +99,11 @@ class Runner(IRunner):
     @property
     def name(self) -> str:
         """@TODO: docs."""
-        return "experiment" if self._trial is None else f"experiment_{self._trial.number}"
+        return (
+            "experiment"
+            if self._trial is None
+            else f"experiment_{self._trial.number}"
+        )
 
     @property
     def hparams(self) -> Dict:
@@ -128,7 +142,9 @@ class Runner(IRunner):
             loggers["_console"] = ConsoleLogger()
         if self._logdir is not None and not is_logger_exists(CSVLogger):
             loggers["_csv"] = CSVLogger(logdir=self._logdir)
-        if self._logdir is not None and not is_logger_exists(TensorboardLogger):
+        if self._logdir is not None and not is_logger_exists(
+            TensorboardLogger
+        ):
             loggers["_tensorboard"] = TensorboardLogger(
                 logdir=os.path.join(self._logdir, "tensorboard")
             )
@@ -136,7 +152,9 @@ class Runner(IRunner):
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """Returns the loaders for a given stage."""
-        self._loaders = _process_loaders(loaders=self._loaders, initial_seed=self.seed)
+        self._loaders = _process_loaders(
+            loaders=self._loaders, initial_seed=self.seed
+        )
         return self._loaders
 
     def get_model(self, stage: str) -> Model:
@@ -152,7 +170,8 @@ class Runner(IRunner):
         """Returns the criterion for a given stage."""
         return (
             self._criterion()
-            if callable(self._criterion) and not isinstance(self._criterion, nn.Module)
+            if callable(self._criterion)
+            and not isinstance(self._criterion, nn.Module)
             else self._criterion
         )
 
@@ -160,7 +179,8 @@ class Runner(IRunner):
         """Returns the optimizer for a given stage."""
         return (
             self._optimizer(model)
-            if callable(self._optimizer) and not isinstance(self._optimizer, optim.Optimizer)
+            if callable(self._optimizer)
+            and not isinstance(self._optimizer, optim.Optimizer)
             else self._optimizer
         )
 
@@ -171,7 +191,10 @@ class Runner(IRunner):
             if callable(self._scheduler)
             and not isinstance(
                 self._scheduler,
-                (optim.lr_scheduler.ReduceLROnPlateau, optim.lr_scheduler._LRScheduler),
+                (
+                    optim.lr_scheduler.ReduceLROnPlateau,
+                    optim.lr_scheduler._LRScheduler,
+                ),
             )
             else self._scheduler
         )
@@ -180,7 +203,8 @@ class Runner(IRunner):
         """Returns the callbacks for a given stage."""
         callbacks = sort_callbacks_by_order(self._callbacks)
         is_callback_exists = lambda callback_fn: any(
-            check_callback_isinstance(x, callback_fn) for x in callbacks.values()
+            check_callback_isinstance(x, callback_fn)
+            for x in callbacks.values()
         )
         if self._verbose and not is_callback_exists(TqdmCallback):
             callbacks["_verbose"] = TqdmCallback()
@@ -191,7 +215,9 @@ class Runner(IRunner):
         if self._overfit and not is_callback_exists(BatchOverfitCallback):
             callbacks["_overfit"] = BatchOverfitCallback()
 
-        if self._logdir is not None and not is_callback_exists(ICheckpointCallback):
+        if self._logdir is not None and not is_callback_exists(
+            ICheckpointCallback
+        ):
             callbacks["_checkpoint"] = CheckpointCallback(
                 logdir=os.path.join(self._logdir, "checkpoints"),
                 loader_key=self._valid_loader,
@@ -320,7 +346,9 @@ class Runner(IRunner):
         self.run()
 
     @torch.no_grad()
-    def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
+    def predict_batch(
+        self, batch: Mapping[str, Any], **kwargs
+    ) -> Mapping[str, Any]:
         """
         Run model inference on specified data batch.
 
@@ -336,7 +364,9 @@ class Runner(IRunner):
         Raises:
             NotImplementedError: if not implemented yet
         """
-        raise NotImplementedError("Please implement `runner.predict_batch` method")
+        raise NotImplementedError(
+            "Please implement `runner.predict_batch` method"
+        )
 
     @torch.no_grad()
     def predict_loader(

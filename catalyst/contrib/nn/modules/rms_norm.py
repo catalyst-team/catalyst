@@ -10,7 +10,9 @@ class RMSNorm(nn.Module):
     @TODO: Docs (link to paper). Contribution is welcome.
     """
 
-    def __init__(self, dimension: int, epsilon: float = 1e-8, is_bias: bool = False):
+    def __init__(
+        self, dimension: int, epsilon: float = 1e-8, is_bias: bool = False
+    ):
         """
         Args:
             dimension: the dimension of the layer output to normalize

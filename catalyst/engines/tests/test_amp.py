@@ -42,7 +42,11 @@ class CustomRunner(dl.IRunner):
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
             "check": DeviceCheckCallback(self._device, logger=logger),
             "check2": LossMinimizationCallback("loss", logger=logger),
@@ -78,7 +82,10 @@ class CustomRunner(dl.IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+        return {
+            "console": dl.ConsoleLogger(),
+            "csv": dl.CSVLogger(logdir=self._logdir),
+        }
 
     def handle_batch(self, batch):
         x, y = batch
@@ -98,7 +105,8 @@ def run_train_with_config_experiment_amp_device(device):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required, reason="CUDA device is not available"
+    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required,
+    reason="CUDA device is not available",
 )
 def test_experiment_engine_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
@@ -108,7 +116,8 @@ def test_experiment_engine_with_devices():
 
 @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required, reason="CUDA device is not available"
+    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required,
+    reason="CUDA device is not available",
 )
 def test_config_experiment_engine_with_cuda():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]

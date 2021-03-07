@@ -20,7 +20,11 @@ REGISTRY.late_add(_transforms_loader)
 def _samplers_loader(r: registry.Registry):
     from torch.utils.data import sampler as s
 
-    factories = {k: v for k, v in s.__dict__.items() if "Sampler" in k and k != "Sampler"}
+    factories = {
+        k: v
+        for k, v in s.__dict__.items()
+        if "Sampler" in k and k != "Sampler"
+    }
     r.add(**factories)
     from catalyst.data import sampler
 

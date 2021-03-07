@@ -1,6 +1,9 @@
 from typing import Dict, List, TYPE_CHECKING
 
-from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_tensor
+from catalyst.contrib.utils.visualization import (
+    plot_confusion_matrix,
+    render_figure_to_tensor,
+)
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
 
@@ -40,7 +43,9 @@ class ConfusionMatrixCallback(Callback):
         self._plot_params = plot_params or {}
 
         self.class_names = class_names or [str(i) for i in range(num_classes)]
-        self.num_classes = num_classes if class_names is None else len(class_names)
+        self.num_classes = (
+            num_classes if class_names is None else len(class_names)
+        )
         self.normalized = normalized
 
         assert self.num_classes is not None
@@ -65,7 +70,10 @@ class ConfusionMatrixCallback(Callback):
             runner.batch[self.input_key].detach(),
             runner.batch[self.target_key].detach(),
         )
-        inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
+        inputs, targets = (
+            runner.engine.sync_tensor(inputs),
+            runner.engine.sync_tensor(targets),
+        )
         self.confusion_matrix.update(predictions=inputs, targets=targets)
 
     def on_loader_end(self, runner: "IRunner"):

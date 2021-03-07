@@ -8,7 +8,11 @@ from pytest import mark
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
+from catalyst.callbacks import (
+    CheckpointCallback,
+    CriterionCallback,
+    OptimizerCallback,
+)
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.loggers import ConsoleLogger, CSVLogger
@@ -54,7 +58,9 @@ class CustomRunner(IRunner):
             # ),
             "check": DeviceCheckCallback(self._device, logger=logger),
             "check2": LossMinimizationCallback("loss", logger=logger),
-            "logits_type_checker": OPTTensorTypeChecker("logits", self._opt_level),
+            "logits_type_checker": OPTTensorTypeChecker(
+                "logits", self._opt_level
+            ),
             # "loss_type_checker": TensorTypeChecker("loss", True),
         }
 
@@ -86,7 +92,10 @@ class CustomRunner(IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
+        return {
+            "console": ConsoleLogger(),
+            "csv": CSVLogger(logdir=self._logdir),
+        }
 
     def handle_batch(self, batch):
         x, y = batch
@@ -106,7 +115,8 @@ def run_train_with_config_experiment_apex_device(device, opt_level):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required, reason="CUDA devices is not available"
+    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required,
+    reason="CUDA devices is not available",
 )
 def test_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
@@ -117,7 +127,8 @@ def test_apex_with_devices():
 
 @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required, reason="CUDA devices is not available"
+    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required,
+    reason="CUDA devices is not available",
 )
 def test_config_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]

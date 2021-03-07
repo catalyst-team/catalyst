@@ -107,7 +107,9 @@ def plot_confusion_matrix(
     if normalize:
         cm = cm.astype(np.float32) / cm.sum(axis=1)[:, np.newaxis]
 
-    plt.rcParams.update({"font.size": int(fontsize / np.log2(len(class_names)))})
+    plt.rcParams.update(
+        {"font.size": int(fontsize / np.log2(len(class_names)))}
+    )
 
     figure = plt.figure(figsize=(figsize, figsize))
     plt.title(title)

@@ -124,7 +124,11 @@ def test_multiple_stages_and_different_checkpoints_to_load():
                 metric_key="loss",
                 minimize=True,
                 save_n_best=2,
-                load_on_stage_end={"model": "best", "criterion": "best", "optimizer": "last"},
+                load_on_stage_end={
+                    "model": "best",
+                    "criterion": "best",
+                    "optimizer": "last",
+                },
             ),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
         ],
@@ -148,7 +152,11 @@ def test_multiple_stages_and_different_checkpoints_to_load():
                 metric_key="loss",
                 minimize=True,
                 save_n_best=3,
-                load_on_stage_start={"model": "last", "criterion": "last", "optimizer": "best"},
+                load_on_stage_start={
+                    "model": "last",
+                    "criterion": "last",
+                    "optimizer": "best",
+                },
             ),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
         ],
@@ -220,7 +228,11 @@ def test_resume_with_missing_file():
                     metric_key="loss",
                     minimize=True,
                     save_n_best=2,
-                    load_on_stage_end={"model": "best", "criterion": "best", "optimizer": "last"},
+                    load_on_stage_end={
+                        "model": "best",
+                        "criterion": "best",
+                        "optimizer": "last",
+                    },
                     resume="not_existing_file.pth",
                 ),
                 dl.CheckRunCallback(num_epoch_steps=num_epochs),
@@ -272,7 +284,11 @@ def test_load_on_stage_start_with_empty_dict():
         minimize_valid_metric=True,
         callbacks=[
             dl.CheckpointCallback(
-                logdir=logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=2
+                logdir=logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=2,
             ),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
         ],

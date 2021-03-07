@@ -167,7 +167,9 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         Runner.__init__(self, model=model, engine=engine)
 
     @torch.no_grad()
-    def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
+    def predict_batch(
+        self, batch: Mapping[str, Any], **kwargs
+    ) -> Mapping[str, Any]:
         """
         Run model inference on specified data batch.
 
@@ -198,17 +200,26 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         """
         callbacks = super().get_callbacks(stage=stage)
         is_callback_exists = lambda callback_fn: any(
-            check_callback_isinstance(x, callback_fn) for x in callbacks.values()
+            check_callback_isinstance(x, callback_fn)
+            for x in callbacks.values()
         )
-        if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
-            callbacks["_criterion"] = CriterionCallback(
-                input_key=self._output_key, target_key=self._target_key, metric_key=self._loss_key,
-            )
-        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
-            callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
-        if isinstance(self._scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
-            ISchedulerCallback
+        if isinstance(self._criterion, Criterion) and not is_callback_exists(
+            ICriterionCallback
         ):
+            callbacks["_criterion"] = CriterionCallback(
+                input_key=self._output_key,
+                target_key=self._target_key,
+                metric_key=self._loss_key,
+            )
+        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(
+            IOptimizerCallback
+        ):
+            callbacks["_optimizer"] = OptimizerCallback(
+                metric_key=self._loss_key
+            )
+        if isinstance(
+            self._scheduler, (Scheduler, ReduceLROnPlateau)
+        ) and not is_callback_exists(ISchedulerCallback):
             callbacks["_scheduler"] = SchedulerCallback(
                 loader_key=self._valid_loader, metric_key=self._valid_metric
             )

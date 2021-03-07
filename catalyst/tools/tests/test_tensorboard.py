@@ -7,7 +7,11 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from catalyst.tools.tensorboard import EventReadingException, EventsFileReader, SummaryReader
+from catalyst.tools.tensorboard import (
+    EventReadingException,
+    EventsFileReader,
+    SummaryReader,
+)
 
 
 def _get_test_data():
@@ -63,7 +67,9 @@ def test_events_reader_successful():
             if event_raw["type"] == "scalar":
                 assert event.summary.value[0].HasField("simple_value")
                 assert event.summary.value[0].tag == event_raw["tag"]
-                assert event.summary.value[0].simple_value == event_raw["value"]
+                assert (
+                    event.summary.value[0].simple_value == event_raw["value"]
+                )
 
 
 def test_events_reader_empty():
@@ -151,7 +157,9 @@ def test_summary_reader_filter_scalars():
     types = ["scalar"]
     reader = SummaryReader("logs", types=types)
     _, data_raw = _get_test_data()
-    data_raw2 = 2 * [d for d in data_raw if d is not None and d["type"] in types]
+    data_raw2 = 2 * [
+        d for d in data_raw if d is not None and d["type"] in types
+    ]
     items = list(reader)
 
     assert len(items) == len(data_raw2)

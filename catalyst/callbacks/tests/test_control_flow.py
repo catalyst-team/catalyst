@@ -97,7 +97,9 @@ def test_controll_flow_callback_filter_fn_epochs():
 
 
 def test_controll_flow_callback_filter_fn_global_epochs():
-    wraped = ControlFlowCallback(DummyCallback(), epochs=[3, 4, 7, 10], use_global_epochs=True)
+    wraped = ControlFlowCallback(
+        DummyCallback(), epochs=[3, 4, 7, 10], use_global_epochs=True
+    )
     mask = [
         False,
         False,
@@ -199,7 +201,9 @@ def test_control_flow_callback_filter_fn_loaders():
 
 
 def test_control_flow_callback_filter_fn_ignore_loaders():
-    wraped = ControlFlowCallback(DummyCallback(), ignore_loaders=["valid", "another_loader"])
+    wraped = ControlFlowCallback(
+        DummyCallback(), ignore_loaders=["valid", "another_loader"]
+    )
     expected = {
         "train": [True] * 5,
         "valid": [False] * 5,
@@ -216,7 +220,9 @@ def test_control_flow_callback_filter_fn_ignore_loaders():
 
 
 def test_control_flow_callback_filter_fn_multiple_epochs_loaders():
-    wraped = ControlFlowCallback(DummyCallback(), loaders={"valid": 3, "another_loader": [2, 4]})
+    wraped = ControlFlowCallback(
+        DummyCallback(), loaders={"valid": 3, "another_loader": [2, 4]}
+    )
     expected = {
         "train": [False] * 5,
         "valid": [False, False, True, False, False],
@@ -253,7 +259,8 @@ def test_control_flow_callback_filter_fn_multiple_epochs_ignore_loaders():
 
 def test_control_flow_callback_filter_fn_string_lambda():
     wraped = ControlFlowCallback(
-        DummyCallback(), filter_fn="lambda stage, epoch, loader: 'valid' in loader",
+        DummyCallback(),
+        filter_fn="lambda stage, epoch, loader: 'valid' in loader",
     )
     expected = {
         "train": [False] * 5,
@@ -272,7 +279,8 @@ def test_control_flow_callback_filter_fn_string_lambda():
 
 def test_control_flow_callback_filter_fn_lambda():
     wraped = ControlFlowCallback(
-        DummyCallback(), filter_fn=lambda stage, epoch, loader: "valid" not in loader,
+        DummyCallback(),
+        filter_fn=lambda stage, epoch, loader: "valid" not in loader,
     )
     expected = {
         "train": [True] * 5,
@@ -362,7 +370,9 @@ class TestControlFlowCallback(unittest.TestCase):
             ControlFlowCallback(callback, loaders=1234.56)
 
         with self.assertRaises(ValueError):
-            ControlFlowCallback(callback, loaders={"train": ["", "fjdskjfdk", "1234"]})
+            ControlFlowCallback(
+                callback, loaders={"train": ["", "fjdskjfdk", "1234"]}
+            )
 
     def test_ignore_loaders_with_wrong_args(self):
         orders = (
@@ -384,7 +394,9 @@ class TestControlFlowCallback(unittest.TestCase):
             ControlFlowCallback(callback, ignore_loaders=1234.56)
 
         with self.assertRaises(ValueError):
-            ControlFlowCallback(callback, ignore_loaders={"train": ["", "fjdskjfdk", "1234"]})
+            ControlFlowCallback(
+                callback, ignore_loaders={"train": ["", "fjdskjfdk", "1234"]}
+            )
 
     def test_ignore_foo_with_wrong_args(self):
         orders = (
@@ -409,10 +421,14 @@ class TestControlFlowCallback(unittest.TestCase):
             ControlFlowCallback(callback, filter_fn=lambda *args: True)
 
         with self.assertRaises(ValueError):
-            ControlFlowCallback(callback, filter_fn=lambda one, two, three, four: True)
+            ControlFlowCallback(
+                callback, filter_fn=lambda one, two, three, four: True
+            )
 
         with self.assertRaises(ValueError):
-            ControlFlowCallback(callback, filter_fn=lambda *args, **kwargs: True)
+            ControlFlowCallback(
+                callback, filter_fn=lambda *args, **kwargs: True
+            )
 
     def test_filter_fn_with_wrong_args(self):
         runner = Mock(stage="stage1", loader_key="train", epoch=1)
@@ -481,12 +497,16 @@ class TestControlFlowCallback(unittest.TestCase):
 
         for order in orders:
             callback = RaiserCallback(order, "on_loader_start")
-            wrapper = ControlFlowCallback(callback, filter_fn="lambda s, e, l: False")
+            wrapper = ControlFlowCallback(
+                callback, filter_fn="lambda s, e, l: False"
+            )
 
             wrapper.on_loader_start(runner)
 
             callback = RaiserCallback(order, "on_loader_start")
-            wrapper = ControlFlowCallback(callback, filter_fn="lambda s, e, l: True")
+            wrapper = ControlFlowCallback(
+                callback, filter_fn="lambda s, e, l: True"
+            )
 
             with self.assertRaises(Dummy):
                 wrapper.on_loader_start(runner)
@@ -504,13 +524,17 @@ class TestControlFlowCallback(unittest.TestCase):
         for event in events:
             for order in orders:
                 callback = RaiserCallback(order, event)
-                wrapper = ControlFlowCallback(callback, filter_fn="lambda s, e, l: False")
+                wrapper = ControlFlowCallback(
+                    callback, filter_fn="lambda s, e, l: False"
+                )
 
                 wrapper.on_loader_start(runner)
                 wrapper.__getattribute__(event)(runner)
 
                 callback = RaiserCallback(order, event)
-                wrapper = ControlFlowCallback(callback, filter_fn="lambda s, e, l: True")
+                wrapper = ControlFlowCallback(
+                    callback, filter_fn="lambda s, e, l: True"
+                )
 
                 wrapper.on_loader_start(runner)
                 with self.assertRaises(Dummy):

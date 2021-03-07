@@ -23,7 +23,8 @@ class DummyModel(nn.Module):
     def __init__(self, num_features: int, num_classes: int) -> None:
         super().__init__()
         self.model = nn.Sequential(
-            nn.Flatten(), nn.Linear(in_features=num_features, out_features=num_classes),
+            nn.Flatten(),
+            nn.Linear(in_features=num_features, out_features=num_classes),
         )
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -50,7 +51,12 @@ class DummyModel(nn.Module):
         (
             ["test_1", "test_2", "test_3"],
             ["test_4"],
-            {"test_1": "test_1", "test_2": "test_2", "test_3": "test_3", "test_4": "test_4"},
+            {
+                "test_1": "test_1",
+                "test_2": "test_2",
+                "test_3": "test_3",
+                "test_4": "test_4",
+            },
         ),
         (
             {"test_1": "test_2", "test_3": "test_4"},
@@ -60,7 +66,12 @@ class DummyModel(nn.Module):
         (
             {"test_1": "test_2", "test_3": "test_4"},
             {"test_5": "test_6", "test_7": "test_8"},
-            {"test_1": "test_2", "test_3": "test_4", "test_5": "test_6", "test_7": "test_8"},
+            {
+                "test_1": "test_2",
+                "test_3": "test_4",
+                "test_5": "test_6",
+                "test_7": "test_8",
+            },
         ),
     ),
 )
@@ -71,7 +82,9 @@ def test_format_keys(
 ) -> None:
     """Check MetricCallback converts keys correctly"""
     accuracy = AccuracyMetric()
-    callback = BatchMetricCallback(metric=accuracy, input_key=input_key, target_key=target_key)
+    callback = BatchMetricCallback(
+        metric=accuracy, input_key=input_key, target_key=target_key
+    )
     assert callback._keys == keys
 
 
@@ -90,7 +103,9 @@ def test_classification_pipeline():
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(model.parameters())
 
-    runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets")
+    runner = dl.SupervisedRunner(
+        input_key="features", output_key="logits", target_key="targets"
+    )
     with TemporaryDirectory() as logdir:
         runner.train(
             model=model,
@@ -160,18 +175,26 @@ def test_metric_learning_pipeline():
     """
     with TemporaryDirectory() as tmp_dir:
         dataset_train = datasets.MnistMLDataset(root=tmp_dir, download=True)
-        sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)
-        train_loader = DataLoader(
-            dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size,
+        sampler = data.BalanceBatchSampler(
+            labels=dataset_train.get_labels(), p=5, k=10
         )
-        dataset_val = datasets.MnistQGDataset(root=tmp_dir, transform=None, gallery_fraq=0.2)
+        train_loader = DataLoader(
+            dataset=dataset_train,
+            sampler=sampler,
+            batch_size=sampler.batch_size,
+        )
+        dataset_val = datasets.MnistQGDataset(
+            root=tmp_dir, transform=None, gallery_fraq=0.2
+        )
         val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
 
         model = DummyModel(num_features=28 * 28, num_classes=NUM_CLASSES)
         optimizer = Adam(model.parameters(), lr=0.001)
 
         sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+        criterion = nn.TripletMarginLossWithSampler(
+            margin=0.5, sampler_inbatch=sampler_inbatch
+        )
 
         callbacks = OrderedDict(
             {

@@ -57,7 +57,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 f" {len(self.class_names)} and classes: {len(self.statistics)}"
             )
         else:
-            self.class_names = [f"class_{idx}" for idx in range(1, len(self.statistics) + 1)]
+            self.class_names = [
+                f"class_{idx}" for idx in range(1, len(self.statistics) + 1)
+            ]
         if self.weights is not None:
             assert len(self.weights) == len(self.statistics), (
                 f"the number of weights must be equal to the number of classes, got weights"
@@ -68,7 +70,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
         """Reset all statistics"""
         self.statistics = {}
 
-    def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    def update(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> torch.Tensor:
         """
         Update segmentation statistics for new data and return intermediate metrics values.
 
@@ -86,7 +90,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
             threshold=self.threshold,
         )
 
-        for idx, (tp_class, fp_class, fn_class) in enumerate(zip(tp, fp, fn), start=1):
+        for idx, (tp_class, fp_class, fn_class) in enumerate(
+            zip(tp, fp, fn), start=1
+        ):
             if idx in self.statistics:
                 self.statistics[idx]["tp"] += tp_class
                 self.statistics[idx]["fp"] += fp_class
@@ -148,7 +154,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 weighted_metric += value * self.weights[class_idx - 1]
             metrics[f"{self.prefix}/{self.class_names[class_idx-1]}"] = value
             for stats_name, value in statistics.items():
-                total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
+                total_statistics[stats_name] = (
+                    total_statistics.get(stats_name, 0) + value
+                )
         micro_metric /= len(self.statistics)
         macro_metric = self.metric_fn(**total_statistics)
         metrics[f"{self.prefix}/micro"] = micro_metric
