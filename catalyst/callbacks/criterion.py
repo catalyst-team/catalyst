@@ -52,7 +52,12 @@ class CriterionCallback(ICriterionCallback):
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
         inputs, targets = runner.batch[self.input_key], runner.batch[self.target_key]
-        loss = self.criterion(inputs, targets)
+
+        # NOTE: similar to amp guides in docs
+        # https://pytorch.org/docs/stable/notes/amp_examples.html
+        with runner.engine.autocast():
+            loss = self.criterion(inputs, targets)
+
         runner.batch_metrics.update({self.metric_key: loss})
         self.additive_metric.update(loss.detach().cpu(), len(targets))
 

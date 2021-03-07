@@ -67,7 +67,6 @@ class TwoBlobsDataset(Dataset):
         >>> print(y)
 
         """
-        # self.points = [
         #     [-5.12894273, 9.83618863, 4.7269259, 1.67416233],
         #     [-2.41212007, 9.98293112, 3.93782574, 1.64550754],
         #     [-1.59379551, 9.34303724, 4.11011863, 2.48643712],
@@ -148,58 +147,6 @@ class TwoBlobsDataset(Dataset):
         self.labels = [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8
         # self.labels = [0, 1] * 32
         # fmt: on
-        assert len(self.points) == len(self.labels)
-
-    def __len__(self):
-        """
-        Returns:
-            dataset's length.
-        """
-        return len(self.points)
-
-    def __getitem__(self, index):
-        """
-        Args:
-            idx: index of sample
-
-        Returns:
-            dummy features and targets vector
-        """
-        x = torch.FloatTensor(self.points[index])
-        y = torch.LongTensor([self.labels[index]])
-        return x, y
-
-
-@REGISTRY.add
-class AllwaysSameModel(nn.Module):
-    """Docs"""
-
-    def __init__(self, *args, **kwargs):
-        """Docs."""
-        super().__init__()
-        self.in_features = 4
-        self.out_features = 2
-        self.layers = nn.Linear(self.in_features, self.out_features)
-        # set initial layers weights
-        weights = torch.nn.Parameter(
-            torch.FloatTensor(
-                # [
-                #     [0.08763321, -0.19935564, 0.24326038, 0.06141703],
-                #     [-0.08763321, 0.19935564, -0.24326038, -0.06141703],
-                # ]
-                [[0.0, 0.0, 0.0, -1.0], [0.0, 0.0, 0.0, 1.0],]
-            )
-        )
-        weights.requires_grad = True
-        self.layers.weight = weights
-
-    def forward(self, batch):
-        """Docs"""
-        return self.layers(batch)
-
-    def train(self, mode: bool = True):
-        assert mode == False, "No changes required"
-        super().train(mode)
 
 
 @REGISTRY.add
