@@ -8,7 +8,7 @@ from catalyst.metrics.functional._hitrate import hitrate
 
 
 class HitrateMetric(ICallbackBatchMetric):
-    """ 
+    """
     Calculate the hitrate
     score given model outputs and targets
     The precision metric summarizes the fraction of relevant items

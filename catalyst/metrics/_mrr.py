@@ -8,7 +8,7 @@ from catalyst.metrics.functional._mrr import mrr
 
 
 class MRRMetric(ICallbackBatchMetric):
-    """ 
+    """
     Calculate the Mean Reciprocal Rank (MRR)
     score given model outputs and targets
     The precision metric summarizes the fraction of relevant items

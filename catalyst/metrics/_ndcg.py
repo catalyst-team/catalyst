@@ -8,7 +8,7 @@ from catalyst.metrics.functional._ndcg import ndcg
 
 
 class NDCGMetric(ICallbackBatchMetric):
-    """ 
+    """
     Calculate the Normalized discounted cumulative gain (NDCG)
     score given model outputs and targets
     The precision metric summarizes the fraction of relevant items
