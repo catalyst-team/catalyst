@@ -10,6 +10,12 @@ from catalyst.callbacks.metrics.cmc_score import CMCScoreCallback
 if SETTINGS.ml_required:
     from catalyst.callbacks.metrics.confusion_matrix import ConfusionMatrixCallback
 
+from catalyst.callbacks.metrics.segmentation import (
+    IOUCallback,
+    JaccardCallback,
+    DiceCallback,
+    TrevskyCallback,
+)
 
 #
 # from catalyst.callbacks.metrics.accuracy import (
