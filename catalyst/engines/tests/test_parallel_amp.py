@@ -14,7 +14,6 @@ from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
-
 if SETTINGS.amp_required:
     from catalyst.engines.apex import DataParallelAMPEngine
 
