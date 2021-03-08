@@ -13,11 +13,12 @@ from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 class DeviceEngine(IEngine):
     """Single training device engine."""
 
-    def __init__(self, device: str = "cpu"):
+    def __init__(self, device: str = None):
         """
         Args:
             device (str, optional): use device, default is `"cpu"`.
         """
+        device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.device = device
 
     def __repr__(self) -> str:  # noqa: D105
