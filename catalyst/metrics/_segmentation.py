@@ -124,7 +124,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
             self._check_parameters()
             self._checked_params = True
         metrics = {
-            f"{self.prefix}/{self.class_names[idx]}": value for idx, value in enumerate(metrics_per_class)
+            f"{self.prefix}/{self.class_names[idx]}": value
+            for idx, value in enumerate(metrics_per_class)
         }
         metrics[f"{self.prefix}/micro"] = micro_metric
         metrics[f"{self.prefix}/macro"] = macro_metric

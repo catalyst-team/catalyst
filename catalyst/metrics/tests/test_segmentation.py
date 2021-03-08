@@ -24,8 +24,8 @@ EPS = 1e-5
             {
                 "dice/class_name_00": 0.3636363446712494,
                 "dice/class_name_01": 1.0,
-                'dice/micro': 0.6818182,
-                'dice/macro': 0.7123288,
+                "dice/micro": 0.6818182,
+                "dice/macro": 0.7123288,
                 "dice/weighted": 0.8727272748947144,
             },
             {
@@ -70,8 +70,8 @@ def test_dice_metric(
             {
                 "iou/class_name_00": 0.2222222536802292,
                 "iou/class_name_01": 1.0,
-                'iou/micro': 0.6111111,
-                'iou/macro': 0.5531915,
+                "iou/micro": 0.6111111,
+                "iou/macro": 0.5531915,
                 "iou/weighted": 0.8444444537162781,
             },
             {
