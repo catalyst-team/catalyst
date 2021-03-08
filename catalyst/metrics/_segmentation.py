@@ -1,6 +1,7 @@
 from typing import Callable, Dict, List, Optional
 from functools import partial
 
+import numpy as np
 import torch
 
 from catalyst.engines.functional import all_gather
@@ -144,10 +145,13 @@ class RegionBasedMetric(ICallbackBatchMetric):
             weighted_metric = 0
 
         # @TODO: ddp hotfix, could be done better
+        # @TODO: check here
         if self._is_ddp:
             for class_idx, statistics in self.statistics.items():
-                for key, value in statistics:
-                    statistics[key] = torch.sum(all_gather(value)).detach().cpu().item()
+                for key in statistics:
+                    value: List[np.ndarray] = all_gather(statistics[key])
+                    value: np.ndarray = np.sum(np.vstack(value), axis=0)
+                    statistics[key] = value
 
         for class_idx, statistics in self.statistics.items():
             value = self.metric_fn(**statistics)

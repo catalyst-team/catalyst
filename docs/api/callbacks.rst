@@ -167,6 +167,7 @@ AUCCallback
     :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
+
 MulticlassPrecisionRecallF1SupportCallback
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.metrics.classification.MulticlassPrecisionRecallF1SupportCallback
@@ -181,6 +182,7 @@ MultilabelPrecisionRecallF1SupportCallback
     :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
+
 CMCScoreCallback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.metrics.cmc_score.CMCScoreCallback
@@ -188,12 +190,14 @@ CMCScoreCallback
     :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
+
 ConfusionMatrixCallback
 ~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.metrics.confusion_matrix.ConfusionMatrixCallback
     :members:
     :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
+
 
 HitrateCallback
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -223,13 +227,13 @@ NDCGCallback
     :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
+
 IOUCallback
 ~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.metrics.segmentation.IOUCallback
     :members:
     :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
-
 
 DiceCallback
 ~~~~~~~~~~~~~~~~~~~~~~~

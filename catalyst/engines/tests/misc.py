@@ -147,6 +147,15 @@ class TwoBlobsDataset(Dataset):
         self.labels = [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8
         # self.labels = [0, 1] * 32
         # fmt: on
+        assert len(self.points) == len(self.labels)
+
+    def __len__(self):
+        return len(self.points)
+
+    def __getitem__(self, index):
+        x = torch.FloatTensor(self.points[index])
+        y = torch.LongTensor([self.labels[index]])
+        return x, y
 
 
 @REGISTRY.add

@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 from collections import defaultdict
 from functools import partial
 
@@ -273,8 +273,10 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         """
         # @TODO: ddp hotfix, could be done better
         if self._is_ddp:
-            for key, value in self.statistics.items():
-                self.statistics[key] = torch.sum(all_gather(value), dim=1).detach().cpu().numpy()
+            for key in self.statistics:
+                value: List[np.ndarray] = all_gather(self.statistics[key])
+                value: np.ndarray = np.sum(np.vstack(value), axis=0)
+                self.statistics[key] = value
 
         per_class, micro, macro, weighted = self.compute()
         metrics = self._convert_metrics_to_kv(
@@ -382,8 +384,10 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         """
         # @TODO: ddp hotfix, could be done better
         if self._is_ddp:
-            for key, value in self.statistics.items():
-                self.statistics[key] = torch.sum(all_gather(value)).detach().cpu().item()
+            for key in self.statistics:
+                value: List[float] = all_gather(self.statistics[key])
+                value: float = sum(value)
+                self.statistics[key] = value
 
         precision_value, recall_value, f1_value = get_binary_metrics(
             tp=self.statistics["tp"],

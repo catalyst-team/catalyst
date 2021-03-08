@@ -17,6 +17,7 @@ from catalyst.callbacks import (
     AUCCallback,
     CheckpointCallback,
     CriterionCallback,
+    MulticlassPrecisionRecallF1SupportCallback,
     OptimizerCallback,
     TqdmCallback,
 )
@@ -116,6 +117,9 @@ class IRunnerMixin(IRunner):
             ),
             "accuracy": AccuracyCallback(input_key="logits", target_key="targets", num_classes=1),
             "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
+            "classification": MulticlassPrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=2,
+            ),
             # "optimizer": OptimizerCallback(metric_key="loss"),
             # "checkpoint": CheckpointCallback(
             #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
@@ -259,4 +263,4 @@ def test_device_and_ddp_metrics():
 
         # print(f"epoch_metrics1: {epoch_metrics1}")
         # print(f"epoch_metrics2: {epoch_metrics2}")
-        # assert 0 == 1
+        assert 0 == 1
