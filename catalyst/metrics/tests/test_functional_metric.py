@@ -1,5 +1,5 @@
 # flake8: noqa
-from typing import Dict, Callable, Any
+from typing import Any, Callable, Dict
 
 import pytest
 import torch
@@ -32,10 +32,9 @@ def custom_dice(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
             torch.Tensor([1.1, 2.9, -1, 3.1]),
             torch.nn.functional.l1_loss,
             "custom_mae",
-            {'custom_mae': torch.tensor(1.6600)},
-            {'custom_mae': torch.tensor(4.8000)},
-            {'custom_mae/mean': torch.tensor(3.0555556)}
-
+            {"custom_mae": torch.tensor(1.6600)},
+            {"custom_mae": torch.tensor(4.8000)},
+            {"custom_mae/mean": torch.tensor(3.0555556)},
         ),
         (
             torch.Tensor([12, 3.1, 12, 0, -1]),
@@ -44,10 +43,9 @@ def custom_dice(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
             torch.Tensor([1.1, 2.9, -1, 3.1]),
             torch.nn.functional.mse_loss,
             "custom_mse",
-            {'custom_mse': torch.tensor(6.0100)},
-            {'custom_mse': torch.tensor(53.4150)},
-            {'custom_mse/mean': torch.tensor(27.078888)}
-
+            {"custom_mse": torch.tensor(6.0100)},
+            {"custom_mse": torch.tensor(53.4150)},
+            {"custom_mse/mean": torch.tensor(27.078888)},
         ),
         (
             base_outputs_1,
@@ -56,23 +54,23 @@ def custom_dice(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
             base_targets_2,
             custom_dice,
             "custom_dice",
-            {'custom_dice': torch.tensor(0.71232873)},
-            {'custom_dice': torch.tensor(0.36363637)},
-            {'custom_dice/mean': torch.tensor(0.5379826)}
-
+            {"custom_dice": torch.tensor(0.71232873)},
+            {"custom_dice": torch.tensor(0.36363637)},
+            {"custom_dice/mean": torch.tensor(0.5379826)},
         ),
-    )
-
+    ),
 )
-def test_mae_metric(outputs_1: torch.Tensor,
-                    targets_1: torch.Tensor,
-                    outputs_2: torch.Tensor,
-                    targets_2: torch.Tensor,
-                    metric_function: Callable,
-                    prefix: str,
-                    batch_answer_1: Dict[str, Any],
-                    batch_answer_2: Dict[str, Any],
-                    total_answer: Dict[str, Any]):
+def test_mae_metric(
+    outputs_1: torch.Tensor,
+    targets_1: torch.Tensor,
+    outputs_2: torch.Tensor,
+    targets_2: torch.Tensor,
+    metric_function: Callable,
+    prefix: str,
+    batch_answer_1: Dict[str, Any],
+    batch_answer_2: Dict[str, Any],
+    total_answer: Dict[str, Any],
+):
     metric = BatchFuntionalMetric(metric_function=metric_function, prefix=prefix)
     batch_score_1 = metric.update_key_value(outputs_1, targets_1)
     batch_score_2 = metric.update_key_value(outputs_2, targets_2)
