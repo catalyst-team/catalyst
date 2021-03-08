@@ -268,4 +268,4 @@ def test_device_and_ddp_metrics():
 
         # print(f"epoch_metrics1: {epoch_metrics1}")
         # print(f"epoch_metrics2: {epoch_metrics2}")
-        assert 0 == 1
+        # assert 0 == 1
