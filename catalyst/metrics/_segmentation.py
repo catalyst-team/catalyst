@@ -147,7 +147,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
 
         # @TODO: ddp hotfix, could be done better
         if self._is_ddp:
-            for class_idx, statistics in self.statistics.items():
+            for _, statistics in self.statistics.items():
                 for key in statistics:
                     device = statistics[key].device
                     value: List[torch.Tensor] = all_gather(statistics[key].cpu())

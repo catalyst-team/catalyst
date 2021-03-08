@@ -160,7 +160,7 @@ class MetricAggregationCallback(Callback):
                     result = [metrics[key] * value for key, value in self.metrics.items()]
                 else:
                     result = [metrics[key] for key in self.metrics]
-            except KeyError as ex:
+            except KeyError:
                 raise KeyError(f"Could not found required key out of {metrics.keys()}")
         else:
             result = list(metrics.values())

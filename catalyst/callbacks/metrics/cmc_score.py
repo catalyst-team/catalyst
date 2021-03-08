@@ -2,8 +2,6 @@ from typing import List
 
 from catalyst.callbacks.metric import LoaderMetricCallback
 from catalyst.metrics._cmc_score import CMCMetric
-from catalyst.metrics.functional import get_default_topk_args
-from catalyst.utils.distributed import get_rank
 
 
 class CMCScoreCallback(LoaderMetricCallback):
@@ -26,7 +24,6 @@ class CMCScoreCallback(LoaderMetricCallback):
         labels_key: str,
         is_query_key: str,
         topk_args: List[int] = None,
-        num_classes: int = None,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -43,30 +40,27 @@ class CMCScoreCallback(LoaderMetricCallback):
         Args:
             embeddings_key: embeddings key in output dict
             labels_key: labels key in output dict
-            is_query_key: bool key True if current
-                object is from query
-            prefix: key for the metric's name
+            is_query_key: bool key True if current object is from query
             topk_args: specifies which cmc@K to log.
                 [1] - cmc@1
                 [1, 3] - cmc@1 and cmc@3
                 [1, 3, 5] - cmc@1, cmc@3 and cmc@5
-            num_classes: number of classes to calculate ``accuracy_args``
-                if ``topk_args`` is None
+            prefix: metric prefix
+            suffix: metric suffix
 
         """
-        self.list_args = topk_args or get_default_topk_args(num_classes)
         super().__init__(
             metric=CMCMetric(
                 embeddings_key=embeddings_key,
                 labels_key=labels_key,
                 is_query_key=is_query_key,
+                topk_args=topk_args,
                 prefix=prefix,
                 suffix=suffix,
             ),
             input_key=[embeddings_key, is_query_key],
             target_key=[labels_key],
         )
-        assert get_rank() < 0, "No DDP support implemented yet"
 
 
 __all__ = ["CMCScoreCallback"]

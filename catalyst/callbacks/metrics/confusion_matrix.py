@@ -45,7 +45,6 @@ class ConfusionMatrixCallback(Callback):
         self.normalized = normalized
 
         assert self.num_classes is not None
-        assert get_rank() < 0, "No DDP support implemented yet"
 
     def on_loader_start(self, runner: "IRunner"):
         """Loader start hook.
@@ -56,6 +55,7 @@ class ConfusionMatrixCallback(Callback):
         self.confusion_matrix = ConfusionMatrixMetric(
             num_classes=self.num_classes, normalized=self.normalized
         )
+        assert get_rank() < 0, "No DDP support implemented yet"
 
     def on_batch_end(self, runner: "IRunner"):
         """Batch end hook.

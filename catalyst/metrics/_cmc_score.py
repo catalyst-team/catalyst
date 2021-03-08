@@ -4,6 +4,7 @@ import torch
 
 from catalyst.metrics._metric import AccumulationMetric
 from catalyst.metrics.functional._cmc_score import cmc_score
+from catalyst.utils.distributed import get_rank
 
 
 class CMCMetric(AccumulationMetric):
@@ -126,6 +127,17 @@ class CMCMetric(AccumulationMetric):
         self.is_query_key = is_query_key
         self.topk_args = topk_args or (1,)
         self.metric_name = f"{self.prefix}cmc{self.suffix}"
+
+    def reset(self, num_batches: int, num_samples: int) -> None:
+        """
+        Reset metrics fields
+
+        Args:
+            num_batches: expected number of batches
+            num_samples: expected number of samples to accumulate
+        """
+        super().reset(num_batches, num_samples)
+        assert get_rank() < 0, "No DDP support implemented yet"
 
     def compute(self) -> List[float]:
         """

@@ -17,10 +17,11 @@ class AUCMetric(ICallbackLoaderMetric):
         self.metric_name = f"{self.prefix}auc{self.suffix}"
         self.scores = []
         self.targets = []
-        self._is_ddp = get_rank() > -1
+        self._is_ddp = False
 
     def reset(self, num_batches, num_samples) -> None:
         """@TODO: docs here"""
+        self._is_ddp = get_rank() > -1
         self.scores = []
         self.targets = []
 
