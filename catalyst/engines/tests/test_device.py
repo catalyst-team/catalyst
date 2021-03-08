@@ -91,13 +91,13 @@ class CustomRunner(IRunner):
         self.batch = {"features": x, "targets": y, "logits": logits}
 
 
-def run_train_with_experiment_device(device):
+def train_from_runner(device):
     with TemporaryDirectory() as logdir:
         runner = CustomRunner(logdir, device)
         runner.run()
 
 
-def run_train_with_config_experiment_device(device):
+def train_from_config(device):
     with TemporaryDirectory() as logdir:
         dataset = DummyDataset(6)
         runner = SupervisedConfigRunner(
@@ -145,11 +145,11 @@ def test_experiment_engine_with_devices():
     # will check on all available devices
     to_check_devices = ["cpu"] + [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:
-        run_train_with_experiment_device(device)
+        train_from_runner(device)
 
 
 def test_config_experiment_engine_with_cpu():
     # will check on all available devices
     to_check_devices = ["cpu"] + [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:
-        run_train_with_config_experiment_device(device)
+        train_from_config(device)
