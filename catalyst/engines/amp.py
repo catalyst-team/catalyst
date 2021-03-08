@@ -143,4 +143,4 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         return amp.autocast()
 
 
-__all__ = ["AMPEngine", "DistributedDataParallelAMPEngine"]
+__all__ = ["AMPEngine", "DataParallelAMPEngine", "DistributedDataParallelAMPEngine"]

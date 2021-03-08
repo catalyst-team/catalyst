@@ -420,4 +420,4 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             amp.load_state_dict(checkpoint["amp"])
 
 
-__all__ = ["APEXEngine", "DistributedDataParallelApexEngine"]
+__all__ = ["APEXEngine", "DataParallelApexEngine", "DistributedDataParallelApexEngine"]
