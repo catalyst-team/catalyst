@@ -195,6 +195,34 @@ ConfusionMatrixCallback
     :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
+HitrateCallback
+~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.metrics.recsys.HitrateCallback
+    :members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
+MAPCallback
+~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.metrics.recsys.MAPCallback
+    :members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
+MRRCallback
+~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.metrics.recsys.MRRCallback
+    :members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
+NDCGCallback
+~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.metrics.recsys.NDCGCallback
+    :members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
 IOUCallback
 ~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.metrics.segmentation.IOUCallback
