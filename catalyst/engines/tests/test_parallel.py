@@ -80,14 +80,13 @@ class CustomRunner(IRunner):
         self.batch = {"features": x, "targets": y, "logits": logits}
 
 
-def run_train_with_experiment_parallel_device():
+def train_from_runner():
     with TemporaryDirectory() as logdir:
         runner = CustomRunner(logdir)
         runner.run()
 
 
-def run_train_with_config_experiment_parallel_device():
-    device = "dp"
+def train_from_config():
     with TemporaryDirectory() as logdir:
         dataset = DummyDataset(6)
         runner = SupervisedConfigRunner(
@@ -131,10 +130,10 @@ def run_train_with_config_experiment_parallel_device():
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_experiment_parallel_engine_with_cuda():
-    run_train_with_experiment_parallel_device()
+    train_from_runner()
 
 
 # @mark.skip("Config experiment is in development phase!")
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
 def test_config_experiment_engine_with_cuda():
-    run_train_with_config_experiment_parallel_device()
+    train_from_config()

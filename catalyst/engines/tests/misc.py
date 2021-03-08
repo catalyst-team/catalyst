@@ -1,6 +1,11 @@
 # flake8: noqa
+from collections.abc import Iterable
+from contextlib import suppress
 import logging
+import numbers
+import warnings
 
+import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset
@@ -8,6 +13,175 @@ from torch.utils.data import Dataset
 from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.registry import REGISTRY
+
+
+def check_random_state(seed):
+    """Turn seed into a np.random.RandomState instance
+    Parameters
+    ----------
+    seed : None, int or instance of RandomState
+        If seed is None, return the RandomState singleton used by np.random.
+        If seed is an int, return a new RandomState instance seeded with seed.
+        If seed is already a RandomState instance, return it.
+        Otherwise raise ValueError.
+    """
+    if seed is None or seed is np.random:
+        return np.random.mtrand._rand
+    if isinstance(seed, numbers.Integral):
+        return np.random.RandomState(seed)
+    if isinstance(seed, np.random.RandomState):
+        return seed
+    raise ValueError("%r cannot be used to seed a numpy.random.RandomState instance" % seed)
+
+
+def make_blobs(
+    n_samples=100,
+    n_features=2,
+    *,
+    centers=None,
+    cluster_std=1.0,
+    center_box=(-10.0, 10.0),
+    shuffle=True,
+    random_state=None,
+    return_centers=False,
+):
+    """Generate isotropic Gaussian blobs for clustering.
+    Read more in the :ref:`User Guide <sample_generators>`.
+    Parameters
+    ----------
+    n_samples : int or array-like, default=100
+        If int, it is the total number of points equally divided among
+        clusters.
+        If array-like, each element of the sequence indicates
+        the number of samples per cluster.
+        .. versionchanged:: v0.20
+            one can now pass an array-like to the ``n_samples`` parameter
+    n_features : int, default=2
+        The number of features for each sample.
+    centers : int or ndarray of shape (n_centers, n_features), default=None
+        The number of centers to generate, or the fixed center locations.
+        If n_samples is an int and centers is None, 3 centers are generated.
+        If n_samples is array-like, centers must be
+        either None or an array of length equal to the length of n_samples.
+    cluster_std : float or array-like of float, default=1.0
+        The standard deviation of the clusters.
+    center_box : tuple of float (min, max), default=(-10.0, 10.0)
+        The bounding box for each cluster center when centers are
+        generated at random.
+    shuffle : bool, default=True
+        Shuffle the samples.
+    random_state : int, RandomState instance or None, default=None
+        Determines random number generation for dataset creation. Pass an int
+        for reproducible output across multiple function calls.
+        See :term:`Glossary <random_state>`.
+    return_centers : bool, default=False
+        If True, then return the centers of each cluster
+        .. versionadded:: 0.23
+    Returns
+    -------
+    X : ndarray of shape (n_samples, n_features)
+        The generated samples.
+    y : ndarray of shape (n_samples,)
+        The integer labels for cluster membership of each sample.
+    centers : ndarray of shape (n_centers, n_features)
+        The centers of each cluster. Only returned if
+        ``return_centers=True``.
+    Examples
+    --------
+    >>> from sklearn.datasets import make_blobs
+    >>> X, y = make_blobs(n_samples=10, centers=3, n_features=2,
+    ...                   random_state=0)
+    >>> print(X.shape)
+    (10, 2)
+    >>> y
+    array([0, 0, 1, 0, 2, 2, 2, 1, 1, 0])
+    >>> X, y = make_blobs(n_samples=[3, 3, 4], centers=None, n_features=2,
+    ...                   random_state=0)
+    >>> print(X.shape)
+    (10, 2)
+    >>> y
+    array([0, 1, 2, 0, 2, 2, 2, 1, 1, 0])
+    See Also
+    --------
+    make_classification : A more intricate variant.
+    """
+    generator = check_random_state(random_state)
+
+    if isinstance(n_samples, numbers.Integral):
+        # Set n_centers by looking at centers arg
+        if centers is None:
+            centers = 3
+
+        if isinstance(centers, numbers.Integral):
+            n_centers = centers
+            centers = generator.uniform(center_box[0], center_box[1], size=(n_centers, n_features))
+
+        else:
+            centers = np.array(centers)  # check_array(centers)
+            n_features = centers.shape[1]
+            n_centers = centers.shape[0]
+
+    else:
+        # Set n_centers by looking at [n_samples] arg
+        n_centers = len(n_samples)
+        if centers is None:
+            centers = generator.uniform(center_box[0], center_box[1], size=(n_centers, n_features))
+        try:
+            assert len(centers) == n_centers
+        except TypeError as e:
+            raise ValueError(
+                "Parameter `centers` must be array-like. " "Got {!r} instead".format(centers)
+            ) from e
+        except AssertionError as e:
+            raise ValueError(
+                f"Length of `n_samples` not consistent with number of "
+                f"centers. Got n_samples = {n_samples} and centers = {centers}"
+            ) from e
+        else:
+            centers = np.array(centers)  # check_array(centers)
+            n_features = centers.shape[1]
+
+    # stds: if cluster_std is given as list, it must be consistent
+    # with the n_centers
+    if hasattr(cluster_std, "__len__") and len(cluster_std) != n_centers:
+        raise ValueError(
+            "Length of `clusters_std` not consistent with "
+            "number of centers. Got centers = {} "
+            "and cluster_std = {}".format(centers, cluster_std)
+        )
+
+    if isinstance(cluster_std, numbers.Real):
+        cluster_std = np.full(len(centers), cluster_std)
+
+    X = []
+    y = []
+
+    if isinstance(n_samples, Iterable):
+        n_samples_per_center = n_samples
+    else:
+        n_samples_per_center = [int(n_samples // n_centers)] * n_centers
+
+        for i in range(n_samples % n_centers):
+            n_samples_per_center[i] += 1
+
+    for i, (n, std) in enumerate(zip(n_samples_per_center, cluster_std)):
+        X.append(generator.normal(loc=centers[i], scale=std, size=(n, n_features)))
+        y += [i] * n
+
+    X = np.concatenate(X)
+    y = np.array(y)
+
+    if shuffle:
+        total_n_samples = np.sum(n_samples)
+        indices = np.arange(total_n_samples)
+        generator.shuffle(indices)
+        X = X[indices]
+        y = y[indices]
+
+    if return_centers:
+        return X, y, centers
+    else:
+        return X, y
 
 
 class DummyDataset(Dataset):
@@ -147,7 +321,7 @@ class TwoBlobsDataset(Dataset):
         # self.labels = [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8
         # self.labels = [0, 1] * 32
         # fmt: on
-        from sklearn.datasets import make_blobs
+        # from sklearn.datasets import make_blobs
 
         self.points, self.labels = make_blobs(
             n_samples=1000, centers=4, n_features=4, random_state=42

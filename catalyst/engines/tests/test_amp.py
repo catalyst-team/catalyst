@@ -92,13 +92,13 @@ class CustomRunner(IRunner):
         self.batch = {"features": x, "targets": y, "logits": logits}
 
 
-def run_train_with_experiment_amp_device(device):
+def train_from_runner(device):
     with TemporaryDirectory() as logdir:
         runner = CustomRunner(logdir, device)
         runner.run()
 
 
-def run_train_with_config_experiment_amp_device(device):
+def train_from_config(device):
     with TemporaryDirectory() as logdir:
         dataset = DummyDataset(6)
         runner = SupervisedConfigRunner(
@@ -149,7 +149,7 @@ def run_train_with_config_experiment_amp_device(device):
 def test_experiment_engine_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:
-        run_train_with_experiment_amp_device(device)
+        train_from_runner(device)
 
 
 @mark.skipif(
@@ -158,4 +158,4 @@ def test_experiment_engine_with_devices():
 def test_config_experiment_engine_with_cuda():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:
-        run_train_with_config_experiment_amp_device(device)
+        train_from_config(device)
