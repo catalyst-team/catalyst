@@ -26,8 +26,8 @@ class StatisticsMetric(ICallbackBatchMetric):
 
     def __init__(
         self,
-        num_classes: int,
         mode: str,
+        num_classes: int = None,
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
@@ -58,12 +58,17 @@ class StatisticsMetric(ICallbackBatchMetric):
 
         self.num_classes = num_classes
         self.statistics = None
+        self._is_ddp = False
         self.reset()
-        self._is_ddp = get_rank() > -1
+
+    # multiprocessing could not handle lamdas, so..
+    def _mp_hack(self):
+        return np.zeros(shape=(self.num_classes,))
 
     def reset(self) -> None:
         """Reset all the statistics."""
-        self.statistics = defaultdict(lambda: np.zeros(shape=(self.num_classes)))
+        self.statistics = defaultdict(self._mp_hack)
+        self._is_ddp = get_rank() > -1
 
     def update(
         self, outputs: torch.Tensor, targets: torch.Tensor
@@ -142,8 +147,8 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
 
     def __init__(
         self,
-        num_classes: int,
         mode: str,
+        num_classes: int = None,
         zero_division: int = 0,
         compute_on_call: bool = True,
         prefix: str = None,
@@ -419,7 +424,7 @@ class MulticlassPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
 
     def __init__(
         self,
-        num_classes: int,
+        num_classes: int = None,
         zero_division: int = 0,
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
@@ -454,7 +459,7 @@ class MultilabelPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
 
     def __init__(
         self,
-        num_classes: int,
+        num_classes: int = None,
         zero_division: int = 0,
         compute_on_call: bool = True,
         prefix: Optional[str] = None,

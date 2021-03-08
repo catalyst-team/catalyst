@@ -1,7 +1,6 @@
 from typing import Callable, Dict, List, Optional
 from functools import partial
 
-import numpy as np
 import torch
 
 from catalyst.engines.functional import all_gather
@@ -52,7 +51,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         self.weights = weights
         self.class_names = class_names
         self._checked_params = False
-        self._is_ddp = get_rank() > -1
+        self._is_ddp = False
 
     def _check_parameters(self):
         # check class_names
@@ -72,9 +71,10 @@ class RegionBasedMetric(ICallbackBatchMetric):
     def reset(self):
         """Reset all statistics"""
         self.statistics = {}
+        self._is_ddp = get_rank() > -1
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        """Updatse segmentation statistics iwth new data and return intermediate metrics values.
+        """Updatse segmentation statistics with new data and return intermediate metrics values.
 
         Args:
             outputs: tensor of logits
@@ -84,8 +84,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
             metric for each class
         """
         tp, fp, fn = get_segmentation_statistics(
-            outputs=outputs.cpu().detach(),
-            targets=targets.cpu().detach(),
+            outputs=outputs.detach(),
+            targets=targets.detach(),
             class_dim=self.class_dim,
             threshold=self.threshold,
         )
@@ -124,6 +124,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         metrics = {
             f"{self.prefix}/{self.class_names[idx]}": value for idx, value in enumerate(values)
         }
+        metrics[self.prefix] = torch.mean(values)
         if self.weights is not None:
             weighted_metric = 0
             for idx, value in enumerate(values):
@@ -145,12 +146,12 @@ class RegionBasedMetric(ICallbackBatchMetric):
             weighted_metric = 0
 
         # @TODO: ddp hotfix, could be done better
-        # @TODO: check here
         if self._is_ddp:
             for class_idx, statistics in self.statistics.items():
                 for key in statistics:
-                    value: List[np.ndarray] = all_gather(statistics[key])
-                    value: np.ndarray = np.sum(np.vstack(value), axis=0)
+                    device = statistics[key].device
+                    value: List[torch.Tensor] = all_gather(statistics[key].cpu())
+                    value: torch.Tensor = torch.sum(torch.vstack(value), dim=0).to(device)
                     statistics[key] = value
 
         for class_idx, statistics in self.statistics.items():
@@ -165,6 +166,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         macro_metric = self.metric_fn(**total_statistics)
         metrics[f"{self.prefix}/micro"] = micro_metric
         metrics[f"{self.prefix}/macro"] = macro_metric
+        metrics[f"{self.prefix}"] = macro_metric
         if self.weights is not None:
             metrics[f"{self.prefix}/weighted"] = weighted_metric
         # convert torch.Tensor to float
@@ -200,8 +202,8 @@ class IOUMetric(RegionBasedMetric):
             Used for per-batch logging. default: True
             prefix: metric prefix
             suffix: metric suffix
-            class_dim: indicates class dimention (K) for ``outputs`` and
-            ``targets`` tensors (default = 1)
+            class_dim: indicates class dimension (K) for ``outputs`` and
+                ``targets`` tensors (default = 1)
             weights: class weights
             class_names: class names
             threshold: threshold for outputs binarization

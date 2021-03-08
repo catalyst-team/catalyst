@@ -611,7 +611,7 @@ dataset_val = datasets.MnistQGDataset(root=dataset_root, transform=transforms, g
 val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
 
 # 2. model and optimizer
-model = models.MnistSimpleNet(features_dim=16)
+model = models.MnistSimpleNet(out_features=16)
 optimizer = Adam(model.parameters(), lr=0.001)
 
 # 3. criterion with triplets sampling

@@ -6,7 +6,7 @@ import numpy as np
 import torch
 import torch.distributed as dist
 import torch.nn as nn
-from torch.nn.parallel import DistributedDataParallel as DDP
+from torch.nn.parallel import DistributedDataParallel
 
 from catalyst.core.engine import IEngine
 from catalyst.engines.functional import mean_reduce, sum_reduce
@@ -124,7 +124,9 @@ class DistributedDataParallelEngine(IEngine):
         model = model_fn()
         model = self.sync_device(model)
         # NOTE: do not forget to wrap a model in DDP
-        model = DDP(model, device_ids=[self.device])
+        model = DistributedDataParallel(
+            model, device_ids=[self.device], find_unused_parameters=True
+        )
         # criterion
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
@@ -153,7 +155,7 @@ class DistributedDataParallelEngine(IEngine):
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
-        _model = model.module if isinstance(model, DDP) else model
+        _model = model.module if isinstance(model, DistributedDataParallel) else model
         return {
             "model": _model,
             "criterion": criterion,

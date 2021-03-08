@@ -3,7 +3,7 @@ from typing import Any, Dict, Mapping, Union
 
 import torch
 import torch.nn as nn
-from torch.nn.parallel import DataParallel as DP
+from torch.nn.parallel import DataParallel
 
 from catalyst.engines.device import DeviceEngine
 
@@ -35,7 +35,7 @@ class DataParallelEngine(DeviceEngine):
     ):
         model = model_fn()
         model = self.sync_device(model)
-        model = DP(model)
+        model = DataParallel(model)
 
         # criterion
         criterion = criterion_fn()
