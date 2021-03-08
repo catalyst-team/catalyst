@@ -147,7 +147,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         if self._is_ddp:
             for class_idx, statistics in self.statistics.items():
                 for key, value in statistics:
-                    statistics[key] = torch.sum(all_gather(value))
+                    statistics[key] = torch.sum(all_gather(value)).detach().cpu().item()
 
         for class_idx, statistics in self.statistics.items():
             value = self.metric_fn(**statistics)

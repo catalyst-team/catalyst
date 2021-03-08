@@ -5,6 +5,7 @@ from functools import partial
 import numpy as np
 import torch
 
+from catalyst.engines.functional import all_gather
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._classification import get_aggregated_metrics, get_binary_metrics
 from catalyst.metrics.functional._misc import (
@@ -12,6 +13,7 @@ from catalyst.metrics.functional._misc import (
     get_multiclass_statistics,
     get_multilabel_statistics,
 )
+from catalyst.utils.distributed import get_rank
 
 
 class StatisticsMetric(ICallbackBatchMetric):
@@ -57,6 +59,7 @@ class StatisticsMetric(ICallbackBatchMetric):
         self.num_classes = num_classes
         self.statistics = None
         self.reset()
+        self._is_ddp = get_rank() > -1
 
     def reset(self) -> None:
         """Reset all the statistics."""
@@ -268,6 +271,11 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         Returns:
             dict of metrics
         """
+        # @TODO: ddp hotfix, could be done better
+        if self._is_ddp:
+            for key, value in self.statistics.items():
+                self.statistics[key] = torch.sum(all_gather(value), dim=1).detach().cpu().numpy()
+
         per_class, micro, macro, weighted = self.compute()
         metrics = self._convert_metrics_to_kv(
             per_class=per_class, micro=micro, macro=macro, weighted=weighted
@@ -372,6 +380,11 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         Returns:
             tuple of metrics: precision, recall, f1 score
         """
+        # @TODO: ddp hotfix, could be done better
+        if self._is_ddp:
+            for key, value in self.statistics.items():
+                self.statistics[key] = torch.sum(all_gather(value)).detach().cpu().item()
+
         precision_value, recall_value, f1_value = get_binary_metrics(
             tp=self.statistics["tp"],
             fp=self.statistics["fp"],
