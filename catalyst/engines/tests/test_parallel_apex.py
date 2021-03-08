@@ -10,11 +10,13 @@ from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
 from catalyst.core.runner import IRunner
-from catalyst.engines import DataParallelApexEngine
-from catalyst.engines.device import DeviceEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
+
+
+if SETTINGS.apex_required:
+    from catalyst.engines.apex import DataParallelApexEngine
 
 from .misc import (
     DataParallelTypeChecker,
