@@ -4,6 +4,7 @@ from catalyst.settings import SETTINGS
 
 from catalyst.callbacks.metrics.accuracy import AccuracyCallback
 from catalyst.callbacks.metrics.auc import AUCCallback
+from catalyst.callbacks.metrics.custom import CustomMetricCallback
 
 if SETTINGS.ml_required:
     from catalyst.callbacks.metrics.confusion_matrix import ConfusionMatrixCallback
