@@ -1,5 +1,7 @@
 # flake8: noqa
+import os
 import logging
+from collections import OrderedDict
 
 import torch
 import torch.nn as nn
@@ -353,3 +355,41 @@ class DistributedDataParallelTypeChecker(ModuleTypeChecker):
         assert isinstance(
             model, nn.parallel.DistributedDataParallel
         ), f"Expected nn.parallel.DistributedDataParallel but got - '{type(model)}' !"
+
+
+@REGISTRY.add
+class CheckModelStateLoadAfterStages(Callback):
+    def __init__(self, stage, logdir, checkpoint):
+        """Docs."""
+        super().__init__(CallbackOrder.Internal)
+        self.stage = stage
+        self.logdir = logdir
+        self.checkpoint = checkpoint
+
+    def on_stage_start(self, runner):
+        if runner.stage_key != self.stage or not runner.engine.is_master_process:
+            return
+        # modify model state
+        checkpoint_file = os.path.join(self.logdir, self.checkpoint)
+        checkpoint = runner.engine.load_checkpoint(checkpoint_file)
+        checkpoint["model_state_dict"] = OrderedDict(
+            (k, torch.ones_like(v)) for k, v in checkpoint["model_state_dict"].items()
+        )
+        runner.engine.save_checkpoint(checkpoint, checkpoint_file)
+
+    def on_batch_start(self, runner):
+        if runner.stage_key != self.stage:
+            return
+        # check if model loaded right checkpoint
+        model = runner.model
+        if not isinstance(model, nn.Module):  # dummy check for DP or DDP
+            model = model.module
+        state_dict = model.state_dict()
+        for k, v in state_dict.items():
+            assert torch.all(v == torch.ones_like(v)), (
+                f"Stage: '{runner.stage_key}'\n"
+                f"Epoch: {runner.stage_epoch_step} (global - {runner.global_epoch_step})\n"
+                f"Expected that value for '{k}' will be all ones!\n"
+                f"Got:\n{v}\n"
+            )
+

@@ -150,9 +150,7 @@ def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]
     return required_files
 
 
-def _load_states_from_file_map(
-    *, logdir: str, runner: "IRunner", load_map: Dict[str, str]
-) -> None:
+def _load_states_from_file_map(*, logdir: str, runner: "IRunner", load_map: Dict[str, str]) -> None:
     """
     Load state of a model, criterion, optimizer, scheduler
     from files specified in ``load_map``.
@@ -493,6 +491,34 @@ class CheckpointCallback(ICheckpointCallback):
             if self.use_logdir_postfix:
                 self.logdir = os.path.join(self.logdir, "checkpoints")
 
+        # TODO: rethink this logic
+        if self.load_on_stage_start:
+            checkpoint_exists = False
+            need_load_full = False
+            if isinstance(self.load_on_stage_start, str):
+                checkpoint_exists = os.path.isfile(f"{self.logdir}/{self.load_on_stage_start}.pth")
+                need_load_full = self.load_on_stage_start.endswith("full")
+            elif isinstance(self.load_on_stage_start, dict):
+                required_files = _get_required_files(self.logdir, self.load_on_stage_start).keys()
+                checkpoint_exists = all(os.path.isfile(file) for file in required_files)
+
+            if checkpoint_exists:
+                checkpoint = self.load_on_stage_start
+                if self.load_on_stage_start in {"best", "best_full", "last", "last_full"}:
+                    checkpoint = f"{self.load_on_stage_start}.pth"
+                checkpoint = os.path.join(self.logdir, checkpoint)
+                state = runner.engine.load_checkpoint(checkpoint)
+                runner.engine.unpack_checkpoint(
+                    state, runner.model, runner.criterion, runner.optimizer, runner.scheduler,
+                )
+
+                # _load_runner(
+                #     logdir=self.logdir,
+                #     runner=runner,
+                #     mapping=self.load_on_stage_start,
+                #     load_full=need_load_full,
+                # )
+
     #     if getattr(runner, "resume", None) is not None:
     #         self.resume = runner.resume
     #         runner.resume = None
@@ -633,9 +659,7 @@ class CheckpointCallback(ICheckpointCallback):
             )
         elif isinstance(self.load_on_stage_end, dict) and self.save_n_best > 0:
             to_load = {
-                k: v
-                for k, v in self.load_on_stage_end.items()
-                if v not in not_required_load_states
+                k: v for k, v in self.load_on_stage_end.items() if v not in not_required_load_states
             }
             _load_runner(logdir=self.logdir, runner=runner, mapping=to_load)
 
