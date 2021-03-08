@@ -7,7 +7,8 @@ from catalyst.metrics.functional._misc import process_recsys_components
 
 def dcg(outputs: torch.Tensor, targets: torch.Tensor, gain_function="exp_rank") -> torch.Tensor:
     """
-    Computes DCG@topk for the specified values of `k`.
+    Computes Discounted cumulative gain (DCG)
+    DCG@topk for the specified values of `k`.
     Graded relevance as a measure of  usefulness,
     or gain, from examining a set of items.
     Gain may be reduced at lower ranks.

@@ -4,12 +4,12 @@ import logging
 import torch
 from torch import nn
 
-from catalyst.settings import IS_HYDRA_AVAILABLE
+from catalyst.settings import SETTINGS
 from catalyst.typing import Model
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.torch import process_model_params
 
-if IS_HYDRA_AVAILABLE:
+if SETTINGS.hydra_required:
     from omegaconf import ListConfig
 
 logger = logging.getLogger(__name__)
@@ -76,7 +76,7 @@ def get_model_parameters(
             models[models_keys], layerwise_params, no_bias_weight_decay, lr_scaling,
         )
     elif (
-        IS_HYDRA_AVAILABLE
+        SETTINGS.hydra_required
         and isinstance(models_keys, (list, tuple, ListConfig))
         or isinstance(models_keys, (list, tuple))
     ):

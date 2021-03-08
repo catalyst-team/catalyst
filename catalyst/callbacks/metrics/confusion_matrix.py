@@ -3,6 +3,7 @@ from typing import Dict, List, TYPE_CHECKING
 from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_tensor
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
+from catalyst.utils.distributed import get_rank
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -44,6 +45,7 @@ class ConfusionMatrixCallback(Callback):
         self.normalized = normalized
 
         assert self.num_classes is not None
+        assert get_rank() < 0, "No DDP support implemented"
 
     def on_loader_start(self, runner: "IRunner"):
         """Loader start hook.
@@ -65,7 +67,6 @@ class ConfusionMatrixCallback(Callback):
             runner.batch[self.input_key].detach(),
             runner.batch[self.target_key].detach(),
         )
-        inputs, targets = runner.engine.sync_tensor(inputs), runner.engine.sync_tensor(targets)
         self.confusion_matrix.update(predictions=inputs, targets=targets)
 
     def on_loader_end(self, runner: "IRunner"):

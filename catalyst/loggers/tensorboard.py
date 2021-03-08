@@ -2,9 +2,9 @@ from typing import Dict
 import os
 
 import numpy as np
+from tensorboardX import SummaryWriter
 
 from catalyst.core.logger import ILogger
-from catalyst.tools.tensorboard import SummaryWriter
 
 
 class TensorboardLogger(ILogger):

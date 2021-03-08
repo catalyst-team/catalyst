@@ -8,7 +8,13 @@ from catalyst.metrics.functional._ndcg import ndcg
 
 
 class NDCGMetric(ICallbackBatchMetric):
-    """@TODO: docs here"""
+    """
+    Calculate the Normalized discounted cumulative gain (NDCG)
+    score given model outputs and targets
+    The precision metric summarizes the fraction of relevant items
+
+    Compute mean value of ndcg and it's approximate std value
+    """
 
     def __init__(
         self,
@@ -17,7 +23,15 @@ class NDCGMetric(ICallbackBatchMetric):
         prefix: str = None,
         suffix: str = None,
     ):
-        """@TODO: docs here"""
+        """
+        Init NDCGMetric
+
+        Args:
+            topk_args: list of `topk` for map@topk computing
+            compute_on_call: if True, computes and returns metric value during metric call
+            prefix: metric prefix
+            suffix: metric suffix
+        """
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_name_mean = f"{self.prefix}ndcg{self.suffix}"
         self.metric_name_std = f"{self.prefix}ndcg{self.suffix}/std"
@@ -27,12 +41,21 @@ class NDCGMetric(ICallbackBatchMetric):
         ]
 
     def reset(self) -> None:
-        """@TODO: docs here"""
+        """Reset all fields"""
         for metric in self.additive_metrics:
             metric.reset()
 
     def update(self, logits: torch.Tensor, targets: torch.Tensor) -> List[float]:
-        """@TODO: docs here"""
+        """
+        Update metric value with ndcg for new data and return intermediate metrics values.
+
+        Args:
+            logits (torch.Tensor): tensor of logits
+            targets (torch.Tensor): tensor of targets
+
+        Returns:
+            list of ndcg@k values
+        """
         values = ndcg(logits, targets, topk=self.topk_args)
         values = [v.item() for v in values]
         for value, metric in zip(values, self.additive_metrics):
@@ -40,7 +63,17 @@ class NDCGMetric(ICallbackBatchMetric):
         return values
 
     def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
-        """@TODO: docs here"""
+        """
+        Update metric value with ndcg for new data and return intermediate metrics
+        values in key-value format.
+
+        Args:
+            logits (torch.Tensor): tensor of logits
+            targets (torch.Tensor): tensor of targets
+
+        Returns:
+            dict of ndcg@k values
+        """
         values = self.update(logits=logits, targets=targets)
         output = {
             f"{self.prefix}ndcg{key:02d}{self.suffix}": value
@@ -50,12 +83,22 @@ class NDCGMetric(ICallbackBatchMetric):
         return output
 
     def compute(self) -> Any:
-        """@TODO: docs here"""
+        """
+        Compute ndcg for all data
+
+        Returns:
+            list of mean values, list of std values
+        """
         means, stds = zip(*(metric.compute() for metric in self.additive_metrics))
         return means, stds
 
     def compute_key_value(self) -> Dict[str, float]:
-        """@TODO: docs here"""
+        """
+        Compute ndcg for all data and return results in key-value format
+
+        Returns:
+            dict of metrics
+        """
         means, stds = self.compute()
         output_mean = {
             f"{self.prefix}ndcg{key:02d}{self.suffix}": value
