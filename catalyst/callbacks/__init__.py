@@ -26,7 +26,6 @@ from catalyst.callbacks.scheduler import (
     ILRUpdater,
     LRFinder,
 )
-from catalyst.callbacks.aggregation import MetricAggregationCallback
 
 # if SETTINGS.use_quantization:
 #     from catalyst.callbacks.quantization import DynamicQuantizationCallback
