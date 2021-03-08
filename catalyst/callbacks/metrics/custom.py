@@ -1,7 +1,7 @@
 from typing import Callable
 
 from catalyst.callbacks.metric import BatchMetricCallback
-from catalyst.metrics._funtional_metric import BatchFuntionalMetric
+from catalyst.metrics._funtional_metric import BatchFunctionalMetric
 
 
 class CustomMetricCallback(BatchMetricCallback):
@@ -22,7 +22,7 @@ class CustomMetricCallback(BatchMetricCallback):
             prefix: key for the metric's name
         """
         super().__init__(
-            metric=BatchFuntionalMetric(metric_function=metric_function, prefix=prefix),
+            metric=BatchFunctionalMetric(metric_function=metric_function, prefix=prefix),
             input_key=input_key,
             target_key=target_key,
         )

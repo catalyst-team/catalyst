@@ -6,7 +6,7 @@ from catalyst.metrics import ICallbackBatchMetric
 from catalyst.metrics._additive import AdditiveValueMetric
 
 
-class BatchFuntionalMetric(ICallbackBatchMetric):
+class BatchFunctionalMetric(ICallbackBatchMetric):
     """
     Class for custom metric in functional way.
     Note: the loader metrics calculated as average over all examples
@@ -80,4 +80,4 @@ class BatchFuntionalMetric(ICallbackBatchMetric):
         return {f"{self.prefix}/mean": self.compute()}
 
 
-__all__ = ["BatchFuntionalMetric"]
+__all__ = ["BatchFunctionalMetric"]
