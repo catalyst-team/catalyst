@@ -30,9 +30,7 @@ runner:
   loss_key: &model_loss "loss"
 
 engine:
-#  engine: "cpu"
   _target_: DeviceEngine
-  device: "cpu"
 
 loggers:
   console:

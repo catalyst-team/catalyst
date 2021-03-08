@@ -1,5 +1,6 @@
 from typing import Any, Callable, Dict, Iterable
 from collections import OrderedDict
+from functools import partial
 
 import torch
 from torch.utils.data import DataLoader, Dataset, DistributedSampler
@@ -67,6 +68,10 @@ def get_loader(
         drop_last=drop_last,
     )
     return loader
+
+
+def _worker_init_fn(x, *, initial_seed):
+    return set_global_seed(initial_seed + x)
 
 
 def get_loaders_from_params(
@@ -204,7 +209,7 @@ def get_loaders_from_params(
                 loader_params.pop(k, None)
 
         if "worker_init_fn" not in loader_params:
-            loader_params["worker_init_fn"] = lambda x: set_global_seed(initial_seed + x)
+            loader_params["worker_init_fn"] = partial(_worker_init_fn, initial_seed=initial_seed)
 
         loaders[name] = DataLoader(**loader_params)
 

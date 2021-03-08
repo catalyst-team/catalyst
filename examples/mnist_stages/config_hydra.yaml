@@ -29,9 +29,7 @@ runner:
   loss_key: "loss"
 
 engine:
-#  engine: "cpu"
   _target_: catalyst.engines.DeviceEngine
-  device: "cpu"
 
 loggers:
   console:
