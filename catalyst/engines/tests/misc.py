@@ -386,7 +386,7 @@ class CheckModelStateLoadAfterStages(Callback):
             model = model.module
         state_dict = model.state_dict()
         for k, v in state_dict.items():
-            assert torch.all(v == torch.ones_like(v)), (
+            assert torch.all(v.isclose(torch.ones_like(v))), (
                 f"Stage: '{runner.stage_key}'\n"
                 f"Epoch: {runner.stage_epoch_step} (global - {runner.global_epoch_step})\n"
                 f"Expected that value for '{k}' will be all ones!\n"
