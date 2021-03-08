@@ -3,6 +3,7 @@ from typing import Callable, Dict
 import torch
 
 from catalyst.metrics import ICallbackBatchMetric
+from catalyst.metrics._additive import AdditiveValueMetric
 
 
 class BatchFuntionalMetric(ICallbackBatchMetric):
@@ -23,25 +24,11 @@ class BatchFuntionalMetric(ICallbackBatchMetric):
         """
         super().__init__(compute_on_call=True, prefix=prefix)
         self.metric_function = metric_function
-        self.cumulative_metric = None
-        self.total_examples = 0
+        self.cumulative_metric = AdditiveValueMetric()
 
     def reset(self):
         """Reset all statistics"""
-        self.cumulative_metric = None
-        self.total_examples = 0
-
-    def _update_cumulative_metric(self, value: torch.Tensor, batch_length: int) -> None:
-        if self.cumulative_metric is None:
-            self.cumulative_metric = value
-            self.total_examples = batch_length
-        else:
-            old = (
-                self.total_examples / (self.total_examples + batch_length) * self.cumulative_metric
-            )
-            new = batch_length / (self.total_examples + batch_length) * value
-            self.cumulative_metric = old + new
-            self.total_examples += batch_length
+        self.cumulative_metric.reset()
 
     def update_key_value(
         self, outputs: torch.Tensor, targets: torch.Tensor
@@ -71,8 +58,7 @@ class BatchFuntionalMetric(ICallbackBatchMetric):
             custom metric
         """
         value = self.metric_function(outputs, targets)
-        batch_length = len(outputs)
-        self._update_cumulative_metric(value, batch_length)
+        self.cumulative_metric.update(value, len(outputs))
         return value
 
     def compute(self) -> torch.Tensor:
@@ -82,7 +68,7 @@ class BatchFuntionalMetric(ICallbackBatchMetric):
         Returns:
             custom metric
         """
-        return self.cumulative_metric
+        return self.cumulative_metric.compute()[0]
 
     def compute_key_value(self) -> Dict[str, torch.Tensor]:
         """
@@ -91,7 +77,7 @@ class BatchFuntionalMetric(ICallbackBatchMetric):
         Returns:
             Dict with one element-custom metric
         """
-        return {f"{self.prefix}/mean": self.cumulative_metric}
+        return {f"{self.prefix}/mean": self.compute()}
 
 
 __all__ = ["BatchFuntionalMetric"]
