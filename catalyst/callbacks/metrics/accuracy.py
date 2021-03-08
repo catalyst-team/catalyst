@@ -20,10 +20,8 @@ class AccuracyCallback(BatchMetricCallback):
     ):
         """
         Args:
-            input_key: input key to use for accuracy calculation;
-                specifies our `y_true`
-            target_key: output key to use for accuracy calculation;
-                specifies our `y_pred`
+            input_key: input key to use for metric calculation, specifies our `y_pred`
+            target_key: output key to use for metric calculation, specifies our `y_true`
             prefix: key for the metric's name
             topk_args: specifies which accuracy@K to log:
                 [1] - accuracy

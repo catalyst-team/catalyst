@@ -132,7 +132,7 @@ class TwoBlobsDataset(Dataset):
         #     [-7.14428402, -4.15994043, -8.21266041, 6.46636536],
         #     [-6.70644627, -6.49479221, -9.72218519, 7.47724802],
         # ]
-        self.points = [[0, 0, 0, 1]] * 64
+        # self.points = [[0, 0, 0, 1]] * 64
         # fmt: off
         # self.labels = [
         #     0, 0, 0, 0, 0, 1, 0, 1,
@@ -144,9 +144,24 @@ class TwoBlobsDataset(Dataset):
         #     0, 1, 0, 1, 1, 0, 1, 0,
         #     0, 1, 0, 1, 1, 1, 1, 1
         # ]
-        self.labels = [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8
+        # self.labels = [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8 + [0] * 8 + [1] * 8
         # self.labels = [0, 1] * 32
         # fmt: on
+        from sklearn.datasets import make_blobs
+
+        self.points, self.labels = make_blobs(
+            n_samples=1000, centers=4, n_features=4, random_state=42
+        )
+
+        assert len(self.points) == len(self.labels)
+
+    def __len__(self):
+        return len(self.points)
+
+    def __getitem__(self, index):
+        x = torch.FloatTensor(self.points[index])
+        y = torch.LongTensor([self.labels[index]])
+        return x, y
 
 
 @REGISTRY.add
@@ -157,12 +172,17 @@ class TwoBlobsModel(nn.Module):
         """Docs."""
         super().__init__()
         self.in_features = 4
-        self.out_features = 2
+        self.out_features = 4
         self.layers = nn.Linear(self.in_features, self.out_features)
         # set initial layers weights
         weights = torch.nn.Parameter(
             torch.FloatTensor(
-                [[0.3429, 0.0886, 0.4281, -0.0090], [-0.1003, -0.2247, -0.2584, -0.1986]],
+                [
+                    [0.3429, 0.0886, 0.4281, -0.0090],
+                    [0.3429, 0.0886, -0.2584, -0.1986],
+                    [-0.1003, -0.2247, 0.4281, -0.0090],
+                    [-0.1003, -0.2247, -0.2584, -0.1986],
+                ]
             )
         )
         weights.requires_grad = True

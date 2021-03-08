@@ -8,6 +8,14 @@ if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
 
 
+def _sum_aggregation(x):
+    return torch.sum(torch.stack(x))
+
+
+def _mean_aggregation(x):
+    return torch.mean(torch.stack(x))
+
+
 class MetricAggregationCallback(Callback):
     """A callback to aggregate several metrics in one value."""
 
@@ -136,21 +144,24 @@ class MetricAggregationCallback(Callback):
         self.multiplier = multiplier
 
         if mode in ("sum", "weighted_sum", "weighted_mean"):
-            self.aggregation_fn = lambda x: torch.sum(torch.stack(x)) * multiplier
+            self.aggregation_fn = _sum_aggregation
             if mode == "weighted_mean":
                 weights_sum = sum(metrics.items())
                 self.metrics = {key: weight / weights_sum for key, weight in metrics.items()}
         elif mode == "mean":
-            self.aggregation_fn = lambda x: torch.mean(torch.stack(x)) * multiplier
+            self.aggregation_fn = _mean_aggregation
         elif callable(mode):
             self.aggregation_fn = mode
 
     def _preprocess(self, metrics: Any) -> List[float]:
         if self.metrics is not None:
-            if self.mode == "weighted_sum":
-                result = [metrics[key] * value for key, value in self.metrics.items()]
-            else:
-                result = [metrics[key] for key in self.metrics]
+            try:
+                if self.mode == "weighted_sum":
+                    result = [metrics[key] * value for key, value in self.metrics.items()]
+                else:
+                    result = [metrics[key] for key in self.metrics]
+            except KeyError:
+                raise KeyError(f"Could not found required key out of {metrics.keys()}")
         else:
             result = list(metrics.values())
         result = [metric.float() for metric in result]
@@ -158,10 +169,10 @@ class MetricAggregationCallback(Callback):
 
     def _process_metrics(self, metrics: Dict, runner: "IRunner") -> None:
         if callable(self.mode):
-            metric_aggregated = self.aggregation_fn(metrics, runner)
+            metric_aggregated = self.aggregation_fn(metrics, runner) * self.multiplier
         else:
             metrics_processed = self._preprocess(metrics)
-            metric_aggregated = self.aggregation_fn(metrics_processed)
+            metric_aggregated = self.aggregation_fn(metrics_processed) * self.multiplier
         metrics[self.prefix] = metric_aggregated
 
     def on_batch_end(self, runner: "IRunner") -> None:

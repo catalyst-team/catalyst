@@ -17,11 +17,15 @@ from catalyst.callbacks import (
     AUCCallback,
     CheckpointCallback,
     CriterionCallback,
+    MulticlassPrecisionRecallF1SupportCallback,
     OptimizerCallback,
     TqdmCallback,
 )
+from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.models import MnistSimpleNet
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, CallbackScope
 from catalyst.core.runner import IRunner
+from catalyst.data.transforms import ToTensor
 from catalyst.engines.device import DeviceEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
 from catalyst.engines.parallel import DataParallelEngine
@@ -57,24 +61,23 @@ class CustomSampler(SequentialSampler):
         return iter(indices)
 
 
-class LabelsCheck(Callback):
-    def __init__(self, required_num: int):
+class CounterCallback(Callback):
+    def __init__(self):
         super().__init__(CallbackOrder.external, CallbackNode.all, CallbackScope.stage)
         self.counter = 0
-        self.counter2 = 0
+        self.counter2 = [0] * 4
         self.counter3 = 0
-        self.required_num = required_num
 
     def on_loader_start(self, runner: "IRunner") -> None:
         self.counter = 0
-        self.counter2 = 0
+        self.counter2 = [0] * 4
         self.counter3 = 0
 
     def on_batch_end(self, runner: "IRunner") -> None:
         self.counter += torch.sum(runner.batch["targets"]).detach().cpu().item()
-        self.counter2 += (
-            torch.sum(torch.argmax(runner.batch["logits"], dim=1)).detach().cpu().item()
-        )
+        preds = torch.argmax(runner.batch["logits"], dim=1).detach().cpu().numpy()
+        for i_class in range(runner.batch["logits"].shape[1]):
+            self.counter2[i_class] += (preds == i_class).sum()
         self.counter3 += len(runner.batch["logits"])
 
     def on_loader_end(self, runner: "IRunner") -> None:
@@ -98,6 +101,7 @@ class IRunnerMixin(IRunner):
         return 1
 
     def get_model(self, stage: str):
+        # return MnistSimpleNet(out_features=10, normalize=False)
         return TwoBlobsModel()
 
     def get_criterion(self, stage: str):
@@ -114,26 +118,28 @@ class IRunnerMixin(IRunner):
             "criterion": CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
-            "accuracy": AccuracyCallback(input_key="logits", target_key="targets", num_classes=1),
+            "accuracy": AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,)),
             "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
+            "classification": MulticlassPrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=4,
+            ),
             # "optimizer": OptimizerCallback(metric_key="loss"),
             # "checkpoint": CheckpointCallback(
             #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             # ),
             # "verbose": TqdmCallback(),
-            "counter": LabelsCheck(
-                required_num=16 if isinstance(self.engine, DistributedDataParallelEngine) else 32
-            ),
+            "counter": CounterCallback(),
         }
 
     def handle_batch(self, batch):
         x, y = batch
         logits = self.model(x)
+        num_class = logits.shape[1]
 
         self.batch = {
             "features": x,
             "targets": y.view(-1),
-            "targets_onehot": F.one_hot(y.view(-1), 2).to(torch.float32),
+            "targets_onehot": F.one_hot(y.view(-1), num_class).to(torch.float32),
             "logits": logits,
             "scores": torch.sigmoid(logits),
         }
@@ -145,6 +151,7 @@ class CustomDeviceRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
+        # dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
         sampler = CustomSampler(data_source=dataset)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}
@@ -156,6 +163,7 @@ class CustomDPRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
+        # dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
         sampler = CustomSampler(data_source=dataset)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}
@@ -167,6 +175,7 @@ class CustomDDPRunner(IRunnerMixin, IRunner):
 
     def get_loaders(self, stage: str, epoch: int = None):
         dataset = TwoBlobsDataset()
+        # dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
         sampler = CustomDistributedSampler(dataset=dataset, shuffle=True)
         loader = DataLoader(dataset, batch_size=_BATCH_SIZE, num_workers=_WORKERS, sampler=sampler)
         return {"valid": loader}

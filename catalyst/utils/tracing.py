@@ -53,6 +53,4 @@ def trace_model(
     return traced
 
 
-__all__ = [
-    "trace_model",
-]
+__all__ = ["trace_model"]

@@ -6,7 +6,12 @@
 
 from catalyst.metrics.functional import *
 
-from catalyst.metrics._metric import ICallbackBatchMetric, ICallbackLoaderMetric, IMetric
+from catalyst.metrics._metric import (
+    ICallbackBatchMetric,
+    ICallbackLoaderMetric,
+    IMetric,
+    AccumulationMetric,
+)
 from catalyst.metrics._additive import AdditiveValueMetric
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
 
@@ -17,7 +22,7 @@ from catalyst.metrics._classification import (
     MulticlassPrecisionRecallF1SupportMetric,
     MultilabelPrecisionRecallF1SupportMetric,
 )
-from catalyst.metrics._cmc_score import AccumulationMetric, CMCMetric
+from catalyst.metrics._cmc_score import CMCMetric
 from catalyst.metrics._hitrate import HitrateMetric
 from catalyst.metrics._ndcg import NDCGMetric
 from catalyst.metrics._map import MAPMetric

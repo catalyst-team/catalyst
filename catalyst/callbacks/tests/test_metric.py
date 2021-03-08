@@ -177,7 +177,12 @@ def test_metric_learning_pipeline():
             {
                 "cmc": dl.ControlFlowCallback(
                     LoaderMetricCallback(
-                        CMCMetric(topk_args=[1], embeddings_key="embeddings"),
+                        CMCMetric(
+                            topk_args=[1],
+                            embeddings_key="embeddings",
+                            labels_key="targets",
+                            is_query_key="is_query",
+                        ),
                         input_key=["embeddings", "is_query"],
                         target_key=["targets"],
                     ),

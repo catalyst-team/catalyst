@@ -1,10 +1,11 @@
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 from collections import defaultdict
 from functools import partial
 
 import numpy as np
 import torch
 
+from catalyst.engines.functional import all_gather
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._classification import get_aggregated_metrics, get_binary_metrics
 from catalyst.metrics.functional._misc import (
@@ -12,6 +13,7 @@ from catalyst.metrics.functional._misc import (
     get_multiclass_statistics,
     get_multilabel_statistics,
 )
+from catalyst.utils.distributed import get_rank
 
 
 class StatisticsMetric(ICallbackBatchMetric):
@@ -24,8 +26,8 @@ class StatisticsMetric(ICallbackBatchMetric):
 
     def __init__(
         self,
-        num_classes: int,
         mode: str,
+        num_classes: int = None,
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
@@ -56,11 +58,17 @@ class StatisticsMetric(ICallbackBatchMetric):
 
         self.num_classes = num_classes
         self.statistics = None
+        self._is_ddp = False
         self.reset()
+
+    # multiprocessing could not handle lamdas, so..
+    def _mp_hack(self):
+        return np.zeros(shape=(self.num_classes,))
 
     def reset(self) -> None:
         """Reset all the statistics."""
-        self.statistics = defaultdict(lambda: np.zeros(shape=(self.num_classes)))
+        self.statistics = defaultdict(self._mp_hack)
+        self._is_ddp = get_rank() > -1
 
     def update(
         self, outputs: torch.Tensor, targets: torch.Tensor
@@ -139,8 +147,8 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
 
     def __init__(
         self,
-        num_classes: int,
         mode: str,
+        num_classes: int = None,
         zero_division: int = 0,
         compute_on_call: bool = True,
         prefix: str = None,
@@ -268,6 +276,13 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         Returns:
             dict of metrics
         """
+        # @TODO: ddp hotfix, could be done better
+        if self._is_ddp:
+            for key in self.statistics:
+                value: List[np.ndarray] = all_gather(self.statistics[key])
+                value: np.ndarray = np.sum(np.vstack(value), axis=0)
+                self.statistics[key] = value
+
         per_class, micro, macro, weighted = self.compute()
         metrics = self._convert_metrics_to_kv(
             per_class=per_class, micro=micro, macro=macro, weighted=weighted
@@ -372,6 +387,13 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         Returns:
             tuple of metrics: precision, recall, f1 score
         """
+        # @TODO: ddp hotfix, could be done better
+        if self._is_ddp:
+            for key in self.statistics:
+                value: List[float] = all_gather(self.statistics[key])
+                value: float = sum(value)
+                self.statistics[key] = value
+
         precision_value, recall_value, f1_value = get_binary_metrics(
             tp=self.statistics["tp"],
             fp=self.statistics["fp"],
@@ -402,7 +424,7 @@ class MulticlassPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
 
     def __init__(
         self,
-        num_classes: int,
+        num_classes: int = None,
         zero_division: int = 0,
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
@@ -437,7 +459,7 @@ class MultilabelPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
 
     def __init__(
         self,
-        num_classes: int,
+        num_classes: int = None,
         zero_division: int = 0,
         compute_on_call: bool = True,
         prefix: Optional[str] = None,

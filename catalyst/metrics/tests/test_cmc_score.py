@@ -4,7 +4,8 @@ import numpy as np
 import pytest
 import torch
 
-from catalyst.metrics._cmc_score import AccumulationMetric, CMCMetric
+from catalyst.metrics._cmc_score import CMCMetric
+from catalyst.metrics._metric import AccumulationMetric
 
 COMPLEX_OUTPUT_TYPE = Iterable[
     Tuple[Iterable[str], int, int, Iterable[Dict[str, torch.Tensor]], Dict[str, torch.Tensor]]
