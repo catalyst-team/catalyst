@@ -45,7 +45,7 @@ class ConfusionMatrixCallback(Callback):
         self.normalized = normalized
 
         assert self.num_classes is not None
-        assert get_rank() < 0, "No DDP support implemented"
+        assert get_rank() < 0, "No DDP support implemented yet"
 
     def on_loader_start(self, runner: "IRunner"):
         """Loader start hook.
