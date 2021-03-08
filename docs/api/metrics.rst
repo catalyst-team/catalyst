@@ -54,6 +54,13 @@ ConfusionMatrixMetric
     :undoc-members:
     :show-inheritance:
 
+AdditiveValueMetric
+~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._functional_metric.BatchFunctionalMetric
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Runner Metrics
 ----------------------
