@@ -4,6 +4,7 @@ from collections import OrderedDict
 
 import torch
 from torch import nn
+from torch.nn.parallel import DataParallel
 
 from catalyst.engines.device import DeviceEngine
 from catalyst.engines.distributed import DistributedDataParallelEngine
@@ -192,7 +193,7 @@ class APEXEngine(DeviceEngine):
         checkpoint = {"amp": amp.state_dict()}
         # main components
         if model is not None:
-            if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)):
+            if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel, APEX_DDP)):
                 _model = model.module
             else:
                 _model = model
@@ -234,6 +235,38 @@ class APEXEngine(DeviceEngine):
         #   https://nvidia.github.io/apex/amp.html#checkpointing
         if "amp" in checkpoint:
             amp.load_state_dict(checkpoint["amp"])
+
+
+class DataParallelApexEngine(APEXEngine):
+    def __init__(self, opt_level: str = "O1"):
+        super().__init__(f"cuda:{torch.cuda.current_device()}", opt_level)
+        self.device_count = torch.cuda.device_count()
+
+    def __repr__(self) -> str:  # noqa: D105
+        return f"{self.__class__.__name__}(device='{self.device}',opt_level='{self.opt_level}')"
+
+    def init_components(
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+    ):
+        model = model_fn()
+        model = self.sync_device(model)
+
+        # criterion
+        criterion = criterion_fn()
+        criterion = self.sync_device(criterion)
+
+        # optimizer
+        optimizer = optimizer_fn()
+        optimizer = self.sync_device(optimizer)
+
+        model, optimizer = _wrap_into_data_parallel_with_apex(
+            model, optimizer, distributed_params={"opt_level": self.opt_level}
+        )
+
+        # scheduler
+        scheduler = scheduler_fn()
+        scheduler = self.sync_device(scheduler)
+        return model, criterion, optimizer, scheduler
 
 
 class DistributedDataParallelApexEngine(DistributedDataParallelEngine):

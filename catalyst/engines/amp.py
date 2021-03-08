@@ -59,6 +59,13 @@ class AMPEngine(DeviceEngine):
 
 
 class DataParallelAMPEngine(AMPEngine):
+    def __init__(self):
+        super().__init__(f"cuda:{torch.cuda.current_device()}")
+        self.device_count = torch.cuda.device_count()
+
+    def __repr__(self) -> str:  # noqa: D105
+        return f"{self.__class__.__name__}(device='{self.device}')"
+
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):

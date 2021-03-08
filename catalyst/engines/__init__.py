@@ -17,7 +17,11 @@ if SETTINGS.amp_required:
     )
 
 if SETTINGS.apex_required:
-    from catalyst.engines.apex import APEXEngine, DistributedDataParallelApexEngine
+    from catalyst.engines.apex import (
+        APEXEngine,
+        DataParallelApexEngine,
+        DistributedDataParallelApexEngine,
+    )
 
 
 __all__ = [
@@ -31,4 +35,4 @@ if SETTINGS.amp_required:
     __all__ += ["AMPEngine", "DataParallelAMPEngine", "DistributedDataParallelAMPEngine"]
 
 if SETTINGS.apex_required:
-    __all__ += ["APEXEngine", "DistributedDataParallelApexEngine"]
+    __all__ += ["APEXEngine", "DataParallelApexEngine", "DistributedDataParallelApexEngine"]
