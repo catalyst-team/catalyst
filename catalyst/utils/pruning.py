@@ -88,7 +88,7 @@ def prune_model(
             If None provided then will try to prune every module in
             model.
         dim (int, optional): if you are using structured pruning method you need
-                to specify dimension. Defaults to None.
+            to specify dimension. Defaults to None.
         l_norm (int, optional): if you are using ln_structured you need to specify l_norm.
             Defaults to None.
 
@@ -99,7 +99,7 @@ def prune_model(
 
     Raises:
         AttributeError: If layers_to_prune is not None, but there is
-                no layers with specified name. OR
+            no layers with specified name. OR
         ValueError: if no layers have specified keys.
     """
     pruning_fn = get_pruning_fn(pruning_fn, l_norm=l_norm, dim=dim)

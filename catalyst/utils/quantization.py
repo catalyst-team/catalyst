@@ -35,6 +35,4 @@ def quantize_model(
     return quantized_model
 
 
-__all__ = [
-    "quantize_model",
-]
+__all__ = ["quantize_model"]
