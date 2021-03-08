@@ -9,7 +9,7 @@ from catalyst.metrics.functional import *
 from catalyst.metrics._metric import ICallbackBatchMetric, ICallbackLoaderMetric, IMetric
 from catalyst.metrics._additive import AdditiveValueMetric
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
-from catalyst.metrics.funtional_metric import BatchFuntionalMetric
+from catalyst.metrics._funtional_metric import BatchFuntionalMetric
 
 from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
 from catalyst.metrics._auc import AUCMetric
