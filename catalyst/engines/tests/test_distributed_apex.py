@@ -116,7 +116,7 @@ class MyConfigRunner(SupervisedConfigRunner):
         return {"train": self._dataset, "valid": self._dataset}
 
 
-def _train_ddp_apex(port, logdir, opt_lvl):
+def train_from_config(port, logdir, opt_lvl):
     opt = str(opt_lvl).strip().upper()
     runner = MyConfigRunner(
         config={
@@ -172,4 +172,4 @@ def _train_ddp_apex(port, logdir, opt_lvl):
 def test_config_train_distributed_parallel_apex():
     for idx, opt_level in enumerate(OPT_LEVELS):
         with TemporaryDirectory() as logdir:
-            _train_ddp_apex(str(33333 + idx), logdir, opt_level)
+            train_from_config(str(33333 + idx), logdir, opt_level)

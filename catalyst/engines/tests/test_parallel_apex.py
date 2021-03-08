@@ -1,7 +1,7 @@
 # flake8: noqa
+
 from typing import Any, Dict, List
 import logging
-import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -10,34 +10,41 @@ from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
 from catalyst.core.runner import IRunner
-from catalyst.engines.device import DeviceEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
+
+if SETTINGS.apex_required:
+    from catalyst.engines.apex import DataParallelApexEngine
 
 from .misc import (
-    DeviceCheckCallback,
+    DataParallelTypeChecker,
     DummyDataset,
     DummyModel,
     LossMinimizationCallback,
-    ModuleTypeChecker,
+    OPTTensorTypeChecker,
+    TensorTypeChecker,
 )
 
 logger = logging.getLogger(__name__)
 
 
-if NUM_CUDA_DEVICES > 1:
-    os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
+OPT_LEVELS = (
+    "O0",
+    # "O1",  # disabled, issue: https://github.com/NVIDIA/apex/issues/694
+    "O2",
+    "O3",
+)
 
-# experiment definition
+
 class CustomRunner(IRunner):
-    def __init__(self, logdir, device):
+    def __init__(self, logdir, opt_level):
         super().__init__()
         self._logdir = logdir
-        self._device = device
+        self._opt_level = opt_level
 
     def get_engine(self):
-        return DeviceEngine(self._device)
+        return DataParallelApexEngine(self._opt_level)
 
     def get_callbacks(self, stage: str):
         return {
@@ -49,9 +56,9 @@ class CustomRunner(IRunner):
             "checkpoint": CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
-            "test_nn_module": ModuleTypeChecker(),
-            "test_device": DeviceCheckCallback(self._device, logger=logger),
+            "test_nn_parallel_data_parallel": DataParallelTypeChecker(),
             "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
+            "test_logits_type": OPTTensorTypeChecker("logits", self._opt_level),
         }
 
     @property
@@ -91,27 +98,27 @@ class CustomRunner(IRunner):
         self.batch = {"features": x, "targets": y, "logits": logits}
 
 
-def train_from_runner(device):
+def train_from_runner(opt_level):
     with TemporaryDirectory() as logdir:
-        runner = CustomRunner(logdir, device)
+        runner = CustomRunner(logdir, opt_level)
         runner.run()
 
 
-def train_from_config(device):
+def train_from_config(opt_level):
     with TemporaryDirectory() as logdir:
         dataset = DummyDataset(6)
         runner = SupervisedConfigRunner(
             config={
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
-                "engine": {"_target_": "DeviceEngine", "device": device},
+                "engine": {"_target_": "DataParallelApexEngine", "opt_level": opt_level},
                 "args": {"logdir": logdir},
                 "stages": {
                     "stage1": {
                         "num_epochs": 10,
+                        "loaders": {"batch_size": 4, "num_workers": 0},
                         "criterion": {"_target_": "MSELoss"},
                         "optimizer": {"_target_": "Adam", "lr": 1e-3},
-                        "loaders": {"batch_size": 4, "num_workers": 0},
                         "callbacks": {
                             "criterion": {
                                 "_target_": "CriterionCallback",
@@ -120,14 +127,17 @@ def train_from_config(device):
                                 "target_key": "targets",
                             },
                             "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
-                            "test_nn_module": {"_target_": "ModuleTypeChecker"},
-                            "test_device": {
-                                "_target_": "DeviceCheckCallback",
-                                "assert_device": device,
+                            "test_nn_parallel_data_parallel": {
+                                "_target_": "DataParallelTypeChecker"
                             },
                             "test_loss_minimization": {
                                 "_target_": "LossMinimizationCallback",
                                 "key": "loss",
+                            },
+                            "test_logits_type": {
+                                "_target_": "OPTTensorTypeChecker",
+                                "key": "logits",
+                                "opt_level": opt_level,
                             },
                         },
                     },
@@ -141,15 +151,14 @@ def train_from_config(device):
         runner.run()
 
 
-def test_experiment_engine_with_devices():
-    # will check on all available devices
-    to_check_devices = ["cpu"] + [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
-    for device in to_check_devices:
-        train_from_runner(device)
+@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+def test_parallel_apex():
+    for level in OPT_LEVELS:
+        train_from_runner(level)
 
 
-def test_config_experiment_engine_with_cpu():
-    # will check on all available devices
-    to_check_devices = ["cpu"] + [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
-    for device in to_check_devices:
-        train_from_config(device)
+# @mark.skip("Config experiment is in development phase!")
+@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+def test_config_parallel_apex():
+    for level in OPT_LEVELS:
+        train_from_config(level)

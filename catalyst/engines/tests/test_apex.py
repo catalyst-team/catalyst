@@ -100,13 +100,13 @@ class CustomRunner(IRunner):
         self.batch = {"features": x, "targets": y, "logits": logits}
 
 
-def run_train_with_experiment_apex_device(device, opt_level):
+def train_from_runner(device, opt_level):
     with TemporaryDirectory() as logdir:
         runner = CustomRunner(logdir, device, opt_level)
         runner.run()
 
 
-def run_train_with_config_experiment_apex_device(device, opt_level):
+def train_from_config(device, opt_level):
     with TemporaryDirectory() as logdir:
         dataset = DummyDataset(6)
         runner = SupervisedConfigRunner(
@@ -166,7 +166,7 @@ def test_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:
         for level in OPT_LEVELS:
-            run_train_with_experiment_apex_device(device, level)
+            train_from_runner(device, level)
 
 
 @mark.skipif(
@@ -176,4 +176,4 @@ def test_config_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:
         for level in OPT_LEVELS:
-            run_train_with_config_experiment_apex_device(device, level)
+            train_from_config(device, level)
