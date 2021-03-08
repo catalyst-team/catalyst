@@ -10,7 +10,6 @@ from itertools import tee
 import random
 
 import numpy as np
-from packaging.version import parse, Version
 from torch import int as tint, long, short, Tensor
 
 T = TypeVar("T")
@@ -65,17 +64,6 @@ def set_global_seed(seed: int) -> None:
         if torch.cuda.is_available():
             torch.cuda.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
-    try:
-        import tensorflow as tf
-    except ImportError:
-        pass
-    else:
-        if parse(tf.__version__) >= Version("2.0.0"):
-            tf.random.set_seed(seed)
-        elif parse(tf.__version__) <= Version("1.13.2"):
-            tf.set_random_seed(seed)
-        else:
-            tf.compat.v1.set_random_seed(seed)
 
 
 def maybe_recursive_call(

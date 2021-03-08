@@ -8,10 +8,10 @@ from catalyst.contrib.nn.modules import Flatten
 class MnistSimpleNet(nn.Module):
     """Simple MNIST convolutional network for test purposes."""
 
-    def __init__(self, features_dim: int, normalize: bool = True):
+    def __init__(self, out_features: int, normalize: bool = True):
         """
         Args:
-            features_dim: size of the output tensor
+            out_features: size of the output tensor
         """
         super().__init__()
         layers = [
@@ -23,7 +23,7 @@ class MnistSimpleNet(nn.Module):
             Flatten(),
             nn.Linear(9216, 128),
             nn.ReLU(),
-            nn.Linear(128, features_dim),
+            nn.Linear(128, out_features),
         ]
         if normalize:
             layers.append(Normalize())

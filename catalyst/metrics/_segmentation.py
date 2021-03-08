@@ -3,6 +3,7 @@ from functools import partial
 
 import torch
 
+from catalyst.engines.functional import all_gather
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._segmentation import (
     _dice,
@@ -10,6 +11,7 @@ from catalyst.metrics.functional._segmentation import (
     _trevsky,
     get_segmentation_statistics,
 )
+from catalyst.utils.distributed import get_rank
 
 
 class RegionBasedMetric(ICallbackBatchMetric):
@@ -35,7 +37,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
             prefix: metric prefix
             suffix: metric suffix
             class_dim: indicates class dimension (K) for ``outputs`` and
-            ``targets`` tensors (default = 1)
+                ``targets`` tensors (default = 1)
             weights: class weights
             class_names: class names
             threshold: threshold for outputs binarization
@@ -44,10 +46,12 @@ class RegionBasedMetric(ICallbackBatchMetric):
         self.metric_fn = metric_fn
         self.class_dim = class_dim
         self.threshold = threshold
+        # statistics = {class_idx: {"tp":, "fn": , "fp": "tn": }}
         self.statistics = {}
         self.weights = weights
         self.class_names = class_names
         self._checked_params = False
+        self._is_ddp = False
 
     def _check_parameters(self):
         # check class_names
@@ -57,7 +61,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 f" {len(self.class_names)} and classes: {len(self.statistics)}"
             )
         else:
-            self.class_names = [f"class_{idx}" for idx in range(1, len(self.statistics) + 1)]
+            self.class_names = [f"class_{idx:02d}" for idx in range(len(self.statistics))]
         if self.weights is not None:
             assert len(self.weights) == len(self.statistics), (
                 f"the number of weights must be equal to the number of classes, got weights"
@@ -67,10 +71,10 @@ class RegionBasedMetric(ICallbackBatchMetric):
     def reset(self):
         """Reset all statistics"""
         self.statistics = {}
+        self._is_ddp = get_rank() > -1
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        """
-        Update segmentation statistics for new data and return intermediate metrics values.
+        """Updatse segmentation statistics with new data and return intermediate metrics values.
 
         Args:
             outputs: tensor of logits
@@ -80,13 +84,13 @@ class RegionBasedMetric(ICallbackBatchMetric):
             metric for each class
         """
         tp, fp, fn = get_segmentation_statistics(
-            outputs=outputs.cpu().detach(),
-            targets=targets.cpu().detach(),
+            outputs=outputs.detach(),
+            targets=targets.detach(),
             class_dim=self.class_dim,
             threshold=self.threshold,
         )
 
-        for idx, (tp_class, fp_class, fn_class) in enumerate(zip(tp, fp, fn), start=1):
+        for idx, (tp_class, fp_class, fn_class) in enumerate(zip(tp, fp, fn)):
             if idx in self.statistics:
                 self.statistics[idx]["tp"] += tp_class
                 self.statistics[idx]["fp"] += fp_class
@@ -103,8 +107,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
     def update_key_value(
         self, outputs: torch.Tensor, targets: torch.Tensor
     ) -> Dict[str, torch.Tensor]:
-        """
-        Update segmentation statistics for new data and return intermediate metrics values.
+        """Updates segmentation statistics with new data and return intermediate metrics values.
 
         Args:
             outputs: tensor of logits
@@ -119,9 +122,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
             self._check_parameters()
             self._checked_params = True
         metrics = {
-            f"{self.prefix}/{self.class_names[idx-1]}": value
-            for idx, value in enumerate(values, start=1)
+            f"{self.prefix}/{self.class_names[idx]}": value for idx, value in enumerate(values)
         }
+        metrics[self.prefix] = torch.mean(values)
         if self.weights is not None:
             weighted_metric = 0
             for idx, value in enumerate(values):
@@ -141,18 +144,29 @@ class RegionBasedMetric(ICallbackBatchMetric):
         micro_metric = 0
         if self.weights is not None:
             weighted_metric = 0
+
+        # @TODO: ddp hotfix, could be done better
+        if self._is_ddp:
+            for _, statistics in self.statistics.items():
+                for key in statistics:
+                    device = statistics[key].device
+                    value: List[torch.Tensor] = all_gather(statistics[key].cpu())
+                    value: torch.Tensor = torch.sum(torch.vstack(value), dim=0).to(device)
+                    statistics[key] = value
+
         for class_idx, statistics in self.statistics.items():
             value = self.metric_fn(**statistics)
             micro_metric += value
             if self.weights is not None:
-                weighted_metric += value * self.weights[class_idx - 1]
-            metrics[f"{self.prefix}/{self.class_names[class_idx-1]}"] = value
+                weighted_metric += value * self.weights[class_idx]
+            metrics[f"{self.prefix}/{self.class_names[class_idx]}"] = value
             for stats_name, value in statistics.items():
                 total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
         micro_metric /= len(self.statistics)
         macro_metric = self.metric_fn(**total_statistics)
         metrics[f"{self.prefix}/micro"] = micro_metric
         metrics[f"{self.prefix}/macro"] = macro_metric
+        metrics[f"{self.prefix}"] = macro_metric
         if self.weights is not None:
             metrics[f"{self.prefix}/weighted"] = weighted_metric
         # convert torch.Tensor to float
@@ -188,8 +202,8 @@ class IOUMetric(RegionBasedMetric):
             Used for per-batch logging. default: True
             prefix: metric prefix
             suffix: metric suffix
-            class_dim: indicates class dimention (K) for ``outputs`` and
-            ``targets`` tensors (default = 1)
+            class_dim: indicates class dimension (K) for ``outputs`` and
+                ``targets`` tensors (default = 1)
             weights: class weights
             class_names: class names
             threshold: threshold for outputs binarization

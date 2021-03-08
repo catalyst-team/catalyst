@@ -1,7 +1,7 @@
 # flake8: noqa
-
 from typing import Any, Dict, List
 import logging
+import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -9,15 +9,25 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
-from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.engines.device import DeviceEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
+from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
-from .misc import DeviceCheckCallback, DummyDataset, DummyModel, LossMinimizationCallback
+from .misc import (
+    DeviceCheckCallback,
+    DummyDataset,
+    DummyModel,
+    LossMinimizationCallback,
+    ModuleTypeChecker,
+)
 
 logger = logging.getLogger(__name__)
+
+
+if NUM_CUDA_DEVICES > 1:
+    os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 
 # experiment definition
 class CustomRunner(IRunner):
@@ -29,7 +39,7 @@ class CustomRunner(IRunner):
     def get_engine(self):
         return DeviceEngine(self._device)
 
-    def get_callbacks(self, stage: str) -> Dict[str, Callback]:
+    def get_callbacks(self, stage: str):
         return {
             "criterion": CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
@@ -39,8 +49,9 @@ class CustomRunner(IRunner):
             "checkpoint": CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
-            "check": DeviceCheckCallback(self._device, logger=logger),
-            "check2": LossMinimizationCallback("loss", logger=logger),
+            "test_nn_module": ModuleTypeChecker(),
+            "test_device": DeviceCheckCallback(self._device, logger=logger),
+            "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
         }
 
     @property
@@ -87,40 +98,47 @@ def run_train_with_experiment_device(device):
 
 
 def run_train_with_config_experiment_device(device):
-    pass
-    # dataset = DummyDataset(10)
-    # runner = SupervisedRunner()
-    # logdir = f"./test_{device}_engine"
-    # exp = ConfigExperiment(
-    #     config={
-    #         "model_params": {"_target_": "DummyModel", "in_features": 4, "out_features": 1},
-    #         "engine": str(device),
-    #         "args": {"logdir": logdir},
-    #         "stages": {
-    #             "data_params": {"batch_size": 4, "num_workers": 0},
-    #             "criterion_params": {"_target_": "MSELoss"},
-    #             "optimizer_params": {"_target_": "SGD", "lr": 1e-3},
-    #             "stage1": {
-    #                 "stage_params": {"num_epochs": 2},
-    #                 "callbacks_params": {
-    #                     "loss": {"_target_": "CriterionCallback"},
-    #                     "optimizer": {"_target_": "OptimizerCallback"},
-    #                     "test_device": {
-    #                         "_target_": "DeviceCheckCallback",
-    #                         "assert_device": str(device),
-    #                     },
-    #                     "test_loss_minimization": {"_target_": "LossMinimizationCallback"},
-    #                 },
-    #             },
-    #         },
-    #     }
-    # )
-    # exp.get_datasets = lambda *args, **kwargs: {
-    #     "train": dataset,
-    #     "valid": dataset,
-    # }
-    # runner.run(exp)
-    # shutil.rmtree(logdir, ignore_errors=True)
+    with TemporaryDirectory() as logdir:
+        dataset = DummyDataset(6)
+        runner = SupervisedConfigRunner(
+            config={
+                "args": {"logdir": logdir},
+                "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
+                "engine": {"_target_": "DeviceEngine", "device": device},
+                "args": {"logdir": logdir},
+                "stages": {
+                    "stage1": {
+                        "num_epochs": 10,
+                        "criterion": {"_target_": "MSELoss"},
+                        "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "callbacks": {
+                            "criterion": {
+                                "_target_": "CriterionCallback",
+                                "metric_key": "loss",
+                                "input_key": "logits",
+                                "target_key": "targets",
+                            },
+                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            "test_nn_module": {"_target_": "ModuleTypeChecker"},
+                            "test_device": {
+                                "_target_": "DeviceCheckCallback",
+                                "assert_device": device,
+                            },
+                            "test_loss_minimization": {
+                                "_target_": "LossMinimizationCallback",
+                                "key": "loss",
+                            },
+                        },
+                    },
+                },
+            }
+        )
+        runner.get_datasets = lambda *args, **kwargs: {
+            "train": dataset,
+            "valid": dataset,
+        }
+        runner.run()
 
 
 def test_experiment_engine_with_devices():
@@ -130,7 +148,6 @@ def test_experiment_engine_with_devices():
         run_train_with_experiment_device(device)
 
 
-@mark.skip("Config experiment is in development phase!")
 def test_config_experiment_engine_with_cpu():
     # will check on all available devices
     to_check_devices = ["cpu"] + [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]

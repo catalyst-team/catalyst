@@ -97,3 +97,6 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
     def autocast(self):
         """@TODO: docs."""
         return amp.autocast()
+
+
+__all__ = ["AMPEngine", "DistributedDataParallelAMPEngine"]

@@ -9,26 +9,32 @@ import torch
 from torch.utils.data import DataLoader
 
 from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
-from catalyst.core.callback import Callback, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.loggers import ConsoleLogger, CSVLogger
-from catalyst.settings import IS_APEX_AVAILABLE, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.runners.config import SupervisedConfigRunner
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 from .misc import (
     DeviceCheckCallback,
     DummyDataset,
     DummyModel,
     LossMinimizationCallback,
+    ModuleTypeChecker,
     OPTTensorTypeChecker,
 )
 
-if IS_APEX_AVAILABLE:
+if SETTINGS.apex_required:
     from catalyst.engines.apex import APEXEngine
 
 logger = logging.getLogger(__name__)
 
 
-OPT_LEVELS = ("O0", "O1", "O2", "O3")
+OPT_LEVELS = (
+    "O0",
+    # "O1",  # disabled, issue: https://github.com/NVIDIA/apex/issues/694
+    "O2",
+    "O3",
+)
 
 
 class CustomRunner(IRunner):
@@ -41,21 +47,20 @@ class CustomRunner(IRunner):
     def get_engine(self):
         return APEXEngine(self._device, self._opt_level)
 
-    def get_callbacks(self, stage: str) -> Dict[str, Callback]:
+    def get_callbacks(self, stage: str):
         return {
             "criterion": CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            # TODO: fix issue with pickling wrapped model's forward function
-            # "checkpoint": dl.CheckpointCallback(
-            #     self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
-            # ),
-            "check": DeviceCheckCallback(self._device, logger=logger),
-            "check2": LossMinimizationCallback("loss", logger=logger),
-            "logits_type_checker": OPTTensorTypeChecker("logits", self._opt_level),
-            # "loss_type_checker": TensorTypeChecker("loss", True),
+            "checkpoint": CheckpointCallback(
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            ),
+            "test_nn_module": ModuleTypeChecker(),
+            "test_device": DeviceCheckCallback(self._device, logger=logger),
+            "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
+            "test_logits_type": OPTTensorTypeChecker("logits", self._opt_level),
         }
 
     @property
@@ -102,11 +107,60 @@ def run_train_with_experiment_apex_device(device, opt_level):
 
 
 def run_train_with_config_experiment_apex_device(device, opt_level):
-    pass
+    with TemporaryDirectory() as logdir:
+        dataset = DummyDataset(6)
+        runner = SupervisedConfigRunner(
+            config={
+                "args": {"logdir": logdir},
+                "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
+                "engine": {
+                    "_target_": "APEXEngine",
+                    "device": device,
+                    "opt_level": opt_level.upper(),
+                },
+                "args": {"logdir": logdir},
+                "stages": {
+                    "stage1": {
+                        "num_epochs": 10,
+                        "criterion": {"_target_": "MSELoss"},
+                        "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "callbacks": {
+                            "criterion": {
+                                "_target_": "CriterionCallback",
+                                "metric_key": "loss",
+                                "input_key": "logits",
+                                "target_key": "targets",
+                            },
+                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            "test_nn_module": {"_target_": "ModuleTypeChecker"},
+                            "test_device": {
+                                "_target_": "DeviceCheckCallback",
+                                "assert_device": device,
+                            },
+                            "test_loss_minimization": {
+                                "_target_": "LossMinimizationCallback",
+                                "key": "loss",
+                            },
+                            "test_opt_logits_type": {
+                                "_target_": "OPTTensorTypeChecker",
+                                "key": "logits",
+                                "opt_level": opt_level,
+                            },
+                        },
+                    },
+                },
+            }
+        )
+        runner.get_datasets = lambda *args, **kwargs: {
+            "train": dataset,
+            "valid": dataset,
+        }
+        runner.run()
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not IS_APEX_AVAILABLE, reason="CUDA devices is not available"
+    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required, reason="CUDA devices is not available"
 )
 def test_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
@@ -115,9 +169,8 @@ def test_apex_with_devices():
             run_train_with_experiment_apex_device(device, level)
 
 
-@mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not IS_APEX_AVAILABLE, reason="CUDA devices is not available"
+    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required, reason="CUDA devices is not available"
 )
 def test_config_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]

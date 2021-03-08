@@ -377,30 +377,12 @@ class IRunner(ICallback, ILogger, ABC):
     def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
         """Returns callbacks for a given stage.
 
-        .. note::
-            To learn more about Catalyst Callbacks mechanism, please follow
-            :py:mod:`catalyst.core.callback.Callback` documentation.
-
-        .. note::
-            We need ordered dictionary to guarantee the correct dataflow
-            and order of metrics optimization.
-            For example, to compute loss before optimization ;)
-
         Args:
-            stage: stage name of interest
-                like "pretrain" / "train" / "finetune" / etc
-
-        Returns:  # noqa: DAR202
-            OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
-            with callbacks for current stage.
-
-        Args:
-            stage: stage name of interest,
-                like "pretrain" / "train" / "finetune" / etc
+            stage: stage name of interest like "pretrain" / "train" / "finetune" / etc
 
         Returns:
-            OrderedDict[str, Callback]: Ordered dictionary
-                with callbacks for current stage.
+            OrderedDict[str, Callback]: Ordered dictionary  # noqa: DAR202
+            with callbacks for current stage.
         """
         return {}
 
@@ -482,12 +464,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     def _setup_components(self) -> None:
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
-        (
-            self.model,
-            self.criterion,
-            self.optimizer,
-            self.scheduler,
-        ) = self.engine.init_components(
+        self.model, self.criterion, self.optimizer, self.scheduler = self.engine.init_components(
             model_fn=self._get_model,
             criterion_fn=self._get_criterion,
             optimizer_fn=self._get_optimizer,
@@ -583,6 +560,14 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
+        # as far as we could `backward` anything from `batch_metrics` on the nodes during training,
+        # which means, it could not be synced before,
+        # we have to sync them in the end of the batch... here:
+        # @TODO: could be done better
+        self.batch_metrics = {
+            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+            for k, v in self.batch_metrics.items()
+        }
         self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
@@ -599,10 +584,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler."""
-        from catalyst.utils.distributed import get_rank
-
-        if get_rank() == 0:
-            self.engine.deinit_components()
+        self.engine.deinit_components()
 
     def on_experiment_end(self, runner: "IRunner"):
         """Event handler."""
@@ -634,22 +616,18 @@ class IRunner(ICallback, ILogger, ABC):
 
     def _run_batch(self) -> None:
         self._run_event("on_batch_start")
-
-        # NOTE: wrapped forward because need to scale forward propagation
-        # as it was noted in docs:
-        #   https://pytorch.org/docs/stable/notes/amp_examples.html#typical-mixed-precision-training
-        # @TODO: handle_batch with Callback?
-        with self.engine.autocast():
-            self.handle_batch(batch=self.batch)
-        # self.handle_batch()
+        self.handle_batch(batch=self.batch)
         self._run_event("on_batch_end")
 
     def _run_loader(self) -> None:
+        # NOTE: wrapped forward because need to scale forward propagation
+        # as it was noted in docs:
+        # https://pytorch.org/docs/stable/notes/amp_examples.html#typical-mixed-precision-training
         self._run_event("on_loader_start")
         with torch.set_grad_enabled(self.is_train_loader):
             for self.loader_batch_step, self.batch in enumerate(self.loader):
-                # @TODO: could we move `with self.engine.autocast():` here?
-                self._run_batch()
+                with self.engine.autocast():
+                    self._run_batch()
                 if self.need_early_stop:
                     self.need_early_stop = False
                     break
@@ -661,16 +639,11 @@ class IRunner(ICallback, ILogger, ABC):
             self._run_loader()
         self._run_event("on_epoch_end")
 
-    def _run_stage(self, rank=0, world_size=1) -> None:
-        # TODO: move this logic somewhere else
-        # NOTE: engine should be built elsewhere but not here
+    def _run_stage(self, rank: int = -1, world_size: int = 1) -> None:
         if isinstance(self.engine, DistributedDataParallelEngine):
-            self.engine._rank = rank
-            # self.engine._world_size = world_size
-
-            LOGGER.warning(f"rank: {rank}")
-            LOGGER.warning(f"world size: {world_size}")
-            LOGGER.warning(f"engine: {self.engine}")
+            self.engine.setup_process(rank=rank, world_size=world_size)
+            if not self.engine.is_master_process:
+                self.loggers = {}
 
         self._run_event("on_stage_start")
         while self.stage_epoch_step < self.stage_epoch_len:
@@ -683,16 +656,15 @@ class IRunner(ICallback, ILogger, ABC):
     def _run_experiment(self) -> None:
         self._run_event("on_experiment_start")
         for self.stage_key in self.stages:
-            if self.engine.rank < 0:
-                # single-device branch (cpu, gpu, dp)
-                self._run_stage()
-            else:
+            if isinstance(self.engine, DistributedDataParallelEngine):
                 # ddp-device branch
                 world_size = self.engine.world_size
                 torch.multiprocessing.spawn(
                     self._run_stage, args=(world_size,), nprocs=world_size, join=True,
                 )
-                # raise NotImplementedError()
+            else:
+                # single-device branch (cpu, gpu, dp)
+                self._run_stage()
         self._run_event("on_experiment_end")
 
     def run(self) -> "IRunner":

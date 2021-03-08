@@ -2,8 +2,10 @@ from typing import Dict
 
 import torch
 
+from catalyst.engines.functional import all_gather
 from catalyst.metrics._metric import ICallbackLoaderMetric
 from catalyst.metrics.functional._auc import auc
+from catalyst.utils.distributed import get_rank
 
 
 class AUCMetric(ICallbackLoaderMetric):
@@ -15,9 +17,11 @@ class AUCMetric(ICallbackLoaderMetric):
         self.metric_name = f"{self.prefix}auc{self.suffix}"
         self.scores = []
         self.targets = []
+        self._is_ddp = False
 
     def reset(self, num_batches, num_samples) -> None:
         """@TODO: docs here"""
+        self._is_ddp = get_rank() > -1
         self.scores = []
         self.targets = []
 
@@ -30,6 +34,12 @@ class AUCMetric(ICallbackLoaderMetric):
         """@TODO: docs here"""
         targets = torch.cat(self.targets)
         scores = torch.cat(self.scores)
+
+        # @TODO: ddp hotfix, could be done better
+        if self._is_ddp:
+            scores = torch.cat(all_gather(scores))
+            targets = torch.cat(all_gather(targets))
+
         score = auc(outputs=scores, targets=targets)
         return score
 

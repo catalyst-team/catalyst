@@ -8,24 +8,28 @@ from pytest import mark
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst import dl
-from catalyst.settings import IS_AMP_AVAILABLE, IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
+from catalyst.core.runner import IRunner
+from catalyst.loggers import ConsoleLogger, CSVLogger
+from catalyst.runners.config import SupervisedConfigRunner
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 from .misc import (
     DeviceCheckCallback,
     DummyDataset,
     DummyModel,
     LossMinimizationCallback,
+    ModuleTypeChecker,
     TensorTypeChecker,
 )
 
-if IS_AMP_AVAILABLE:
+if SETTINGS.amp_required:
     from catalyst.engines.amp import AMPEngine
 
 logger = logging.getLogger(__name__)
 
 
-class CustomRunner(dl.IRunner):
+class CustomRunner(IRunner):
     def __init__(self, logdir, device):
         super().__init__()
         self._logdir = logdir
@@ -34,19 +38,20 @@ class CustomRunner(dl.IRunner):
     def get_engine(self):
         return AMPEngine(self._device)
 
-    def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
+    def get_callbacks(self, stage: str):
         return {
-            "criterion": dl.CriterionCallback(
+            "criterion": CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
-            "optimizer": dl.OptimizerCallback(metric_key="loss"),
+            "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            "checkpoint": dl.CheckpointCallback(
+            "checkpoint": CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
-            "check": DeviceCheckCallback(self._device, logger=logger),
-            "check2": LossMinimizationCallback("loss", logger=logger),
-            "logits_type_checker": TensorTypeChecker("logits"),
+            "test_nn_module": ModuleTypeChecker(),
+            "test_device": DeviceCheckCallback(self._device, logger=logger),
+            "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
+            "test_logits_type": TensorTypeChecker("logits"),
             # "loss_type_checker": TensorTypeChecker("loss", True),
         }
 
@@ -78,7 +83,7 @@ class CustomRunner(dl.IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+        return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
 
     def handle_batch(self, batch):
         x, y = batch
@@ -94,18 +99,62 @@ def run_train_with_experiment_amp_device(device):
 
 
 def run_train_with_config_experiment_amp_device(device):
-    pass
+    with TemporaryDirectory() as logdir:
+        dataset = DummyDataset(6)
+        runner = SupervisedConfigRunner(
+            config={
+                "args": {"logdir": logdir},
+                "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
+                "engine": {"_target_": "AMPEngine", "device": device},
+                "args": {"logdir": logdir},
+                "stages": {
+                    "stage1": {
+                        "num_epochs": 10,
+                        "criterion": {"_target_": "MSELoss"},
+                        "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "callbacks": {
+                            "criterion": {
+                                "_target_": "CriterionCallback",
+                                "metric_key": "loss",
+                                "input_key": "logits",
+                                "target_key": "targets",
+                            },
+                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            "test_nn_module": {"_target_": "ModuleTypeChecker"},
+                            "test_device": {
+                                "_target_": "DeviceCheckCallback",
+                                "assert_device": device,
+                            },
+                            "test_loss_minimization": {
+                                "_target_": "LossMinimizationCallback",
+                                "key": "loss",
+                            },
+                            "test_logits_type": {"_target_": "TensorTypeChecker", "key": "logits"},
+                        },
+                    },
+                },
+            }
+        )
+        runner.get_datasets = lambda *args, **kwargs: {
+            "train": dataset,
+            "valid": dataset,
+        }
+        runner.run()
 
 
-@mark.skipif(not IS_CUDA_AVAILABLE or not IS_AMP_AVAILABLE, reason="CUDA device is not available")
+@mark.skipif(
+    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required, reason="CUDA device is not available"
+)
 def test_experiment_engine_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:
         run_train_with_experiment_amp_device(device)
 
 
-@mark.skip("Config experiment is in development phase!")
-@mark.skipif(not IS_CUDA_AVAILABLE or not IS_AMP_AVAILABLE, reason="CUDA device is not available")
+@mark.skipif(
+    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required, reason="CUDA device is not available"
+)
 def test_config_experiment_engine_with_cuda():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
     for device in to_check_devices:

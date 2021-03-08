@@ -37,6 +37,13 @@ ICallbackLoaderMetric
     :undoc-members:
     :show-inheritance:
 
+AccumulationMetric
+~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._metric.AccumulationMetric
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 General Metrics
 ----------------------
 
@@ -79,23 +86,9 @@ AUCMetric
     :undoc-members:
     :show-inheritance:
 
-BinaryPrecisionRecallF1Metric
+CMCMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._classification.BinaryPrecisionRecallF1Metric
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MulticlassPrecisionRecallF1SupportMetric
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._classification.MulticlassPrecisionRecallF1SupportMetric
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MultilabelPrecisionRecallF1SupportMetric
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._classification.MultilabelPrecisionRecallF1SupportMetric
+.. autoclass:: catalyst.metrics._cmc_score.CMCMetric
     :members:
     :undoc-members:
     :show-inheritance:
@@ -124,6 +117,27 @@ MAPMetric
 MRRMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._mrr.MRRMetric
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+BinaryPrecisionRecallF1Metric
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._classification.BinaryPrecisionRecallF1Metric
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+MulticlassPrecisionRecallF1SupportMetric
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._classification.MulticlassPrecisionRecallF1SupportMetric
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+MultilabelPrecisionRecallF1SupportMetric
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._classification.MultilabelPrecisionRecallF1SupportMetric
     :members:
     :undoc-members:
     :show-inheritance:
