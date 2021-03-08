@@ -87,7 +87,6 @@ def train_from_runner():
 
 
 def train_from_config():
-    device = "dp"
     with TemporaryDirectory() as logdir:
         dataset = DummyDataset(6)
         runner = SupervisedConfigRunner(
