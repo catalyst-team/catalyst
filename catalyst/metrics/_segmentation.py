@@ -102,8 +102,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 self.statistics[idx]["fn"] = fn_class
 
         metrics_per_class = self.metric_fn(tp, fp, fn)
-        micro_metric = torch.mean(metrics_per_class)
-        macro_metric = self.metric_fn(tp.sum(), fp.sum(), fn.sum())
+        macro_metric = torch.mean(metrics_per_class)
+        micro_metric = self.metric_fn(tp.sum(), fp.sum(), fn.sum())
         return metrics_per_class, micro_metric, macro_metric
 
     def update_key_value(
@@ -147,7 +147,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         """
         metrics = {}
         total_statistics = {}
-        micro_metric = 0
+        macro_metric = 0
         if self.weights is not None:
             weighted_metric = 0
 
@@ -162,17 +162,16 @@ class RegionBasedMetric(ICallbackBatchMetric):
 
         for class_idx, statistics in self.statistics.items():
             value = self.metric_fn(**statistics)
-            micro_metric += value
+            macro_metric += value
             if self.weights is not None:
                 weighted_metric += value * self.weights[class_idx]
             metrics[f"{self.prefix}/{self.class_names[class_idx]}"] = value
             for stats_name, value in statistics.items():
                 total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
-        micro_metric /= len(self.statistics)
-        macro_metric = self.metric_fn(**total_statistics)
+        macro_metric /= len(self.statistics)
+        micro_metric = self.metric_fn(**total_statistics)
         metrics[f"{self.prefix}/micro"] = micro_metric
         metrics[f"{self.prefix}/macro"] = macro_metric
-        metrics[f"{self.prefix}"] = macro_metric
         if self.weights is not None:
             metrics[f"{self.prefix}/weighted"] = weighted_metric
         # convert torch.Tensor to float
