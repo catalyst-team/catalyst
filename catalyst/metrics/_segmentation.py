@@ -133,6 +133,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
             for idx, value in enumerate(metrics_per_class):
                 weighted_metric += value * self.weights[idx]
             metrics[f"{self.prefix}/weighted"] = weighted_metric
+        # convert torch.Tensor to float
+        metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
 
     def compute_key_value(self) -> Dict[str, torch.Tensor]:
