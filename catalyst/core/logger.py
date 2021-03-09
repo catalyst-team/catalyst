@@ -3,7 +3,6 @@ from typing import Dict
 import numpy as np
 
 
-# @TODO: could we just pass runner?
 class ILogger:
     """An abstraction that syncs experiment run with monitoring tools."""
 

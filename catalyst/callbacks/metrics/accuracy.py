@@ -7,6 +7,17 @@ from catalyst.metrics._accuracy import AccuracyMetric
 class AccuracyCallback(BatchMetricCallback):
     """Accuracy metric callback.
     Computes multiclass accuracy@topk for the specified values of `topk`.
+
+    Args:
+        input_key: input key to use for metric calculation, specifies our `y_pred`
+        target_key: output key to use for metric calculation, specifies our `y_true`
+        topk_args: specifies which accuracy@K to log:
+            [1] - accuracy
+            [1, 3] - accuracy at 1 and 3
+            [1, 3, 5] - accuracy at 1, 3 and 5
+        num_classes: number of classes to calculate ``topk_args`` if ``accuracy_args`` is None
+        prefix: metric's prefix
+        suffix: metric's suffix
     """
 
     def __init__(
@@ -18,18 +29,7 @@ class AccuracyCallback(BatchMetricCallback):
         prefix: str = None,
         suffix: str = None,
     ):
-        """
-        Args:
-            input_key: input key to use for metric calculation, specifies our `y_pred`
-            target_key: output key to use for metric calculation, specifies our `y_true`
-            prefix: key for the metric's name
-            topk_args: specifies which accuracy@K to log:
-                [1] - accuracy
-                [1, 3] - accuracy at 1 and 3
-                [1, 3, 5] - accuracy at 1, 3 and 5
-            num_classes: number of classes to calculate ``topk_args``
-                if ``accuracy_args`` is None
-        """
+        """Init."""
         super().__init__(
             metric=AccuracyMetric(
                 topk_args=topk_args, num_classes=num_classes, prefix=prefix, suffix=suffix

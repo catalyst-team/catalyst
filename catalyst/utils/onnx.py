@@ -12,7 +12,7 @@ if SETTINGS.onnx_required:
     from onnxruntime.quantization import quantize_dynamic, QuantType
 
 
-def convert_to_onnx(
+def onnx_export(
     model: torch.nn.Module,
     batch: torch.Tensor,
     file: str,
@@ -23,6 +23,7 @@ def convert_to_onnx(
     opset_version: int = 9,
     do_constant_folding: bool = False,
     return_model: bool = False,
+    verbose: bool = False,
 ) -> Union[None, "onnx"]:
     """Converts model to onnx runtime.
 
@@ -40,6 +41,8 @@ def convert_to_onnx(
             is applied to the model during export. Defaults to False.
         return_model (bool, optional): If True then returns onnxruntime model (onnx required).
             Defaults to False.
+        verbose (bool, default False): if specified, we will print out a debug
+            description of the trace being exported.
 
     Example:
         .. code-block:: python
@@ -77,7 +80,7 @@ def convert_to_onnx(
         model,
         batch,
         file,
-        verbose=True,
+        verbose=verbose,
         input_names=input_names,
         output_names=output_names,
         dynamic_axes=dynamic_axes,
@@ -128,4 +131,4 @@ def quantize_onnx_model(
         print(f"Quantized model saved to {quantized_model_path}.")
 
 
-__all__ = ["convert_to_onnx", "quantize_onnx_model"]
+__all__ = ["onnx_export", "quantize_onnx_model"]

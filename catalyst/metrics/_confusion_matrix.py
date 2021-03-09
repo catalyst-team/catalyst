@@ -1,9 +1,11 @@
-from typing import Any
+from typing import Any, List
 
 import numpy as np
 import torch
 
+from catalyst.engines.functional import all_gather
 from catalyst.metrics._metric import IMetric
+from catalyst.utils.distributed import get_rank
 
 
 class ConfusionMatrixMetric(IMetric):
@@ -22,11 +24,13 @@ class ConfusionMatrixMetric(IMetric):
         self.num_classes = num_classes
         self.normalized = normalized
         self.conf = np.ndarray((num_classes, num_classes), dtype=np.int32)
+        self._is_ddp = False
         self.reset()
 
     def reset(self) -> None:
         """Reset confusion matrix, filling it with zeros."""
         self.conf.fill(0)
+        self._is_ddp = get_rank() > -1
 
     def update(self, predictions: torch.Tensor, targets: torch.Tensor) -> None:
         """Computes the confusion matrix of ``K x K`` size where ``K`` is no of classes.
@@ -88,6 +92,10 @@ class ConfusionMatrixMetric(IMetric):
             to ground-truth targets and columns corresponds to predicted
             targets.
         """
+        if self._is_ddp:
+            value: List[np.ndarray] = all_gather(self.conf)
+            value: np.ndarray = np.sum(np.vstack(value), axis=0)
+            self.conf = value
         if self.normalized:
             conf = self.conf.astype(np.float32)
             return conf / conf.sum(1).clip(min=1e-12)[:, None]

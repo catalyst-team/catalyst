@@ -91,7 +91,4 @@ def get_model_parameters(
     return model_params
 
 
-__all__ = [
-    "do_lr_linear_scaling",
-    "get_model_parameters",
-]
+__all__ = ["do_lr_linear_scaling", "get_model_parameters"]

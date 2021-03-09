@@ -148,12 +148,10 @@ class CallbackOrder(IntFlag):
 
         >>> class MyCustomCallback(Callback):
         >>>     def __init__(self):
-        >>>         super().__init__(order=42)
+        >>>         super().__init__(order=33)
         >>>     ...
         # MyCustomCallback will be executed after all `Metric`-Callbacks
         # but before all `MetricAggregation`-Callbacks.
-
-    .. _Alchemy: https://alchemy.host
     """
 
     Internal = internal = 0  # noqa: WPS115
@@ -162,6 +160,7 @@ class CallbackOrder(IntFlag):
     Optimizer = optimizer = 60  # noqa: WPS115
     Scheduler = scheduler = 80  # noqa: WPS115
     External = external = 100  # noqa: WPS115
+    ExternalExtra = external_extra = 120  # noqa: WPS115
 
 
 class CallbackScope(IntFlag):
@@ -394,14 +393,6 @@ class CallbackList(Callback):
         """
         for callback in self.callbacks:
             callback.on_batch_start(runner)
-
-    # def handle_batch(self, runner: "IRunner") -> None:
-    #     """Event handler for exception case.
-    #
-    #     Args:
-    #         runner: IRunner instance.
-    #     """
-    #     pass
 
     def on_batch_end(self, runner: "IRunner") -> None:
         """Event handler for batch end.

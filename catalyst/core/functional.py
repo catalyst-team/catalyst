@@ -6,6 +6,7 @@ import warnings
 from torch.utils.data import DataLoader, DistributedSampler
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackWrapper
+from catalyst.data.sampler import DistributedSamplerWrapper
 from catalyst.utils.distributed import get_rank
 
 
@@ -19,8 +20,6 @@ def _force_make_distributed_loader(loader: DataLoader) -> DataLoader:
     Returns:
         DataLoader: pytorch dataloder with distributed sampler.
     """
-    from catalyst.data.sampler import DistributedSamplerWrapper
-
     sampler = (
         DistributedSampler(dataset=loader.dataset)
         if getattr(loader, "sampler", None) is not None
@@ -47,14 +46,12 @@ def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
     (Experimental feature)
 
     Args:
-        loaders (Dict[str, DataLoader]): dictionary with pytorch dataloaders
+        loaders: dictionary with pytorch dataloaders
 
     Returns:
         Dict[str, DataLoader]: dictionary
             with pytorch dataloaders (with distributed samplers if necessary)
     """
-    from catalyst.data.sampler import DistributedSamplerWrapper
-
     rank = get_rank()
     if rank >= 0:
         for key, value in loaders.items():
@@ -69,13 +66,13 @@ def validate_loaders(loaders: Dict[str, DataLoader]) -> Dict[str, DataLoader]:
 
 
 def _get_original_callback(callback: Callback) -> Callback:
-    """@TODO: docs"""
+    """Docs."""
     while isinstance(callback, CallbackWrapper):
         callback = callback.callback
     return callback
 
 
-def check_callback_isinstance(callback: Callback, class_or_tuple) -> bool:
+def callback_isinstance(callback: Callback, class_or_tuple) -> bool:
     """Check if callback is the same type as required ``class_or_tuple``
 
     Args:
@@ -101,8 +98,7 @@ def sort_callbacks_by_order(
         sequence of callbacks sorted by ``callback order``
 
     Raises:
-        TypeError: if `callbacks` is out of
-            `None`, `dict`, `OrderedDict`, `list`
+        TypeError: if `callbacks` is out of `None`, `dict`, `OrderedDict`, `list`
     """
     if callbacks is None:
         output = OrderedDict()
@@ -128,10 +124,10 @@ def filter_callbacks_by_node(callbacks: Union[Dict, OrderedDict]) -> Union[Dict,
     and master-only callbacks from ``CallbackNode.Worker``.
 
     Args:
-        callbacks (Union[Dict, OrderedDict]): callbacks
+        callbacks: callbacks
 
     Returns:
-        Union[Dict, OrderedDict]: filtered callbacks dictionary.
+        Union: filtered callbacks dictionary.
     """
     # distributed run setting
     output = callbacks.copy()
@@ -151,5 +147,5 @@ __all__ = [
     "validate_loaders",
     "sort_callbacks_by_order",
     "filter_callbacks_by_node",
-    "check_callback_isinstance",
+    "callback_isinstance",
 ]

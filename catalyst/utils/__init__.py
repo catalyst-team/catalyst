@@ -33,7 +33,7 @@ from catalyst.utils.misc import (
 )
 from catalyst.utils.numpy import get_one_hot
 
-from catalyst.utils.onnx import convert_to_onnx
+from catalyst.utils.onnx import onnx_export
 
 if SETTINGS.onnx_required:
     from catalyst.utils.onnx import quantize_onnx_model

@@ -53,10 +53,8 @@ class RunnerException(Exception):
 
 class IRunner(ICallback, ILogger, ABC):
     """
-    An abstraction that knows **how** to run an experiment.
-    contains all the logic of how to run the experiment,
+    An abstraction that contains all the logic of how to run the experiment,
     stages, epochs, loaders and batches.
-    Runner also contains full information about experiment runner.
 
     .. note::
         To learn more about Catalyst Core concepts, please check out
@@ -64,25 +62,19 @@ class IRunner(ICallback, ILogger, ABC):
             - :py:mod:`catalyst.core.runner.IRunner`
             - :py:mod:`catalyst.core.engine.IEngine`
             - :py:mod:`catalyst.core.callback.Callback`
+
+    Args:
+        model: Torch model object
+        engine: IEngine instance
     """
 
     def __init__(
-        self,
-        model: RunnerModel = None,
-        engine: IEngine = None,
-        # device: Device = None,
+        self, model: RunnerModel = None, engine: IEngine = None,
     ):
-        """
-        Args:
-            model: Torch model object
-            engine: IEngine instance
-            # device: Torch device object
-        """
+        """Init."""
         # the core
         self.model: RunnerModel = model
-        # self._device = device
         self.engine: IEngine = engine
-        # self.experiment: IExperiment = None
         self.trial: ITrial = None
         # the data
         self.loaders: Dict[str, DataLoader] = None
@@ -135,7 +127,6 @@ class IRunner(ICallback, ILogger, ABC):
         # extra
         self.exception: Exception = None
         self.need_early_stop: bool = False
-        self.need_exception_reraise: bool = True
 
     # @TODO: remove hotfix
     @property
@@ -486,7 +477,6 @@ class IRunner(ICallback, ILogger, ABC):
         self.global_sample_step: int = 0
         self.exception: Exception = None
         self.need_early_stop: bool = False
-        self.need_exception_reraise: bool = True
 
         self.trial = self.get_trial()
         self.engine = self.get_engine()
@@ -561,8 +551,7 @@ class IRunner(ICallback, ILogger, ABC):
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
         # as far as we could `backward` anything from `batch_metrics` on the nodes during training,
-        # which means, it could not be synced before,
-        # we have to sync them in the end of the batch... here:
+        # they could not be synced before, so we have to sync them in the end of the batch
         # @TODO: could be done better
         self.batch_metrics = {
             k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")

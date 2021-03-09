@@ -74,19 +74,16 @@ def prune_model(
 
     Args:
         model: Model to be pruned.
-        pruning_fn: Pruning function with API same as in
-            torch.nn.utils.pruning.
+        pruning_fn: Pruning function with API same as in torch.nn.utils.pruning.
             pruning_fn(module, name, amount).
-        keys_to_prune: list of strings. Determines
-            which tensor in modules will be pruned.
+        keys_to_prune: list of strings. Determines which tensor in modules will be pruned.
         amount: quantity of parameters to prune.
             If float, should be between 0.0 and 1.0 and
             represent the fraction of parameters to prune.
             If int, it represents the absolute number
             of parameters to prune.
         layers_to_prune: list of strings - module names to be pruned.
-            If None provided then will try to prune every module in
-            model.
+            If None provided then will try to prune every module in model.
         dim (int, optional): if you are using structured pruning method you need
             to specify dimension. Defaults to None.
         l_norm (int, optional): if you are using ln_structured you need to specify l_norm.

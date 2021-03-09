@@ -3,7 +3,6 @@ from typing import Dict, List, TYPE_CHECKING
 from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_tensor
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
-from catalyst.utils.distributed import get_rank
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -15,16 +14,17 @@ class ConfusionMatrixCallback(Callback):
     Args:
         input_key: key to use from ``runner.batch``, specifies our ``y_pred``
         target_key: key to use from ``runner.batch``, specifies our ``y_true``
-        prefix: tensorboard plot name
+        prefix: plot name for monitoring tools
         class_names: list with class names
         num_classes: number of classes
+        normalized: boolean flag for confusion matrix normalization
         plot_params: extra params for plt.figure rendering
     """
 
     def __init__(
         self,
-        input_key: str = "logits",
-        target_key: str = "targets",
+        input_key: str,
+        target_key: str,
         prefix: str = "confusion_matrix",
         class_names: List[str] = None,
         num_classes: int = None,
@@ -32,7 +32,7 @@ class ConfusionMatrixCallback(Callback):
         plot_params: Dict = None,
     ):
         """Callback initialisation."""
-        super().__init__(CallbackOrder.metric, CallbackNode.master)
+        super().__init__(CallbackOrder.metric, CallbackNode.all)
         assert num_classes is not None or class_names is not None
         self.prefix = prefix
         self.input_key = input_key
@@ -40,11 +40,14 @@ class ConfusionMatrixCallback(Callback):
 
         self._plot_params = plot_params or {}
 
-        self.class_names = class_names or [str(i) for i in range(num_classes)]
+        self.class_names = class_names or [f"class_{i:02d}" for i in range(num_classes)]
         self.num_classes = num_classes if class_names is None else len(class_names)
         self.normalized = normalized
 
         assert self.num_classes is not None
+        self.confusion_matrix = ConfusionMatrixMetric(
+            num_classes=self.num_classes, normalized=self.normalized
+        )
 
     def on_loader_start(self, runner: "IRunner"):
         """Loader start hook.
@@ -52,10 +55,7 @@ class ConfusionMatrixCallback(Callback):
         Args:
             runner: current runner
         """
-        self.confusion_matrix = ConfusionMatrixMetric(
-            num_classes=self.num_classes, normalized=self.normalized
-        )
-        assert get_rank() < 0, "No DDP support implemented yet"
+        self.confusion_matrix.reset()
 
     def on_batch_end(self, runner: "IRunner"):
         """Batch end hook.
@@ -76,11 +76,6 @@ class ConfusionMatrixCallback(Callback):
             runner: current runner
         """
         confusion_matrix = self.confusion_matrix.compute()
-        # if runner.engine.rank >= 0:
-        #     confusion_matrix = torch.from_numpy(confusion_matrix)
-        #     confusion_matrix = runner.engine.sync_tensor(confusion_matrix)
-        #     confusion_matrix = confusion_matrix.cpu().numpy()
-        # if runner.engine.rank <= 0:
         fig = plot_confusion_matrix(
             confusion_matrix,
             class_names=self.class_names,

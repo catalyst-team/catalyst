@@ -13,7 +13,7 @@ from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.core import Callback
-from catalyst.core.functional import check_callback_isinstance
+from catalyst.core.functional import callback_isinstance
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
@@ -40,14 +40,14 @@ logger = logging.getLogger(__name__)
 
 
 class HydraRunner(IRunner):
-    """Runner created from a hydra configuration file."""
+    """Runner created from a hydra configuration file.
+
+    Args:
+        cfg: Hydra dictionary with parameters
+    """
 
     def __init__(self, cfg: DictConfig):
-        """Init.
-
-        Args:
-            cfg: dictionary with parameters
-        """
+        """Init."""
         super().__init__()
         self._config: DictConfig = deepcopy(cfg)
 
@@ -56,11 +56,13 @@ class HydraRunner(IRunner):
         self._timeit: bool = self._config.args.timeit
         self._check: bool = self._config.args.check
         self._overfit: bool = self._config.args.overfit
-        self._name: str = self._get_init_name()
-        self._logdir: str = self._get_init_logdir()
-        self._trial = None  # @TODO: hack for catalyst-dl tune
+        self._name: str = self._get_run_name()
+        self._logdir: str = self._get_run_logdir()
 
-    def _get_init_name(self) -> str:
+        # @TODO: hack for catalyst-dl tune, could be done better
+        self._trial = None
+
+    def _get_run_name(self) -> str:
         timestamp = get_utcnow_time()
         config_hash = get_short_hash(self._config)
         default_name = f"{timestamp}-{config_hash}"
@@ -73,7 +75,7 @@ class HydraRunner(IRunner):
         logdir = f"{timestamp}.{config_hash}"
         return logdir
 
-    def _get_init_logdir(self) -> str:  # noqa: WPS112
+    def _get_run_logdir(self) -> str:  # noqa: WPS112
         output = None
         exclude_tag = "none"
 
@@ -329,7 +331,7 @@ class HydraRunner(IRunner):
         }
 
         is_callback_exists = lambda callback_fn: any(
-            check_callback_isinstance(x, callback_fn) for x in callbacks.values()
+            callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
         if self._verbose and not is_callback_exists(TqdmCallback):
             callbacks["_verbose"] = TqdmCallback()

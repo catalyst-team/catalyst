@@ -7,7 +7,7 @@ from pathlib import Path
 
 import optuna
 
-from catalyst.dl.scripts.functional import parse_args_uargs
+from catalyst.dl.scripts.misc import parse_args_uargs
 from catalyst.runners.config import ConfigRunner
 from catalyst.utils.distributed import get_rank
 from catalyst.utils.misc import boolean_flag, maybe_recursive_call, set_global_seed
