@@ -310,170 +310,59 @@ runner.train(
 
 ```python
 import os
-import torch
-from torch.nn import functional as F
+from torch import nn, optim
 from torch.utils.data import DataLoader
-from catalyst import dl, metrics
+from catalyst import dl
 from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
 
-model = torch.nn.Linear(28 * 28, 10)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
     "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
     "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
 }
-
-class CustomRunner(dl.Runner):
-
-    def handle_batch(self, batch):
-        x, y = batch
-        y_hat = self.model(x.view(x.size(0), -1))
-
-        loss = F.cross_entropy(y_hat, y)
-        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-        self.batch_metrics = {
-            "loss": loss,
-            "accuracy01": accuracy01,
-            "accuracy03": accuracy03,
-            "accuracy05": accuracy05,
-        }
-        
-        if self.is_train_loader:
-            loss.backward()
-            self.optimizer.step()
-            self.optimizer.zero_grad()
-
-runner = CustomRunner()
-runner.train(
-    model=model, 
-    optimizer=optimizer, 
-    loaders=loaders, 
-    verbose=True,
-)
-```
-</p>
-</details>
-
-<details>
-<summary>CV - classification with AutoEncoder</summary>
-<p>
-
-```python
-import os
-import torch
-from torch import nn
-from torch.nn import functional as F
-from torch.utils.data import DataLoader
-from catalyst import dl, metrics
-from catalyst.data.transforms import ToTensor
-from catalyst.contrib.datasets import MNIST
-
-class ClassifyAE(nn.Module):
-
-    def __init__(self, in_features, hid_features, out_features):
-        super().__init__()
-        self.encoder = nn.Sequential(nn.Linear(in_features, hid_features), nn.Tanh())
-        self.decoder = nn.Sequential(nn.Linear(hid_features, in_features), nn.Sigmoid())
-        self.clf = nn.Linear(hid_features, out_features)
-
-    def forward(self, x):
-        z = self.encoder(x)
-        y_hat = self.clf(z)
-        x_ = self.decoder(z)
-        return y_hat, x_
-
-model = ClassifyAE(28 * 28, 128, 10)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
-
-loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
-}
-
-class CustomRunner(dl.Runner):
-
-    def handle_batch(self, batch):
-        x, y = batch
-        x = x.view(x.size(0), -1)
-        y_hat, x_ = self.model(x)
-
-        loss_clf = F.cross_entropy(y_hat, y)
-        loss_ae = F.mse_loss(x_, x)
-        loss = loss_clf + loss_ae
-        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-        self.batch_metrics = {
-            "loss_clf": loss_clf,
-            "loss_ae": loss_ae,
-            "loss": loss,
-            "accuracy01": accuracy01,
-            "accuracy03": accuracy03,
-            "accuracy05": accuracy05,
-        }
-
-        if self.is_train_loader:
-            loss.backward()
-            self.optimizer.step()
-            self.optimizer.zero_grad()
-
-runner = CustomRunner()
+runner = dl.SupervisedRunner()
+# model training
 runner.train(
     model=model,
+    criterion=criterion,
     optimizer=optimizer,
     loaders=loaders,
+    num_epochs=1,
+    logdir="./logs",
+    valid_loader="valid",
+    valid_metric="loss",
+    minimize_valid_metric=True,
     verbose=True,
 )
 ```
 </p>
 </details>
 
+
 <details>
-<summary>CV - classification with Variational AutoEncoder</summary>
+<summary>CV - MNIST segmentation</summary>
 <p>
 
 ```python
 import os
-import numpy as np
 import torch
 from torch import nn
-from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from catalyst import dl, metrics
+from catalyst import dl
 from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
+from catalyst.contrib.nn import IoULoss
 
-LOG_SCALE_MAX = 2
-LOG_SCALE_MIN = -10
 
-def normal_sample(loc, log_scale):
-    scale = torch.exp(0.5 * log_scale)
-    return loc + scale * torch.randn_like(scale)
-
-class ClassifyVAE(torch.nn.Module):
-
-    def __init__(self, in_features, hid_features, out_features):
-        super().__init__()
-        self.encoder = nn.Linear(in_features, hid_features * 2)
-        self.decoder = nn.Sequential(nn.Linear(hid_features, in_features), nn.Sigmoid())
-        self.clf = nn.Linear(hid_features, out_features)
-
-    def forward(self, x, deterministic=False):
-        z = self.encoder(x)
-        bs, z_dim = z.shape
-
-        loc, log_scale = z[:, :z_dim // 2], z[:, z_dim // 2:]
-        log_scale = torch.clamp(log_scale, LOG_SCALE_MIN, LOG_SCALE_MAX)
-
-        z_ = loc if deterministic else normal_sample(loc, log_scale)
-        z_ = z_.view(bs, -1)
-        x_ = self.decoder(z_)
-
-        y_hat = self.clf(z_)
-
-        return y_hat, x_, loc, log_scale
-
-model = ClassifyVAE(28 * 28, 64, 10)
+model = nn.Sequential(
+    nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(), 
+    nn.Conv2d(1, 1, 3, 1, 1), nn.Sigmoid(),
+)
+criterion = IoULoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
@@ -481,144 +370,59 @@ loaders = {
     "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
 }
 
-class CustomRunner(dl.Runner):
-
+class CustomRunner(dl.SupervisedRunner):
     def handle_batch(self, batch):
-        x, y = batch
-        x = x.view(x.size(0), -1)
-        y_hat, x_, loc, log_scale = self.model(x, deterministic=not self.is_train_loader)
-
-        loss_clf = F.cross_entropy(y_hat, y)
-        loss_ae = F.mse_loss(x_, x)
-        loss_kld = (-0.5 * torch.sum(1 + log_scale - loc.pow(2) - log_scale.exp(), dim=1)).mean()
-        loss = loss_clf + loss_ae + loss_kld
-        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-        self.batch_metrics = {
-            "loss_clf": loss_clf,
-            "loss_ae": loss_ae,
-            "loss_kld": loss_kld,
-            "loss": loss,
-            "accuracy01": accuracy01,
-            "accuracy03": accuracy03,
-            "accuracy05": accuracy05,
-        }
-
-        if self.is_train_loader:
-            loss.backward()
-            self.optimizer.step()
-            self.optimizer.zero_grad()
-
-runner = CustomRunner()
-runner.train(
-    model=model,
-    optimizer=optimizer,
-    loaders=loaders,
-    verbose=True,
-)
-```
-</p>
-</details>
-
-<details>
-<summary>CV - segmentation with classification auxiliary task</summary>
-<p>
-
-```python
-import os
-import torch
-from torch import nn
-from torch.nn import functional as F
-from torch.utils.data import DataLoader
-from catalyst import dl, metrics
-from catalyst.data.transforms import ToTensor
-from catalyst.contrib.datasets import MNIST
-
-class ClassifyUnet(nn.Module):
-
-    def __init__(self, in_channels, in_hw, out_features):
-        super().__init__()
-        self.encoder = nn.Sequential(nn.Conv2d(in_channels, in_channels, 3, 1, 1), nn.Tanh())
-        self.decoder = nn.Conv2d(in_channels, in_channels, 3, 1, 1)
-        self.clf = nn.Linear(in_channels * in_hw * in_hw, out_features)
-
-    def forward(self, x):
-        z = self.encoder(x)
-        z_ = z.view(z.size(0), -1)
-        y_hat = self.clf(z_)
-        x_ = self.decoder(z)
-        return y_hat, x_
-
-model = ClassifyUnet(1, 28, 10)
-optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
-
-loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
-}
-
-class CustomRunner(dl.Runner):
-
-    def handle_batch(self, batch):
-        x, y = batch
+        x = batch[self._input_key]
         x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
-        y_hat, x_ = self.model(x_noise)
+        x_ = self.model(x_noise)
+        self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
 
-        loss_clf = F.cross_entropy(y_hat, y)
-        iou = metrics.iou(x_, x).mean()
-        loss_iou = 1 - iou
-        loss = loss_clf + loss_iou
-        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-        self.batch_metrics = {
-            "loss_clf": loss_clf,
-            "loss_iou": loss_iou,
-            "loss": loss,
-            "iou": iou,
-            "accuracy01": accuracy01,
-            "accuracy03": accuracy03,
-            "accuracy05": accuracy05,
-        }
-        
-        if self.is_train_loader:
-            loss.backward()
-            self.optimizer.step()
-            self.optimizer.zero_grad()
-
-runner = CustomRunner()
+runner = CustomRunner(input_key="features", output_key="scores", target_key="targets", loss_key="loss")
+# model training
 runner.train(
-    model=model, 
-    optimizer=optimizer, 
-    loaders=loaders, 
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    num_epochs=1,
+    callbacks=[
+        dl.IOUCallback(input_key="scores", target_key="targets"),
+        dl.DiceCallback(input_key="scores", target_key="targets"),
+        dl.TrevskyCallback(input_key="scores", target_key="targets", alpha=0.2),
+    ],
+    logdir="./logdir",
+    valid_loader="valid",
+    valid_metric="loss",
+    minimize_valid_metric=True,
     verbose=True,
 )
 ```
 </p>
 </details>
+
 
 <details>
 <summary>CV - MNIST with Metric Learning</summary>
 <p>
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xcob6Y2W0O1JiN-juoF1YfJMJsScCVhV?usp=sharing)
-
 ```python
+import os
 from torch.optim import Adam
 from torch.utils.data import DataLoader
-
-from catalyst import data, dl, utils
+from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
 from catalyst.data.transforms import Compose, Normalize, ToTensor
 
 
-# 1. train and valid datasets
-dataset_root = "."
+# 1. train and valid loaders
 transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
-dataset_train = datasets.MnistMLDataset(root=dataset_root, download=True, transform=transforms)
-sampler = data.BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)
-train_loader = DataLoader(dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size)
+train_dataset = datasets.MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
+sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=10)
+train_loader = DataLoader(dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size)
 
-dataset_val = datasets.MnistQGDataset(root=dataset_root, transform=transforms, gallery_fraq=0.2)
-val_loader = DataLoader(dataset=dataset_val, batch_size=1024)
+valid_dataset = datasets.MnistQGDataset(root=os.getcwd(), transform=transforms, gallery_fraq=0.2)
+valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
 
 # 2. model and optimizer
 model = models.MnistSimpleNet(out_features=16)
@@ -629,25 +433,52 @@ sampler_inbatch = data.HardTripletsSampler(norm_required=False)
 criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
 
 # 4. training with catalyst Runner
+class CustomRunner(dl.SupervisedRunner):
+    def handle_batch(self, batch) -> None:
+        if self.is_train_loader:
+            images, targets = batch["features"].float(), batch["targets"].long()
+            features = self.model(images)
+            self.batch = {"embeddings": features, "targets": targets,}
+        else:
+            images, targets, is_query = batch["features"].float(), batch["targets"].long(), batch["is_query"].bool()
+            features = self.model(images)
+            self.batch = {"embeddings": features, "targets": targets, "is_query": is_query}
+
 callbacks = [
-    dl.ControlFlowCallback(dl.CriterionCallback(), loaders="train"),
-    dl.ControlFlowCallback(dl.CMCScoreCallback(topk_args=[1]), loaders="valid"),
-    dl.PeriodicLoaderCallback(valid=100),
+    dl.ControlFlowCallback(
+        dl.CriterionCallback(
+            input_key="embeddings", target_key="targets", metric_key="loss"
+        ),
+        loaders="train",
+    ),
+    dl.ControlFlowCallback(
+        dl.CMCScoreCallback(
+            embeddings_key="embeddings",
+            labels_key="targets",
+            is_query_key="is_query",
+            topk_args=[1],
+        ),
+        loaders="valid",
+    ),
+    dl.PeriodicLoaderCallback(
+        valid_loader_key="valid", valid_metric_key="cmc01", minimize=False, valid=2
+    ),
 ]
 
-runner = dl.SupervisedRunner(device=utils.get_device())
+runner = CustomRunner(input_key="features", output_key="embeddings")
 runner.train(
     model=model,
     criterion=criterion,
     optimizer=optimizer,
     callbacks=callbacks,
-    loaders={"train": train_loader, "valid": val_loader},
-    minimize_valid_metric=False,
-    verbose=True,
+    loaders={"train": train_loader, "valid": valid_loader},
+    verbose=False,
+    logdir="./logs",
     valid_loader="valid",
-    num_epochs=200,
     valid_metric="cmc01",
-)   
+    minimize_valid_metric=False,
+    num_epochs=10,
+)
 ```
 </p>
 </details>
