@@ -2,12 +2,12 @@
 
 from catalyst.settings import SETTINGS
 
-from catalyst.callbacks.metrics.accuracy import AccuracyCallback
+from catalyst.callbacks.metrics.accuracy import AccuracyCallback, MultilabelAccuracyCallback
 from catalyst.callbacks.metrics.auc import AUCCallback
 from catalyst.callbacks.metrics.custom import CustomMetricCallback
 
 from catalyst.callbacks.metrics.classification import (
-    MulticlassPrecisionRecallF1SupportCallback,
+    PrecisionRecallF1SupportCallback,
     MultilabelPrecisionRecallF1SupportCallback,
 )
 

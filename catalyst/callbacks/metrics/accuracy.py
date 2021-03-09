@@ -1,7 +1,9 @@
-from typing import List
+from typing import List, Union
+
+import torch
 
 from catalyst.callbacks.metric import BatchMetricCallback
-from catalyst.metrics._accuracy import AccuracyMetric
+from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
 
 
 class AccuracyCallback(BatchMetricCallback):
@@ -39,4 +41,32 @@ class AccuracyCallback(BatchMetricCallback):
         )
 
 
-__all__ = ["AccuracyCallback"]
+class MultilabelAccuracyCallback(BatchMetricCallback):
+    """Multilabel accuracy metric callback.
+    Computes multilabel accuracy@topk for the specified values of `topk`.
+
+    Args:
+        input_key: input key to use for metric calculation, specifies our `y_pred`
+        target_key: output key to use for metric calculation, specifies our `y_true`
+        threshold: thresholds for model scores
+        prefix: metric's prefix
+        suffix: metric's suffix
+    """
+
+    def __init__(
+        self,
+        input_key: str,
+        target_key: str,
+        threshold: Union[float, torch.Tensor] = 0.5,
+        prefix: str = None,
+        suffix: str = None,
+    ):
+        """Init."""
+        super().__init__(
+            metric=MultilabelAccuracyMetric(threshold=threshold, prefix=prefix, suffix=suffix),
+            input_key=input_key,
+            target_key=target_key,
+        )
+
+
+__all__ = ["AccuracyCallback", "MultilabelAccuracyCallback"]

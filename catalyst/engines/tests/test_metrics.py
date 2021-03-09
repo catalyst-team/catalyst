@@ -17,8 +17,8 @@ from catalyst.callbacks import (
     AUCCallback,
     CheckpointCallback,
     CriterionCallback,
-    MulticlassPrecisionRecallF1SupportCallback,
     OptimizerCallback,
+    PrecisionRecallF1SupportCallback,
     TqdmCallback,
 )
 from catalyst.contrib.datasets import MNIST
@@ -120,7 +120,7 @@ class IRunnerMixin(IRunner):
             ),
             "accuracy": AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,)),
             "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
-            "classification": MulticlassPrecisionRecallF1SupportCallback(
+            "classification": PrecisionRecallF1SupportCallback(
                 input_key="logits", target_key="targets", num_classes=4,
             ),
             # "optimizer": OptimizerCallback(metric_key="loss"),

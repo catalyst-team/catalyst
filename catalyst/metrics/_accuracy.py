@@ -124,10 +124,10 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
 
     def __init__(
         self,
+        threshold: Union[float, torch.Tensor] = 0.5,
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
-        thresholds: Union[float, torch.Tensor] = 0.5,
     ):
         """
         Init MultilabelAccuracyMetric
@@ -136,14 +136,14 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
             compute_on_call: if True, computes and returns metric value during metric call
             prefix: metric prefix
             suffix: metric suffix
-            thresholds: thresholds to predict labels
+            threshold: thresholds for model scores
         """
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
         self.suffix = suffix or ""
         self.metric_name_mean = f"{self.prefix}accuracy{self.suffix}"
         self.metric_name_std = f"{self.prefix}accuracy{self.suffix}/std"
-        self.thresholds = thresholds
+        self.threshold = threshold
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> float:
         """
@@ -157,7 +157,7 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
             accuracy metric for outputs and targets
         """
         metric = multilabel_accuracy(
-            outputs=outputs, targets=targets, threshold=self.thresholds
+            outputs=outputs, targets=targets, threshold=self.threshold
         ).item()
         super().update(value=metric, num_samples=np.prod(targets.shape))
         return metric

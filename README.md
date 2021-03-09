@@ -177,7 +177,7 @@ Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsyste
 ```python
 import torch
 from torch.utils.data import DataLoader, TensorDataset
-from catalyst.dl import SupervisedRunner
+from catalyst import dl
 
 # data
 num_samples, num_features = int(1e4), int(1e1)
@@ -193,7 +193,7 @@ optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 
 # model training
-runner = SupervisedRunner()
+runner = dl.SupervisedRunner()
 runner.train(
     model=model,
     criterion=criterion,
@@ -201,6 +201,9 @@ runner.train(
     scheduler=scheduler,
     loaders=loaders,
     logdir="./logdir",
+    valid_loader="valid",
+    valid_metric="loss",
+    minimize_valid_metric=True,
     num_epochs=8,
     verbose=True,
 )
@@ -221,7 +224,7 @@ from catalyst import dl
 # sample data
 num_samples, num_features, num_classes = int(1e4), int(1e1), 4
 X = torch.rand(num_samples, num_features)
-y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
+y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
 
 # pytorch loaders
 dataset = TensorDataset(X, y)
@@ -235,7 +238,7 @@ optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
 # model training
-runner = dl.SupervisedRunner()
+runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
 runner.train(
     model=model,
     criterion=criterion,
@@ -244,7 +247,11 @@ runner.train(
     loaders=loaders,
     logdir="./logdir",
     num_epochs=3,
-    callbacks=[dl.AccuracyCallback(num_classes=num_classes)]
+    valid_loader="valid",
+    valid_metric="accuracy03",
+    minimize_valid_metric=False,
+    verbose=True,
+    callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=num_classes)],
 )
 ```
 </p>
@@ -277,7 +284,7 @@ optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
 # model training
-runner = dl.SupervisedRunner()
+runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
 runner.train(
     model=model,
     criterion=criterion,
@@ -286,7 +293,11 @@ runner.train(
     loaders=loaders,
     logdir="./logdir",
     num_epochs=3,
-    callbacks=[dl.MultiLabelAccuracyCallback(threshold=0.5)]
+    valid_loader="valid",
+    valid_metric="accuracy",
+    minimize_valid_metric=False,
+    verbose=True,
+    callbacks=[dl.MultilabelAccuracyCallback(input_key="logits", target_key="targets", threshold=0.5)]
 )
 ```
 </p>

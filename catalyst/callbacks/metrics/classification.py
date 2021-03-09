@@ -5,7 +5,7 @@ from catalyst.metrics._classification import (
 )
 
 
-class MulticlassPrecisionRecallF1SupportCallback(BatchMetricCallback):
+class PrecisionRecallF1SupportCallback(BatchMetricCallback):
     """Multiclass PrecisionRecallF1Support metric callback."""
 
     def __init__(
@@ -62,6 +62,6 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
 
 
 __all__ = [
-    "MulticlassPrecisionRecallF1SupportCallback",
+    "PrecisionRecallF1SupportCallback",
     "MultilabelPrecisionRecallF1SupportCallback",
 ]

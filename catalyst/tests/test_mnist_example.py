@@ -9,14 +9,13 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl, utils
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.nn.modules import Flatten
 from catalyst.data.transforms import ToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 
 def train_experiment(device):
     with TemporaryDirectory() as logdir:
-        model = nn.Sequential(Flatten(), nn.Linear(28 * 28, 10))
+        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(model.parameters(), lr=0.02)
 
@@ -42,7 +41,7 @@ def train_experiment(device):
             num_epochs=1,
             callbacks=[
                 dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MulticlassPrecisionRecallF1SupportCallback(
+                dl.PrecisionRecallF1SupportCallback(
                     input_key="logits", target_key="targets", num_classes=10
                 ),
                 dl.ConfusionMatrixCallback(
@@ -71,7 +70,7 @@ def train_experiment(device):
         utils.trace_model(model=runner.model, batch=features_batch)
         # model to onnx
         utils.onnx_export(
-            model=runner.model, batch=features_batch, file="./logs/mnist.onnx", verbose=True
+            model=runner.model, batch=features_batch, file=f"./{logdir}/mnist.onnx", verbose=True
         )
         # model quantization
         utils.quantize_model(model=runner.model)
