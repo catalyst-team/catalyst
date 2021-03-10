@@ -46,9 +46,10 @@ def train_experiment(device):
             minimize_valid_metric=False,
             verbose=True,
             callbacks=[
+                dl.AUCCallback(input_key="logits", target_key="targets"),
                 dl.MultilabelAccuracyCallback(
                     input_key="logits", target_key="targets", threshold=0.5
-                )
+                ),
             ],
         )
 

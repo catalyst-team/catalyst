@@ -48,7 +48,6 @@ def train_experiment(device):
             optimizer=optimizer,
             scheduler=scheduler,
             loaders=loaders,
-            logdir="./logdir",
             num_epochs=3,
             verbose=True,
             callbacks=[

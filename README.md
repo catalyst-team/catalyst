@@ -74,8 +74,9 @@ runner.train(
     num_epochs=1,
     callbacks=[
         dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-#       dl.MulticlassPrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
-        dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
+#         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+#         dl.AUCCallback(input_key="logits", target_key="targets"),
+#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),  # catalyst[ml] required
     ],
     logdir="./logs",
     valid_loader="valid",
@@ -253,7 +254,13 @@ runner.train(
     valid_metric="accuracy03",
     minimize_valid_metric=False,
     verbose=True,
-    callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=num_classes)],
+# uncomment for extra metrics:
+    callbacks=[
+        dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=num_classes)
+#         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+#         dl.AUCCallback(input_key="logits", target_key="targets"),
+#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets"), # catalyst[ml] required
+    ],
 )
 ```
 </p>
@@ -299,7 +306,10 @@ runner.train(
     valid_metric="accuracy",
     minimize_valid_metric=False,
     verbose=True,
-    callbacks=[dl.MultilabelAccuracyCallback(input_key="logits", target_key="targets", threshold=0.5)]
+    callbacks=[
+        dl.AUCCallback(input_key="logits", target_key="targets"),
+        dl.MultilabelAccuracyCallback(input_key="logits", target_key="targets", threshold=0.5)
+    ]
 )
 ```
 </p>
@@ -345,7 +355,6 @@ runner.train(
     optimizer=optimizer,
     scheduler=scheduler,
     loaders=loaders,
-    logdir="./logdir",
     num_epochs=3,
     verbose=True,
     callbacks=[
@@ -398,9 +407,9 @@ runner.train(
     valid_metric="loss",
     minimize_valid_metric=True,
     verbose=True,
-    # uncomment for extra metrics:
+# uncomment for extra metrics:
 #     callbacks=[
-#         dl.AccuracyCallback(input_key="logits", target_key="targets"),
+#         dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
 #         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
 #         dl.AUCCallback(input_key="logits", target_key="targets"),
 #         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets"), # catalyst[ml] required
@@ -933,8 +942,8 @@ def objective(trial):
         optimizer=optimizer,
         loaders=loaders,
         callbacks={
-            "optuna": dl.OptunaPruningCallback(loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial),
             "accuracy": dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
+            "optuna": dl.OptunaPruningCallback(loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial),
         },
         num_epochs=3,
     )
