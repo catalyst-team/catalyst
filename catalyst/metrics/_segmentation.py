@@ -123,7 +123,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
             self._check_parameters()
             self._checked_params = True
         metrics = {
-            f"{self.prefix}{self.suffix}/class_{self.class_names[idx]}": value
+            f"{self.prefix}{self.suffix}/{self.class_names[idx]}": value
             for idx, value in enumerate(metrics_per_class)
         }
         metrics[f"{self.prefix}{self.suffix}"] = macro_metric
@@ -163,7 +163,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
             macro_metric += value
             if self.weights is not None:
                 weighted_metric += value * self.weights[class_idx]
-            metrics[f"{self.prefix}{self.suffix}/class_{self.class_names[class_idx]}"] = value
+            metrics[f"{self.prefix}{self.suffix}/{self.class_names[class_idx]}"] = value
             for stats_name, value in statistics.items():
                 total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
         macro_metric /= len(self.statistics)
