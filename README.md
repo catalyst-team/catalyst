@@ -604,276 +604,20 @@ runner.train(
     verbose=True,
     logdir="./logs_gan",
 )
+
+# visualization (matplotlib required):
+# import matplotlib.pyplot as plt
+# %matplotlib inline
+# plt.imshow(runner.predict_batch(None)[0, 0].cpu().numpy())
 ```
 </p>
 </details>
 
-<details>
-<summary>ML - multiclass classification (fp16 training version)</summary>
-<p>
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)
-
-```python
-# pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" git+https://github.com/NVIDIA/apex
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-from catalyst import dl
-
-# sample data
-num_samples, num_features, num_classes = int(1e4), int(1e1), 4
-X = torch.rand(num_samples, num_features)
-y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
-
-# pytorch loaders
-dataset = TensorDataset(X, y)
-loader = DataLoader(dataset, batch_size=32, num_workers=1)
-loaders = {"train": loader, "valid": loader}
-
-# model, criterion, optimizer, scheduler
-model = torch.nn.Linear(num_features, num_classes)
-criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters())
-scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
-
-# model training
-runner = dl.SupervisedRunner()
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    scheduler=scheduler,
-    loaders=loaders,
-    logdir="./logdir",
-    num_epochs=3,
-    callbacks=[dl.AccuracyCallback(num_classes=num_classes)],
-    fp16=True,
-)
-```
-</p>
-</details>
-
-<details>
-<summary>ML - multiclass classification (advanced fp16 training version)</summary>
-<p>
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1q8BPg1XpQn2J5vWV9OYKSBo-k9wA2jYS?usp=sharing)
-
-```python
-# pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" git+https://github.com/NVIDIA/apex
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-from catalyst import dl
-
-# sample data
-num_samples, num_features, num_classes = int(1e4), int(1e1), 4
-X = torch.rand(num_samples, num_features)
-y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
-
-# pytorch loaders
-dataset = TensorDataset(X, y)
-loader = DataLoader(dataset, batch_size=32, num_workers=1)
-loaders = {"train": loader, "valid": loader}
-
-# model, criterion, optimizer, scheduler
-model = torch.nn.Linear(num_features, num_classes)
-criterion = torch.nn.CrossEntropyLoss()
-optimizer = torch.optim.Adam(model.parameters())
-scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
-
-# model training
-runner = dl.SupervisedRunner()
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    scheduler=scheduler,
-    loaders=loaders,
-    logdir="./logdir",
-    num_epochs=3,
-    callbacks=[dl.AccuracyCallback(num_classes=num_classes)],
-    fp16=dict(apex=True, opt_level="O1"),
-)
-```
-</p>
-</details>
-
-<details>
-<summary>ML - Linear Regression (distributed training version)</summary>
-<p>
-
-```python
-#!/usr/bin/env python
-import torch
-from torch.utils.data import TensorDataset
-from catalyst.dl import SupervisedRunner, utils
-
-def datasets_fn(num_features: int):
-    X = torch.rand(int(1e4), num_features)
-    y = torch.rand(X.shape[0])
-    dataset = TensorDataset(X, y)
-    return {"train": dataset, "valid": dataset}
-
-def train():
-    num_features = int(1e1)
-    # model, criterion, optimizer, scheduler
-    model = torch.nn.Linear(num_features, 1)
-    criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters())
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
-
-    runner = SupervisedRunner()
-    runner.train(
-        model=model,
-        datasets={
-            "batch_size": 32,
-            "num_workers": 1,
-            "get_datasets_fn": datasets_fn,
-            "num_features": num_features,  # will be passed to datasets_fn
-        },
-        criterion=criterion,
-        optimizer=optimizer,
-        scheduler=scheduler,
-        logdir="./logs/example_distributed_ml",
-        num_epochs=8,
-        verbose=True,
-        distributed=False,
-    )
-
-utils.distributed_cmd_run(train)
-```
-</p>
-</details>
-
-<details>
-<summary>CV - classification with AutoEncoder (distributed training version)</summary>
-<p>
-
-```python
-#!/usr/bin/env python
-import os
-import torch
-from torch import nn
-from torch.nn import functional as F
-from catalyst import dl, metrics, utils
-from catalyst.data.transforms import ToTensor
-from catalyst.contrib.datasets import MNIST
-
-class ClassifyAE(nn.Module):
-
-    def __init__(self, in_features, hid_features, out_features):
-        super().__init__()
-        self.encoder = nn.Sequential(nn.Linear(in_features, hid_features), nn.Tanh())
-        self.decoder = nn.Linear(hid_features, in_features)
-        self.clf = nn.Linear(hid_features, out_features)
-
-    def forward(self, x):
-        z = self.encoder(x)
-        y_hat = self.clf(z)
-        x_ = self.decoder(z)
-        return y_hat, x_
-
-class CustomRunner(dl.Runner):
-
-    def handle_batch(self, batch):
-        x, y = batch
-        x = x.view(x.size(0), -1)
-        y_hat, x_ = self.model(x)
-
-        loss_clf = F.cross_entropy(y_hat, y)
-        loss_ae = F.mse_loss(x_, x)
-        loss = loss_clf + loss_ae
-        accuracy01, accuracy03, accuracy05 = metrics.accuracy(y_hat, y, topk=(1, 3, 5))
-        self.batch_metrics = {
-            "loss_clf": loss_clf,
-            "loss_ae": loss_ae,
-            "loss": loss,
-            "accuracy01": accuracy01,
-            "accuracy03": accuracy03,
-            "accuracy05": accuracy05,
-        }
-
-        if self.is_train_loader:
-            loss.backward()
-            self.optimizer.step()
-            self.optimizer.zero_grad()
-
-def datasets_fn():
-    dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
-    return {"train": dataset, "valid": dataset}
-
-def train():
-    model = ClassifyAE(28 * 28, 128, 10)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
-
-    runner = CustomRunner()
-    runner.train(
-        model=model,
-        optimizer=optimizer,
-        datasets={
-            "batch_size": 32,
-            "num_workers": 1,
-            "get_datasets_fn": datasets_fn,
-        },
-        logdir="./logs/distributed_ae",
-        num_epochs=8,
-        verbose=True,
-    )
-
-utils.distributed_cmd_run(train)
-```
-</p>
-</details>
-
-<details>
-<summary>ML - multiclass classification (TPU version)</summary>
-<p>
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)
-
-```python
-import torch
-from torch.utils.data import DataLoader, TensorDataset
-from catalyst import dl, utils
-
-# sample data
-num_samples, num_features, num_classes = int(1e4), int(1e1), 4
-X = torch.rand(num_samples, num_features)
-y = (torch.rand(num_samples, ) * num_classes).to(torch.int64)
-
-# pytorch loaders
-dataset = TensorDataset(X, y)
-loader = DataLoader(dataset, batch_size=32, num_workers=1)
-loaders = {"train": loader, "valid": loader}
-
-# device (TPU > GPU > CPU)
-device = utils.get_device()  # <--------- TPU device
-
-# model, criterion, optimizer, scheduler
-model = torch.nn.Linear(num_features, num_classes).to(device)
-criterion = torch.nn.CrossEntropyLoss().to(device)
-optimizer = torch.optim.Adam(model.parameters())
-
-# model training
-runner = dl.SupervisedRunner(device=device)
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    loaders=loaders,
-    logdir="./logdir",
-    num_epochs=3,
-    callbacks=[dl.AccuracyCallback(num_classes=num_classes)]
-)
-```
-</p>
-</details>
 
 <details>
 <summary>AutoML - hyperparameters optimization with Optuna</summary>
 <p>
-
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/14njbSYUESZPc0iCnECTG4hkbDuEnGJTi?usp=sharing)
 
 ```python
 import os
@@ -884,7 +628,6 @@ from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
-from catalyst.contrib.nn import Flatten
     
 
 def objective(trial):
@@ -895,27 +638,24 @@ def objective(trial):
         "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
         "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
     }
-    model = nn.Sequential(
-        Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10)
-    )
+    model = nn.Sequential(nn.Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10))
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss()
 
-    runner = dl.SupervisedRunner()
+    runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets")
     runner.train(
         model=model,
-        loaders=loaders,
         criterion=criterion,
         optimizer=optimizer,
-        callbacks=[
-            dl.OptunaCallback(trial),
-            dl.AccuracyCallback(num_classes=10),
-        ],
-        num_epochs=10,
-        valid_metric="accuracy01",
-        minimize_valid_metric=False,
+        loaders=loaders,
+        callbacks={
+            "optuna": dl.OptunaPruningCallback(loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial),
+            "accuracy": dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
+        },
+        num_epochs=3,
     )
-    return runner.best_valid_metrics[runner.main_metric]
+    score = runner.callbacks["optuna"].best_score
+    return score
 
 study = optuna.create_study(
     direction="maximize",
@@ -923,7 +663,7 @@ study = optuna.create_study(
         n_startup_trials=1, n_warmup_steps=0, interval_steps=1
     ),
 )
-study.optimize(objective, n_trials=10, timeout=300)
+study.optimize(objective, n_trials=3, timeout=300)
 print(study.best_value, study.best_params)
 ```
 </p>
