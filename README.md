@@ -259,7 +259,7 @@ runner.train(
         dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=num_classes)
 #         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
 #         dl.AUCCallback(input_key="logits", target_key="targets"),
-#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets"), # catalyst[ml] required
+#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes), # catalyst[ml] required
     ],
 )
 ```
@@ -412,7 +412,7 @@ runner.train(
 #         dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
 #         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
 #         dl.AUCCallback(input_key="logits", target_key="targets"),
-#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets"), # catalyst[ml] required
+#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes), # catalyst[ml] required
 #     ]
 )
 ```
