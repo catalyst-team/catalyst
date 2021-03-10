@@ -11,6 +11,7 @@ pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-hydra.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-optuna.txt -y
+pip uninstall -r requirements/requirements-mlflow.txt -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -21,6 +22,7 @@ cv_required = false
 ml_required = false
 hydra_required = false
 optuna_required = false
+mlflow_required = false
 EOT
 
 python -c """
@@ -42,6 +44,7 @@ pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-hydra.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-optuna.txt -y
+pip uninstall -r requirements/requirements-mlflow.txt -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -52,6 +55,7 @@ cv_required = true
 ml_required = false
 hydra_required = false
 optuna_required = false
+mlflow_required = false
 EOT
 
 python -c """
@@ -111,6 +115,7 @@ pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-hydra.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-optuna.txt -y
+pip uninstall -r requirements/requirements-mlflow.txt -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -121,6 +126,7 @@ cv_required = false
 ml_required = true
 hydra_required = false
 optuna_required = false
+mlflow_required = false
 EOT
 
 # check if fail if requirements not installed
@@ -168,6 +174,7 @@ pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-hydra.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-optuna.txt -y
+pip uninstall -r requirements/requirements-mlflow.txt -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -177,7 +184,7 @@ cat <<EOT > .catalyst
 cv_required = true
 ml_required = true
 hydra_required = false
-optuna_required = false
+mlflow_required = false
 EOT
 
 python -c """
@@ -276,6 +283,7 @@ pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-hydra.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-optuna.txt -y
+pip uninstall -r requirements/requirements-mlflow.txt -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -286,6 +294,7 @@ cv_required = false
 ml_required = false
 hydra_required = true
 optuna_required = false
+mlflow_required = false
 EOT
 
 # check if fail if requirements not installed
@@ -313,6 +322,7 @@ pip uninstall -r requirements/requirements-dev.txt -y
 pip uninstall -r requirements/requirements-hydra.txt -y
 pip uninstall -r requirements/requirements-ml.txt -y
 pip uninstall -r requirements/requirements-optuna.txt -y
+pip uninstall -r requirements/requirements-mlflow.txt -y
 pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -323,6 +333,7 @@ cv_required = false
 ml_required = false
 hydra_required = false
 optuna_required = true
+mlflow_required = true
 EOT
 
 # check if fail if requirements not installed
@@ -345,6 +356,45 @@ python -c """
 from catalyst.dl.__main__ import COMMANDS
 
 assert ('tune' in COMMANDS)
+"""
+
+################################  pipeline 06  ################################
+# checking catalyst-mlflow dependencies loading
+pip uninstall -r requirements/requirements-cv.txt -y
+pip uninstall -r requirements/requirements-dev.txt -y
+pip uninstall -r requirements/requirements-hydra.txt -y
+pip uninstall -r requirements/requirements-ml.txt -y
+pip uninstall -r requirements/requirements-optuna.txt -y
+pip uninstall -r requirements/requirements-mlflow.txt -y
+pip install -r requirements/requirements.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
+
+cat <<EOT > .catalyst
+[catalyst]
+cv_required = false
+ml_required = false
+hydra_required = false
+optuna_required = false
+mlflow_required = true
+EOT
+
+# check if fail if requirements not installed
+python -c """
+try:
+    from catalyst.loggers import MlflowLogger
+except (AttributeError, ImportError, AssertionError):
+    pass  # Ok
+else:
+    raise AssertionError('\'ImportError\' or \'AssertionError\' expected')
+"""
+
+pip install -r requirements/requirements-mlflow.txt --quiet \
+  --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
+  --upgrade-strategy only-if-needed
+
+python -c """
+from catalyst.loggers import MlflowLogger
 """
 
 
