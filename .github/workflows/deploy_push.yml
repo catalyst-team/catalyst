@@ -54,7 +54,7 @@
 #      - name: install dependencies
 #        run: |
 #          # python -m pip install --upgrade --user pip
-#          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-log.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-nlp.txt -r ./requirements/requirements-tune.txt
+#          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-nlp.txt -r ./requirements/requirements-tune.txt
 #          python --version
 #          pip --version
 #          pip list
