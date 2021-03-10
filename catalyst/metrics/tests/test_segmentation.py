@@ -50,7 +50,6 @@ def test_dice_metric(
     metric = DiceMetric(weights=weights, class_names=class_names)
     batch_score = metric.update_key_value(outputs, targets)
     total_score = metric.compute_key_value()
-    print(batch_score)
     for key, value in batch_answer.items():
         assert key in batch_score
         assert abs(batch_score[key] - batch_answer[key]) < EPS
@@ -114,18 +113,18 @@ def test_iou_metric(
             [0.2, 0.8],
             ["class_name_00", "class_name_01"],
             {
-                "trevsky_index/class_name_00": 0.4166666567325592,
-                "trevsky_index/class_name_01": 1.0,
-                "trevsky_index/macro": 0.7083333134651184,
-                "trevsky_index/micro": 0.7558139562606812,
-                "trevsky_index/weighted": 0.8833333253860474,
+                "trevsky/class_name_00": 0.4166666567325592,
+                "trevsky/class_name_01": 1.0,
+                "trevsky/macro": 0.7083333134651184,
+                "trevsky/micro": 0.7558139562606812,
+                "trevsky/weighted": 0.8833333253860474,
             },
             {
-                "trevsky_index/class_name_00": 0.4166666567325592,
-                "trevsky_index/class_name_01": 1.0,
-                "trevsky_index/macro": 0.7083333134651184,
-                "trevsky_index/micro": 0.7558139562606812,
-                "trevsky_index/weighted": 0.8833333253860474,
+                "trevsky/class_name_00": 0.4166666567325592,
+                "trevsky/class_name_01": 1.0,
+                "trevsky/macro": 0.7083333134651184,
+                "trevsky/micro": 0.7558139562606812,
+                "trevsky/weighted": 0.8833333253860474,
             },
         ),
     ),
