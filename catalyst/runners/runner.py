@@ -278,8 +278,7 @@ class Runner(IRunner):
             ddp: if `True` will start training in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
         """
-        if fp16 or ddp:
-            raise NotImplementedError("@TODO")
+        assert fp16 is False and ddp is False, "@TODO"
         # experiment setup
         self._engine = engine
         self._trial = trial
@@ -326,6 +325,7 @@ class Runner(IRunner):
             NotImplementedError: if not implemented yet
         """
         raise NotImplementedError("Please implement `runner.predict_batch` method")
+        return None
 
     @torch.no_grad()
     def predict_loader(
@@ -334,7 +334,6 @@ class Runner(IRunner):
         loader: DataLoader,
         model: Model = None,
         engine: Union["IEngine", str] = None,
-        # resume: str = None,
         seed: int = 42,
     ) -> Generator:
         """

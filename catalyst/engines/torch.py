@@ -152,7 +152,6 @@ class DeviceEngine(IEngine):
         **kwargs,
     ) -> None:
         """@TODO: docs."""
-
         if model is not None:
             model = get_nn_from_ddp_module(model)
             maybe_recursive_call(
@@ -290,6 +289,9 @@ class DistributedDataParallelEngine(DeviceEngine):
 
         Returns:
             torch.Tensor with synchronized values.
+
+        Raises:
+            ValueError: if mode is out of ``sum`` or ``mean``
         """
         if mode not in {"sum", "mean"}:
             raise ValueError(f"Unknown sync_type '{mode}'")

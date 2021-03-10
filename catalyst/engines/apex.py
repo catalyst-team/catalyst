@@ -376,7 +376,6 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         **kwargs,
     ) -> None:
         """@TODO: docs."""
-
         super().unpack_checkpoint(
             checkpoint,
             model=model,

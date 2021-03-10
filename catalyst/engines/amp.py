@@ -30,6 +30,7 @@ class AMPEngine(DeviceEngine):
 
     # TODO: should be used with forward method? (similar to criterion)
     def autocast(self):
+        """@TODO: docs."""
         return amp.autocast()
 
 
