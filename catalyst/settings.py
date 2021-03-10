@@ -236,7 +236,8 @@ class Settings(FrozenClass):
         self.mlflow_required: bool = _get_optional_value(
             mlflow_required,
             _is_mlflow_available,
-            "catalyst[mlflow] is not available, to install it, run `pip install catalyst[mlflow]`.",
+            "catalyst[mlflow] is not available, to install it, "
+            "run `pip install catalyst[mlflow]`.",
         )
         # self.wandb_required: bool = wandb_required
 
