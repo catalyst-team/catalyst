@@ -24,13 +24,14 @@ EPS = 1e-5
             {
                 "dice/class_name_00": 0.3636363446712494,
                 "dice/class_name_01": 1.0,
+                "dice": 0.6818182,
                 "dice/weighted": 0.8727272748947144,
             },
             {
                 "dice/class_name_00": 0.3636363446712494,
                 "dice/class_name_01": 1.0,
-                "dice/micro": 0.6818181872367859,
-                "dice/macro": 0.7123287916183472,
+                "dice": 0.6818181872367859,
+                "dice/micro": 0.7123287916183472,
                 "dice/weighted": 0.8727272748947144,
             },
         ),
@@ -67,13 +68,14 @@ def test_dice_metric(
             {
                 "iou/class_name_00": 0.2222222536802292,
                 "iou/class_name_01": 1.0,
+                "iou": 0.6111111,
                 "iou/weighted": 0.8444444537162781,
             },
             {
                 "iou/class_name_00": 0.2222222536802292,
                 "iou/class_name_01": 1.0,
-                "iou/micro": 0.6111111044883728,
-                "iou/macro": 0.5531914830207825,
+                "iou": 0.6111111044883728,
+                "iou/micro": 0.5531914830207825,
                 "iou/weighted": 0.8444444537162781,
             },
         ),
@@ -109,16 +111,17 @@ def test_iou_metric(
             [0.2, 0.8],
             ["class_name_00", "class_name_01"],
             {
-                "trevsky_index/class_name_00": 0.4166666567325592,
-                "trevsky_index/class_name_01": 1.0,
-                "trevsky_index/weighted": 0.8833333253860474,
+                "trevsky/class_name_00": 0.4166666567325592,
+                "trevsky/class_name_01": 1.0,
+                "trevsky": 0.7083333134651184,
+                "trevsky/weighted": 0.8833333253860474,
             },
             {
-                "trevsky_index/class_name_00": 0.4166666567325592,
-                "trevsky_index/class_name_01": 1.0,
-                "trevsky_index/micro": 0.7083333134651184,
-                "trevsky_index/macro": 0.7558139562606812,
-                "trevsky_index/weighted": 0.8833333253860474,
+                "trevsky/class_name_00": 0.4166666567325592,
+                "trevsky/class_name_01": 1.0,
+                "trevsky": 0.7083333134651184,
+                "trevsky/micro": 0.7558139562606812,
+                "trevsky/weighted": 0.8833333253860474,
             },
         ),
     ),
@@ -132,7 +135,6 @@ def test_trevsky_metric(
     batch_answer: Dict[str, float],
     total_answer: Dict[str, float],
 ):
-    """Docs."""
     metric = TrevskyMetric(alpha=alpha, weights=weights, class_names=class_names)
     batch_score = metric.update_key_value(outputs, targets)
     total_score = metric.compute_key_value()

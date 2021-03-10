@@ -20,6 +20,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
     def __init__(
         self,
         metric_fn: Callable,
+        metric_name: str,
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
@@ -32,6 +33,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
 
         Args:
             metric_fn: metric function, that get statistics and return score
+            metric_name: name of the metric
             compute_on_call: Computes and returns metric value during metric call.
             Used for per-batch logging. default: True
             prefix: metric prefix
@@ -44,6 +46,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         """
         super().__init__(compute_on_call, prefix, suffix)
         self.metric_fn = metric_fn
+        self.metric_name = metric_name
         self.class_dim = class_dim
         self.threshold = threshold
         # statistics = {class_idx: {"tp":, "fn": , "fp": "tn": }}
@@ -101,8 +104,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 self.statistics[idx]["fp"] = fp_class
                 self.statistics[idx]["fn"] = fn_class
 
-        values = self.metric_fn(tp, fp, fn)
-        return values
+        metrics_per_class = self.metric_fn(tp, fp, fn)
+        macro_metric = torch.mean(metrics_per_class)
+        return metrics_per_class, macro_metric
 
     def update_key_value(
         self, outputs: torch.Tensor, targets: torch.Tensor
@@ -116,20 +120,23 @@ class RegionBasedMetric(ICallbackBatchMetric):
         Returns:
             dict of metric for each class and weighted (if weights were given) metric
         """
-        values = self.update(outputs, targets)
+        metrics_per_class, macro_metric = self.update(outputs, targets)
         # need only one time
         if not self._checked_params:
             self._check_parameters()
             self._checked_params = True
         metrics = {
-            f"{self.prefix}/{self.class_names[idx]}": value for idx, value in enumerate(values)
+            f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[idx]}": value
+            for idx, value in enumerate(metrics_per_class)
         }
-        metrics[self.prefix] = torch.mean(values)
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
         if self.weights is not None:
             weighted_metric = 0
-            for idx, value in enumerate(values):
+            for idx, value in enumerate(metrics_per_class):
                 weighted_metric += value * self.weights[idx]
-            metrics[f"{self.prefix}/weighted"] = weighted_metric
+            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/weighted"] = weighted_metric
+        # convert torch.Tensor to float
+        metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
 
     def compute_key_value(self) -> Dict[str, torch.Tensor]:
@@ -141,7 +148,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         """
         metrics = {}
         total_statistics = {}
-        micro_metric = 0
+        macro_metric = 0
         if self.weights is not None:
             weighted_metric = 0
 
@@ -156,19 +163,21 @@ class RegionBasedMetric(ICallbackBatchMetric):
 
         for class_idx, statistics in self.statistics.items():
             value = self.metric_fn(**statistics)
-            micro_metric += value
+            macro_metric += value
             if self.weights is not None:
                 weighted_metric += value * self.weights[class_idx]
-            metrics[f"{self.prefix}/{self.class_names[class_idx]}"] = value
+            metrics[
+                f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[class_idx]}"
+            ] = value
             for stats_name, value in statistics.items():
                 total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
-        micro_metric /= len(self.statistics)
-        macro_metric = self.metric_fn(**total_statistics)
-        metrics[f"{self.prefix}/micro"] = micro_metric
-        metrics[f"{self.prefix}/macro"] = macro_metric
-        metrics[f"{self.prefix}"] = macro_metric
+        macro_metric /= len(self.statistics)
+        micro_metric = self.metric_fn(**total_statistics)
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/micro"] = micro_metric
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/macro"] = macro_metric
         if self.weights is not None:
-            metrics[f"{self.prefix}/weighted"] = weighted_metric
+            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/weighted"] = weighted_metric
         # convert torch.Tensor to float
         metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
@@ -187,7 +196,7 @@ class IOUMetric(RegionBasedMetric):
     def __init__(
         self,
         compute_on_call: bool = True,
-        prefix: Optional[str] = "iou",
+        prefix: Optional[str] = None,
         suffix: Optional[str] = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
@@ -212,6 +221,7 @@ class IOUMetric(RegionBasedMetric):
         metric_fn = partial(_iou, eps=eps)
         super().__init__(
             metric_fn=metric_fn,
+            metric_name="iou",
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
@@ -232,7 +242,7 @@ class DiceMetric(RegionBasedMetric):
     def __init__(
         self,
         compute_on_call: bool = True,
-        prefix: Optional[str] = "dice",
+        prefix: Optional[str] = None,
         suffix: Optional[str] = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
@@ -257,6 +267,7 @@ class DiceMetric(RegionBasedMetric):
         metric_fn = partial(_dice, eps=eps)
         super().__init__(
             metric_fn=metric_fn,
+            metric_name="dice",
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
@@ -278,7 +289,7 @@ class TrevskyMetric(RegionBasedMetric):
         alpha: float,
         beta: Optional[float] = None,
         compute_on_call: bool = True,
-        prefix: Optional[str] = "trevsky_index",
+        prefix: Optional[str] = None,
         suffix: Optional[str] = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
@@ -310,6 +321,7 @@ class TrevskyMetric(RegionBasedMetric):
         metric_fn = partial(_trevsky, alpha=alpha, beta=beta, eps=eps)
         super().__init__(
             metric_fn=metric_fn,
+            metric_name="trevsky",
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
