@@ -30,15 +30,18 @@ class DeviceEngine(IEngine):
 
     @property
     def rank(self) -> int:
+        """@TODO: docs."""
         return -1
 
     @property
     def world_size(self) -> int:
+        """@TODO: docs."""
         return 1
 
     def sync_device(
         self, tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module]
     ) -> Any:
+        """@TODO: docs."""
         if isinstance(tensor_or_module, dict):
             return {key: self.sync_device(value) for key, value in tensor_or_module.items()}
         elif isinstance(tensor_or_module, (list, tuple)):
@@ -62,11 +65,13 @@ class DeviceEngine(IEngine):
         return tensor_or_module
 
     def sync_tensor(self, tensor: Any, *args, **kwargs) -> Any:
+        """@TODO: docs."""
         return tensor
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
+        """@TODO: docs."""
         # model
         model = model_fn()
         model = self.sync_device(model)
@@ -82,16 +87,20 @@ class DeviceEngine(IEngine):
         return model, criterion, optimizer, scheduler
 
     def deinit_components(self):
+        """@TODO: docs."""
         # remove backend
         pass
 
     def zero_grad(self, loss, model, optimizer) -> None:
+        """@TODO: docs."""
         model.zero_grad()
 
     def backward_loss(self, loss, model, optimizer) -> None:
+        """@TODO: docs."""
         loss.backward()
 
     def optimizer_step(self, loss, model, optimizer) -> None:
+        """@TODO: docs."""
         optimizer.step()
 
     def pack_checkpoint(
@@ -102,6 +111,7 @@ class DeviceEngine(IEngine):
         scheduler: RunnerScheduler = None,
         **kwargs,
     ) -> Dict:
+        """@TODO: docs."""
         checkpoint = kwargs
 
         if isinstance(model, dict):
@@ -141,6 +151,7 @@ class DeviceEngine(IEngine):
         scheduler: RunnerScheduler = None,
         **kwargs,
     ) -> None:
+        """@TODO: docs."""
 
         if model is not None:
             model = get_nn_from_ddp_module(model)
@@ -164,15 +175,20 @@ class DeviceEngine(IEngine):
                 dict2load.load_state_dict(checkpoint[name2load])
 
     def save_checkpoint(self, checkpoint: Mapping[str, Any], path: str):
+        """@TODO: docs."""
         torch.save(checkpoint, path)
 
     def load_checkpoint(self, path: str):
+        """@TODO: docs."""
         checkpoint = torch.load(path, map_location=lambda storage, loc: storage)
         return checkpoint
 
 
 class DataParallelEngine(DeviceEngine):
+    """@TODO: docs."""
+
     def __init__(self):
+        """@TODO: docs."""
         super().__init__(f"cuda:{torch.cuda.current_device()}")
         self.device_count = torch.cuda.device_count()
 
@@ -182,6 +198,7 @@ class DataParallelEngine(DeviceEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
+        """@TODO: docs."""
         model = model_fn()
         model = self.sync_device(model)
         model = DataParallel(model)
@@ -200,6 +217,8 @@ class DataParallelEngine(DeviceEngine):
 
 
 class DistributedDataParallelEngine(DeviceEngine):
+    """@TODO: docs."""
+
     def __init__(
         self,
         address: str = "localhost",
@@ -232,14 +251,17 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     @property
     def rank(self) -> int:
+        """@TODO: docs."""
         return self._rank
 
     @property
     def world_size(self) -> int:
+        """@TODO: docs."""
         return self._world_size
 
     @property
     def is_master_process(self) -> bool:
+        """@TODO: docs."""
         return self._rank == 0
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
@@ -279,6 +301,7 @@ class DistributedDataParallelEngine(DeviceEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
+        """@TODO: docs."""
         model = model_fn()
         model = self.sync_device(model)
         # NOTE: do not forget to wrap a model in DDP
@@ -298,15 +321,19 @@ class DistributedDataParallelEngine(DeviceEngine):
         return model, criterion, optimizer, scheduler
 
     def deinit_components(self):
+        """@TODO: docs."""
         self.cleanup_process()
 
     def zero_grad(self, loss, model, optimizer) -> None:
+        """@TODO: docs."""
         model.zero_grad()
 
     def backward_loss(self, loss, model, optimizer) -> None:
+        """@TODO: docs."""
         loss.backward()
 
     def optimizer_step(self, loss, model, optimizer) -> None:
+        """@TODO: docs."""
         optimizer.step()
         dist.barrier()
 

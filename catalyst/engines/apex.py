@@ -10,8 +10,9 @@ from catalyst.typing import RunnerModel, RunnerOptimizer
 from catalyst.utils.misc import get_fn_default_params
 
 if SETTINGS.apex_required:
+    import apex
     import apex.amp as amp
-    from apex.parallel import DistributedDataParallel as APEX_DDP
+    from apex.parallel import DistributedDataParallel as ApexDistributedDataParallel
 
 
 def _initialize_apex(model, optimizer=None, **engine_params):
@@ -26,8 +27,6 @@ def _initialize_apex(model, optimizer=None, **engine_params):
     Returns:
         model and optimizer, wrapped with Nvidia Apex initialization
     """
-    import apex
-
     amp_params = get_fn_default_params(apex.amp.initialize, ["models", "optimizers"])
     amp_params["opt_level"] = "O0"
     for dp in engine_params:
@@ -64,8 +63,6 @@ def _initialize_apex(model, optimizer=None, **engine_params):
 
 # taken form https://github.com/catalyst-team/catalyst/blob/master/catalyst/utils/components.py
 def _patch_forward(model):
-    import apex
-
     input_caster_lambda = (
         lambda tensor: tensor.to(
             apex.amp._amp_state.opt_properties.options["cast_model_type"]
@@ -125,6 +122,8 @@ def _wrap_into_data_parallel_with_apex(
 
 
 class APEXEngine(DeviceEngine):
+    """@TODO: docs."""
+
     def __init__(self, device: str = "cuda", opt_level: str = "O1"):
         """
         Args:
@@ -151,7 +150,7 @@ class APEXEngine(DeviceEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        # TODO: how could we do better?)
+        """@TODO: docs."""
         # model
         model = model_fn()
         # model = _patch_forward(model)
@@ -175,12 +174,14 @@ class APEXEngine(DeviceEngine):
         return model, criterion, optimizer, scheduler
 
     def backward_loss(self, loss, model, optimizer) -> None:
+        """@TODO: docs."""
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
+        """@TODO: docs."""
         checkpoint = {"amp": amp.state_dict()}
         checkpoint = super().pack_checkpoint(
             model=model,
@@ -200,6 +201,7 @@ class APEXEngine(DeviceEngine):
         scheduler=None,
         **kwargs,
     ) -> None:
+        """@TODO: docs."""
         super().unpack_checkpoint(
             checkpoint,
             model=model,
@@ -216,7 +218,10 @@ class APEXEngine(DeviceEngine):
 
 
 class DataParallelApexEngine(APEXEngine):
+    """@TODO: docs."""
+
     def __init__(self, opt_level: str = "O1"):
+        """@TODO: docs."""
         super().__init__(f"cuda:{torch.cuda.current_device()}", opt_level)
         self.device_count = torch.cuda.device_count()
 
@@ -226,6 +231,7 @@ class DataParallelApexEngine(APEXEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
+        """@TODO: docs."""
         model = model_fn()
         model = self.sync_device(model)
 
@@ -248,6 +254,8 @@ class DataParallelApexEngine(APEXEngine):
 
 
 class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
+    """@TODO: docs."""
+
     def __init__(
         self,
         address: str = "localhost",
@@ -304,14 +312,9 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         )
 
     def init_components(
-        self,
-        model_fn=None,
-        criterion_fn=None,
-        optimizer_fn=None,
-        scheduler_fn=None,
-        # rank=None,
-        # world_size=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
+        """@TODO: docs."""
         model = model_fn()
         model = self.sync_device(model)
 
@@ -338,19 +341,21 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             keep_batchnorm_fp32=self.keep_batchnorm_fp32,
             loss_scale=self.loss_scale,
         )
-        model = APEX_DDP(model, delay_allreduce=self.delay_all_reduce)
+        model = ApexDistributedDataParallel(model, delay_allreduce=self.delay_all_reduce)
 
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
     def backward_loss(self, loss, model, optimizer) -> None:
+        """@TODO: docs."""
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
+        """@TODO: docs."""
         checkpoint = {"amp": amp.state_dict()}
         checkpoint = super().pack_checkpoint(
             model=model,
@@ -370,6 +375,7 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         scheduler=None,
         **kwargs,
     ) -> None:
+        """@TODO: docs."""
 
         super().unpack_checkpoint(
             checkpoint,

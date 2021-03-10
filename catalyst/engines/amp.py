@@ -34,7 +34,10 @@ class AMPEngine(DeviceEngine):
 
 
 class DataParallelAMPEngine(AMPEngine):
+    """@TODO: docs."""
+
     def __init__(self):
+        """@TODO: docs."""
         super().__init__(f"cuda:{torch.cuda.current_device()}")
         self.device_count = torch.cuda.device_count()
 
@@ -44,6 +47,7 @@ class DataParallelAMPEngine(AMPEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
+        """@TODO: docs."""
         model = model_fn()
         model = self.sync_device(model)
         model = DataParallel(model)
