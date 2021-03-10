@@ -33,6 +33,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
 
         Args:
             metric_fn: metric function, that get statistics and return score
+            metric_name: name of the metric
             compute_on_call: Computes and returns metric value during metric call.
             Used for per-batch logging. default: True
             prefix: metric prefix
