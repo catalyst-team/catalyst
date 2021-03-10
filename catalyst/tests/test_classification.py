@@ -50,11 +50,11 @@ def train_experiment(device):
                     input_key="logits", target_key="targets", num_classes=num_classes
                 ),
                 dl.PrecisionRecallF1SupportCallback(
-                    input_key="logits", target_key="targets", num_classes=10
+                    input_key="logits", target_key="targets", num_classes=4
                 ),
                 dl.AUCCallback(input_key="logits", target_key="targets"),
                 dl.ConfusionMatrixCallback(
-                    input_key="logits", target_key="targets", num_classes=10
+                    input_key="logits", target_key="targets", num_classes=4
                 ),
             ],
         )
