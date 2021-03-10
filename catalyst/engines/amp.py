@@ -1,14 +1,8 @@
-# flake8: noqa
-# TODO: works only with latest pytorch (1.7.1) - fix for older versions
-from typing import Any, Dict, Mapping
-
 import torch
 import torch.cuda.amp as amp
-import torch.nn as nn
 from torch.nn.parallel import DataParallel
 
-from catalyst.engines.device import DeviceEngine
-from catalyst.engines.distributed import DistributedDataParallelEngine
+from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 
 
 class AMPEngine(DeviceEngine):
@@ -17,7 +11,7 @@ class AMPEngine(DeviceEngine):
     def __init__(self, device: str = "cuda"):
         """
         Args:
-            device (str): use device, default is `"cpu"`.
+            device: use device, default is `"cuda"`.
         """
         super().__init__(device)
         self.scaler = amp.GradScaler()
@@ -33,25 +27,6 @@ class AMPEngine(DeviceEngine):
         """@TODO: docs."""
         self.scaler.step(optimizer)
         self.scaler.update()
-
-    def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
-    ):
-        """@TODO: docs."""
-        # TODO: how could we do better?)
-        # model
-        model = model_fn()
-        model = self.sync_device(model)
-        # criterion
-        criterion = criterion_fn()
-        criterion = self.sync_device(criterion)
-        # optimizer
-        optimizer = optimizer_fn()
-        optimizer = self.sync_device(optimizer)
-        # scheduler
-        scheduler = scheduler_fn()
-        scheduler = self.sync_device(scheduler)
-        return model, criterion, optimizer, scheduler
 
     # TODO: should be used with forward method? (similar to criterion)
     def autocast(self):
@@ -85,19 +60,7 @@ class DataParallelAMPEngine(AMPEngine):
 
         return model, criterion, optimizer, scheduler
 
-    def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
-    ) -> Dict:
-        # unwrap model
-        _model = model.module if isinstance(model, nn.DataParallel) else model
-        return super().pack_checkpoint(_model, criterion, optimizer, scheduler, **kwargs)
 
-    def save_checkpoint(self, checkpoint: Mapping[str, Any], path: str):
-        # TODO: method for unpacking torch.nn.DataParallel
-        torch.save(checkpoint, path)
-
-
-# TODO: move this class to a engines/distributed.py ??
 class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
     """@TODO: docs."""
 
@@ -110,13 +73,11 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
     ):
         """
         Args:
-            address (str): process address to use (required for PyTorch backend),
+            address: process address to use (required for PyTorch backend),
                 default is `"localhost"`.
-            port (str): process port to listen (required for PyTorch backend),
-                default is `"12345"`.
-            backend (str): multiprocessing backend to use,
-                default is `"nccl"`.
-            world_size (int): number of processes.
+            port: process port to listen (required for PyTorch backend), default is `"12345"`.
+            backend: multiprocessing backend to use, default is `"nccl"`.
+            world_size: number of processes.
         """
         super().__init__(address, port, backend, world_size)
         self.scaler = amp.GradScaler()

@@ -1,15 +1,12 @@
-# flake8: noqa
 from typing import Dict, Union
 from collections import OrderedDict
 
 import torch
 from torch import nn
-from torch.nn.parallel import DataParallel
 
-from catalyst.engines.device import DeviceEngine
-from catalyst.engines.distributed import DistributedDataParallelEngine
+from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import SETTINGS
-from catalyst.typing import Criterion, Model, Optimizer, RunnerModel, RunnerOptimizer, Scheduler
+from catalyst.typing import RunnerModel, RunnerOptimizer
 from catalyst.utils.misc import get_fn_default_params
 
 if SETTINGS.apex_required:
@@ -128,7 +125,6 @@ def _wrap_into_data_parallel_with_apex(
 
 
 class APEXEngine(DeviceEngine):
-    # TODO: make clickable link about opt_level's
     def __init__(self, device: str = "cuda", opt_level: str = "O1"):
         """
         Args:
@@ -183,53 +179,35 @@ class APEXEngine(DeviceEngine):
             scaled_loss.backward()
 
     def pack_checkpoint(
-        self,
-        model: Model = None,
-        criterion: Criterion = None,
-        optimizer: Optimizer = None,
-        scheduler: Scheduler = None,
-        **kwargs,
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
         checkpoint = {"amp": amp.state_dict()}
-        # main components
-        if model is not None:
-            if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel, APEX_DDP)):
-                _model = model.module
-            else:
-                _model = model
-            checkpoint["model_state_dict"] = _model.state_dict()
-        if criterion is not None and isinstance(criterion, nn.Module):
-            checkpoint["criterion_state_dict"] = criterion.state_dict()
-        if optimizer is not None:
-            checkpoint["optimizer_state_dict"] = optimizer.state_dict()
-        if scheduler is not None:
-            checkpoint["scheduler_state_dict"] = scheduler.state_dict()
-        # other components
-        for key, value in kwargs.items():
-            checkpoint[key] = value
+        checkpoint = super().pack_checkpoint(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **checkpoint,
+        )
         return checkpoint
 
     def unpack_checkpoint(
         self,
         checkpoint: Dict,
-        model: Model = None,
-        criterion: Criterion = None,
-        optimizer: Optimizer = None,
-        scheduler: Scheduler = None,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
         **kwargs,
     ) -> None:
-
-        if "model_state_dict" in checkpoint:
-            model.load_state_dict(checkpoint["model_state_dict"])
-
-        if "optimizer_state_dict" in checkpoint and optimizer is not None:
-            optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-
-        if "criterion_state_dict" in checkpoint and criterion is not None:
-            criterion.load_state_dict(checkpoint["criterion_state_dict"])
-
-        if "scheduler_state_dict" in checkpoint and scheduler is not None:
-            scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+        super().unpack_checkpoint(
+            checkpoint,
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **kwargs,
+        )
 
         # NOTE: propper way to load state, docs:
         #   https://nvidia.github.io/apex/amp.html#checkpointing
@@ -374,22 +352,13 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
         checkpoint = {"amp": amp.state_dict()}
-        # main components
-        if model is not None:
-            if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel, APEX_DDP)):
-                _model = model.module
-            else:
-                _model = model
-            checkpoint["model_state_dict"] = _model.state_dict()
-        if criterion is not None and isinstance(criterion, nn.Module):
-            checkpoint["criterion_state_dict"] = criterion.state_dict()
-        if optimizer is not None:
-            checkpoint["optimizer_state_dict"] = optimizer.state_dict()
-        if scheduler is not None:
-            checkpoint["scheduler_state_dict"] = scheduler.state_dict()
-        # other components
-        for key, value in kwargs.items():
-            checkpoint[key] = value
+        checkpoint = super().pack_checkpoint(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **checkpoint,
+        )
         return checkpoint
 
     def unpack_checkpoint(
@@ -402,17 +371,14 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         **kwargs,
     ) -> None:
 
-        if "model_state_dict" in checkpoint:
-            model.load_state_dict(checkpoint["model_state_dict"])
-
-        if "optimizer_state_dict" in checkpoint and optimizer is not None:
-            optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-
-        if "criterion_state_dict" in checkpoint and criterion is not None:
-            criterion.load_state_dict(checkpoint["criterion_state_dict"])
-
-        if "scheduler_state_dict" in checkpoint and scheduler is not None:
-            scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+        super().unpack_checkpoint(
+            checkpoint,
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **kwargs,
+        )
 
         # NOTE: propper way to load state, docs:
         #   https://nvidia.github.io/apex/amp.html#checkpointing

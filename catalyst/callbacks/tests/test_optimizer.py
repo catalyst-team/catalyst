@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 
 from catalyst.callbacks import OptimizerCallback
-from catalyst.engines.device import DeviceEngine
+from catalyst.engines.torch import DeviceEngine
 
 
 class DummyRunner:

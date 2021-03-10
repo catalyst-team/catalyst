@@ -12,7 +12,7 @@ import torch.optim as optim
 from torch.utils.data import DataLoader, Dataset
 
 from catalyst import dl, utils
-from catalyst.engines.device import DeviceEngine
+from catalyst.engines.torch import DeviceEngine
 from catalyst.registry import REGISTRY
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 

@@ -18,7 +18,7 @@ from catalyst.core.functional import (
 )
 from catalyst.core.logger import ILogger
 from catalyst.core.trial import ITrial
-from catalyst.engines.distributed import DistributedDataParallelEngine
+from catalyst.engines.torch import DistributedDataParallelEngine
 from catalyst.typing import (
     Criterion,
     Device,
