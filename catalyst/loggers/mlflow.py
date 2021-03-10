@@ -28,7 +28,7 @@ class MlflowLogger(ILogger):
             def get_loggers(self):
                 return {
                     "console": dl.ConsoleLogger(),
-                    "mlflow": dl.MLflowLogger(experiment="test_exp", run="test_run")
+                    "mlflow": dl.MlflowLogger(experiment="test_exp", run="test_run")
                 }
 
         runner = CustomSupervisedRunner().run()
@@ -40,7 +40,7 @@ class MlflowLogger(ILogger):
 
         loggers:
             mlflow:
-                _target_: MLflowLogger
+                _target_: MlflowLogger
                 experiment: test_exp
                 run: test_run
         ...
