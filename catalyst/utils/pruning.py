@@ -62,8 +62,8 @@ def get_pruning_fn(
 def prune_model(
     model: Module,
     pruning_fn: Union[Callable, str],
-    keys_to_prune: List[str],
     amount: Union[float, int],
+    keys_to_prune: Optional[List[str]] = None,
     layers_to_prune: Optional[List[str]] = None,
     dim: int = None,
     l_norm: int = None,
@@ -100,6 +100,7 @@ def prune_model(
         ValueError: if no layers have specified keys.
     """
     pruning_fn = get_pruning_fn(pruning_fn, l_norm=l_norm, dim=dim)
+    keys_to_prune = keys_to_prune or ["weight"]
     pruned_modules = 0
     for name, module in model.named_modules():
         try:

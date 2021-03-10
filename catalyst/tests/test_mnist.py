@@ -53,7 +53,7 @@ def train_experiment(device):
             valid_loader="valid",
             valid_metric="loss",
             minimize_valid_metric=True,
-            verbose=True,
+            verbose=False,
             load_best_on_end=True,
             timeit=False,
             check=False,
@@ -71,12 +71,12 @@ def train_experiment(device):
         utils.trace_model(model=runner.model, batch=features_batch)
         # model to onnx
         utils.onnx_export(
-            model=runner.model, batch=features_batch, file=f"./{logdir}/mnist.onnx", verbose=True
+            model=runner.model, batch=features_batch, file=f"./{logdir}/mnist.onnx", verbose=False
         )
         # model quantization
         utils.quantize_model(model=runner.model)
         # model pruning
-        # utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
+        utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
 
 
 def test_finetune_on_cpu():

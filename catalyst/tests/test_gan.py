@@ -134,7 +134,7 @@ def train_experiment(device):
             valid_metric="loss_generator",
             minimize_valid_metric=True,
             num_epochs=1,
-            verbose=True,
+            verbose=False,
             logdir=logdir,
         )
         runner.predict_batch(None)[0, 0].cpu().numpy()

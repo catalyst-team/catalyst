@@ -39,7 +39,7 @@ def train_experiment(device):
             valid_metric="loss",
             minimize_valid_metric=True,
             num_epochs=8,
-            verbose=True,
+            verbose=False,
         )
 
 

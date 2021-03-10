@@ -40,8 +40,8 @@ class PruningCallback(Callback):
     def __init__(
         self,
         pruning_fn: Union[Callable, str],
+        amount: Union[int, float],
         keys_to_prune: Optional[List[str]] = None,
-        amount: Optional[Union[int, float]] = 0.5,
         prune_on_epoch_end: Optional[bool] = False,
         prune_on_stage_end: Optional[bool] = True,
         remove_reparametrization_on_stage_end: Optional[bool] = True,
