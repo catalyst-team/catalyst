@@ -103,7 +103,7 @@ def train_experiment(device):
 
         runner = CustomRunner()
         runner.train(
-            device=dl.DeviceEngine(device),
+            engine=dl.DeviceEngine(device),
             model=model,
             criterion=criterion,
             optimizer=optimizer,

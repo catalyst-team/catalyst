@@ -86,7 +86,7 @@ def train_experiment(device):
 
         runner = CustomRunner(input_key="features", output_key="embeddings")
         runner.train(
-            device=dl.DeviceEngine(device),
+            engine=dl.DeviceEngine(device),
             model=model,
             criterion=criterion,
             optimizer=optimizer,
@@ -97,7 +97,7 @@ def train_experiment(device):
             valid_loader="valid",
             valid_metric="cmc01",
             minimize_valid_metric=False,
-            num_epochs=10,
+            num_epochs=2,
         )
 
 

@@ -48,7 +48,7 @@ def test_pruning():
         optimizer=torch.optim.Adam(model.parameters()),
         criterion=criterion,
         loaders={"train": dataloader},
-        callbacks=[PruningCallback(l1_unstructured)],
+        callbacks=[PruningCallback(l1_unstructured, amount=0.5)],
         num_epochs=1,
     )
     assert np.isclose(pruning_factor(model), 0.5)
@@ -65,7 +65,11 @@ def test_parametrization():
         optimizer=torch.optim.Adam(model.parameters()),
         criterion=criterion,
         loaders={"train": dataloader},
-        callbacks=[PruningCallback(l1_unstructured, remove_reparametrization_on_stage_end=False)],
+        callbacks=[
+            PruningCallback(
+                l1_unstructured, amount=0.5, remove_reparametrization_on_stage_end=False
+            )
+        ],
         num_epochs=1,
     )
     assert np.isclose(pruning_factor(model), 0.5)
@@ -88,7 +92,7 @@ def test_pruning_str_unstructured():
         optimizer=torch.optim.Adam(model.parameters()),
         criterion=criterion,
         loaders={"train": dataloader},
-        callbacks=[PruningCallback("l1_unstructured")],
+        callbacks=[PruningCallback("l1_unstructured", amount=0.5)],
         num_epochs=1,
     )
     assert np.isclose(pruning_factor(model), 0.5)
@@ -105,7 +109,7 @@ def test_pruning_str_structured():
         optimizer=torch.optim.Adam(model.parameters()),
         criterion=criterion,
         loaders={"train": dataloader},
-        callbacks=[PruningCallback("ln_structured", dim=1, l_norm=2)],
+        callbacks=[PruningCallback("ln_structured", amount=0.5, dim=1, l_norm=2)],
         num_epochs=1,
     )
     assert np.isclose(pruning_factor(model), 0.5)
@@ -123,7 +127,7 @@ def test_pruning_str_structured_f():
         optimizer=torch.optim.Adam(model.parameters()),
         criterion=criterion,
         loaders={"train": dataloader},
-        callbacks=[PruningCallback("ln_structured", dim=1)],
+        callbacks=[PruningCallback("ln_structured", amount=0.5, dim=1)],
         num_epochs=1,
     )
     assert np.isclose(pruning_factor(model), 0.5)
@@ -141,7 +145,7 @@ def test_pruning_str_random_structured_f():
         optimizer=torch.optim.Adam(model.parameters()),
         criterion=criterion,
         loaders={"train": dataloader},
-        callbacks=[PruningCallback("random_structured")],
+        callbacks=[PruningCallback("random_structured", amount=0.5)],
         num_epochs=1,
     )
     assert np.isclose(pruning_factor(model), 0.5)

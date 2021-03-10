@@ -40,7 +40,7 @@ def train_experiment(device):
             scheduler=scheduler,
             loaders=loaders,
             logdir=logdir,
-            num_epochs=3,
+            num_epochs=1,
             valid_loader="valid",
             valid_metric="accuracy",
             minimize_valid_metric=False,

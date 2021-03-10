@@ -70,9 +70,9 @@ def train_experiment(device):
         # model tracing
         utils.trace_model(model=runner.model, batch=features_batch)
         # model to onnx
-        utils.onnx_export(
-            model=runner.model, batch=features_batch, file=f"./{logdir}/mnist.onnx", verbose=False
-        )
+        # utils.onnx_export(
+        #     model=runner.model, batch=features_batch, file=f"./{logdir}/mnist.onnx", verbose=False
+        # )
         # model quantization
         utils.quantize_model(model=runner.model)
         # model pruning

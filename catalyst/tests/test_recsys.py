@@ -48,7 +48,7 @@ def train_experiment(device):
             optimizer=optimizer,
             scheduler=scheduler,
             loaders=loaders,
-            num_epochs=3,
+            num_epochs=1,
             verbose=False,
             callbacks=[
                 dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),

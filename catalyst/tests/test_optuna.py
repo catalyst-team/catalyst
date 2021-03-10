@@ -55,7 +55,7 @@ def train_experiment(device):
                         input_key="logits", target_key="targets", num_classes=10
                     ),
                 },
-                num_epochs=3,
+                num_epochs=2,
             )
             score = runner.callbacks["optuna"].best_score
             return score
