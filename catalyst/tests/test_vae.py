@@ -4,7 +4,6 @@ import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 import torch
 from torch import nn, optim
 from torch.nn import functional as F
@@ -13,6 +12,7 @@ from torch.utils.data import DataLoader
 from catalyst import dl, metrics
 from catalyst.contrib.datasets import MNIST
 from catalyst.data.transforms import ToTensor
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 LOG_SCALE_MAX = 2
 LOG_SCALE_MIN = -10
@@ -117,11 +117,20 @@ class CustomRunner(dl.IRunner):
             self.loader_metrics[key] = self.meters[key].compute()[0]
         super().on_loader_end(runner)
 
+    def predict_batch(self, batch):
+        batch_size = 1
+        # Sample random points in the latent space
+        random_latent_vectors = torch.randn(batch_size, self.model.hid_features).to(self.device)
+        # Decode them to fake images
+        generated_images = self.model.decoder(random_latent_vectors).detach()
+        return generated_images
+
 
 def train_experiment(device):
     with TemporaryDirectory() as logdir:
         runner = CustomRunner(logdir, device)
         runner.run()
+        runner.predict_batch(None)[0].cpu().numpy().reshape(28, 28)
 
 
 def test_finetune_on_cpu():

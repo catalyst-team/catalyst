@@ -137,6 +137,7 @@ def train_experiment(device):
             verbose=True,
             logdir=logdir,
         )
+        runner.predict_batch(None)[0, 0].cpu().numpy()
 
 
 def test_finetune_on_cpu():
