@@ -22,7 +22,6 @@ from catalyst.engines import DeviceEngine, IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.runners.supervised import ISupervisedRunner
-from catalyst.loggers.mlflow import MlflowLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
 from catalyst.settings import IS_CUDA_AVAILABLE
 from catalyst.typing import (
