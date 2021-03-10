@@ -47,7 +47,7 @@
 #        uses: actions/cache@v1
 #        with:
 #          path: ${{ steps.pip-cache.outputs.dir }}
-#          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements.txt') }} -${{ hashFiles('./requirements/requirements-cv.txt') }} -${{ hashFiles('./requirements/requirements-dev.txt') }} -${{ hashFiles('./requirements/requirements-log.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-nlp.txt') }} -${{ hashFiles('./requirements/requirements-tune.txt') }}
+#          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements.txt') }} -${{ hashFiles('./requirements/requirements-cv.txt') }} -${{ hashFiles('./requirements/requirements-dev.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-nlp.txt') }} -${{ hashFiles('./requirements/requirements-tune.txt') }}
 #          restore-keys: |
 #            ${{ runner.os }}-${{ matrix.python-version }}-pip-
 #
