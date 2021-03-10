@@ -325,7 +325,7 @@ class Runner(IRunner):
             NotImplementedError: if not implemented yet
         """
         raise NotImplementedError("Please implement `runner.predict_batch` method")
-        return None
+        return None  # noqa: WPS427
 
     @torch.no_grad()
     def predict_loader(
@@ -343,6 +343,7 @@ class Runner(IRunner):
         Args:
             loader: loader to predict
             model: model to use for prediction
+            engine: engine to use for prediction
             seed: random seed to use before prediction
 
         Yields:
