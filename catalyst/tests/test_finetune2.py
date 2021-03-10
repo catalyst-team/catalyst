@@ -1,100 +1,16 @@
 # flake8: noqa
 
-from typing import Any, Dict, List
-import logging
+import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from torch.utils.data import DataLoader, Dataset
+from torch import nn, optim
+from torch.utils.data import DataLoader
 
 from catalyst import dl, utils
-from catalyst.engines.torch import DeviceEngine
-from catalyst.registry import REGISTRY
+from catalyst.contrib.datasets import MNIST
+from catalyst.data.transforms import ToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
-
-logger = logging.getLogger(__name__)
-
-
-class DummyDataset(Dataset):
-    """
-    Dummy dataset.
-    """
-
-    features_dim: int = 4
-    out_dim: int = 2
-
-    def __init__(self, num_records: int):
-        self.num_records = num_records
-
-    def __len__(self):
-        """
-        Returns:
-            dataset's length.
-        """
-        return self.num_records
-
-    def __getitem__(self, idx: int):
-        """
-        Args:
-            idx: index of sample
-
-        Returns:
-            dummy features and targets vector
-        """
-        x = torch.ones(self.features_dim, dtype=torch.float)
-        y = torch.ones(self.out_dim, dtype=torch.float)
-        return x, y
-
-
-@REGISTRY.add
-class DummyModelFinetune(nn.Module):
-    def __init__(self, in_features, hidden_features, out_features):
-        super().__init__()
-        self.in_features = in_features
-        self.out_features = out_features
-        self.layer1 = nn.Linear(in_features, hidden_features)
-        self.layer2 = nn.Linear(hidden_features, out_features)
-
-    def forward(self, batch):
-        x = self.layer1(batch)
-        x = F.relu(x)
-        x = self.layer2(x)
-        return x
-
-
-class CheckRequiresGrad(dl.Callback):
-    def __init__(self, layer_name, stage, requires_grad=True):
-        super().__init__(dl.CallbackOrder.internal)
-        self.name = layer_name
-        self.stage = stage
-        self.requires_grad = requires_grad
-
-    def check_fn(self, model, stage):
-        if stage != self.stage:
-            return
-        for layer_name, layer in model.named_children():
-            if self.name != layer_name:
-                continue
-            for param in layer.parameters():
-                assert (
-                    self.requires_grad == param.requires_grad
-                ), f"Stage '{stage}', layer '{self.name}': expected - {self.requires_grad}, actual - {param.requires_grad}"
-
-    def on_stage_start(self, runner: dl.IRunner):
-        self.check_fn(runner.model, runner.stage_key)
-
-    def on_batch_start(self, runner: dl.IRunner):
-        self.check_fn(runner.model, runner.stage_key)
-
-    def on_batch_end(self, runner: dl.IRunner):
-        self.check_fn(runner.model, runner.stage_key)
-
-    def on_stage_enf(self, runner: dl.IRunner):
-        self.check_fn(runner.model, runner.stage_key)
 
 
 class CustomRunner(dl.IRunner):
@@ -104,56 +20,78 @@ class CustomRunner(dl.IRunner):
         self._device = device
 
     def get_engine(self):
-        return DeviceEngine(self._device)
+        return dl.DeviceEngine(self._device)
 
     def get_loggers(self):
-        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+        return {
+            "console": dl.ConsoleLogger(),
+            "csv": dl.CSVLogger(logdir=self._logdir),
+            "tensorboard": dl.TensorboardLogger(logdir=self._logdir),
+        }
 
     @property
-    def stages(self) -> List[str]:
+    def stages(self):
         return ["train_freezed", "train_unfreezed"]
 
     def get_stage_len(self, stage: str) -> int:
         return 3
 
-    def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
-        dataset = DummyDataset(6)
-        loader = DataLoader(dataset, batch_size=4)
-        return {"train": loader, "valid": loader}
+    def get_loaders(self, stage: str, epoch: int = None):
+        loaders = {
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32,
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                batch_size=32,
+            ),
+        }
+        return loaders
 
     def get_model(self, stage: str):
-        if self.model is not None:
-            model = self.model
-        else:
-            model = DummyModelFinetune(4, 3, 2)
+        model = (
+            self.model
+            if self.model is not None
+            else nn.Sequential(nn.Flatten(), nn.Linear(784, 128), nn.ReLU(), nn.Linear(128, 10))
+        )
         if stage == "train_freezed":
             # freeze layer
-            utils.set_requires_grad(model.layer1, False)
+            utils.set_requires_grad(model[1], False)
         else:
             utils.set_requires_grad(model, True)
         return model
 
     def get_criterion(self, stage: str):
-        return nn.MSELoss()
+        return nn.CrossEntropyLoss()
 
     def get_optimizer(self, stage: str, model):
-        return optim.Adam(model.parameters(), lr=1e-3)
+        if stage == "train_freezed":
+            return optim.Adam(model.parameters(), lr=1e-3)
+        else:
+            return optim.SGD(model.parameters(), lr=1e-1)
 
     def get_scheduler(self, stage: str, optimizer):
         return None
 
-    def get_callbacks(self, stage: str) -> Dict[str, dl.Callback]:
+    def get_callbacks(self, stage: str):
         return {
             "criterion": dl.CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
+            "accuracy": dl.AccuracyCallback(
+                input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+            ),
+            "classification": dl.PrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
+            "confusion_matrix": dl.ConfusionMatrixCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
             "checkpoint": dl.CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
-            "check_freezed": CheckRequiresGrad("layer1", "train_freezed", False),
-            "check_unfreezed": CheckRequiresGrad("layer1", "train_unfreezed", True),
         }
 
     def handle_batch(self, batch):

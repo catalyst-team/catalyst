@@ -15,6 +15,13 @@ AMPEngine
     :undoc-members:
     :show-inheritance:
 
+DataParallelAMPEngine
+--------------------------------
+.. autoclass:: catalyst.engines.amp.DataParallelAMPEngine
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 DistributedDataParallelAMPEngine
 --------------------------------
 .. autoclass:: catalyst.engines.amp.DistributedDataParallelAMPEngine
@@ -27,21 +34,21 @@ DistributedDataParallelAMPEngine
 
 DeviceEngine
 ----------------------
-.. autoclass:: catalyst.engines.device.DeviceEngine
-    :members: __init__
-    :undoc-members:
-    :show-inheritance:
-
-DistributedDataParallelEngine
------------------------------
-.. autoclass:: catalyst.engines.distributed.DistributedDataParallelEngine
+.. autoclass:: catalyst.engines.torch.DeviceEngine
     :members: __init__
     :undoc-members:
     :show-inheritance:
 
 DataParallelEngine
 -----------------------------
-.. autoclass:: catalyst.engines.parallel.DataParallelEngine
+.. autoclass:: catalyst.engines.torch.DataParallelEngine
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+DistributedDataParallelEngine
+-----------------------------
+.. autoclass:: catalyst.engines.torch.DistributedDataParallelEngine
     :members: __init__
     :undoc-members:
     :show-inheritance:

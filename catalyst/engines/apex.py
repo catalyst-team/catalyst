@@ -1,20 +1,18 @@
-# flake8: noqa
 from typing import Dict, Union
 from collections import OrderedDict
 
 import torch
 from torch import nn
-from torch.nn.parallel import DataParallel
 
-from catalyst.engines.device import DeviceEngine
-from catalyst.engines.distributed import DistributedDataParallelEngine
+from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import SETTINGS
-from catalyst.typing import Criterion, Model, Optimizer, RunnerModel, RunnerOptimizer, Scheduler
+from catalyst.typing import RunnerModel, RunnerOptimizer
 from catalyst.utils.misc import get_fn_default_params
 
 if SETTINGS.apex_required:
+    import apex
     import apex.amp as amp
-    from apex.parallel import DistributedDataParallel as APEX_DDP
+    from apex.parallel import DistributedDataParallel as ApexDistributedDataParallel
 
 
 def _initialize_apex(model, optimizer=None, **engine_params):
@@ -29,8 +27,6 @@ def _initialize_apex(model, optimizer=None, **engine_params):
     Returns:
         model and optimizer, wrapped with Nvidia Apex initialization
     """
-    import apex
-
     amp_params = get_fn_default_params(apex.amp.initialize, ["models", "optimizers"])
     amp_params["opt_level"] = "O0"
     for dp in engine_params:
@@ -67,8 +63,6 @@ def _initialize_apex(model, optimizer=None, **engine_params):
 
 # taken form https://github.com/catalyst-team/catalyst/blob/master/catalyst/utils/components.py
 def _patch_forward(model):
-    import apex
-
     input_caster_lambda = (
         lambda tensor: tensor.to(
             apex.amp._amp_state.opt_properties.options["cast_model_type"]
@@ -128,7 +122,8 @@ def _wrap_into_data_parallel_with_apex(
 
 
 class APEXEngine(DeviceEngine):
-    # TODO: make clickable link about opt_level's
+    """@TODO: docs."""
+
     def __init__(self, device: str = "cuda", opt_level: str = "O1"):
         """
         Args:
@@ -155,7 +150,7 @@ class APEXEngine(DeviceEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        # TODO: how could we do better?)
+        """@TODO: docs."""
         # model
         model = model_fn()
         # model = _patch_forward(model)
@@ -179,57 +174,42 @@ class APEXEngine(DeviceEngine):
         return model, criterion, optimizer, scheduler
 
     def backward_loss(self, loss, model, optimizer) -> None:
+        """@TODO: docs."""
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 
     def pack_checkpoint(
-        self,
-        model: Model = None,
-        criterion: Criterion = None,
-        optimizer: Optimizer = None,
-        scheduler: Scheduler = None,
-        **kwargs,
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
+        """@TODO: docs."""
         checkpoint = {"amp": amp.state_dict()}
-        # main components
-        if model is not None:
-            if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel, APEX_DDP)):
-                _model = model.module
-            else:
-                _model = model
-            checkpoint["model_state_dict"] = _model.state_dict()
-        if criterion is not None and isinstance(criterion, nn.Module):
-            checkpoint["criterion_state_dict"] = criterion.state_dict()
-        if optimizer is not None:
-            checkpoint["optimizer_state_dict"] = optimizer.state_dict()
-        if scheduler is not None:
-            checkpoint["scheduler_state_dict"] = scheduler.state_dict()
-        # other components
-        for key, value in kwargs.items():
-            checkpoint[key] = value
+        checkpoint = super().pack_checkpoint(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **checkpoint,
+        )
         return checkpoint
 
     def unpack_checkpoint(
         self,
         checkpoint: Dict,
-        model: Model = None,
-        criterion: Criterion = None,
-        optimizer: Optimizer = None,
-        scheduler: Scheduler = None,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
         **kwargs,
     ) -> None:
-
-        if "model_state_dict" in checkpoint:
-            model.load_state_dict(checkpoint["model_state_dict"])
-
-        if "optimizer_state_dict" in checkpoint and optimizer is not None:
-            optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-
-        if "criterion_state_dict" in checkpoint and criterion is not None:
-            criterion.load_state_dict(checkpoint["criterion_state_dict"])
-
-        if "scheduler_state_dict" in checkpoint and scheduler is not None:
-            scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+        """@TODO: docs."""
+        super().unpack_checkpoint(
+            checkpoint,
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **kwargs,
+        )
 
         # NOTE: propper way to load state, docs:
         #   https://nvidia.github.io/apex/amp.html#checkpointing
@@ -238,7 +218,10 @@ class APEXEngine(DeviceEngine):
 
 
 class DataParallelApexEngine(APEXEngine):
+    """@TODO: docs."""
+
     def __init__(self, opt_level: str = "O1"):
+        """@TODO: docs."""
         super().__init__(f"cuda:{torch.cuda.current_device()}", opt_level)
         self.device_count = torch.cuda.device_count()
 
@@ -248,6 +231,7 @@ class DataParallelApexEngine(APEXEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
+        """@TODO: docs."""
         model = model_fn()
         model = self.sync_device(model)
 
@@ -270,6 +254,8 @@ class DataParallelApexEngine(APEXEngine):
 
 
 class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
+    """@TODO: docs."""
+
     def __init__(
         self,
         address: str = "localhost",
@@ -326,14 +312,9 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         )
 
     def init_components(
-        self,
-        model_fn=None,
-        criterion_fn=None,
-        optimizer_fn=None,
-        scheduler_fn=None,
-        # rank=None,
-        # world_size=None,
+        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
+        """@TODO: docs."""
         model = model_fn()
         model = self.sync_device(model)
 
@@ -360,36 +341,29 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             keep_batchnorm_fp32=self.keep_batchnorm_fp32,
             loss_scale=self.loss_scale,
         )
-        model = APEX_DDP(model, delay_allreduce=self.delay_all_reduce)
+        model = ApexDistributedDataParallel(model, delay_allreduce=self.delay_all_reduce)
 
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
     def backward_loss(self, loss, model, optimizer) -> None:
+        """@TODO: docs."""
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
+        """@TODO: docs."""
         checkpoint = {"amp": amp.state_dict()}
-        # main components
-        if model is not None:
-            if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel, APEX_DDP)):
-                _model = model.module
-            else:
-                _model = model
-            checkpoint["model_state_dict"] = _model.state_dict()
-        if criterion is not None and isinstance(criterion, nn.Module):
-            checkpoint["criterion_state_dict"] = criterion.state_dict()
-        if optimizer is not None:
-            checkpoint["optimizer_state_dict"] = optimizer.state_dict()
-        if scheduler is not None:
-            checkpoint["scheduler_state_dict"] = scheduler.state_dict()
-        # other components
-        for key, value in kwargs.items():
-            checkpoint[key] = value
+        checkpoint = super().pack_checkpoint(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **checkpoint,
+        )
         return checkpoint
 
     def unpack_checkpoint(
@@ -401,18 +375,15 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         scheduler=None,
         **kwargs,
     ) -> None:
-
-        if "model_state_dict" in checkpoint:
-            model.load_state_dict(checkpoint["model_state_dict"])
-
-        if "optimizer_state_dict" in checkpoint and optimizer is not None:
-            optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-
-        if "criterion_state_dict" in checkpoint and criterion is not None:
-            criterion.load_state_dict(checkpoint["criterion_state_dict"])
-
-        if "scheduler_state_dict" in checkpoint and scheduler is not None:
-            scheduler.load_state_dict(checkpoint["scheduler_state_dict"])
+        """@TODO: docs."""
+        super().unpack_checkpoint(
+            checkpoint,
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **kwargs,
+        )
 
         # NOTE: propper way to load state, docs:
         #   https://nvidia.github.io/apex/amp.html#checkpointing

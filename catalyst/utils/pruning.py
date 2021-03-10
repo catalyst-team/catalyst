@@ -62,8 +62,8 @@ def get_pruning_fn(
 def prune_model(
     model: Module,
     pruning_fn: Union[Callable, str],
-    keys_to_prune: List[str],
     amount: Union[float, int],
+    keys_to_prune: Optional[List[str]] = None,
     layers_to_prune: Optional[List[str]] = None,
     dim: int = None,
     l_norm: int = None,
@@ -74,19 +74,16 @@ def prune_model(
 
     Args:
         model: Model to be pruned.
-        pruning_fn: Pruning function with API same as in
-            torch.nn.utils.pruning.
+        pruning_fn: Pruning function with API same as in torch.nn.utils.pruning.
             pruning_fn(module, name, amount).
-        keys_to_prune: list of strings. Determines
-            which tensor in modules will be pruned.
+        keys_to_prune: list of strings. Determines which tensor in modules will be pruned.
         amount: quantity of parameters to prune.
             If float, should be between 0.0 and 1.0 and
             represent the fraction of parameters to prune.
             If int, it represents the absolute number
             of parameters to prune.
         layers_to_prune: list of strings - module names to be pruned.
-            If None provided then will try to prune every module in
-            model.
+            If None provided then will try to prune every module in model.
         dim (int, optional): if you are using structured pruning method you need
             to specify dimension. Defaults to None.
         l_norm (int, optional): if you are using ln_structured you need to specify l_norm.
@@ -103,6 +100,7 @@ def prune_model(
         ValueError: if no layers have specified keys.
     """
     pruning_fn = get_pruning_fn(pruning_fn, l_norm=l_norm, dim=dim)
+    keys_to_prune = keys_to_prune or ["weight"]
     pruned_modules = 0
     for name, module in model.named_modules():
         try:

@@ -236,7 +236,6 @@ class TqdmCallback(Callback):
                 self.tqdm.clear()
                 self.tqdm.close()
                 self.tqdm = None
-            runner.need_exception_reraise = False
 
 
 class CheckRunCallback(Callback):

@@ -17,8 +17,8 @@ from catalyst.callbacks import (
     AUCCallback,
     CheckpointCallback,
     CriterionCallback,
-    MulticlassPrecisionRecallF1SupportCallback,
     OptimizerCallback,
+    PrecisionRecallF1SupportCallback,
     TqdmCallback,
 )
 from catalyst.contrib.datasets import MNIST
@@ -26,10 +26,8 @@ from catalyst.contrib.models import MnistSimpleNet
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, CallbackScope
 from catalyst.core.runner import IRunner
 from catalyst.data.transforms import ToTensor
-from catalyst.engines.device import DeviceEngine
-from catalyst.engines.distributed import DistributedDataParallelEngine
-from catalyst.engines.parallel import DataParallelEngine
 from catalyst.engines.tests.misc import TwoBlobsDataset, TwoBlobsModel
+from catalyst.engines.torch import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
@@ -120,7 +118,7 @@ class IRunnerMixin(IRunner):
             ),
             "accuracy": AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,)),
             "auc": AUCCallback(input_key="scores", target_key="targets_onehot"),
-            "classification": MulticlassPrecisionRecallF1SupportCallback(
+            "classification": PrecisionRecallF1SupportCallback(
                 input_key="logits", target_key="targets", num_classes=4,
             ),
             # "optimizer": OptimizerCallback(metric_key="loss"),

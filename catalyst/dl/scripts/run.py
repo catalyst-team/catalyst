@@ -5,7 +5,7 @@ import os
 from pathlib import Path
 import sys
 
-from catalyst.dl.scripts.functional import parse_args_uargs
+from catalyst.dl.scripts.misc import parse_args_uargs
 from catalyst.runners.config import ConfigRunner
 from catalyst.settings import SETTINGS
 from catalyst.utils.distributed import get_rank

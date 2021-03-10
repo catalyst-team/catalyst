@@ -196,7 +196,7 @@ def test_multilabel_accuracy(
         thresholds: thresholds for multilabel classification
         true_values: expected metric value
     """
-    metric = MultilabelAccuracyMetric(thresholds=thresholds)
+    metric = MultilabelAccuracyMetric(threshold=thresholds)
     metric.update(outputs=outputs, targets=targets)
     values = metric.compute_key_value()
     for key in true_values.keys():
@@ -258,7 +258,7 @@ def test_multilabel_accuracy_mean(
         thresholds: threshold
         true_values_list: true intermediate metric results
     """
-    metric = MultilabelAccuracyMetric(thresholds=thresholds)
+    metric = MultilabelAccuracyMetric(threshold=thresholds)
     for outputs, targets, true_value in zip(outputs_list, targets_list, true_values_list):
         metric.update(outputs=outputs, targets=targets)
         mean, _ = metric.compute()
@@ -320,7 +320,7 @@ def test_multilabel_accuracy_std(
         thresholds: threshold
         true_values_list: true intermediate metric results
     """
-    metric = MultilabelAccuracyMetric(thresholds=thresholds)
+    metric = MultilabelAccuracyMetric(threshold=thresholds)
     for outputs, targets, true_value in zip(outputs_list, targets_list, true_values_list):
         metric.update(outputs=outputs, targets=targets)
         _, std = metric.compute()

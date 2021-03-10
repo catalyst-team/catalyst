@@ -10,7 +10,7 @@ from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.core.callback import Callback
-from catalyst.core.functional import check_callback_isinstance, sort_callbacks_by_order
+from catalyst.core.functional import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
@@ -33,7 +33,7 @@ from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
 
-def _get_default_engine():
+def _get_default_engine(fp16: bool = False, ddp: bool = False):
     return DeviceEngine("cuda" if IS_CUDA_AVAILABLE else "cpu")
 
 
@@ -52,10 +52,9 @@ class Runner(IRunner):
         """@TODO: docs."""
         super().__init__(*args, **kwargs)
         # the core
-        self._model: RunnerModel = self.model
-        self._engine: IEngine = self.engine
-        # self.experiment: IExperiment = None
         self._trial: ITrial = None
+        self._engine: IEngine = self.engine
+        self._model: RunnerModel = self.model
         # the data
         self._loaders: Dict[str, DataLoader] = None
         # the components
@@ -71,10 +70,12 @@ class Runner(IRunner):
         self._hparams: Dict = None
         self._stage: str = "stage"
         self._num_epochs: int = 1
+        # model selection
         self._logdir = None
         self._valid_loader = None
         self._valid_metric = None
         self._minimize_valid_metric = None
+        # extras
         self._verbose = False
         self._timeit = False
         self._check = False
@@ -88,12 +89,12 @@ class Runner(IRunner):
 
     @property
     def name(self) -> str:
-        """@TODO: docs."""
+        """Returns run name."""
         return "experiment" if self._trial is None else f"experiment_{self._trial.number}"
 
     @property
     def hparams(self) -> Dict:
-        """Returns hyper parameters"""
+        """Returns hyperparameters."""
         if self._hparams is not None:
             return self._hparams
         elif self._trial is not None:
@@ -107,19 +108,19 @@ class Runner(IRunner):
         return [self._stage]
 
     def get_stage_len(self, stage: str) -> int:
-        """@TODO: docs."""
+        """Returns the stage length in epochs for a given stage."""
         return self._num_epochs
 
     def get_trial(self) -> ITrial:
-        """@TODO: docs."""
+        """Returns the trial for a run."""
         return self._trial
 
     def get_engine(self) -> IEngine:
-        """@TODO: docs."""
+        """Returns the engine for a run."""
         return self._engine or _get_default_engine()
 
     def get_loggers(self) -> Dict[str, ILogger]:
-        """@TODO: docs."""
+        """Returns the logger for a run."""
         loggers = self._loggers or {}
         is_logger_exists = lambda logger_fn: any(
             isinstance(x, logger_fn) for x in loggers.values()
@@ -180,7 +181,7 @@ class Runner(IRunner):
         """Returns the callbacks for a given stage."""
         callbacks = sort_callbacks_by_order(self._callbacks)
         is_callback_exists = lambda callback_fn: any(
-            check_callback_isinstance(x, callback_fn) for x in callbacks.values()
+            callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
         if self._verbose and not is_callback_exists(TqdmCallback):
             callbacks["_verbose"] = TqdmCallback()
@@ -198,16 +199,6 @@ class Runner(IRunner):
                 metric_key=self._valid_metric,
                 minimize=self._minimize_valid_metric,
             )
-
-        # if self._valid_metric is not None:
-        #     have_required_callback = False
-        #     for callback in callbacks.values():
-        #         if isinstance(callback, CriterionCallback)
-        #           and callback.metric_key == self._valid_metric:
-        #             have_required_callback = True
-        #     assert (
-        #         have_required_callback
-        #     ), f"No CriterionCallback with `metric_key={self._valid_metric}` were found"
         return callbacks
 
     def train(
@@ -234,7 +225,6 @@ class Runner(IRunner):
         num_epochs: int = 1,
         # extra info (callbacks info)
         logdir: str = None,
-        # resume: str = None,
         valid_loader: str = None,
         valid_metric: str = None,
         minimize_valid_metric: bool = True,
@@ -288,7 +278,7 @@ class Runner(IRunner):
             ddp: if `True` will start training in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
         """
-        assert fp16 is False and ddp is False
+        assert fp16 is False and ddp is False, "@TODO"
         # experiment setup
         self._engine = engine
         self._trial = trial
@@ -325,18 +315,17 @@ class Runner(IRunner):
         Run model inference on specified data batch.
 
         Args:
-            batch (Mapping[str, Any]): dictionary with data batches
-                from DataLoader.
+            batch: dictionary with data batches from DataLoader.
             **kwargs: additional kwargs to pass to the model
 
-        # noqa: DAR202
         Returns:
-            Mapping[str, Any]: model output dictionary
+            Mapping: model output dictionary
 
         Raises:
             NotImplementedError: if not implemented yet
         """
         raise NotImplementedError("Please implement `runner.predict_batch` method")
+        return None  # noqa: WPS427
 
     @torch.no_grad()
     def predict_loader(
@@ -344,24 +333,26 @@ class Runner(IRunner):
         *,
         loader: DataLoader,
         model: Model = None,
-        # resume: str = None,
-        initial_seed: int = 42,
+        engine: Union["IEngine", str] = None,
+        seed: int = 42,
     ) -> Generator:
         """
         Runs model inference on PyTorch DataLoader and returns
         python generator with model predictions from `runner.predict_batch`.
-        Cleans up the experiment info to avoid possible collisions.
-        Sets `is_train_loader` and `is_valid_loader` to `False` while
-        keeping `is_infer_loader` as True. Moves model to evaluation mode.
 
         Args:
             loader: loader to predict
             model: model to use for prediction
-            initial_seed: seed to use before prediction
+            engine: engine to use for prediction
+            seed: random seed to use before prediction
 
         Yields:
             bathes with model predictions
         """
+        if engine is not None:
+            self.engine = engine
+        assert self.engine is not None
+
         if model is not None:
             self.model = model
         assert self.model is not None
@@ -374,7 +365,7 @@ class Runner(IRunner):
         self.model = self.engine.sync_device(self.model)
         maybe_recursive_call(self.model, "train", mode=False)
 
-        set_global_seed(initial_seed)
+        set_global_seed(seed)
         for batch in loader:
             yield self.predict_batch(batch)
 

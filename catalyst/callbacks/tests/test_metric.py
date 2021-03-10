@@ -127,11 +127,8 @@ class CustomRunner(dl.SupervisedRunner):
         Args:
             batch: batch to process
         """
-        if self.loader_key == "train":
-            images, targets = (
-                batch["features"].float(),
-                batch["targets"].long(),
-            )
+        if self.is_train_loader:
+            images, targets = batch["features"].float(), batch["targets"].long()
             features = self.model(images)
             self.batch = {
                 "embeddings": features,

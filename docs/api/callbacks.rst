@@ -167,6 +167,13 @@ AccuracyCallback
     :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
+MultilabelAccuracyCallback
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.metrics.accuracy.MultilabelAccuracyCallback
+    :members:
+    :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
 AUCCallback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.metrics.auc.AUCCallback
@@ -175,9 +182,9 @@ AUCCallback
     :show-inheritance:
 
 
-MulticlassPrecisionRecallF1SupportCallback
+PrecisionRecallF1SupportCallback
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.callbacks.metrics.classification.MulticlassPrecisionRecallF1SupportCallback
+.. autoclass:: catalyst.callbacks.metrics.classification.PrecisionRecallF1SupportCallback
     :members:
     :exclude-members: on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:

@@ -1,6 +1,5 @@
 from typing import Any, List, Mapping, Tuple, Union
 from collections import OrderedDict
-import logging
 
 import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
@@ -10,16 +9,21 @@ from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core.callback import Callback
 from catalyst.core.engine import IEngine
-from catalyst.core.functional import check_callback_isinstance
+from catalyst.core.functional import callback_isinstance
 from catalyst.core.runner import IRunner
 from catalyst.runners.runner import Runner
 from catalyst.typing import Criterion, Optimizer, RunnerModel, Scheduler
 
-logger = logging.getLogger(__name__)
-
 
 class ISupervisedRunner(IRunner):
-    """IRunner for experiments with supervised model."""
+    """IRunner for experiments with supervised model.
+
+    Args:
+        input_key: key in ``runner.batch`` dict mapping for model input
+        output_key: key for ``runner.batch`` to store model output
+        target_key: key in ``runner.batch`` dict mapping for target
+        loss_key: key for ``runner.batch_metrics`` to store criterion loss output
+    """
 
     def __init__(
         self,
@@ -28,16 +32,7 @@ class ISupervisedRunner(IRunner):
         target_key: str = "targets",
         loss_key: str = "loss",
     ):
-        """
-        Args:
-            model: Torch model object
-            device: Torch device
-            input_key: Key in batch dict mapping for model input
-            output_key: Key in output dict model output
-                will be stored under
-            target_key: Key in batch dict mapping for target
-        """
-        # super().__init__(model=model, engine=engine)
+        """Init."""
         IRunner.__init__(self)
 
         self._input_key = input_key
@@ -119,7 +114,6 @@ class ISupervisedRunner(IRunner):
 
     def on_batch_start(self, runner: "IRunner"):
         """Event handler."""
-        # @TODO: could we remove the hack?
         self.batch = self._process_batch(self.batch)
         super().on_batch_start(runner)
 
@@ -129,15 +123,22 @@ class ISupervisedRunner(IRunner):
         Used to make a train/valid/infer stage during Experiment run.
 
         Args:
-            batch (Mapping[str, Any]): dictionary with data batches
-                from DataLoader.
+            batch: dictionary with data batches from DataLoader.
         """
-        # self.batch = self._process_batch(self.batch)
         self.batch = {**batch, **self.forward(batch)}
 
 
 class SupervisedRunner(ISupervisedRunner, Runner):
-    """Runner for experiments with supervised model."""
+    """Runner for experiments with supervised model.
+
+    Args:
+        model: Torch model instance
+        engine: IEngine instance
+        input_key: key in ``runner.batch`` dict mapping for model input
+        output_key: key for ``runner.batch`` to store model output
+        target_key: key in ``runner.batch`` dict mapping for target
+        loss_key: key for ``runner.batch_metrics`` to store criterion loss output
+    """
 
     def __init__(
         self,
@@ -148,15 +149,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         target_key: str = "targets",
         loss_key: str = "loss",
     ):
-        """
-        Args:
-            model: Torch model object
-            device: Torch device
-            input_key: Key in batch dict mapping for model input
-            output_key: Key in output dict model output
-                will be stored under
-            target_key: Key in batch dict mapping for target
-        """
+        """Init."""
         ISupervisedRunner.__init__(
             self,
             input_key=input_key,
@@ -182,8 +175,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         Returns:
             Mapping[str, Any]: model output dictionary
         """
-        self._process_batch(batch)
-        batch = self.engine.sync_device(batch)
+        batch = self._process_batch(batch)
         output = self.forward(batch, **kwargs)
         return output
 
@@ -198,7 +190,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         """
         callbacks = super().get_callbacks(stage=stage)
         is_callback_exists = lambda callback_fn: any(
-            check_callback_isinstance(x, callback_fn) for x in callbacks.values()
+            callback_isinstance(x, callback_fn) for x in callbacks.values()
         )
         if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
             callbacks["_criterion"] = CriterionCallback(

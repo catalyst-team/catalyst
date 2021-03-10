@@ -9,18 +9,39 @@ if TYPE_CHECKING:
 
 
 class PruningCallback(Callback):
-    """
-    Pruning Callback
+    """This callback prunes network parameters during and/or after training.
 
-    This callback is designed to prune network parameters
-    during and/or after training.
+    Args:
+        pruning_fn: function from torch.nn.utils.prune module
+            or your based on BasePruningMethod. Can be string e.g.
+            `"l1_unstructured"`. See pytorch docs for more details.
+        keys_to_prune: list of strings. Determines
+            which tensor in modules will be pruned.
+        amount: quantity of parameters to prune.
+            If float, should be between 0.0 and 1.0 and
+            represent the fraction of parameters to prune.
+            If int, it represents the absolute number
+            of parameters to prune.
+        prune_on_epoch_end: bool flag determines call or not
+            to call pruning_fn on epoch end.
+        prune_on_stage_end: bool flag determines call or not
+            to call pruning_fn on stage end.
+        remove_reparametrization_on_stage_end: if True then all
+            reparametrization pre-hooks and tensors with mask
+            will be removed on stage end.
+        layers_to_prune: list of strings - module names to be pruned.
+            If None provided then will try to prune every module in
+            model.
+        dim: if you are using structured pruning method you need
+            to specify dimension.
+        l_norm: if you are using ln_structured you need to specify l_norm.
     """
 
     def __init__(
         self,
         pruning_fn: Union[Callable, str],
+        amount: Union[int, float],
         keys_to_prune: Optional[List[str]] = None,
-        amount: Optional[Union[int, float]] = 0.5,
         prune_on_epoch_end: Optional[bool] = False,
         prune_on_stage_end: Optional[bool] = True,
         remove_reparametrization_on_stage_end: Optional[bool] = True,
@@ -55,7 +76,7 @@ class PruningCallback(Callback):
                 to specify dimension.
             l_norm: if you are using ln_structured you need to specify l_norm.
         """
-        super().__init__(CallbackOrder.External)
+        super().__init__(CallbackOrder.ExternalExtra)
         self.pruning_fn = get_pruning_fn(pruning_fn=pruning_fn, dim=dim, l_norm=l_norm)
         if keys_to_prune is None:
             keys_to_prune = ["weight"]
@@ -73,8 +94,7 @@ class PruningCallback(Callback):
         self.layers_to_prune = layers_to_prune
 
     def on_epoch_end(self, runner: "IRunner") -> None:
-        """
-        On epoch end action.
+        """Event handler.
 
         Active if prune_on_epoch_end is True.
 
@@ -91,11 +111,9 @@ class PruningCallback(Callback):
             )
 
     def on_stage_end(self, runner: "IRunner") -> None:
-        """
-        On stage end action.
+        """Event handler.
 
-        Active if prune_on_stage_end or
-        remove_reparametrization is True.
+        Active if prune_on_stage_end or remove_reparametrization is True.
 
         Args:
             runner: runner for your experiment
