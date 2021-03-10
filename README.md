@@ -621,10 +621,8 @@ runner.train(
 
 ```python
 import os
-
 from torch import nn, optim
 from torch.utils.data import DataLoader
-
 from catalyst import dl, utils
 from catalyst.contrib.datasets import MNIST
 from catalyst.data.transforms import ToTensor
