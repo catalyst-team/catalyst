@@ -350,11 +350,11 @@ runner.train(
     verbose=True,
     callbacks=[
         dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
-        dl.AUCCallback(input_key="scores", target_key="targets"),
-        dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-        dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+#         dl.AUCCallback(input_key="scores", target_key="targets"),
+#         dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+#         dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
         dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-        dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+#         dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
         dl.OptimizerCallback(metric_key="loss"),
         dl.SchedulerCallback(),
         dl.CheckpointCallback(logdir="./logs", loader_key="valid", metric_key="map01", minimize=False),
@@ -398,6 +398,13 @@ runner.train(
     valid_metric="loss",
     minimize_valid_metric=True,
     verbose=True,
+    # uncomment for extra metrics:
+#     callbacks=[
+#         dl.AccuracyCallback(input_key="logits", target_key="targets"),
+#         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+#         dl.AUCCallback(input_key="logits", target_key="targets"),
+#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets"), # catalyst[ml] required
+#     ]
 )
 ```
 </p>
