@@ -164,11 +164,11 @@ class MlflowLogger(ILogger):
         stages = set(hparams["stages"]) - set(STAGE_PARAMS) - set(EXCLUDE_PARAMS)
         self._multistage = len(stages) > 1
 
-        if scope in stages:
+        if scope == "stage":
             if self._multistage:
-                mlflow.start_run(run_name=scope, nested=True)
+                mlflow.start_run(run_name=experiment_key, nested=True)
 
-            scope_params = hparams["stages"].get(scope, {})
+            scope_params = hparams["stages"].get(experiment_key, {})
             mlflow_log_dict(scope_params, log_type="param")
 
             for key in STAGE_PARAMS:
