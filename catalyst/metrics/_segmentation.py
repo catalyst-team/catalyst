@@ -165,7 +165,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
             macro_metric += value
             if self.weights is not None:
                 weighted_metric += value * self.weights[class_idx]
-            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[class_idx]}"] = value
+            metrics[
+                f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[class_idx]}"
+            ] = value
             for stats_name, value in statistics.items():
                 total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
         macro_metric /= len(self.statistics)
@@ -217,7 +219,7 @@ class IOUMetric(RegionBasedMetric):
         metric_fn = partial(_iou, eps=eps)
         super().__init__(
             metric_fn=metric_fn,
-            metric_name='iou',
+            metric_name="iou",
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
@@ -263,7 +265,7 @@ class DiceMetric(RegionBasedMetric):
         metric_fn = partial(_dice, eps=eps)
         super().__init__(
             metric_fn=metric_fn,
-            metric_name='dice',
+            metric_name="dice",
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
@@ -317,7 +319,7 @@ class TrevskyMetric(RegionBasedMetric):
         metric_fn = partial(_trevsky, alpha=alpha, beta=beta, eps=eps)
         super().__init__(
             metric_fn=metric_fn,
-            metric_name='trevsky',
+            metric_name="trevsky",
             compute_on_call=compute_on_call,
             prefix=prefix,
             suffix=suffix,
