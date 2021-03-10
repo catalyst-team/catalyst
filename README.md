@@ -715,6 +715,7 @@ def normal_sample(loc, log_scale):
 class VAE(nn.Module):
     def __init__(self, in_features, hid_features):
         super().__init__()
+        self.hid_features = hid_features
         self.encoder = nn.Linear(in_features, hid_features * 2)
         self.decoder = nn.Sequential(nn.Linear(hid_features, in_features), nn.Sigmoid())
 
@@ -798,6 +799,11 @@ class CustomRunner(dl.IRunner):
         for key in ["loss_ae", "loss_kld", "loss"]:
             self.loader_metrics[key] = self.meters[key].compute()[0]
         super().on_loader_end(runner)
+    
+    def predict_batch(self, batch):
+        random_latent_vectors = torch.randn(1, self.model.hid_features).to(self.device)
+        generated_images = self.model.decoder(random_latent_vectors).detach()
+        return generated_images
 
 runner = CustomRunner("./logs", "cpu")
 runner.run()
