@@ -333,7 +333,7 @@ cv_required = false
 ml_required = false
 hydra_required = false
 optuna_required = true
-mlflow_required = true
+mlflow_required = false
 EOT
 
 # check if fail if requirements not installed
