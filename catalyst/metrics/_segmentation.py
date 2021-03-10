@@ -174,6 +174,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         micro_metric = self.metric_fn(**total_statistics)
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}/micro"] = micro_metric
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/macro"] = macro_metric
         if self.weights is not None:
             metrics[f"{self.prefix}{self.metric_name}{self.suffix}/weighted"] = weighted_metric
         # convert torch.Tensor to float
