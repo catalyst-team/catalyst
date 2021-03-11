@@ -3,9 +3,8 @@ from typing import Any, List
 import numpy as np
 import torch
 
-from catalyst.engines.functional import all_gather
 from catalyst.metrics._metric import IMetric
-from catalyst.utils.distributed import get_rank
+from catalyst.utils.distributed import all_gather, get_rank
 
 
 class ConfusionMatrixMetric(IMetric):

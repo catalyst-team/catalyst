@@ -3,7 +3,6 @@ from functools import partial
 
 import torch
 
-from catalyst.engines.functional import all_gather
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._segmentation import (
     _dice,
@@ -11,7 +10,7 @@ from catalyst.metrics.functional._segmentation import (
     _trevsky,
     get_segmentation_statistics,
 )
-from catalyst.utils.distributed import get_rank
+from catalyst.utils.distributed import all_gather, get_rank
 
 
 class RegionBasedMetric(ICallbackBatchMetric):

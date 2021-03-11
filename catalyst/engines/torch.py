@@ -1,17 +1,21 @@
 from typing import Any, Dict, Mapping, Union
 import os
 
-import numpy as np
 import torch
 import torch.distributed as dist
 import torch.nn as nn
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 
 from catalyst.core.engine import IEngine
-from catalyst.engines.functional import mean_reduce, sum_reduce
 from catalyst.typing import RunnerCriterion, RunnerModel, RunnerOptimizer, RunnerScheduler
-from catalyst.utils.distributed import get_nn_from_ddp_module
-from catalyst.utils.misc import maybe_recursive_call
+from catalyst.utils.distributed import mean_reduce, sum_reduce
+from catalyst.utils.torch import (
+    any2device,
+    load_checkpoint,
+    pack_checkpoint,
+    save_checkpoint,
+    unpack_checkpoint,
+)
 
 
 class DeviceEngine(IEngine):
@@ -42,27 +46,7 @@ class DeviceEngine(IEngine):
         self, tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module]
     ) -> Any:
         """@TODO: docs."""
-        if isinstance(tensor_or_module, dict):
-            return {key: self.sync_device(value) for key, value in tensor_or_module.items()}
-        elif isinstance(tensor_or_module, (list, tuple)):
-            return type(tensor_or_module)(self.sync_device(elem) for elem in tensor_or_module)
-        elif torch.is_tensor(tensor_or_module):
-            return tensor_or_module.to(self.device, non_blocking=True)
-        elif (
-            isinstance(tensor_or_module, (np.ndarray, np.void))
-            and tensor_or_module.dtype.fields is not None
-        ):
-            return {
-                k: self.sync_device(tensor_or_module[k])
-                for k in tensor_or_module.dtype.fields.keys()
-            }
-        elif isinstance(tensor_or_module, np.ndarray):
-            return torch.tensor(tensor_or_module, device=self.device)
-        elif isinstance(tensor_or_module, nn.Module):
-            return tensor_or_module.to(self.device)
-        # elif hasattr(tensor_or_module, "to"):
-        #     return tensor_or_module.to(self.device)
-        return tensor_or_module
+        return any2device(tensor_or_module, device=self.device)
 
     def sync_tensor(self, tensor: Any, *args, **kwargs) -> Any:
         """@TODO: docs."""
@@ -112,35 +96,9 @@ class DeviceEngine(IEngine):
         **kwargs,
     ) -> Dict:
         """@TODO: docs."""
-        checkpoint = kwargs
-
-        if isinstance(model, dict):
-            for key, value in model.items():
-                model_module = get_nn_from_ddp_module(value)
-                checkpoint[f"model_{key}_state_dict"] = maybe_recursive_call(
-                    model_module, "state_dict"
-                )
-        else:
-            model_module = get_nn_from_ddp_module(model)
-            checkpoint["model_state_dict"] = maybe_recursive_call(model_module, "state_dict")
-
-        for dict2save, name2save in zip(
-            [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
-        ):
-            if dict2save is None:
-                continue
-            if isinstance(dict2save, dict):
-                for key, value in dict2save.items():
-                    if value is not None:
-                        state_dict2save = name2save + "_" + str(key)
-                        # checkpoint[name2save_] = value
-                        state_dict2save = state_dict2save + "_state_dict"
-                        checkpoint[state_dict2save] = value.state_dict()
-            else:
-                # checkpoint[name2save] = dict2save
-                name2save = name2save + "_state_dict"
-                checkpoint[name2save] = dict2save.state_dict()
-        return checkpoint
+        return pack_checkpoint(
+            model=model, criterion=criterion, optimizer=optimizer, scheduler=scheduler, **kwargs
+        )
 
     def unpack_checkpoint(
         self,
@@ -152,35 +110,21 @@ class DeviceEngine(IEngine):
         **kwargs,
     ) -> None:
         """@TODO: docs."""
-        if model is not None:
-            model = get_nn_from_ddp_module(model)
-            maybe_recursive_call(
-                model, "load_state_dict", recursive_args=checkpoint["model_state_dict"],
-            )
-
-        for dict2load, name2load in zip(
-            [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
-        ):
-            if dict2load is None:
-                continue
-
-            if isinstance(dict2load, dict):
-                for key, value in dict2load.items():
-                    if value is not None:
-                        state_dict2load = f"{name2load}_{key}_state_dict"
-                        value.load_state_dict(checkpoint[state_dict2load])
-            else:
-                name2load = f"{name2load}_state_dict"
-                dict2load.load_state_dict(checkpoint[name2load])
+        return unpack_checkpoint(
+            checkpoint=checkpoint,
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+        )
 
     def save_checkpoint(self, checkpoint: Mapping[str, Any], path: str):
         """@TODO: docs."""
-        torch.save(checkpoint, path)
+        return save_checkpoint(checkpoint=checkpoint, path=path)
 
     def load_checkpoint(self, path: str):
         """@TODO: docs."""
-        checkpoint = torch.load(path, map_location=lambda storage, loc: storage)
-        return checkpoint
+        return load_checkpoint(path=path)
 
 
 class DataParallelEngine(DeviceEngine):
