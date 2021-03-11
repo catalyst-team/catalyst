@@ -494,6 +494,8 @@ class CheckpointCallback(ICheckpointCallback):
         # # configure map_location properly
         # map_location = {"cuda:%d" % 0: "cuda:%d" % rank}
         # ddp_model.load_state_dict(torch.load(CHECKPOINT_PATH, map_location=map_location))
+        # Use a barrier() to make sure that all processes have finished reading the checkpoint
+        # dist.barrier()
 
     #     if getattr(runner, "resume", None) is not None:
     #         self.resume = runner.resume
@@ -646,7 +648,7 @@ class CheckpointCallback(ICheckpointCallback):
             }
             _load_runner(logdir=self.logdir, runner=runner, mapping=to_load)
 
-        if runner.engine.is_ddp:
+        if runner.engine.is_ddp and runner.engine.is_master_process:
             # master sync
             dist.barrier()
 

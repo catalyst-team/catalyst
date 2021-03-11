@@ -2,10 +2,9 @@ from typing import Dict
 
 import torch
 
-from catalyst.engines.functional import all_gather
 from catalyst.metrics._metric import ICallbackLoaderMetric
 from catalyst.metrics.functional._auc import auc
-from catalyst.utils.distributed import get_rank
+from catalyst.utils.distributed import all_gather, get_rank
 
 
 class AUCMetric(ICallbackLoaderMetric):
