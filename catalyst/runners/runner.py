@@ -144,7 +144,9 @@ class Runner(IRunner):
     def get_loggers(self) -> Dict[str, ILogger]:
         """Returns the logger for a run."""
         loggers = self._loggers or {}
-        is_logger_exists = lambda logger_fn: any(isinstance(x, logger_fn) for x in loggers.values())
+        is_logger_exists = lambda logger_fn: any(
+            isinstance(x, logger_fn) for x in loggers.values()
+        )
         if not is_logger_exists(ConsoleLogger):
             loggers["_console"] = ConsoleLogger()
         if self._logdir is not None and not is_logger_exists(CSVLogger):
