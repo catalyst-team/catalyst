@@ -18,7 +18,7 @@ class TrevskyLoss(nn.Module):
         alpha: float,
         beta: Optional[float] = None,
         class_dim: int = 1,
-        mode: str = "micro",
+        mode: str = "macro",
         weights: List[float] = None,
         eps: float = 1e-7,
     ):
@@ -71,7 +71,7 @@ class FocalTrevskyLoss(nn.Module):
         beta: Optional[float] = None,
         gamma: float = 4 / 3,
         class_dim: int = 1,
-        mode: str = "micro",
+        mode: str = "macro",
         weights: List[float] = None,
         eps: float = 1e-7,
     ):

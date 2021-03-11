@@ -4,6 +4,8 @@ import os
 from pathlib import Path
 import shutil
 
+import torch.distributed as dist
+
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.tools.metric_handler import MetricHandler
@@ -17,23 +19,18 @@ def _save_checkpoint(
     suffix: str,
     is_best: bool = False,
     is_last: bool = False,
-    special_suffix: str = "",
+    extra_suffix: str = "",
 ) -> Union[Path, str]:
     """Saving checkpoint to a file.
 
     Args:
         checkpoint: data to save.
-        logdir: directory where checkpoint
-            should be stored.
+        runner: current runner
+        logdir: directory where checkpoint should be stored.
         suffix: checkpoint file name.
-        is_best: if ``True`` then also
-            will be generated best checkpoint file.
-        is_last: if ``True`` then also
-            will be generated last checkpoint file.
-        special_suffix: suffix to use for
-            saving best/last checkpoints.
-        save_fn: function to use for saving
-            data to file, default is ``torch.save``
+        is_best: if ``True`` then also will be generated best checkpoint file.
+        is_last: if ``True`` then also will be generated last checkpoint file.
+        extra_suffix: suffix to use for saving best/last checkpoints.
 
     Returns:
         path to saved checkpoint
@@ -42,9 +39,9 @@ def _save_checkpoint(
     filename = f"{logdir}/{suffix}.pth"
     runner.engine.save_checkpoint(checkpoint, filename)
     if is_best:
-        shutil.copyfile(filename, f"{logdir}/best{special_suffix}.pth")
+        shutil.copyfile(filename, f"{logdir}/best{extra_suffix}.pth")
     if is_last:
-        shutil.copyfile(filename, f"{logdir}/last{special_suffix}.pth")
+        shutil.copyfile(filename, f"{logdir}/last{extra_suffix}.pth")
     return filename
 
 
@@ -115,8 +112,7 @@ def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]
 
     Arguments:
         logdir: directory with logs
-        load_map (Dict[str, str]): dict with specification
-            what should be loaded
+        load_map (Dict[str, str]): dict with specification what should be loaded
 
     Returns:
         Mapping from file to parts required from this file.
@@ -317,7 +313,7 @@ class CheckpointCallback(ICheckpointCallback):
             use_logdir_postfix: @TODO: docs.
             use_runner_logdir: @TODO: docs.
         """
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.master)
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         possible_states = {
             None,
             "best",
@@ -425,7 +421,7 @@ class CheckpointCallback(ICheckpointCallback):
                 suffix=f"{suffix}_full",
                 is_best=is_best,
                 is_last=is_last,
-                special_suffix="_full",
+                extra_suffix="_full",
             )
         if self.mode in ("all", "model"):
             exclude = ["criterion", "optimizer", "scheduler"]
@@ -486,12 +482,18 @@ class CheckpointCallback(ICheckpointCallback):
         """
         if runner.is_infer_stage:
             return
-        # @TODO: very tricky hack
-        # @TODO: remove
+        # @TODO: very tricky hack, should be removed
         if self.logdir is None and self.use_runner_logdir:
             self.logdir = getattr(runner, "_logdir", None)
             if self.use_logdir_postfix:
                 self.logdir = os.path.join(self.logdir, "checkpoints")
+
+        # @TODO:
+        # # Use a barrier() to make sure that process 1 loads the model after process 0 saves it.
+        # dist.barrier()
+        # # configure map_location properly
+        # map_location = {"cuda:%d" % 0: "cuda:%d" % rank}
+        # ddp_model.load_state_dict(torch.load(CHECKPOINT_PATH, map_location=map_location))
 
     #     if getattr(runner, "resume", None) is not None:
     #         self.resume = runner.resume
@@ -534,12 +536,14 @@ class CheckpointCallback(ICheckpointCallback):
 
     def on_epoch_end(self, runner: "IRunner") -> None:
         """
-        Collect and save checkpoint after epoch.
+        Collects and saves checkpoint after epoch.
 
         Args:
             runner: current runner
         """
         if runner.is_infer_stage:
+            return
+        if runner.engine.is_ddp and not runner.engine.is_master_process:
             return
 
         if self._use_model_selection:
@@ -570,7 +574,6 @@ class CheckpointCallback(ICheckpointCallback):
                 dict(runner.epoch_metrics),
             )
             self.top_best_metrics.append(metrics_record)
-            # CALLBACK IS MASTER ONLY
             # truncate checkpoints
             self._truncate_checkpoints()
             # save checkpoint metrics
@@ -586,6 +589,10 @@ class CheckpointCallback(ICheckpointCallback):
             runner: current runner
         """
         if runner.is_infer_stage:
+            return
+        if runner.engine.is_ddp and not runner.engine.is_master_process:
+            # worker sync
+            dist.barrier()
             return
 
         # let's log Top-N base metrics
@@ -638,6 +645,10 @@ class CheckpointCallback(ICheckpointCallback):
                 if v not in not_required_load_states
             }
             _load_runner(logdir=self.logdir, runner=runner, mapping=to_load)
+
+        if runner.engine.is_ddp:
+            # master sync
+            dist.barrier()
 
 
 __all__ = ["ICheckpointCallback", "CheckpointCallback"]

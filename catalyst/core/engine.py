@@ -43,14 +43,29 @@ class IEngine(ABC):
         pass
 
     @property
+    def is_ddp(self) -> bool:
+        """@TODO: docs."""
+        return self.rank > -1
+
+    @property
     def is_master_process(self) -> bool:
         """Checks if a process is master process.
         Should be implemented only for DDP setup in other cases should always return True.
 
         Returns:
-            `True` if current process is a master process, othervise `False`.
+            `True` if current process is a master process, otherwise `False`.
         """
         return True
+
+    @property
+    def is_worker_process(self) -> bool:
+        """Checks if a process is worker process.
+        Should be implemented only for DDP setup in other cases should always return False.
+
+        Returns:
+            `True` if current process is a worker process, otherwise `False`.
+        """
+        return False
 
     @abstractmethod
     def sync_device(self, tensor_or_module: Any) -> Any:

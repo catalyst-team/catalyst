@@ -31,7 +31,6 @@ from catalyst.metrics._mrr import MRRMetric
 from catalyst.metrics._segmentation import (
     RegionBasedMetric,
     IOUMetric,
-    JaccardMetric,
     DiceMetric,
     TrevskyMetric,
 )

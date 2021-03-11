@@ -263,6 +263,11 @@ class DistributedDataParallelEngine(DeviceEngine):
         """@TODO: docs."""
         return self._rank == 0
 
+    @property
+    def is_worker_process(self) -> bool:
+        """@TODO: docs."""
+        return self._rank > 0
+
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes."""
         self._rank = rank

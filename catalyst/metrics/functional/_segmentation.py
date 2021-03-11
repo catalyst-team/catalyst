@@ -188,8 +188,7 @@ def iou(
         eps: epsilon to avoid zero division
 
     Returns:
-        IoU (Jaccard) score for each class(if mode='weighted') or
-        aggregated IOU
+        IoU (Jaccard) score for each class(if mode='weighted') or aggregated IOU
 
     Example:
         >>> size = 4
@@ -382,6 +381,4 @@ def trevsky(
     return score
 
 
-jaccard = iou
-
-__all__ = ["iou", "jaccard", "dice", "trevsky", "get_segmentation_statistics"]
+__all__ = ["iou", "dice", "trevsky", "get_segmentation_statistics"]

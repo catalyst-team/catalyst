@@ -163,13 +163,6 @@ IOUMetric
     :undoc-members:
     :show-inheritance:
 
-JaccardMetric
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._segmentation.JaccardMetric
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 DiceMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._segmentation.DiceMetric

@@ -17,7 +17,7 @@ class DiceLoss(nn.Module):
     def __init__(
         self,
         class_dim: int = 1,
-        mode: str = "micro",
+        mode: str = "macro",
         weights: List[float] = None,
         eps: float = 1e-7,
     ):
