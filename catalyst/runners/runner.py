@@ -14,11 +14,16 @@ from catalyst.core.functional import callback_isinstance, sort_callbacks_by_orde
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
-from catalyst.engines import DeviceEngine, IEngine
+from catalyst.engines import (
+    DataParallelEngine,
+    DeviceEngine,
+    DistributedDataParallelEngine,
+    IEngine,
+)
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
-from catalyst.settings import IS_CUDA_AVAILABLE
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 from catalyst.typing import (
     Criterion,
     Model,
@@ -32,9 +37,26 @@ from catalyst.typing import (
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
+if SETTINGS.amp_required:
+    from catalyst.engines import AMPEngine, DataParallelAMPEngine, DistributedDataParallelAMPEngine
+
 
 def _get_default_engine(fp16: bool = False, ddp: bool = False):
-    return DeviceEngine("cuda" if IS_CUDA_AVAILABLE else "cpu")
+    has_multiple_gpus = NUM_CUDA_DEVICES > 1
+    if not IS_CUDA_AVAILABLE:
+        return DeviceEngine("cpu")
+    else:
+        if fp16 and SETTINGS.amp_required and ddp and has_multiple_gpus:
+            return DistributedDataParallelAMPEngine()
+        elif fp16 and NUM_CUDA_DEVICES > 1:
+            return DataParallelAMPEngine()
+        elif fp16 and NUM_CUDA_DEVICES == 1:
+            return AMPEngine()
+        elif ddp and has_multiple_gpus:
+            return DistributedDataParallelEngine()
+        elif has_multiple_gpus:
+            return DataParallelEngine()
+    return DeviceEngine("cuda")
 
 
 def _process_loaders(
@@ -278,9 +300,8 @@ class Runner(IRunner):
             ddp: if `True` will start training in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
         """
-        assert fp16 is False and ddp is False, "@TODO"
         # experiment setup
-        self._engine = engine
+        self._engine = _get_default_engine(fp16, ddp) if engine is None else engine
         self._trial = trial
         self._loggers = loggers
         # the data
