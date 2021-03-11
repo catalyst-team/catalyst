@@ -77,7 +77,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         self._is_ddp = get_rank() > -1
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        """Updatse segmentation statistics with new data and return intermediate metrics values.
+        """Updates segmentation statistics with new data and return intermediate metrics values.
 
         Args:
             outputs: tensor of logits
@@ -105,8 +105,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 self.statistics[idx]["fn"] = fn_class
 
         metrics_per_class = self.metric_fn(tp, fp, fn)
-        macro_metric = torch.mean(metrics_per_class)
-        return metrics_per_class, macro_metric
+        return metrics_per_class
 
     def update_key_value(
         self, outputs: torch.Tensor, targets: torch.Tensor
@@ -120,7 +119,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
         Returns:
             dict of metric for each class and weighted (if weights were given) metric
         """
-        metrics_per_class, macro_metric = self.update(outputs, targets)
+        metrics_per_class = self.update(outputs, targets)
+        macro_metric = torch.mean(metrics_per_class)
         # need only one time
         if not self._checked_params:
             self._check_parameters()
@@ -136,7 +136,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 weighted_metric += value * self.weights[idx]
             metrics[f"{self.prefix}{self.metric_name}{self.suffix}/weighted"] = weighted_metric
         # convert torch.Tensor to float
-        metrics = {k: float(v) for k, v in metrics.items()}
+        # metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
 
     def compute_key_value(self) -> Dict[str, torch.Tensor]:
@@ -149,8 +149,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         metrics = {}
         total_statistics = {}
         macro_metric = 0
-        if self.weights is not None:
-            weighted_metric = 0
+        weighted_metric = 0
 
         # @TODO: ddp hotfix, could be done better
         if self._is_ddp:
@@ -179,7 +178,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         if self.weights is not None:
             metrics[f"{self.prefix}{self.metric_name}{self.suffix}/weighted"] = weighted_metric
         # convert torch.Tensor to float
-        metrics = {k: float(v) for k, v in metrics.items()}
+        # metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
 
     def compute(self):
@@ -208,7 +207,7 @@ class IOUMetric(RegionBasedMetric):
 
         Args:
             compute_on_call: Computes and returns metric value during metric call.
-            Used for per-batch logging. default: True
+                Used for per-batch logging. default: True
             prefix: metric prefix
             suffix: metric suffix
             class_dim: indicates class dimension (K) for ``outputs`` and
@@ -235,8 +234,7 @@ class IOUMetric(RegionBasedMetric):
 class DiceMetric(RegionBasedMetric):
     """
     Dice Metric
-    dice score = 2 * intersection / (intersection + union)) = \
-    = 2 * tp / (2 * tp + fp + fn)
+    dice score = 2 * intersection / (intersection + union)) = 2 * tp / (2 * tp + fp + fn)
     """
 
     def __init__(
@@ -301,15 +299,15 @@ class TrevskyMetric(RegionBasedMetric):
 
         Args:
             alpha: false negative coefficient, bigger alpha bigger penalty for
-            false negative. if beta is None, alpha must be in (0, 1)
+                false negative. if beta is None, alpha must be in (0, 1)
             beta: false positive coefficient, bigger alpha bigger penalty for false
-            positive. Must be in (0, 1), if None beta = (1 - alpha)
+                positive. Must be in (0, 1), if None beta = (1 - alpha)
             compute_on_call: Computes and returns metric value during metric call.
-            Used for per-batch logging. default: True
+                Used for per-batch logging. default: True
             prefix: metric prefix
             suffix: metric suffix
             class_dim: indicates class dimension (K) for ``outputs`` and
-            ``targets`` tensors (default = 1)
+                ``targets`` tensors (default = 1)
             weights: class weights
             class_names: class names
             threshold: threshold for outputs binarization
@@ -332,12 +330,9 @@ class TrevskyMetric(RegionBasedMetric):
         )
 
 
-JaccardMetric = IOUMetric
-
 __all__ = [
     "RegionBasedMetric",
     "IOUMetric",
-    "JaccardMetric",
     "DiceMetric",
     "TrevskyMetric",
 ]

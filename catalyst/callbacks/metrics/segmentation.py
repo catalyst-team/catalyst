@@ -38,9 +38,6 @@ class IOUCallback(BatchMetricCallback):
         )
 
 
-JaccardCallback = IOUCallback
-
-
 class DiceCallback(BatchMetricCallback):
     """Dice metric callback."""
 
@@ -113,4 +110,4 @@ class TrevskyCallback(BatchMetricCallback):
         )
 
 
-__all__ = ["IOUCallback", "JaccardCallback", "DiceCallback", "TrevskyCallback"]
+__all__ = ["IOUCallback", "DiceCallback", "TrevskyCallback"]
