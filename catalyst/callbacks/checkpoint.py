@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 import shutil
 
-import torch.distributed as dists
+import torch.distributed as dist
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
@@ -543,7 +543,7 @@ class CheckpointCallback(ICheckpointCallback):
         """
         if runner.is_infer_stage:
             return
-        if not runner.engine.is_master_process:
+        if runner.engine.is_ddp and not runner.engine.is_master_process:
             return
 
         if self._use_model_selection:
@@ -590,9 +590,9 @@ class CheckpointCallback(ICheckpointCallback):
         """
         if runner.is_infer_stage:
             return
-        if not runner.engine.is_master_process:
+        if runner.engine.is_ddp and not runner.engine.is_master_process:
             # worker sync
-            dists.barrier()
+            dist.barrier()
             return
 
         # let's log Top-N base metrics
@@ -646,8 +646,9 @@ class CheckpointCallback(ICheckpointCallback):
             }
             _load_runner(logdir=self.logdir, runner=runner, mapping=to_load)
 
-        # master sync
-        dists.barrier()
+        if runner.engine.is_ddp:
+            # master sync
+            dist.barrier()
 
 
 __all__ = ["ICheckpointCallback", "CheckpointCallback"]
