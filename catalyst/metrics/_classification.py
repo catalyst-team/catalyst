@@ -5,7 +5,6 @@ from functools import partial
 import numpy as np
 import torch
 
-from catalyst.engines.functional import all_gather
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._classification import get_aggregated_metrics, get_binary_metrics
 from catalyst.metrics.functional._misc import (
@@ -13,7 +12,7 @@ from catalyst.metrics.functional._misc import (
     get_multiclass_statistics,
     get_multilabel_statistics,
 )
-from catalyst.utils.distributed import get_rank
+from catalyst.utils.distributed import all_gather, get_rank
 
 
 class StatisticsMetric(ICallbackBatchMetric):
@@ -22,6 +21,13 @@ class StatisticsMetric(ICallbackBatchMetric):
     false negative, support statistics from data.
 
     It can work in binary, multiclass and multilabel classification tasks.
+
+    Args:
+        mode: one of "binary", "multiclass" and "multilabel"
+        num_classes: number of classes
+        compute_on_call: if True, computes and returns metric value during metric call
+        prefix: TODO: docs
+        suffix: TODO: docs
     """
 
     def __init__(
@@ -33,13 +39,6 @@ class StatisticsMetric(ICallbackBatchMetric):
         suffix: Optional[str] = None,
     ):
         """Init params
-
-        Args:
-            compute_on_call: if True, computes and returns metric value during metric call
-            prefix:
-            suffix:
-            mode: one of "binary", "multiclass" and "multilabel"
-            num_classes: number of classes
 
         Raises:
             ValueError: if mode is incorrect
@@ -143,6 +142,15 @@ class StatisticsMetric(ICallbackBatchMetric):
 class PrecisionRecallF1SupportMetric(StatisticsMetric):
     """
     Metric that can collect statistics and count precision, recall, f1_score and support with it.
+
+    Args:
+        mode: one of "binary", "multiclass" and "multilabel"
+        num_classes: number of classes in loader's dataset
+        zero_division: value to set in case of zero division during metrics
+            (precision, recall) computation; should be one of 0 or 1
+        compute_on_call: if True, allows compute metric's value on call
+        prefix: TODO
+        suffix: TODO
     """
 
     def __init__(
@@ -154,18 +162,7 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         prefix: str = None,
         suffix: str = None,
     ) -> None:
-        """
-        Init PrecisionRecallF1SupportMetric instance
-
-        Args:
-            num_classes: number of classes in loader's dataset
-            mode: one of "binary", "multiclass" and "multilabel"
-            zero_division: value to set in case of zero division during metrics
-                (precision, recall) computation; should be one of 0 or 1
-            compute_on_call: if True, allows compute metric's value on call
-            prefix: ?
-            suffix: ?
-        """
+        """Init PrecisionRecallF1SupportMetric instance"""
         super().__init__(
             compute_on_call=compute_on_call,
             prefix=prefix,
@@ -291,7 +288,15 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
 
 
 class BinaryPrecisionRecallF1Metric(StatisticsMetric):
-    """Precision, recall, f1_score and support metrics for binary classification."""
+    """Precision, recall, f1_score and support metrics for binary classification.
+
+    Args:
+        zero_division: value to set in case of zero division during metrics
+            (precision, recall) computation; should be one of 0 or 1
+        compute_on_call: if True, allows compute metric's value on call
+        prefix: TODO: docs
+        suffix: TODO: docs
+    """
 
     def __init__(
         self,
@@ -300,16 +305,7 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
-        """
-        Init BinaryPrecisionRecallF1SupportMetric instance
-
-        Args:
-            compute_on_call: if True, allows compute metric's value on call
-            prefix: ?
-            suffix: ?
-            zero_division: value to set in case of zero division during metrics
-                (precision, recall) computation; should be one of 0 or 1
-        """
+        """Init BinaryPrecisionRecallF1SupportMetric instance"""
         super().__init__(
             num_classes=2,
             mode="binary",
@@ -420,6 +416,14 @@ class MulticlassPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
     """
     Precision, recall, f1_score and support metrics for multiclass classification.
     Counts metrics with macro, micro and weighted average.
+
+    Args:
+        num_classes: number of classes in loader's dataset
+        zero_division: value to set in case of zero division during metrics
+            (precision, recall) computation; should be one of 0 or 1
+        compute_on_call: if True, allows compute metric's value on call
+        prefix: TODO: docs
+        suffix: TODO: docs
     """
 
     def __init__(
@@ -430,17 +434,7 @@ class MulticlassPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
-        """
-        Init MultiClassPrecisionRecallF1SupportMetric instance
-
-        Args:
-            compute_on_call: if True, allows compute metric's value on call
-            prefix: ?
-            suffix: ?
-            num_classes: number of classes in loader's dataset
-            zero_division: value to set in case of zero division during metrics
-                (precision, recall) computation; should be one of 0 or 1
-        """
+        """Init MultiClassPrecisionRecallF1SupportMetric instance"""
         super().__init__(
             compute_on_call=compute_on_call,
             prefix=prefix,
@@ -455,6 +449,14 @@ class MultilabelPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
     """
     Precision, recall, f1_score and support metrics for multilabel classification.
     Counts metrics with macro, micro and weighted average.
+
+    Args:
+        num_classes: number of classes in loader's dataset
+        zero_division: value to set in case of zero division during metrics
+            (precision, recall) computation; should be one of 0 or 1
+        compute_on_call: if True, allows compute metric's value on call
+        prefix: TODO: docs
+        suffix: TODO: docs
     """
 
     def __init__(
@@ -465,17 +467,7 @@ class MultilabelPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
-        """
-        Init MultiLabelPrecisionRecallF1SupportMetric instance
-
-        Args:
-            compute_on_call: if True, allows compute metric's value on call
-            prefix: ?
-            suffix: ?
-            num_classes: number of classes in loader's dataset
-            zero_division: value to set in case of zero division during metrics
-                (precision, recall) computation; should be one of 0 or 1
-        """
+        """Init MultiLabelPrecisionRecallF1SupportMetric instance"""
         super().__init__(
             compute_on_call=compute_on_call,
             prefix=prefix,

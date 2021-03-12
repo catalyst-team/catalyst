@@ -3,18 +3,19 @@ from catalyst.metrics._auc import AUCMetric
 
 
 class AUCCallback(LoaderMetricCallback):
-    """ROC-AUC  metric callback."""
+    """ROC-AUC  metric callback.
+
+    Args:
+        input_key: input key to use for auc calculation, specifies our ``y_true``.
+        target_key: output key to use for auc calculation, specifies our ``y_pred``.
+        prefix: metric's prefix
+        suffix: metric's suffix
+    """
 
     def __init__(
         self, input_key: str, target_key: str, prefix: str = None, suffix: str = None,
     ):
-        """
-        Args:
-            input_key: input key to use for auc calculation
-                specifies our ``y_true``.
-            target_key: output key to use for auc calculation;
-                specifies our ``y_pred``.
-        """
+        """Init."""
         super().__init__(
             metric=AUCMetric(prefix=prefix, suffix=suffix),
             input_key=input_key,

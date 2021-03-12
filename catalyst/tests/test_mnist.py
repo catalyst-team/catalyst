@@ -67,6 +67,10 @@ def train_experiment(device):
 
         # model post-processing
         features_batch = next(iter(loaders["valid"]))[0]
+        # model stochastic weight averaging
+        model.load_state_dict(
+            utils.get_averaged_weights_by_path_mask(logdir=logdir, path_mask="*.pth")
+        )
         # model tracing
         utils.trace_model(model=runner.model, batch=features_batch)
         # model to onnx

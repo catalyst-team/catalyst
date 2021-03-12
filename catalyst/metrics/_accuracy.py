@@ -14,6 +14,13 @@ class AccuracyMetric(ICallbackBatchMetric):
     This metric computes accuracy for multiclass classification case.
     It computes mean value of accuracy and it's approximate std value
     (note that it's not a real accuracy std but std of accuracy over batch mean values).
+
+    Args:
+        topk_args: list of `topk` for accuracy@topk computing
+        num_classes: number of classes
+        compute_on_call: if True, computes and returns metric value during metric call
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
@@ -24,16 +31,7 @@ class AccuracyMetric(ICallbackBatchMetric):
         prefix: str = None,
         suffix: str = None,
     ):
-        """
-        Init AccuracyMetric
-
-        Args:
-            topk_args: list of `topk` for accuracy@topk computing
-            num_classes: number of classes
-            compute_on_call: if True, computes and returns metric value during metric call
-            prefix: metric prefix
-            suffix: metric suffix
-        """
+        """Init AccuracyMetric"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_name_mean = f"{self.prefix}accuracy{self.suffix}"
         self.metric_name_std = f"{self.prefix}accuracy{self.suffix}/std"
@@ -120,6 +118,12 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
     This metric computes accuracy for multilabel classification case.
     It computes mean value of accuracy and it's approximate std value
     (note that it's not a real accuracy std but std of accuracy over batch mean values).
+
+    Args:
+        compute_on_call: if True, computes and returns metric value during metric call
+        prefix: metric prefix
+        suffix: metric suffix
+        threshold: thresholds for model scores
     """
 
     def __init__(
@@ -129,15 +133,7 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ):
-        """
-        Init MultilabelAccuracyMetric
-
-        Args:
-            compute_on_call: if True, computes and returns metric value during metric call
-            prefix: metric prefix
-            suffix: metric suffix
-            threshold: thresholds for model scores
-        """
+        """Init MultilabelAccuracyMetric"""
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
         self.suffix = suffix or ""

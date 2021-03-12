@@ -25,9 +25,9 @@ from catalyst.metrics._classification import (
 )
 from catalyst.metrics._cmc_score import CMCMetric
 from catalyst.metrics._hitrate import HitrateMetric
-from catalyst.metrics._ndcg import NDCGMetric
 from catalyst.metrics._map import MAPMetric
 from catalyst.metrics._mrr import MRRMetric
+from catalyst.metrics._ndcg import NDCGMetric
 from catalyst.metrics._segmentation import (
     RegionBasedMetric,
     IOUMetric,

@@ -12,6 +12,23 @@ if TYPE_CHECKING:
 class BatchTransformCallback(Callback):
     """Callback to perform data augmentations on GPU using kornia library.
 
+    Args:
+        transform: define augmentations to apply on a batch
+
+            If a sequence of transforms passed, then each element
+            should be either ``kornia.augmentation.AugmentationBase2D``,
+            ``kornia.augmentation.AugmentationBase3D``, or ``nn.Module``
+            compatible with kornia interface.
+
+            If a sequence of params (``dict``) passed, then each
+            element of the sequence must contain ``'transform'`` key with
+            an augmentation name as a value. Please note that in this case
+            to use custom augmentation you should add it to the
+            `REGISTRY` registry first.
+        input_key (Union[str, int]): key in batch dict mapping to transform, e.g. `'image'`
+        output_key: key to use to store the result
+            of the transform, defaults to `input_key` if not provided
+
     Look at `Kornia: an Open Source Differentiable Computer Vision
     Library for PyTorch`_ for details.
 
@@ -124,27 +141,7 @@ class BatchTransformCallback(Callback):
         input_key: Union[str, int] = "image",
         output_key: Optional[Union[str, int]] = None,
     ) -> None:
-        """Constructor method for the :class:`BatchTransformCallback` callback.
-
-        Args:
-            transform (Sequence[Union[dict, nn.Module]]): define
-                augmentations to apply on a batch
-
-                If a sequence of transforms passed, then each element
-                should be either ``kornia.augmentation.AugmentationBase2D``,
-                ``kornia.augmentation.AugmentationBase3D``, or ``nn.Module``
-                compatible with kornia interface.
-
-                If a sequence of params (``dict``) passed, then each
-                element of the sequence must contain ``'transform'`` key with
-                an augmentation name as a value. Please note that in this case
-                to use custom augmentation you should add it to the
-                `REGISTRY` registry first.
-            input_key (Union[str, int]): key in batch dict
-                mapping to transform, e.g. `'image'`
-            output_key: key to use to store the result
-                of the transform, defaults to `input_key` if not provided
-        """
+        """Init."""
         super().__init__(order=CallbackOrder.Internal, node=CallbackNode.all)
 
         self.input_key = input_key

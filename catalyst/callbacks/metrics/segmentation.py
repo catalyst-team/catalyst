@@ -5,25 +5,31 @@ from catalyst.metrics._segmentation import DiceMetric, IOUMetric, TrevskyMetric
 
 
 class IOUCallback(BatchMetricCallback):
-    """IOU metric callback."""
+    """IOU metric callback.
+
+    Args:
+        input_key: input key to use for metric calculation, specifies our `y_pred`
+        target_key: output key to use for metric calculation, specifies our `y_true`
+        class_dim: @TODO: docs
+        weights: @TODO: docs
+        class_names: @TODO: docs
+        threshold: @TODO: docs
+        prefix: metric prefix
+        suffix: metric suffix
+    """
 
     def __init__(
         self,
         input_key: str,
         target_key: str,
-        prefix: str = None,
-        suffix: str = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
+        prefix: str = None,
+        suffix: str = None,
     ):
-        """
-        Args:
-            input_key: input key to use for metric calculation, specifies our `y_pred`
-            target_key: output key to use for metric calculation, specifies our `y_true`
-            prefix: key for the metric's name
-        """
+        """Init."""
         super().__init__(
             metric=IOUMetric(
                 class_dim=class_dim,
@@ -39,25 +45,31 @@ class IOUCallback(BatchMetricCallback):
 
 
 class DiceCallback(BatchMetricCallback):
-    """Dice metric callback."""
+    """Dice metric callback.
+
+    Args:
+        input_key: input key to use for metric calculation, specifies our `y_pred`
+        target_key: output key to use for metric calculation, specifies our `y_true`
+        class_dim: @TODO: docs
+        weights: @TODO: docs
+        class_names: @TODO: docs
+        threshold: @TODO: docs
+        prefix: metric prefix
+        suffix: metric suffix
+    """
 
     def __init__(
         self,
         input_key: str,
         target_key: str,
-        prefix: str = None,
-        suffix: str = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
+        prefix: str = None,
+        suffix: str = None,
     ):
-        """
-        Args:
-            input_key: input key to use for metric calculation, specifies our `y_pred`
-            target_key: output key to use for metric calculation, specifies our `y_true`
-            prefix: key for the metric's name
-        """
+        """Init."""
         super().__init__(
             metric=DiceMetric(
                 class_dim=class_dim,
@@ -73,7 +85,18 @@ class DiceCallback(BatchMetricCallback):
 
 
 class TrevskyCallback(BatchMetricCallback):
-    """Trevsky metric callback."""
+    """Trevsky metric callback.
+
+    Args:
+        input_key: input key to use for metric calculation, specifies our `y_pred`
+        target_key: output key to use for metric calculation, specifies our `y_true`
+        class_dim: @TODO: docs
+        weights: @TODO: docs
+        class_names: @TODO: docs
+        threshold: @TODO: docs
+        prefix: metric prefix
+        suffix: metric suffix
+    """
 
     def __init__(
         self,
@@ -88,12 +111,7 @@ class TrevskyCallback(BatchMetricCallback):
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
     ):
-        """
-        Args:
-            input_key: input key to use for metric calculation, specifies our `y_pred`
-            target_key: output key to use for metric calculation, specifies our `y_true`
-            prefix: key for the metric's name
-        """
+        """Init."""
         super().__init__(
             metric=TrevskyMetric(
                 alpha=alpha,

@@ -10,8 +10,15 @@ if TYPE_CHECKING:
 
 
 class OptunaPruningCallback(Callback):
-    """
-    Optuna callback for pruning unpromising runs
+    """Optuna callback for pruning unpromising runs.
+    This callback can be used for early stopping (pruning) unpromising runs.
+
+    Args:
+        loader_key: @TODO: docs.
+        metric_key: @TODO: docs.
+        minimize: @TODO: docs.
+        min_delta: @TODO: docs.
+        trial:  Optuna.Trial for experiment.
 
     .. code-block:: python
 
@@ -51,15 +58,7 @@ class OptunaPruningCallback(Callback):
         min_delta: float = 1e-6,
         trial: optuna.Trial = None,
     ):
-        """This callback can be used for early stopping (pruning) unpromising runs.
-
-        Args:
-            loader_key: @TODO: docs.
-            metric_key: @TODO: docs.
-            minimize: @TODO: docs.
-            min_delta: @TODO: docs.
-            trial:  Optuna.Trial for experiment.
-        """
+        """Init."""
         super().__init__(CallbackOrder.External)
         self.loader_key = loader_key
         self.metric_key = metric_key

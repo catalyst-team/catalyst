@@ -19,6 +19,7 @@ Metric API
 IMetric
 ~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._metric.IMetric
+    :exclude-members: __init__
     :members:
     :undoc-members:
     :show-inheritance:
@@ -26,6 +27,7 @@ IMetric
 ICallbackBatchMetric
 ~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._metric.ICallbackBatchMetric
+    :exclude-members: __init__
     :members:
     :undoc-members:
     :show-inheritance:
@@ -33,14 +35,14 @@ ICallbackBatchMetric
 ICallbackLoaderMetric
 ~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._metric.ICallbackLoaderMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
 AccumulationMetric
 ~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._metric.AccumulationMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
@@ -50,21 +52,21 @@ General Metrics
 AdditiveValueMetric
 ~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._additive.AdditiveValueMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
 ConfusionMatrixMetric
 ~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._confusion_matrix.ConfusionMatrixMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
 BatchFunctionalMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._functional_metric.BatchFunctionalMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
@@ -72,108 +74,108 @@ BatchFunctionalMetric
 Runner Metrics
 ----------------------
 
-AccuracyMetric
-~~~~~~~~~~~~~~~~~~~~
+Accuracy - AccuracyMetric
+~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._accuracy.AccuracyMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
-MultilabelAccuracyMetric
-~~~~~~~~~~~~~~~~~~~~~~~~
+Accuracy - MultilabelAccuracyMetric
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._accuracy.MultilabelAccuracyMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
 AUCMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._auc.AUCMetric
-    :members:
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Classification – BinaryPrecisionRecallF1Metric
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._classification.BinaryPrecisionRecallF1Metric
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Classification – MulticlassPrecisionRecallF1SupportMetric
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._classification.MulticlassPrecisionRecallF1SupportMetric
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Classification – MultilabelPrecisionRecallF1SupportMetric
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._classification.MultilabelPrecisionRecallF1SupportMetric
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
 CMCMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._cmc_score.CMCMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
-HitrateMetric
+RecSys – HitrateMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._hitrate.HitrateMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
-NDCGMetric
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._ndcg.NDCGMetric
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MAPMetric
+RecSys – MAPMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._map.MAPMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
-MRRMetric
+RecSys – MRRMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._mrr.MRRMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
-BinaryPrecisionRecallF1Metric
+RecSys – NDCGMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._classification.BinaryPrecisionRecallF1Metric
-    :members:
+.. autoclass:: catalyst.metrics._ndcg.NDCGMetric
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
-MulticlassPrecisionRecallF1SupportMetric
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._classification.MulticlassPrecisionRecallF1SupportMetric
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MultilabelPrecisionRecallF1SupportMetric
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._classification.MultilabelPrecisionRecallF1SupportMetric
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-RegionBasedMetric
+Segmentation – RegionBasedMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._segmentation.RegionBasedMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
-IOUMetric
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._segmentation.IOUMetric
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-DiceMetric
+Segmentation – DiceMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._segmentation.DiceMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
-TrevskyMetric
+Segmentation – IOUMetric
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._segmentation.IOUMetric
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Segmentation – TrevskyMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._segmentation.TrevskyMetric
-    :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
@@ -237,13 +239,6 @@ Hitrate
     :undoc-members:
     :show-inheritance:
 
-Misc
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.functional._misc
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 MRR
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.metrics.functional._mrr
@@ -275,6 +270,13 @@ Recall
 Segmentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.metrics.functional._segmentation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+Misc
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.metrics.functional._misc
     :members:
     :undoc-members:
     :show-inheritance:

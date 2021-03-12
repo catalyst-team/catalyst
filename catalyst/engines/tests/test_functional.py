@@ -8,8 +8,8 @@ import torch.distributed as dist
 import torch.multiprocessing as mp
 
 from catalyst.engines import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
-from catalyst.engines.functional import all_gather, mean_reduce, sum_reduce
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.utils.distributed import all_gather, mean_reduce, sum_reduce
 
 if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"

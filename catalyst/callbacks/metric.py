@@ -44,7 +44,12 @@ class IMetricCallback(Callback, ABC):
 
 class MetricCallback(IMetricCallback):
     """
-    MetricCallback is a base implementation of callback that updates metrics over batch or loader
+    MetricCallback is a base implementation of callback that updates metrics over batch or loader.
+
+    Args:
+        metric: metric to calculate in callback
+        input_key: keys of tensors that should be used as inputs in metric calculation
+        target_key: keys of tensors that should be used as targets in metric calculation
     """
 
     def __init__(
@@ -53,14 +58,7 @@ class MetricCallback(IMetricCallback):
         input_key: Union[str, Iterable[str], Dict[str, str]],
         target_key: Union[str, Iterable[str], Dict[str, str]],
     ):
-        """
-        Init MetricCallback
-
-        Args:
-            metric: metric to calculate in callback
-            input_key: keys of tensors that should be used as inputs in metric calculation
-            target_key: keys of tensors that should be used as targets in metric calculation
-        """
+        """Init MetricCallback"""
         super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
         self.metric = metric
         assert isinstance(metric, IMetric)
@@ -168,7 +166,14 @@ class MetricCallback(IMetricCallback):
 
 
 class BatchMetricCallback(MetricCallback):
-    """BatchMetricCallback implements batch-based metrics update and computation over loader"""
+    """BatchMetricCallback implements batch-based metrics update and computation over loader
+
+    Args:
+        metric: metric to calculate in callback
+        input_key: keys of tensors that should be used as inputs in metric calculation
+        target_key: keys of tensors that should be used as targets in metric calculation
+        log_on_batch: if True update runner's batch metrics every batch
+    """
 
     def __init__(
         self,
@@ -177,14 +182,7 @@ class BatchMetricCallback(MetricCallback):
         target_key: Union[str, Iterable[str], Dict[str, str]],
         log_on_batch: bool = True,
     ) -> None:
-        """Init BatchMetricCallback
-
-        Args:
-            metric: metric to calculate in callback
-            input_key: keys of tensors that should be used as inputs in metric calculation
-            target_key: keys of tensors that should be used as targets in metric calculation
-            log_on_batch: if True update runner's batch metrics every batch
-        """
+        """Init BatchMetricCallback"""
         super().__init__(metric=metric, input_key=input_key, target_key=target_key)
         assert isinstance(metric, ICallbackBatchMetric)
         self.log_on_batch = log_on_batch
@@ -224,7 +222,13 @@ class BatchMetricCallback(MetricCallback):
 
 
 class LoaderMetricCallback(MetricCallback):
-    """LoaderMetricCallback implements loader-based metrics update and computation over loader"""
+    """LoaderMetricCallback implements loader-based metrics update and computation over loader
+
+    Args:
+        metric: metric to calculate in callback
+        input_key: keys of tensors that should be used as inputs in metric calculation
+        target_key: keys of tensors that should be used as targets in metric calculation
+    """
 
     def __init__(
         self,

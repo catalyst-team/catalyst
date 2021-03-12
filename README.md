@@ -95,6 +95,8 @@ for prediction in runner.predict_loader(loader=loaders["valid"]):
     assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
 
 features_batch = next(iter(loaders["valid"]))[0]
+# model stochastic weight averaging
+model.load_state_dict(utils.get_averaged_weights_by_path_mask(logdir="./logs", path_mask="*.pth"))
 # model tracing
 utils.trace_model(model=runner.model, batch=features_batch)
 # model quantization

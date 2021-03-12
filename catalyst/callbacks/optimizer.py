@@ -30,7 +30,16 @@ class IOptimizerCallback(Callback):
 
 
 class OptimizerCallback(IOptimizerCallback):
-    """Optimizer callback, abstraction over optimizer step."""
+    """Optimizer callback, abstraction over optimizer step.
+
+    Args:
+        metric_key: a key to get loss from ``runner.batch_metrics``
+        model_key: a key to select a model from ``runner.model`` in case
+            there are several of them and they are in a dictionary format.
+        optimizer_key: a key to select a optimizer from ``runner.optimizer`` in case
+            there are several of them and they are in a dictionary format.
+        accumulation_steps: number of steps before ``model.zero_grad()``
+    """
 
     def __init__(
         self,
@@ -39,15 +48,7 @@ class OptimizerCallback(IOptimizerCallback):
         optimizer_key: str = None,
         accumulation_steps: int = 1,
     ):
-        """
-        Args:
-            metric_key: a key to get loss from ``runner.batch_metrics``
-            model_key: a key to select a model from ``runner.model`` in case
-                there are several of them and they are in a dictionary format.
-            optimizer_key: a key to select a optimizer from ``runner.optimizer`` in case
-                there are several of them and they are in a dictionary format.
-            accumulation_steps: number of steps before ``model.zero_grad()``
-        """
+        """Init."""
         super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
         self.metric_key = metric_key
         self.model_key = model_key

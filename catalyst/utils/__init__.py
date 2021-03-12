@@ -9,6 +9,9 @@ from catalyst.utils.distributed import (
     get_distributed_params,
     get_rank,
     get_nn_from_ddp_module,
+    sum_reduce,
+    mean_reduce,
+    all_gather,
 )
 
 from catalyst.utils.misc import (
@@ -70,11 +73,15 @@ from catalyst.utils.torch import (
     get_requires_grad,
     set_requires_grad,
     get_network_output,
-    detach,
+    detach_tensor,
     trim_tensors,
     get_optimal_inner_init,
     outer_init,
     reset_weights_if_possible,
+    pack_checkpoint,
+    unpack_checkpoint,
+    save_checkpoint,
+    load_checkpoint,
 )
 
 from catalyst.utils.tracing import trace_model

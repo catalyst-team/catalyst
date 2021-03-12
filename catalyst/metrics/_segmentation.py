@@ -3,7 +3,6 @@ from functools import partial
 
 import torch
 
-from catalyst.engines.functional import all_gather
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._segmentation import (
     _dice,
@@ -11,39 +10,39 @@ from catalyst.metrics.functional._segmentation import (
     _trevsky,
     get_segmentation_statistics,
 )
-from catalyst.utils.distributed import get_rank
+from catalyst.utils.distributed import all_gather, get_rank
 
 
 class RegionBasedMetric(ICallbackBatchMetric):
-    """Logic class for all region based metrics, like IoU, Dice, Trevsky."""
+    """Logic class for all region based metrics, like IoU, Dice, Trevsky.
+
+    Args:
+        metric_fn: metric function, that get statistics and return score
+        metric_name: name of the metric
+        class_dim: indicates class dimension (K) for ``outputs`` and
+            ``targets`` tensors (default = 1)
+        weights: class weights
+        class_names: class names
+        threshold: threshold for outputs binarization
+        compute_on_call: Computes and returns metric value during metric call.
+            Used for per-batch logging. default: True
+        prefix: metric prefix
+        suffix: metric suffix
+    """
 
     def __init__(
         self,
         metric_fn: Callable,
         metric_name: str,
-        compute_on_call: bool = True,
-        prefix: Optional[str] = None,
-        suffix: Optional[str] = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = 0.5,
+        compute_on_call: bool = True,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None,
     ):
-        """
-
-        Args:
-            metric_fn: metric function, that get statistics and return score
-            metric_name: name of the metric
-            compute_on_call: Computes and returns metric value during metric call.
-            Used for per-batch logging. default: True
-            prefix: metric prefix
-            suffix: metric suffix
-            class_dim: indicates class dimension (K) for ``outputs`` and
-                ``targets`` tensors (default = 1)
-            weights: class weights
-            class_names: class names
-            threshold: threshold for outputs binarization
-        """
+        """Init"""
         super().__init__(compute_on_call, prefix, suffix)
         self.metric_fn = metric_fn
         self.metric_name = metric_name
@@ -188,35 +187,34 @@ class RegionBasedMetric(ICallbackBatchMetric):
 
 class IOUMetric(RegionBasedMetric):
     """
-    IoU Metric
-    iou score = intersection / union = tp / (tp + fp + fn)
+    IoU Metric,
+    iou score = intersection / union = tp / (tp + fp + fn).
+
+    Args:
+        class_dim: indicates class dimension (K) for ``outputs`` and
+            ``targets`` tensors (default = 1)
+        weights: class weights
+        class_names: class names
+        threshold: threshold for outputs binarization
+        eps: epsilon to avoid zero division
+        compute_on_call: Computes and returns metric value during metric call.
+            Used for per-batch logging. default: True
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
         self,
-        compute_on_call: bool = True,
-        prefix: Optional[str] = None,
-        suffix: Optional[str] = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
         eps: float = 1e-7,
+        compute_on_call: bool = True,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None,
     ):
-        """
-
-        Args:
-            compute_on_call: Computes and returns metric value during metric call.
-                Used for per-batch logging. default: True
-            prefix: metric prefix
-            suffix: metric suffix
-            class_dim: indicates class dimension (K) for ``outputs`` and
-                ``targets`` tensors (default = 1)
-            weights: class weights
-            class_names: class names
-            threshold: threshold for outputs binarization
-            eps: epsilon to avoid zero division
-        """
+        """Init."""
         metric_fn = partial(_iou, eps=eps)
         super().__init__(
             metric_fn=metric_fn,
@@ -233,35 +231,34 @@ class IOUMetric(RegionBasedMetric):
 
 class DiceMetric(RegionBasedMetric):
     """
-    Dice Metric
+    Dice Metric,
     dice score = 2 * intersection / (intersection + union)) = 2 * tp / (2 * tp + fp + fn)
+
+    Args:
+        class_dim: indicates class dimention (K) for ``outputs`` and
+        ``targets`` tensors (default = 1)
+        weights: class weights
+        class_names: class names
+        threshold: threshold for outputs binarization
+        eps: epsilon to avoid zero division
+        compute_on_call: Computes and returns metric value during metric call.
+            Used for per-batch logging. default: True
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
         self,
-        compute_on_call: bool = True,
-        prefix: Optional[str] = None,
-        suffix: Optional[str] = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
         eps: float = 1e-7,
+        compute_on_call: bool = True,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None,
     ):
-        """
-
-        Args:
-            compute_on_call: Computes and returns metric value during metric call.
-            Used for per-batch logging. default: True
-            prefix: metric prefix
-            suffix: metric suffix
-            class_dim: indicates class dimention (K) for ``outputs`` and
-            ``targets`` tensors (default = 1)
-            weights: class weights
-            class_names: class names
-            threshold: threshold for outputs binarization
-            eps: epsilon to avoid zero division
-        """
+        """Init."""
         metric_fn = partial(_dice, eps=eps)
         super().__init__(
             metric_fn=metric_fn,
@@ -278,41 +275,40 @@ class DiceMetric(RegionBasedMetric):
 
 class TrevskyMetric(RegionBasedMetric):
     """
-    Trevsky Metric
+    Trevsky Metric,
     trevsky score = tp / (tp + fp * beta + fn * alpha)
+
+    Args:
+        alpha: false negative coefficient, bigger alpha bigger penalty for
+            false negative. if beta is None, alpha must be in (0, 1)
+        beta: false positive coefficient, bigger alpha bigger penalty for false
+            positive. Must be in (0, 1), if None beta = (1 - alpha)
+        class_dim: indicates class dimension (K) for ``outputs`` and
+            ``targets`` tensors (default = 1)
+        weights: class weights
+        class_names: class names
+        threshold: threshold for outputs binarization
+        eps: epsilon to avoid zero division
+        compute_on_call: Computes and returns metric value during metric call.
+            Used for per-batch logging. default: True
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
         self,
         alpha: float,
         beta: Optional[float] = None,
-        compute_on_call: bool = True,
-        prefix: Optional[str] = None,
-        suffix: Optional[str] = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
         eps: float = 1e-7,
+        compute_on_call: bool = True,
+        prefix: Optional[str] = None,
+        suffix: Optional[str] = None,
     ):
-        """
-
-        Args:
-            alpha: false negative coefficient, bigger alpha bigger penalty for
-                false negative. if beta is None, alpha must be in (0, 1)
-            beta: false positive coefficient, bigger alpha bigger penalty for false
-                positive. Must be in (0, 1), if None beta = (1 - alpha)
-            compute_on_call: Computes and returns metric value during metric call.
-                Used for per-batch logging. default: True
-            prefix: metric prefix
-            suffix: metric suffix
-            class_dim: indicates class dimension (K) for ``outputs`` and
-                ``targets`` tensors (default = 1)
-            weights: class weights
-            class_names: class names
-            threshold: threshold for outputs binarization
-            eps: epsilon to avoid zero division
-        """
+        """Init."""
         if beta is None:
             assert 0 < alpha < 1, "if beta=None, alpha must be in (0, 1)"
             beta = 1 - alpha

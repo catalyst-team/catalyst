@@ -6,15 +6,15 @@ import torch
 
 
 class IMetric(ABC):
-    """Interface for all Metrics."""
+    """Interface for all Metrics.
+
+    Args:
+        compute_on_call: Computes and returns metric value during metric call.
+            Used for per-batch logging. default: True
+    """
 
     def __init__(self, compute_on_call: bool = True):
-        """Interface for all Metrics.
-
-        Args:
-            compute_on_call: Computes and returns metric value during metric call.
-                Used for per-batch logging. default: True
-        """
+        """Interface for all Metrics."""
         self.compute_on_call = compute_on_call
 
     @abstractmethod
@@ -94,10 +94,16 @@ class ICallbackBatchMetric(IMetric):
 
 
 class ICallbackLoaderMetric(IMetric):
-    """Interface for all Metrics."""
+    """Interface for all Metrics.
+
+    Args:
+        compute_on_call: @TODO: docs
+        prefix:  @TODO: docs
+        suffix:  @TODO: docs
+    """
 
     def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
-        """@TODO: docs here"""
+        """Init."""
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
         self.suffix = suffix or ""
@@ -144,26 +150,25 @@ class ICallbackLoaderMetric(IMetric):
 
 
 class AccumulationMetric(ICallbackLoaderMetric):
-    """This metric accumulates all the input data along loader"""
+    """This metric accumulates all the input data along loader
+
+    Args:
+        accumulative_fields: list of keys to accumulate data from batch
+        compute_on_call: if True, allows compute metric's value on call
+        prefix: metric's prefix
+        suffix: metric's suffix
+    """
 
     def __init__(
         self,
+        accumulative_fields: Iterable[str] = None,
         compute_on_call: bool = True,
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
-        accumulative_fields: Iterable[str] = (),
     ) -> None:
-        """
-        Init AccumulationMetric
-
-        Args:
-            compute_on_call: if True, allows compute metric's value on call
-            prefix: metric's prefix
-            suffix: metric's suffix
-            accumulative_fields: list of keys to accumulate data from batch
-        """
+        """Init AccumulationMetric"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
-        self.accumulative_fields = accumulative_fields
+        self.accumulative_fields = accumulative_fields or ()
         self.storage = None
         self.num_samples = None
         self.collected_batches = None

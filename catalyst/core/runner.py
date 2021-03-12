@@ -11,12 +11,8 @@ from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
 from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
-from catalyst.core.functional import (
-    filter_callbacks_by_node,
-    sort_callbacks_by_order,
-    validate_loaders,
-)
 from catalyst.core.logger import ILogger
+from catalyst.core.misc import filter_callbacks_by_node, sort_callbacks_by_order, validate_loaders
 from catalyst.core.trial import ITrial
 from catalyst.engines.torch import DistributedDataParallelEngine
 from catalyst.typing import (
@@ -56,16 +52,16 @@ class IRunner(ICallback, ILogger, ABC):
     An abstraction that contains all the logic of how to run the experiment,
     stages, epochs, loaders and batches.
 
+    Args:
+        model: Torch model object
+        engine: IEngine instance
+
     .. note::
         To learn more about Catalyst Core concepts, please check out
 
             - :py:mod:`catalyst.core.runner.IRunner`
             - :py:mod:`catalyst.core.engine.IEngine`
             - :py:mod:`catalyst.core.callback.Callback`
-
-    Args:
-        model: Torch model object
-        engine: IEngine instance
     """
 
     def __init__(
