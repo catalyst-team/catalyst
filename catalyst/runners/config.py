@@ -12,8 +12,8 @@ from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
 from catalyst.core.callback import Callback
-from catalyst.core.functional import callback_isinstance
 from catalyst.core.logger import ILogger
+from catalyst.core.misc import callback_isinstance
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
 from catalyst.engines import IEngine
@@ -340,7 +340,15 @@ class ConfigRunner(IRunner):
 
 
 class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
-    """@TODO: docs."""
+    """@TODO: docs.
+
+    Args:
+        config:
+        input_key:
+        output_key:
+        target_key:
+        loss_key:
+    """
 
     def __init__(
         self,
@@ -350,7 +358,7 @@ class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
         target_key: str = "targets",
         loss_key: str = "loss",
     ):
-        """@TODO: docs."""
+        """Init."""
         ISupervisedRunner.__init__(
             self,
             input_key=input_key,

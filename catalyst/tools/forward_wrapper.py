@@ -4,11 +4,15 @@ from torch import nn
 class ModelForwardWrapper(nn.Module):
     """Model that calls specified method instead of forward.
 
+    Args:
+        model: @TODO: docs
+        method_name: @TODO: docs
+
     (Workaround, single method tracing is not supported)
     """
 
     def __init__(self, model, method_name):
-        """@TODO: docs."""
+        """Init"""
         super().__init__()
         self.model = model
         self.method_name = method_name

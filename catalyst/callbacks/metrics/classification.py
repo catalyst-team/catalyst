@@ -6,7 +6,16 @@ from catalyst.metrics._classification import (
 
 
 class PrecisionRecallF1SupportCallback(BatchMetricCallback):
-    """Multiclass PrecisionRecallF1Support metric callback."""
+    """Multiclass PrecisionRecallF1Support metric callback.
+
+    Args:
+        input_key: input key to use for metric calculation, specifies our `y_pred`
+        target_key: output key to use for metric calculation, specifies our `y_true`
+        num_classes: number of classes
+        zero_division: @TODO: docs
+        prefix: metric's prefix
+        suffix: metric's suffix
+    """
 
     def __init__(
         self,
@@ -17,13 +26,7 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         prefix: str = None,
         suffix: str = None,
     ):
-        """
-        Args:
-            input_key: input key to use for metric calculation, specifies our `y_pred`
-            target_key: output key to use for metric calculation, specifies our `y_true`
-            prefix: key for the metric's name
-            num_classes: number of classes
-        """
+        """Init."""
         super().__init__(
             metric=MulticlassPrecisionRecallF1SupportMetric(
                 num_classes=num_classes, zero_division=zero_division, prefix=prefix, suffix=suffix
@@ -34,7 +37,16 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
 
 
 class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
-    """Multilabel PrecisionRecallF1Support metric callback."""
+    """Multilabel PrecisionRecallF1Support metric callback.
+
+    Args:
+        input_key: input key to use for metric calculation, specifies our `y_pred`
+        target_key: output key to use for metric calculation, specifies our `y_true`
+        num_classes: number of classes
+        zero_division: @TODO: docs
+        prefix: metric's prefix
+        suffix: metric's suffix
+    """
 
     def __init__(
         self,
@@ -45,13 +57,7 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         prefix: str = None,
         suffix: str = None,
     ):
-        """
-        Args:
-            input_key: input key to use for metric calculation, specifies our `y_pred`
-            target_key: output key to use for metric calculation, specifies our `y_true`
-            prefix: key for the metric's name
-            num_classes: number of classes
-        """
+        """Init."""
         super().__init__(
             metric=MultilabelPrecisionRecallF1SupportMetric(
                 num_classes=num_classes, zero_division=zero_division, prefix=prefix, suffix=suffix

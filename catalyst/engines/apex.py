@@ -122,27 +122,38 @@ def _wrap_into_data_parallel_with_apex(
 
 
 class APEXEngine(DeviceEngine):
-    """@TODO: docs."""
+    """@TODO: docs.
 
-    def __init__(self, device: str = "cuda", opt_level: str = "O1"):
-        """
-        Args:
-            device (str): use device, default is `"cpu"`.
-            opt_level (str): optimization level, should be one of
-                "O0", "O1", "O2", "O3" or "O4".
+    Args:
+        device: use device, default is `"cuda"`.
+        opt_level: optimization level, should be one of
+            "O0", "O1", "O2", "O3" or "O4".
 
-                    - "O0" - no-op training
-                    - "O1" - mixed precision (FP16) training
-                    - "O2" - "almost" mixed precision training
-                    - "O3" - another implementation of mixed precision training
+                - "O0" - no-op training
+                - "O1" - mixed precision (FP16) training
+                - "O2" - "almost" mixed precision training
+                - "O3" - another implementation of mixed precision training
 
-                Details about levels can be found here:
-                    https://nvidia.github.io/apex/amp.html#opt-levels
+            Details about levels can be found here:
+                https://nvidia.github.io/apex/amp.html#opt-levels
 
-                Default is "O1".
-        """
+            Default is "O1".
+        keep_batchnorm_fp32: TODO
+        loss_scale: TODO
+    """
+
+    def __init__(
+        self,
+        device: str = "cuda",
+        opt_level: str = "O1",
+        keep_batchnorm_fp32: bool = None,
+        loss_scale: Union[float, str] = None,
+    ):
+        """Init."""
         super().__init__(device)
         self.opt_level = opt_level
+        self.keep_batchnorm_fp32 = keep_batchnorm_fp32
+        self.loss_scale = loss_scale
 
     def __repr__(self) -> str:  # noqa: D105
         return f"{self.__class__.__name__}(device='{self.device}',opt_level='{self.opt_level}')"
@@ -166,7 +177,13 @@ class APEXEngine(DeviceEngine):
 
         # from official docs:
         #   https://nvidia.github.io/apex/amp.html#opt-levels-and-properties
-        model, optimizer = _initialize_apex(model, optimizer, opt_level=self.opt_level)
+        model, optimizer = _initialize_apex(
+            model,
+            optimizer,
+            opt_level=self.opt_level,
+            keep_batchnorm_fp32=self.keep_batchnorm_fp32,
+            loss_scale=self.loss_scale,
+        )
 
         # scheduler
         scheduler = scheduler_fn()
@@ -254,7 +271,29 @@ class DataParallelApexEngine(APEXEngine):
 
 
 class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
-    """@TODO: docs."""
+    """@TODO: docs.
+
+    Args:
+        address: process address to use (required for PyTorch backend), default is `"localhost"`.
+        port: process port to listen (required for PyTorch backend), default is `"12345"`.
+        backend: multiprocessing backend to use, default is `"nccl"`.
+        world_size: number of processes.
+        opt_level: optimization level, should be one of
+            "O0", "O1", "O2", "O3" or "O4".
+
+                - "O0" - no-op training
+                - "O1" - mixed precision (FP16) training
+                - "O2" - "almost" mixed precision training
+                - "O3" - another implementation of mixed precision training
+
+            Details about levels can be found here:
+                https://nvidia.github.io/apex/amp.html#opt-levels
+
+            Default is "O1".
+        keep_batchnorm_fp32: TODO
+        loss_scale: TODO
+        delay_all_reduce: TODO
+    """
 
     def __init__(
         self,
@@ -263,34 +302,11 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         backend: str = "nccl",
         world_size: int = None,
         opt_level: str = "O1",
-        delay_all_reduce: bool = True,
         keep_batchnorm_fp32: bool = None,
         loss_scale: Union[float, str] = None,
+        delay_all_reduce: bool = True,
     ):
-        """
-        Args:
-            address (str): process address to use (required for PyTorch backend),
-                default is `"localhost"`.
-            port (str): process port to listen (required for PyTorch backend),
-                default is `"12345"`.
-            backend (str): multiprocessing backend to use,
-                default is `"nccl"`.
-            world_size (int): number of processes.
-            opt_level (str): optimization level, should be one of
-                "O0", "O1", "O2", "O3" or "O4".
-
-                    - "O0" - no-op training
-                    - "O1" - mixed precision (FP16) training
-                    - "O2" - "almost" mixed precision training
-                    - "O3" - another implementation of mixed precision training
-
-                Details about levels can be found here:
-                    https://nvidia.github.io/apex/amp.html#opt-levels
-
-                Default is "O1".
-            delay_all_reduce (bool): TODO
-            keep_batchnorm_fp32 (bool): TODO
-        """
+        """Init."""
         super().__init__()
         self.address = address
         self.port = port

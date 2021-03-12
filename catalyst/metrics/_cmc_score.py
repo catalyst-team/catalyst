@@ -8,7 +8,101 @@ from catalyst.utils.distributed import get_rank
 
 
 class CMCMetric(AccumulationMetric):
-    """Cumulative Matching Characteristics"""
+    """Cumulative Matching Characteristics
+
+    Args:
+        embeddings_key: key of embedding tensor in batch
+        labels_key: key of label tensor in batch
+        is_query_key: key of query flag tensor in batch
+        topk_args: list of k, specifies which cmc@k should be calculated
+        compute_on_call: if True, allows compute metric's value on call
+        prefix: metric's prefix
+        suffix: metric's suffix
+
+    Examples:
+        >>> from collections import OrderedDict
+        >>> from torch.optim import Adam
+        >>> from torch.utils.data import DataLoader
+        >>> from catalyst.contrib import nn
+        >>> from catalyst.contrib.datasets import MnistMLDataset, MnistQGDataset
+        >>> from catalyst.data import BalanceBatchSampler, HardTripletsSampler
+        >>> from catalyst.dl import ControlFlowCallback, LoaderMetricCallback, SupervisedRunner
+        >>> from catalyst.metrics import CMCMetric
+        >>>
+        >>> dataset_root = "."
+        >>>
+        >>> # download dataset for train and val, create loaders
+        >>> dataset_train = MnistMLDataset(root=dataset_root, download=True, transform=None)
+        >>> sampler = BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)
+        >>> train_loader = DataLoader(
+        >>>     dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size
+        >>> )
+        >>> dataset_valid = MnistQGDataset(root=dataset_root, transform=None, gallery_fraq=0.2)
+        >>> valid_loader = DataLoader(dataset=dataset_valid, batch_size=1024)
+        >>>
+        >>> # model, optimizer, criterion
+        >>> model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 100))
+        >>> optimizer = Adam(model.parameters())
+        >>> sampler_inbatch = HardTripletsSampler(norm_required=False)
+        >>> criterion = nn.TripletMarginLossWithSampler(
+        >>>     margin=0.5, sampler_inbatch=sampler_inbatch
+        >>> )
+        >>>
+        >>> # batch data processing
+        >>> class CustomRunner(SupervisedRunner):
+        >>>     def handle_batch(self, batch):
+        >>>         if self.is_train_loader:
+        >>>             images, targets = batch["features"].float(), batch["targets"].long()
+        >>>             features = model(images)
+        >>>             self.batch = {
+        >>>                 "embeddings": features,
+        >>>                 "targets": targets,
+        >>>             }
+        >>>         else:
+        >>>             images, targets, is_query = (
+        >>>                 batch["features"].float(),
+        >>>                 batch["targets"].long(),
+        >>>                 batch["is_query"].bool(),
+        >>>             )
+        >>>             features = model(images)
+        >>>             self.batch = {
+        >>>                 "embeddings": features,
+        >>>                 "targets": targets,
+        >>>                 "is_query": is_query,
+        >>>             }
+        >>>
+        >>> # training
+        >>> runner = CustomRunner(input_key="features", output_key="embeddings")
+        >>> runner.train(
+        >>>     model=model,
+        >>>     criterion=criterion,
+        >>>     optimizer=optimizer,
+        >>>     callbacks=OrderedDict(
+        >>>         {
+        >>>             "cmc": ControlFlowCallback(
+        >>>                 LoaderMetricCallback(
+        >>>                     CMCMetric(
+        >>>                         embeddings_key="embeddings",
+        >>>                         labels_key="targets",
+        >>>                         is_query_key="is_query",
+        >>>                         topk_args=(1, 3)
+        >>>                     ),
+        >>>                     input_key=["embeddings", "is_query"],
+        >>>                     target_key=["targets"]
+        >>>                 ),
+        >>>                 loaders="valid",
+        >>>             ),
+        >>>         }
+        >>>     ),
+        >>>     loaders=OrderedDict({"train": train_loader, "valid": valid_loader}),
+        >>>     valid_loader="valid",
+        >>>     valid_metric="cmc01",
+        >>>     minimize_valid_metric=False,
+        >>>     logdir="./logs",
+        >>>     verbose=True,
+        >>>     num_epochs=3,
+        >>> )
+    """
 
     def __init__(
         self,
@@ -20,102 +114,7 @@ class CMCMetric(AccumulationMetric):
         prefix: Optional[str] = None,
         suffix: Optional[str] = None,
     ) -> None:
-        """
-        Init CMCMetric
-
-        Args:
-            embeddings_key: key of embedding tensor in batch
-            labels_key: key of label tensor in batch
-            is_query_key: key of query flag tensor in batch
-            topk_args: list of k, specifies which cmc@k should be calculated
-            compute_on_call: if True, allows compute metric's value on call
-            prefix: metric's prefix
-            suffix: metric's suffix
-
-        Examples:
-            >>> from collections import OrderedDict
-            >>> from torch.optim import Adam
-            >>> from torch.utils.data import DataLoader
-            >>> from catalyst.contrib import nn
-            >>> from catalyst.contrib.datasets import MnistMLDataset, MnistQGDataset
-            >>> from catalyst.data import BalanceBatchSampler, HardTripletsSampler
-            >>> from catalyst.dl import ControlFlowCallback, LoaderMetricCallback, SupervisedRunner
-            >>> from catalyst.metrics import CMCMetric
-            >>>
-            >>> dataset_root = "."
-            >>>
-            >>> # download dataset for train and val, create loaders
-            >>> dataset_train = MnistMLDataset(root=dataset_root, download=True, transform=None)
-            >>> sampler = BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)
-            >>> train_loader = DataLoader(
-            >>>     dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size
-            >>> )
-            >>> dataset_valid = MnistQGDataset(root=dataset_root, transform=None, gallery_fraq=0.2)
-            >>> valid_loader = DataLoader(dataset=dataset_valid, batch_size=1024)
-            >>>
-            >>> # model, optimizer, criterion
-            >>> model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 100))
-            >>> optimizer = Adam(model.parameters())
-            >>> sampler_inbatch = HardTripletsSampler(norm_required=False)
-            >>> criterion = nn.TripletMarginLossWithSampler(
-            >>>     margin=0.5, sampler_inbatch=sampler_inbatch
-            >>> )
-            >>>
-            >>> # batch data processing
-            >>> class CustomRunner(SupervisedRunner):
-            >>>     def handle_batch(self, batch):
-            >>>         if self.is_train_loader:
-            >>>             images, targets = batch["features"].float(), batch["targets"].long()
-            >>>             features = model(images)
-            >>>             self.batch = {
-            >>>                 "embeddings": features,
-            >>>                 "targets": targets,
-            >>>             }
-            >>>         else:
-            >>>             images, targets, is_query = (
-            >>>                 batch["features"].float(),
-            >>>                 batch["targets"].long(),
-            >>>                 batch["is_query"].bool(),
-            >>>             )
-            >>>             features = model(images)
-            >>>             self.batch = {
-            >>>                 "embeddings": features,
-            >>>                 "targets": targets,
-            >>>                 "is_query": is_query,
-            >>>             }
-            >>>
-            >>> # training
-            >>> runner = CustomRunner(input_key="features", output_key="embeddings")
-            >>> runner.train(
-            >>>     model=model,
-            >>>     criterion=criterion,
-            >>>     optimizer=optimizer,
-            >>>     callbacks=OrderedDict(
-            >>>         {
-            >>>             "cmc": ControlFlowCallback(
-            >>>                 LoaderMetricCallback(
-            >>>                     CMCMetric(
-            >>>                         embeddings_key="embeddings",
-            >>>                         labels_key="targets",
-            >>>                         is_query_key="is_query",
-            >>>                         topk_args=(1, 3)
-            >>>                     ),
-            >>>                     input_key=["embeddings", "is_query"],
-            >>>                     target_key=["targets"]
-            >>>                 ),
-            >>>                 loaders="valid",
-            >>>             ),
-            >>>         }
-            >>>     ),
-            >>>     loaders=OrderedDict({"train": train_loader, "valid": valid_loader}),
-            >>>     valid_loader="valid",
-            >>>     valid_metric="cmc01",
-            >>>     minimize_valid_metric=False,
-            >>>     logdir="./logs",
-            >>>     verbose=True,
-            >>>     num_epochs=3,
-            >>> )
-        """
+        """Init CMCMetric"""
         super().__init__(
             compute_on_call=compute_on_call,
             prefix=prefix,

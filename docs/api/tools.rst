@@ -11,6 +11,7 @@ Tools
 FrozenClass
 ----------------------
 .. autoclass:: catalyst.tools.frozen_class.FrozenClass
+    :exclude-members: __init__
     :members:
     :undoc-members:
     :show-inheritance:
@@ -18,6 +19,7 @@ FrozenClass
 MetricHandler
 ----------------------
 .. autoclass:: catalyst.tools.metric_handler.MetricHandler
+    :exclude-members: __init__
     :members:
     :undoc-members:
     :show-inheritance:
@@ -25,6 +27,7 @@ MetricHandler
 ModelForwardWrapper
 ----------------------
 .. autoclass:: catalyst.tools.forward_wrapper.ModelForwardWrapper
+    :exclude-members: __init__
     :members:
     :undoc-members:
     :show-inheritance:
@@ -32,6 +35,7 @@ ModelForwardWrapper
 Registry
 ----------------------
 .. autoclass:: catalyst.tools.registry.Registry
+    :exclude-members: __init__
     :members:
     :undoc-members:
     :show-inheritance:
@@ -39,6 +43,7 @@ Registry
 TimeManager
 ----------------------
 .. autoclass:: catalyst.tools.time_manager.TimeManager
+    :exclude-members: __init__
     :members:
     :undoc-members:
     :show-inheritance:

@@ -7,7 +7,7 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
 from catalyst import dl, metrics
-from catalyst.callbacks.transform import BatchTransformCallback
+from catalyst.callbacks.batch_transform import BatchTransformCallback
 from catalyst.contrib.datasets import MNIST
 from catalyst.data.transforms import ToTensor
 

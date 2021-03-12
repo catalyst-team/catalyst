@@ -6,15 +6,14 @@ from catalyst.metrics._metric import IMetric
 
 
 class AdditiveValueMetric(IMetric):
-    """This metric computes mean and std values of input data."""
+    """This metric computes mean and std values of input data.
+
+    Args:
+        compute_on_call: if True, computes and returns metric value during metric call
+    """
 
     def __init__(self, compute_on_call: bool = True):
-        """
-        Init AdditiveValueMetric
-
-        Args:
-            compute_on_call: if True, computes and returns metric value during metric call
-        """
+        """Init AdditiveValueMetric"""
         super().__init__(compute_on_call=compute_on_call)
         self.n = 0
         self.value = 0.0

@@ -14,20 +14,21 @@ class ICriterionCallback(Callback):
 
 # @TODO: add KV support
 class CriterionCallback(ICriterionCallback):
-    """@TODO: docs."""
+    """Criterion callback, abstraction over criterion step.
+
+    Args:
+        input_key:
+        target_key:
+        metric_key: prefix for metrics and output key for loss
+            in ``runner.batch_metrics`` dictionary
+        criterion_key: A key to take a criterion in case
+            there are several of them and they are in a dictionary format.
+    """
 
     def __init__(
         self, input_key: str, target_key: str, metric_key: str, criterion_key: str = None,
     ):
-        """
-        Args:
-            input_key:
-            target_key:
-            metric_key: prefix for metrics and output key for loss
-                in ``runner.batch_metrics`` dictionary
-            criterion_key: A key to take a criterion in case
-                there are several of them and they are in a dictionary format.
-        """
+        """Init."""
         super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
         self.input_key = input_key
         self.target_key = target_key
@@ -55,8 +56,8 @@ class CriterionCallback(ICriterionCallback):
 
         # NOTE: similar to amp guides in docs
         # https://pytorch.org/docs/stable/notes/amp_examples.html
-        with runner.engine.autocast():
-            loss = self.criterion(inputs, targets)
+        # with runner.engine.autocast():
+        loss = self.criterion(inputs, targets)
 
         runner.batch_metrics.update({self.metric_key: loss})
         self.additive_metric.update(loss.detach().cpu(), len(targets))

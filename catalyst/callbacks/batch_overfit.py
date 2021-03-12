@@ -12,6 +12,9 @@ class BatchOverfitCallback(Callback):
     """Callback to overfit loaders with specified number of batches.
     By default we use ``1`` batch for loader.
 
+    Args:
+        kwargs: loader names and their number of batches to overfit.
+
     For example, if you have ``train``, ``train_additional``,
     ``valid`` and ``valid_additional`` loaders and wan't to overfit
     ``train`` on first 1 batch,
@@ -84,10 +87,7 @@ class BatchOverfitCallback(Callback):
     """
 
     def __init__(self, **kwargs):
-        """
-        Args:
-            kwargs: loader names and their number of batches to overfit.
-        """
+        """Init."""
         super().__init__(order=CallbackOrder.internal)
 
         self.loader_batches = {}

@@ -1,9 +1,14 @@
 # @TODO: we also can make it BestScoreHanlder and store best score inside
 class MetricHandler:
-    """@TODO: docs."""
+    """@TODO: docs.
+
+    Args:
+        minimize: @TODO: docs
+        min_delta: @TODO: docs
+    """
 
     def __init__(self, minimize: bool = True, min_delta: float = 1e-6):
-        """@TODO: docs."""
+        """Init."""
         self.minimize = minimize
         self.min_delta = min_delta
         # self.best_score = None

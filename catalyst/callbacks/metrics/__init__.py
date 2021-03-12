@@ -4,7 +4,6 @@ from catalyst.settings import SETTINGS
 
 from catalyst.callbacks.metrics.accuracy import AccuracyCallback, MultilabelAccuracyCallback
 from catalyst.callbacks.metrics.auc import AUCCallback
-from catalyst.callbacks.metrics.custom import CustomMetricCallback
 
 from catalyst.callbacks.metrics.classification import (
     PrecisionRecallF1SupportCallback,
@@ -16,6 +15,8 @@ from catalyst.callbacks.metrics.cmc_score import CMCScoreCallback
 if SETTINGS.ml_required:
     from catalyst.callbacks.metrics.confusion_matrix import ConfusionMatrixCallback
 
+from catalyst.callbacks.metrics.functional import FunctionalMetricCallback
+
 from catalyst.callbacks.metrics.recsys import (
     HitrateCallback,
     MAPCallback,
@@ -24,7 +25,7 @@ from catalyst.callbacks.metrics.recsys import (
 )
 
 from catalyst.callbacks.metrics.segmentation import (
-    IOUCallback,
     DiceCallback,
+    IOUCallback,
     TrevskyCallback,
 )

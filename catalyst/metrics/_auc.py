@@ -8,10 +8,16 @@ from catalyst.utils.distributed import all_gather, get_rank
 
 
 class AUCMetric(ICallbackLoaderMetric):
-    """@TODO: docs here"""
+    """@TODO: docs here
+
+    Args:
+        compute_on_call: @TODO: docs
+        prefix: @TODO: docs
+        suffix:@TODO: docs
+    """
 
     def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
-        """@TODO: docs here"""
+        """Init."""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_name = f"{self.prefix}auc{self.suffix}"
         self.scores = []
