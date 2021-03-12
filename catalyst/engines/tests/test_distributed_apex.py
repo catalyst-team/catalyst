@@ -3,6 +3,7 @@
 from typing import Any, Dict, List
 import logging
 import os
+import random
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -34,6 +35,7 @@ if NUM_CUDA_DEVICES > 1:
 
 
 OPT_LEVELS = ("O0", "O1", "O2", "O3")
+DDP_ADDRESS = random.randint(22222, 99999)
 
 
 class CustomRunner(IRunner):
@@ -105,7 +107,7 @@ class CustomRunner(IRunner):
 def test_train_distributed_parallel_apex():
     for idx, opt_level in enumerate(OPT_LEVELS):
         with TemporaryDirectory() as logdir:
-            runner = CustomRunner(logdir, opt_level, str(22222 + idx))
+            runner = CustomRunner(logdir, opt_level, DDP_ADDRESS + random.randint(1, 100))
             runner.run()
 
 
@@ -172,4 +174,4 @@ def train_from_config(port, logdir, opt_lvl):
 def test_config_train_distributed_parallel_apex():
     for idx, opt_level in enumerate(OPT_LEVELS):
         with TemporaryDirectory() as logdir:
-            train_from_config(str(33333 + idx), logdir, opt_level)
+            train_from_config(DDP_ADDRESS + random.randint(100, 200), logdir, opt_level)
