@@ -14,6 +14,7 @@ class IOUCallback(BatchMetricCallback):
         weights: @TODO: docs
         class_names: @TODO: docs
         threshold: @TODO: docs
+        log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
     """
@@ -26,6 +27,7 @@ class IOUCallback(BatchMetricCallback):
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
+        log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -41,6 +43,7 @@ class IOUCallback(BatchMetricCallback):
             ),
             input_key=input_key,
             target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 
@@ -54,6 +57,7 @@ class DiceCallback(BatchMetricCallback):
         weights: @TODO: docs
         class_names: @TODO: docs
         threshold: @TODO: docs
+        log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
     """
@@ -66,6 +70,7 @@ class DiceCallback(BatchMetricCallback):
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
+        log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -81,6 +86,7 @@ class DiceCallback(BatchMetricCallback):
             ),
             input_key=input_key,
             target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 
@@ -94,6 +100,7 @@ class TrevskyCallback(BatchMetricCallback):
         weights: @TODO: docs
         class_names: @TODO: docs
         threshold: @TODO: docs
+        log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
     """
@@ -104,12 +111,13 @@ class TrevskyCallback(BatchMetricCallback):
         target_key: str,
         alpha: float,
         beta: Optional[float] = None,
-        prefix: str = None,
-        suffix: str = None,
         class_dim: int = 1,
         weights: Optional[List[float]] = None,
         class_names: Optional[List[str]] = None,
         threshold: Optional[float] = None,
+        log_on_batch: bool = True,
+        prefix: str = None,
+        suffix: str = None,
     ):
         """Init."""
         super().__init__(
@@ -125,6 +133,7 @@ class TrevskyCallback(BatchMetricCallback):
             ),
             input_key=input_key,
             target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 

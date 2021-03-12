@@ -155,8 +155,8 @@ class AccumulationMetric(ICallbackLoaderMetric):
     Args:
         accumulative_fields: list of keys to accumulate data from batch
         compute_on_call: if True, allows compute metric's value on call
-        prefix: metric's prefix
-        suffix: metric's suffix
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
