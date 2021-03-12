@@ -18,7 +18,7 @@ from catalyst.core.logger import ILogger
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
-from catalyst.engines import IEngine
+from catalyst.engines import get_engine, IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
@@ -35,7 +35,6 @@ from catalyst.typing import (
 )
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-from catalyst.utils.torch import get_engine
 
 
 def _process_loaders(
