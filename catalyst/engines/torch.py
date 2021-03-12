@@ -120,11 +120,11 @@ class DeviceEngine(IEngine):
 
     def save_checkpoint(self, checkpoint: Mapping[str, Any], path: str):
         """@TODO: docs."""
-        return save_checkpoint(checkpoint=checkpoint, path=path)
+        save_checkpoint(checkpoint=checkpoint, path=path)
 
     def load_checkpoint(self, path: str):
         """@TODO: docs."""
-        return load_checkpoint(path=path)
+        load_checkpoint(path=path)
 
 
 class DataParallelEngine(DeviceEngine):
@@ -287,6 +287,12 @@ class DistributedDataParallelEngine(DeviceEngine):
         """@TODO: docs."""
         optimizer.step()
         dist.barrier()
+
+    def save_checkpoint(self, checkpoint: Mapping[str, Any], path: str):
+        """@TODO: docs."""
+        # dist.barrier()
+        if self.is_master_process:
+            super().save_checkpoint(checkpoint=checkpoint, path=path)
 
 
 __all__ = ["DeviceEngine", "DataParallelEngine", "DistributedDataParallelEngine"]
