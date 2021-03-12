@@ -470,9 +470,7 @@ def pack_checkpoint(
     if isinstance(model, dict):
         for key, value in model.items():
             model_module = get_nn_from_ddp_module(value)
-            checkpoint[f"model_{key}_state_dict"] = maybe_recursive_call(
-                model_module, "state_dict"
-            )
+            checkpoint[f"model_{key}_state_dict"] = maybe_recursive_call(model_module, "state_dict")
     else:
         model_module = get_nn_from_ddp_module(model)
         checkpoint["model_state_dict"] = maybe_recursive_call(model_module, "state_dict")
@@ -565,7 +563,6 @@ __all__ = [
     "get_optimizer_momentum_list",
     "set_optimizer_momentum",
     "get_device",
-    "get_engine",
     "get_available_gpus",
     "any2device",
     "prepare_cudnn",
