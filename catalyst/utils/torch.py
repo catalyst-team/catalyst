@@ -183,10 +183,10 @@ def get_device() -> torch.device:
     return torch.device(device)
 
 
-def get_default_engine(
+def get_available_engine(
     fp16: bool = False, ddp: bool = False, amp: bool = False, apex: bool = False
 ) -> "IEngine":
-    """Default engine based on given arguments.
+    """Returns available engine based on given arguments.
 
     Args:
         fp16 (bool): option to use fp16 for training. Default is `False`.
@@ -648,7 +648,7 @@ __all__ = [
     "get_requires_grad",
     "set_requires_grad",
     "get_network_output",
-    "get_default_engine",
+    "get_available_engine",
     "detach_tensor",
     "trim_tensors",
     "get_optimal_inner_init",

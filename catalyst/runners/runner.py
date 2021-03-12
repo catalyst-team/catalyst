@@ -35,7 +35,7 @@ from catalyst.typing import (
 )
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-from catalyst.utils.torch import get_default_engine
+from catalyst.utils.torch import get_available_engine
 
 
 def _process_loaders(
@@ -123,7 +123,7 @@ class Runner(IRunner):
 
     def get_engine(self) -> IEngine:
         """Returns the engine for a run."""
-        return self._engine or _get_default_engine()
+        return self._engine or get_available_engine()
 
     def get_loggers(self) -> Dict[str, ILogger]:
         """Returns the logger for a run."""
@@ -289,7 +289,7 @@ class Runner(IRunner):
                 Note: Works only with python scripts. No jupyter support.
         """
         # experiment setup
-        self._engine = engine or get_default_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
+        self._engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
         self._trial = trial
         self._loggers = loggers
         # the data

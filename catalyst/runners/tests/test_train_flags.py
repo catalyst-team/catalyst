@@ -1,14 +1,12 @@
-# flake: noqa
+# flake8: noqa
 
-import os
 from tempfile import TemporaryDirectory
 
-import numpy as np
 import pytest
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.engines import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
+from catalyst.engines import DistributedDataParallelEngine
 from catalyst.runners import Runner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
@@ -84,7 +82,7 @@ class CustomRunner(Runner):
     reason="AMP is unavailable",
 )
 def test_amp_arg():
-    with TemporaryDirectory() as logdir, pytest.raises(EngineIsOk):
+    with TemporaryDirectory(), pytest.raises(EngineIsOk):
         runner = CustomRunner()
         runner._expected_engine = AMPEngine
         runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), fp16=True)
@@ -95,7 +93,7 @@ def test_amp_arg():
     reason="AMP is unavailable or not enough GPUs",
 )
 def test_dp_amp_arg():
-    with TemporaryDirectory() as logdir, pytest.raises(EngineIsOk):
+    with TemporaryDirectory(), pytest.raises(EngineIsOk):
         runner = CustomRunner()
         runner._expected_engine = DataParallelAMPEngine
         runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), fp16=True)
@@ -106,7 +104,7 @@ def test_dp_amp_arg():
     reason="APEX is unavailable",
 )
 def test_apex_arg():
-    with TemporaryDirectory() as logdir, pytest.raises(EngineIsOk):
+    with TemporaryDirectory(), pytest.raises(EngineIsOk):
         runner = CustomRunner()
         runner._expected_engine = APEXEngine
         runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), apex=True)
@@ -117,7 +115,7 @@ def test_apex_arg():
     reason="APEX is unavailable or not enough GPUs",
 )
 def test_dp_apex_arg():
-    with TemporaryDirectory() as logdir, pytest.raises(EngineIsOk):
+    with TemporaryDirectory(), pytest.raises(EngineIsOk):
         runner = CustomRunner()
         runner._expected_engine = DataParallelApexEngine
         runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), apex=True)
@@ -127,7 +125,7 @@ def test_dp_apex_arg():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES > 1), reason="Not enough GPUs",
 )
 def test_ddp_arg():
-    with TemporaryDirectory() as logdir, pytest.raises(Exception):
+    with TemporaryDirectory(), pytest.raises(Exception):
         runner = CustomRunner()
         runner._expected_engine = DistributedDataParallelEngine
         runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True)
@@ -138,7 +136,7 @@ def test_ddp_arg():
     reason="AMP is unavailable or not enough GPUs",
 )
 def test_ddp_amp_arg():
-    with TemporaryDirectory() as logdir, pytest.raises(Exception):
+    with TemporaryDirectory(), pytest.raises(Exception):
         runner = CustomRunner()
         runner._expected_engine = DistributedDataParallelAMPEngine
         runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True, fp16=True)
@@ -149,7 +147,7 @@ def test_ddp_amp_arg():
     reason="APEX is unavailable or not enough GPUs",
 )
 def test_ddp_apex_arg():
-    with TemporaryDirectory() as logdir, pytest.raises(Exception):
+    with TemporaryDirectory(), pytest.raises(Exception):
         runner = CustomRunner()
         runner._expected_engine = DistributedDataParallelApexEngine
         runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True, apex=True)
