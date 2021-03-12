@@ -25,7 +25,7 @@ class ConfusionMatrixCallback(Callback):
         self,
         input_key: str,
         target_key: str,
-        prefix: str = "confusion_matrix",
+        prefix: str = None,
         class_names: List[str] = None,
         num_classes: int = None,
         normalized: bool = False,
@@ -34,7 +34,7 @@ class ConfusionMatrixCallback(Callback):
         """Callback initialisation."""
         super().__init__(CallbackOrder.metric, CallbackNode.all)
         assert num_classes is not None or class_names is not None
-        self.prefix = prefix
+        self.prefix = prefix or "confusion_matrix"
         self.input_key = input_key
         self.target_key = target_key
 

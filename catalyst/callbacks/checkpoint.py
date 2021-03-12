@@ -64,10 +64,13 @@ def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> 
         FileNotFoundError: when file specified in ``filename``
             is not exist.
     """
+    is_master_process = runner.engine.is_master_process
+
     if not os.path.isfile(filename):
         raise FileNotFoundError(f"No checkpoint found at {filename}!")
 
-    print(f"=> Loading checkpoint {filename}")
+    if is_master_process:
+        print(f"=> Loading checkpoint {filename}")
     checkpoint = runner.engine.load_checkpoint(filename)
 
     if not runner.stage_key.startswith("infer") and load_full:
@@ -84,21 +87,23 @@ def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> 
             scheduler=runner.scheduler,
         )
 
-        print(
-            f"full checkpoint {filename} loaded "
-            f"(global epoch {checkpoint['global_epoch_step']}, "
-            f"stage {checkpoint['stage_key']}, "
-            f"epoch {checkpoint['stage_epoch_step']})"
-        )
+        if is_master_process:
+            print(
+                f"full checkpoint {filename} loaded "
+                f"(global epoch {checkpoint['global_epoch_step']}, "
+                f"stage {checkpoint['stage_key']}, "
+                f"epoch {checkpoint['stage_epoch_step']})"
+            )
     else:
         runner.engine.unpack_checkpoint(checkpoint, model=runner.model)
 
-        print(
-            f"model checkpoint {filename} loaded "
-            f"(global epoch {checkpoint['global_epoch_step']}, "
-            f"stage {checkpoint['stage_key']}, "
-            f"epoch {checkpoint['stage_epoch_step']})"
-        )
+        if is_master_process:
+            print(
+                f"model checkpoint {filename} loaded "
+                f"(global epoch {checkpoint['global_epoch_step']}, "
+                f"stage {checkpoint['stage_key']}, "
+                f"epoch {checkpoint['stage_epoch_step']})"
+            )
 
 
 def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
@@ -477,6 +482,10 @@ class CheckpointCallback(ICheckpointCallback):
             and ``resume_dir`` (as directory with file)
             then will be performed loading checkpoint.
 
+        Raises:
+            FileNotFoundError: if specified load_on_stage_start
+                but checkpoint file is missing.
+
         Args:
             runner: current runner
         """
@@ -496,6 +505,32 @@ class CheckpointCallback(ICheckpointCallback):
         # ddp_model.load_state_dict(torch.load(CHECKPOINT_PATH, map_location=map_location))
         # Use a barrier() to make sure that all processes have finished reading the checkpoint
         # dist.barrier()
+
+        is_first_stage = list(runner.stages).index(runner.stage_key) == 0
+        if self.load_on_stage_start is not None and not is_first_stage:
+            need_full = False
+            file_exists = False
+            if isinstance(self.load_on_stage_start, str):
+                need_full = self.load_on_stage_start.endswith("full")
+                use_file = os.path.join(self.logdir, f"{self.load_on_stage_start}.pth")
+                file_exists = os.path.isfile(use_file)
+                if not file_exists:
+                    raise FileNotFoundError(f"Missing file '{use_file}'!")  # noqa: F821
+            elif isinstance(self.load_on_stage_start, dict):
+                required_files = _get_required_files(self.logdir, self.load_on_stage_start).keys()
+                file_exists = True
+                for use_file in required_files:
+                    if not os.path.isfile(use_file):
+                        file_exists = False
+                        raise FileNotFoundError(f"Missing file '{use_file}'!")
+
+            if self.load_on_stage_start is not None and file_exists:
+                _load_runner(
+                    logdir=self.logdir,
+                    runner=runner,
+                    mapping=self.load_on_stage_start,
+                    load_full=need_full,
+                )
 
     #     if getattr(runner, "resume", None) is not None:
     #         self.resume = runner.resume

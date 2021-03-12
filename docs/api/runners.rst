@@ -8,7 +8,7 @@ Runners
    :local:
 
 
-Runner API
+Runner Extensions
 ----------------------
 
 ISupervisedRunner

@@ -11,21 +11,21 @@ Loggers
 ConsoleLogger
 --------------------------------
 .. autoclass:: catalyst.loggers.console.ConsoleLogger
-    :members: __init__
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
 CSVLogger
 --------------------------------
 .. autoclass:: catalyst.loggers.csv.CSVLogger
-    :members: __init__
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
 TensorboardLogger
 --------------------------------
 .. autoclass:: catalyst.loggers.tensorboard.TensorboardLogger
-    :members: __init__
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
