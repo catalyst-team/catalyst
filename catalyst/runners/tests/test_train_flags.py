@@ -80,8 +80,8 @@ class CustomRunner(Runner):
 
 
 @pytest.mark.skipif(
-    not IS_CUDA_AVAILABLE and not SETTINGS.amp_required and NUM_CUDA_DEVICES < 2,
-    reason="No AMP available",
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required and NUM_CUDA_DEVICES == 1),
+    reason="AMP is unavailable",
 )
 def test_amp_arg():
     with TemporaryDirectory() as logdir, pytest.raises(EngineIsOk):
@@ -91,7 +91,8 @@ def test_amp_arg():
 
 
 @pytest.mark.skipif(
-    not IS_CUDA_AVAILABLE and not SETTINGS.amp_required, reason="No AMP available",
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required and NUM_CUDA_DEVICES > 1),
+    reason="AMP is unavailable or not enough GPUs",
 )
 def test_dp_amp_arg():
     with TemporaryDirectory() as logdir, pytest.raises(EngineIsOk):
@@ -101,8 +102,8 @@ def test_dp_amp_arg():
 
 
 @pytest.mark.skipif(
-    not IS_CUDA_AVAILABLE and not SETTINGS.apex_required and NUM_CUDA_DEVICES < 2,
-    reason="No AMP available",
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required and NUM_CUDA_DEVICES == 1),
+    reason="APEX is unavailable",
 )
 def test_apex_arg():
     with TemporaryDirectory() as logdir, pytest.raises(EngineIsOk):
@@ -112,7 +113,8 @@ def test_apex_arg():
 
 
 @pytest.mark.skipif(
-    not IS_CUDA_AVAILABLE and not SETTINGS.apex_required, reason="No AMP available",
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required and NUM_CUDA_DEVICES > 1),
+    reason="APEX is unavailable or not enough GPUs",
 )
 def test_dp_apex_arg():
     with TemporaryDirectory() as logdir, pytest.raises(EngineIsOk):
@@ -122,7 +124,7 @@ def test_dp_apex_arg():
 
 
 @pytest.mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES > 1), reason="Not enough GPUs",
 )
 def test_ddp_arg():
     with TemporaryDirectory() as logdir, pytest.raises(Exception):
@@ -132,8 +134,8 @@ def test_ddp_arg():
 
 
 @pytest.mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2 and not SETTINGS.amp_required,
-    reason="Number of CUDA devices is less than 2 and AMP is not available",
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required and NUM_CUDA_DEVICES > 1),
+    reason="AMP is unavailable or not enough GPUs",
 )
 def test_ddp_amp_arg():
     with TemporaryDirectory() as logdir, pytest.raises(Exception):
@@ -143,8 +145,8 @@ def test_ddp_amp_arg():
 
 
 @pytest.mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2 and not SETTINGS.apex_required,
-    reason="Number of CUDA devices is less than 2 and AMP is not available",
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required and NUM_CUDA_DEVICES > 1),
+    reason="APEX is unavailable or not enough GPUs",
 )
 def test_ddp_apex_arg():
     with TemporaryDirectory() as logdir, pytest.raises(Exception):
