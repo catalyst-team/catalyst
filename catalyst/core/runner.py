@@ -11,12 +11,8 @@ from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
 from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
-from catalyst.core.functional import (
-    filter_callbacks_by_node,
-    sort_callbacks_by_order,
-    validate_loaders,
-)
 from catalyst.core.logger import ILogger
+from catalyst.core.misc import filter_callbacks_by_node, sort_callbacks_by_order, validate_loaders
 from catalyst.core.trial import ITrial
 from catalyst.engines.torch import DistributedDataParallelEngine
 from catalyst.typing import (

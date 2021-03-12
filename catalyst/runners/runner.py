@@ -4,20 +4,25 @@ import os
 
 import torch
 from torch import nn, optim
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader
 
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
 from catalyst.callbacks.checkpoint import CheckpointCallback, ICheckpointCallback
+from catalyst.callbacks.criterion import CriterionCallback, ICriterionCallback
 from catalyst.callbacks.misc import CheckRunCallback, TimerCallback, TqdmCallback
+from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
+from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core.callback import Callback
-from catalyst.core.functional import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.logger import ILogger
+from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
 from catalyst.engines import DeviceEngine, IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
+from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.settings import IS_CUDA_AVAILABLE
 from catalyst.typing import (
     Criterion,
@@ -46,10 +51,15 @@ def _process_loaders(
 
 
 class Runner(IRunner):
-    """Single-stage deep learning Runner with user-friendly API."""
+    """Single-stage deep learning Runner with user-friendly API.
+
+    Args:
+        *args:
+        **kwargs:
+    """
 
     def __init__(self, *args, **kwargs):
-        """@TODO: docs."""
+        """Init."""
         super().__init__(*args, **kwargs)
         # the core
         self._trial: ITrial = None
@@ -370,4 +380,83 @@ class Runner(IRunner):
             yield self.predict_batch(batch)
 
 
-__all__ = ["Runner"]
+class SupervisedRunner(ISupervisedRunner, Runner):
+    """Runner for experiments with supervised model.
+
+    Args:
+        model: Torch model instance
+        engine: IEngine instance
+        input_key: key in ``runner.batch`` dict mapping for model input
+        output_key: key for ``runner.batch`` to store model output
+        target_key: key in ``runner.batch`` dict mapping for target
+        loss_key: key for ``runner.batch_metrics`` to store criterion loss output
+    """
+
+    def __init__(
+        self,
+        model: RunnerModel = None,
+        engine: IEngine = None,
+        input_key: Any = "features",
+        output_key: Any = "logits",
+        target_key: str = "targets",
+        loss_key: str = "loss",
+    ):
+        """Init."""
+        ISupervisedRunner.__init__(
+            self,
+            input_key=input_key,
+            output_key=output_key,
+            target_key=target_key,
+            loss_key=loss_key,
+        )
+        Runner.__init__(self, model=model, engine=engine)
+
+    @torch.no_grad()
+    def predict_batch(self, batch: Mapping[str, Any], **kwargs) -> Mapping[str, Any]:
+        """
+        Run model inference on specified data batch.
+
+        .. warning::
+            You should not override this method. If you need specific model
+            call, override forward() method
+
+        Args:
+            batch: dictionary with data batch from DataLoader.
+            **kwargs: additional kwargs to pass to the model
+
+        Returns:
+            Mapping[str, Any]: model output dictionary
+        """
+        batch = self._process_batch(batch)
+        output = self.forward(batch, **kwargs)
+        return output
+
+    def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
+        """Prepares the callbacks for selected stage.
+
+        Args:
+            stage: stage name
+
+        Returns:
+            dictionary with stage callbacks
+        """
+        callbacks = super().get_callbacks(stage=stage)
+        is_callback_exists = lambda callback_fn: any(
+            callback_isinstance(x, callback_fn) for x in callbacks.values()
+        )
+        if isinstance(self._criterion, Criterion) and not is_callback_exists(ICriterionCallback):
+            callbacks["_criterion"] = CriterionCallback(
+                input_key=self._output_key, target_key=self._target_key, metric_key=self._loss_key,
+            )
+        if isinstance(self._optimizer, Optimizer) and not is_callback_exists(IOptimizerCallback):
+            callbacks["_optimizer"] = OptimizerCallback(metric_key=self._loss_key)
+        if isinstance(self._scheduler, (Scheduler, ReduceLROnPlateau)) and not is_callback_exists(
+            ISchedulerCallback
+        ):
+            callbacks["_scheduler"] = SchedulerCallback(
+                loader_key=self._valid_loader, metric_key=self._valid_metric
+            )
+        return callbacks
+
+
+__all__ = ["Runner", "SupervisedRunner"]

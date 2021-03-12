@@ -9,9 +9,15 @@ from catalyst.metrics.functional._average_precision import mean_average_precisio
 
 class MAPMetric(ICallbackBatchMetric):
     """
-    Calculate the Mean Average Precision (MAP) for RecSys.
+    Calculates the Mean Average Precision (MAP) for RecSys.
     The precision metric summarizes the fraction of relevant items
     out of the whole the recommendation list.
+
+    Args:
+        topk_args: list of `topk` for map@topk computing
+        compute_on_call: if True, computes and returns metric value during metric call
+        prefix: metric prefix
+        suffix: metric suffix
 
     It computes mean value of map and it's approximate std value
     """
@@ -23,15 +29,7 @@ class MAPMetric(ICallbackBatchMetric):
         prefix: str = None,
         suffix: str = None,
     ):
-        """
-        Init MAPMetric
-
-        Args:
-            topk_args: list of `topk` for map@topk computing
-            compute_on_call: if True, computes and returns metric value during metric call
-            prefix: metric prefix
-            suffix: metric suffix
-        """
+        """Init MAPMetric"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_name_mean = f"{self.prefix}map{self.suffix}"
         self.metric_name_std = f"{self.prefix}map{self.suffix}/std"

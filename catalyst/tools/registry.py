@@ -31,14 +31,14 @@ class RegistryException(Exception):
 class Registry(collections.MutableMapping):
     """
     Universal class allowing to add and access various factories by name.
+
+    Args:
+        default_meta_factory: default object
+            that calls factory. Optional. Default just calls factory.
     """
 
     def __init__(self, default_meta_factory: MetaFactory = _default_meta_factory):
-        """
-        Args:
-            default_meta_factory: default object
-                that calls factory. Optional. Default just calls factory.
-        """
+        """Init."""
         self.meta_factory = default_meta_factory
         self._factories: Dict[str, Factory] = {}
         self._late_add_callbacks: List[LateAddCallbak] = []

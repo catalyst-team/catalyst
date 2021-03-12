@@ -9,21 +9,17 @@ from catalyst.metrics._additive import AdditiveValueMetric
 class BatchFunctionalMetric(ICallbackBatchMetric):
     """
     Class for custom metric in functional way.
-    Note: the loader metrics calculated as average over all examples
+    Note: the loader metrics calculated as average over all batch metrics
+
+    Args:
+        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor
+        metric_name: metric name
     """
 
-    def __init__(
-        self, metric_function: Callable, prefix: str,
-    ):
-        """
-
-        Args:
-            metric_function: metric function, that get outputs, targets and return score as
-            torch.Tensor
-            prefix: metric prefix
-        """
-        super().__init__(compute_on_call=True, prefix=prefix)
-        self.metric_function = metric_function
+    def __init__(self, metric_fn: Callable, metric_name: str):
+        """Init"""
+        super().__init__(compute_on_call=True, prefix=metric_name)
+        self.metric_fn = metric_fn
         self.cumulative_metric = AdditiveValueMetric()
 
     def reset(self):
@@ -57,7 +53,7 @@ class BatchFunctionalMetric(ICallbackBatchMetric):
         Returns:
             custom metric
         """
-        value = self.metric_function(outputs, targets)
+        value = self.metric_fn(outputs, targets)
         self.cumulative_metric.update(value, len(outputs))
         return value
 

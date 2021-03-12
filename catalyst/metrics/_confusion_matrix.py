@@ -8,17 +8,17 @@ from catalyst.utils.distributed import all_gather, get_rank
 
 
 class ConfusionMatrixMetric(IMetric):
-    """Constructs a confusion matrix for a multiclass classification problems."""
+    """Constructs a confusion matrix for a multiclass classification problems.
+
+    Args:
+        num_classes: number of classes in the classification problem
+        normalized: determines whether or not the confusion matrix is normalized or not
+        compute_on_call: Boolean flag to computes and return confusion matrix during __call__.
+            default: True
+    """
 
     def __init__(self, num_classes: int, normalized: bool = False, compute_on_call: bool = True):
-        """Constructs a confusion matrix for a multiclass classification problems.
-
-        Args:
-            num_classes: number of classes in the classification problem
-            normalized: determines whether or not the confusion matrix is normalized or not
-            compute_on_call: Boolean flag to computes and return confusion matrix during __call__.
-                default: True
-        """
+        """Constructs a confusion matrix for a multiclass classification problems."""
         super().__init__(compute_on_call=compute_on_call)
         self.num_classes = num_classes
         self.normalized = normalized

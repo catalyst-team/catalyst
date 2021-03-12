@@ -21,7 +21,7 @@ class FunctionalMetricCallback(BatchMetricCallback):
     ):
         """Init."""
         super().__init__(
-            metric=BatchFunctionalMetric(metric_function=metric_function, prefix=prefix),
+            metric=BatchFunctionalMetric(metric_fn=metric_function, prefix=prefix),
             input_key=input_key,
             target_key=target_key,
         )

@@ -71,7 +71,7 @@ def test_mae_metric(
     batch_answer_2: Dict[str, Any],
     total_answer: Dict[str, Any],
 ):
-    metric = BatchFunctionalMetric(metric_function=metric_function, prefix=prefix)
+    metric = BatchFunctionalMetric(metric_fn=metric_function, prefix=prefix)
     batch_score_1 = metric.update_key_value(outputs_1, targets_1)
     batch_score_2 = metric.update_key_value(outputs_2, targets_2)
     loader_metric = metric.compute_key_value()

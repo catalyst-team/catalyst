@@ -13,6 +13,12 @@ class MRRMetric(ICallbackBatchMetric):
     score given model outputs and targets
     The precision metric summarizes the fraction of relevant items
 
+    Args:
+        topk_args: list of `topk` for mrr@topk computing
+        compute_on_call: if True, computes and returns metric value during metric call
+        prefix: metric prefix
+        suffix: metric suffix
+
     Compute mean value of map and it's approximate std value
     """
 
@@ -23,15 +29,7 @@ class MRRMetric(ICallbackBatchMetric):
         prefix: str = None,
         suffix: str = None,
     ):
-        """
-        Init MRRMetric
-
-        Args:
-            topk_args: list of `topk` for map@topk computing
-            compute_on_call: if True, computes and returns metric value during metric call
-            prefix: metric prefix
-            suffix: metric suffix
-        """
+        """Init MRRMetric"""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_name_mean = f"{self.prefix}mrr{self.suffix}"
         self.metric_name_std = f"{self.prefix}mrr{self.suffix}/std"
