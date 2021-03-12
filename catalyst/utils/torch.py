@@ -10,8 +10,6 @@ import torch.backends
 from torch.backends import cudnn
 
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
-from catalyst.typing import Device, Model, Optimizer
-from catalyst.utils.misc import merge_dicts
 from catalyst.typing import (
     Device,
     Model,
@@ -23,7 +21,6 @@ from catalyst.typing import (
 )
 from catalyst.utils.distributed import get_nn_from_ddp_module
 from catalyst.utils.misc import maybe_recursive_call, merge_dicts
-
 
 # TODO: move to global registry with activation functions
 ACTIVATIONS = {  # noqa: WPS407
@@ -509,7 +506,9 @@ def pack_checkpoint(
     if isinstance(model, dict):
         for key, value in model.items():
             model_module = get_nn_from_ddp_module(value)
-            checkpoint[f"model_{key}_state_dict"] = maybe_recursive_call(model_module, "state_dict")
+            checkpoint[f"model_{key}_state_dict"] = maybe_recursive_call(
+                model_module, "state_dict"
+            )
     else:
         model_module = get_nn_from_ddp_module(model)
         checkpoint["model_state_dict"] = maybe_recursive_call(model_module, "state_dict")
