@@ -28,3 +28,10 @@ TensorboardLogger
     :members: __init__
     :undoc-members:
     :show-inheritance:
+
+MlflowLogger
+--------------------------------
+.. autoclass:: catalyst.loggers.mlflow.MlflowLogger
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
