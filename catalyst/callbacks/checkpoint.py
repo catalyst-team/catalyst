@@ -151,9 +151,7 @@ def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]
     return required_files
 
 
-def _load_states_from_file_map(
-    *, logdir: str, runner: "IRunner", load_map: Dict[str, str]
-) -> None:
+def _load_states_from_file_map(*, logdir: str, runner: "IRunner", load_map: Dict[str, str]) -> None:
     """
     Load state of a model, criterion, optimizer, scheduler
     from files specified in ``load_map``.
@@ -482,6 +480,10 @@ class CheckpointCallback(ICheckpointCallback):
             and ``resume_dir`` (as directory with file)
             then will be performed loading checkpoint.
 
+        Raises:
+            FileNotFoundError: if specified load_on_stage_start
+                but checkpoint file is missing.
+
         Args:
             runner: current runner
         """
@@ -671,9 +673,7 @@ class CheckpointCallback(ICheckpointCallback):
             )
         elif isinstance(self.load_on_stage_end, dict) and self.save_n_best > 0:
             to_load = {
-                k: v
-                for k, v in self.load_on_stage_end.items()
-                if v not in not_required_load_states
+                k: v for k, v in self.load_on_stage_end.items() if v not in not_required_load_states
             }
             _load_runner(logdir=self.logdir, runner=runner, mapping=to_load)
 
