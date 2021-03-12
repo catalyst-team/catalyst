@@ -500,7 +500,8 @@ class CheckpointCallback(ICheckpointCallback):
         # map_location = {"cuda:%d" % 0: "cuda:%d" % rank}
         # ddp_model.load_state_dict(torch.load(CHECKPOINT_PATH, map_location=map_location))
 
-        if self.load_on_stage_start is not None:
+        is_first_stage = list(runner.stages).index(runner.stage_key) == 0
+        if self.load_on_stage_start is not None and not is_first_stage:
             need_full = False
             file_exists = False
             if isinstance(self.load_on_stage_start, str):
