@@ -74,6 +74,13 @@ class MLflowLogger(ILogger):
 
     MLflow documentation: https://mlflow.org/docs/latest/index.html.
 
+    Args:
+        experiment: Name of the experiment in MLflow to log to.
+        run: Name of the run in MLflow to log to.
+        tracking_uri: URI of tracking server against which
+            to log run information related.
+        registry_uri: Address of local or remote model registry server.
+
     Notebook API example:
 
     .. code-block:: python
@@ -112,14 +119,6 @@ class MLflowLogger(ILogger):
         tracking_uri: Optional[str] = None,
         registry_uri: Optional[str] = None,
     ) -> None:
-        """
-        Args:
-            experiment: Name of the experiment in MLflow to log to.
-            run: Name of the run in MLflow to log to.
-            tracking_uri: URI of tracking server against which
-                to log run information related.
-            registry_uri: Address of local or remote model registry server.
-        """
         self.experiment = experiment
         self.run = run
         self.tracking_uri = tracking_uri
@@ -251,4 +250,4 @@ class MLflowLogger(ILogger):
             mlflow.end_run()
 
 
-__all__ = ["MLflowLogger", "EXPERIMENT_PARAMS", "STAGE_PARAMS", "EXCLUDE_PARAMS"]
+__all__ = ["MLflowLogger"]
