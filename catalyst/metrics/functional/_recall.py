@@ -13,7 +13,7 @@ def recall(
     num_classes: Optional[int] = None,
 ) -> Union[float, torch.Tensor]:
     """
-    Multiclass precision metric.
+    Multiclass recall score.
 
     Args:
         outputs: estimated targets as predicted by a model
@@ -23,7 +23,7 @@ def recall(
         argmax_dim: int, that specifies dimension for argmax transformation
             in case of scores/probabilities in ``outputs``
         eps: float. Epsilon to avoid zero division.
-        num_classes: int, that specifies number of classes if it known.
+        num_classes: int, that specifies number of classes if it known
 
     Returns:
         Tensor: recall for every class

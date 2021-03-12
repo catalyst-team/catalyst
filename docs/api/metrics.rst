@@ -262,7 +262,7 @@ Precision
 
 Recall
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.metrics.recall
+.. automodule:: catalyst.metrics.functional._recall
     :members:
     :undoc-members:
     :show-inheritance:
