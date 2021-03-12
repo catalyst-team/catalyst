@@ -1,22 +1,22 @@
 # flake8: noqa
 
+from collections import OrderedDict
+from io import StringIO
 import os
 import re
 import shutil
 import sys
-from collections import OrderedDict
-from io import StringIO
 from tempfile import TemporaryDirectory
 
 import pytest
+
 # installed
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 # local
 import catalyst.dl as dl
-from catalyst.engines import (DataParallelEngine, DeviceEngine,
-                              DistributedDataParallelEngine)
+from catalyst.engines import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 
