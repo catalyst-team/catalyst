@@ -32,17 +32,21 @@ ACTIVATIONS = {  # noqa: WPS407
     nn.ELU: "relu",
 }
 
-from catalyst.engines import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
+from catalyst.engines.torch import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
+
+if SETTINGS.amp_required:
+    from catalyst.engines.amp import (
+        AMPEngine,
+        DataParallelAMPEngine,
+        DistributedDataParallelAMPEngine,
+    )
 
 if SETTINGS.apex_required:
-    from catalyst.engines import (
+    from catalyst.engines.apex import (
         APEXEngine,
         DataParallelApexEngine,
         DistributedDataParallelApexEngine,
     )
-
-if SETTINGS.amp_required:
-    from catalyst.engines import AMPEngine, DataParallelAMPEngine, DistributedDataParallelAMPEngine
 
 
 def get_engine(fp16: bool = False, apex: bool = False, ddp: bool = False):
