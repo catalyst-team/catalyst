@@ -19,6 +19,17 @@ STAGE_PARAMS = ("data", "criterion", "optimizer", "scheduler", "stage")
 EXCLUDE_PARAMS = ("loggers", "transform", "callbacks")
 
 
+def _get_or_start_run(run_name):
+    """MLflow function. Gets the active run and gives it a name.
+    If active run does not exist, starts a new one.
+    """
+    active_run = mlflow.active_run()
+    if active_run:
+        mlflow.set_tag('mlflow.runName', run_name)
+        return active_run
+    return mlflow.start_run(run_name=run_name)
+
+
 def _mlflow_log_dict(
         dictionary: Dict[str, Any], prefix: str = "", log_type: Optional[str] = None
 ):
@@ -119,7 +130,7 @@ class MLflowLogger(ILogger):
         mlflow.set_tracking_uri(self.tracking_uri)
         mlflow.set_registry_uri(self.registry_uri)
         mlflow.set_experiment(self.experiment)
-        mlflow.start_run(run_name=self.run)
+        _get_or_start_run(run_name=self.run)
 
     @staticmethod
     def _log_metrics(metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
@@ -211,7 +222,7 @@ class MLflowLogger(ILogger):
             experiment_key: Experiment info.
             stage_key: Stage info.
         """
-        stages = set(hparams["stages"]) - set(STAGE_PARAMS) - set(EXCLUDE_PARAMS)
+        stages = set(hparams.get("stages", {})) - set(STAGE_PARAMS) - set(EXCLUDE_PARAMS)
         self._multistage = len(stages) > 1
 
         if scope == "experiment":
@@ -222,11 +233,11 @@ class MLflowLogger(ILogger):
             if self._multistage:
                 mlflow.start_run(run_name=stage_key, nested=True)
 
-            scope_params = hparams["stages"].get(experiment_key, {})
+            scope_params = hparams.get("stages", {}).get(experiment_key, {})
             _mlflow_log_dict(scope_params, log_type="param")
 
             for key in STAGE_PARAMS:
-                stage_params = hparams["stages"].get(key, {})
+                stage_params = hparams.get("stages", {}).get(key, {})
                 _mlflow_log_dict(stage_params, log_type="param")
 
             for key in EXPERIMENT_PARAMS:
