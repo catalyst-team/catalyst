@@ -1,6 +1,6 @@
 from typing import Dict, List, TYPE_CHECKING
 
-from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_tensor
+from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_array
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
 
@@ -83,7 +83,7 @@ class ConfusionMatrixCallback(Callback):
             show=False,
             **self._plot_params,
         )
-        image = render_figure_to_tensor(fig)
+        image = render_figure_to_array(fig)
         runner.log_image(tag=self.prefix, image=image, scope="loader")
 
 
