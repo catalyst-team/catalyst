@@ -177,6 +177,12 @@ class CallbackScope(IntFlag):
 class Callback(ICallback):
     """
     An abstraction that lets you customize your experiment run logic.
+
+    Args:
+        order: flag from ``CallbackOrder``
+        node: flag from ``CallbackNode``
+        scope: flag from ``CallbackScope``
+
     To give users maximum flexibility and extensibility Catalyst supports
     callback execution anywhere in the training loop:
 
@@ -194,16 +200,11 @@ class Callback(ICallback):
 
         exception – if an Exception was raised
 
-    All callbacks have
-        - ``order`` from ``CallbackOrder``
-        - ``node`` from ``CallbackNode``
-        - ``scope`` from ``CallbackScope``
-
     .. note::
         To learn more about Catalyst Core concepts, please check out
 
-            - :py:mod:`catalyst.core.experiment.IExperiment`
             - :py:mod:`catalyst.core.runner.IRunner`
+            - :py:mod:`catalyst.core.engine.IEngine`
             - :py:mod:`catalyst.core.callback.Callback`
 
     Abstraction, please check out the implementations:
@@ -217,29 +218,24 @@ class Callback(ICallback):
     def __init__(
         self, order: int, node: int = CallbackNode.all, scope: int = CallbackScope.stage,
     ):
-        """Callback initializer.
-
-        Args:
-            order: flag from ``CallbackOrder``
-            node: flag from ``CallbackNode``
-            scope: flag from ``CallbackScope``
-        """
+        """Callback initializer."""
         self.node = node
         self.order = order
         self.scope = scope
 
 
 class CallbackWrapper(Callback):
-    """Enable/disable callback execution."""
+    """Enable/disable callback execution.
+
+    Args:
+        base_callback: callback to wrap
+        enable_callback: indicator to enable/disable
+            callback, if ``True`` then callback will be enabled,
+            default ``True``
+    """
 
     def __init__(self, base_callback: Callback, enable_callback: bool = True):
-        """
-        Args:
-            base_callback: callback to wrap
-            enable_callback: indicator to enable/disable
-                callback, if ``True`` then callback will be enabled,
-                default ``True``
-        """
+        """Init."""
         if base_callback is None or not isinstance(base_callback, Callback):
             raise ValueError(f"Expected callback but got - {type(base_callback)}!")
         super().__init__(

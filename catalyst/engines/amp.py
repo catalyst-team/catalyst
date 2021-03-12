@@ -6,13 +6,14 @@ from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 
 
 class AMPEngine(DeviceEngine):
-    """@TODO: docs."""
+    """@TODO: docs.
+
+    Args:
+        device: used device, default is `"cuda"`.
+    """
 
     def __init__(self, device: str = "cuda"):
-        """
-        Args:
-            device: use device, default is `"cuda"`.
-        """
+        """Init."""
         super().__init__(device)
         self.scaler = amp.GradScaler()
 
@@ -67,7 +68,14 @@ class DataParallelAMPEngine(AMPEngine):
 
 
 class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
-    """@TODO: docs."""
+    """@TODO: docs.
+
+    Args:
+        address: process address to use (required for PyTorch backend), default is `"localhost"`.
+        port: process port to listen (required for PyTorch backend), default is `"12345"`.
+        backend: multiprocessing backend to use, default is `"nccl"`.
+        world_size: number of processes.
+    """
 
     def __init__(
         self,
@@ -76,14 +84,7 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         backend: str = "nccl",
         world_size: int = None,
     ):
-        """
-        Args:
-            address: process address to use (required for PyTorch backend),
-                default is `"localhost"`.
-            port: process port to listen (required for PyTorch backend), default is `"12345"`.
-            backend: multiprocessing backend to use, default is `"nccl"`.
-            world_size: number of processes.
-        """
+        """Init."""
         super().__init__(address, port, backend, world_size)
         self.scaler = amp.GradScaler()
 
