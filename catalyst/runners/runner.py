@@ -14,12 +14,7 @@ from catalyst.core.functional import callback_isinstance, sort_callbacks_by_orde
 from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
-from catalyst.engines import (
-    DataParallelEngine,
-    DeviceEngine,
-    DistributedDataParallelEngine,
-    IEngine,
-)
+from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
@@ -36,27 +31,7 @@ from catalyst.typing import (
 )
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-
-if SETTINGS.amp_required:
-    from catalyst.engines import AMPEngine, DataParallelAMPEngine, DistributedDataParallelAMPEngine
-
-
-def _get_default_engine(fp16: bool = False, ddp: bool = False):
-    has_multiple_gpus = NUM_CUDA_DEVICES > 1
-    if not IS_CUDA_AVAILABLE:
-        return DeviceEngine("cpu")
-    else:
-        if fp16 and SETTINGS.amp_required and ddp and has_multiple_gpus:
-            return DistributedDataParallelAMPEngine()
-        elif fp16 and has_multiple_gpus:
-            return DataParallelAMPEngine()
-        elif fp16 and NUM_CUDA_DEVICES == 1:
-            return AMPEngine()
-        elif ddp and has_multiple_gpus:
-            return DistributedDataParallelEngine()
-        elif has_multiple_gpus:
-            return DataParallelEngine()
-    return DeviceEngine("cuda")
+from catalyst.utils.torch import get_engine
 
 
 def _process_loaders(
@@ -257,6 +232,7 @@ class Runner(IRunner):
         load_best_on_end: bool = False,
         # engine extra params,
         fp16: bool = False,
+        apex: bool = False,
         ddp: bool = False,
     ) -> None:
         """
@@ -297,11 +273,12 @@ class Runner(IRunner):
                 best checkpoint state (model, optimizer, etc)
                 according to validation metrics. Requires specified ``logdir``.
             fp16: boolean flag to use half-precision training
+            apex: boolean flag to use apex half-precision
             ddp: if `True` will start training in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
         """
         # experiment setup
-        self._engine = _get_default_engine(fp16, ddp) if engine is None else engine
+        self._engine = get_engine(fp16, apex, ddp) if engine is None else engine
         self._trial = trial
         self._loggers = loggers
         # the data
