@@ -382,7 +382,7 @@ EOT
 # check if fail if requirements not installed
 python -c """
 try:
-    from catalyst.loggers import MlflowLogger
+    from catalyst.loggers import MLflowLogger
 except (AttributeError, ImportError, AssertionError):
     pass  # Ok
 else:
@@ -394,7 +394,7 @@ pip install -r requirements/requirements-mlflow.txt --quiet \
   --upgrade-strategy only-if-needed
 
 python -c """
-from catalyst.loggers import MlflowLogger
+from catalyst.loggers import MLflowLogger
 """
 
 

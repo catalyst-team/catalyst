@@ -58,8 +58,10 @@ def _mlflow_log_dict(
             raise ValueError(f"Unknown type of logging value: {type(value)}")
 
 
-class MlflowLogger(ILogger):
+class MLflowLogger(ILogger):
     """MLflow logger for parameters, metrics, images and other artifacts.
+
+    MLflow documentation: https://mlflow.org/docs/latest/index.html.
 
     Notebook API example:
 
@@ -74,7 +76,7 @@ class MlflowLogger(ILogger):
             def get_loggers(self):
                 return {
                     "console": dl.ConsoleLogger(),
-                    "mlflow": dl.MlflowLogger(experiment="test_exp", run="test_run")
+                    "mlflow": dl.MLflowLogger(experiment="test_exp", run="test_run")
                 }
 
         runner = CustomSupervisedRunner().run()
@@ -86,7 +88,7 @@ class MlflowLogger(ILogger):
 
         loggers:
             mlflow:
-                _target_: MlflowLogger
+                _target_: MLflowLogger
                 experiment: test_exp
                 run: test_run
         ...
@@ -232,4 +234,4 @@ class MlflowLogger(ILogger):
             mlflow.end_run()
 
 
-__all__ = ["MlflowLogger", "EXPERIMENT_PARAMS", "STAGE_PARAMS", "EXCLUDE_PARAMS"]
+__all__ = ["MLflowLogger", "EXPERIMENT_PARAMS", "STAGE_PARAMS", "EXCLUDE_PARAMS"]

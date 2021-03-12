@@ -35,6 +35,9 @@ engine:
 loggers:
   console:
     _target_: ConsoleLogger
+  mlflow:
+    _target_: MLflowLogger
+    experiment: mnist
 
 model:
   _target_: SimpleNet
