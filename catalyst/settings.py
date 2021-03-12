@@ -267,6 +267,7 @@ class Settings(FrozenClass):
     @staticmethod
     def parse() -> "Settings":
         """Parse and return the settings.
+
         Returns:
             Settings: Dictionary of the parsed and merged Settings.
         """
@@ -275,8 +276,10 @@ class Settings(FrozenClass):
 
     def type_hint(self, key: str):
         """Returns type hint for the specified ``key``.
+
         Args:
             key: key of interest
+
         Returns:
             type hint for the specified key
         """
@@ -296,6 +299,7 @@ class ConfigFileFinder:
 
     def __init__(self, program_name: str) -> None:
         """Initialize object to find config files.
+
         Args:
             program_name: Name of the current program (e.g., catalyst).
         """
@@ -342,6 +346,7 @@ class ConfigFileFinder:
 
     def generate_possible_local_files(self):
         """Find and generate all local config files.
+
         Yields:
             str: Path to config file.
         """
@@ -359,6 +364,7 @@ class ConfigFileFinder:
     def local_config_files(self) -> List[str]:  # noqa: D202
         """
         Find all local config files which actually exist.
+
         Returns:
             List[str]: List of files that exist that are
             local project config  files with extra config files
@@ -397,6 +403,7 @@ class MergedConfigParser:
 
     def __init__(self, config_finder: ConfigFileFinder):
         """Initialize the MergedConfigParser instance.
+
         Args:
             config_finder: Initialized ConfigFileFinder.
         """
@@ -430,6 +437,7 @@ class MergedConfigParser:
         First this copies over the parsed local configuration and then
         iterates over the options in the user configuration and sets them if
         they were not set by the local configuration file.
+
         Returns:
             dict: Dictionary of the parsed and merged configuration options.
         """

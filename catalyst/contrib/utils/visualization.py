@@ -177,6 +177,7 @@ def render_figure_to_array(figure):
 
 
 __all__ = [
+    "image_to_tensor",
     "plot_confusion_matrix",
     "render_figure_to_array",
 ]

@@ -21,8 +21,8 @@ from catalyst.core.trial import ITrial
 from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
-from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.loggers.tensorboard import TensorboardLogger
+from catalyst.runners.supervised import ISupervisedRunner
 from catalyst.typing import (
     Criterion,
     Model,

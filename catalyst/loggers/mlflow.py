@@ -6,7 +6,6 @@ import numpy as np
 from catalyst.core.logger import ILogger
 from catalyst.typing import Directory, File, Number
 
-
 EXPERIMENT_PARAMS = (
     "shared",
     "args",
@@ -20,19 +19,17 @@ EXCLUDE_PARAMS = ("loggers", "transform", "callbacks")
 
 
 def _get_or_start_run(run_name):
-    """MLflow function. Gets the active run and gives it a name.
+    """The function of MLflow. Gets the active run and gives it a name.
     If active run does not exist, starts a new one.
     """
     active_run = mlflow.active_run()
     if active_run:
-        mlflow.set_tag('mlflow.runName', run_name)
+        mlflow.set_tag("mlflow.runName", run_name)
         return active_run
     return mlflow.start_run(run_name=run_name)
 
 
-def _mlflow_log_dict(
-        dictionary: Dict[str, Any], prefix: str = "", log_type: Optional[str] = None
-):
+def _mlflow_log_dict(dictionary: Dict[str, Any], prefix: str = "", log_type: Optional[str] = None):
     """The function of MLflow. Logs any value by its type from dictionary recursively.
 
     Args:
@@ -70,13 +67,13 @@ def _mlflow_log_dict(
 
 
 class MLflowLogger(ILogger):
-    """MLflow logger for parameters, metrics, images and other artifacts.
+    """Mlflow logger for parameters, metrics, images and other artifacts.
 
-    MLflow documentation: https://mlflow.org/docs/latest/index.html.
+    Mlflow documentation: https://mlflow.org/docs/latest/index.html.
 
     Args:
         experiment: Name of the experiment in MLflow to log to.
-        run: Name of the run in MLflow to log to.
+        run: Name of the run in Mlflow to log to.
         tracking_uri: URI of tracking server against which
             to log run information related.
         registry_uri: Address of local or remote model registry server.
@@ -226,7 +223,7 @@ class MLflowLogger(ILogger):
 
         if scope == "experiment":
             if self._multistage:
-                mlflow.set_tag('mlflow.runName', experiment_key)
+                mlflow.set_tag("mlflow.runName", experiment_key)
 
         if scope == "stage":
             if self._multistage:
