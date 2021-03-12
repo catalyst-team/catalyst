@@ -126,18 +126,15 @@ class APEXEngine(DeviceEngine):
 
     Args:
         device: use device, default is `"cuda"`.
-        opt_level: optimization level, should be one of
-            "O0", "O1", "O2", "O3" or "O4".
+        opt_level: optimization level, should be one of "O0", "O1", "O2", "O3" or "O4".
 
-                - "O0" - no-op training
-                - "O1" - mixed precision (FP16) training
-                - "O2" - "almost" mixed precision training
-                - "O3" - another implementation of mixed precision training
+            - "O0" - no-op training
+            - "O1" - mixed precision (FP16) training (default)
+            - "O2" - "almost" mixed precision training
+            - "O3" - another implementation of mixed precision training
 
             Details about levels can be found here:
-                https://nvidia.github.io/apex/amp.html#opt-levels
-
-            Default is "O1".
+            https://nvidia.github.io/apex/amp.html#opt-levels
         keep_batchnorm_fp32: TODO
         loss_scale: TODO
     """
@@ -278,18 +275,16 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         port: process port to listen (required for PyTorch backend), default is `"12345"`.
         backend: multiprocessing backend to use, default is `"nccl"`.
         world_size: number of processes.
-        opt_level: optimization level, should be one of
-            "O0", "O1", "O2", "O3" or "O4".
+        opt_level: optimization level, should be one of "O0", "O1", "O2", "O3" or "O4".
 
-                - "O0" - no-op training
-                - "O1" - mixed precision (FP16) training
-                - "O2" - "almost" mixed precision training
-                - "O3" - another implementation of mixed precision training
+            - "O0" - no-op training
+            - "O1" - mixed precision (FP16) training (default)
+            - "O2" - "almost" mixed precision training
+            - "O3" - another implementation of mixed precision training
 
             Details about levels can be found here:
-                https://nvidia.github.io/apex/amp.html#opt-levels
+            https://nvidia.github.io/apex/amp.html#opt-levels
 
-            Default is "O1".
         keep_batchnorm_fp32: TODO
         loss_scale: TODO
         delay_all_reduce: TODO

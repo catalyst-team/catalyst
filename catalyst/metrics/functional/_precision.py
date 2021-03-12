@@ -13,7 +13,7 @@ def precision(
     num_classes: Optional[int] = None,
 ) -> Union[float, torch.Tensor]:
     """
-    Multiclass precision metric.
+    Multiclass precision score.
 
     Args:
         outputs: estimated targets as predicted by a model
@@ -26,7 +26,7 @@ def precision(
         num_classes: int, that specifies number of classes if it known
 
     Returns:
-        Tensor:
+        Tensor: precision for every class
 
     Examples:
         >>> precision(

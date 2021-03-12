@@ -18,6 +18,7 @@ class HitrateCallback(BatchMetricCallback):
             [1] - HR
             [1, 3] - HR at 1 and 3
             [1, 3, 5] - HR at 1, 3 and 5
+        log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
     """
@@ -27,6 +28,7 @@ class HitrateCallback(BatchMetricCallback):
         input_key: str,
         target_key: str,
         topk_args: List[int] = None,
+        log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -35,6 +37,7 @@ class HitrateCallback(BatchMetricCallback):
             metric=HitrateMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
             input_key=input_key,
             target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 
@@ -50,6 +53,7 @@ class MAPCallback(BatchMetricCallback):
             [1] - MAP
             [1, 3] - MAP at 1 and 3
             [1, 3, 5] - MAP at 1, 3 and 5
+        log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
     """
@@ -59,6 +63,7 @@ class MAPCallback(BatchMetricCallback):
         input_key: str,
         target_key: str,
         topk_args: List[int] = None,
+        log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -67,6 +72,7 @@ class MAPCallback(BatchMetricCallback):
             metric=MAPMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
             input_key=input_key,
             target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 
@@ -82,6 +88,7 @@ class MRRCallback(BatchMetricCallback):
             [1] - MRR
             [1, 3] - MRR at 1 and 3
             [1, 3, 5] - MRR at 1, 3 and 5
+        log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
     """
@@ -91,6 +98,7 @@ class MRRCallback(BatchMetricCallback):
         input_key: str,
         target_key: str,
         topk_args: List[int] = None,
+        log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -99,6 +107,7 @@ class MRRCallback(BatchMetricCallback):
             metric=MRRMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
             input_key=input_key,
             target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 
@@ -114,6 +123,7 @@ class NDCGCallback(BatchMetricCallback):
             [1] - NDCG
             [1, 3] - NDCG at 1 and 3
             [1, 3, 5] - NDCG at 1, 3 and 5
+        log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
     """
@@ -123,6 +133,7 @@ class NDCGCallback(BatchMetricCallback):
         input_key: str,
         target_key: str,
         topk_args: List[int] = None,
+        log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -131,6 +142,7 @@ class NDCGCallback(BatchMetricCallback):
             metric=NDCGMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
             input_key=input_key,
             target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 
