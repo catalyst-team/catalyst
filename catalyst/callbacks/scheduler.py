@@ -20,7 +20,20 @@ class ISchedulerCallback(Callback):
 
 
 class SchedulerCallback(ISchedulerCallback):
-    """Callback for wrapping schedulers.
+    """Scheduler callback, abstraction over scheduler step.
+
+    Args:
+        scheduler_key: scheduler name, if ``None``,
+            default is ``None``.
+        mode: scheduler mode, should be one of
+            ``"epoch"`` or ``"batch"``, default is ``None``.
+            If ``None`` and object is instance of ``BatchScheduler``
+            or ``OneCycleLRWithWarmup`` then will be used ``"batch"``
+            otherwise - ``"epoch"``.
+        loader_key: @TODO: docs.
+        metric_key: metric name to forward to scheduler
+            object, if ``None`` then will be used main metric
+            specified in experiment.
 
     Notebook API example:
 
@@ -94,19 +107,7 @@ class SchedulerCallback(ISchedulerCallback):
         loader_key: str = None,
         metric_key: str = None,
     ):
-        """
-        Args:
-            scheduler_key: scheduler name, if ``None``,
-                default is ``None``.
-            mode: scheduler mode, should be one of
-                ``"epoch"`` or ``"batch"``, default is ``None``.
-                If ``None`` and object is instance of ``BatchScheduler``
-                or ``OneCycleLRWithWarmup`` then will be used ``"batch"``
-                otherwise - ``"epoch"``.
-            metric_key: metric name to forward to scheduler
-                object, if ``None`` then will be used main metric
-                specified in experiment.
-        """
+        """Init."""
         super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
         if loader_key is not None or metric_key is not None:
             assert loader_key is not None and metric_key is not None, (

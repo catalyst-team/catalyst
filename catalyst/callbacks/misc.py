@@ -84,7 +84,22 @@ class IEpochMetricHandlerCallback(ABC, Callback):
 
 
 class EarlyStoppingCallback(IEpochMetricHandlerCallback):
-    """Stage early stop based on metric."""
+    """Stage early stop based on metric.
+
+    Args:
+        patience: number of epochs with no improvement
+            after which training will be stopped.
+        loader_key: @TODO: docs
+        metric_key: metric name to use for early stopping.
+        minimize: if ``True`` then expected that metric should
+            decrease and early stopping will be performed only when metric
+            stops decreasing. If ``False`` then expected
+            that metric should increase. Default value ``True``.
+        min_delta: minimum change in the monitored metric
+            to qualify as an improvement, i.e. an absolute change
+            of less than min_delta, will count as no improvement,
+            default value is ``1e-6``.
+    """
 
     def __init__(
         self,
@@ -94,21 +109,7 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
         minimize: bool = True,
         min_delta: float = 1e-6,
     ):
-        """
-        Args:
-            patience: number of epochs with no improvement
-                after which training will be stopped.
-            loader_key: @TODO: docs
-            metric_key: metric name to use for early stopping.
-            minimize: if ``True`` then expected that metric should
-                decrease and early stopping will be performed only when metric
-                stops decreasing. If ``False`` then expected
-                that metric should increase. Default value ``True``.
-            min_delta: minimum change in the monitored metric
-                to qualify as an improvement, i.e. an absolute change
-                of less than min_delta, will count as no improvement,
-                default value is ``1e-6``.
-        """
+        """Init."""
         super().__init__(
             loader_key=loader_key, metric_key=metric_key, minimize=minimize, min_delta=min_delta,
         )
@@ -184,7 +185,7 @@ class TimerCallback(Callback):
 
 
 class TqdmCallback(Callback):
-    """Logs the params into console."""
+    """Logs the params into tqdm console."""
 
     def __init__(self):
         super().__init__(order=CallbackOrder.external, node=CallbackNode.master)
@@ -239,7 +240,11 @@ class TqdmCallback(Callback):
 
 
 class CheckRunCallback(Callback):
-    """Executes only a pipeline part from the ``Experiment``.
+    """Executes only a pipeline part from the run.
+
+    Args:
+        num_batch_steps: number of batches to iterate in epoch
+        num_epoch_steps: number of epoch to perform in a stage
 
     Minimal working example (Notebook API):
 
@@ -281,11 +286,7 @@ class CheckRunCallback(Callback):
     """
 
     def __init__(self, num_batch_steps: int = 3, num_epoch_steps: int = 3):
-        """
-        Args:
-            num_batch_steps: number of batches to iterate in epoch
-            num_epoch_steps: number of epoch to perform in a stage
-        """
+        """Init."""
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         self.num_batch_steps = num_batch_steps
         self.num_epoch_steps = num_epoch_steps

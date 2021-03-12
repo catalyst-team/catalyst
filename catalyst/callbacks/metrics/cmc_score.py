@@ -8,6 +8,26 @@ class CMCScoreCallback(LoaderMetricCallback):
     """
     Cumulative Matching Characteristics callback.
 
+    This callback was designed to count
+    cumulative matching characteristics.
+    If current object is from query your dataset
+    should output `True` in `is_query_key`
+    and false if current object is from gallery.
+    You can see `QueryGalleryDataset` in
+    `catalyst.contrib.datasets.metric_learning` for more information.
+    On batch end callback accumulate all embeddings
+
+    Args:
+        embeddings_key: embeddings key in output dict
+        labels_key: labels key in output dict
+        is_query_key: bool key True if current object is from query
+        topk_args: specifies which cmc@K to log.
+            [1] - cmc@1
+            [1, 3] - cmc@1 and cmc@3
+            [1, 3, 5] - cmc@1, cmc@3 and cmc@5
+        prefix: metric prefix
+        suffix: metric suffix
+
     .. note::
 
         You should use it with `ControlFlowCallback`
@@ -27,28 +47,7 @@ class CMCScoreCallback(LoaderMetricCallback):
         prefix: str = None,
         suffix: str = None,
     ):
-        """
-        This callback was designed to count
-        cumulative matching characteristics.
-        If current object is from query your dataset
-        should output `True` in `is_query_key`
-        and false if current object is from gallery.
-        You can see `QueryGalleryDataset` in
-        `catalyst.contrib.datasets.metric_learning` for more information.
-        On batch end callback accumulate all embeddings
-
-        Args:
-            embeddings_key: embeddings key in output dict
-            labels_key: labels key in output dict
-            is_query_key: bool key True if current object is from query
-            topk_args: specifies which cmc@K to log.
-                [1] - cmc@1
-                [1, 3] - cmc@1 and cmc@3
-                [1, 3, 5] - cmc@1, cmc@3 and cmc@5
-            prefix: metric prefix
-            suffix: metric suffix
-
-        """
+        """Init."""
         super().__init__(
             metric=CMCMetric(
                 embeddings_key=embeddings_key,

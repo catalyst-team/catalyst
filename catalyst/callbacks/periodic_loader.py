@@ -1,4 +1,3 @@
-# @TODO: recheck the logic here
 from typing import Mapping, TYPE_CHECKING
 from collections import OrderedDict
 
@@ -12,10 +11,11 @@ if TYPE_CHECKING:
 
 class PeriodicLoaderCallback(Callback):
     """Callback for runing loaders with specified period.
-    To disable loader use ``0`` as period (if specified
-    ``0`` for validation loader then will be raised an
-    error).
+    To disable loader use ``0`` as period (if specified ``0`` for validation loader
+    then will be raised an error).
 
+    Args:
+        kwargs: loader names and their run periods.
 
     For example, if you have ``train``, ``train_additional``,
     ``valid`` and ``valid_additional`` loaders and wan't to
@@ -54,10 +54,7 @@ class PeriodicLoaderCallback(Callback):
     def __init__(
         self, valid_loader_key: str, valid_metric_key: str, minimize: bool = True, **kwargs
     ):
-        """
-        Args:
-            kwargs: loader names and their run periods.
-        """
+        """Init."""
         super().__init__(order=CallbackOrder.internal)
 
         self.valid_loader: str = valid_loader_key

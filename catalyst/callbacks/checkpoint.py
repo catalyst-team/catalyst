@@ -213,7 +213,84 @@ class ICheckpointCallback(Callback):
 
 
 class CheckpointCallback(ICheckpointCallback):
-    """Checkpoint callback to save/restore your model/criterion/optimizer/scheduler."""
+    """Checkpoint callback to save/restore your model/criterion/optimizer/scheduler.
+
+    Args:
+        logdir: @TODO: docs.
+        loader_key: @TODO: docs.
+        metric_key: @TODO: docs.
+        minimize: @TODO: docs.
+        min_delta: @TODO: docs.
+        save_n_best: number of best checkpoint to keep,
+            if ``0`` then  store only last state of model and
+            ``load_on_stage_end`` should be one of
+            ``last`` or ``last_full``.
+        load_on_stage_start (str or Dict[str, str]): load specified
+            state/model at stage start.
+
+            If passed **string** then will be performed initialization from
+            specified state (``best``/``best_full``/``last``/``last_full``)
+            or checkpoint file.
+
+            If passed **dict** then will be performed initialization only
+            for specified parts - model, criterion, optimizer, scheduler.
+
+            Example:
+
+                >>> # possible checkpoints to use:
+                >>> #   "best"/"best_full"/"last"/"last_full"
+                >>> #   or path to specific checkpoint
+                >>> to_load = {
+                >>>    "model": "path/to/checkpoint.pth",
+                >>>    "criterion": "best",
+                >>>    "optimizer": "last_full",
+                >>>    "scheduler": "best_full",
+                >>> }
+                >>> CheckpointCallback(load_on_stage_start=to_load)
+
+            All other keys instead of ``"model"``, ``"criterion"``,
+            ``"optimizer"`` and ``"scheduler"`` will be ignored.
+
+            If ``None`` or an empty dict (or dict without mentioned
+            above keys) then no action is required at stage start and:
+
+            - Config API - will be used best state of model
+            - Notebook API - no action will be performed (will be used the last state)
+
+            **NOTE:** Loading will be performed on all stages except first.
+
+            **NOTE:** Criterion, optimizer and scheduler are optional keys
+            and should be loaded from full checkpoint.
+
+            Model state can be loaded from any checkpoint.
+
+            When dict contains keys for model and some other part
+            (for example ``{"model": "last", "optimizer": "last"}``)
+            and they match in prefix (``"best"`` and
+            ``"best_full"``) then will be loaded full checkpoint
+            because it contains required states.
+        load_on_stage_end (str or Dict[str, str]): load specified
+            state/model at stage end.
+
+            If passed **string** then will be performed initialization from
+            specified state (``best``/``best_full``/``last``/``last_full``)
+            or checkpoint file.
+
+            If passed **dict** then will be performed initialization only
+            for specified parts - model, criterion, optimizer, scheduler.
+            Logic for dict is the same as for ``load_on_stage_start``.
+
+            If ``None`` then no action is required at stage end
+            and will be used the last runner.
+
+            **NOTE:** Loading will be performed always at stage end.
+        metrics_filename: filename to save metrics
+            in checkpoint folder.
+            Must ends on ``.json`` or ``.yml``
+        mode: @TODO: docs.
+        use_logdir_postfix: @TODO: docs.
+        use_runner_logdir: @TODO: docs.
+    """
 
     def __init__(
         self,
@@ -235,84 +312,7 @@ class CheckpointCallback(ICheckpointCallback):
         use_logdir_postfix: bool = False,
         use_runner_logdir: bool = False,
     ):
-        """
-        Args:
-            logdir: @TODO: docs.
-            loader_key: @TODO: docs.
-            metric_key: @TODO: docs.
-            minimize: @TODO: docs.
-            min_delta: @TODO: docs.
-            save_n_best: number of best checkpoint to keep,
-                if ``0`` then  store only last state of model and
-                ``load_on_stage_end`` should be one of
-                ``last`` or ``last_full``.
-            load_on_stage_start (str or Dict[str, str]): load specified
-                state/model at stage start.
-
-                If passed **string** then will be performed initialization from
-                specified state (``best``/``best_full``/``last``/``last_full``)
-                or checkpoint file.
-
-                If passed **dict** then will be performed initialization only
-                for specified parts - model, criterion, optimizer, scheduler.
-
-                Example:
-
-                    >>> # possible checkpoints to use:
-                    >>> #   "best"/"best_full"/"last"/"last_full"
-                    >>> #   or path to specific checkpoint
-                    >>> to_load = {
-                    >>>    "model": "path/to/checkpoint.pth",
-                    >>>    "criterion": "best",
-                    >>>    "optimizer": "last_full",
-                    >>>    "scheduler": "best_full",
-                    >>> }
-                    >>> CheckpointCallback(load_on_stage_start=to_load)
-
-                All other keys instead of ``"model"``, ``"criterion"``,
-                ``"optimizer"`` and ``"scheduler"`` will be ignored.
-
-                If ``None`` or an empty dict (or dict without mentioned
-                above keys) then no action is required at stage start and:
-
-                - Config API - will be used best state of model
-                - Notebook API - no action will be performed (will be
-                  used the last state)
-
-                **NOTE:** Loading will be performed on all stages except first.
-
-                **NOTE:** Criterion, optimizer and scheduler are optional keys
-                and should be loaded from full checkpoint.
-
-                Model state can be loaded from any checkpoint.
-
-                When dict contains keys for model and some other part
-                (for example ``{"model": "last", "optimizer": "last"}``)
-                and they match in prefix (``"best"`` and
-                ``"best_full"``) then will be loaded full checkpoint
-                because it contains required states.
-            load_on_stage_end (str or Dict[str, str]): load specified
-                state/model at stage end.
-
-                If passed **string** then will be performed initialization from
-                specified state (``best``/``best_full``/``last``/``last_full``)
-                or checkpoint file.
-
-                If passed **dict** then will be performed initialization only
-                for specified parts - model, criterion, optimizer, scheduler.
-                Logic for dict is the same as for ``load_on_stage_start``.
-
-                If ``None`` then no action is required at stage end
-                and will be used the last runner.
-
-                **NOTE:** Loading will be performed always at stage end.
-            metrics_filename: filename to save metrics
-                in checkpoint folder.
-                Must ends on ``.json`` or ``.yml``
-            mode: @TODO: docs.
-            use_logdir_postfix: @TODO: docs.
-            use_runner_logdir: @TODO: docs.
-        """
+        """Init."""
         super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
         possible_states = {
             None,
