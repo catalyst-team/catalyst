@@ -185,7 +185,7 @@ def get_device() -> torch.device:
 
 def get_default_engine(
     fp16: bool = False, ddp: bool = False, amp: bool = False, apex: bool = False
-) -> IEngine:
+) -> "IEngine":
     """Default engine based on given arguments.
 
     Args:
