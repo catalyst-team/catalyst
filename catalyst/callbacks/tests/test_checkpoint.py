@@ -175,7 +175,6 @@ def test_ddp_load_on_stage_start():
         runner.run()
 
 
-@pytest.mark.skip()
 def test_load_best_on_stage_end():
     old_stdout = sys.stdout
     sys.stdout = str_stdout = StringIO()
