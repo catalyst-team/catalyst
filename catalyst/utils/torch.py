@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Iterable, List, Mapping, Union
+from typing import Any, Callable, Dict, Iterable, List, Mapping, TYPE_CHECKING, Union
 import collections
 import os
 import re
@@ -9,7 +9,7 @@ from torch import nn, Tensor
 import torch.backends
 from torch.backends import cudnn
 
-from catalyst.settings import SETTINGS
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 from catalyst.typing import (
     Device,
     Model,
@@ -21,6 +21,9 @@ from catalyst.typing import (
 )
 from catalyst.utils.distributed import get_nn_from_ddp_module
 from catalyst.utils.misc import maybe_recursive_call, merge_dicts
+
+if TYPE_CHECKING:
+    from catalyst.core.engine import IEngine
 
 # TODO: move to global registry with activation functions
 ACTIVATIONS = {  # noqa: WPS407
@@ -178,6 +181,79 @@ def get_device() -> torch.device:
     elif is_available_gpu:
         device = "cuda"
     return torch.device(device)
+
+
+def get_default_engine(
+    fp16: bool = False, ddp: bool = False, amp: bool = False, apex: bool = False
+) -> IEngine:
+    """Default engine based on given arguments.
+
+    Args:
+        fp16 (bool): option to use fp16 for training. Default is `False`.
+        ddp (bool): option to use DDP for training. Default is `False`.
+        amp (bool): option to use APEX for training. Default is `False`.
+        apex (bool): option to use APEX for training. Default is `False`.
+
+    Returns:
+        IEngine which match requirements.
+    """
+    from catalyst.engines.torch import (
+        DataParallelEngine,
+        DeviceEngine,
+        DistributedDataParallelEngine,
+    )
+
+    if fp16 and not amp and not apex:
+        amp = SETTINGS.amp_required or (SETTINGS.amp_required and SETTINGS.apex_required)
+        apex = SETTINGS.apex_required and (not SETTINGS.amp_required)
+
+    if amp:
+        assert (
+            SETTINGS.amp_required
+        ), "catalyst[amp] is not available, to install it, run `pip install catalyst[amp]`."
+        assert not apex, "Could not use both apex and amp engines"
+        from catalyst.engines.amp import (
+            AMPEngine,
+            DataParallelAMPEngine,
+            DistributedDataParallelAMPEngine,
+        )
+
+    if apex:
+        assert (
+            SETTINGS.apex_required
+        ), "catalyst[apex] is not available, to install it, run `pip install catalyst[apex]`."
+        assert not amp, "Could not use both apex and amp engines"
+        from catalyst.engines.apex import (
+            APEXEngine,
+            DataParallelApexEngine,
+            DistributedDataParallelApexEngine,
+        )
+
+    is_multiple_gpus = NUM_CUDA_DEVICES > 1
+    if not IS_CUDA_AVAILABLE:
+        return DeviceEngine("cpu")
+    elif is_multiple_gpus:
+        if ddp:
+            if amp:
+                return DistributedDataParallelAMPEngine()
+            elif apex:
+                return DistributedDataParallelApexEngine()
+            else:
+                return DistributedDataParallelEngine()
+        else:
+            if amp:
+                return DataParallelAMPEngine()
+            elif apex:
+                return DataParallelApexEngine()
+            else:
+                return DataParallelEngine()
+    else:
+        if amp:
+            return AMPEngine()
+        elif apex:
+            return APEXEngine()
+        else:
+            return DeviceEngine("cuda")
 
 
 def get_available_gpus():
@@ -572,6 +648,7 @@ __all__ = [
     "get_requires_grad",
     "set_requires_grad",
     "get_network_output",
+    "get_default_engine",
     "detach_tensor",
     "trim_tensors",
     "get_optimal_inner_init",

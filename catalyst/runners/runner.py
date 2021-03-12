@@ -18,7 +18,7 @@ from catalyst.core.logger import ILogger
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
-from catalyst.engines import get_engine, IEngine
+from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
 from catalyst.loggers.tensorboard import TensorboardLogger
@@ -35,6 +35,7 @@ from catalyst.typing import (
 )
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
+from catalyst.utils.torch import get_default_engine
 
 
 def _process_loaders(
@@ -240,6 +241,7 @@ class Runner(IRunner):
         load_best_on_end: bool = False,
         # engine extra params,
         fp16: bool = False,
+        amp: bool = False,
         apex: bool = False,
         ddp: bool = False,
     ) -> None:
@@ -280,13 +282,14 @@ class Runner(IRunner):
             load_best_on_end: if True, Runner will load
                 best checkpoint state (model, optimizer, etc)
                 according to validation metrics. Requires specified ``logdir``.
-            fp16: boolean flag to use half-precision training
+            fp16: boolean flag to use half-precision training (AMP > APEX)
+            amp: boolean flag to use amp half-precision
             apex: boolean flag to use apex half-precision
             ddp: if `True` will start training in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
         """
         # experiment setup
-        self._engine = get_engine(fp16, apex, ddp) if engine is None else engine
+        self._engine = engine or get_default_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
         self._trial = trial
         self._loggers = loggers
         # the data
