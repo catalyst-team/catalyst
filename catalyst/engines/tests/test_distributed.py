@@ -3,6 +3,7 @@
 from typing import Any, Dict
 import logging
 import os
+import random
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -31,13 +32,16 @@ if NUM_CUDA_DEVICES > 1:
     os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
 
 
+DDP_ADDRESS = random.randint(22222, 99999)
+
+
 class CustomRunner(IRunner):
     def __init__(self, logdir):
         super().__init__()
         self._logdir = logdir
 
     def get_engine(self):
-        return DistributedDataParallelEngine(port="22222")
+        return DistributedDataParallelEngine(port=DDP_ADDRESS + random.randint(1, 100))
 
     def get_callbacks(self, stage: str):
         return {
@@ -117,7 +121,10 @@ def test_config_ddp_engine():
             config={
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
-                "engine": {"_target_": "DistributedDataParallelEngine", "port": "33333"},
+                "engine": {
+                    "_target_": "DistributedDataParallelEngine",
+                    "port": DDP_ADDRESS + random.randint(100, 200),
+                },
                 "loggers": {"console": {"_target_": "ConsoleLogger"}},
                 "stages": {
                     "stage1": {

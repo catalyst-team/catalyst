@@ -532,58 +532,6 @@ class CheckpointCallback(ICheckpointCallback):
                     load_full=need_full,
                 )
 
-        is_first_stage = list(runner.stages).index(runner.stage_key) == 0
-        if self.load_on_stage_start is not None and not is_first_stage:
-            need_full = False
-            file_exists = False
-            if isinstance(self.load_on_stage_start, str):
-                need_full = self.load_on_stage_start.endswith("full")
-                use_file = os.path.join(self.logdir, f"{self.load_on_stage_start}.pth")
-                file_exists = os.path.isfile(use_file)
-                if not file_exists:
-                    raise FileNotFoundError(f"Missing file '{use_file}'!")  # noqa: F821
-            elif isinstance(self.load_on_stage_start, dict):
-                required_files = _get_required_files(self.logdir, self.load_on_stage_start).keys()
-                file_exists = True
-                for use_file in required_files:
-                    if not os.path.isfile(use_file):
-                        file_exists = False
-                        raise FileNotFoundError(f"Missing file '{use_file}'!")
-
-            if self.load_on_stage_start is not None and file_exists:
-                _load_runner(
-                    logdir=self.logdir,
-                    runner=runner,
-                    mapping=self.load_on_stage_start,
-                    load_full=need_full,
-                )
-
-        is_first_stage = list(runner.stages).index(runner.stage_key) == 0
-        if self.load_on_stage_start is not None and not is_first_stage:
-            need_full = False
-            file_exists = False
-            if isinstance(self.load_on_stage_start, str):
-                need_full = self.load_on_stage_start.endswith("full")
-                use_file = os.path.join(self.logdir, f"{self.load_on_stage_start}.pth")
-                file_exists = os.path.isfile(use_file)
-                if not file_exists:
-                    raise FileNotFoundError(f"Missing file '{use_file}'!")  # noqa: F821
-            elif isinstance(self.load_on_stage_start, dict):
-                required_files = _get_required_files(self.logdir, self.load_on_stage_start).keys()
-                file_exists = True
-                for use_file in required_files:
-                    if not os.path.isfile(use_file):
-                        file_exists = False
-                        raise FileNotFoundError(f"Missing file '{use_file}'!")
-
-            if self.load_on_stage_start is not None and file_exists:
-                _load_runner(
-                    logdir=self.logdir,
-                    runner=runner,
-                    mapping=self.load_on_stage_start,
-                    load_full=need_full,
-                )
-
     #     if getattr(runner, "resume", None) is not None:
     #         self.resume = runner.resume
     #         runner.resume = None
