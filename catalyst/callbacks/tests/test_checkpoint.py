@@ -1,9 +1,10 @@
 # flake8: noqa
-from io import StringIO
+
 import os
 import re
 import shutil
 import sys
+from io import StringIO
 
 import pytest
 import torch
