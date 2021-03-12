@@ -9,8 +9,6 @@ import sys
 from tempfile import TemporaryDirectory
 
 import pytest
-
-# installed
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -19,24 +17,34 @@ import catalyst.dl as dl
 from catalyst.engines import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
+if NUM_CUDA_DEVICES > 1:
+    os.environ["MKL_SERVICE_FORCE_INTEL"] = "1"
+
 
 class DummyDataset:
+    """Docs."""
+
     features_dim: int = 4
     out_dim: int = 2
 
     def __init__(self, num_records: int):
+        """Docs."""
         self.num_records = num_records
 
     def __len__(self):
+        """Docs."""
         return self.num_records
 
     def __getitem__(self, idx: int):
+        """Docs."""
         x = torch.ones(self.features_dim, dtype=torch.float)
         y = torch.ones(self.out_dim, dtype=torch.float)
         return x, y
 
 
 class CheckModelStateLoadAfterStages(dl.Callback):
+    """Docs."""
+
     def __init__(self, stage, logdir, checkpoint):
         """Docs."""
         super().__init__(dl.CallbackOrder.Internal)
