@@ -431,6 +431,7 @@ class IRunner(ICallback, ILogger, ABC):
                 **kwargs,
                 # experiment info
                 experiment_key=self.run_key,
+                stage_key=self.stage_key,
             )
 
     def flush_log(self) -> None:

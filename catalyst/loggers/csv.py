@@ -70,6 +70,7 @@ class CSVLogger(ILogger):
         scope: str = None,
         # experiment info
         experiment_key: str = None,
+        stage_key: str = None,
     ) -> None:
         """@TODO: docs."""
         if scope == "experiment":

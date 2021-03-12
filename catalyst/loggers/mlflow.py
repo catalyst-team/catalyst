@@ -195,6 +195,7 @@ class MLflowLogger(ILogger):
         scope: str = None,
         # experiment info
         experiment_key: str = None,
+        stage_key: str = None,
     ) -> None:
         """Logs parameters for current scope.
 
@@ -208,13 +209,18 @@ class MLflowLogger(ILogger):
             hparams: Parameters to log.
             scope: On which scope log parameters.
             experiment_key: Experiment info.
+            stage_key: Stage info.
         """
         stages = set(hparams["stages"]) - set(STAGE_PARAMS) - set(EXCLUDE_PARAMS)
         self._multistage = len(stages) > 1
 
+        if scope == "experiment":
+            if self._multistage:
+                mlflow.set_tag('mlflow.runName', experiment_key)
+
         if scope == "stage":
             if self._multistage:
-                mlflow.start_run(run_name=experiment_key, nested=True)
+                mlflow.start_run(run_name=stage_key, nested=True)
 
             scope_params = hparams["stages"].get(experiment_key, {})
             _mlflow_log_dict(scope_params, log_type="param")
