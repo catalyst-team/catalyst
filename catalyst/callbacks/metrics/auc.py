@@ -8,8 +8,8 @@ class AUCCallback(LoaderMetricCallback):
     Args:
         input_key: input key to use for auc calculation, specifies our ``y_true``.
         target_key: output key to use for auc calculation, specifies our ``y_pred``.
-        prefix: metric's prefix
-        suffix: metric's suffix
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(

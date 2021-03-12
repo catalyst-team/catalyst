@@ -172,7 +172,7 @@ class BatchMetricCallback(MetricCallback):
         metric: metric to calculate in callback
         input_key: keys of tensors that should be used as inputs in metric calculation
         target_key: keys of tensors that should be used as targets in metric calculation
-        log_on_batch: if True update runner's batch metrics every batch
+        log_on_batch: boolean flag to log computed metrics every batch
     """
 
     def __init__(

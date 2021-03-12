@@ -18,8 +18,9 @@ class AccuracyCallback(BatchMetricCallback):
             [1, 3] - accuracy at 1 and 3
             [1, 3, 5] - accuracy at 1, 3 and 5
         num_classes: number of classes to calculate ``topk_args`` if ``accuracy_args`` is None
-        prefix: metric's prefix
-        suffix: metric's suffix
+        log_on_batch: boolean flag to log computed metrics every batch
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
@@ -28,6 +29,7 @@ class AccuracyCallback(BatchMetricCallback):
         target_key: str,
         topk_args: List[int] = None,
         num_classes: int = None,
+        log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -38,6 +40,7 @@ class AccuracyCallback(BatchMetricCallback):
             ),
             input_key=input_key,
             target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 
@@ -49,8 +52,9 @@ class MultilabelAccuracyCallback(BatchMetricCallback):
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
         threshold: thresholds for model scores
-        prefix: metric's prefix
-        suffix: metric's suffix
+        log_on_batch: boolean flag to log computed metrics every batch
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
@@ -58,6 +62,7 @@ class MultilabelAccuracyCallback(BatchMetricCallback):
         input_key: str,
         target_key: str,
         threshold: Union[float, torch.Tensor] = 0.5,
+        log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -66,6 +71,7 @@ class MultilabelAccuracyCallback(BatchMetricCallback):
             metric=MultilabelAccuracyMetric(threshold=threshold, prefix=prefix, suffix=suffix),
             input_key=input_key,
             target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 

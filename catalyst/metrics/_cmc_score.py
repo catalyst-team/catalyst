@@ -16,8 +16,8 @@ class CMCMetric(AccumulationMetric):
         is_query_key: key of query flag tensor in batch
         topk_args: list of k, specifies which cmc@k should be calculated
         compute_on_call: if True, allows compute metric's value on call
-        prefix: metric's prefix
-        suffix: metric's suffix
+        prefix: metric prefix
+        suffix: metric suffix
 
     Examples:
         >>> from collections import OrderedDict

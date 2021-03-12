@@ -13,8 +13,9 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         target_key: output key to use for metric calculation, specifies our `y_true`
         num_classes: number of classes
         zero_division: @TODO: docs
-        prefix: metric's prefix
-        suffix: metric's suffix
+        log_on_batch: boolean flag to log computed metrics every batch
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
@@ -23,6 +24,7 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         target_key: str,
         num_classes: int,
         zero_division: int = 0,
+        log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -33,6 +35,7 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
             ),
             input_key=input_key,
             target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 
@@ -44,8 +47,9 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         target_key: output key to use for metric calculation, specifies our `y_true`
         num_classes: number of classes
         zero_division: @TODO: docs
-        prefix: metric's prefix
-        suffix: metric's suffix
+        log_on_batch: boolean flag to log computed metrics every batch
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
@@ -54,6 +58,7 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         target_key: str,
         num_classes: int,
         zero_division: int = 0,
+        log_on_batch: bool = True,
         prefix: str = None,
         suffix: str = None,
     ):
@@ -64,6 +69,7 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
             ),
             input_key=input_key,
             target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 
