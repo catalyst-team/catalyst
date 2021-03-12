@@ -2,26 +2,9 @@ import itertools
 
 import matplotlib
 import numpy as np
-import torch
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
-
-
-def image_to_tensor(image: np.ndarray) -> torch.Tensor:
-    """
-    Creates tensor from RGB image.
-
-    Args:
-        image: RGB image stored as np.ndarray
-
-    Returns:
-        tensor
-    """
-    image = np.moveaxis(image, -1, 0)
-    image = np.ascontiguousarray(image)
-    image = torch.from_numpy(image)
-    return image
 
 
 # def tensor_to_ndimage(
@@ -177,7 +160,6 @@ def render_figure_to_array(figure):
 
 
 __all__ = [
-    "image_to_tensor",
     "plot_confusion_matrix",
     "render_figure_to_array",
 ]

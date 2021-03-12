@@ -4,8 +4,8 @@ import os
 import numpy as np
 from tensorboardX import SummaryWriter
 
-from catalyst.contrib.utils.visualization import image_to_tensor
 from catalyst.core.logger import ILogger
+from catalyst.loggers.functional import image_to_tensor
 
 
 class TensorboardLogger(ILogger):
