@@ -505,14 +505,19 @@ class CheckpointCallback(ICheckpointCallback):
             file_exists = False
             if isinstance(self.load_on_stage_start, str):
                 need_full = self.load_on_stage_start.endswith("full")
-                file_exists = os.path.isfile(
-                    os.path.join(self.logdir, f"{self.load_on_stage_start}.pth")
-                )
+                _file = os.path.join(self.logdir, f"{self.load_on_stage_start}.pth")
+                file_exists = os.path.isfile(_file)
+                if not file_exists:
+                    raise FileNotFoundError(f"Missing file '{_file}'!")
             elif isinstance(self.load_on_stage_start, dict):
                 required_files = _get_required_files(self.logdir, self.load_on_stage_start).keys()
-                file_exists = all(os.path.isfile(file) for file in required_files)
+                file_exists = True
+                for file in required_files:
+                    if not os.path.isfile(file):
+                        file_exists = False
+                        raise FileNotFoundError(f"Missing file '{file}'")
 
-            if not self.load_on_stage_start is None and file_exists:
+            if self.load_on_stage_start is not None and file_exists:
                 _load_runner(
                     logdir=self.logdir,
                     runner=runner,
