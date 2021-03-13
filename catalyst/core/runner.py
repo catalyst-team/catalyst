@@ -137,8 +137,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     @property
     def name(self) -> str:
-        """@TODO: docs"""
-        # @TODO: return the hash from the IRunner instance
+        """Returns run name for monitoring tools."""
         return "IRunner"
 
     @property
@@ -164,7 +163,7 @@ class IRunner(ICallback, ILogger, ABC):
     @property
     @abstractmethod
     def stages(self) -> Iterable[str]:
-        """Experiment's stage names.
+        """Run's stage names.
 
         Example::
 
@@ -174,20 +173,26 @@ class IRunner(ICallback, ILogger, ABC):
         pass
 
     def get_stage_len(self, stage: str) -> int:
-        """@TODO: docs"""
+        """Returns number of epochs for the selected stage.
+
+        Example::
+
+            >>> runner.get_stage_len("pretraining")
+            3
+        """
         return 1
 
     def get_trial(self) -> Optional[ITrial]:
-        """@TODO: docs"""
+        """Returns the trial for the run."""
         return None  # noqa: WPS324
 
     @abstractmethod
     def get_engine(self) -> IEngine:
-        """@TODO: docs"""
+        """Returns the engine for the run."""
         return None  # noqa: WPS324
 
     def get_loggers(self) -> Dict[str, ILogger]:
-        """@TODO: docs"""
+        """Returns the loggers for the run."""
         return {}
 
     def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":

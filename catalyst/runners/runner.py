@@ -253,15 +253,15 @@ class Runner(IRunner):
             loaders: dictionary with one or several ``torch.utils.data.DataLoader``
                 for training, validation or inference
             model: model to train
-            engine: @TODO: docs
-            trial: @TODO: docs
+            engine: engine to use for model training
+            trial: trial to use during model training
             criterion: criterion function for training
             optimizer: optimizer for training
             scheduler: scheduler for training
             callbacks: list or dictionary with Catalyst callbacks
-            loggers: @TODO: docs
+            loggers: dictionary with Catalyst loggers
             seed: experiment's initial seed value
-            hparams: @TODO: docs
+            hparams: hyperparameters for the run
             num_epochs: number of training epochs
             logdir: path to output directory
             valid_loader: loader name used to calculate

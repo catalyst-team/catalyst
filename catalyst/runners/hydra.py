@@ -96,12 +96,12 @@ class HydraRunner(IRunner):
 
     @property
     def seed(self) -> int:
-        """@TODO: docs."""
+        """Experiment's seed for reproducibility."""
         return self._seed
 
     @property
     def name(self) -> str:
-        """@TODO: docs."""
+        """Returns run name for monitoring tools."""
         return self._name
 
     @property
@@ -116,21 +116,27 @@ class HydraRunner(IRunner):
         return stages_keys
 
     def get_stage_len(self, stage: str) -> int:
-        """@TODO: docs."""
+        """Returns number of epochs for the selected stage.
+
+        Example::
+
+            >>> runner.get_stage_len("pretraining")
+            3
+        """
         return self._config.stages[stage].num_epochs or 1
 
     def get_trial(self) -> ITrial:
-        """@TODO: docs."""
+        """Returns the trial for the run."""
         return self._trial
 
     def get_engine(self) -> IEngine:
-        """@TODO: docs."""
+        """Returns the engine for the run."""
         engine_params = self._config.engine
         engine = hydra.utils.instantiate(engine_params)
         return engine
 
     def get_loggers(self) -> Dict[str, ILogger]:
-        """@TODO: docs."""
+        """Returns the loggers for the run."""
         loggers_params = self._config.loggers or {}
         loggers = {key: hydra.utils.instantiate(params) for key, params in loggers_params.items()}
 
@@ -351,14 +357,14 @@ class HydraRunner(IRunner):
 
 
 class SupervisedHydraRunner(ISupervisedRunner, HydraRunner):
-    """@TODO: docs.
+    """HydraRunner for supervised tasks
 
     Args:
-        cfg:
-        input_key:
-        output_key:
-        target_key:
-        loss_key:
+        cfg: Hydra dictionary with parameters
+        input_key: key in ``runner.batch`` dict mapping for model input
+        output_key: key for ``runner.batch`` to store model output
+        target_key: key in ``runner.batch`` dict mapping for target
+        loss_key: key for ``runner.batch_metrics`` to store criterion loss output
     """
 
     def __init__(

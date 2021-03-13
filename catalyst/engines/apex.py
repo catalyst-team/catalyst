@@ -122,7 +122,7 @@ def _wrap_into_data_parallel_with_apex(
 
 
 class APEXEngine(DeviceEngine):
-    """@TODO: docs.
+    """Apex single training device engine.
 
     Args:
         device: use device, default is `"cuda"`.
@@ -135,8 +135,14 @@ class APEXEngine(DeviceEngine):
 
             Details about levels can be found here:
             https://nvidia.github.io/apex/amp.html#opt-levels
-        keep_batchnorm_fp32: TODO
-        loss_scale: TODO
+        keep_batchnorm_fp32: To enhance precision and enable cudnn batchnorm
+            (which improves performance),
+            it’s often beneficial to keep batchnorm weights in FP32 even
+            if the rest of the model is FP16.
+        loss_scale: If loss_scale is a float value,
+            use this value as the static (fixed) loss scale. If loss_scale is the string "dynamic",
+            adaptively adjust the loss scale over time.
+            Dynamic loss scale adjustments are performed by Amp automatically.
     """
 
     def __init__(
@@ -158,7 +164,7 @@ class APEXEngine(DeviceEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        """@TODO: docs."""
+        """Inits the runs components."""
         # model
         model = model_fn()
         # model = _patch_forward(model)
@@ -188,14 +194,29 @@ class APEXEngine(DeviceEngine):
         return model, criterion, optimizer, scheduler
 
     def backward_loss(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``loss.backward()`` step."""
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
-        """@TODO: docs."""
+        """
+        Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
+        and some extra info ``**kwargs`` to torch-based checkpoint.
+
+        Args:
+            model: torch model
+            criterion: torch criterion
+            optimizer: torch optimizer
+            scheduler: torch scheduler
+            **kwargs: some extra info to pack
+
+        Returns:
+            torch-based checkpoint with ``model_state_dict``,
+            ``criterion_state_dict``, ``optimizer_state_dict``,
+            ``scheduler_state_dict`` keys.
+        """
         checkpoint = {"amp": amp.state_dict()}
         checkpoint = super().pack_checkpoint(
             model=model,
@@ -215,7 +236,17 @@ class APEXEngine(DeviceEngine):
         scheduler=None,
         **kwargs,
     ) -> None:
-        """@TODO: docs."""
+        """Load checkpoint from file and unpack the content to a model
+        (if not None), criterion (if not None), optimizer (if not None),
+        scheduler (if not None).
+
+        Args:
+            checkpoint: checkpoint to load
+            model: model where should be updated state
+            criterion: criterion where should be updated state
+            optimizer: optimizer where should be updated state
+            scheduler: scheduler where should be updated state
+        """
         super().unpack_checkpoint(
             checkpoint,
             model=model,
@@ -232,10 +263,10 @@ class APEXEngine(DeviceEngine):
 
 
 class DataParallelApexEngine(APEXEngine):
-    """@TODO: docs."""
+    """Apex multi-gpu training device engine."""
 
     def __init__(self, opt_level: str = "O1"):
-        """@TODO: docs."""
+        """Init."""
         super().__init__(f"cuda:{torch.cuda.current_device()}", opt_level)
         self.device_count = torch.cuda.device_count()
 
@@ -245,7 +276,7 @@ class DataParallelApexEngine(APEXEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        """@TODO: docs."""
+        """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
 
@@ -268,7 +299,7 @@ class DataParallelApexEngine(APEXEngine):
 
 
 class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
-    """@TODO: docs.
+    """Distributed Apex MultiGPU training device engine.
 
     Args:
         address: process address to use (required for PyTorch backend), default is `"localhost"`.
@@ -285,9 +316,15 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             Details about levels can be found here:
             https://nvidia.github.io/apex/amp.html#opt-levels
 
-        keep_batchnorm_fp32: TODO
-        loss_scale: TODO
-        delay_all_reduce: TODO
+        keep_batchnorm_fp32: To enhance precision and enable cudnn batchnorm
+            (which improves performance),
+            it’s often beneficial to keep batchnorm weights in FP32 even
+            if the rest of the model is FP16.
+        loss_scale: If loss_scale is a float value,
+            use this value as the static (fixed) loss scale. If loss_scale is the string "dynamic",
+            adaptively adjust the loss scale over time.
+            Dynamic loss scale adjustments are performed by Amp automatically.
+        delay_all_reduce: boolean flag for delayed all reduce
     """
 
     def __init__(
@@ -325,7 +362,7 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        """@TODO: docs."""
+        """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
 
@@ -359,14 +396,29 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         return model, criterion, optimizer, scheduler
 
     def backward_loss(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``loss.backward()`` step."""
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
 
     def pack_checkpoint(
         self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
     ) -> Dict:
-        """@TODO: docs."""
+        """
+        Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
+        and some extra info ``**kwargs`` to torch-based checkpoint.
+
+        Args:
+            model: torch model
+            criterion: torch criterion
+            optimizer: torch optimizer
+            scheduler: torch scheduler
+            **kwargs: some extra info to pack
+
+        Returns:
+            torch-based checkpoint with ``model_state_dict``,
+            ``criterion_state_dict``, ``optimizer_state_dict``,
+            ``scheduler_state_dict`` keys.
+        """
         checkpoint = {"amp": amp.state_dict()}
         checkpoint = super().pack_checkpoint(
             model=model,
@@ -386,7 +438,17 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         scheduler=None,
         **kwargs,
     ) -> None:
-        """@TODO: docs."""
+        """Load checkpoint from file and unpack the content to a model
+        (if not None), criterion (if not None), optimizer (if not None),
+        scheduler (if not None).
+
+        Args:
+            checkpoint: checkpoint to load
+            model: model where should be updated state
+            criterion: criterion where should be updated state
+            optimizer: optimizer where should be updated state
+            scheduler: scheduler where should be updated state
+        """
         super().unpack_checkpoint(
             checkpoint,
             model=model,

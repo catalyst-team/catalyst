@@ -8,12 +8,12 @@ from catalyst.utils.distributed import all_gather, get_rank
 
 
 class AUCMetric(ICallbackLoaderMetric):
-    """@TODO: docs here
+    """AUC metric,
 
     Args:
-        compute_on_call: @TODO: docs
-        prefix: @TODO: docs
-        suffix:@TODO: docs
+        compute_on_call: if True, computes and returns metric value during metric call
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
@@ -25,18 +25,23 @@ class AUCMetric(ICallbackLoaderMetric):
         self._is_ddp = False
 
     def reset(self, num_batches, num_samples) -> None:
-        """@TODO: docs here"""
+        """Resets all fields"""
         self._is_ddp = get_rank() > -1
         self.scores = []
         self.targets = []
 
     def update(self, scores: torch.Tensor, targets: torch.Tensor) -> None:
-        """@TODO: docs here"""
+        """Updates metric value with statistics for new data.
+
+        Args:
+            scores: tensor with scores
+            targets: tensor with targets
+        """
         self.scores.append(scores.cpu().detach())
         self.targets.append(targets.cpu().detach())
 
     def compute(self) -> torch.Tensor:
-        """@TODO: docs here"""
+        """Computes the AUC metric based on saved statistics."""
         targets = torch.cat(self.targets)
         scores = torch.cat(self.scores)
 
@@ -49,7 +54,7 @@ class AUCMetric(ICallbackLoaderMetric):
         return score
 
     def compute_key_value(self) -> Dict[str, float]:
-        """@TODO: docs here"""
+        """Computes the AUC metric based on saved statistics and returns key-value results."""
         per_class_auc = self.compute()
         output = {
             f"{self.metric_name}/class_{i:02d}": value.item()

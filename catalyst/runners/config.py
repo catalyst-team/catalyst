@@ -94,12 +94,12 @@ class ConfigRunner(IRunner):
 
     @property
     def seed(self) -> int:
-        """@TODO: docs."""
+        """Experiment's seed for reproducibility."""
         return self._seed
 
     @property
     def name(self) -> str:
-        """@TODO: docs."""
+        """Returns run name for monitoring tools."""
         return self._name
 
     @property
@@ -114,21 +114,27 @@ class ConfigRunner(IRunner):
         return stages_keys
 
     def get_stage_len(self, stage: str) -> int:
-        """@TODO: docs."""
+        """Returns number of epochs for the selected stage.
+
+        Example::
+
+            >>> runner.get_stage_len("pretraining")
+            3
+        """
         return get_by_keys(self._stage_config, stage, "num_epochs", default=1)
 
     def get_trial(self) -> ITrial:
-        """@TODO: docs."""
+        """Returns the trial for the run."""
         return self._trial
 
     def get_engine(self) -> IEngine:
-        """@TODO: docs."""
+        """Returns the engine for the run."""
         engine_params = self._config.get("engine")
         engine = REGISTRY.get_from_params(**engine_params)
         return engine
 
     def get_loggers(self) -> Dict[str, ILogger]:
-        """@TODO: docs."""
+        """Returns the loggers for the run."""
         loggers_params = self._config.get("loggers", {})
         loggers = {
             key: REGISTRY.get_from_params(**params) for key, params in loggers_params.items()
@@ -149,7 +155,16 @@ class ConfigRunner(IRunner):
         return loggers
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
-        """@TODO: docs."""
+        """
+        Returns loaders for a given stage.
+
+        Args:
+            stage: stage name
+
+        Returns:
+            Dict: loaders objects
+
+        """
         loaders_params = dict(self._stage_config[stage]["loaders"])
         loaders = get_loaders_from_params(
             datasets_fn=partial(self.get_datasets, stage=stage),
@@ -340,14 +355,14 @@ class ConfigRunner(IRunner):
 
 
 class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
-    """@TODO: docs.
+    """ConfigRunner for supervised tasks
 
     Args:
-        config:
-        input_key:
-        output_key:
-        target_key:
-        loss_key:
+        config: dictionary with parameters
+        input_key: key in ``runner.batch`` dict mapping for model input
+        output_key: key for ``runner.batch`` to store model output
+        target_key: key in ``runner.batch`` dict mapping for target
+        loss_key: key for ``runner.batch_metrics`` to store criterion loss output
     """
 
     def __init__(

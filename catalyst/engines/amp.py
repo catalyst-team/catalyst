@@ -6,7 +6,7 @@ from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 
 
 class AMPEngine(DeviceEngine):
-    """@TODO: docs.
+    """Pytorch.AMP single training device engine.
 
     Args:
         device: used device, default is `"cuda"`.
@@ -21,25 +21,25 @@ class AMPEngine(DeviceEngine):
         return f"{self.__class__.__name__}(device='{self.device}')"
 
     def backward_loss(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``loss.backward()`` step."""
         self.scaler.scale(loss).backward()
 
     def optimizer_step(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``optimizer.step()`` step."""
         self.scaler.step(optimizer)
         self.scaler.update()
 
     # TODO: should be used with forward method? (similar to criterion)
     def autocast(self):
-        """@TODO: docs."""
+        """AMP context"""
         return amp.autocast()
 
 
 class DataParallelAMPEngine(AMPEngine):
-    """@TODO: docs."""
+    """AMP multi-gpu training device engine."""
 
     def __init__(self):
-        """@TODO: docs."""
+        """Init."""
         super().__init__(f"cuda:{torch.cuda.current_device()}")
         self.device_count = torch.cuda.device_count()
 
@@ -49,7 +49,7 @@ class DataParallelAMPEngine(AMPEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        """@TODO: docs."""
+        """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
         model = DataParallel(model)
@@ -68,7 +68,7 @@ class DataParallelAMPEngine(AMPEngine):
 
 
 class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
-    """@TODO: docs.
+    """Distributed AMP multi-gpu training device engine.
 
     Args:
         address: process address to use (required for PyTorch backend), default is `"localhost"`.
@@ -96,17 +96,17 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         )
 
     def backward_loss(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``loss.backward()`` step."""
         self.scaler.scale(loss).backward()
 
     def optimizer_step(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``optimizer.step()`` step."""
         self.scaler.step(optimizer)
         self.scaler.update()
 
     # TODO: should be used with forward method? (similar to criterion)
     def autocast(self):
-        """@TODO: docs."""
+        """AMP context"""
         return amp.autocast()
 
 

@@ -28,7 +28,7 @@ class ILogger:
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """@TODO: docs"""
+        """Logs metrics to the logger."""
         pass
 
     def log_image(
@@ -54,7 +54,7 @@ class ILogger:
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """@TODO: docs"""
+        """Logs image to the logger."""
         pass
 
     def log_hparams(
@@ -65,15 +65,15 @@ class ILogger:
         run_key: str = None,
         stage_key: str = None,
     ) -> None:
-        """@TODO: docs"""
+        """Logs hyperparameters to the logger."""
         pass
 
     def flush_log(self) -> None:
-        """@TODO: docs"""
+        """Flushes the logger."""
         pass
 
     def close_log(self) -> None:
-        """@TODO: docs"""
+        """Closes the logger."""
         pass
 
 
