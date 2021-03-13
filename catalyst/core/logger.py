@@ -11,7 +11,7 @@ class ILogger:
         metrics: Dict[str, float],
         scope: str = None,
         # experiment info
-        experiment_key: str = None,
+        run_key: str = None,
         global_epoch_step: int = 0,
         global_batch_step: int = 0,
         global_sample_step: int = 0,
@@ -37,7 +37,7 @@ class ILogger:
         image: np.ndarray,
         scope: str = None,
         # experiment info
-        experiment_key: str = None,
+        run_key: str = None,
         global_epoch_step: int = 0,
         global_batch_step: int = 0,
         global_sample_step: int = 0,
@@ -62,7 +62,7 @@ class ILogger:
         hparams: Dict,
         scope: str = None,
         # experiment info
-        experiment_key: str = None,
+        run_key: str = None,
         stage_key: str = None,
     ) -> None:
         """@TODO: docs"""

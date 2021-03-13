@@ -32,19 +32,19 @@ class IEngine(ABC):
     @property
     @abstractmethod
     def rank(self) -> int:
-        """@TODO: docs"""
+        """"Process rank"""
         pass
 
     @property
     @abstractmethod
     def world_size(self) -> int:
-        """@TODO: docs"""
+        """Process world size"""
         # only for ddp
         pass
 
     @property
     def is_ddp(self) -> bool:
-        """@TODO: docs."""
+        """Boolean flag for distributed run"""
         return self.rank > -1
 
     @property

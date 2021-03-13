@@ -110,13 +110,15 @@ class DeviceEngine(IEngine):
         **kwargs,
     ) -> None:
         """@TODO: docs."""
-        return unpack_checkpoint(
+        unpack_checkpoint(
             checkpoint=checkpoint,
             model=model,
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
         )
+        for key, value in kwargs.items():
+            value = checkpoint[key]
 
     def save_checkpoint(self, checkpoint: Mapping[str, Any], path: str):
         """@TODO: docs."""
@@ -273,6 +275,7 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     def deinit_components(self):
         """@TODO: docs."""
+        dist.barrier()
         self.cleanup_process()
 
     def zero_grad(self, loss, model, optimizer) -> None:

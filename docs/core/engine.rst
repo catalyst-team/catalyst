@@ -1,27 +1,17 @@
-Experiment
+Engine
 ==============================================================================
 
-Experiment - an abstraction that contains information about the experiment
-- a model, a criterion, an optimizer, a scheduler, and their hyperparameters.
-It also holds information about the data and transformations to apply.
-The Experiment knows **what** you would like to run.
+Hi,
 
-Each deep learning project has several main components.
-These primitives define what we want to use during the experiment:
+Still work in progress here.
 
-- the data
-- the model(s)
-- the optimizer(s)
-- the loss(es)
-- and the scheduler(s) if we need them.
+But don't feel upset, check out the kitty... `Kittylyst`_ tutorial.
 
-That are the abstractions that Experiment covers in Catalyst,
-with a few modifications for easier experiment monitoring
-and hyperparameters logging. For each stage of our experiment,
-the Experiment provides interfaces to all primitives above + the callbacks.
+.. _`Kittylyst`: https://github.com/Scitator/kittylyst
 
-.. image:: https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/third_party_pics/catalyst102-experiment.png
-    :alt: Experiment
+.. image:: https://raw.githubusercontent.com/Scitator/kittylyst/master/assets/kitty.jpg
+    :target: https://github.com/Scitator/kittylyst
+    :alt: kitty
 
 If you haven't found the answer for your question, feel free to `join our slack`_ for the discussion.
 

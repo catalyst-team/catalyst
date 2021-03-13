@@ -374,13 +374,13 @@ class IRunner(ICallback, ILogger, ABC):
         return {}
 
     def log_metrics(self, *args, **kwargs) -> None:
-        """@TODO: docs."""
+        """Logs batch, loader and epoch metrics to available loggers."""
         for logger in self.loggers.values():
             logger.log_metrics(
                 *args,
                 **kwargs,
                 # experiment info
-                experiment_key=self.run_key,
+                run_key=self.run_key,
                 global_sample_step=self.global_sample_step,
                 global_batch_step=self.global_batch_step,
                 global_epoch_step=self.global_epoch_step,
@@ -399,13 +399,13 @@ class IRunner(ICallback, ILogger, ABC):
             )
 
     def log_image(self, *args, **kwargs) -> None:
-        """@TODO: docs."""
+        """Logs image to available loggers."""
         for logger in self.loggers.values():
             logger.log_image(
                 *args,
                 **kwargs,
                 # experiment info
-                experiment_key=self.run_key,
+                run_key=self.run_key,
                 global_sample_step=self.global_sample_step,
                 global_batch_step=self.global_batch_step,
                 global_epoch_step=self.global_epoch_step,
@@ -424,23 +424,23 @@ class IRunner(ICallback, ILogger, ABC):
             )
 
     def log_hparams(self, *args, **kwargs) -> None:
-        """@TODO: docs."""
+        """Logs hyperparameters to available loggers."""
         for logger in self.loggers.values():
             logger.log_hparams(
                 *args,
                 **kwargs,
                 # experiment info
-                experiment_key=self.run_key,
+                run_key=self.run_key,
                 stage_key=self.stage_key,
             )
 
     def flush_log(self) -> None:
-        """@TODO: docs."""
+        """Flushes the loggers."""
         for logger in self.loggers.values():
             logger.flush_log()
 
     def close_log(self) -> None:
-        """@TODO: docs."""
+        """Closes the loggers."""
         for logger in self.loggers.values():
             logger.close_log()
 
