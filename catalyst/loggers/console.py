@@ -63,9 +63,6 @@ class ConsoleLogger(ILogger):
             scope: On which scope log parameters.
             run_key: Experiment info.
             stage_key: Stage info.
-
-        Returns:
-
         """
         if scope == "experiment":
             print(f"Hparams ({run_key}): {hparams}")
