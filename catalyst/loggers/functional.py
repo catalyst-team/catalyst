@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 
-
 # def format_metric(name: str, value: float) -> str:
 #     """Format metric.
 #
