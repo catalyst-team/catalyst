@@ -5,6 +5,7 @@ import numpy as np
 from tensorboardX import SummaryWriter
 
 from catalyst.core.logger import ILogger
+from catalyst.loggers.functional import image_to_tensor
 
 
 class TensorboardLogger(ILogger):
@@ -92,7 +93,8 @@ class TensorboardLogger(ILogger):
         """@TODO: docs."""
         if scope == "loader":
             self._check_loader_key(loader_key=loader_key)
-            self.loggers[loader_key].add_image(f"{tag}", image, global_step=global_epoch_step)
+            tensor = image_to_tensor(image)
+            self.loggers[loader_key].add_image(f"{tag}", tensor, global_step=global_epoch_step)
 
     def flush_log(self) -> None:
         """@TODO: docs."""

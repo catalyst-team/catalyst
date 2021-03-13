@@ -49,5 +49,5 @@ from catalyst.contrib.utils.serialization import deserialize, serialize
 if SETTINGS.ml_required:
     from catalyst.contrib.utils.visualization import (
         plot_confusion_matrix,
-        render_figure_to_tensor,
+        render_figure_to_array,
     )

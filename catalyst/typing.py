@@ -2,11 +2,16 @@
 All Catalyst custom types are defined in this module.
 """
 from typing import Dict, Union
+from numbers import Number
+from pathlib import Path
 
 import torch
 from torch import nn, optim
 from torch.optim import lr_scheduler
 from torch.utils import data
+
+Directory = Path
+File = Path
 
 Model = nn.Module
 Criterion = nn.Module
@@ -22,6 +27,9 @@ RunnerOptimizer = Union[Optimizer, Dict[str, Optimizer]]
 RunnerScheduler = Union[Scheduler, Dict[str, Scheduler]]
 
 __all__ = [
+    "Number",
+    "Directory",
+    "File",
     "Model",
     "Criterion",
     "Optimizer",

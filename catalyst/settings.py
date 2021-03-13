@@ -113,6 +113,15 @@ def _is_ml_available():
         return False
 
 
+def _is_mlflow_available():
+    try:
+        import mlflow  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
 def _get_optional_value(
     is_required: Optional[bool], is_available_fn: Callable, assert_msg: str
 ) -> bool:
@@ -148,7 +157,7 @@ class Settings(FrozenClass):
         # [logging]
         # alchemy_required: Optional[bool] = None,
         # neptune_required: Optional[bool] = None,
-        # mlflow_required: Optional[bool] = None,
+        mlflow_required: Optional[bool] = None,
         # wandb_required: Optional[bool] = None,
         # [extras]
         use_lz4: Optional[bool] = None,
@@ -224,7 +233,12 @@ class Settings(FrozenClass):
         # [logging]
         # self.alchemy_required: bool = alchemy_required
         # self.neptune_required: bool = neptune_required
-        # self.mlflow_required: bool = mlflow_required
+        self.mlflow_required: bool = _get_optional_value(
+            mlflow_required,
+            _is_mlflow_available,
+            "catalyst[mlflow] is not available, to install it, "
+            "run `pip install catalyst[mlflow]`.",
+        )
         # self.wandb_required: bool = wandb_required
 
         # [extras]
@@ -278,9 +292,7 @@ DEFAULT_SETTINGS = Settings()
 
 class ConfigFileFinder:
     """Encapsulate the logic for finding and reading config files.
-
     Adapted from:
-
     - https://gitlab.com/pwoolvett/flake8 (MIT License)
     - https://github.com/python/mypy (MIT License)
     """
@@ -377,13 +389,10 @@ class ConfigFileFinder:
 
 class MergedConfigParser:
     """Encapsulate merging different types of configuration files.
-
     This parses out the options registered that were specified in the
     configuration files, handles extra configuration files, and returns
     dictionaries with the parsed values.
-
     Adapted from:
-
     - https://gitlab.com/pwoolvett/flake8 (MIT License)
     - https://github.com/python/mypy (MIT License)
     """
@@ -425,7 +434,6 @@ class MergedConfigParser:
 
     def parse(self) -> dict:
         """Parse and return the local and user config files.
-
         First this copies over the parsed local configuration and then
         iterates over the options in the user configuration and sets them if
         they were not set by the local configuration file.

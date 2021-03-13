@@ -18,6 +18,7 @@ class CustomRunner(dl.IRunner):
         super().__init__()
         self._logdir = logdir
         self._device = device
+        self._name = "finetune2"
 
     def get_engine(self):
         return dl.DeviceEngine(self._device)
@@ -27,6 +28,7 @@ class CustomRunner(dl.IRunner):
             "console": dl.ConsoleLogger(),
             "csv": dl.CSVLogger(logdir=self._logdir),
             "tensorboard": dl.TensorboardLogger(logdir=self._logdir),
+            "mlflow": dl.MLflowLogger(experiment=self._name),
         }
 
     @property

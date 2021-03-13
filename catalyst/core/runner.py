@@ -431,6 +431,7 @@ class IRunner(ICallback, ILogger, ABC):
                 **kwargs,
                 # experiment info
                 experiment_key=self.run_key,
+                stage_key=self.stage_key,
             )
 
     def flush_log(self) -> None:
@@ -477,7 +478,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.trial = self.get_trial()
         self.engine = self.get_engine()
         self.loggers = self.get_loggers()
-        self.log_hparams(hparams=self.hparams)
+        self.log_hparams(hparams=self.hparams, scope="experiment")
 
     def on_stage_start(self, runner: "IRunner"):
         """Event handler."""
@@ -490,6 +491,7 @@ class IRunner(ICallback, ILogger, ABC):
         self._setup_loaders()
         self._setup_components()
         self._setup_callbacks()
+        self.log_hparams(hparams=self.hparams, scope="stage")
 
     def on_epoch_start(self, runner: "IRunner"):
         """Event handler."""

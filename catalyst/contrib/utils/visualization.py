@@ -2,26 +2,9 @@ import itertools
 
 import matplotlib
 import numpy as np
-import torch
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
-
-
-def _image_to_tensor(image: np.ndarray) -> torch.Tensor:
-    """
-    Creates tensor from RGB image.
-
-    Args:
-        image: RGB image stored as np.ndarray
-
-    Returns:
-        tensor
-    """
-    image = np.moveaxis(image, -1, 0)
-    image = np.ascontiguousarray(image)
-    image = torch.from_numpy(image)
-    return image
 
 
 # def tensor_to_ndimage(
@@ -162,7 +145,7 @@ def plot_confusion_matrix(
 #     return image
 
 
-def render_figure_to_tensor(figure):
+def render_figure_to_array(figure):
     """Renders matplotlib"s figure to tensor."""
     plt.ioff()
 
@@ -172,13 +155,11 @@ def render_figure_to_tensor(figure):
     plt.close(figure)
     del figure
 
-    image = _image_to_tensor(image)
-
     plt.ion()
     return image
 
 
 __all__ = [
     "plot_confusion_matrix",
-    "render_figure_to_tensor",
+    "render_figure_to_array",
 ]
