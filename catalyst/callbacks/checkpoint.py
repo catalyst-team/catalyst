@@ -73,10 +73,10 @@ def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> 
         print(f"=> Loading checkpoint {filename}")
     checkpoint = runner.engine.load_checkpoint(filename)
 
-    # if not runner.stage_key.startswith("infer") and load_full:
-    #     runner.global_epoch_step = checkpoint["global_epoch_step"]
-    #     runner.global_batch_step = checkpoint["global_batch_step"]
-    #     runner.global_sample_step = checkpoint["global_sample_step"]
+    if not runner.stage_key.startswith("infer") and load_full:
+        runner.global_epoch_step = checkpoint["global_epoch_step"]
+        runner.global_batch_step = checkpoint["global_batch_step"]
+        runner.global_sample_step = checkpoint["global_sample_step"]
 
     if load_full:
         runner.engine.unpack_checkpoint(
@@ -85,9 +85,6 @@ def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> 
             criterion=runner.criterion,
             optimizer=runner.optimizer,
             scheduler=runner.scheduler,
-            global_epoch_step=runner.global_epoch_step,
-            global_batch_step=runner.global_batch_step,
-            global_sample_step=runner.global_sample_step,
         )
 
         if is_master_process:
@@ -129,11 +126,7 @@ def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]
         return OrderedDict()
 
     default_states = {"best", "best_full", "last", "last_full"}
-    required_full_checkpoint = [
-        "criterion",
-        "optimizer",
-        "scheduler",
-    ]
+    required_full_checkpoint = ["criterion", "optimizer", "scheduler"]
     steps = ["global_epoch_step", "global_batch_step", "global_sample_step"]
     experiment_parts = ["model"] + required_full_checkpoint + steps
 
