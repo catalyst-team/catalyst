@@ -74,9 +74,10 @@ runner.train(
     num_epochs=1,
     callbacks=[
         dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-#         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
-#         dl.AUCCallback(input_key="logits", target_key="targets"),
-#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),  # catalyst[ml] required
+        dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+        dl.AUCCallback(input_key="logits", target_key="targets"),
+        # catalyst[ml] required
+        dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
     ],
     logdir="./logs",
     valid_loader="valid",
@@ -1176,6 +1177,7 @@ best practices for your deep learning research.
 
 ### Documentation
 - [master](https://catalyst-team.github.io/catalyst/)
+- [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html)
 - [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
 - [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
 - [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
