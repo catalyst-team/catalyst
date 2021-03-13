@@ -137,8 +137,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     @property
     def name(self) -> str:
-        """@TODO: docs"""
-        # @TODO: return the hash from the IRunner instance
+        """Returns run name for monitoring tools."""
         return "IRunner"
 
     @property
@@ -164,7 +163,7 @@ class IRunner(ICallback, ILogger, ABC):
     @property
     @abstractmethod
     def stages(self) -> Iterable[str]:
-        """Experiment's stage names.
+        """Run's stage names.
 
         Example::
 
@@ -174,20 +173,32 @@ class IRunner(ICallback, ILogger, ABC):
         pass
 
     def get_stage_len(self, stage: str) -> int:
-        """@TODO: docs"""
+        """Returns number of epochs for the selected stage.
+
+        Args:
+            stage: current stage
+
+        Returns:
+            number of epochs in stage
+
+        Example::
+
+            >>> runner.get_stage_len("pretraining")
+            3
+        """
         return 1
 
     def get_trial(self) -> Optional[ITrial]:
-        """@TODO: docs"""
+        """Returns the trial for the run."""
         return None  # noqa: WPS324
 
     @abstractmethod
     def get_engine(self) -> IEngine:
-        """@TODO: docs"""
+        """Returns the engine for the run."""
         return None  # noqa: WPS324
 
     def get_loggers(self) -> Dict[str, ILogger]:
-        """@TODO: docs"""
+        """Returns the loggers for the run."""
         return {}
 
     def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
@@ -374,13 +385,13 @@ class IRunner(ICallback, ILogger, ABC):
         return {}
 
     def log_metrics(self, *args, **kwargs) -> None:
-        """@TODO: docs."""
+        """Logs batch, loader and epoch metrics to available loggers."""
         for logger in self.loggers.values():
             logger.log_metrics(
                 *args,
                 **kwargs,
                 # experiment info
-                experiment_key=self.run_key,
+                run_key=self.run_key,
                 global_sample_step=self.global_sample_step,
                 global_batch_step=self.global_batch_step,
                 global_epoch_step=self.global_epoch_step,
@@ -399,13 +410,13 @@ class IRunner(ICallback, ILogger, ABC):
             )
 
     def log_image(self, *args, **kwargs) -> None:
-        """@TODO: docs."""
+        """Logs image to available loggers."""
         for logger in self.loggers.values():
             logger.log_image(
                 *args,
                 **kwargs,
                 # experiment info
-                experiment_key=self.run_key,
+                run_key=self.run_key,
                 global_sample_step=self.global_sample_step,
                 global_batch_step=self.global_batch_step,
                 global_epoch_step=self.global_epoch_step,
@@ -424,23 +435,23 @@ class IRunner(ICallback, ILogger, ABC):
             )
 
     def log_hparams(self, *args, **kwargs) -> None:
-        """@TODO: docs."""
+        """Logs hyperparameters to available loggers."""
         for logger in self.loggers.values():
             logger.log_hparams(
                 *args,
                 **kwargs,
                 # experiment info
-                experiment_key=self.run_key,
+                run_key=self.run_key,
                 stage_key=self.stage_key,
             )
 
     def flush_log(self) -> None:
-        """@TODO: docs."""
+        """Flushes the loggers."""
         for logger in self.loggers.values():
             logger.flush_log()
 
     def close_log(self) -> None:
-        """@TODO: docs."""
+        """Closes the loggers."""
         for logger in self.loggers.values():
             logger.close_log()
 

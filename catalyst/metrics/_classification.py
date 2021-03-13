@@ -26,8 +26,8 @@ class StatisticsMetric(ICallbackBatchMetric):
         mode: one of "binary", "multiclass" and "multilabel"
         num_classes: number of classes
         compute_on_call: if True, computes and returns metric value during metric call
-        prefix: TODO: docs
-        suffix: TODO: docs
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
@@ -294,8 +294,8 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         compute_on_call: if True, allows compute metric's value on call
-        prefix: TODO: docs
-        suffix: TODO: docs
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
@@ -422,8 +422,8 @@ class MulticlassPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         compute_on_call: if True, allows compute metric's value on call
-        prefix: TODO: docs
-        suffix: TODO: docs
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
@@ -455,8 +455,8 @@ class MultilabelPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         compute_on_call: if True, allows compute metric's value on call
-        prefix: TODO: docs
-        suffix: TODO: docs
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(

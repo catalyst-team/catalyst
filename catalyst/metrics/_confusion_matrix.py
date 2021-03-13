@@ -93,7 +93,7 @@ class ConfusionMatrixMetric(IMetric):
         """
         if self._is_ddp:
             value: List[np.ndarray] = all_gather(self.conf)
-            value: np.ndarray = np.sum(np.vstack(value), axis=0)
+            value: np.ndarray = np.sum(np.stack(value, axis=0), axis=0)
             self.conf = value
         if self.normalized:
             conf = self.conf.astype(np.float32)

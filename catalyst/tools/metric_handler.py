@@ -1,4 +1,16 @@
+# flake8: noqa
 # @TODO: we also can make it BestScoreHanlder and store best score inside
+from functools import partial
+
+
+def _is_better_min(score, best, min_delta):
+    return score <= (best - min_delta)
+
+
+def _is_better_max(score, best, min_delta):
+    return score >= (best + min_delta)
+
+
 class MetricHandler:
     """@TODO: docs.
 
@@ -14,16 +26,9 @@ class MetricHandler:
         # self.best_score = None
 
         if self.minimize:
-
-            def _is_better(score, best):
-                return score <= (best - self.min_delta)
-
+            self.is_better = partial(_is_better_min, min_delta=min_delta)
         else:
-
-            def _is_better(score, best):
-                return score >= (best + self.min_delta)
-
-        self.is_better = _is_better
+            self.is_better = partial(_is_better_max, min_delta=min_delta)
 
     def __call__(self, score, best_score):
         """@TODO: docs."""

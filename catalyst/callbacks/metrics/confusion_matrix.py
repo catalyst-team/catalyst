@@ -1,8 +1,11 @@
 from typing import Dict, List, TYPE_CHECKING
 
-from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_array
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
+from catalyst.settings import SETTINGS
+
+if SETTINGS.ml_required:
+    from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_array
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -19,6 +22,9 @@ class ConfusionMatrixCallback(Callback):
         num_classes: number of classes
         normalized: boolean flag for confusion matrix normalization
         plot_params: extra params for plt.figure rendering
+
+    .. note::
+        catalyst[ml] required for this callback
     """
 
     def __init__(

@@ -114,7 +114,7 @@ class CustomRunner(dl.IRunner):
         return ["train_freezed", "train_unfreezed"]
 
     def get_stage_len(self, stage: str) -> int:
-        return 3
+        return 1
 
     def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
         dataset = DummyDataset(6)

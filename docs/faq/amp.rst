@@ -79,7 +79,7 @@ After that you could easily extend our current pipeline with just one line of co
         logdir="./logdir",
         num_epochs=8,
         verbose=True,
-        fp16=dict(apex=True, opt_level="O1") # <-- Nvidia Apex FP16 params -->
+        apex=True
     )
 
 You could also check out the example above in `this Google Colab notebook`_
@@ -118,7 +118,7 @@ If you would like to use native AMP support, you could do the following:
         logdir="./logdir",
         num_epochs=8,
         verbose=True,
-        fp16=dict(amp=True) # <-- PyTorch AMP FP16 params -->
+        amp=True
     )
 
 You could also check out the example above in `this Google Colab notebook`_
@@ -132,7 +132,8 @@ Firstly, prepare the config. For example:
 
 .. code-block:: yaml
 
-    distributed_params:
+    engine:
+        _target_: APEXEngine
         opt_level: "O1"
         ...
 

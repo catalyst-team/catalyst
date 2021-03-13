@@ -24,20 +24,20 @@ class IBatchMetricHandlerCallback(ABC, Callback):
 
     @abstractmethod
     def handle_score_is_better(self, runner: "IRunner"):
-        """@TODO: docs"""
+        """Event handler."""
         pass
 
     @abstractmethod
     def handle_score_is_not_better(self, runner: "IRunner"):
-        """@TODO: docs"""
+        """Event handler."""
         pass
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """@TODO: docs"""
+        """Event handler."""
         self.best_score = None
 
     def on_batch_end(self, runner: "IRunner") -> None:
-        """@TODO: docs"""
+        """Event handler."""
         score = runner.batch_metrics[self.metric_key]
         if self.best_score is None or self.is_better(score, self.best_score):
             self.best_score = score
@@ -61,20 +61,20 @@ class IEpochMetricHandlerCallback(ABC, Callback):
 
     @abstractmethod
     def handle_score_is_better(self, runner: "IRunner"):
-        """@TODO: docs"""
+        """Event handler."""
         pass
 
     @abstractmethod
     def handle_score_is_not_better(self, runner: "IRunner"):
-        """@TODO: docs"""
+        """Event handler."""
         pass
 
     def on_stage_start(self, runner: "IRunner") -> None:
-        """@TODO: docs"""
+        """Event handler."""
         self.best_score = None
 
     def on_epoch_end(self, runner: "IRunner") -> None:
-        """@TODO: docs"""
+        """Event handler."""
         score = runner.epoch_metrics[self.loader_key][self.metric_key]
         if self.best_score is None or self.is_better(score, self.best_score):
             self.best_score = score
@@ -89,8 +89,8 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
     Args:
         patience: number of epochs with no improvement
             after which training will be stopped.
-        loader_key: @TODO: docs
-        metric_key: metric name to use for early stopping.
+        loader_key: loader key for early stopping (based on metric score over the dataset)
+        metric_key: metric key for early stopping (based on metric score over the dataset)
         minimize: if ``True`` then expected that metric should
             decrease and early stopping will be performed only when metric
             stops decreasing. If ``False`` then expected
@@ -117,11 +117,11 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
         self.num_no_improvement_epochs = 0
 
     def handle_score_is_better(self, runner: "IRunner"):
-        """@TODO: docs"""
+        """Event handler."""
         self.num_no_improvement_epochs = 0
 
     def handle_score_is_not_better(self, runner: "IRunner"):
-        """@TODO: docs"""
+        """Event handler."""
         self.num_no_improvement_epochs += 1
         if self.num_no_improvement_epochs >= self.patience:
             # print(f"Early stop at {runner.epoch} epoch")

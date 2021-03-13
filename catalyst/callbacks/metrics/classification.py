@@ -12,7 +12,8 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
         num_classes: number of classes
-        zero_division: @TODO: docs
+        zero_division: value to set in case of zero division during metrics
+            (precision, recall) computation; should be one of 0 or 1
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix
@@ -46,7 +47,8 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         input_key: input key to use for metric calculation, specifies our `y_pred`
         target_key: output key to use for metric calculation, specifies our `y_true`
         num_classes: number of classes
-        zero_division: @TODO: docs
+        zero_division: value to set in case of zero division during metrics
+            (precision, recall) computation; should be one of 0 or 1
         log_on_batch: boolean flag to log computed metrics every batch
         prefix: metric prefix
         suffix: metric suffix

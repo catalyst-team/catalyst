@@ -1,10 +1,13 @@
 from typing import Any, Dict, Optional
 
-import mlflow
 import numpy as np
 
 from catalyst.core.logger import ILogger
+from catalyst.settings import SETTINGS
 from catalyst.typing import Directory, File, Number
+
+if SETTINGS.mlflow_required:
+    import mlflow
 
 EXPERIMENT_PARAMS = (
     "shared",
@@ -138,7 +141,7 @@ class MLflowLogger(ILogger):
         metrics: Dict[str, Any],
         scope: str = None,
         # experiment info
-        experiment_key: str = None,
+        run_key: str = None,
         global_epoch_step: int = 0,
         global_batch_step: int = 0,
         global_sample_step: int = 0,
@@ -176,7 +179,7 @@ class MLflowLogger(ILogger):
         image: np.ndarray,
         scope: str = None,
         # experiment info
-        experiment_key: str = None,
+        run_key: str = None,
         global_epoch_step: int = 0,
         global_batch_step: int = 0,
         global_sample_step: int = 0,
@@ -201,7 +204,7 @@ class MLflowLogger(ILogger):
         hparams: Dict,
         scope: str = None,
         # experiment info
-        experiment_key: str = None,
+        run_key: str = None,
         stage_key: str = None,
     ) -> None:
         """Logs parameters for current scope.
@@ -215,7 +218,7 @@ class MLflowLogger(ILogger):
         Args:
             hparams: Parameters to log.
             scope: On which scope log parameters.
-            experiment_key: Experiment info.
+            run_key: Experiment info.
             stage_key: Stage info.
         """
         stages = set(hparams.get("stages", {})) - set(STAGE_PARAMS) - set(EXCLUDE_PARAMS)
@@ -223,13 +226,13 @@ class MLflowLogger(ILogger):
 
         if scope == "experiment":
             if self._multistage:
-                mlflow.set_tag("mlflow.runName", experiment_key)
+                mlflow.set_tag("mlflow.runName", run_key)
 
         if scope == "stage":
             if self._multistage:
                 mlflow.start_run(run_name=stage_key, nested=True)
 
-            scope_params = hparams.get("stages", {}).get(experiment_key, {})
+            scope_params = hparams.get("stages", {}).get(run_key, {})
             _mlflow_log_dict(scope_params, log_type="param")
 
             for key in STAGE_PARAMS:

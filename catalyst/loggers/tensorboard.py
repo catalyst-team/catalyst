@@ -9,10 +9,15 @@ from catalyst.loggers.functional import image_to_tensor
 
 
 class TensorboardLogger(ILogger):
-    """Logger callback, translates ``runner.metric_manager`` to tensorboard."""
+    """Tensorboard logger for parameters, metrics, images and other artifacts.
+
+    Args:
+        logdir: path to logdir for tensorboard
+        use_logdir_postfix: boolean flag to use extra ``tensorboard`` prefix in the logdir
+    """
 
     def __init__(self, logdir: str, use_logdir_postfix: bool = False):
-        """@TODO: docs."""
+        """Init."""
         if use_logdir_postfix:
             logdir = os.path.join(logdir, "tensorboard")
         self.logdir = logdir
@@ -33,7 +38,7 @@ class TensorboardLogger(ILogger):
         metrics: Dict[str, float],
         scope: str = None,
         # experiment info
-        experiment_key: str = None,
+        run_key: str = None,
         global_epoch_step: int = 0,
         global_batch_step: int = 0,
         global_sample_step: int = 0,
@@ -50,7 +55,7 @@ class TensorboardLogger(ILogger):
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """@TODO: docs."""
+        """Logs batch and epoch metrics to Tensorboard."""
         if scope == "batch":
             self._check_loader_key(loader_key=loader_key)
             metrics = {k: float(v) for k, v in metrics.items()}
@@ -73,7 +78,7 @@ class TensorboardLogger(ILogger):
         image: np.ndarray,
         scope: str = None,
         # experiment info
-        experiment_key: str = None,
+        run_key: str = None,
         global_epoch_step: int = 0,
         global_batch_step: int = 0,
         global_sample_step: int = 0,
@@ -90,19 +95,19 @@ class TensorboardLogger(ILogger):
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """@TODO: docs."""
-        if scope == "loader":
-            self._check_loader_key(loader_key=loader_key)
-            tensor = image_to_tensor(image)
-            self.loggers[loader_key].add_image(f"{tag}", tensor, global_step=global_epoch_step)
+        """Logs image to Tensorboard for current scope on current step."""
+        assert loader_key is not None
+        self._check_loader_key(loader_key=loader_key)
+        tensor = image_to_tensor(image)
+        self.loggers[loader_key].add_image(f"{tag}/{scope}", tensor, global_step=global_epoch_step)
 
     def flush_log(self) -> None:
-        """@TODO: docs."""
+        """Flushes the loggers."""
         for logger in self.loggers.values():
             logger.flush()
 
     def close_log(self) -> None:
-        """@TODO: docs."""
+        """Closes the loggers."""
         for logger in self.loggers.values():
             logger.close()
 

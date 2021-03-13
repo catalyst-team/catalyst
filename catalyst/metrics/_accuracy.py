@@ -47,7 +47,7 @@ class AccuracyMetric(ICallbackBatchMetric):
 
     def update(self, logits: torch.Tensor, targets: torch.Tensor) -> List[float]:
         """
-        Update metric value with accuracy for new data and return intermediate metrics values.
+        Updates metric value with accuracy for new data and return intermediate metrics values.
 
         Args:
             logits: tensor of logits

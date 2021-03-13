@@ -14,10 +14,10 @@ class OptunaPruningCallback(Callback):
     This callback can be used for early stopping (pruning) unpromising runs.
 
     Args:
-        loader_key: @TODO: docs.
-        metric_key: @TODO: docs.
-        minimize: @TODO: docs.
-        min_delta: @TODO: docs.
+        loader_key: loader key for best model selection (based on metric score over the dataset)
+        metric_key: metric key for best model selection (based on metric score over the dataset)
+        minimize: boolean flag to minimize the required metric
+        min_delta: minimal delta for metric improve
         trial:  Optuna.Trial for experiment.
 
     .. code-block:: python

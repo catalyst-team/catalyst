@@ -127,7 +127,8 @@ def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]
 
     default_states = {"best", "best_full", "last", "last_full"}
     required_full_checkpoint = ["criterion", "optimizer", "scheduler"]
-    experiment_parts = ["model"] + required_full_checkpoint
+    steps = ["global_epoch_step", "global_batch_step", "global_sample_step"]
+    experiment_parts = ["model"] + required_full_checkpoint + steps
 
     # keep required parts
     experiment_parts = list(filter(lambda part: part in load_map, experiment_parts))
@@ -186,6 +187,13 @@ def _load_states_from_file_map(
         checkpoint = runner.engine.load_checkpoint(filename)
         to_unpack = {part: getattr(runner, part) for part in parts_to_load}
         runner.engine.unpack_checkpoint(checkpoint, **to_unpack)
+        # hotfix
+        if "global_epoch_step" in to_unpack:
+            runner.global_epoch_step = checkpoint["global_epoch_step"]
+        if "global_batch_step" in to_unpack:
+            runner.global_batch_step = checkpoint["global_batch_step"]
+        if "global_sample_step" in to_unpack:
+            runner.global_sample_step = checkpoint["global_sample_step"]
         print(f"   loaded: {', '.join(parts_to_load)}")
 
 
@@ -221,11 +229,11 @@ class CheckpointCallback(ICheckpointCallback):
     """Checkpoint callback to save/restore your model/criterion/optimizer/scheduler.
 
     Args:
-        logdir: @TODO: docs.
-        loader_key: @TODO: docs.
-        metric_key: @TODO: docs.
-        minimize: @TODO: docs.
-        min_delta: @TODO: docs.
+        logdir: directory to store chekpoints
+        loader_key: loader key for best model selection (based on metric score over the dataset)
+        metric_key: metric key for best model selection (based on metric score over the dataset)
+        minimize: boolean flag to minimize the required metric
+        min_delta: minimal delta for metric improve
         save_n_best: number of best checkpoint to keep,
             if ``0`` then  store only last state of model and
             ``load_on_stage_end`` should be one of
@@ -292,9 +300,9 @@ class CheckpointCallback(ICheckpointCallback):
         metrics_filename: filename to save metrics
             in checkpoint folder.
             Must ends on ``.json`` or ``.yml``
-        mode: @TODO: docs.
-        use_logdir_postfix: @TODO: docs.
-        use_runner_logdir: @TODO: docs.
+        mode: checkpoining mode, could be ``all``, ``full``, ``model``
+        use_logdir_postfix: boolean flag to use extra prefix ``checkpoints`` for logdir
+        use_runner_logdir: boolean flag to use ``runner._logdir`` as logdir
     """
 
     def __init__(
@@ -385,7 +393,7 @@ class CheckpointCallback(ICheckpointCallback):
             optimizer=runner.optimizer,
             scheduler=runner.scheduler,
             # experiment info
-            experiment_key=runner.run_key,
+            run_key=runner.run_key,
             global_epoch_step=runner.global_epoch_step,
             global_batch_step=runner.global_batch_step,
             global_sample_step=runner.global_sample_step,

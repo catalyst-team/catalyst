@@ -7,11 +7,10 @@ from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 
 @contextmanager
 def nullcontext(enter_result=None):
-    """@TODO: docs"""
+    """Context handler."""
     yield enter_result
 
 
-# @TODO: should IEngine be ICallback-based?
 class IEngine(ABC):
     """
     An abstraction that syncs experiment run with
@@ -32,19 +31,19 @@ class IEngine(ABC):
     @property
     @abstractmethod
     def rank(self) -> int:
-        """@TODO: docs"""
+        """Process rank for distributed training."""
         pass
 
     @property
     @abstractmethod
     def world_size(self) -> int:
-        """@TODO: docs"""
+        """Process world size  for distributed training."""
         # only for ddp
         pass
 
     @property
     def is_ddp(self) -> bool:
-        """@TODO: docs."""
+        """Boolean flag for distributed run."""
         return self.rank > -1
 
     @property
@@ -69,41 +68,44 @@ class IEngine(ABC):
 
     @abstractmethod
     def sync_device(self, tensor_or_module: Any) -> Any:
-        """@TODO: docs"""
+        """Moves ``tensor_or_module`` to Engine's deivce.
+
+        Args:
+            tensor_or_module: tensor to mode
+        """
         pass
-        # return any2device(batch, self.device)
 
     @abstractmethod
     def sync_tensor(self, tensor: Any, mode: str) -> Any:
-        """@TODO: docs"""
+        """Syncs ``tensor`` over ``world_size`` in distributed mode."""
         pass
 
     @abstractmethod
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        """@TODO: docs"""
+        """Inits the runs components."""
         pass
 
     @abstractmethod
     def deinit_components(self):
-        """@TODO: docs"""
+        """Deinits the runs components."""
         # only for ddp
         pass
 
     @abstractmethod
     def zero_grad(self, loss, model, optimizer) -> None:
-        """@TODO: docs"""
+        """Abstraction over ``model.zero_grad()`` step."""
         pass
 
     @abstractmethod
     def backward_loss(self, loss, model, optimizer) -> None:
-        """@TODO: docs"""
+        """Abstraction over ``loss.backward()`` step."""
         pass
 
     @abstractmethod
     def optimizer_step(self, loss, model, optimizer) -> None:
-        """@TODO: docs"""
+        """Abstraction over ``optimizer.step()`` step."""
         pass
 
     @abstractmethod
@@ -115,7 +117,17 @@ class IEngine(ABC):
         scheduler: Scheduler = None,
         **kwargs,
     ) -> Dict:
-        """@TODO: docs"""
+        """
+        Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
+        and some extra info ``**kwargs`` to torch-based checkpoint.
+
+        Args:
+            model: torch model
+            criterion: torch criterion
+            optimizer: torch optimizer
+            scheduler: torch scheduler
+            **kwargs: some extra info to pack
+        """
         pass
 
     @abstractmethod
@@ -128,17 +140,37 @@ class IEngine(ABC):
         scheduler: Scheduler = None,
         **kwargs,
     ) -> None:
-        """@TODO: docs"""
+        """Load checkpoint from file and unpack the content to a model
+        (if not None), criterion (if not None), optimizer (if not None),
+        scheduler (if not None).
+
+        Args:
+            checkpoint: checkpoint to load
+            model: model where should be updated state
+            criterion: criterion where should be updated state
+            optimizer: optimizer where should be updated state
+            scheduler: scheduler where should be updated state
+            kwargs: extra arguments
+        """
         pass
 
     @abstractmethod
     def save_checkpoint(self, checkpoint: Dict, path: str) -> None:
-        """@TODO: docs"""
+        """Saves checkpoint to a file.
+
+        Args:
+            checkpoint: data to save.
+            path: filepath where checkpoint should be stored.
+        """
         pass
 
     @abstractmethod
     def load_checkpoint(self, path: str) -> Dict:
-        """@TODO: docs"""
+        """Load checkpoint from path.
+
+        Args:
+            path: checkpoint file to load
+        """
         pass
 
     def autocast(self, *args, **kwargs):

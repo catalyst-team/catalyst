@@ -19,13 +19,14 @@ from catalyst.utils.torch import (
 
 
 class DeviceEngine(IEngine):
-    """Single training device engine."""
+    """Single training device engine.
+
+    Args:
+        device (str, optional): use device, default is `"cpu"`.
+    """
 
     def __init__(self, device: str = None):
-        """
-        Args:
-            device (str, optional): use device, default is `"cpu"`.
-        """
+        """Init."""
         device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.device = device
 
@@ -34,28 +35,28 @@ class DeviceEngine(IEngine):
 
     @property
     def rank(self) -> int:
-        """@TODO: docs."""
+        """Process rank for distributed training."""
         return -1
 
     @property
     def world_size(self) -> int:
-        """@TODO: docs."""
+        """Process world size  for distributed training."""
         return 1
 
     def sync_device(
         self, tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module]
     ) -> Any:
-        """@TODO: docs."""
+        """Moves ``tensor_or_module`` to Engine's deivce."""
         return any2device(tensor_or_module, device=self.device)
 
     def sync_tensor(self, tensor: Any, *args, **kwargs) -> Any:
-        """@TODO: docs."""
+        """Syncs ``tensor`` over ``world_size`` in distributed mode."""
         return tensor
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        """@TODO: docs."""
+        """Inits the runs components."""
         # model
         model = model_fn()
         model = self.sync_device(model)
@@ -71,20 +72,20 @@ class DeviceEngine(IEngine):
         return model, criterion, optimizer, scheduler
 
     def deinit_components(self):
-        """@TODO: docs."""
+        """Deinits the runs components."""
         # remove backend
         pass
 
     def zero_grad(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``model.zero_grad()`` step."""
         model.zero_grad()
 
     def backward_loss(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``loss.backward()`` step."""
         loss.backward()
 
     def optimizer_step(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``optimizer.step()`` step."""
         optimizer.step()
 
     def pack_checkpoint(
@@ -95,7 +96,22 @@ class DeviceEngine(IEngine):
         scheduler: RunnerScheduler = None,
         **kwargs,
     ) -> Dict:
-        """@TODO: docs."""
+        """
+        Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
+        and some extra info ``**kwargs`` to torch-based checkpoint.
+
+        Args:
+            model: torch model
+            criterion: torch criterion
+            optimizer: torch optimizer
+            scheduler: torch scheduler
+            **kwargs: some extra info to pack
+
+        Returns:
+            torch-based checkpoint with ``model_state_dict``,
+            ``criterion_state_dict``, ``optimizer_state_dict``,
+            ``scheduler_state_dict`` keys.
+        """
         return pack_checkpoint(
             model=model, criterion=criterion, optimizer=optimizer, scheduler=scheduler, **kwargs
         )
@@ -109,8 +125,19 @@ class DeviceEngine(IEngine):
         scheduler: RunnerScheduler = None,
         **kwargs,
     ) -> None:
-        """@TODO: docs."""
-        return unpack_checkpoint(
+        """Load checkpoint from file and unpack the content to a model
+        (if not None), criterion (if not None), optimizer (if not None),
+        scheduler (if not None).
+
+        Args:
+            checkpoint: checkpoint to load
+            model: model where should be updated state
+            criterion: criterion where should be updated state
+            optimizer: optimizer where should be updated state
+            scheduler: scheduler where should be updated state
+            kwargs: extra arguments
+        """
+        unpack_checkpoint(
             checkpoint=checkpoint,
             model=model,
             criterion=criterion,
@@ -119,19 +146,31 @@ class DeviceEngine(IEngine):
         )
 
     def save_checkpoint(self, checkpoint: Mapping[str, Any], path: str):
-        """@TODO: docs."""
-        return save_checkpoint(checkpoint=checkpoint, path=path)
+        """Saves checkpoint to a file.
+
+        Args:
+            checkpoint: data to save.
+            path: filepath where checkpoint should be stored.
+        """
+        save_checkpoint(checkpoint=checkpoint, path=path)
 
     def load_checkpoint(self, path: str):
-        """@TODO: docs."""
+        """Load checkpoint from path.
+
+        Args:
+            path: checkpoint file to load
+
+        Returns:
+            loaded checkpoint
+        """
         return load_checkpoint(path=path)
 
 
 class DataParallelEngine(DeviceEngine):
-    """@TODO: docs."""
+    """MultiGPU training device engine."""
 
     def __init__(self):
-        """@TODO: docs."""
+        """Init"""
         super().__init__(f"cuda:{torch.cuda.current_device()}")
         self.device_count = torch.cuda.device_count()
 
@@ -141,7 +180,7 @@ class DataParallelEngine(DeviceEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        """@TODO: docs."""
+        """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
         model = DataParallel(model)
@@ -160,7 +199,14 @@ class DataParallelEngine(DeviceEngine):
 
 
 class DistributedDataParallelEngine(DeviceEngine):
-    """@TODO: docs."""
+    """Distributed MultiGPU training device engine.
+
+    Args:
+        address: process address to use (required for PyTorch backend), default is `"localhost"`.
+        port: process port to listen (required for PyTorch backend), default is `"12345"`.
+        backend: multiprocessing backend to use, default is `"nccl"`.
+        world_size: number of processes.
+    """
 
     def __init__(
         self,
@@ -169,14 +215,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         backend: str = "nccl",
         world_size: int = None,
     ):
-        """
-        Args:
-            address: process address to use (required for PyTorch backend),
-                default is `"localhost"`.
-            port: process port to listen (required for PyTorch backend), default is `"12345"`.
-            backend: multiprocessing backend to use, default is `"nccl"`.
-            world_size: number of processes.
-        """
+        """Init."""
         super().__init__()
         self.address = address
         self.port = port
@@ -194,22 +233,32 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     @property
     def rank(self) -> int:
-        """@TODO: docs."""
+        """Process rank for distributed training."""
         return self._rank
 
     @property
     def world_size(self) -> int:
-        """@TODO: docs."""
+        """Process world size  for distributed training."""
         return self._world_size
 
     @property
     def is_master_process(self) -> bool:
-        """@TODO: docs."""
+        """Checks if a process is master process.
+        Should be implemented only for DDP setup in other cases should always return True.
+
+        Returns:
+            `True` if current process is a master process, otherwise `False`.
+        """
         return self._rank == 0
 
     @property
     def is_worker_process(self) -> bool:
-        """@TODO: docs."""
+        """Checks if a process is worker process.
+        Should be implemented only for DDP setup in other cases should always return False.
+
+        Returns:
+            `True` if current process is a worker process, otherwise `False`.
+        """
         return self._rank > 0
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
@@ -228,7 +277,7 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     # @TODO: add all_gather
     def sync_tensor(self, tensor: torch.Tensor, mode: str):
-        """Synchronize tensor.
+        """Syncs ``tensor`` over ``world_size`` in distributed mode.
 
         Args:
             tensor: tensor to sync across the processes.
@@ -252,7 +301,7 @@ class DistributedDataParallelEngine(DeviceEngine):
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
-        """@TODO: docs."""
+        """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
         # NOTE: do not forget to wrap a model in DDP
@@ -272,19 +321,20 @@ class DistributedDataParallelEngine(DeviceEngine):
         return model, criterion, optimizer, scheduler
 
     def deinit_components(self):
-        """@TODO: docs."""
+        """Deinits the runs components."""
+        dist.barrier()
         self.cleanup_process()
 
     def zero_grad(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``model.zero_grad()`` step."""
         model.zero_grad()
 
     def backward_loss(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``loss.backward()`` step."""
         loss.backward()
 
     def optimizer_step(self, loss, model, optimizer) -> None:
-        """@TODO: docs."""
+        """Abstraction over ``optimizer.step()`` step."""
         optimizer.step()
         dist.barrier()
 
