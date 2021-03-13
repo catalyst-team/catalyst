@@ -31,7 +31,7 @@ class IEngine(ABC):
     @property
     @abstractmethod
     def rank(self) -> int:
-        """"Process rank for distributed training."""
+        """Process rank for distributed training."""
         pass
 
     @property
@@ -71,10 +71,7 @@ class IEngine(ABC):
         """Moves ``tensor_or_module`` to Engine's deivce.
 
         Args:
-            tensor: tensor to sync across the processes.
-            mode: tensor synchronization type,
-                should be one of 'sum' or 'mean'.
-                Default is 'mean'.
+            tensor_or_module: tensor to mode
         """
         pass
 
@@ -130,11 +127,6 @@ class IEngine(ABC):
             optimizer: torch optimizer
             scheduler: torch scheduler
             **kwargs: some extra info to pack
-
-        Returns:
-            torch-based checkpoint with ``model_state_dict``,
-            ``criterion_state_dict``, ``optimizer_state_dict``,
-            ``scheduler_state_dict`` keys.
         """
         pass
 
@@ -158,6 +150,7 @@ class IEngine(ABC):
             criterion: criterion where should be updated state
             optimizer: optimizer where should be updated state
             scheduler: scheduler where should be updated state
+            kwargs: extra arguments
         """
         pass
 

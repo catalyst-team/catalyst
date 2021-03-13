@@ -24,7 +24,7 @@ def train_experiment(device):
 
             loaders = {
                 "train": DataLoader(
-                    MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
                     batch_size=32,
                 ),
                 "valid": DataLoader(

@@ -84,11 +84,6 @@ runner.train(
     minimize_valid_metric=True,
     verbose=True,
     load_best_on_end=True,
-    timeit=False,
-    check=False,
-    overfit=False,
-    fp16=False,
-    ddp=False,
 )
 # model inference
 for prediction in runner.predict_loader(loader=loaders["valid"]):

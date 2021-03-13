@@ -63,7 +63,7 @@ def train_experiment(device):
             optimizer=optimizer,
             scheduler=scheduler,
             loaders=loaders,
-            num_epochs=3,
+            num_epochs=1,
             verbose=True,
             callbacks=[
                 dl.CriterionCallback(

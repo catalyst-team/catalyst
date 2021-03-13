@@ -65,12 +65,12 @@ class CustomRunner(dl.IRunner):
         return ["train"]
 
     def get_stage_len(self, stage: str) -> int:
-        return 3
+        return 1
 
     def get_loaders(self, stage: str, epoch: int = None):
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
             ),
             "valid": DataLoader(
                 MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32

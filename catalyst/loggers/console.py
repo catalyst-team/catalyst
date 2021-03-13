@@ -56,7 +56,7 @@ class ConsoleLogger(ILogger):
         run_key: str = None,
         stage_key: str = None,
     ) -> None:
-        """
+        """Logs hyperparameters to the console.
 
         Args:
             hparams: Parameters to log.

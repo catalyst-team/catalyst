@@ -28,7 +28,7 @@ class CustomRunner(dl.IRunner):
             "console": dl.ConsoleLogger(),
             "csv": dl.CSVLogger(logdir=self._logdir),
             "tensorboard": dl.TensorboardLogger(logdir=self._logdir),
-            "mlflow": dl.MLflowLogger(experiment=self._name),
+            # "mlflow": dl.MLflowLogger(experiment=self._name),
         }
 
     @property
@@ -36,12 +36,12 @@ class CustomRunner(dl.IRunner):
         return ["train_freezed", "train_unfreezed"]
 
     def get_stage_len(self, stage: str) -> int:
-        return 3
+        return 1
 
     def get_loaders(self, stage: str, epoch: int = None):
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32,
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32,
             ),
             "valid": DataLoader(
                 MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),

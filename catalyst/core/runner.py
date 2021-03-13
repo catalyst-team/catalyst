@@ -175,6 +175,12 @@ class IRunner(ICallback, ILogger, ABC):
     def get_stage_len(self, stage: str) -> int:
         """Returns number of epochs for the selected stage.
 
+        Args:
+            stage: current stage
+
+        Returns:
+            number of epochs in stage
+
         Example::
 
             >>> runner.get_stage_len("pretraining")

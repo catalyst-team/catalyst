@@ -18,7 +18,7 @@
 #     """Quantize model"""
 #     loaders = {
 #         "train": DataLoader(
-#             MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32,
+#             MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32,
 #         ),
 #         "valid": DataLoader(
 #             MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32,

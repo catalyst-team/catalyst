@@ -35,7 +35,7 @@ class DeviceEngine(IEngine):
 
     @property
     def rank(self) -> int:
-        """"Process rank for distributed training."""
+        """Process rank for distributed training."""
         return -1
 
     @property
@@ -135,6 +135,7 @@ class DeviceEngine(IEngine):
             criterion: criterion where should be updated state
             optimizer: optimizer where should be updated state
             scheduler: scheduler where should be updated state
+            kwargs: extra arguments
         """
         unpack_checkpoint(
             checkpoint=checkpoint,
@@ -143,8 +144,6 @@ class DeviceEngine(IEngine):
             optimizer=optimizer,
             scheduler=scheduler,
         )
-        for key, value in kwargs.items():
-            value = checkpoint[key]
 
     def save_checkpoint(self, checkpoint: Mapping[str, Any], path: str):
         """Saves checkpoint to a file.
@@ -153,13 +152,16 @@ class DeviceEngine(IEngine):
             checkpoint: data to save.
             path: filepath where checkpoint should be stored.
         """
-        return save_checkpoint(checkpoint=checkpoint, path=path)
+        save_checkpoint(checkpoint=checkpoint, path=path)
 
     def load_checkpoint(self, path: str):
         """Load checkpoint from path.
 
         Args:
             path: checkpoint file to load
+
+        Returns:
+            loaded checkpoint
         """
         return load_checkpoint(path=path)
 
@@ -231,7 +233,7 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     @property
     def rank(self) -> int:
-        """"Process rank for distributed training."""
+        """Process rank for distributed training."""
         return self._rank
 
     @property
@@ -275,7 +277,7 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     # @TODO: add all_gather
     def sync_tensor(self, tensor: torch.Tensor, mode: str):
-        """Moves ``tensor_or_module`` to Engine's deivce.
+        """Syncs ``tensor`` over ``world_size`` in distributed mode.
 
         Args:
             tensor: tensor to sync across the processes.

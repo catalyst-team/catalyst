@@ -246,6 +246,7 @@ class APEXEngine(DeviceEngine):
             criterion: criterion where should be updated state
             optimizer: optimizer where should be updated state
             scheduler: scheduler where should be updated state
+            kwargs: extra arguments
         """
         super().unpack_checkpoint(
             checkpoint,
@@ -448,6 +449,7 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             criterion: criterion where should be updated state
             optimizer: optimizer where should be updated state
             scheduler: scheduler where should be updated state
+            kwargs: extra arguments
         """
         super().unpack_checkpoint(
             checkpoint,
