@@ -55,7 +55,7 @@ Getting started
             # model inference step
             return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # model train/valid step
             x, y = batch
             y_hat = self.model(x.view(x.size(0), -1))
@@ -141,31 +141,24 @@ More specific with additional requirements:
 
     pip install catalyst[ml]         # installs ML-based Catalyst
     pip install catalyst[cv]         # installs CV-based Catalyst
-    pip install catalyst[nlp]        # installs NLP-based Catalyst
-    pip install catalyst[tune]       # installs Catalyst+Optuna
-    pip install catalyst[ecosystem]  # installs Catalyst.Ecosystem
     # master version installation
     pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 
 
-Catalyst is compatible with: Python 3.6+. PyTorch 1.1+.
+Catalyst is compatible with: Python 3.6+. PyTorch 1.3+.
 
 Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsystem for Linux.
 
 
-Structure
+Features
 ~~~~~~~~~~~~~~~~~~~~~~
-- **callbacks** - a variety of callbacks for your train-loop customization.
-- **contrib** - additional modules contributed by Catalyst users.
-- **core** - framework core with main abstractions - Experiment, Runner and Callback.
-- **data** - useful tools and scripts for data processing.
-- **dl** - entrypoint for your deep learning experiments.
-- **experiments** - a number of useful experiments extensions for Notebook and Config API.
-- **metrics** – classic ML and CV/NLP/RecSys metrics.
-- **registry** - Catalyst global registry for Config API.
-- **runners** - runners extensions for different deep learning tasks.
-- **tools** - extra tools for Deep Learning research, class-based helpers.
-- **utils** - typical utils for Deep Learning research, function-based helpers.
+- Universal train/inference loop.
+- Configuration files for model/data hyperparameters.
+- Reproducibility – all source code and environment variables will be saved.
+- Callbacks – reusable train/inference pipeline parts with easy customization.
+- Training stages support.
+- Deep Learning best practices - SWA, AdamW, Ranger optimizer, OneCycle, and more.
+- Developments best practices - fp16 support, distributed training, slurm support.
 
 
 Tests
@@ -218,10 +211,9 @@ Indices and tables
     :maxdepth: 2
     :hidden:
 
-    core/experiment
     core/runner
+    core/engine
     core/callback
-..    core/engine
 
 .. toctree::
     :caption: FAQ
@@ -269,13 +261,10 @@ Indices and tables
     api/contrib
     api/core
     api/data
-    api/experiments
+    api/engines
+    api/loggers
     api/metrics
-    api/registry
     api/runners
-    api/settings
     api/tools
-    api/typing
     api/utils
-
 

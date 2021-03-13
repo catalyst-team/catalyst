@@ -22,9 +22,9 @@ Collate Functions
 FilteringCollateFn
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.collate_fn.FilteringCollateFn
-    :members:
+    :members: __init__
     :undoc-members:
-    :special-members: __init__, __call__
+    :special-members:
 
 
 Dataset
@@ -41,37 +41,32 @@ PyTorch Extensions
 DatasetFromSampler
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.data.dataset.torch.DatasetFromSampler
+    :members: __init__
     :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__
 
 ListDataset
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.data.dataset.torch.ListDataset
+    :members: __init__
     :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__
 
 MergeDataset
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.data.dataset.torch.MergeDataset
+    :members: __init__
     :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__
 
 NumpyDataset
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.data.dataset.torch.NumpyDataset
+    :members: __init__
     :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__
 
 PathsDataset
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.data.dataset.torch.PathsDataset
+    :members: __init__
     :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__
 
 Metric Learning Datasets
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -79,16 +74,14 @@ Metric Learning Datasets
 MetricLearningTrainDataset
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.data.dataset.metric_learning.MetricLearningTrainDataset
+    :members: __init__, get_labels
     :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__
 
 QueryGalleryDataset
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.data.dataset.metric_learning.QueryGalleryDataset
+    :members: __init__, query_size, gallery_size
     :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__
 
 
 In-batch Samplers
@@ -135,15 +128,15 @@ Loader
 BatchLimitLoaderWrapper
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.loader.BatchLimitLoaderWrapper
-    :members:
-    :exclude-members: __dict__, __module__
+    :members: __init__
+    :exclude-members:
     :special-members:
 
 BatchPrefetchLoaderWrapper
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.loader.BatchPrefetchLoaderWrapper
-    :members:
-    :exclude-members: __dict__, __module__
+    :members: __init__
+    :exclude-members:
     :special-members:
 
 
@@ -153,45 +146,68 @@ Samplers
 BalanceBatchSampler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.sampler.BalanceBatchSampler
-    :members:
+    :members: __init__
     :undoc-members:
-    :special-members: __iter__, __len__
+    :special-members:
 
 BalanceClassSampler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.sampler.BalanceClassSampler
-    :members:
+    :members: __init__
     :undoc-members:
-    :special-members: __iter__, __len__
+    :special-members:
 
 DistributedSamplerWrapper
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.sampler.DistributedSamplerWrapper
-    :members:
+    :members: __init__
     :undoc-members:
-    :special-members: __iter__, __len__
+    :special-members:
 
 DynamicBalanceClassSampler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.sampler.DynamicBalanceClassSampler
-    :members:
+    :members: __init__
     :undoc-members:
-    :special-members: __iter__, __len__
+    :special-members:
 
 DynamicLenBatchSampler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.sampler.DynamicLenBatchSampler
-    :members:
+    :members: __init__
     :undoc-members:
-    :special-members: __iter__, __len__
+    :special-members:
 
 MiniEpochSampler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.data.sampler.MiniEpochSampler
-    :members:
+    :members: __init__
     :undoc-members:
-    :special-members: __iter__, __len__
+    :special-members:
 
+Transforms
+--------------------------------------
+
+Compose
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.data.transforms.Compose
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Normalize
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.data.transforms.Normalize
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+ToTensor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.data.transforms.ToTensor
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
 
 Contrib
 ----------------------
@@ -229,122 +245,44 @@ For example open image by path, or read string and tokenize it.
 IReader
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.contrib.data.reader.IReader
-    :members:
+    :members: __init__
     :undoc-members:
-    :special-members: __init__, __call__
+    :special-members:
 
 ImageReader (CV)
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.contrib.data.cv.reader.ImageReader
-    :members:
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
 LambdaReader
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.contrib.data.reader.LambdaReader
-    :members:
+    :members: __init__
     :undoc-members:
-    :special-members: __init__, __call__
+    :special-members:
 
 MaskReader (CV)
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.contrib.data.cv.reader.MaskReader
-    :members:
+    :members: __init__
     :undoc-members:
     :show-inheritance:
 
 ScalarReader
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.contrib.data.reader.ScalarReader
-    :members:
+    :members: __init__
     :undoc-members:
-    :special-members: __init__, __call__
+    :special-members:
 
 ReaderCompose
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.contrib.data.reader.ReaderCompose
-    :members:
+    :members: __init__
     :undoc-members:
-    :special-members: __init__, __call__
-
-
-Mixins (CV)
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-BlurMixin
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.cv.mixins.blur.BlurMixin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-FlareMixin
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.cv.mixins.flare.FlareMixin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-RotateMixin
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.cv.mixins.rotate.RotateMixin
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Transforms (CV)
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-Compose
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.cv.transforms.torch.Compose
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ImageToTensor
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.cv.transforms.albumentations.ImageToTensor
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Normalize
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.cv.transforms.torch.Normalize
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-OneOfPerBatch
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.cv.transforms.kornia.OneOfPerBatch
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-OneOfPerSample
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.cv.transforms.kornia.OneOfPerSample
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-TensorToImage
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.cv.transforms.albumentations.TensorToImage
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-ToTensor
-""""""""""""""""""""""""""
-.. autoclass:: catalyst.contrib.data.cv.transforms.torch.ToTensor
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    :special-members:
 
 
 Datasets (CV)
@@ -354,5 +292,5 @@ ImageFolderDataset
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.contrib.data.cv.dataset.ImageFolderDataset
     :show-inheritance:
-    :members:
-    :special-members: __getitem__, __len__
+    :members: __init__
+    :special-members:

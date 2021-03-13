@@ -1,14 +1,58 @@
-# flake8: noqa
-# TODO: add docs and move to pure contrib
 import itertools
 
+import matplotlib
 import numpy as np
 
-from catalyst.contrib.utils.cv import tensor_from_rgb_image
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt  # noqa: E402
+
+# def tensor_to_ndimage(
+#     images: torch.Tensor,
+#     denormalize: bool = True,
+#     mean: Tuple[float, float, float] = _IMAGENET_MEAN,
+#     std: Tuple[float, float, float] = _IMAGENET_STD,
+#     move_channels_dim: bool = True,
+#     dtype=np.float32,
+# ) -> np.ndarray:
+#     """
+#     Convert float image(s) with standard normalization to
+#     np.ndarray with [0..1] when dtype is np.float32 and [0..255]
+#     when dtype is `np.uint8`.
+#
+#     Args:
+#         images: [B]xCxHxW float tensor
+#         denormalize: if True, multiply image(s) by std and add mean
+#         mean (Tuple[float, float, float]): per channel mean to add
+#         std (Tuple[float, float, float]): per channel std to multiply
+#         move_channels_dim: if True, convert tensor to [B]xHxWxC format
+#         dtype: result ndarray dtype. Only float32 and uint8 are supported
+#
+#     Returns:
+#         [B]xHxWxC np.ndarray of dtype
+#     """
+#     if denormalize:
+#         has_batch_dim = len(images.shape) == 4
+#
+#         mean = images.new_tensor(mean).view(*((1) if has_batch_dim else ()), len(mean), 1, 1)
+#         std = images.new_tensor(std).view(*((1) if has_batch_dim else ()), len(std), 1, 1)
+#
+#         images = images * std + mean
+#
+#     images = images.clamp(0, 1).numpy()
+#
+#     if move_channels_dim:
+#         images = np.moveaxis(images, -3, -1)
+#
+#     if dtype == np.uint8:
+#         images = (images * 255).round().astype(dtype)
+#     else:
+#         assert dtype == np.float32, "Only float32 and uint8 are supported"
+#
+#     return images
 
 
 def plot_confusion_matrix(
-    cm,
+    cm: np.ndarray,
     class_names=None,
     normalize=False,
     title="confusion matrix",
@@ -18,15 +62,23 @@ def plot_confusion_matrix(
     fontsize=32,
     colormap="Blues",
 ):
-    """
-    Render the confusion matrix and return matplotlib"s figure with it.
+    """Render the confusion matrix and return matplotlib"s figure with it.
     Normalization can be applied by setting `normalize=True`.
+
+    Args:
+        cm: numpy confusion matrix
+        class_names: class names
+        normalize: boolean flag to normalize confusion matrix
+        title: title
+        fname: filename to save confusion matrix
+        show: boolean flag for preview
+        figsize: matplotlib figure size
+        fontsize: matplotlib font size
+        colormap: matplotlib color map
+
+    Returns:
+        matplotlib figure
     """
-    import matplotlib
-
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-
     plt.ioff()
 
     cmap = plt.cm.__dict__[colormap]
@@ -37,11 +89,9 @@ def plot_confusion_matrix(
     if normalize:
         cm = cm.astype(np.float32) / cm.sum(axis=1)[:, np.newaxis]
 
-    plt.rcParams.update(
-        {"font.size": int(fontsize / np.log2(len(class_names)))}
-    )
+    plt.rcParams.update({"font.size": int(fontsize / np.log2(len(class_names)))})
 
-    f = plt.figure(figsize=(figsize, figsize))
+    figure = plt.figure(figsize=(figsize, figsize))
     plt.title(title)
     plt.imshow(cm, interpolation="nearest", cmap=cmap)
     plt.colorbar()
@@ -72,16 +122,30 @@ def plot_confusion_matrix(
     if show:
         plt.show()
 
-    return f
+    plt.ion()
+    return figure
 
 
-def render_figure_to_tensor(figure):
-    """@TODO: Docs. Contribution is welcome."""
-    import matplotlib
+# def render_figure_to_numpy(figure):
+#     """@TODO: Docs. Contribution is welcome."""
+#     import matplotlib
+#
+#     matplotlib.use("Agg")
+#     import matplotlib.pyplot as plt
+#
+#     plt.ioff()
+#
+#     figure.canvas.draw()
+#
+#     image = np.array(figure.canvas.renderer._renderer)  # noqa: WPS437
+#     plt.close(figure)
+#     del figure
+#
+#     return image
 
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
 
+def render_figure_to_array(figure):
+    """Renders matplotlib"s figure to tensor."""
     plt.ioff()
 
     figure.canvas.draw()
@@ -90,8 +154,11 @@ def render_figure_to_tensor(figure):
     plt.close(figure)
     del figure
 
-    image = tensor_from_rgb_image(image)
+    plt.ion()
     return image
 
 
-__all__ = ["plot_confusion_matrix", "render_figure_to_tensor"]
+__all__ = [
+    "plot_confusion_matrix",
+    "render_figure_to_array",
+]

@@ -1,5 +1,4 @@
 # flake8: noqa
-# TODO: refactor code, examples and docs
 import torch
 from torch import nn
 
@@ -37,9 +36,7 @@ class GradientPenaltyLoss(nn.Module):
         with torch.set_grad_enabled(True):  # to compute in validation mode
             d_interpolates = critic(interpolates, *critic_condition_args)
 
-        fake = torch.ones(
-            (real_data.size(0), 1), device=device, requires_grad=False
-        )
+        fake = torch.ones((real_data.size(0), 1), device=device, requires_grad=False)
         # Get gradient w.r.t. interpolates
         gradients = torch.autograd.grad(
             outputs=d_interpolates,

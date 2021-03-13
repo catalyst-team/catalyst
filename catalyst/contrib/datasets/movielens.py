@@ -3,7 +3,6 @@ import os
 
 import numpy as np
 import scipy.sparse as sp
-
 import torch
 from torch.utils.data import Dataset
 
@@ -85,9 +84,7 @@ class MovieLens(Dataset):
         self._fetch_movies()
 
         if not self._check_exists():
-            raise RuntimeError(
-                "Dataset not found. You can use download=True to download it"
-            )
+            raise RuntimeError("Dataset not found. You can use download=True to download it")
 
         if self.train:
             data_file = self.training_file
@@ -97,49 +94,38 @@ class MovieLens(Dataset):
         self.data = torch.load(os.path.join(self.processed_folder, data_file))
 
     def __getitem__(self, user_index):
-        """
+        """Get item.
+
         Args:
             user_index (int): User index [0, 942]
+
         Returns:
             tensor: (items) item's ranking for the user with index user_index
         """
         return self.data[user_index]
 
     def __len__(self):
-        """@TODO: Docs. Contribution is welcome.
-        The length of the loader
-        """
+        """The length of the loader"""
         return self.dimensions[0]
 
     @property
     def raw_folder(self):
-        """
-        Create raw folder for data download
-        """
+        """Create raw folder for data download"""
         return os.path.join(self.root, self.__class__.__name__, "raw")
 
     @property
     def processed_folder(self):
-        """
-        Create the folder for the processed files
-        """
+        """Create the folder for the processed files"""
         return os.path.join(self.root, self.__class__.__name__, "processed")
 
     def _check_exists(self):
-        """
-        Check if the path for tarining and testing data exists
-        in processed folder
-        """
+        """Check if the path for tarining and testing data exists in processed folder."""
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
-        ) and os.path.exists(
-            os.path.join(self.processed_folder, self.test_file)
-        )
+        ) and os.path.exists(os.path.join(self.processed_folder, self.test_file))
 
     def _download(self):
-        """
-        Download and extarct files
-        """
+        """Download and extract files/"""
         if self._check_exists():
             return
 
@@ -157,9 +143,7 @@ class MovieLens(Dataset):
         )
 
     def _read_raw_movielens_data(self):
-        """
-        Return the raw lines of the train and test files
-        """
+        """Return the raw lines of the train and test files."""
         path = self.raw_folder
 
         with open(path + "/ml-100k/ua.base") as datafile:
@@ -177,12 +161,14 @@ class MovieLens(Dataset):
         return (ua_base, ua_test, u_item, u_genre)
 
     def _build_interaction_matrix(self, rows, cols, data):
-        """
+        """Builds interaction matrix.
+
         Args:
             rows (int): rows of the oevrall dataset
             cols (int): columns of the overall dataset
             data (generator object): generator of
             the data object
+
         Returns:
             interaction_matrix (torch.sparse.Float):
             sparse user2item interaction matrix
@@ -200,17 +186,15 @@ class MovieLens(Dataset):
         v = torch.FloatTensor(values)
         shape = coo.shape
 
-        interaction_matrix = torch.sparse.FloatTensor(
-            i, v, torch.Size(shape)
-        ).to_dense()
+        interaction_matrix = torch.sparse.FloatTensor(i, v, torch.Size(shape)).to_dense()
         return interaction_matrix
 
     def _parse(self, data):
-        """
-        Parse the raw data.
-        Substract one to shift to zero based indexing
+        """Parses the raw data. Substract one to shift to zero based indexing
+
         Args:
             data: raw data of the dataset
+
         Returns:
             Generator iterator for parsed data
         """
@@ -223,13 +207,14 @@ class MovieLens(Dataset):
             yield uid - 1, iid - 1, rating, timestamp
 
     def _get_dimensions(self, train_data, test_data):
-        """
-        Get the dimensions of the raw dataset
+        """Gets the dimensions of the raw dataset
+
         Args:
             train_data: (uid, iid, rating, timestamp)
                 Genrator for training data
             test_data: (uid, iid, rating, timestamp)
                 Genrator for testing data
+
         Returns:
             The total dimension of the dataset
         """
@@ -255,33 +240,18 @@ class MovieLens(Dataset):
             3. Parse test data
             4. Save in the .pt with torch.save
         """
-        (
-            train_raw,
-            test_raw,
-            item_metadata_raw,
-            genres_raw,
-        ) = self._read_raw_movielens_data()
+        (train_raw, test_raw, item_metadata_raw, genres_raw) = self._read_raw_movielens_data()
 
-        num_users, num_items = self._get_dimensions(
-            self._parse(train_raw), self._parse(test_raw)
-        )
+        num_users, num_items = self._get_dimensions(self._parse(train_raw), self._parse(test_raw))
 
-        train = self._build_interaction_matrix(
-            num_users, num_items, self._parse(train_raw)
-        )
-        test = self._build_interaction_matrix(
-            num_users, num_items, self._parse(test_raw)
-        )
+        train = self._build_interaction_matrix(num_users, num_items, self._parse(train_raw))
+        test = self._build_interaction_matrix(num_users, num_items, self._parse(test_raw))
         assert train.shape == test.shape
 
-        with open(
-            os.path.join(self.processed_folder, self.training_file), "wb"
-        ) as f:
+        with open(os.path.join(self.processed_folder, self.training_file), "wb") as f:
             torch.save(train, f)
 
-        with open(
-            os.path.join(self.processed_folder, self.test_file), "wb"
-        ) as f:
+        with open(os.path.join(self.processed_folder, self.test_file), "wb") as f:
             torch.save(test, f)
 
 

@@ -1,3 +1,4 @@
+# flake8: noqa
 from catalyst.utils.misc import get_hash
 
 

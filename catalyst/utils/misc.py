@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, TypeVar, Union
 import argparse
 from base64 import urlsafe_b64encode
 import collections
@@ -7,12 +7,12 @@ from datetime import datetime
 from hashlib import sha256
 import inspect
 from itertools import tee
-from pathlib import Path
 import random
-import shutil
 
 import numpy as np
-from packaging.version import parse, Version
+from torch import int as tint, long, short, Tensor
+
+T = TypeVar("T")
 
 
 def boolean_flag(
@@ -43,9 +43,7 @@ def boolean_flag(
     names = ["--" + name]
     if shorthand is not None:
         names.append("-" + shorthand)
-    parser.add_argument(
-        *names, action="store_true", default=default, dest=dest, help=help
-    )
+    parser.add_argument(*names, action="store_true", default=default, dest=dest, help=help)
     parser.add_argument("--no-" + name, action="store_false", dest=dest)
 
 
@@ -64,18 +62,8 @@ def set_global_seed(seed: int) -> None:
     else:
         torch.manual_seed(seed)
         if torch.cuda.is_available():
+            torch.cuda.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
-    try:
-        import tensorflow as tf
-    except ImportError:
-        pass
-    else:
-        if parse(tf.__version__) >= Version("2.0.0"):
-            tf.random.set_seed(seed)
-        elif parse(tf.__version__) <= Version("1.13.2"):
-            tf.set_random_seed(seed)
-        else:
-            tf.compat.v1.set_random_seed(seed)
 
 
 def maybe_recursive_call(
@@ -101,15 +89,9 @@ def maybe_recursive_call(
         result = type(object_or_dict)()
         for k, v in object_or_dict.items():
             r_args = None if recursive_args is None else recursive_args[k]
-            r_kwargs = (
-                None if recursive_kwargs is None else recursive_kwargs[k]
-            )
+            r_kwargs = None if recursive_kwargs is None else recursive_kwargs[k]
             result[k] = maybe_recursive_call(
-                v,
-                method,
-                recursive_args=r_args,
-                recursive_kwargs=r_kwargs,
-                **kwargs,
+                v, method, recursive_args=r_args, recursive_kwargs=r_kwargs, **kwargs,
             )
         return result
 
@@ -129,22 +111,6 @@ def is_exception(ex: Any) -> bool:
     return result
 
 
-def copy_directory(input_dir: Path, output_dir: Path) -> None:
-    """Recursively copies the input directory.
-
-    Args:
-        input_dir: input directory
-        output_dir: output directory
-    """
-    output_dir.mkdir(exist_ok=True, parents=True)
-    for path in input_dir.iterdir():
-        if path.is_dir():
-            path_name = path.name
-            copy_directory(path, output_dir / path_name)
-        else:
-            shutil.copy2(path, output_dir)
-
-
 def get_utcnow_time(format: str = None) -> str:
     """Return string with current utc time in chosen format.
 
@@ -160,24 +126,6 @@ def get_utcnow_time(format: str = None) -> str:
     return result
 
 
-def format_metric(name: str, value: float) -> str:
-    """Format metric.
-
-    Metric will be returned in the scientific format if 4
-    decimal chars are not enough (metric value lower than 1e-4).
-
-    Args:
-        name: metric name
-        value: value of metric
-
-    Returns:
-        str: formatted metric
-    """
-    if value < 1e-4:
-        return f"{name}={value:1.3e}"
-    return f"{name}={value:.4f}"
-
-
 def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
     """Return default parameters of Callable.
 
@@ -189,9 +137,7 @@ def get_fn_default_params(fn: Callable[..., Any], exclude: List[str] = None):
         dict: contains default parameters of `fn`
     """
     argspec = inspect.getfullargspec(fn)
-    default_params = zip(
-        argspec.args[-len(argspec.defaults) :], argspec.defaults
-    )
+    default_params = zip(argspec.args[-len(argspec.defaults) :], argspec.defaults)
     if exclude is not None:
         default_params = filter(lambda x: x[0] not in exclude, default_params)
     default_params = dict(default_params)
@@ -268,41 +214,30 @@ def get_attr(obj: Any, key: str, inner_key: str = None) -> Any:
         return getattr(obj, key)[inner_key]
 
 
-def _get_key_str(
-    dictionary: dict, key: Optional[Union[str, List[str]]],
-) -> Any:
+def _get_key_str(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Any:
     return dictionary[key]
 
 
-def _get_key_list(
-    dictionary: dict, key: Optional[Union[str, List[str]]],
-) -> Dict:
+def _get_key_list(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
     result = {name: dictionary[name] for name in key}
     return result
 
 
-def _get_key_dict(
-    dictionary: dict, key: Optional[Union[str, List[str]]],
-) -> Dict:
+def _get_key_dict(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
     result = {key_out: dictionary[key_in] for key_in, key_out in key.items()}
     return result
 
 
-def _get_key_none(
-    dictionary: dict, key: Optional[Union[str, List[str]]],
-) -> Dict:
+def _get_key_none(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
     return {}
 
 
-def _get_key_all(
-    dictionary: dict, key: Optional[Union[str, List[str]]],
-) -> Dict:
+def _get_key_all(dictionary: dict, key: Optional[Union[str, List[str]]]) -> Dict:
     return dictionary
 
 
 def get_dictkey_auto_fn(key: Optional[Union[str, List[str]]]) -> Callable:
-    """Function generator for sub-dict preparation from dict
-    based on predefined keys.
+    """Function generator for sub-dict preparation from dict based on predefined keys.
 
     Args:
         key: keys
@@ -379,59 +314,17 @@ def flatten_dict(
     for key, value in dictionary.items():
         new_key = parent_key + separator + key if parent_key else key
         if isinstance(value, collections.MutableMapping):
-            items.extend(
-                flatten_dict(value, new_key, separator=separator).items()
-            )
+            items.extend(flatten_dict(value, new_key, separator=separator).items())
         else:
             items.append((new_key, value))
     return collections.OrderedDict(items)
-
-
-def split_dict_to_subdicts(dct: Dict, prefixes: List, extra_key: str) -> Dict:
-    """
-    Splits dict into subdicts with spesicied ``prefixes``.
-    Keys, which don't startswith one of the prefixes go to ``extra_key``.
-
-    Examples:
-        >>> dct = {"train_v1": 1, "train_v2": 2, "not_train": 3}
-        >>> split_dict_to_subdicts(dct, prefixes=["train"], extra_key="_extra")
-        >>> {"train": {"v1": 1, "v2": 2}, "_extra": {"not_train": 3}}
-
-    Args:
-        dct: dictionary with keys with prefixes
-        prefixes: prefixes of interest, which we would like to reveal
-        extra_key: extra key to store everything else
-
-    Returns:
-        dictionary with subdictionaries with
-        ``prefixes`` and ``extra_key`` keys
-    """
-    subdicts = {}
-    extra_subdict = {
-        k: v
-        for k, v in dct.items()
-        if all(not k.startswith(prefix) for prefix in prefixes)
-    }
-    if len(extra_subdict) > 0:
-        subdicts[extra_key] = extra_subdict
-    for prefix in prefixes:
-        subdicts[prefix] = {
-            k.replace(f"{prefix}_", ""): v
-            for k, v in dct.items()
-            if k.startswith(prefix)
-        }
-    return subdicts
 
 
 def _make_hashable(o):
     if isinstance(o, (tuple, list)):
         return tuple(((type(o).__name__, _make_hashable(e)) for e in o))
     if isinstance(o, dict):
-        return tuple(
-            sorted(
-                (type(o).__name__, k, _make_hashable(v)) for k, v in o.items()
-            )
-        )
+        return tuple(sorted((type(o).__name__, k, _make_hashable(v)) for k, v in o.items()))
     if isinstance(o, (set, frozenset)):
         return tuple(sorted((type(o).__name__, _make_hashable(e)) for e in o))
     return o
@@ -469,7 +362,7 @@ def get_short_hash(obj) -> str:
     return hash_
 
 
-def pairwise(iterable: Iterable[Any]) -> Iterable[Any]:
+def pairwise(iterable: Iterable[T]) -> Iterable[Tuple[T, T]]:
     """Iterate sequences by pairs.
 
     Examples:
@@ -499,11 +392,7 @@ def make_tuple(tuple_like):
     Returns:
         tuple or list
     """
-    tuple_like = (
-        tuple_like
-        if isinstance(tuple_like, (list, tuple))
-        else (tuple_like, tuple_like)
-    )
+    tuple_like = tuple_like if isinstance(tuple_like, (list, tuple)) else (tuple_like, tuple_like)
     return tuple_like
 
 
@@ -542,10 +431,47 @@ def find_value_ids(it: Iterable[Any], value: Any) -> List[int]:
     return inds
 
 
+def get_by_keys(dict_: dict, *keys: Any, default: Optional[T] = None) -> T:
+    """@TODO: docs."""
+    if not isinstance(dict_, dict):
+        raise ValueError()
+
+    key, *keys = keys
+    if len(keys) == 0 or key not in dict_:
+        return dict_.get(key, default)
+    return get_by_keys(dict_[key], *keys, default=default)
+
+
+def convert_labels2list(labels: Union[Tensor, List[int]]) -> List[int]:
+    """
+    This function allows to work with 2 types of indexing:
+    using a integer tensor and a list of indices.
+
+    Args:
+        labels: labels of batch samples
+
+    Returns:
+        labels of batch samples in the aligned format
+
+    Raises:
+        TypeError: if type of input labels is not tensor and list
+    """
+    if isinstance(labels, Tensor):
+        labels = labels.squeeze()
+        assert (len(labels.shape) == 1) and (
+            labels.dtype in [short, tint, long]
+        ), "Labels cannot be interpreted as indices."
+        labels_list = labels.tolist()
+    elif isinstance(labels, list):
+        labels_list = labels.copy()
+    else:
+        raise TypeError(f"Unexpected type of labels: {type(labels)}).")
+
+    return labels_list
+
+
 __all__ = [
     "boolean_flag",
-    "copy_directory",
-    "format_metric",
     "get_fn_default_params",
     "get_fn_argsnames",
     "get_utcnow_time",
@@ -556,11 +482,12 @@ __all__ = [
     "get_dictkey_auto_fn",
     "merge_dicts",
     "flatten_dict",
-    "split_dict_to_subdicts",
     "get_hash",
     "get_short_hash",
     "args_are_not_none",
     "make_tuple",
     "pairwise",
     "find_value_ids",
+    "get_by_keys",
+    "convert_labels2list",
 ]

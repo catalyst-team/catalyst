@@ -1,38 +1,59 @@
 import logging
+import os
 
 import hydra
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 
 from catalyst.utils.distributed import get_rank
-from catalyst.utils.hydra_config import prepare_hydra_config
 from catalyst.utils.misc import set_global_seed
-from catalyst.utils.scripts import (
-    distributed_cmd_run,
-    dump_code,
-    import_module,
-)
-from catalyst.utils.sys import dump_environment
+from catalyst.utils.sys import dump_code, dump_environment, import_module
 from catalyst.utils.torch import prepare_cudnn
 
 logger = logging.getLogger(__name__)
 
 
-def main_worker(cfg: DictConfig):
-    set_global_seed(cfg.args.seed)
-    prepare_cudnn(cfg.args.deterministic, cfg.args.benchmark)
+def prepare_hydra_config(cfg: DictConfig) -> DictConfig:
+    """
+    Prepare config. Add required parameters.
 
-    import_module(hydra.utils.to_absolute_path(cfg.args.expdir))
+    Args:
+        cfg: (DictConfig) config
 
-    experiment = hydra.utils.instantiate(cfg.experiment, cfg=cfg)
-    runner = hydra.utils.instantiate(cfg.runner)
+    Returns:
+        DictConfig: config
 
-    if experiment.logdir is not None and get_rank() <= 0:
-        dump_environment(cfg, experiment.logdir)
-        dump_code(
-            hydra.utils.to_absolute_path(cfg.args.expdir), experiment.logdir
-        )
+    """
+    OmegaConf.set_readonly(cfg, False)
+    OmegaConf.set_struct(cfg, False)
 
-    runner.run_experiment(experiment)
+    # cfg.setdefault("vals", DictConfig({}))
+
+    cfg.setdefault("args", DictConfig({}))
+    cfg.args.setdefault("expdir", ".")
+    cfg.args.setdefault("resume", None)
+    cfg.args.setdefault("autoresume", None)
+    cfg.args.setdefault("seed", 42)
+    cfg.args.setdefault("distributed", os.getenv("USE_DDP", "0") == "1")
+    cfg.args.setdefault("apex", os.getenv("USE_APEX", "0") == "1")
+    cfg.args.setdefault("amp", os.getenv("USE_AMP", "0") == "1")
+    cfg.args.setdefault("verbose", False)
+    cfg.args.setdefault("timeit", False)
+    cfg.args.setdefault("check", False)
+    cfg.args.setdefault("overfit", False)
+    cfg.args.setdefault("deterministic", False)
+    cfg.args.setdefault("benchmark", False)
+
+    # cfg.setdefault("distributed", DictConfig({}))
+    # cfg.distributed.setdefault("apex", cfg.args.apex)
+    # cfg.distributed.setdefault("amp", cfg.args.amp)
+
+    cfg.setdefault("runner", DictConfig({}))
+
+    cfg.setdefault("model", DictConfig({}))
+
+    cfg.setdefault("stages", DictConfig({}))
+
+    return cfg
 
 
 @hydra.main()
@@ -45,7 +66,17 @@ def main(cfg: DictConfig):
 
     """
     cfg = prepare_hydra_config(cfg)
-    distributed_cmd_run(main_worker, cfg.args.distributed, cfg)
+    set_global_seed(cfg.args.seed)
+    prepare_cudnn(cfg.args.deterministic, cfg.args.benchmark)
+
+    import_module(hydra.utils.to_absolute_path(cfg.args.expdir))
+    runner = hydra.utils.instantiate(cfg.runner, cfg=cfg)
+
+    if get_rank() <= 0:
+        dump_environment(logdir=runner.logdir, config=cfg)
+        dump_code(expdir=hydra.utils.to_absolute_path(cfg.args.expdir), logdir=runner.logdir)
+
+    runner.run()
 
 
 __all__ = ["main"]
