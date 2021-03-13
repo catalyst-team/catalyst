@@ -34,59 +34,55 @@ Getting started
 .. code-block:: python
 
     import os
-    import torch
-    from torch.nn import functional as F
+    from torch import nn, optim
     from torch.utils.data import DataLoader
-    from torchvision.datasets import MNIST
-    from torchvision.transforms import ToTensor
-    from catalyst import dl, metrics
+    from catalyst import dl, utils
+    from catalyst.data.transforms import ToTensor
+    from catalyst.contrib.datasets import MNIST
 
-    model = torch.nn.Linear(28 * 28, 10)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+    model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
         "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
         "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
     }
-
-    class CustomRunner(dl.Runner):
-
-        def predict_batch(self, batch):
-            # model inference step
-            return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
-
-        def handle_batch(self, batch):
-            # model train/valid step
-            x, y = batch
-            y_hat = self.model(x.view(x.size(0), -1))
-
-            loss = F.cross_entropy(y_hat, y)
-            accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
-            self.batch_metrics.update(
-                {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
-            )
-
-            if self.is_train_loader:
-                loss.backward()
-                self.optimizer.step()
-                self.optimizer.zero_grad()
-
-    runner = CustomRunner()
+    runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
     # model training
     runner.train(
         model=model,
+        criterion=criterion,
         optimizer=optimizer,
         loaders=loaders,
+        num_epochs=1,
+        callbacks=[
+            dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
+            # catalyst[ml] required
+            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
+        ],
         logdir="./logs",
-        num_epochs=5,
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
         verbose=True,
         load_best_on_end=True,
     )
     # model inference
     for prediction in runner.predict_loader(loader=loaders["valid"]):
-        assert prediction.detach().cpu().numpy().shape[-1] == 10
+        assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
+
+    features_batch = next(iter(loaders["valid"]))[0]
+    # model stochastic weight averaging
+    model.load_state_dict(utils.get_averaged_weights_by_path_mask(logdir="./logs", path_mask="*.pth"))
     # model tracing
-    traced_model = runner.trace(loader=loaders["valid"])
+    utils.trace_model(model=runner.model, batch=features_batch)
+    # model quantization
+    utils.quantize_model(model=runner.model)
+    # model pruning
+    utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
+    # onnx export
+    utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.onnx", verbose=True)
 
 
 Step by step guide
