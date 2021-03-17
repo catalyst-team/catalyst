@@ -34,7 +34,7 @@ jobs:
           - python-version: 3.6
             os: macOS-10.15
 
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v2
 
