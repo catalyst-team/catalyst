@@ -5,43 +5,48 @@ Catalyst supports automatic experiments scaling with distributed training suppor
 Notebook API
 ----------------------------------------------------
 
-Suppose you have the following pipeline with Linear Regression:
+Suppose you have the following pipeline with MNIST Classification:
 
 .. code-block:: python
 
-    import torch
-    from torch.utils.data import DataLoader, TensorDataset
-    from catalyst.dl import SupervisedRunner
+    import os
+    from torch import nn, optim
+    from torch.utils.data import DataLoader
+    from catalyst import dl
+    from catalyst.data.transforms import ToTensor
+    from catalyst.contrib.datasets import MNIST
 
-    # experiment setup
-    logdir = "./logdir"
-    num_epochs = 8
+    model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.02)
 
-    # data
-    num_samples, num_features = int(1e4), int(1e1)
-    X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
-    dataset = TensorDataset(X, y)
-    loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {"train": loader, "valid": loader}
+    loaders = {
+        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
+        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    }
 
-    # model, criterion, optimizer, scheduler
-    model = torch.nn.Linear(num_features, 1)
-    criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters())
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
-
+    runner = dl.SupervisedRunner()
     # model training
-    runner = SupervisedRunner()
     runner.train(
         model=model,
         criterion=criterion,
         optimizer=optimizer,
-        scheduler=scheduler,
         loaders=loaders,
-        logdir=logdir,
-        num_epochs=num_epochs,
+        num_epochs=1,
+        logdir="./logs",
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
         verbose=True,
+        callbacks=[
+            dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
+            dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+            dl.AUCCallback(input_key="logits", target_key="targets"),
+            # catalyst[ml] required
+            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes),
+        ]
     )
+
 
 For correct DDP training, you need to separate creation of the dataset(s) from the training.
 In this way Catalyst could easily transfer your datasets to the distributed mode
@@ -52,42 +57,47 @@ As a best practice scenario for this case:
 .. code-block:: python
 
     import torch
-    from torch.utils.data import TensorDataset
-    from catalyst.dl import SupervisedRunner, utils
+    from torch.utils.data import DataLoader, TensorDataset, DistributedSampler
+    from catalyst import dl
 
-    def datasets_fn(num_features: int):
-        X = torch.rand(int(1e4), num_features)
-        y = torch.rand(X.shape[0])
-        dataset = TensorDataset(X, y)
-        return {"train": dataset, "valid": dataset}
+    class CustomRunner(dl.SupervisedRunner):
 
-    def train():
-        num_features = int(1e1)
-        # model, criterion, optimizer, scheduler
-        model = torch.nn.Linear(num_features, 1)
-        criterion = torch.nn.MSELoss()
-        optimizer = torch.optim.Adam(model.parameters())
-        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+        def get_engine(self):
+            return dl.DistributedDataParallelEngine()
 
-        runner = SupervisedRunner()
-        runner.train(
-            model=model,
-            datasets={
-                "batch_size": 32,
-                "num_workers": 1,
-                "get_datasets_fn": datasets_fn,
-                "num_features": num_features,
-            },
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            logdir="./logs/example_3",
-            num_epochs=8,
-            verbose=True,
-            distributed=False,
-        )
+        def get_loaders(self, stage: str):
+            train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+            valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+            loaders = {
+                "train": DataLoader(train_data, sampler=DistributedSampler(dataset=train_data), batch_size=32),
+                "valid": DataLoader(valid_data, sampler=DistributedSampler(dataset=valid_data), batch_size=32),
+            }
+            return loaders
 
-    utils.distributed_cmd_run(train)
+    # model, criterion, optimizer, scheduler
+    model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.02)
+
+    runner = CustomRunner()
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        logdir="./logs",
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
+        verbose=True,
+        num_epochs=8,
+        callbacks=[
+            dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
+            dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+            dl.AUCCallback(input_key="logits", target_key="targets"),
+            # catalyst[ml] required
+            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes),
+        ]
+    )
 
 Config API
 ----------------------------------------------------

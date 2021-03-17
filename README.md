@@ -64,6 +64,7 @@ loaders = {
     "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
     "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
 }
+
 runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
 # model training
 runner.train(
@@ -491,7 +492,8 @@ runner.train(
 #         dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
 #         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
 #         dl.AUCCallback(input_key="logits", target_key="targets"),
-#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes), # catalyst[ml] required
+#         # catalyst[ml] required ``pip install catalyst[ml]``
+#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes), 
 #     ]
 )
 ```
@@ -551,6 +553,70 @@ runner.train(
     valid_metric="loss",
     minimize_valid_metric=True,
     verbose=True,
+)
+```
+</p>
+</details>
+
+
+<details>
+<summary>CV - MNIST model distillation</summary>
+<p>
+
+```python
+import os
+import torch
+from torch import nn, optim
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from catalyst import dl
+from catalyst.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
+
+# [!] teacher model should be already pretrained
+teacher = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+student = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+criterion = {"cls": nn.CrossEntropyLoss(), "kl": nn.KLDivLoss(reduction="batchmean")}
+optimizer = optim.Adam(student.parameters(), lr=0.02)
+
+loaders = {
+    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
+    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+}
+
+class DistilRunner(dl.Runner):
+    def handle_batch(self, batch):
+        x, y = batch
+
+        teacher.eval()  # let's manually set teacher model to eval mode
+        with torch.no_grad():
+            t_logits = self.model["teacher"](x)
+
+        s_logits = self.model["student"](x)
+        self.batch = {
+            "t_logits": t_logits, "s_logits": s_logits, "targets": y,
+            "s_logprobs": F.log_softmax(s_logits, dim=-1), "t_probs": F.softmax(t_logits, dim=-1)
+        }
+
+runner = DistilRunner()
+# model training
+runner.train(
+    model={"teacher": teacher, "student": student},
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    num_epochs=1,
+    logdir="./logs",
+    verbose=True,
+    callbacks=[
+        dl.AccuracyCallback(input_key="t_logits", target_key="targets", num_classes=2, prefix="teacher_"),
+        dl.AccuracyCallback(input_key="s_logits", target_key="targets", num_classes=2, prefix="student_"),
+        dl.CriterionCallback(input_key="s_logits", target_key="targets", metric_key="cls_loss", criterion_key="cls"),
+        dl.CriterionCallback(input_key="s_logprobs", target_key="t_probs", metric_key="kl_div_loss", criterion_key="kl"),
+        dl.MetricAggregationCallback(prefix="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"),
+        dl.OptimizerCallback(metric_key="loss", model_key="student"),
+        dl.CheckpointCallback(logdir="./logs", loader_key="valid", metric_key="loss", minimize=True, save_n_best=3),
+    ],
 )
 ```
 </p>
@@ -834,7 +900,7 @@ class CustomRunner(dl.IRunner):
     def get_stage_len(self, stage: str) -> int:
         return 3
 
-    def get_loaders(self, stage: str, epoch: int = None):
+    def get_loaders(self, stage: str):
         loaders = {
             "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
             "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
@@ -931,7 +997,7 @@ class CustomRunner(dl.IRunner):
     def get_stage_len(self, stage: str) -> int:
         return 3
 
-    def get_loaders(self, stage: str, epoch: int = None):
+    def get_loaders(self, stage: str):
         loaders = {
             "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
             "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
@@ -1028,7 +1094,7 @@ class CustomRunner(dl.IRunner):
     def get_stage_len(self, stage: str) -> int:
         return 3
 
-    def get_loaders(self, stage: str, epoch: int = None):
+    def get_loaders(self, stage: str):
         loaders = {
             "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
             "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
@@ -1307,32 +1373,28 @@ Since the beginning of the development of the Сatalyst,
 a lot of people have influenced it in a lot of different ways.
 
 #### Catalyst.Team
-- [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi))
 - [Dmytro Doroshenko](https://www.linkedin.com/in/dmytro-doroshenko-05671112a/) ([ditwoo](https://github.com/Ditwoo))
-- [Sergey Kolesnikov](https://www.scitator.com/) ([scitator](https://github.com/Scitator))
-
-#### Catalyst - Metric Learning Team
-- [Julia Shenshina](https://github.com/julia-shenshina) ([julia-shenshina](https://github.com/julia-shenshina))
+- [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi))
 - [Nikita Balagansky](https://www.linkedin.com/in/nikita-balagansky-50414a19a/) ([elephantmipt](https://github.com/elephantmipt))
-- [Aleksey Shabanov](https://linkedin.com/in/aleksey-shabanov-96b351189) ([AlekseySh](https://github.com/AlekseySh))
+- [Sergey Kolesnikov](https://www.scitator.com/) ([scitator](https://github.com/Scitator))
 
 #### Catalyst.Contributors
 - [Aleksey Grinchuk](https://www.facebook.com/grinchuk.alexey) ([alexgrinch](https://github.com/AlexGrinch))
+- [Aleksey Shabanov](https://linkedin.com/in/aleksey-shabanov-96b351189) ([AlekseySh](https://github.com/AlekseySh))
 - [Alex Gaziev](https://www.linkedin.com/in/alexgaziev/) ([gazay](https://github.com/gazay))
 - [Andrey Zharkov](https://www.linkedin.com/in/andrey-zharkov-8554a1153/) ([asmekal](https://github.com/asmekal))
 - [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro))
 - [David Kuryakin](https://www.linkedin.com/in/dkuryakin/) ([dkuryakin](https://github.com/dkuryakin))
 - [Evgeny Semyonov](https://www.linkedin.com/in/ewan-semyonov/) ([lightforever](https://github.com/lightforever))
 - [Eugene Khvedchenya](https://www.linkedin.com/in/cvtalks/) ([bloodaxe](https://github.com/BloodAxe))
+- [Ivan Stepanenko](https://www.facebook.com/istepanenko)
+- [Julia Shenshina](https://github.com/julia-shenshina) ([julia-shenshina](https://github.com/julia-shenshina))
+- [Nguyen Xuan Bac](https://www.linkedin.com/in/bac-nguyen-xuan-70340b66/) ([ngxbac](https://github.com/ngxbac))
 - [Roman Tezikov](http://linkedin.com/in/roman-tezikov/) ([TezRomacH](https://github.com/TezRomacH))
 - [Valentin Khrulkov](https://www.linkedin.com/in/vkhrulkov/) ([khrulkovv](https://github.com/KhrulkovV))
+- [Vladimir Iglovikov](https://www.linkedin.com/in/iglovikov/) ([ternaus](https://github.com/ternaus))
 - [Vsevolod Poletaev](https://linkedin.com/in/vsevolod-poletaev-468071165) ([hexfaker](https://github.com/hexfaker))
 - [Yury Kashnitsky](https://www.linkedin.com/in/kashnitskiy/) ([yorko](https://github.com/Yorko))
-
-#### Catalyst.Friends
-- [Ivan Stepanenko](https://www.facebook.com/istepanenko)
-- [Nguyen Xuan Bac](https://www.linkedin.com/in/bac-nguyen-xuan-70340b66/) ([ngxbac](https://github.com/ngxbac))
-- [Vladimir Iglovikov](https://www.linkedin.com/in/iglovikov/) ([ternaus](https://github.com/ternaus))
 
 
 ### Trusted by
@@ -1355,11 +1417,6 @@ a lot of people have influenced it in a lot of different ways.
 - [SoftConstruct](https://www.softconstruct.io/)
 - Researchers@[Tinkoff](https://www.tinkoff.ru/eng/)
 - Researchers@[Yandex.Research](https://research.yandex.com)
-
-
-### Supported by
-- [HostKey](https://www.hostkey.com)
-- [Moscow Institute of Physics and Technology](https://mipt.ru/english/)
 
 
 ### Citation
