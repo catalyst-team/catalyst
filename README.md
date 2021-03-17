@@ -592,7 +592,7 @@ class DistilRunner(dl.Runner):
         with torch.no_grad():
             t_logits = self.model["teacher"](x)
 
-        s_logits = student(x)
+        s_logits = self.model["student"](x)
         self.batch = {
             "t_logits": t_logits, "s_logits": s_logits, "targets": y,
             "s_logprobs": F.log_softmax(s_logits, dim=-1), "t_probs": F.softmax(t_logits, dim=-1)

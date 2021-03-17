@@ -39,7 +39,7 @@ def train_experiment(device):
                 with torch.no_grad():
                     t_logits = self.model["teacher"](x)
 
-                s_logits = student(x)
+                s_logits = self.model["student"](x)
                 self.batch = {
                     "t_logits": t_logits,
                     "s_logits": s_logits,
