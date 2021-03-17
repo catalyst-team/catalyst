@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ## [XX.XX] - XXXX-XX-XX
 
+### Added
+
+- Generalized Mean Pooling(GeM)([#1084](https://github.com/catalyst-team/catalyst/issues/1084))
+
 ### Fixed
 
 - Fix bug in `OptimizerCallback` when mixed-precision params set both:
