@@ -219,13 +219,10 @@ Indices and tables
     faq/intro
 
     faq/data
-    faq/lr_finder
 
     faq/dp
     faq/amp
     faq/ddp
-    faq/slurm
-    faq/tpu
 
     faq/multi_components
     faq/early_stopping

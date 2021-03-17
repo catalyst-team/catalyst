@@ -2,7 +2,7 @@ Mixed precision training
 ==============================================================================
 Catalyst support a variety of backends for mixed precision training.
 For the PyTorch versions below 1.6 it's better to use ``Nvidia Apex`` helper.
-After PyTorch 1.6 release, it's possible to use AMP natively inside ``torch`` package.
+After PyTorch 1.6 release, it's possible to use AMP natively inside ``torch.amp`` package.
 
 Suppose you have the following pipeline with Linear Regression:
 
@@ -34,6 +34,9 @@ Suppose you have the following pipeline with Linear Regression:
         scheduler=scheduler,
         loaders=loaders,
         logdir="./logdir",
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
         num_epochs=8,
         verbose=True,
     )
@@ -77,9 +80,12 @@ After that you could easily extend our current pipeline with just one line of co
         scheduler=scheduler,
         loaders=loaders,
         logdir="./logdir",
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
         num_epochs=8,
         verbose=True,
-        apex=True
+        apex=True,
     )
 
 You could also check out the example above in `this Google Colab notebook`_
@@ -116,9 +122,12 @@ If you would like to use native AMP support, you could do the following:
         scheduler=scheduler,
         loaders=loaders,
         logdir="./logdir",
+        valid_loader="valid",
+        valid_metric="loss",
+        minimize_valid_metric=True,
         num_epochs=8,
         verbose=True,
-        amp=True
+        amp=True,
     )
 
 You could also check out the example above in `this Google Colab notebook`_

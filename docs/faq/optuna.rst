@@ -44,10 +44,10 @@ You can easily use Optuna for hyperparameters optimization:
                 dl.AccuracyCallback(num_classes=10),
             ],
             num_epochs=10,
-            main_metric="accuracy01",
+            valid_metric="accuracy01",
             minimize_metric=False,
         )
-        return runner.best_valid_metrics[runner.main_metric]
+        return runner.best_valid_metrics[runner.valid_metric]
 
     study = optuna.create_study(
         direction="maximize",

@@ -38,7 +38,7 @@ class CustomRunner(dl.IRunner):
     def get_stage_len(self, stage: str) -> int:
         return 1
 
-    def get_loaders(self, stage: str, epoch: int = None):
+    def get_loaders(self, stage: str):
         loaders = {
             "train": DataLoader(
                 MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),

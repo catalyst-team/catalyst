@@ -48,7 +48,7 @@ Let's define **what** we would like to run:
     }
 
 Step 4 - Accelerate it with Catalyst
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Let's define **how** we would like to handle the data (in pure PyTorch):
 
 .. code-block:: python
@@ -107,7 +107,7 @@ You could easily use your custom logic for model inference on batch or loader th
         assert prediction.detach().cpu().numpy().shape[-1] == 10
 
 Step 7 - Prepare for development stage
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Finally, you could use a large number of model post-processing utils for production use cases.
 
 .. code-block:: python
