@@ -30,7 +30,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Mixed precision training" href="amp.html" />
-    <link rel="prev" title="[WIP] Learning Rate Finder" href="lr_finder.html" /> 
+    <link rel="prev" title="Dataflow" href="data.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
@@ -208,12 +208,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tpu.html">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Model checkpointing</a></li>
@@ -317,7 +314,7 @@
               
   <div class="section" id="dataparallel-training-cpu-single-multi-gpu">
 <h1>DataParallel training (cpu, single/multi-gpu)<a class="headerlink" href="#dataparallel-training-cpu-single-multi-gpu" title="Permalink to this headline">¶</a></h1>
-<p>By design, Catalyst tries to use all visible GPUs of your machine.
+<p>By design, Catalyst tries to use all available GPUs on your machine.
 Nevertheless, thanks to Nvidia CUDA design,
 it’s easy to control GPUs visibility with <code class="docutils literal notranslate"><span class="pre">CUDA_VISIBLE_DEVICES</span></code> flag.</p>
 <div class="section" id="cpu-training">
@@ -396,7 +393,7 @@ To list them, do the following (with example output from my server):</p>
         <a href="amp.html" class="btn btn-neutral float-right" title="Mixed precision training" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="lr_finder.html" class="btn btn-neutral" title="[WIP] Learning Rate Finder" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="data.html" class="btn btn-neutral" title="Dataflow" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   

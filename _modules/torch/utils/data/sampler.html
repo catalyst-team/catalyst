@@ -206,12 +206,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/data.html">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../faq/tpu.html">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../faq/checkpointing.html">Model checkpointing</a></li>
@@ -367,7 +364,7 @@
 <span class="k">class</span> <span class="nc">SequentialSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Samples elements sequentially, always in the same order.</span>
 
-<span class="sd">    Arguments:</span>
+<span class="sd">    Args:</span>
 <span class="sd">        data_source (Dataset): dataset to sample from</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">data_source</span><span class="p">:</span> <span class="n">Sized</span>
@@ -386,7 +383,7 @@
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Samples elements randomly. If without replacement, then sample from a shuffled dataset.</span>
 <span class="sd">    If with replacement, then user can specify :attr:`num_samples` to draw.</span>
 
-<span class="sd">    Arguments:</span>
+<span class="sd">    Args:</span>
 <span class="sd">        data_source (Dataset): dataset to sample from</span>
 <span class="sd">        replacement (bool): samples are drawn on-demand with replacement if ``True``, default=``False``</span>
 <span class="sd">        num_samples (int): number of samples to draw, default=`len(dataset)`. This argument</span>
@@ -443,7 +440,7 @@
 <span class="k">class</span> <span class="nc">SubsetRandomSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Samples elements randomly from a given list of indices, without replacement.</span>
 
-<span class="sd">    Arguments:</span>
+<span class="sd">    Args:</span>
 <span class="sd">        indices (sequence): a sequence of indices</span>
 <span class="sd">        generator (Generator): Generator used in sampling.</span>
 <span class="sd">    &quot;&quot;&quot;</span>

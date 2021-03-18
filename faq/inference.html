@@ -208,12 +208,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tpu.html">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Model checkpointing</a></li>
@@ -321,16 +318,16 @@
 you could redefine the <code class="docutils literal notranslate"><span class="pre">Runner.predict_batch</span></code>.</p>
 <p>Suppose you have the following classification pipeline:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">torchvision.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
-<span class="kn">from</span> <span class="nn">torchvision.transforms</span> <span class="kn">import</span> <span class="n">ToTensor</span>
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">metrics</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">metrics</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.transforms</span> <span class="kn">import</span> <span class="n">ToTensor</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
 
-<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
 
 <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
@@ -341,24 +338,43 @@ you could redefine the <code class="docutils literal notranslate"><span class="p
 
     <span class="c1"># &lt;--- model inference step ---&gt;</span>
     <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># model inference step</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
     <span class="c1"># &lt;--- model inference step ---&gt;</span>
+
+    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_loader_start</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meters</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveValueMetric</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">]</span>
+        <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
         <span class="c1"># model train/valid step</span>
+        <span class="c1"># unpack the batch</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
-        <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-
-        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="n">accuracy01</span><span class="p">,</span> <span class="n">accuracy03</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="c1"># run model forward pass</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1"># compute the loss</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="c1"># compute other metrics of interest</span>
+        <span class="n">accuracy01</span><span class="p">,</span> <span class="n">accuracy03</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+        <span class="c1"># log metrics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
             <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">:</span> <span class="n">accuracy01</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">:</span> <span class="n">accuracy03</span><span class="p">}</span>
         <span class="p">)</span>
-
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">meters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="c1"># run model backward pass</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
             <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">loader_metrics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meters</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">compute</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_loader_end</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
 
 <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span>
 <span class="c1"># model training</span>
@@ -370,7 +386,9 @@ you could redefine the <code class="docutils literal notranslate"><span class="p
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">load_best_on_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -380,7 +398,7 @@ you could redefine the <code class="docutils literal notranslate"><span class="p
 <p>If you want to predict one batch:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">batch_prediciton</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">])))</span>
 <span class="c1"># which would be the same with</span>
-<span class="n">batch_model_prediciton</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+<span class="n">batch_model_prediciton</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]))[</span><span class="mi">0</span><span class="p">])</span>
 <span class="n">batch_prediciton</span> <span class="o">==</span> <span class="n">batch_model_prediciton</span>
 <span class="o">&gt;&gt;&gt;</span> <span class="kc">True</span>
 </pre></div>

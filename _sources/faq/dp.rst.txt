@@ -1,6 +1,6 @@
 DataParallel training (cpu, single/multi-gpu)
 ==============================================================================
-By design, Catalyst tries to use all visible GPUs of your machine.
+By design, Catalyst tries to use all available GPUs on your machine.
 Nevertheless, thanks to Nvidia CUDA design,
 it's easy to control GPUs visibility with ``CUDA_VISIBLE_DEVICES`` flag.
 

@@ -208,12 +208,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
@@ -403,7 +400,7 @@
 <h2><a class="toc-backref" href="#id4">Registry</a><a class="headerlink" href="#registry" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.tools.registry.Registry">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.registry.</code><code class="sig-name descname">Registry</code><span class="sig-paren">(</span><em class="sig-param">default_meta_factory: Callable[[Union[Type, Callable[[...], Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.registry.</code><code class="sig-name descname">Registry</code><span class="sig-paren">(</span><em class="sig-param">default_meta_factory: Callable[[Union[Type, Callable[..., Any]], Tuple, Mapping], Any] = &lt;function _default_meta_factory&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></p>
 <p>Universal class allowing to add and access various factories by name.</p>
 <dl class="field-list simple">
@@ -414,7 +411,7 @@ that calls factory. Optional. Default just calls factory.</p>
 </dl>
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[[...], Any]] = None, *factories: Union[Type, Callable[[...], Any]], name: str = None, **named_factories: Union[Type, Callable[[...], Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any]]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
 name. Signature is flexible.</p>
 <dl class="field-list simple">
@@ -471,7 +468,7 @@ as aliases.</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[[...], Any], None]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any], None]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieves factory, without creating any objects with it
 or raises error.</p>
 <dl class="field-list simple">
@@ -511,7 +508,7 @@ If not provided, default is used.</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.get_if_str">
-<code class="sig-name descname">get_if_str</code><span class="sig-paren">(</span><em class="sig-param">obj: Union[str, Type, Callable[[...], Any]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_if_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_if_str" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_if_str</code><span class="sig-paren">(</span><em class="sig-param">obj: Union[str, Type, Callable[..., Any]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_if_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_if_str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns object from the registry if <code class="docutils literal notranslate"><span class="pre">obj</span></code> type is string.</p>
 </dd></dl>
 
@@ -541,7 +538,7 @@ If not provided, default is used</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.late_add">
-<code class="sig-name descname">late_add</code><span class="sig-paren">(</span><em class="sig-param">cb: Callable[[Registry], None]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.late_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.late_add" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">late_add</code><span class="sig-paren">(</span><em class="sig-param">cb: Callable[Registry, None]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.late_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.late_add" title="Permalink to this definition">¶</a></dt>
 <dd><p>Allows to prevent cycle imports by delaying some imports till next
 registry query.</p>
 <dl class="field-list simple">

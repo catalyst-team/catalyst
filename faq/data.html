@@ -29,7 +29,7 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="[WIP] Learning Rate Finder" href="lr_finder.html" />
+    <link rel="next" title="DataParallel training (cpu, single/multi-gpu)" href="dp.html" />
     <link rel="prev" title="How to make X?" href="intro.html" /> 
 
   
@@ -208,12 +208,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tpu.html">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Model checkpointing</a></li>
@@ -337,11 +334,10 @@ In other words, the output of your Dataset/Dataloader should be a key-value (pyt
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
-        <span class="c1"># on this step we also have self.input = batch = {&quot;features&quot;: ..., &quot;targets&quot;: ...}</span>
+        <span class="c1"># on this step we also have self.batch = batch = {&quot;features&quot;: ..., &quot;targets&quot;: ...}</span>
         <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">])</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">}</span>
-        <span class="c1"># this is useful for other components of the pipiline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">})</span>
+        <span class="c1"># this is useful for other components of the pipeline</span>
 
 <span class="n">loader</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">()</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
@@ -371,11 +367,11 @@ very convenient to read, thanks to “automatic naming documentation” - keys f
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
-        <span class="c1"># on this step we also have self.input = batch = {&quot;features&quot;: ..., &quot;extra_features&quot;: ...,&quot;targets&quot;: ...}</span>
+        <span class="c1"># on this step we also have</span>
+        <span class="c1"># self.batch = batch = {&quot;features&quot;: ..., &quot;extra_features&quot;: ...,&quot;targets&quot;: ...}</span>
         <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">],</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;extra_features&quot;</span><span class="p">])</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">}</span>
-        <span class="c1"># this is useful for other components of the pipiline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">update</span><span class="p">()</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">})</span>
+        <span class="c1"># this is useful for other components of the pipeline</span>
 
 <span class="n">loader</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">()</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
@@ -400,11 +396,11 @@ you don’t have to rewrite your code:</p>
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
-        <span class="c1"># on this step we also have self.input = batch = {&quot;features&quot;: ..., &quot;extra_features&quot;: ...,&quot;targets&quot;: ...}</span>
+        <span class="c1"># on this step we also have</span>
+        <span class="c1"># self.batch = batch = {&quot;features&quot;: ..., &quot;extra_features&quot;: ...,&quot;targets&quot;: ...}</span>
         <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">])</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">}</span>
-        <span class="c1"># this is useful for other components of the pipiline</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">})</span>
+        <span class="c1"># this is useful for other components of the pipeline</span>
 
 <span class="n">loader</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">()</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
@@ -421,21 +417,21 @@ and only then will be evaluated on some <code class="docutils literal notranslat
 <span class="n">loaders</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">train_loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">valid_loader</span><span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">MyRunner</span><span class="p">()</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">)</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Catalyst uses the following “automatic naming documentation” for loader keys handling:</p>
 <ul class="simple">
-<li><p>if loader_key starts with “train” - is’s our train datasoure, we need to run forward and backward passes on it.</p></li>
-<li><p>if loader_key starts with “valid” - is’s our validation datasoure, we need to run forward, but not the backward pass on it.</p></li>
-<li><p>if loader_key starts with “infer” - is’s our datasoure for model inference, we need to run forward, but not the backward pass on it.</p></li>
+<li><p>if <code class="docutils literal notranslate"><span class="pre">loader_key</span></code> starts with “train” - is’s train datasoure, we need to run forward and backward passes on it.</p></li>
+<li><p>if <code class="docutils literal notranslate"><span class="pre">loader_key</span></code> starts with “valid” - is’s validation datasoure, we need to run forward, but not the backward pass on it.</p></li>
+<li><p>if <code class="docutils literal notranslate"><span class="pre">loader_key</span></code> starts with “infer” - is’s inference datasoure, we need to run forward, but not the backward pass on it.</p></li>
 </ul>
 </div>
 <div class="section" id="multiple-datasources">
 <h2>Multiple datasources<a class="headerlink" href="#multiple-datasources" title="Permalink to this headline">¶</a></h2>
 <p>Thanks to key-value approach,
 it’s possible to handle any number of datasets/loader
-without code changes or tricks with Datasets concatination, etc:</p>
+without code changes or tricks with Datasets concatenation, etc:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">train_loader</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">train2_loader</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">valid_loader</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
@@ -448,7 +444,7 @@ without code changes or tricks with Datasets concatination, etc:</p>
 <span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">MyRunner</span><span class="p">()</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">)</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>What is even more interesting, you could also do something like:</p>
@@ -465,7 +461,7 @@ without code changes or tricks with Datasets concatination, etc:</p>
 <span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">MyRunner</span><span class="p">()</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">)</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Once again, it’s also valid to do something like:</p>
@@ -486,7 +482,7 @@ without code changes or tricks with Datasets concatination, etc:</p>
 <div class="section" id="loader-for-model-selection">
 <h2>Loader for model selection<a class="headerlink" href="#loader-for-model-selection" title="Permalink to this headline">¶</a></h2>
 <p>In case of multiple loaders, you could select one of them for model selection
-with <code class="docutils literal notranslate"><span class="pre">valid_loader</span></code> param in the <code class="docutils literal notranslate"><span class="pre">runner.train</span></code>.
+with <code class="docutils literal notranslate"><span class="pre">valid_loader</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_metric</span></code> and <code class="docutils literal notranslate"><span class="pre">minimize_valid_metric</span></code> params in the <code class="docutils literal notranslate"><span class="pre">runner.train</span></code>.
 For example, to use <code class="docutils literal notranslate"><span class="pre">valid2</span></code> loaders as your
 model selection one you could do the following:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">train_loader</span> <span class="o">=</span> <span class="n">MyDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
@@ -500,14 +496,25 @@ model selection one you could do the following:</p>
     <span class="s2">&quot;valid2&quot;</span><span class="p">:</span> <span class="n">valid2_loader</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">()</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="o">...</span>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">MyRunner</span><span class="p">()</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span> <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid2&quot;</span><span class="p">)</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid2&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>By default, Catalyst suppose to use
-<code class="docutils literal notranslate"><span class="pre">valid_loader=valid</span></code> for model selection.</p>
+<p>By default, Catalyst doesn’t suppose to use
+<code class="docutils literal notranslate"><span class="pre">valid_loader</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_metric</span></code> and <code class="docutils literal notranslate"><span class="pre">minimize_valid_metric</span></code>
+for model selection.</p>
 </div>
 </div>
 <div class="section" id="metric-for-model-selection">
@@ -516,53 +523,62 @@ model selection one you could do the following:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyRunner</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
-        <span class="c1"># on this step we also have self.input = batch = {&quot;features&quot;: ..., &quot;targets&quot;: ...}</span>
+        <span class="c1"># on this step we also have self.batch = batch = {&quot;features&quot;: ..., &quot;targets&quot;: ...}</span>
         <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">])</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">])</span>
-        <span class="n">accuracy01</span><span class="p">,</span> <span class="n">accuracy03</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">],</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="p">{</span>
-            <span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span>
-            <span class="s2">&quot;accuracy01&quot;</span><span class="p">:</span> <span class="n">accuracy01</span><span class="p">,</span>
-            <span class="s2">&quot;accuracy03&quot;</span><span class="p">:</span> <span class="n">accuracy03</span><span class="p">,</span>
-        <span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">}</span>
-        <span class="c1"># this is useful for other components of the pipiline</span>
+        <span class="c1"># this is useful for other components of the pipeline</span>
 
-<span class="n">loaders</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">}</span>
 <span class="n">model</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="o">...</span>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">MyRunner</span><span class="p">()</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">)</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="p">]</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p>You could select one for model selection with <code class="docutils literal notranslate"><span class="pre">main_metric</span></code> and <code class="docutils literal notranslate"><span class="pre">minimize_metric</span></code>
-params in the <code class="docutils literal notranslate"><span class="pre">runner.train</span></code>. For example, to use <code class="docutils literal notranslate"><span class="pre">accuracy01</span></code> metric
-as your model selection one you could do the following:</p>
+<p>You could select one for model selection with <code class="docutils literal notranslate"><span class="pre">valid_loader</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_metric</span></code>
+and <code class="docutils literal notranslate"><span class="pre">minimize_valid_metric</span></code> params in the <code class="docutils literal notranslate"><span class="pre">runner.train</span></code>.
+For example, to use <code class="docutils literal notranslate"><span class="pre">accuracy01</span></code> metric as your model selection one you could do the following:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyRunner</span><span class="p">:</span>
 
     <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
-        <span class="c1"># on this step we also have self.input = batch = {&quot;features&quot;: ..., &quot;targets&quot;: ...}</span>
+        <span class="c1"># on this step we also have self.batch = batch = {&quot;features&quot;: ..., &quot;targets&quot;: ...}</span>
         <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">])</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">])</span>
-        <span class="n">accuracy01</span><span class="p">,</span> <span class="n">accuracy03</span> <span class="o">=</span> <span class="n">accuracy</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">],</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="p">{</span>
-            <span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span>
-            <span class="s2">&quot;accuracy01&quot;</span><span class="p">:</span> <span class="n">accuracy01</span><span class="p">,</span>
-            <span class="s2">&quot;accuracy03&quot;</span><span class="p">:</span> <span class="n">accuracy03</span><span class="p">,</span>
-        <span class="p">})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">}</span>
-        <span class="c1"># this is useful for other components of the pipiline</span>
+        <span class="c1"># this is useful for other components of the pipeline</span>
 
-<span class="n">loaders</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="o">...</span><span class="p">}</span>
 <span class="n">model</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="o">...</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="o">...</span>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">MyRunner</span><span class="p">()</span>
 <span class="c1"># as far as we would like to maximize our model accuracy...</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span> <span class="n">main_metric</span><span class="o">=</span><span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span> <span class="n">minimize_metric</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span>
+    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="p">]</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>By default, Catalyst suppose to use
-<code class="docutils literal notranslate"><span class="pre">main_metric=loss</span></code> and <code class="docutils literal notranslate"><span class="pre">minimize_metric=False</span></code>
+<p>By default, Catalyst doesn’t suppose to use
+<code class="docutils literal notranslate"><span class="pre">valid_loader</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_metric</span></code> and <code class="docutils literal notranslate"><span class="pre">minimize_valid_metric</span></code>
 for model selection.</p>
 </div>
 </div>
@@ -617,7 +633,7 @@ you could use <code class="docutils literal notranslate"><span class="pre">Batch
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="lr_finder.html" class="btn btn-neutral float-right" title="[WIP] Learning Rate Finder" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="dp.html" class="btn btn-neutral float-right" title="DataParallel training (cpu, single/multi-gpu)" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
         <a href="intro.html" class="btn btn-neutral" title="How to make X?" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>

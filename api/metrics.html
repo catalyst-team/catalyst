@@ -208,12 +208,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
@@ -1677,7 +1674,7 @@ Generate top-N recommendations and if one of the recommendation is
 actually what user has rated, you consider that a hit.
 By rate we mean any explicit form of user’s interactions.
 Add up all of the hits for all users and then divide by number of users</p>
-<p>Compute top-N recomendation for each user in the training stage
+<p>Compute top-N recommendation for each user in the training stage
 and intentionally remove one of this items fro the training data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1694,7 +1691,7 @@ ground truth, labels</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the hit rate score</p>
+<dd class="field-even"><p>the hitrate score</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>hitrate_at_k (List[torch.Tensor])</p>
@@ -1796,7 +1793,7 @@ ground truth, labels</p></li>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">k</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
 <span class="go">[tensor(0.5000), tensor(0.7500)]</span>
 </pre></div>

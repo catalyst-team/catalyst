@@ -207,12 +207,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
@@ -623,7 +620,7 @@ while –no-&lt;name&gt; will disable it</p></li>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.get_fn_default_params">
-<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_default_params</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[[...], Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_default_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_default_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_default_params</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_default_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_default_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return default parameters of Callable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -643,7 +640,7 @@ while –no-&lt;name&gt; will disable it</p></li>
 
 <dl class="function">
 <dt id="catalyst.utils.misc.get_fn_argsnames">
-<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_argsnames</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[[...], Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_argsnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_argsnames" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.misc.</code><code class="sig-name descname">get_fn_argsnames</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable[..., Any], exclude: List[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/misc.html#get_fn_argsnames"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.misc.get_fn_argsnames" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return parameter names of Callable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1574,7 +1571,7 @@ Should be used with <cite>catalyst.data.DynamicLenBatchSampler</cite>.</p>
 
 <dl class="function">
 <dt id="catalyst.utils.torch.get_optimal_inner_init">
-<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_optimal_inner_init</code><span class="sig-paren">(</span><em class="sig-param">nonlinearity: torch.nn.modules.module.Module</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Callable[[torch.nn.modules.module.Module], None]<a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimal_inner_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimal_inner_init" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_optimal_inner_init</code><span class="sig-paren">(</span><em class="sig-param">nonlinearity: torch.nn.modules.module.Module</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Callable[torch.nn.modules.module.Module, None]<a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimal_inner_init"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimal_inner_init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create initializer for inner layers
 based on their activation function (nonlinearity).</p>
 <dl class="field-list simple">
@@ -2149,8 +2146,8 @@ using this as the class labels.</p>
 <code class="sig-prename descclassname">catalyst.contrib.utils.pandas.</code><code class="sig-name descname">get_dataset_labeling</code><span class="sig-paren">(</span><em class="sig-param">dataframe: pandas.core.frame.DataFrame</em>, <em class="sig-param">tag_column: str</em><span class="sig-paren">)</span> &#x2192; Dict[str, int]<a class="reference internal" href="../_modules/catalyst/contrib/utils/pandas.html#get_dataset_labeling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.pandas.get_dataset_labeling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prepares a mapping using unique values from <code class="docutils literal notranslate"><span class="pre">tag_column</span></code>.</p>
 <div class="highlight-javascript notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
-    <span class="s2">&quot;class_name_0&quot;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;class_name_1&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="s2">&quot;class_name_0&quot;</span><span class="o">:</span> <span class="mf">0</span><span class="p">,</span>
+    <span class="s2">&quot;class_name_1&quot;</span><span class="o">:</span> <span class="mf">1</span><span class="p">,</span>
     <span class="p">...</span>
     <span class="s2">&quot;class_name_N&quot;</span><span class="o">:</span> <span class="nx">N</span>
 <span class="p">}</span>
@@ -2200,7 +2197,7 @@ using this as the class labels.</p>
 
 <dl class="function">
 <dt id="catalyst.contrib.utils.pandas.create_dataset">
-<code class="sig-prename descclassname">catalyst.contrib.utils.pandas.</code><code class="sig-name descname">create_dataset</code><span class="sig-paren">(</span><em class="sig-param">dirs: str, extension: str = None, process_fn: Callable[[str], object] = None, recursive: bool = False</em><span class="sig-paren">)</span> &#x2192; Dict[str, List[Any]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/pandas.html#create_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.pandas.create_dataset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.contrib.utils.pandas.</code><code class="sig-name descname">create_dataset</code><span class="sig-paren">(</span><em class="sig-param">dirs: str</em>, <em class="sig-param">extension: str = None</em>, <em class="sig-param">process_fn: Callable[str</em>, <em class="sig-param">object] = None</em>, <em class="sig-param">recursive: bool = False</em><span class="sig-paren">)</span> &#x2192; Dict[str, List[Any]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/pandas.html#create_dataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.pandas.create_dataset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create dataset (dict like <cite>{key: [values]}</cite>) from vctk-like dataset:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span><span class="o">/</span>
     <span class="n">cat</span><span class="o">/</span>

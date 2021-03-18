@@ -208,12 +208,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
@@ -338,20 +335,20 @@
 <div class="section" id="step-2-make-python-imports">
 <h2>Step 2 - Make python imports<a class="headerlink" href="#step-2-make-python-imports" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">torchvision.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
-<span class="kn">from</span> <span class="nn">torchvision.transforms</span> <span class="kn">import</span> <span class="n">ToTensor</span>
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">metrics</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.transforms</span> <span class="kn">import</span> <span class="n">ToTensor</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="step-3-write-pytorch-code">
 <h2>Step 3 - Write PyTorch code<a class="headerlink" href="#step-3-write-pytorch-code" title="Permalink to this headline">¶</a></h2>
-<p>Let’s define <strong>what</strong> we are experimenting with:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+<p>Let’s define <strong>what</strong> we would like to run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
 
 <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
@@ -362,53 +359,74 @@
 </div>
 <div class="section" id="step-4-accelerate-it-with-catalyst">
 <h2>Step 4 - Accelerate it with Catalyst<a class="headerlink" href="#step-4-accelerate-it-with-catalyst" title="Permalink to this headline">¶</a></h2>
-<p>Let’s define <strong>how</strong> we are running the experiment (in pure PyTorch):</p>
+<p>Let’s define <strong>how</strong> we would like to handle the data (in pure PyTorch):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">Runner</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
         <span class="c1"># model inference step</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
         <span class="c1"># model train/valid step</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
-        <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
-
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="n">accuracy01</span><span class="p">,</span> <span class="n">accuracy03</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">:</span> <span class="n">accuracy01</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">:</span> <span class="n">accuracy03</span><span class="p">}</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
-            <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">}</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="step-5-run">
-<h2>Step 5 - Run<a class="headerlink" href="#step-5-run" title="Permalink to this headline">¶</a></h2>
-<p>Let’s <strong>train</strong>, <strong>evaluate</strong>, and <strong>trace</strong> your model with a few lines of code.</p>
+<div class="section" id="step-5-train-the-model">
+<h2>Step 5 - Train the model<a class="headerlink" href="#step-5-train-the-model" title="Permalink to this headline">¶</a></h2>
+<p>Let’s <strong>train</strong> and <strong>evaluate</strong> your model (<a class="reference external" href="https://catalyst-team.github.io/catalyst/api/metrics.html">supported metrics</a>) with a few lines of code.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span>
 <span class="c1"># model training</span>
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
     <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
     <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
     <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">load_best_on_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">PrecisionRecallF1SupportCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">CheckpointCallback</span><span class="p">(</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span> <span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">minimize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_n_best</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+    <span class="p">]</span>
 <span class="p">)</span>
-<span class="c1"># model inference</span>
-<span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">predict_loader</span><span class="p">(</span><span class="n">loader</span><span class="o">=</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]):</span>
-    <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
-<span class="c1"># model tracing</span>
-<span class="n">traced_model</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">loader</span><span class="o">=</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">])</span>
 </pre></div>
 </div>
-<p>PS. Yes, this file is exactly 101 line.</p>
+</div>
+<div class="section" id="step-6-make-predictions">
+<h2>Step 6 - Make predictions<a class="headerlink" href="#step-6-make-predictions" title="Permalink to this headline">¶</a></h2>
+<p>You could easily use your custom logic for model inference on batch or loader thanks to <code class="docutils literal notranslate"><span class="pre">runner.predict_batch</span></code> method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># model batch inference</span>
+<span class="n">features_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">prediction_batch</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">features_batch</span><span class="p">)</span>
+<span class="c1"># model loader inference</span>
+<span class="k">for</span> <span class="n">prediction</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">predict_loader</span><span class="p">(</span><span class="n">loader</span><span class="o">=</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]):</span>
+    <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="step-7-prepare-for-development-stage">
+<h2>Step 7 - Prepare for development stage<a class="headerlink" href="#step-7-prepare-for-development-stage" title="Permalink to this headline">¶</a></h2>
+<p>Finally, you could use a large number of model post-processing utils for production use cases.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">features_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1"># model stochastic weight averaging</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_averaged_weights_by_path_mask</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span> <span class="n">path_mask</span><span class="o">=</span><span class="s2">&quot;*.pth&quot;</span><span class="p">))</span>
+<span class="c1"># model tracing</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">trace_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">features_batch</span><span class="p">)</span>
+<span class="c1"># model quantization</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">quantize_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+<span class="c1"># model pruning</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">prune_model</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">pruning_fn</span><span class="o">=</span><span class="s2">&quot;l1_unstructured&quot;</span><span class="p">,</span> <span class="n">amount</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="c1"># onnx export</span>
+<span class="n">utils</span><span class="o">.</span><span class="n">onnx_export</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">features_batch</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="s2">&quot;./logs/mnist.onnx&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -457,7 +475,9 @@
 <li><a class="reference internal" href="#step-2-make-python-imports">Step 2 - Make python imports</a></li>
 <li><a class="reference internal" href="#step-3-write-pytorch-code">Step 3 - Write PyTorch code</a></li>
 <li><a class="reference internal" href="#step-4-accelerate-it-with-catalyst">Step 4 - Accelerate it with Catalyst</a></li>
-<li><a class="reference internal" href="#step-5-run">Step 5 - Run</a></li>
+<li><a class="reference internal" href="#step-5-train-the-model">Step 5 - Train the model</a></li>
+<li><a class="reference internal" href="#step-6-make-predictions">Step 6 - Make predictions</a></li>
+<li><a class="reference internal" href="#step-7-prepare-for-development-stage">Step 7 - Prepare for development stage</a></li>
 </ul>
 </li>
 </ul>

@@ -208,12 +208,9 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/tpu.html">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
@@ -787,7 +784,7 @@ for <strong>notebook API</strong> need to wrap callback:</p>
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">main_metric</span><span class="o">=</span><span class="s2">&quot;accuracy03&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;accuracy03&quot;</span><span class="p">,</span>
     <span class="n">minimize_metric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
         <span class="n">AccuracyCallback</span><span class="p">(</span>
@@ -1151,7 +1148,7 @@ This callback can be used for early stopping (pruning) unpromising runs.</p>
         <span class="p">],</span>
         <span class="n">num_epochs</span><span class="o">=</span><span class="n">num_epochs</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">return</span> <span class="n">runner</span><span class="o">.</span><span class="n">best_valid_metrics</span><span class="p">[</span><span class="n">runner</span><span class="o">.</span><span class="n">main_metric</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">runner</span><span class="o">.</span><span class="n">best_valid_metrics</span><span class="p">[</span><span class="n">runner</span><span class="o">.</span><span class="n">valid_metric</span><span class="p">]</span>
 
 <span class="n">study</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">create_study</span><span class="p">()</span>
 <span class="n">study</span><span class="o">.</span><span class="n">optimize</span><span class="p">(</span><span class="n">objective</span><span class="p">,</span> <span class="n">n_trials</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">600</span><span class="p">)</span>
@@ -1301,7 +1298,7 @@ specified in experiment.</p></li>
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">main_metric</span><span class="o">=</span><span class="s2">&quot;accuracy03&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;accuracy03&quot;</span><span class="p">,</span>
     <span class="n">minimize_metric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
         <span class="n">AccuracyCallback</span><span class="p">(</span>

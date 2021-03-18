@@ -208,12 +208,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Dataflow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lr_finder.html">[WIP] Learning Rate Finder</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddp.html">Distributed training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="slurm.html">Slurm training</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tpu.html">TPU training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Model checkpointing</a></li>
@@ -319,7 +316,7 @@
 <h1>Mixed precision training<a class="headerlink" href="#mixed-precision-training" title="Permalink to this headline">¶</a></h1>
 <p>Catalyst support a variety of backends for mixed precision training.
 For the PyTorch versions below 1.6 it’s better to use <code class="docutils literal notranslate"><span class="pre">Nvidia</span> <span class="pre">Apex</span></code> helper.
-After PyTorch 1.6 release, it’s possible to use AMP natively inside <code class="docutils literal notranslate"><span class="pre">torch</span></code> package.</p>
+After PyTorch 1.6 release, it’s possible to use AMP natively inside <code class="docutils literal notranslate"><span class="pre">torch.amp</span></code> package.</p>
 <p>Suppose you have the following pipeline with Linear Regression:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
@@ -347,6 +344,9 @@ After PyTorch 1.6 release, it’s possible to use AMP natively inside <code clas
     <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
     <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
+    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
@@ -386,9 +386,12 @@ After PyTorch 1.6 release, it’s possible to use AMP natively inside <code clas
     <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
     <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
+    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">apex</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">apex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -423,9 +426,12 @@ After PyTorch 1.6 release, it’s possible to use AMP natively inside <code clas
     <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
     <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
+    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">amp</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">amp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
