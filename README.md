@@ -77,7 +77,7 @@ runner.train(
         dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
         dl.AUCCallback(input_key="logits", target_key="targets"),
-        # catalyst[ml] required
+        # catalyst[ml] required ``pip install catalyst[ml]``
         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
     ],
     logdir="./logs",
@@ -1213,6 +1213,8 @@ print(study.best_value, study.best_params)
 ```
 </p>
 </details>
+
+[Minimal example for Config/Hydra API](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages)
 
 
 ### Features
