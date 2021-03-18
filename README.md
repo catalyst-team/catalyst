@@ -15,9 +15,9 @@
 [![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
 
 ![codestyle](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg?branch=master&event=push)
+![docs](https://github.com/catalyst-team/catalyst/workflows/deploy-on-push/badge.svg?branch=master&event=push)
 ![catalyst](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
-![catalyst-cv](https://github.com/catalyst-team/catalyst/workflows/catalyst-cv/badge.svg?branch=master&event=push)
-![catalyst-nlp](https://github.com/catalyst-team/catalyst/workflows/catalyst-nlp/badge.svg?branch=master&event=push)
+![intergations](https://github.com/catalyst-team/catalyst/workflows/intergations/badge.svg?branch=master&event=push)
 
 [![python](https://img.shields.io/badge/python_3.6-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
 [![python](https://img.shields.io/badge/python_3.7-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
