@@ -15,9 +15,9 @@
 [![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
 
 ![codestyle](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg?branch=master&event=push)
+![docs](https://github.com/catalyst-team/catalyst/workflows/docs/badge.svg?branch=master&event=push)
 ![catalyst](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
-![catalyst-cv](https://github.com/catalyst-team/catalyst/workflows/catalyst-cv/badge.svg?branch=master&event=push)
-![catalyst-nlp](https://github.com/catalyst-team/catalyst/workflows/catalyst-nlp/badge.svg?branch=master&event=push)
+![intergations](https://github.com/catalyst-team/catalyst/workflows/intergations/badge.svg?branch=master&event=push)
 
 [![python](https://img.shields.io/badge/python_3.6-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
 [![python](https://img.shields.io/badge/python_3.7-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
@@ -107,9 +107,9 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 ### Step by step guide
 1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction. 
 1. Check [minimal examples](#minimal-examples).
-1. Try [notebook tutorials with Google Colab](#tutorials).
+1. Try [notebook tutorials with Google Colab](#notebooks).
 1. Read [blogposts](#blogposts) with use-cases and guides.
-1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://github.com/catalyst-team/dl-course). 
+1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://catalyst-team.com/#course). 
 1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
 1. If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
 1. **And do not forget to [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for collaboration**.

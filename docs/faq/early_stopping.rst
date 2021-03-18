@@ -36,7 +36,7 @@ To use experiment early stopping you could use ``EarlyStoppingCallback``:
         logdir="./logdir",
         num_epochs=8,
         verbose=True,
-        callbacks=[dl.EarlyStoppingCallback(patience=2, metric="loss", minimize=True)]
+        callbacks=[dl.EarlyStoppingCallback(patience=2, loader_key="valid", metric_key="loss", minimize=True)]
     )
 
 Pipeline checking
