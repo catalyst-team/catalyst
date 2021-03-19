@@ -5,6 +5,7 @@ from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.typing import Optimizer
 from catalyst.utils import get_optimizer_momentum_list
 from catalyst.utils.misc import get_attr
+from catalyst.registry import REGISTRY
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -47,6 +48,7 @@ class OptimizerCallback(IOptimizerCallback):
         model_key: str = None,
         optimizer_key: str = None,
         accumulation_steps: int = 1,
+        grad_clip_params: dict = None,
     ):
         """Init."""
         super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
@@ -56,6 +58,8 @@ class OptimizerCallback(IOptimizerCallback):
         self.model = None
         self.optimizer = None
         self.criterion = None
+        self.grad_clip_fn = None
+        self.grad_clip_params = None
         self.accumulation_steps: int = accumulation_steps
         self._accumulation_counter: int = 0
 
@@ -71,6 +75,11 @@ class OptimizerCallback(IOptimizerCallback):
         else:
             self._prefix_lr = "lr"
             self._prefix_momentum = "momentum"
+
+        if grad_clip_params is not None:
+            self.grad_clip_fn = REGISTRY.get(grad_clip_params.pop("fn_name"))
+            self.grad_clip_params = grad_clip_params
+
 
     def _get_lr_momentum_stats(self) -> Dict:
         lr_list = [param_group["lr"] for param_group in self.optimizer.param_groups]
@@ -93,6 +102,9 @@ class OptimizerCallback(IOptimizerCallback):
 
             loss = runner.batch_metrics[self.metric_key]
             runner.engine.backward_loss(loss, self.model, self.optimizer)
+
+            if self.grad_clip_fn is not None:
+                self.grad_clip_fn(self.model.parameters(), **self.grad_clip_params)
 
             if need_gradient_step:
                 runner.engine.optimizer_step(loss, self.model, self.optimizer)
