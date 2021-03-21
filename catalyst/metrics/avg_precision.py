@@ -9,7 +9,7 @@ from catalyst.metrics.functional import process_recsys_components
 
 
 def avg_precision(
-    outputs: torch.Tensor, targets: torch.Tensor
+    outputs: torch.Tensor, targets: torch.Tensor, k: int
 ) -> torch.Tensor:
     """
     Calculate the Average Precision for RecSys.
@@ -42,6 +42,8 @@ def avg_precision(
             and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
+        k:
+            Parameter for evaluation on top-k items
 
     Returns:
         ap_score (torch.Tensor):
@@ -61,10 +63,14 @@ def avg_precision(
         >>> )
         tensor([0.6222, 0.4429])
     """
-    targets_sort_by_outputs = process_recsys_components(outputs, targets)
+    targets_sort_by_outputs = process_recsys_components(outputs, targets)[:, :k]
     precisions = torch.zeros_like(targets_sort_by_outputs)
 
-    for index in range(outputs.size(1)):
+    for index in range(k):
+        precisions[:, index] = torch.sum(
+            targets_sort_by_outputs[:, : (index + 1)], dim=1
+        ) / float(index + 1)
+
         precisions[:, index] = torch.sum(
             targets_sort_by_outputs[:, : (index + 1)], dim=1
         ) / float(index + 1)
@@ -124,7 +130,7 @@ def mean_avg_precision(
     results = []
     for k in topk:
         k = min(outputs.size(1), k)
-        results.append(torch.mean(avg_precision(outputs, targets)[:k]))
+        results.append(torch.mean(avg_precision(outputs, targets, k)))
 
     return results
 

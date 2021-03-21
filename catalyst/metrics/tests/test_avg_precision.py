@@ -97,6 +97,26 @@ def test_mean_avg_precision():
 
     assert np.allclose(map_at10, 0.5325, atol=1e-3)
 
+    # check 1
+    y_pred1 = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    y_pred2 = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+
+    y_true1 = [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0]
+    y_true2 = [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0]
+
+    y_pred_torch = torch.Tensor([y_pred1, y_pred2])
+    y_true_torch = torch.Tensor([y_true1, y_true2])
+    
+    topk=[1, 3, 5, 10]
+
+    map_at1, map_at3, map_at5, map_at10, = mean_avg_precision(y_pred_torch, y_true_torch, top_k)
+
+    assert np.allclose(map_at1, 0.5, atol=1e-3)
+    assert np.allclose(map_at3, 0.667, atol=1e-3)
+    assert np.allclose(map_at5, 0.6417, atol=1e-3)
+    assert np.allclose(map_at10, 0.5325, atol=1e-3)
+
+
 
 def test_wrapper_metrics():
     """
