@@ -50,15 +50,11 @@ For instance, here is a minimal script that trains a linear regression model.
         verbose=True,
     )
 
-`Link to the projector script.`_
-
-.. _Link to the projector script.: https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/dl_z_docs_distributed_0.py
-
-Stage 1 - I just want distributed
+Stage 1 - 1 line ddp
 ------------------------------------------------
 
 In case you want to run it fast and ugly, with minimal changes,
-you can just pass ``distributed=True`` to ``.train`` call
+you can just pass ``ddp=True`` to ``.train`` call
 
 .. code-block:: python
 
@@ -90,12 +86,8 @@ you can just pass ``distributed=True`` to ``.train`` call
         logdir="./logs/example_1",
         num_epochs=8,
         verbose=True,
-        distributed=True,
+        ddp=True,
     )
-
-`Link to the stage-1 script.`_
-
-.. _Link to the stage-1 script.: https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/dl_z_docs_distributed_1.py
 
 In this way Catalyst
 will try to automatically make your loaders work in distributed setup
@@ -104,7 +96,7 @@ and will run experiment training.
 Nevertheless it has several disadvantages,
     - you create your loader again and again with each distributed worker,
       +1 for master scripts with all processes joined.
-    - you can't understand what is going under the hood of ``distributed=True``
+    - you can't understand what is going under the hood of ``ddp=True``
     - we can't always transfer your loaders to distributed mode correctly
 
 Case 2 - We are going deeper
@@ -118,12 +110,13 @@ Let's make it more reusable:
     from torch.utils.data import TensorDataset
     from catalyst.dl import SupervisedRunner
 
-    # data
-    num_samples, num_features = int(1e4), int(1e1)
-    X = torch.rand(int(1e4), num_features)
-    y = torch.rand(X.shape[0])
-    dataset = TensorDataset(X, y)
+    def datasets_fn(num_features: int):
+        X = torch.rand(int(1e4), num_features)
+        y = torch.rand(X.shape[0])
+        dataset = TensorDataset(X, y)
+        return {"train": dataset, "valid": dataset}
 
+    num_features = int(1e1)
     # model, criterion, optimizer, scheduler
     model = torch.nn.Linear(num_features, 1)
     criterion = torch.nn.MSELoss()
@@ -133,26 +126,33 @@ Let's make it more reusable:
     runner = SupervisedRunner()
     runner.train(
         model=model,
-        datasets={
-            "batch_size": 32,
-            "num_workers": 1,
-            "train": dataset,
-            "valid": dataset,
-        },
         criterion=criterion,
         optimizer=optimizer,
+        scheduler=scheduler,
+        loaders={
+            "batch_size": 32,
+            "num_workers": 1,
+            "datasets_fn": datasets_fn,
+            "num_features": num_features,
+        },
         logdir="./logs/example_2",
         num_epochs=8,
         verbose=True,
-        distributed=True,
+        ddp=True,
     )
 
-`Link to the stage-2 script.`_
+Advantages,
+    - you don't duplicate the data - it calls when it really needed
+    - we still can easily transfer them to distributed mode,
+      thanks to ``Datasets`` usage
 
-.. _Link to the stage-2 script.: https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/dl_z_docs_distributed_2.py
+Disadvantages,
+    - everything works thanks to Catalyst `internal logic`_,
+      which could be complicated to understand
 
-By this way we easily can transfer your datasets to distributed mode.
-But again, you recreate your dataset with each worker. Can we make it better?
+Could we make everything precisely clear?
+
+.. _`internal logic`: https://github.com/catalyst-team/catalyst/blob/master/catalyst/runners/runner.py#L147
 
 Case 3 - Best practices for distributed training
 ------------------------------------------------
@@ -162,53 +162,45 @@ Yup, check this one, distributed training like a pro:
 .. code-block:: python
 
     import torch
-    from torch.utils.data import TensorDataset
-    from catalyst.dl import SupervisedRunner, utils
+    from torch.utils.data import DataLoader, Dataset, DistributedSampler
+    from catalyst import dl, utils
 
-    def datasets_fn(num_features: int):
-        X = torch.rand(int(1e4), num_features)
-        y = torch.rand(X.shape[0])
-        dataset = TensorDataset(X, y)
-        return {"train": dataset, "valid": dataset}
+    num_features = int(1e1)
+    # model, criterion, optimizer, scheduler
+    model = torch.nn.Linear(num_features, 1)
+    criterion = torch.nn.MSELoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 
-    def train():
-        num_features = int(1e1)
-        # model, criterion, optimizer, scheduler
-        model = torch.nn.Linear(num_features, 1)
-        criterion = torch.nn.MSELoss()
-        optimizer = torch.optim.Adam(model.parameters())
-        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+    class CustomSupervisedRunner(dl.SupervisedRunner):
+        def get_loaders(self, stage: str):
+            X = torch.rand(int(1e4), num_features)
+            y = torch.rand(X.shape[0])
+            is_ddp = utils.get_rank() > -1
 
-        runner = SupervisedRunner()
-        runner.train(
-            model=model,
-            datasets={
-                "batch_size": 32,
-                "num_workers": 1,
-                "get_datasets_fn": datasets_fn,
-                "num_features": num_features,
-            },
-            criterion=criterion,
-            optimizer=optimizer,
-            scheduler=scheduler,
-            logdir="./logs/example_3",
-            num_epochs=8,
-            verbose=True,
-            distributed=False,
-        )
+            dataset = TensorDataset(X, y)
+            sampler = DistributedSampler(dataset) if is_ddp else None
+            loader = DataLoader(dataset=dataset, sampler=sampler, batch_size=32, num_workers=1)
 
-    utils.distributed_cmd_run(train)
+            return {"train": dataset, "valid": dataset}
 
-`Link to the stage-3 script.`_
-
-.. _Link to the stage-3 script.: https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/dl_z_docs_distributed_3.py
+    runner = CustomSupervisedRunner()
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        scheduler=scheduler,
+        loaders=None,  # as far as we have rewrite the loader logic already
+        logdir="./logs/example_3",
+        num_epochs=8,
+        verbose=True,
+        ddp=True,
+    )
 
 Advantages,
-    - you have control about what is going on with manual call of
-      ``utils.distributed_cmd_run``.
     - you don't duplicate the data - it calls when it really needed
-    - we still can easily transfer them to distributed mode,
-      thanks to ``Datasets`` usage
+    - we still can easily transfer them to distributed mode, thanks to ``Datasets`` usage
+    - the code is easily readable thanks to pure PyTorch way of working with datasets
 
 Launch your training
 ------------------------------------------------

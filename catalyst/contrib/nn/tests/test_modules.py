@@ -1,13 +1,17 @@
 # flake8: noqa
+import math
+
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from catalyst.contrib.nn.modules import (
     AdaCos,
     ArcFace,
     CosFace,
     CurricularFace,
+    GeM2d,
     SoftMax,
     SubCenterArcFace,
 )
@@ -335,3 +339,57 @@ def test_curricularface_with_cross_entropy_loss():
         .numpy()
     )
     assert np.isclose(expected_loss.sum(), actual, atol=EPS)
+
+
+def test_gem():
+    bs = 4
+    output_conv_filters = 1280
+    conv_output = torch.randn(bs, output_conv_filters, 8, 8)
+    eps = 1e-7
+
+    h, w = conv_output.shape[2:]
+
+    # p_trainable is False with constant p
+    p = 2.2
+    op = conv_output.clamp(min=eps).pow(p)
+    op = F.avg_pool2d(op, kernel_size=(h, w)).pow(1.0 / p)
+
+    gem = GeM2d(p=p, p_trainable=False)
+    gem_op = gem(conv_output)
+
+    assert gem_op.shape == (bs, output_conv_filters, 1, 1)
+    assert torch.all(op.eq(gem_op))
+
+    # p_trainable is True with constant p
+    p = nn.Parameter(torch.ones(1) * p)
+    op = conv_output.clamp(min=eps).pow(p)
+    op = F.avg_pool2d(op, kernel_size=(h, w)).pow(1.0 / p)
+
+    gem = GeM2d(p=p, p_trainable=True)
+    gem_op = gem(conv_output)
+
+    assert gem_op.shape == (bs, output_conv_filters, 1, 1)
+    assert torch.all(op.eq(gem_op))
+
+    # p-> inf so we need max pooled features , p_trainable is False
+    p = math.inf
+
+    op = F.max_pool2d(conv_output, kernel_size=(h, w))
+
+    gem = GeM2d(p=math.inf, p_trainable=False)
+    gem_op = gem(conv_output)
+
+    assert gem_op.shape == (bs, output_conv_filters, 1, 1)
+    assert torch.all(op.eq(gem_op))
+
+    # p->inf and p_trainable is True
+
+    p = nn.Parameter(torch.ones(1) * p)
+
+    op = F.max_pool2d(conv_output, kernel_size=(h, w))
+
+    gem = GeM2d(p=math.inf, p_trainable=True)
+    gem_op = gem(conv_output)
+
+    assert gem_op.shape == (bs, output_conv_filters, 1, 1)
+    assert torch.all(op.eq(gem_op))
