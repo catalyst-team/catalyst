@@ -30,7 +30,9 @@ class QuantizationCallback(Callback):
             logdir:
             filename:
         """
-        super().__init__(order=CallbackOrder.ExternalExtra, node=CallbackNode.master)  # External Extra for applying
+        super().__init__(
+            order=CallbackOrder.ExternalExtra, node=CallbackNode.master
+        )  # External Extra for applying
         # after CheckpointCallback; node master for saving.
         self.qconfig_spec = qconfig_spec
         self.dtype = dtype

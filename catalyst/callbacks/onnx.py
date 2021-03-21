@@ -1,10 +1,10 @@
-from typing import Union, Iterable, List, Dict, TYPE_CHECKING
+from typing import Dict, Iterable, List, TYPE_CHECKING, Union
 from pathlib import Path
 
 from torch import Tensor
 
+from catalyst.core import Callback, CallbackNode, CallbackOrder
 from catalyst.utils import onnx_export
-from catalyst.core import CallbackOrder, CallbackNode, Callback
 
 if TYPE_CHECKING:
     from catalyst.core import IRunner
@@ -52,7 +52,7 @@ class OnnxCallback(Callback):
             dynamic_axes=self.dynamic_axes,
             opset_version=self.opset_version,
             do_constant_folding=self.do_constant_folding,
-            verbose=self.verbose
+            verbose=self.verbose,
         )
 
 

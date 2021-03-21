@@ -20,6 +20,7 @@ from catalyst.callbacks.misc import (
     EarlyStoppingCallback,
 )
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
+from catalyst.callbacks.tracing import TracingCallback
 
 if SETTINGS.optuna_required:
     from catalyst.callbacks.optuna import OptunaPruningCallback
