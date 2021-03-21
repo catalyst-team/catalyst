@@ -15,9 +15,9 @@
 [![Github contributors](https://img.shields.io/github/contributors/catalyst-team/catalyst.svg?logo=github&logoColor=white)](https://github.com/catalyst-team/catalyst/graphs/contributors)
 
 ![codestyle](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg?branch=master&event=push)
+![docs](https://github.com/catalyst-team/catalyst/workflows/docs/badge.svg?branch=master&event=push)
 ![catalyst](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
-![catalyst-cv](https://github.com/catalyst-team/catalyst/workflows/catalyst-cv/badge.svg?branch=master&event=push)
-![catalyst-nlp](https://github.com/catalyst-team/catalyst/workflows/catalyst-nlp/badge.svg?branch=master&event=push)
+![intergations](https://github.com/catalyst-team/catalyst/workflows/intergations/badge.svg?branch=master&event=push)
 
 [![python](https://img.shields.io/badge/python_3.6-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
 [![python](https://img.shields.io/badge/python_3.7-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
@@ -61,10 +61,17 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "train": DataLoader(
+        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+    ),
+    "valid": DataLoader(
+        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+    ),
 }
-runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
+
+runner = dl.SupervisedRunner(
+    input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+)
 # model training
 runner.train(
     model=model,
@@ -74,10 +81,12 @@ runner.train(
     num_epochs=1,
     callbacks=[
         dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-        dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+        dl.PrecisionRecallF1SupportCallback(
+            input_key="logits", target_key="targets", num_classes=10
+        ),
         dl.AUCCallback(input_key="logits", target_key="targets"),
-        # catalyst[ml] required
-        dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
+        # catalyst[ml] required ``pip install catalyst[ml]``
+        # dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
     ],
     logdir="./logs",
     valid_loader="valid",
@@ -106,9 +115,9 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 ### Step by step guide
 1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction. 
 1. Check [minimal examples](#minimal-examples).
-1. Try [notebook tutorials with Google Colab](#tutorials).
+1. Try [notebook tutorials with Google Colab](#notebooks).
 1. Read [blogposts](#blogposts) with use-cases and guides.
-1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://github.com/catalyst-team/dl-course). 
+1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://catalyst-team.com/#course). 
 1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
 1. If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
 1. **And do not forget to [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for collaboration**.
@@ -238,7 +247,9 @@ optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
 # model training
-runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
+runner = dl.SupervisedRunner(
+    input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+)
 runner.train(
     model=model,
     criterion=criterion,
@@ -251,12 +262,17 @@ runner.train(
     valid_metric="accuracy03",
     minimize_valid_metric=False,
     verbose=True,
-# uncomment for extra metrics:
     callbacks=[
-        dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=num_classes)
-#         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=num_classes),
-#         dl.AUCCallback(input_key="logits", target_key="targets"),
-#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes), # catalyst[ml] required
+        dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=num_classes),
+        # uncomment for extra metrics:
+        # dl.PrecisionRecallF1SupportCallback(
+        #     input_key="logits", target_key="targets", num_classes=num_classes
+        # ),
+        # dl.AUCCallback(input_key="logits", target_key="targets"),
+        # catalyst[ml] required
+        # dl.ConfusionMatrixCallback(
+        #     input_key="logits", target_key="targets", num_classes=num_classes
+        # ), 
     ],
 )
 ```
@@ -290,7 +306,9 @@ optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
 # model training
-runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
+runner = dl.SupervisedRunner(
+    input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+)
 runner.train(
     model=model,
     criterion=criterion,
@@ -381,12 +399,27 @@ runner.train(
         dl.MetricAggregationCallback(prefix="loss", metrics=["loss1", "loss2"], mode="mean"),
         dl.OptimizerCallback(metric_key="loss"),
         dl.SchedulerCallback(),
-        dl.AccuracyCallback(input_key="logits1", target_key="targets1", num_classes=num_classes1, prefix="one_"),
-        dl.AccuracyCallback(input_key="logits2", target_key="targets2", num_classes=num_classes2, prefix="two_"),
-        dl.ConfusionMatrixCallback(input_key="logits1", target_key="targets1", num_classes=num_classes1, prefix="one_cm"), # catalyst[ml] required
-        dl.ConfusionMatrixCallback(input_key="logits2", target_key="targets2", num_classes=num_classes2, prefix="two_cm"), # catalyst[ml] required
-        dl.CheckpointCallback("./logs/one", loader_key="valid", metric_key="one_accuracy", minimize=False, save_n_best=1),
-        dl.CheckpointCallback("./logs/two", loader_key="valid", metric_key="two_accuracy03", minimize=False, save_n_best=3),
+        dl.AccuracyCallback(
+            input_key="logits1", target_key="targets1", num_classes=num_classes1, prefix="one_"
+        ),
+        dl.AccuracyCallback(
+            input_key="logits2", target_key="targets2", num_classes=num_classes2, prefix="two_"
+        ),
+        # catalyst[ml] required
+        # dl.ConfusionMatrixCallback(
+        #     input_key="logits1", target_key="targets1", num_classes=num_classes1, prefix="one_cm"
+        # ), 
+        # dl.ConfusionMatrixCallback(
+        #     input_key="logits2", target_key="targets2", num_classes=num_classes2, prefix="two_cm"
+        # ),
+        dl.CheckpointCallback(
+            logdir="./logs/one", 
+            loader_key="valid", metric_key="one_accuracy", minimize=False, save_n_best=1
+        ),
+        dl.CheckpointCallback(
+            logdir="./logs/two", 
+            loader_key="valid", metric_key="two_accuracy03", minimize=False, save_n_best=3
+        ),
     ],
     loggers={"console": dl.ConsoleLogger(), "tb": dl.TensorboardLogger("./logs/tb")},
 )
@@ -424,7 +457,9 @@ class CustomRunner(dl.Runner):
     def handle_batch(self, batch):
         x, y = batch
         logits = self.model(x)
-        self.batch = {"features": x, "logits": logits, "scores": torch.sigmoid(logits), "targets": y}
+        self.batch = {
+            "features": x, "logits": logits, "scores": torch.sigmoid(logits), "targets": y
+        }
 
 # model training
 runner = CustomRunner()
@@ -438,14 +473,17 @@ runner.train(
     verbose=True,
     callbacks=[
         dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
+        # uncomment for extra metrics:
 #         dl.AUCCallback(input_key="scores", target_key="targets"),
 #         dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
 #         dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-        dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+#         dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
 #         dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
         dl.OptimizerCallback(metric_key="loss"),
         dl.SchedulerCallback(),
-        dl.CheckpointCallback(logdir="./logs", loader_key="valid", metric_key="map01", minimize=False),
+        dl.CheckpointCallback(
+            logdir="./logs", loader_key="valid", metric_key="map01", minimize=False
+        ),
     ]
 )
 ```
@@ -469,8 +507,12 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "train": DataLoader(
+        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+    ),
+    "valid": DataLoader(
+        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+    ),
 }
 
 runner = dl.SupervisedRunner()
@@ -489,9 +531,14 @@ runner.train(
 # uncomment for extra metrics:
 #     callbacks=[
 #         dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
-#         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+#         dl.PrecisionRecallF1SupportCallback(
+#             input_key="logits", target_key="targets", num_classes=10
+#         ),
 #         dl.AUCCallback(input_key="logits", target_key="targets"),
-#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes), # catalyst[ml] required
+#         # catalyst[ml] required ``pip install catalyst[ml]``
+#         dl.ConfusionMatrixCallback(
+#             input_key="logits", target_key="targets", num_classes=num_classes
+#         ), 
 #     ]
 )
 ```
@@ -522,8 +569,12 @@ criterion = IoULoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "train": DataLoader(
+        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+    ),
+    "valid": DataLoader(
+        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+    ),
 }
 
 class CustomRunner(dl.SupervisedRunner):
@@ -533,7 +584,9 @@ class CustomRunner(dl.SupervisedRunner):
         x_ = self.model(x_noise)
         self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
 
-runner = CustomRunner(input_key="features", output_key="scores", target_key="targets", loss_key="loss")
+runner = CustomRunner(
+    input_key="features", output_key="scores", target_key="targets", loss_key="loss"
+)
 # model training
 runner.train(
     model=model,
@@ -551,6 +604,85 @@ runner.train(
     valid_metric="loss",
     minimize_valid_metric=True,
     verbose=True,
+)
+```
+</p>
+</details>
+
+
+<details>
+<summary>CV - MNIST model distillation</summary>
+<p>
+
+```python
+import os
+import torch
+from torch import nn, optim
+from torch.nn import functional as F
+from torch.utils.data import DataLoader
+from catalyst import dl
+from catalyst.data.transforms import ToTensor
+from catalyst.contrib.datasets import MNIST
+
+# [!] teacher model should be already pretrained
+teacher = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+student = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+criterion = {"cls": nn.CrossEntropyLoss(), "kl": nn.KLDivLoss(reduction="batchmean")}
+optimizer = optim.Adam(student.parameters(), lr=0.02)
+
+loaders = {
+    "train": DataLoader(
+        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+    ),
+    "valid": DataLoader(
+        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+    ),
+}
+
+class DistilRunner(dl.Runner):
+    def handle_batch(self, batch):
+        x, y = batch
+
+        teacher.eval()  # let's manually set teacher model to eval mode
+        with torch.no_grad():
+            t_logits = self.model["teacher"](x)
+
+        s_logits = self.model["student"](x)
+        self.batch = {
+            "t_logits": t_logits, "s_logits": s_logits, "targets": y,
+            "s_logprobs": F.log_softmax(s_logits, dim=-1), "t_probs": F.softmax(t_logits, dim=-1)
+        }
+
+runner = DistilRunner()
+callbacks = [
+    dl.AccuracyCallback(
+        input_key="t_logits", target_key="targets", num_classes=2, prefix="teacher_"
+    ),
+    dl.AccuracyCallback(
+        input_key="s_logits", target_key="targets", num_classes=2, prefix="student_"
+    ),
+    dl.CriterionCallback(
+        input_key="s_logits", target_key="targets", metric_key="cls_loss", criterion_key="cls"
+    ),
+    dl.CriterionCallback(
+        input_key="s_logprobs", target_key="t_probs", metric_key="kl_div_loss", criterion_key="kl"
+    ),
+    dl.MetricAggregationCallback(prefix="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"),
+    dl.OptimizerCallback(metric_key="loss", model_key="student"),
+    dl.CheckpointCallback(
+        logdir="./logs", loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+    ),
+]
+# model training
+runner.train(
+    model={"teacher": teacher, "student": student},
+    criterion=criterion,
+    optimizer=optimizer,
+    loaders=loaders,
+    num_epochs=1,
+    logdir="./logs",
+    verbose=True,
+    callbacks=callbacks,
 )
 ```
 </p>
@@ -596,15 +728,14 @@ class CustomRunner(dl.SupervisedRunner):
             features = self.model(images)
             self.batch = {"embeddings": features, "targets": targets,}
         else:
-            images, targets, is_query = batch["features"].float(), batch["targets"].long(), batch["is_query"].bool()
+            images, targets, is_query = \
+                batch["features"].float(), batch["targets"].long(), batch["is_query"].bool()
             features = self.model(images)
             self.batch = {"embeddings": features, "targets": targets, "is_query": is_query}
 
 callbacks = [
     dl.ControlFlowCallback(
-        dl.CriterionCallback(
-            input_key="embeddings", target_key="targets", metric_key="loss"
-        ),
+        dl.CriterionCallback(input_key="embeddings", target_key="targets", metric_key="loss"),
         loaders="train",
     ),
     dl.ControlFlowCallback(
@@ -683,7 +814,11 @@ optimizer = {
     "generator": torch.optim.Adam(generator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
     "discriminator": torch.optim.Adam(discriminator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
 }
-loaders = {"train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32)}
+loaders = {
+    "train": DataLoader(
+        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+    )
+}
 
 class CustomRunner(dl.Runner):
     def predict_batch(self, batch):
@@ -707,7 +842,8 @@ class CustomRunner(dl.Runner):
         combined_images = torch.cat([generated_images, real_images])
 
         # Assemble labels discriminating real from fake images
-        labels = torch.cat([torch.ones((batch_size, 1)), torch.zeros((batch_size, 1))]).to(self.device)
+        labels = \
+            torch.cat([torch.ones((batch_size, 1)), torch.zeros((batch_size, 1))]).to(self.device)
         # Add random noise to the labels - important trick!
         labels += 0.05 * torch.rand(labels.shape).to(self.device)
 
@@ -750,8 +886,16 @@ runner.train(
             metric_key="loss_generator",
             criterion_key="generator",
         ),
-        dl.OptimizerCallback(model_key="generator", optimizer_key="generator", metric_key="loss_generator"),
-        dl.OptimizerCallback(model_key="discriminator", optimizer_key="discriminator", metric_key="loss_discriminator"),
+        dl.OptimizerCallback(
+            model_key="generator", 
+            optimizer_key="generator", 
+            metric_key="loss_generator"
+        ),
+        dl.OptimizerCallback(
+            model_key="discriminator", 
+            optimizer_key="discriminator", 
+            metric_key="loss_discriminator"
+        ),
     ],
     valid_loader="train",
     valid_metric="loss_generator",
@@ -834,10 +978,14 @@ class CustomRunner(dl.IRunner):
     def get_stage_len(self, stage: str) -> int:
         return 3
 
-    def get_loaders(self, stage: str, epoch: int = None):
+    def get_loaders(self, stage: str):
         loaders = {
-            "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-            "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            ),
         }
         return loaders
 
@@ -851,7 +999,9 @@ class CustomRunner(dl.IRunner):
     def get_callbacks(self, stage: str):
         return {
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
-            "checkpoint": dl.CheckpointCallback(self._logdir, loader_key="valid", metric_key="loss", minimize=True),
+            "checkpoint": dl.CheckpointCallback(
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True
+            ),
         }
 
     def on_loader_start(self, runner):
@@ -931,10 +1081,14 @@ class CustomRunner(dl.IRunner):
     def get_stage_len(self, stage: str) -> int:
         return 3
 
-    def get_loaders(self, stage: str, epoch: int = None):
+    def get_loaders(self, stage: str):
         loaders = {
-            "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-            "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            ),
         }
         return loaders
 
@@ -970,10 +1124,18 @@ class CustomRunner(dl.IRunner):
             ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            # "accuracy": dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-            # "classification": dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
-            # "confusion_matrix": dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
-            "checkpoint": dl.CheckpointCallback(self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3),
+            # "accuracy": dl.AccuracyCallback(
+            #     input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+            # ),
+            # "classification": dl.PrecisionRecallF1SupportCallback(
+            #     input_key="logits", target_key="targets", num_classes=10
+            # ),
+            # "confusion_matrix": dl.ConfusionMatrixCallback(
+            #     input_key="logits", target_key="targets", num_classes=10
+            # ),
+            "checkpoint": dl.CheckpointCallback(
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            ),
         }
 
     def handle_batch(self, batch):
@@ -1028,10 +1190,14 @@ class CustomRunner(dl.IRunner):
     def get_stage_len(self, stage: str) -> int:
         return 3
 
-    def get_loaders(self, stage: str, epoch: int = None):
+    def get_loaders(self, stage: str):
         loaders = {
-            "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-            "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            ),
         }
         return loaders
 
@@ -1054,11 +1220,20 @@ class CustomRunner(dl.IRunner):
 
     def get_callbacks(self, stage: str):
         return {
-            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
+            "criterion": dl.CriterionCallback(
+                metric_key="loss", input_key="logits", target_key="targets"
+            ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
-            "accuracy": dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-            "classification": dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
-            "confusion_matrix": dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
+            "accuracy": dl.AccuracyCallback(
+                input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+            ),
+            "classification": dl.PrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
+            # catalyst[ml] required
+            "confusion_matrix": dl.ConfusionMatrixCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
             "checkpoint": dl.CheckpointCallback(
                 self._logdir,
                 loader_key="valid",
@@ -1114,10 +1289,16 @@ def objective(trial):
     num_hidden = int(trial.suggest_loguniform("num_hidden", 32, 128))
 
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        ),
+        "valid": DataLoader(
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+        ),
     }
-    model = nn.Sequential(nn.Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10))
+    model = nn.Sequential(
+        nn.Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10)
+    )
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss()
 
@@ -1128,8 +1309,12 @@ def objective(trial):
         optimizer=optimizer,
         loaders=loaders,
         callbacks={
-            "accuracy": dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
-            "optuna": dl.OptunaPruningCallback(loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial),
+            "accuracy": dl.AccuracyCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
+            "optuna": dl.OptunaPruningCallback(
+                loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial
+            ),
         },
         num_epochs=3,
     )
@@ -1147,6 +1332,8 @@ print(study.best_value, study.best_params)
 ```
 </p>
 </details>
+
+[Minimal example for Config/Hydra API](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages)
 
 
 ### Features
@@ -1305,32 +1492,28 @@ Since the beginning of the development of the Сatalyst,
 a lot of people have influenced it in a lot of different ways.
 
 #### Catalyst.Team
-- [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi))
 - [Dmytro Doroshenko](https://www.linkedin.com/in/dmytro-doroshenko-05671112a/) ([ditwoo](https://github.com/Ditwoo))
-- [Sergey Kolesnikov](https://www.scitator.com/) ([scitator](https://github.com/Scitator))
-
-#### Catalyst - Metric Learning Team
-- [Julia Shenshina](https://github.com/julia-shenshina) ([julia-shenshina](https://github.com/julia-shenshina))
+- [Eugene Kachan](https://www.linkedin.com/in/yauheni-kachan/) ([bagxi](https://github.com/bagxi))
 - [Nikita Balagansky](https://www.linkedin.com/in/nikita-balagansky-50414a19a/) ([elephantmipt](https://github.com/elephantmipt))
-- [Aleksey Shabanov](https://linkedin.com/in/aleksey-shabanov-96b351189) ([AlekseySh](https://github.com/AlekseySh))
+- [Sergey Kolesnikov](https://www.scitator.com/) ([scitator](https://github.com/Scitator))
 
 #### Catalyst.Contributors
 - [Aleksey Grinchuk](https://www.facebook.com/grinchuk.alexey) ([alexgrinch](https://github.com/AlexGrinch))
+- [Aleksey Shabanov](https://linkedin.com/in/aleksey-shabanov-96b351189) ([AlekseySh](https://github.com/AlekseySh))
 - [Alex Gaziev](https://www.linkedin.com/in/alexgaziev/) ([gazay](https://github.com/gazay))
 - [Andrey Zharkov](https://www.linkedin.com/in/andrey-zharkov-8554a1153/) ([asmekal](https://github.com/asmekal))
 - [Artem Zolkin](https://www.linkedin.com/in/artem-zolkin-b5155571/) ([arquestro](https://github.com/Arquestro))
 - [David Kuryakin](https://www.linkedin.com/in/dkuryakin/) ([dkuryakin](https://github.com/dkuryakin))
 - [Evgeny Semyonov](https://www.linkedin.com/in/ewan-semyonov/) ([lightforever](https://github.com/lightforever))
 - [Eugene Khvedchenya](https://www.linkedin.com/in/cvtalks/) ([bloodaxe](https://github.com/BloodAxe))
+- [Ivan Stepanenko](https://www.facebook.com/istepanenko)
+- [Julia Shenshina](https://github.com/julia-shenshina) ([julia-shenshina](https://github.com/julia-shenshina))
+- [Nguyen Xuan Bac](https://www.linkedin.com/in/bac-nguyen-xuan-70340b66/) ([ngxbac](https://github.com/ngxbac))
 - [Roman Tezikov](http://linkedin.com/in/roman-tezikov/) ([TezRomacH](https://github.com/TezRomacH))
 - [Valentin Khrulkov](https://www.linkedin.com/in/vkhrulkov/) ([khrulkovv](https://github.com/KhrulkovV))
+- [Vladimir Iglovikov](https://www.linkedin.com/in/iglovikov/) ([ternaus](https://github.com/ternaus))
 - [Vsevolod Poletaev](https://linkedin.com/in/vsevolod-poletaev-468071165) ([hexfaker](https://github.com/hexfaker))
 - [Yury Kashnitsky](https://www.linkedin.com/in/kashnitskiy/) ([yorko](https://github.com/Yorko))
-
-#### Catalyst.Friends
-- [Ivan Stepanenko](https://www.facebook.com/istepanenko)
-- [Nguyen Xuan Bac](https://www.linkedin.com/in/bac-nguyen-xuan-70340b66/) ([ngxbac](https://github.com/ngxbac))
-- [Vladimir Iglovikov](https://www.linkedin.com/in/iglovikov/) ([ternaus](https://github.com/ternaus))
 
 
 ### Trusted by
@@ -1353,11 +1536,6 @@ a lot of people have influenced it in a lot of different ways.
 - [SoftConstruct](https://www.softconstruct.io/)
 - Researchers@[Tinkoff](https://www.tinkoff.ru/eng/)
 - Researchers@[Yandex.Research](https://research.yandex.com)
-
-
-### Supported by
-- [HostKey](https://www.hostkey.com)
-- [Moscow Institute of Physics and Technology](https://mipt.ru/english/)
 
 
 ### Citation
