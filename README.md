@@ -1289,10 +1289,16 @@ def objective(trial):
     num_hidden = int(trial.suggest_loguniform("num_hidden", 32, 128))
 
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        ),
+        "valid": DataLoader(
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+        ),
     }
-    model = nn.Sequential(nn.Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10))
+    model = nn.Sequential(
+        nn.Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10)
+    )
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss()
 
@@ -1303,8 +1309,12 @@ def objective(trial):
         optimizer=optimizer,
         loaders=loaders,
         callbacks={
-            "accuracy": dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
-            "optuna": dl.OptunaPruningCallback(loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial),
+            "accuracy": dl.AccuracyCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
+            "optuna": dl.OptunaPruningCallback(
+                loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial
+            ),
         },
         num_epochs=3,
     )
