@@ -1,3 +1,54 @@
+from typing import Dict, Optional, TYPE_CHECKING, Union
+from pathlib import Path
+
+import torch
+
+from catalyst.core import Callback, CallbackNode, CallbackOrder
+from catalyst.utils import BestModel, quantize_model
+
+if TYPE_CHECKING:
+    from catalyst.core import IRunner
+
+
+class QuantizationCallback(Callback):
+    def __init__(
+        self,
+        metric: str,
+        minimize_metric: bool = True,
+        qconfig_spec: Dict = None,
+        dtype: Union[str, Optional[torch.dtype]] = "qint8",
+        logdir: Union[str, Path] = None,
+        filename: str = "quantized.pth",
+    ):
+        """
+        @TODO
+        Args:
+            metric:
+            minimize_metric:
+            qconfig_spec:
+            dtype:
+            logdir:
+            filename:
+        """
+        super().__init__(order=CallbackOrder.External, node=CallbackNode.master)
+        self.best_model = BestModel(metric=metric, minimize_metric=minimize_metric)
+        self.qconfig_spec = qconfig_spec
+        self.dtype = dtype
+        if logdir is not None:
+            self.filename = Path(logdir) / filename
+        else:
+            self.filename = filename
+
+    def on_epoch_end(self, runner: "IRunner") -> None:
+        self.best_model.add_result(epoch_metrics=runner.epoch_metrics, model=runner.model)
+
+    def on_stage_end(self, runner: "IRunner") -> None:
+        model = runner.model.cpu()
+        model.load_state_dict(self.best_model.get_best_model_sd())
+        q_model = quantize_model(model.cpu(), qconfig_spec=self.qconfig_spec, dtype=self.dtype)
+        torch.save(q_model.state_dict(), self.filename)
+
+
 # # @TODO: make the same API for tracing/onnx/pruning/quantization
 # from typing import Dict, Optional, Set, TYPE_CHECKING, Union
 # from pathlib import Path
