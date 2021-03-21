@@ -217,10 +217,9 @@
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inference.html">Inference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="finetuning.html">[WIP] Finetuning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stages.html">[WIP] Multi-stage experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config_api.html">[WIP] Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="finetuning.html">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
@@ -345,7 +344,11 @@
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">dl</span><span class="o">.</span><span class="n">EarlyStoppingCallback</span><span class="p">(</span><span class="n">patience</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">minimize</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">EarlyStoppingCallback</span><span class="p">(</span>
+            <span class="n">patience</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">minimize</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+    <span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
 </div>

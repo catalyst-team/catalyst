@@ -217,10 +217,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">[WIP] Finetuning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/stages.html">[WIP] Multi-stage experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">[WIP] Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
@@ -358,12 +357,11 @@ For instance, here is a minimal script that trains a linear regression model.</p
 <span class="p">)</span>
 </pre></div>
 </div>
-<p><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/dl_z_docs_distributed_0.py">Link to the projector script.</a></p>
 </div>
-<div class="section" id="stage-1-i-just-want-distributed">
-<h2>Stage 1 - I just want distributed<a class="headerlink" href="#stage-1-i-just-want-distributed" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="stage-1-1-line-ddp">
+<h2>Stage 1 - 1 line ddp<a class="headerlink" href="#stage-1-1-line-ddp" title="Permalink to this headline">¶</a></h2>
 <p>In case you want to run it fast and ugly, with minimal changes,
-you can just pass <code class="docutils literal notranslate"><span class="pre">distributed=True</span></code> to <code class="docutils literal notranslate"><span class="pre">.train</span></code> call</p>
+you can just pass <code class="docutils literal notranslate"><span class="pre">ddp=True</span></code> to <code class="docutils literal notranslate"><span class="pre">.train</span></code> call</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
@@ -392,11 +390,10 @@ you can just pass <code class="docutils literal notranslate"><span class="pre">d
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs/example_1&quot;</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">distributed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">ddp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/dl_z_docs_distributed_1.py">Link to the stage-1 script.</a></p>
 <p>In this way Catalyst
 will try to automatically make your loaders work in distributed setup
 and will run experiment training.</p>
@@ -404,7 +401,7 @@ and will run experiment training.</p>
 <dt>Nevertheless it has several disadvantages,</dt><dd><ul class="simple">
 <li><p>you create your loader again and again with each distributed worker,
 +1 for master scripts with all processes joined.</p></li>
-<li><p>you can’t understand what is going under the hood of <code class="docutils literal notranslate"><span class="pre">distributed=True</span></code></p></li>
+<li><p>you can’t understand what is going under the hood of <code class="docutils literal notranslate"><span class="pre">ddp=True</span></code></p></li>
 <li><p>we can’t always transfer your loaders to distributed mode correctly</p></li>
 </ul>
 </dd>
@@ -417,12 +414,13 @@ and will run experiment training.</p>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
 
-<span class="c1"># data</span>
-<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
-<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="n">num_features</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">datasets_fn</span><span class="p">(</span><span class="n">num_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="n">num_features</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">}</span>
 
+<span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
 <span class="c1"># model, criterion, optimizer, scheduler</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
@@ -432,75 +430,82 @@ and will run experiment training.</p>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
     <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-    <span class="n">datasets</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-        <span class="s2">&quot;num_workers&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span>
-        <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span>
-    <span class="p">},</span>
     <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
     <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s2">&quot;num_workers&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;datasets_fn&quot;</span><span class="p">:</span> <span class="n">datasets_fn</span><span class="p">,</span>
+        <span class="s2">&quot;num_features&quot;</span><span class="p">:</span> <span class="n">num_features</span><span class="p">,</span>
+    <span class="p">},</span>
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs/example_2&quot;</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">distributed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">ddp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/dl_z_docs_distributed_2.py">Link to the stage-2 script.</a></p>
-<p>By this way we easily can transfer your datasets to distributed mode.
-But again, you recreate your dataset with each worker. Can we make it better?</p>
+<dl class="simple">
+<dt>Advantages,</dt><dd><ul class="simple">
+<li><p>you don’t duplicate the data - it calls when it really needed</p></li>
+<li><p>we still can easily transfer them to distributed mode,
+thanks to <code class="docutils literal notranslate"><span class="pre">Datasets</span></code> usage</p></li>
+</ul>
+</dd>
+<dt>Disadvantages,</dt><dd><ul class="simple">
+<li><p>everything works thanks to Catalyst <a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/catalyst/runners/runner.py#L147">internal logic</a>,
+which could be complicated to understand</p></li>
+</ul>
+</dd>
+</dl>
+<p>Could we make everything precisely clear?</p>
 </div>
 <div class="section" id="case-3-best-practices-for-distributed-training">
 <h2>Case 3 - Best practices for distributed training<a class="headerlink" href="#case-3-best-practices-for-distributed-training" title="Permalink to this headline">¶</a></h2>
 <p>Yup, check this one, distributed training like a pro:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">TensorDataset</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DistributedSampler</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">utils</span>
 
-<span class="k">def</span> <span class="nf">datasets_fn</span><span class="p">(</span><span class="n">num_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="n">num_features</span><span class="p">)</span>
-    <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">}</span>
+<span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
+<span class="c1"># model, criterion, optimizer, scheduler</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
 
-<span class="k">def</span> <span class="nf">train</span><span class="p">():</span>
-    <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
-    <span class="c1"># model, criterion, optimizer, scheduler</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
-    <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="k">class</span> <span class="nc">CustomSupervisedRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="n">num_features</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">is_ddp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
 
-    <span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
-    <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-        <span class="n">datasets</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;batch_size&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
-            <span class="s2">&quot;num_workers&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="s2">&quot;get_datasets_fn&quot;</span><span class="p">:</span> <span class="n">datasets_fn</span><span class="p">,</span>
-            <span class="s2">&quot;num_features&quot;</span><span class="p">:</span> <span class="n">num_features</span><span class="p">,</span>
-        <span class="p">},</span>
-        <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
-        <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
-        <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-        <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs/example_3&quot;</span><span class="p">,</span>
-        <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-        <span class="n">distributed</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_ddp</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="n">utils</span><span class="o">.</span><span class="n">distributed_cmd_run</span><span class="p">(</span><span class="n">train</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">}</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomSupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># as far as we have rewrite the loader logic already</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs/example_3&quot;</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">ddp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
-<p><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/tests/_tests_scripts/dl_z_docs_distributed_3.py">Link to the stage-3 script.</a></p>
 <dl class="simple">
 <dt>Advantages,</dt><dd><ul class="simple">
-<li><p>you have control about what is going on with manual call of
-<code class="docutils literal notranslate"><span class="pre">utils.distributed_cmd_run</span></code>.</p></li>
 <li><p>you don’t duplicate the data - it calls when it really needed</p></li>
-<li><p>we still can easily transfer them to distributed mode,
-thanks to <code class="docutils literal notranslate"><span class="pre">Datasets</span></code> usage</p></li>
+<li><p>we still can easily transfer them to distributed mode, thanks to <code class="docutils literal notranslate"><span class="pre">Datasets</span></code> usage</p></li>
+<li><p>the code is easily readable thanks to pure PyTorch way of working with datasets</p></li>
 </ul>
 </dd>
 </dl>
@@ -602,7 +607,7 @@ For more fine-tuning, we recommend reading the slurm documentation.</p>
               <ul>
 <li><a class="reference internal" href="#">Distributed training tutorial</a><ul>
 <li><a class="reference internal" href="#prepare-your-script">Prepare your script</a></li>
-<li><a class="reference internal" href="#stage-1-i-just-want-distributed">Stage 1 - I just want distributed</a></li>
+<li><a class="reference internal" href="#stage-1-1-line-ddp">Stage 1 - 1 line ddp</a></li>
 <li><a class="reference internal" href="#case-2-we-are-going-deeper">Case 2 - We are going deeper</a></li>
 <li><a class="reference internal" href="#case-3-best-practices-for-distributed-training">Case 3 - Best practices for distributed training</a></li>
 <li><a class="reference internal" href="#launch-your-training">Launch your training</a></li>

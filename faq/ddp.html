@@ -217,10 +217,9 @@
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inference.html">Inference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="finetuning.html">[WIP] Finetuning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stages.html">[WIP] Multi-stage experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config_api.html">[WIP] Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="finetuning.html">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
@@ -330,8 +329,12 @@
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
 
 <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
-    <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
+    <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+        <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+   <span class="p">),</span>
 <span class="p">}</span>
 
 <span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
@@ -349,10 +352,14 @@
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
         <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
-        <span class="n">dl</span><span class="o">.</span><span class="n">PrecisionRecallF1SupportCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">PrecisionRecallF1SupportCallback</span><span class="p">(</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span>
+        <span class="p">),</span>
         <span class="n">dl</span><span class="o">.</span><span class="n">AUCCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">),</span>
         <span class="c1"># catalyst[ml] required</span>
-        <span class="n">dl</span><span class="o">.</span><span class="n">ConfusionMatrixCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">),</span>
+        <span class="c1"># dl.ConfusionMatrixCallback(</span>
+        <span class="c1">#     input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=num_classes</span>
+        <span class="c1"># ),</span>
     <span class="p">]</span>
 <span class="p">)</span>
 </pre></div>
@@ -374,8 +381,12 @@ and there would be no data re-creation on each worker.</p>
         <span class="n">train_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">())</span>
         <span class="n">valid_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">())</span>
         <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">DistributedSampler</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">train_data</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
-            <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">valid_data</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">DistributedSampler</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">valid_data</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
+            <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+                <span class="n">train_data</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">DistributedSampler</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">train_data</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+                <span class="n">valid_data</span><span class="p">,</span> <span class="n">sampler</span><span class="o">=</span><span class="n">DistributedSampler</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">valid_data</span><span class="p">),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+            <span class="p">),</span>
         <span class="p">}</span>
         <span class="k">return</span> <span class="n">loaders</span>
 
@@ -397,10 +408,14 @@ and there would be no data re-creation on each worker.</p>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
     <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
         <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
-        <span class="n">dl</span><span class="o">.</span><span class="n">PrecisionRecallF1SupportCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">PrecisionRecallF1SupportCallback</span><span class="p">(</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span>
+        <span class="p">),</span>
         <span class="n">dl</span><span class="o">.</span><span class="n">AUCCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">),</span>
         <span class="c1"># catalyst[ml] required</span>
-        <span class="n">dl</span><span class="o">.</span><span class="n">ConfusionMatrixCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">),</span>
+        <span class="c1"># dl.ConfusionMatrixCallback(</span>
+        <span class="c1">#     input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=num_classes</span>
+        <span class="c1"># ),</span>
     <span class="p">]</span>
 <span class="p">)</span>
 </pre></div>

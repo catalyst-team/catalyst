@@ -29,8 +29,8 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Callbacks" href="../api/callbacks.html" />
-    <link rel="prev" title="[WIP] Config API" href="config_api.html" /> 
+    <link rel="next" title="Finetuning (multistage runs)" href="finetuning.html" />
+    <link rel="prev" title="Inference" href="inference.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
@@ -217,10 +217,9 @@
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inference.html">Inference</a></li>
-<li class="toctree-l1"><a class="reference internal" href="finetuning.html">[WIP] Finetuning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stages.html">[WIP] Multi-stage experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config_api.html">[WIP] Config API</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="finetuning.html">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
@@ -332,22 +331,34 @@
     <span class="n">num_hidden</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">trial</span><span class="o">.</span><span class="n">suggest_loguniform</span><span class="p">(</span><span class="s2">&quot;num_hidden&quot;</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">128</span><span class="p">))</span>
 
     <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
-        <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
+        <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+            <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+        <span class="p">),</span>
     <span class="p">}</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">784</span><span class="p">,</span> <span class="n">num_hidden</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_hidden</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">784</span><span class="p">,</span> <span class="n">num_hidden</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_hidden</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">)</span>
     <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span>
     <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
 
-    <span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">output_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">)</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">(</span>
+        <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">output_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span>
+    <span class="p">)</span>
     <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
         <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
         <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
         <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
         <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
         <span class="n">callbacks</span><span class="o">=</span><span class="p">{</span>
-            <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
-            <span class="s2">&quot;optuna&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">OptunaPruningCallback</span><span class="p">(</span><span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span> <span class="n">minimize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">trial</span><span class="o">=</span><span class="n">trial</span><span class="p">),</span>
+            <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span>
+                <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;optuna&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">OptunaPruningCallback</span><span class="p">(</span>
+                <span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;accuracy01&quot;</span><span class="p">,</span> <span class="n">minimize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">trial</span><span class="o">=</span><span class="n">trial</span>
+            <span class="p">),</span>
         <span class="p">},</span>
         <span class="n">num_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="p">)</span>
@@ -397,10 +408,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../api/callbacks.html" class="btn btn-neutral float-right" title="Callbacks" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="finetuning.html" class="btn btn-neutral float-right" title="Finetuning (multistage runs)" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="config_api.html" class="btn btn-neutral" title="[WIP] Config API" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="inference.html" class="btn btn-neutral" title="Inference" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>[WIP] Finetuning &mdash; Catalyst 21.03 documentation</title>
+  <title>Finetuning (multistage runs) &mdash; Catalyst 21.03 documentation</title>
   
 
   
@@ -29,8 +29,8 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="[WIP] Multi-stage experiments" href="stages.html" />
-    <link rel="prev" title="Inference" href="inference.html" /> 
+    <link rel="next" title="Config API" href="config_api.html" />
+    <link rel="prev" title="Optuna integration" href="optuna.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
@@ -217,10 +217,9 @@
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Model debugging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="logging.html">Logging</a></li>
 <li class="toctree-l1"><a class="reference internal" href="inference.html">Inference</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">[WIP] Finetuning</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stages.html">[WIP] Multi-stage experiments</a></li>
-<li class="toctree-l1"><a class="reference internal" href="config_api.html">[WIP] Config API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optuna.html">Optuna integration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Contribution guide</span></p>
 <ul>
@@ -280,7 +279,7 @@
       </li>
 
         
-      <li>[WIP] Finetuning</li>
+      <li>Finetuning (multistage runs)</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -312,9 +311,267 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="wip-finetuning">
-<h1>[WIP] Finetuning<a class="headerlink" href="#wip-finetuning" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="finetuning-multistage-runs">
+<h1>Finetuning (multistage runs)<a class="headerlink" href="#finetuning-multistage-runs" title="Permalink to this headline">¶</a></h1>
+<p>Suppose you have a large pretrained network you want to adapt for your task.
+Most common approach in this case would be to finetune the network on our dataset –
+use the large network as an encoder for your small classification head and train only this head.</p>
+<dl class="simple">
+<dt>Nevertheless to get the best possible results, it’s better to use two-stage approach:</dt><dd><ul class="simple">
+<li><p>freeze the encoder network and train only the classification head during the first stage</p></li>
+<li><p>unfreeze the whole network and tune encoder with head on the second stage</p></li>
+</ul>
+</dd>
+</dl>
+<p>Thanks to Catalyst Runner API,
+it’s quite easy to create such complex pipeline with a few line of code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.transforms</span> <span class="kn">import</span> <span class="n">ToTensor</span>
+
+
+<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logdir</span><span class="p">,</span> <span class="n">device</span><span class="p">):</span>
+        <span class="c1"># you could add all required extra params during Runner initialization</span>
+        <span class="c1"># for our case, let&#39;s customize ``logdir`` and ``engine`` for the runs</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="n">logdir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="n">device</span>
+
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DeviceEngine</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_device</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;console&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">ConsoleLogger</span><span class="p">(),</span>
+            <span class="s2">&quot;csv&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CSVLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">),</span>
+            <span class="s2">&quot;tensorboard&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">TensorboardLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">),</span>
+        <span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># suppose we have 2 stages:</span>
+        <span class="c1"># 1st - with freezed encoder</span>
+        <span class="c1"># 2nd with unfreezed whole network</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;train_freezed&quot;</span><span class="p">,</span> <span class="s2">&quot;train_unfreezed&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_stage_len</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">3</span>
+
+    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+                <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+                <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+            <span class="p">),</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">loaders</span>
+
+    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># the logic here is quite straightforward:</span>
+        <span class="c1"># we create the model on the fist stage</span>
+        <span class="c1"># and reuse it during next stages</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">else</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+                <span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">784</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">stage</span> <span class="o">==</span> <span class="s2">&quot;train_freezed&quot;</span><span class="p">:</span>
+            <span class="c1"># 1st stage</span>
+            <span class="c1"># freeze layer</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># 2nd stage</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="k">def</span> <span class="nf">get_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1"># we could also define different components for the different stages</span>
+        <span class="k">if</span> <span class="n">stage</span> <span class="o">==</span> <span class="s2">&quot;train_freezed&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;criterion&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
+                <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
+            <span class="c1"># &quot;scheduler&quot;: dl.SchedulerCallback(loader_key=&quot;valid&quot;, metric_key=&quot;loss&quot;),</span>
+            <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span>
+                <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk_args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;classification&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">PrecisionRecallF1SupportCallback</span><span class="p">(</span>
+                <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span>
+            <span class="p">),</span>
+            <span class="c1"># catalyst[ml] required</span>
+            <span class="c1"># &quot;confusion_matrix&quot;: dl.ConfusionMatrixCallback(</span>
+            <span class="c1">#     input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=10</span>
+            <span class="c1"># ),</span>
+            <span class="s2">&quot;checkpoint&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CheckpointCallback</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span>
+                <span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">minimize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_n_best</span><span class="o">=</span><span class="mi">3</span>
+            <span class="p">),</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+            <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span>
+            <span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">,</span>
+        <span class="p">}</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">(</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span> <span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="multistage-run-in-distributed-mode">
+<h2>Multistage run in distributed mode<a class="headerlink" href="#multistage-run-in-distributed-mode" title="Permalink to this headline">¶</a></h2>
+<p>Due to multiprocessing setup during distrubuted training, the multistage runs looks a bit different:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">DistributedSampler</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span><span class="p">,</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.transforms</span> <span class="kn">import</span> <span class="n">ToTensor</span>
+
+
+<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logdir</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="n">logdir</span>
+
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># your could also try</span>
+        <span class="c1"># DistributedDataParallelAMPEngine or DistributedDataParallelApexEngine engines</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelEngine</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;console&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">ConsoleLogger</span><span class="p">(),</span>
+            <span class="s2">&quot;csv&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CSVLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">),</span>
+            <span class="s2">&quot;tensorboard&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">TensorboardLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">),</span>
+        <span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;train_freezed&quot;</span><span class="p">,</span> <span class="s2">&quot;train_unfreezed&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_stage_len</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">3</span>
+
+    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># by default, Catalyst would add ``DistributedSampler`` in the framework internals</span>
+        <span class="c1"># nevertheless, it&#39;s much easier to define this logic by yourself, isn&#39;t it?</span>
+        <span class="n">is_ddp</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_rank</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">DistributedSampler</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span> <span class="k">if</span> <span class="n">is_ddp</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+                <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span>
+                <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
+                <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span>
+                <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
+            <span class="p">),</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">loaders</span>
+
+    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="c1"># due to multiprocessing setup we have to create the model on each stage</span>
+        <span class="c1"># to transfer the model weights between stages</span>
+        <span class="c1"># we would use ``CheckpointCallback`` logic</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">784</span><span class="p">,</span> <span class="mi">128</span><span class="p">),</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">stage</span> <span class="o">==</span> <span class="s2">&quot;train_freezed&quot;</span><span class="p">:</span>  <span class="c1"># freeze layer</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">set_requires_grad</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="k">def</span> <span class="nf">get_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">stage</span> <span class="o">==</span> <span class="s2">&quot;train_freezed&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">optim</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;criterion&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
+                <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;optimizer&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;accuracy&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span>
+                <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">topk_args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;classification&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">PrecisionRecallF1SupportCallback</span><span class="p">(</span>
+                <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="mi">10</span>
+            <span class="p">),</span>
+            <span class="c1"># catalyst[ml] required</span>
+            <span class="c1"># &quot;confusion_matrix&quot;: dl.ConfusionMatrixCallback(</span>
+            <span class="c1">#     input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=10</span>
+            <span class="c1"># ),</span>
+            <span class="c1"># the logic here is quite simple:</span>
+            <span class="c1"># you could define which components you want to load from which checkpoints</span>
+            <span class="c1"># by default you could load model/criterion/optimizer/scheduler components</span>
+            <span class="c1"># and global_epoch_step/global_batch_step/global_sample_step step counters</span>
+            <span class="c1"># from ``best`` or ``last`` checkpoints</span>
+            <span class="c1"># for a more formal documentation, please follow CheckpointCallback docs :)</span>
+            <span class="s2">&quot;checkpoint&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CheckpointCallback</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span>
+                <span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+                <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+                <span class="n">minimize</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">save_n_best</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                <span class="n">load_on_stage_start</span><span class="o">=</span><span class="p">{</span>
+                    <span class="s2">&quot;model&quot;</span><span class="p">:</span> <span class="s2">&quot;best&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;global_epoch_step&quot;</span><span class="p">:</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;global_batch_step&quot;</span><span class="p">:</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;global_sample_step&quot;</span><span class="p">:</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span>
+                <span class="p">},</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">TqdmCallback</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+            <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span>
+            <span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">,</span>
+        <span class="p">}</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">(</span><span class="s2">&quot;./logs&quot;</span><span class="p">)</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
+</div>
 </div>
 
 
@@ -325,10 +582,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="stages.html" class="btn btn-neutral float-right" title="[WIP] Multi-stage experiments" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="config_api.html" class="btn btn-neutral float-right" title="Config API" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="inference.html" class="btn btn-neutral" title="Inference" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="optuna.html" class="btn btn-neutral" title="Optuna integration" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -356,7 +613,10 @@
           <div class="catalyst-right-menu" id="catalyst-right-menu">
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">[WIP] Finetuning</a></li>
+<li><a class="reference internal" href="#">Finetuning (multistage runs)</a><ul>
+<li><a class="reference internal" href="#multistage-run-in-distributed-mode">Multistage run in distributed mode</a></li>
+</ul>
+</li>
 </ul>
 
             </div>
