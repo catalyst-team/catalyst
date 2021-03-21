@@ -4,7 +4,7 @@ from pathlib import Path
 import torch
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder
-from catalyst.utils import BestModel, quantize_model
+from catalyst.utils import quantize_model
 
 if TYPE_CHECKING:
     from catalyst.core import IRunner
@@ -30,8 +30,8 @@ class QuantizationCallback(Callback):
             logdir:
             filename:
         """
-        super().__init__(order=CallbackOrder.External, node=CallbackNode.master)
-        self.best_model = BestModel(metric=metric, minimize_metric=minimize_metric)
+        super().__init__(order=CallbackOrder.ExternalExtra, node=CallbackNode.master)  # External Extra for applying
+        # after CheckpointCallback; node master for saving.
         self.qconfig_spec = qconfig_spec
         self.dtype = dtype
         if logdir is not None:
@@ -39,12 +39,8 @@ class QuantizationCallback(Callback):
         else:
             self.filename = filename
 
-    def on_epoch_end(self, runner: "IRunner") -> None:
-        self.best_model.add_result(epoch_metrics=runner.epoch_metrics, model=runner.model)
-
     def on_stage_end(self, runner: "IRunner") -> None:
         model = runner.model.cpu()
-        model.load_state_dict(self.best_model.get_best_model_sd())
         q_model = quantize_model(model.cpu(), qconfig_spec=self.qconfig_spec, dtype=self.dtype)
         torch.save(q_model.state_dict(), self.filename)
 

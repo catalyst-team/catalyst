@@ -39,6 +39,12 @@ from catalyst.callbacks.scheduler import (
     LRFinder,
 )
 
+if SETTINGS.quantization_required:
+    from catalyst.callbacks.quantization import QuantizationCallback
+
+if SETTINGS.onnx_required:
+    from catalyst.callbacks.onnx import OnnxCallback
+
 # from catalyst.callbacks.tracing import TracingCallback
 
 
