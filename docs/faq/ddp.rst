@@ -21,8 +21,12 @@ Suppose you have the following pipeline with MNIST Classification:
     optimizer = optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        ),
+        "valid": DataLoader(
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+       ),
     }
 
     runner = dl.SupervisedRunner()
@@ -40,10 +44,14 @@ Suppose you have the following pipeline with MNIST Classification:
         verbose=True,
         callbacks=[
             dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
-            dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+            dl.PrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
             dl.AUCCallback(input_key="logits", target_key="targets"),
             # catalyst[ml] required
-            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes),
+            # dl.ConfusionMatrixCallback(
+            #     input_key="logits", target_key="targets", num_classes=num_classes
+            # ),
         ]
     )
 
@@ -69,8 +77,12 @@ As a best practice scenario for this case:
             train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
             valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
             loaders = {
-                "train": DataLoader(train_data, sampler=DistributedSampler(dataset=train_data), batch_size=32),
-                "valid": DataLoader(valid_data, sampler=DistributedSampler(dataset=valid_data), batch_size=32),
+                "train": DataLoader(
+                    train_data, sampler=DistributedSampler(dataset=train_data), batch_size=32
+                ),
+                "valid": DataLoader(
+                    valid_data, sampler=DistributedSampler(dataset=valid_data), batch_size=32
+                ),
             }
             return loaders
 
@@ -92,10 +104,14 @@ As a best practice scenario for this case:
         num_epochs=8,
         callbacks=[
             dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
-            dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+            dl.PrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
             dl.AUCCallback(input_key="logits", target_key="targets"),
             # catalyst[ml] required
-            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes),
+            # dl.ConfusionMatrixCallback(
+            #     input_key="logits", target_key="targets", num_classes=num_classes
+            # ),
         ]
     )
 
