@@ -22,8 +22,12 @@ Suppose you have the following classification pipeline (in pure PyTorch):
     optimizer = optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        ),
+        "valid": DataLoader(
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+        ),
     }
 
     class CustomRunner(dl.Runner):
@@ -107,8 +111,12 @@ Multi-model example:
     criterion = nn.CrossEntropyLoss()
 
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        ),
+        "valid": DataLoader(
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+        ),
     }
 
     class CustomRunner(dl.Runner):
@@ -198,8 +206,12 @@ Multi-optimizer example:
     criterion = nn.CrossEntropyLoss()
 
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        ),
+        "valid": DataLoader(
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+        ),
     }
 
     class CustomRunner(dl.Runner):
@@ -291,8 +303,12 @@ Multi-criterion example:
     # <--- multi-criterion setup --->
 
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        ),
+        "valid": DataLoader(
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+        ),
     }
 
     class CustomRunner(dl.Runner):
@@ -317,7 +333,8 @@ Multi-criterion example:
             # <--- multi-criterion usage --->
             # compute the loss
             loss_multiclass = self.criterion["multiclass"](logits, y)
-            loss_multilabel = self.criterion["multilabel"](logits, F.one_hot(y, 10).to(torch.float32))
+            loss_multilabel = \
+                self.criterion["multilabel"](logits, F.one_hot(y, 10).to(torch.float32))
             loss = loss_multiclass + loss_multilabel
             # <--- multi-criterion usage --->
             # compute other metrics of interest
