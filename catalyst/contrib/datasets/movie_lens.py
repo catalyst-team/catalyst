@@ -1,5 +1,5 @@
-import zipfile
 import os
+import zipfile
 
 import numpy as np
 
@@ -7,6 +7,7 @@ import torch
 from torch.utils.data import Dataset
 
 from catalyst.contrib.datasets.utils import download_and_extract_archive
+
 
 class MovieLens(Dataset):
     '''
@@ -107,4 +108,3 @@ class MovieLens(Dataset):
 
         if self._check_exist():
             return
-            

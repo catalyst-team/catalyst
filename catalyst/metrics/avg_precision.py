@@ -63,7 +63,9 @@ def avg_precision(
         >>> )
         tensor([0.6222, 0.4429])
     """
-    targets_sort_by_outputs = process_recsys_components(outputs, targets)[:, :k]
+    targets_sort_by_outputs = process_recsys_components(outputs, targets)[
+        :, :k
+    ]
     precisions = torch.zeros_like(targets_sort_by_outputs)
 
     for index in range(k):
