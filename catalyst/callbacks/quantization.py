@@ -21,13 +21,13 @@ class QuantizationCallback(Callback):
         dtype (Union[str, Optional[torch.dtype]], optional): Type of weights after quantization.
             Defaults to "qint8".
     """
+
     def __init__(
         self,
         logdir: Union[str, Path] = None,
         filename: str = "quantized.pth",
         qconfig_spec: Dict = None,
         dtype: Union[str, Optional[torch.dtype]] = "qint8",
-
     ):
         """
         Callback for model quantiztion.
@@ -35,8 +35,10 @@ class QuantizationCallback(Callback):
         Args:
             logdir: path to folder for saving
             filename: filename
-            qconfig_spec (Dict, optional): quantization config in PyTorch format. Defaults to None.
-            dtype (Union[str, Optional[torch.dtype]], optional): Type of weights after quantization.
+            qconfig_spec (Dict, optional): quantization config in PyTorch format.
+                Defaults to None.
+            dtype (Union[str, Optional[torch.dtype]], optional):
+                Type of weights after quantization.
                 Defaults to "qint8".
         """
         super().__init__(

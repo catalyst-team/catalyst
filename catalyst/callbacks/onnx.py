@@ -29,6 +29,7 @@ class OnnxCallback(Callback):
         verbose (bool, default False): if specified, we will print out a debug
             description of the trace being exported.
     """
+
     def __init__(
         self,
         logdir: Union[str, Path] = None,
@@ -49,7 +50,8 @@ class OnnxCallback(Callback):
             logdir: path to folder for saving
             filename: filename
             batch: input tensor for model. If None will take batch from train loader.
-            method_name (str, optional): Forward pass method to be converted. Defaults to "forward".
+            method_name (str, optional): Forward pass method to be converted.
+                Defaults to "forward".
             input_names (Iterable, optional): name of inputs in graph. Defaults to None.
             output_names (List[str], optional): name of outputs in graph. Defaults to None.
             dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): axes

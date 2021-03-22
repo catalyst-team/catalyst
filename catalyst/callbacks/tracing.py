@@ -1,4 +1,4 @@
-from typing import Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 from pathlib import Path
 
 import torch
@@ -21,6 +21,7 @@ class TracingCallback(Callback):
         batch: input tensor for model. If None will take batch from train loader.
         method_name: Model's method name that will be used as entrypoint during tracing
     """
+
     def __init__(
         self,
         logdir: Union[str, Path] = None,
