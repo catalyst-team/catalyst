@@ -132,7 +132,7 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 - [Catalyst](#catalyst)
   * [Documentation](#documentation)
   * [Notebooks](#notebooks)
-  * [Blog Posts](#blogposts)
+  * [Blog Posts](#notable-blog-posts)
   * [Talks](#talks)
   * [Projects](#projects)
 - [Community](#community)
