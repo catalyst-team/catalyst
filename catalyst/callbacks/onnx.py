@@ -11,10 +11,28 @@ if TYPE_CHECKING:
 
 
 class OnnxCallback(Callback):
+    """
+    Callback for converting model to onnx runtime.
+
+    Args:
+        logdir: path to folder for saving
+        filename: filename
+        batch: input tensor for model. If None will take batch from train loader.
+        method_name (str, optional): Forward pass method to be converted. Defaults to "forward".
+        input_names (Iterable, optional): name of inputs in graph. Defaults to None.
+        output_names (List[str], optional): name of outputs in graph. Defaults to None.
+        dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): axes
+            with dynamic shapes. Defaults to None.
+        opset_version (int, optional): Defaults to 9.
+        do_constant_folding (bool, optional): If True, the constant-folding optimization
+            is applied to the model during export. Defaults to False.
+        verbose (bool, default False): if specified, we will print out a debug
+            description of the trace being exported.
+    """
     def __init__(
         self,
-        filename: str = "onnx.py",
         logdir: Union[str, Path] = None,
+        filename: str = "onnx.py",
         batch: Tensor = None,
         method_name: str = "forward",
         input_names: Iterable = None,
@@ -24,6 +42,24 @@ class OnnxCallback(Callback):
         do_constant_folding: bool = False,
         verbose: bool = False,
     ):
+        """
+        Callback for converting model to onnx runtime.
+
+        Args:
+            logdir: path to folder for saving
+            filename: filename
+            batch: input tensor for model. If None will take batch from train loader.
+            method_name (str, optional): Forward pass method to be converted. Defaults to "forward".
+            input_names (Iterable, optional): name of inputs in graph. Defaults to None.
+            output_names (List[str], optional): name of outputs in graph. Defaults to None.
+            dynamic_axes (Union[Dict[str, int], Dict[str, Dict[str, int]]], optional): axes
+                with dynamic shapes. Defaults to None.
+            opset_version (int, optional): Defaults to 9.
+            do_constant_folding (bool, optional): If True, the constant-folding optimization
+                is applied to the model during export. Defaults to False.
+            verbose (bool, default False): if specified, we will print out a debug
+                description of the trace being exported.
+        """
         super().__init__(order=CallbackOrder.ExternalExtra, node=CallbackNode.Master)
         if self.logdir is not None:
             self.filename = Path(logdir) / filename
@@ -40,6 +76,12 @@ class OnnxCallback(Callback):
         self.batch = batch
 
     def on_stage_end(self, runner: "IRunner") -> None:
+        """
+        On stage end action.
+
+        Args:
+            runner: runner for experiment
+        """
         model = runner.model.cpu()
         batch = self.batch or next(iter(runner.loaders["train"]))
         onnx_export(
