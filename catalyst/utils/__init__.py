@@ -14,8 +14,6 @@ from catalyst.utils.distributed import (
     all_gather,
 )
 
-from catalyst.utils.best_model import BestModel
-
 from catalyst.utils.misc import (
     get_fn_default_params,
     get_fn_argsnames,
