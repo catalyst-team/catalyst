@@ -23,6 +23,37 @@ class DeviceEngine(IEngine):
 
     Args:
         device (str, optional): use device, default is `"cpu"`.
+
+    Runner example:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DeviceEngine("cuda:1")
+            # ...
+
+    Config example:
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DeviceEngine
+            device: cuda:1
+
+        stages:
+            ...
+
     """
 
     def __init__(self, device: str = None):

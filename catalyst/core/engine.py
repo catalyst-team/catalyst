@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Generator
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 
@@ -6,7 +6,7 @@ from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 
 
 @contextmanager
-def nullcontext(enter_result=None):
+def nullcontext(enter_result: Any = None) -> Generator[Any]:
     """Context handler."""
     yield enter_result
 
@@ -37,8 +37,7 @@ class IEngine(ABC):
     @property
     @abstractmethod
     def world_size(self) -> int:
-        """Process world size  for distributed training."""
-        # only for ddp
+        """Process world size for distributed training."""
         pass
 
     @property
@@ -49,26 +48,28 @@ class IEngine(ABC):
     @property
     def is_master_process(self) -> bool:
         """Checks if a process is master process.
-        Should be implemented only for DDP setup in other cases should always return True.
+        Should be implemented only for distributed training (ddp).
+        For non distributed training should always return `True`.
 
         Returns:
-            `True` if current process is a master process, otherwise `False`.
+            `True` if current process is a master process in other cases return `False`.
         """
         return True
 
     @property
     def is_worker_process(self) -> bool:
         """Checks if a process is worker process.
-        Should be implemented only for DDP setup in other cases should always return False.
+        Should be implemented only for distributed training (ddp).
+        For non distributed training should always return `False`.
 
         Returns:
-            `True` if current process is a worker process, otherwise `False`.
+            `True` if current process is a worker process in other cases return `False`.
         """
         return False
 
     @abstractmethod
     def sync_device(self, tensor_or_module: Any) -> Any:
-        """Moves ``tensor_or_module`` to Engine's deivce.
+        """Moves ``tensor_or_module`` to Engine's device.
 
         Args:
             tensor_or_module: tensor to mode
@@ -89,23 +90,35 @@ class IEngine(ABC):
 
     @abstractmethod
     def deinit_components(self):
-        """Deinits the runs components."""
-        # only for ddp
+        """Deinits the runs components.
+        In distributed mode should destroy process group.
+        """
         pass
 
     @abstractmethod
     def zero_grad(self, loss, model, optimizer) -> None:
-        """Abstraction over ``model.zero_grad()`` step."""
+        """Abstraction over ``model.zero_grad()`` step.
+        Should be overloaded in cases when required to set arguments
+        for ``model.zero_grad()`` like `set_to_none=True` or
+        you need to use custom scheme which replaces/improves
+        `.zero_grad()` method.
+        """
         pass
 
     @abstractmethod
     def backward_loss(self, loss, model, optimizer) -> None:
-        """Abstraction over ``loss.backward()`` step."""
+        """Abstraction over ``loss.backward()`` step.
+        Should be overloaded in cases when required loss scaling.
+        Examples - APEX and AMP.
+        """
         pass
 
     @abstractmethod
     def optimizer_step(self, loss, model, optimizer) -> None:
-        """Abstraction over ``optimizer.step()`` step."""
+        """Abstraction over ``optimizer.step()`` step.
+        Should be overloaded in cases when required gradient scaling.
+        Example - AMP.
+        """
         pass
 
     @abstractmethod
@@ -174,7 +187,8 @@ class IEngine(ABC):
         pass
 
     def autocast(self, *args, **kwargs):
-        """AMP scaling context. Default autocast context does not scale anything.
+        """AMP scaling context.
+        Default autocast context does not scale anything.
 
         Args:
             *args: some args
