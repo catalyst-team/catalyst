@@ -1475,7 +1475,7 @@ please open an issue first and discuss it with us.
 
 ### User Feedback
 
-We've created `catalyst.team.core@gmail.com` as an additional channel for user feedback.
+We've created `feedback@catalyst-team.com` as an additional channel for user feedback.
 
 - If you like the project and want to thanks us, this the right place.
 - If you would like to start a collaboration between your team and Catalyst team to improve Deep Learning R&D, you are always welcome.
