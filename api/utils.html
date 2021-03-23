@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utilities &mdash; Catalyst 21.03 documentation</title>
+  <title>Utilities &mdash; Catalyst 21.03.1 documentation</title>
   
 
   
@@ -339,7 +339,8 @@
 <li><p><a class="reference internal" href="#module-catalyst.contrib.utils.pandas" id="id17">Pandas</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.utils.parallel" id="id18">Parallel</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.contrib.utils.serialization" id="id19">Serialization</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.visualization" id="id20">Visualization</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.thresholds" id="id20">Thresholds</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.visualization" id="id21">Visualization</a></p></li>
 </ul>
 </li>
 </ul>
@@ -2345,8 +2346,240 @@ using this as the class labels.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-catalyst.contrib.utils.thresholds">
+<span id="thresholds"></span><h3><a class="toc-backref" href="#id20">Thresholds</a><a class="headerlink" href="#module-catalyst.contrib.utils.thresholds" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="catalyst.contrib.utils.thresholds.get_baseline_thresholds">
+<code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_baseline_thresholds</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float]</em><span class="sig-paren">)</span> &#x2192; Tuple[float, List[float]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_baseline_thresholds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_baseline_thresholds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns baseline thresholds for multiclass/multilabel classification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> – estimated per-class scores/probabilities predicted by the model,
+numpy array with shape [num_examples, num_classes]</p></li>
+<li><p><strong>labels</strong> – ground truth labels,
+numpy array with shape [num_examples, num_classes]</p></li>
+<li><p><strong>objective</strong> – callable function, metric which we want to maximize</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with best found objective score and per-class thresholds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.contrib.utils.thresholds.get_binary_threshold">
+<code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_binary_threshold</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float], num_thresholds: int = 100</em><span class="sig-paren">)</span> &#x2192; Tuple[float, float]<a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_binary_threshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_binary_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds best threshold for binary classification task based on cross-validation estimates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> – estimated per-class scores/probabilities predicted by the model,
+numpy array with shape [num_examples, ]</p></li>
+<li><p><strong>labels</strong> – ground truth labels, numpy array with shape [num_examples, ]</p></li>
+<li><p><strong>objective</strong> – callable function, metric which we want to maximize</p></li>
+<li><p><strong>num_thresholds</strong> – number of thresholds ot try for each class</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with best found objective score and threshold</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.contrib.utils.thresholds.get_multiclass_thresholds">
+<code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_multiclass_thresholds</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float]</em><span class="sig-paren">)</span> &#x2192; Tuple[List[float], List[float]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_multiclass_thresholds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_multiclass_thresholds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds best thresholds for multiclass classification task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> – estimated per-class scores/probabilities predicted by the model,
+numpy array with shape [num_examples, num_classes]</p></li>
+<li><p><strong>labels</strong> – ground truth labels, numpy array with shape [num_examples, num_classes]</p></li>
+<li><p><strong>objective</strong> – callable function, metric which we want to maximize</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with best found objective score and per-class thresholds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.contrib.utils.thresholds.get_multilabel_thresholds">
+<code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_multilabel_thresholds</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_multilabel_thresholds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_multilabel_thresholds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds best thresholds for multilabel classification task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> – estimated per-class scores/probabilities predicted by the model,
+numpy array with shape [num_examples, num_classes]</p></li>
+<li><p><strong>labels</strong> – ground truth labels, numpy array with shape [num_examples, num_classes]</p></li>
+<li><p><strong>objective</strong> – callable function, metric which we want to maximize</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with best found objective score and per-class thresholds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.contrib.utils.thresholds.get_binary_threshold_cv">
+<code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_binary_threshold_cv</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float], num_splits: int = 5, num_repeats: int = 1, random_state: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_binary_threshold_cv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_binary_threshold_cv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds best threshold for binary classification task
+based on cross-validation estimates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> – estimated per-class scores/probabilities predicted by the model,
+numpy array with shape [num_examples, ]</p></li>
+<li><p><strong>labels</strong> – ground truth labels, numpy array with shape [num_examples, ]</p></li>
+<li><p><strong>objective</strong> – callable function, metric which we want to maximize</p></li>
+<li><p><strong>num_splits</strong> – number of splits to use for cross-validation</p></li>
+<li><p><strong>num_repeats</strong> – number of repeats to use for cross-validation</p></li>
+<li><p><strong>random_state</strong> – random state to use for cross-validation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with best found objective score and threshold</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.contrib.utils.thresholds.get_multilabel_thresholds_cv">
+<code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_multilabel_thresholds_cv</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float], num_splits: int = 5, num_repeats: int = 1, random_state: int = 42</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_multilabel_thresholds_cv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_multilabel_thresholds_cv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds best thresholds for multilabel classification task
+based on cross-validation estimates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> – estimated per-class scores/probabilities predicted by the model,
+numpy array with shape [num_examples, num_classes]</p></li>
+<li><p><strong>labels</strong> – ground truth labels, numpy array with shape [num_examples, num_classes]</p></li>
+<li><p><strong>objective</strong> – callable function, metric which we want to maximize</p></li>
+<li><p><strong>num_splits</strong> – number of splits to use for cross-validation</p></li>
+<li><p><strong>num_repeats</strong> – number of repeats to use for cross-validation</p></li>
+<li><p><strong>random_state</strong> – random state to use for cross-validation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with best found objective score and per-class thresholds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.contrib.utils.thresholds.get_thresholds_greedy">
+<code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_thresholds_greedy</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray</em>, <em class="sig-param">labels: numpy.ndarray</em>, <em class="sig-param">score_fn: Callable</em>, <em class="sig-param">num_iterations: int = 100</em>, <em class="sig-param">num_thresholds: int = 100</em>, <em class="sig-param">thresholds: numpy.ndarray = None</em>, <em class="sig-param">patience: int = 3</em>, <em class="sig-param">atol: float = 0.01</em><span class="sig-paren">)</span> &#x2192; Tuple[float, List[float]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_thresholds_greedy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_thresholds_greedy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds best thresholds for classification task with brute-force algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> – estimated per-class scores/probabilities predicted by the model</p></li>
+<li><p><strong>labels</strong> – ground truth labels</p></li>
+<li><p><strong>score_fn</strong> – callable function, based on (scores, labels, thresholds)</p></li>
+<li><p><strong>num_iterations</strong> – number of iteration for brute-force algorithm</p></li>
+<li><p><strong>num_thresholds</strong> – number of thresholds ot try for each class</p></li>
+<li><p><strong>thresholds</strong> – baseline thresholds, which we want to optimize</p></li>
+<li><p><strong>patience</strong> – maximum number of iteration before early stop exit</p></li>
+<li><p><strong>atol</strong> – minimum required improvement per iteration for early stop exit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with best found objective score and per-class thresholds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.contrib.utils.thresholds.get_multilabel_thresholds_greedy">
+<code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_multilabel_thresholds_greedy</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float], num_iterations: int = 100, num_thresholds: int = 100, thresholds: numpy.ndarray = None, patience: int = 3, atol: float = 0.01</em><span class="sig-paren">)</span> &#x2192; Tuple[float, List[float]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_multilabel_thresholds_greedy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_multilabel_thresholds_greedy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds best thresholds for multilabel classification task with brute-force algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> – estimated per-class scores/probabilities predicted by the model</p></li>
+<li><p><strong>labels</strong> – ground truth labels</p></li>
+<li><p><strong>objective</strong> – callable function, metric which we want to maximize</p></li>
+<li><p><strong>num_iterations</strong> – number of iteration for brute-force algorithm</p></li>
+<li><p><strong>num_thresholds</strong> – number of thresholds ot try for each class</p></li>
+<li><p><strong>thresholds</strong> – baseline thresholds, which we want to optimize</p></li>
+<li><p><strong>patience</strong> – maximum number of iteration before early stop exit</p></li>
+<li><p><strong>atol</strong> – minimum required improvement per iteration for early stop exit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with best found objective score and per-class thresholds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.contrib.utils.thresholds.get_multiclass_thresholds_greedy">
+<code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_multiclass_thresholds_greedy</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float], num_iterations: int = 100, num_thresholds: int = 100, thresholds: numpy.ndarray = None, patience: int = 3, atol: float = 0.01</em><span class="sig-paren">)</span> &#x2192; Tuple[float, List[float]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_multiclass_thresholds_greedy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_multiclass_thresholds_greedy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds best thresholds for multiclass classification task with brute-force algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> – estimated per-class scores/probabilities predicted by the model</p></li>
+<li><p><strong>labels</strong> – ground truth labels</p></li>
+<li><p><strong>objective</strong> – callable function, metric which we want to maximize</p></li>
+<li><p><strong>num_iterations</strong> – number of iteration for brute-force algorithm</p></li>
+<li><p><strong>num_thresholds</strong> – number of thresholds ot try for each class</p></li>
+<li><p><strong>thresholds</strong> – baseline thresholds, which we want to optimize</p></li>
+<li><p><strong>patience</strong> – maximum number of iteration before early stop exit</p></li>
+<li><p><strong>atol</strong> – minimum required improvement per iteration for early stop exit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with best found objective score and per-class thresholds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.contrib.utils.thresholds.get_best_multilabel_thresholds">
+<code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_best_multilabel_thresholds</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float]</em><span class="sig-paren">)</span> &#x2192; Tuple[float, List[float]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_best_multilabel_thresholds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_best_multilabel_thresholds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds best thresholds for multilabel classification task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> – estimated per-class scores/probabilities predicted by the model</p></li>
+<li><p><strong>labels</strong> – ground truth labels</p></li>
+<li><p><strong>objective</strong> – callable function, metric which we want to maximize</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with best found objective score and per-class thresholds</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.contrib.utils.thresholds.get_best_multiclass_thresholds">
+<code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_best_multiclass_thresholds</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float]</em><span class="sig-paren">)</span> &#x2192; Tuple[float, List[float]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_best_multiclass_thresholds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_best_multiclass_thresholds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finds best thresholds for multiclass classification task.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scores</strong> – estimated per-class scores/probabilities predicted by the model</p></li>
+<li><p><strong>labels</strong> – ground truth labels</p></li>
+<li><p><strong>objective</strong> – callable function, metric which we want to maximize</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>tuple with best found objective score and per-class thresholds</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="module-catalyst.contrib.utils.visualization">
-<span id="visualization"></span><h3><a class="toc-backref" href="#id20">Visualization</a><a class="headerlink" href="#module-catalyst.contrib.utils.visualization" title="Permalink to this headline">¶</a></h3>
+<span id="visualization"></span><h3><a class="toc-backref" href="#id21">Visualization</a><a class="headerlink" href="#module-catalyst.contrib.utils.visualization" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.visualization.plot_confusion_matrix">
 <code class="sig-prename descclassname">catalyst.contrib.utils.visualization.</code><code class="sig-name descname">plot_confusion_matrix</code><span class="sig-paren">(</span><em class="sig-param">cm: numpy.ndarray</em>, <em class="sig-param">class_names=None</em>, <em class="sig-param">normalize=False</em>, <em class="sig-param">title='confusion matrix'</em>, <em class="sig-param">fname=None</em>, <em class="sig-param">show=True</em>, <em class="sig-param">figsize=12</em>, <em class="sig-param">fontsize=32</em>, <em class="sig-param">colormap='Blues'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/visualization.html#plot_confusion_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.visualization.plot_confusion_matrix" title="Permalink to this definition">¶</a></dt>
@@ -2441,6 +2674,7 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.pandas">Pandas</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.parallel">Parallel</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.serialization">Serialization</a></li>
+<li><a class="reference internal" href="#module-catalyst.contrib.utils.thresholds">Thresholds</a></li>
 <li><a class="reference internal" href="#module-catalyst.contrib.utils.visualization">Visualization</a></li>
 </ul>
 </li>

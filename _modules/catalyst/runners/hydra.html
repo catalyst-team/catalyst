@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.hydra &mdash; Catalyst 21.03 documentation</title>
+  <title>catalyst.runners.hydra &mdash; Catalyst 21.03.1 documentation</title>
   
 
   
@@ -343,6 +343,7 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.data</span> <span class="kn">import</span> <span class="n">get_loaders_from_params</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_short_hash</span><span class="p">,</span> <span class="n">get_utcnow_time</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_available_engine</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -359,11 +360,17 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">seed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">verbose</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_timeit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">timeit</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">check</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_overfit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">overfit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">apex</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_amp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">amp</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ddp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">ddp</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fp16</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">fp16</span> <span class="ow">or</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">seed</span> <span class="ow">or</span> <span class="mi">42</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timeit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">timeit</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">check</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_overfit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">overfit</span> <span class="ow">or</span> <span class="kc">False</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_run_name</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_run_logdir</span><span class="p">()</span>
 
@@ -446,7 +453,12 @@
 <div class="viewcode-block" id="HydraRunner.get_engine"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_engine">[docs]</a>    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IEngine</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the engine for the run.&quot;&quot;&quot;</span>
         <span class="n">engine_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">engine</span>
-        <span class="n">engine</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">engine_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">engine_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">engine</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">engine_params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">engine</span> <span class="o">=</span> <span class="n">get_available_engine</span><span class="p">(</span>
+                <span class="n">fp16</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fp16</span><span class="p">,</span> <span class="n">ddp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ddp</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_amp</span><span class="p">,</span> <span class="n">apex</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_apex</span>
+            <span class="p">)</span>
         <span class="k">return</span> <span class="n">engine</span></div>
 
 <div class="viewcode-block" id="HydraRunner.get_loggers"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_loggers">[docs]</a>    <span class="k">def</span> <span class="nf">get_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ILogger</span><span class="p">]:</span>
