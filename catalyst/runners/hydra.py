@@ -52,16 +52,16 @@ class HydraRunner(IRunner):
         super().__init__()
         self._config: DictConfig = deepcopy(cfg)
 
-        self._apex: bool = self._config.args.apex
-        self._amp: bool = self._config.args.amp
-        self._ddp: bool = self._config.args.ddp
-        self._fp16: bool = self._config.args.fp16
+        self._apex: bool = self._config.args.apex or False
+        self._amp: bool = self._config.args.amp or False
+        self._ddp: bool = self._config.args.ddp or False
+        self._fp16: bool = self._config.args.fp16 or False
 
-        self._seed: int = self._config.args.seed
-        self._verbose: bool = self._config.args.verbose
-        self._timeit: bool = self._config.args.timeit
-        self._check: bool = self._config.args.check
-        self._overfit: bool = self._config.args.overfit
+        self._seed: int = self._config.args.seed or 42
+        self._verbose: bool = self._config.args.verbose or False
+        self._timeit: bool = self._config.args.timeit or False
+        self._check: bool = self._config.args.check or False
+        self._overfit: bool = self._config.args.overfit or False
 
         self._name: str = self._get_run_name()
         self._logdir: str = self._get_run_logdir()
