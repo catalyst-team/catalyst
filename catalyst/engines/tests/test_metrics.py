@@ -171,7 +171,7 @@ class CustomDDPRunner(IRunnerMixin, IRunner):
     def get_engine(self):
         return DistributedDataParallelEngine(port="22222")
 
-    def get_loaders(self, stage: str, epoch: int = None):
+    def get_loaders(self, stage: str):
         dataset = TwoBlobsDataset()
         # dataset = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
         sampler = CustomDistributedSampler(dataset=dataset, shuffle=True)

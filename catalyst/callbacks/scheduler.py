@@ -68,7 +68,7 @@ class SchedulerCallback(ISchedulerCallback):
             logdir="./logdir",
             num_epochs=5,
             verbose=False,
-            main_metric="accuracy03",
+            valid_metric="accuracy03",
             minimize_metric=False,
             callbacks=[
                 AccuracyCallback(

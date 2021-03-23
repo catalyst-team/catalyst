@@ -20,7 +20,7 @@ jobs:
       matrix:
         os: [ubuntu-18.04]
         python-version: [3.6]
-    timeout-minutes: 60
+    timeout-minutes: 120
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
