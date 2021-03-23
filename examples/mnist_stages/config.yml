@@ -98,6 +98,9 @@ stages:
       optimizer:
         _target_: OptimizerCallback
         metric_key: *model_loss
+        grad_clip_fn: clip_grad_value_
+        grad_clip_params:
+          clip_value: 1.0
       scheduler:
         _target_: SchedulerCallback
         loader_key: *valid_loader
