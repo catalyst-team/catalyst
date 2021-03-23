@@ -6,29 +6,54 @@ from catalyst.metrics import ICallbackBatchMetric
 from catalyst.metrics._additive import AdditiveValueMetric
 
 
-class BatchFunctionalMetric(ICallbackBatchMetric):
+class FunctionalBatchMetric(ICallbackBatchMetric):
     """
     Class for custom metric in functional way.
     Note: the loader metrics calculated as average over all batch metrics
 
     Args:
         metric_fn: metric function, that get outputs, targets and return score as torch.Tensor
-        metric_name: metric name
+        metric_key: metric name
+        compute_on_call: Computes and returns metric value during metric call.
+            Used for per-batch logging. default: True
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
-    def __init__(self, metric_fn: Callable, metric_name: str):
+    def __init__(
+        self,
+        metric_fn: Callable,
+        metric_key: str,
+        compute_on_call: bool = True,
+        prefix: str = None,
+        suffix: str = None,
+    ):
         """Init"""
-        super().__init__(compute_on_call=True, prefix=metric_name)
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_fn = metric_fn
-        self.cumulative_metric = AdditiveValueMetric()
+        self.metric_name = f"{self.prefix}{metric_key}{self.suffix}"
+        self.additive_metric = AdditiveValueMetric()
 
     def reset(self):
         """Reset all statistics"""
-        self.cumulative_metric.reset()
+        self.additive_metric.reset()
 
-    def update_key_value(
-        self, outputs: torch.Tensor, targets: torch.Tensor
-    ) -> Dict[str, torch.Tensor]:
+    def update(self, batch_size: int, *args, **kwargs) -> torch.Tensor:
+        """
+        Calculate metric and update average metric
+
+        Args:
+            outputs: tensor of model output
+            targets: tensor of targets
+
+        Returns:
+            custom metric
+        """
+        value = self.metric_fn(*args, **kwargs)
+        self.additive_metric.update(float(value), batch_size)
+        return value
+
+    def update_key_value(self, batch_size: int, *args, **kwargs) -> Dict[str, torch.Tensor]:
         """
         Calculate metric and update average metric
 
@@ -39,23 +64,8 @@ class BatchFunctionalMetric(ICallbackBatchMetric):
         Returns:
             Dict with one element-custom metric
         """
-        value = self.update(outputs, targets)
-        return {f"{self.prefix}": value}
-
-    def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
-        """
-        Calculate metric and update average metric
-
-        Args:
-            outputs: tensor of logits
-            targets: tensor of targets
-
-        Returns:
-            custom metric
-        """
-        value = self.metric_fn(outputs, targets)
-        self.cumulative_metric.update(value, len(outputs))
-        return value
+        value = self.update(batch_size, *args, **kwargs)
+        return {f"{self.metric_name}": value}
 
     def compute(self) -> torch.Tensor:
         """
@@ -64,7 +74,7 @@ class BatchFunctionalMetric(ICallbackBatchMetric):
         Returns:
             custom metric
         """
-        return self.cumulative_metric.compute()[0]
+        return self.additive_metric.compute()
 
     def compute_key_value(self) -> Dict[str, torch.Tensor]:
         """
@@ -73,7 +83,12 @@ class BatchFunctionalMetric(ICallbackBatchMetric):
         Returns:
             Dict with one element-custom metric
         """
-        return {f"{self.prefix}/mean": self.compute()}
+        mean, std = self.compute()
+        return {
+            self.metric_name: mean,
+            f"{self.metric_name}/mean": mean,
+            f"{self.metric_name}/std": std,
+        }
 
 
-__all__ = ["BatchFunctionalMetric"]
+__all__ = ["FunctionalBatchMetric"]
