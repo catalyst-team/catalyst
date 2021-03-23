@@ -223,6 +223,22 @@ class BatchMetricCallback(MetricCallback):
 
 
 class FunctionalBatchMetricCallback(BatchMetricCallback):
+    """FunctionalBatchMetricCallback implements batch-based metrics update
+    and computation over loader for ``FunctionalBatchMetric`` metrics.
+
+    Args:
+        metric: metric to calculate in callback
+        input_key: keys of tensors that should be used as inputs in metric calculation
+        target_key: keys of tensors that should be used as targets in metric calculation
+        log_on_batch: boolean flag to log computed metrics every batch
+
+    .. note::
+
+        The main difference from BatchMetricCallback:
+        FunctionalBatchMetricCallback also propagates current ``batch_size``
+        to the FunctionalBatchMetric for correct metric computation.
+    """
+
     def __init__(
         self,
         metric: FunctionalBatchMetric,
@@ -230,6 +246,7 @@ class FunctionalBatchMetricCallback(BatchMetricCallback):
         target_key: Union[str, Iterable[str], Dict[str, str]],
         log_on_batch: bool = True,
     ) -> None:
+        """Init."""
         assert isinstance(metric, FunctionalBatchMetric)
         super().__init__(
             metric=metric, input_key=input_key, target_key=target_key, log_on_batch=log_on_batch

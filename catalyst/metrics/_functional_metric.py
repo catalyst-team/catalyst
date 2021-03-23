@@ -7,9 +7,7 @@ from catalyst.metrics._additive import AdditiveValueMetric
 
 
 class FunctionalBatchMetric(ICallbackBatchMetric):
-    """
-    Class for custom metric in functional way.
-    Note: the loader metrics calculated as average over all batch metrics
+    """Class for custom metrics in a functional way.
 
     Args:
         metric_fn: metric function, that get outputs, targets and return score as torch.Tensor
@@ -18,6 +16,11 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
             Used for per-batch logging. default: True
         prefix: metric prefix
         suffix: metric suffix
+
+    .. note::
+
+        Loader metrics calculated as average over all batch metrics.
+
     """
 
     def __init__(
