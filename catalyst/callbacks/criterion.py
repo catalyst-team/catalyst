@@ -31,7 +31,6 @@ class CriterionCallback(FunctionalMetricCallback, ICriterionCallback):
         suffix: str = None,
     ):
         """Init."""
-
         super().__init__(
             input_key=input_key,
             target_key=target_key,
