@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - Generalized Mean Pooling(GeM) ([#1084](https://github.com/catalyst-team/catalyst/issues/1084))
 - Key-value support for CriterionCallback ([#1130](https://github.com/catalyst-team/catalyst/issues/1130))
+- Engine configuration through cmd ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
+- Extra utils for thresholds ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
 
 ### Changed
 
@@ -28,6 +30,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 
 ### Fixed
+
+- Data-Model device sync and ``Engine`` logic during `runner.predict_loader` ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
 
 ## [21.03] - 2021-03-13
 
