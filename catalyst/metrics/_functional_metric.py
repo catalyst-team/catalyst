@@ -46,8 +46,9 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
         Calculate metric and update average metric
 
         Args:
-            outputs: tensor of model output
-            targets: tensor of targets
+            batch_size: current batch size for metric statistics aggregation
+            *args: args for metric_fn
+            **kwargs: kwargs for metric_fn
 
         Returns:
             custom metric
@@ -61,8 +62,9 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
         Calculate metric and update average metric
 
         Args:
-            outputs: tensor of logits
-            targets: tensor of targets
+            batch_size: current batch size for metric statistics aggregation
+            *args: args for metric_fn
+            **kwargs: kwargs for metric_fn
 
         Returns:
             Dict with one element-custom metric

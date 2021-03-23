@@ -9,12 +9,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- Generalized Mean Pooling(GeM)([#1084](https://github.com/catalyst-team/catalyst/issues/1084))
+- Generalized Mean Pooling(GeM) ([#1084](https://github.com/catalyst-team/catalyst/issues/1084))
+- Key-value support for CriterionCallback ([#1130](https://github.com/catalyst-team/catalyst/issues/1130))
+
+### Changed
+
+- CriterionCallback now inherits from BatchMetricCallback [#1130](https://github.com/catalyst-team/catalyst/issues/1130))
+    - united metrics computation logic
+
+### Removed
 
 ### Fixed
 
-- Fix bug in `OptimizerCallback` when mixed-precision params set both:
-  in callback arguments and in distributed_params  ([#1042](https://github.com/catalyst-team/catalyst/pull/1042))
+## [21.03] - 2021-03-13
+
+### Added
+
+- 
+
+### Changed
+
+- 
+
+### Removed
+
+- 
+
+### Fixed
+
+- 
 
 ## [20.12.1] - XXXX-XX-XX
 
@@ -22,6 +45,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Inference mode for face layers ([#1045](https://github.com/catalyst-team/catalyst/pull/1045))
+
+### Fixed
+
+- Fix bug in `OptimizerCallback` when mixed-precision params set both:
+  in callback arguments and in distributed_params  ([#1042](https://github.com/catalyst-team/catalyst/pull/1042))
 
 
 ## [20.12] - 2020-12-20
