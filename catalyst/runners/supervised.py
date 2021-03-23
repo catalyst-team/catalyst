@@ -102,6 +102,11 @@ class ISupervisedRunner(IRunner):
         output = self._process_output(output)
         return output
 
+    def on_batch_start(self, runner: "IRunner"):
+        """Event handler."""
+        self.batch = self._process_batch(self.batch)
+        super().on_batch_start(runner)
+
     def handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
         Inner method to handle specified data batch.
@@ -110,7 +115,6 @@ class ISupervisedRunner(IRunner):
         Args:
             batch: dictionary with data batches from DataLoader.
         """
-        batch = self._process_batch(batch)
         self.batch = {**batch, **self.forward(batch)}
 
 

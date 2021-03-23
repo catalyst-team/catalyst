@@ -427,8 +427,8 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         Returns:
             Mapping[str, Any]: model output dictionary
         """
-        batch = self.engine.sync_device(tensor_or_module=batch)
         batch = self._process_batch(batch)
+        batch = self.engine.sync_device(tensor_or_module=batch)
         output = self.forward(batch, **kwargs)
         return output
 
