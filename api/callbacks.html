@@ -815,18 +815,17 @@ for <strong>notebook API</strong> need to wrap callback:</p>
 <h3><a class="toc-backref" href="#id6">CriterionCallback</a><a class="headerlink" href="#criterioncallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.criterion.CriterionCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.criterion.</code><code class="sig-name descname">CriterionCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">metric_key: str</em>, <em class="sig-param">criterion_key: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/criterion.html#CriterionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.criterion.CriterionCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.criterion.ICriterionCallback</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.criterion.</code><code class="sig-name descname">CriterionCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">metric_key: str</em>, <em class="sig-param">criterion_key: str = None</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/criterion.html#CriterionCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.criterion.CriterionCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback" title="catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.criterion.ICriterionCallback</span></code></p>
 <p>Criterion callback, abstraction over criterion step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> – </p></li>
-<li><p><strong>target_key</strong> – </p></li>
-<li><p><strong>metric_key</strong> – prefix for metrics and output key for loss
-in <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code> dictionary</p></li>
+<li><p><strong>input_key</strong> – input key to use for metric calculation, specifies our <cite>y_pred</cite></p></li>
+<li><p><strong>target_key</strong> – output key to use for metric calculation, specifies our <cite>y_true</cite></p></li>
+<li><p><strong>metric_key</strong> – key to store computed metric in <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code> dictionary</p></li>
 <li><p><strong>criterion_key</strong> – A key to take a criterion in case
-there are several of them and they are in a dictionary format.</p></li>
+there are several of them, and they are in a dictionary format.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1574,20 +1573,21 @@ Loaders should contain “is_query” and “label” key.</p>
 <div class="section" id="functionalmetriccallback">
 <h3><a class="toc-backref" href="#id28">FunctionalMetricCallback</a><a class="headerlink" href="#functionalmetriccallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="catalyst.callbacks.metrics.functional.FunctionalMetricCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.functional.</code><code class="sig-name descname">FunctionalMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">metric_function: Callable</em>, <em class="sig-param">metric_name: str</em>, <em class="sig-param">log_on_batch: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/functional.html#FunctionalMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.functional.FunctionalMetricCallback" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metric.BatchMetricCallback" title="catalyst.callbacks.metric.BatchMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metric.BatchMetricCallback</span></code></a></p>
-<p>Custom metric in functional way.
-Note: the loader metrics calculated as average over all examples.</p>
+<dt id="catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.functional_metric.</code><code class="sig-name descname">FunctionalMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: Union[str, Iterable[str], Dict[str, str]], target_key: Union[str, Iterable[str], Dict[str, str]], metric_fn: Callable, metric_key: str, compute_on_call: bool = True, log_on_batch: bool = True, prefix: str = None, suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/functional_metric.html#FunctionalMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metric.FunctionalBatchMetricCallback</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_key</strong> – input key, specifies our <cite>predictions</cite></p></li>
-<li><p><strong>target_key</strong> – output key, specifies our <cite>y_pred</cite></p></li>
-<li><p><strong>metric_function</strong> – metric function, that get outputs, targets and return score as</p></li>
-<li><p><strong>torch.Tensor</strong> – </p></li>
-<li><p><strong>metric_name</strong> – key for the metric’s name</p></li>
+<li><p><strong>input_key</strong> – input key to use for metric calculation, specifies our <cite>y_pred</cite></p></li>
+<li><p><strong>target_key</strong> – output key to use for metric calculation, specifies our <cite>y_true</cite></p></li>
+<li><p><strong>metric_fn</strong> – metric function, that get outputs, targets and return score as torch.Tensor</p></li>
+<li><p><strong>metric_key</strong> – key to store computed metric in <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code> dictionary</p></li>
+<li><p><strong>compute_on_call</strong> – Computes and returns metric value during metric call.
+Used for per-batch logging. default: True</p></li>
 <li><p><strong>log_on_batch</strong> – boolean flag to log computed metrics every batch</p></li>
+<li><p><strong>prefix</strong> – metric prefix</p></li>
+<li><p><strong>suffix</strong> – metric suffix</p></li>
 </ul>
 </dd>
 </dl>

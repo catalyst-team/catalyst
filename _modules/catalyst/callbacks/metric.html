@@ -313,7 +313,8 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
-<span class="kn">from</span> <span class="nn">catalyst.metrics</span> <span class="kn">import</span> <span class="n">ICallbackBatchMetric</span><span class="p">,</span> <span class="n">ICallbackLoaderMetric</span><span class="p">,</span> <span class="n">IMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics._functional_metric</span> <span class="kn">import</span> <span class="n">FunctionalBatchMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics._metric</span> <span class="kn">import</span> <span class="n">ICallbackBatchMetric</span><span class="p">,</span> <span class="n">ICallbackLoaderMetric</span><span class="p">,</span> <span class="n">IMetric</span>
 
 
 <span class="k">class</span> <span class="nc">IMetricCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
@@ -529,6 +530,63 @@
         <span class="n">runner</span><span class="o">.</span><span class="n">loader_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span></div>
 
 
+<span class="k">class</span> <span class="nc">FunctionalBatchMetricCallback</span><span class="p">(</span><span class="n">BatchMetricCallback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;FunctionalBatchMetricCallback implements batch-based metrics update</span>
+<span class="sd">    and computation over loader for ``FunctionalBatchMetric`` metrics.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metric: metric to calculate in callback</span>
+<span class="sd">        input_key: keys of tensors that should be used as inputs in metric calculation</span>
+<span class="sd">        target_key: keys of tensors that should be used as targets in metric calculation</span>
+<span class="sd">        log_on_batch: boolean flag to log computed metrics every batch</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        The main difference from BatchMetricCallback:</span>
+<span class="sd">        FunctionalBatchMetricCallback also propagates current ``batch_size``</span>
+<span class="sd">        to the FunctionalBatchMetric for correct metric computation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metric</span><span class="p">:</span> <span class="n">FunctionalBatchMetric</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">target_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">log_on_batch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric</span><span class="p">,</span> <span class="n">FunctionalBatchMetric</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">metric</span><span class="o">=</span><span class="n">metric</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span> <span class="n">log_on_batch</span><span class="o">=</span><span class="n">log_on_batch</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_value_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get data from batch in value input case</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            tuple of tensor of inputs and tensor of targets</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">],</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_get_key_value_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Get data from batch in key-value input case</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dict of inputs and targets tensors</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">kv_inputs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">:</span>
+            <span class="n">kv_inputs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_keys</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">kv_inputs</span><span class="p">[</span><span class="s2">&quot;batch_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="k">return</span> <span class="n">kv_inputs</span>
+
+
 <div class="viewcode-block" id="LoaderMetricCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.metric.LoaderMetricCallback">[docs]</a><span class="k">class</span> <span class="nc">LoaderMetricCallback</span><span class="p">(</span><span class="n">MetricCallback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;LoaderMetricCallback implements loader-based metrics update and computation over loader</span>
 
@@ -579,6 +637,7 @@
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;IMetricCallback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;BatchMetricCallback&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FunctionalBatchMetricCallback&quot;</span><span class="p">,</span>
     <span class="s2">&quot;LoaderMetricCallback&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>

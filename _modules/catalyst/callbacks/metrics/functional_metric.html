@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.metrics.functional &mdash; Catalyst 21.03 documentation</title>
+  <title>catalyst.callbacks.metrics.functional_metric &mdash; Catalyst 21.03 documentation</title>
   
 
   
@@ -279,7 +279,7 @@
         
           <li><a href="../../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.callbacks.metrics.functional</li>
+      <li>catalyst.callbacks.metrics.functional_metric</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -305,37 +305,48 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.callbacks.metrics.functional</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+  <h1>Source code for catalyst.callbacks.metrics.functional_metric</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.callbacks.metric</span> <span class="kn">import</span> <span class="n">BatchMetricCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.metrics._functional_metric</span> <span class="kn">import</span> <span class="n">BatchFunctionalMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.metric</span> <span class="kn">import</span> <span class="n">FunctionalBatchMetricCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics._functional_metric</span> <span class="kn">import</span> <span class="n">FunctionalBatchMetric</span>
 
 
-<div class="viewcode-block" id="FunctionalMetricCallback"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.callbacks.metrics.functional.FunctionalMetricCallback">[docs]</a><span class="k">class</span> <span class="nc">FunctionalMetricCallback</span><span class="p">(</span><span class="n">BatchMetricCallback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Custom metric in functional way.</span>
-<span class="sd">    Note: the loader metrics calculated as average over all examples.</span>
+<div class="viewcode-block" id="FunctionalMetricCallback"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback">[docs]</a><span class="k">class</span> <span class="nc">FunctionalMetricCallback</span><span class="p">(</span><span class="n">FunctionalBatchMetricCallback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        input_key: input key, specifies our `predictions`</span>
-<span class="sd">        target_key: output key, specifies our `y_pred`</span>
-<span class="sd">        metric_function: metric function, that get outputs, targets and return score as</span>
-<span class="sd">        torch.Tensor</span>
-<span class="sd">        metric_name: key for the metric&#39;s name</span>
+<span class="sd">        input_key: input key to use for metric calculation, specifies our `y_pred`</span>
+<span class="sd">        target_key: output key to use for metric calculation, specifies our `y_true`</span>
+<span class="sd">        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor</span>
+<span class="sd">        metric_key: key to store computed metric in ``runner.batch_metrics`` dictionary</span>
+<span class="sd">        compute_on_call: Computes and returns metric value during metric call.</span>
+<span class="sd">            Used for per-batch logging. default: True</span>
 <span class="sd">        log_on_batch: boolean flag to log computed metrics every batch</span>
+<span class="sd">        prefix: metric prefix</span>
+<span class="sd">        suffix: metric suffix</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-        <span class="n">metric_function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
-        <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">target_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">metric_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+        <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">log_on_batch</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">metric</span><span class="o">=</span><span class="n">BatchFunctionalMetric</span><span class="p">(</span><span class="n">metric_fn</span><span class="o">=</span><span class="n">metric_function</span><span class="p">,</span> <span class="n">metric_name</span><span class="o">=</span><span class="n">metric_name</span><span class="p">),</span>
+            <span class="n">metric</span><span class="o">=</span><span class="n">FunctionalBatchMetric</span><span class="p">(</span>
+                <span class="n">metric_fn</span><span class="o">=</span><span class="n">metric_fn</span><span class="p">,</span>
+                <span class="n">metric_key</span><span class="o">=</span><span class="n">metric_key</span><span class="p">,</span>
+                <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+            <span class="p">),</span>
             <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
             <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
             <span class="n">log_on_batch</span><span class="o">=</span><span class="n">log_on_batch</span><span class="p">,</span>

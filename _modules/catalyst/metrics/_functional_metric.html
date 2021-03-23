@@ -314,56 +314,71 @@
 <span class="kn">from</span> <span class="nn">catalyst.metrics._additive</span> <span class="kn">import</span> <span class="n">AdditiveValueMetric</span>
 
 
-<div class="viewcode-block" id="BatchFunctionalMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._functional_metric.BatchFunctionalMetric">[docs]</a><span class="k">class</span> <span class="nc">BatchFunctionalMetric</span><span class="p">(</span><span class="n">ICallbackBatchMetric</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Class for custom metric in functional way.</span>
-<span class="sd">    Note: the loader metrics calculated as average over all batch metrics</span>
+<div class="viewcode-block" id="FunctionalBatchMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._functional_metric.FunctionalBatchMetric">[docs]</a><span class="k">class</span> <span class="nc">FunctionalBatchMetric</span><span class="p">(</span><span class="n">ICallbackBatchMetric</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for custom metrics in a functional way.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor</span>
-<span class="sd">        metric_name: metric name</span>
+<span class="sd">        metric_key: metric name</span>
+<span class="sd">        compute_on_call: Computes and returns metric value during metric call.</span>
+<span class="sd">            Used for per-batch logging. default: True</span>
+<span class="sd">        prefix: metric prefix</span>
+<span class="sd">        suffix: metric suffix</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        Loader metrics calculated as average over all batch metrics.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metric_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">metric_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metric_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+        <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">metric_name</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">metric_fn</span> <span class="o">=</span> <span class="n">metric_fn</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_metric</span> <span class="o">=</span> <span class="n">AdditiveValueMetric</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="n">metric_key</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additive_metric</span> <span class="o">=</span> <span class="n">AdditiveValueMetric</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reset all statistics&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additive_metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculate metric and update average metric</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            outputs: tensor of logits</span>
-<span class="sd">            targets: tensor of targets</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Dict with one element-custom metric</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
-
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Calculate metric and update average metric</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            outputs: tensor of logits</span>
-<span class="sd">            targets: tensor of targets</span>
+<span class="sd">            batch_size: current batch size for metric statistics aggregation</span>
+<span class="sd">            *args: args for metric_fn</span>
+<span class="sd">            **kwargs: kwargs for metric_fn</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            custom metric</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_fn</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">))</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">additive_metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">batch_size</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate metric and update average metric</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch_size: current batch size for metric statistics aggregation</span>
+<span class="sd">            *args: args for metric_fn</span>
+<span class="sd">            **kwargs: kwargs for metric_fn</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict with one element-custom metric</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span><span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -372,7 +387,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            custom metric</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumulative_metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">additive_metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -381,10 +396,15 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            Dict with one element-custom metric</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">/mean&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()}</span></div>
+        <span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="p">:</span> <span class="n">mean</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">/mean&quot;</span><span class="p">:</span> <span class="n">mean</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">/std&quot;</span><span class="p">:</span> <span class="n">std</span><span class="p">,</span>
+        <span class="p">}</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BatchFunctionalMetric&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FunctionalBatchMetric&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

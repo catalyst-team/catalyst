@@ -329,7 +329,7 @@
 <ul>
 <li><p><a class="reference internal" href="#additivevaluemetric" id="id7">AdditiveValueMetric</a></p></li>
 <li><p><a class="reference internal" href="#confusionmatrixmetric" id="id8">ConfusionMatrixMetric</a></p></li>
-<li><p><a class="reference internal" href="#batchfunctionalmetric" id="id9">BatchFunctionalMetric</a></p></li>
+<li><p><a class="reference internal" href="#functionalbatchmetric" id="id9">FunctionalBatchMetric</a></p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#runner-metrics" id="id10">Runner Metrics</a></p>
@@ -539,22 +539,29 @@ default: True</p></li>
 </dd></dl>
 
 </div>
-<div class="section" id="batchfunctionalmetric">
-<h3><a class="toc-backref" href="#id9">BatchFunctionalMetric</a><a class="headerlink" href="#batchfunctionalmetric" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="functionalbatchmetric">
+<h3><a class="toc-backref" href="#id9">FunctionalBatchMetric</a><a class="headerlink" href="#functionalbatchmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="catalyst.metrics._functional_metric.BatchFunctionalMetric">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._functional_metric.</code><code class="sig-name descname">BatchFunctionalMetric</code><span class="sig-paren">(</span><em class="sig-param">metric_fn: Callable</em>, <em class="sig-param">metric_name: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_functional_metric.html#BatchFunctionalMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._functional_metric.BatchFunctionalMetric" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.metrics._functional_metric.FunctionalBatchMetric">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._functional_metric.</code><code class="sig-name descname">FunctionalBatchMetric</code><span class="sig-paren">(</span><em class="sig-param">metric_fn: Callable</em>, <em class="sig-param">metric_key: str</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_functional_metric.html#FunctionalBatchMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._functional_metric.FunctionalBatchMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._metric.ICallbackBatchMetric" title="catalyst.metrics._metric.ICallbackBatchMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._metric.ICallbackBatchMetric</span></code></a></p>
-<p>Class for custom metric in functional way.
-Note: the loader metrics calculated as average over all batch metrics</p>
+<p>Class for custom metrics in a functional way.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>metric_fn</strong> – metric function, that get outputs, targets and return score as torch.Tensor</p></li>
-<li><p><strong>metric_name</strong> – metric name</p></li>
+<li><p><strong>metric_key</strong> – metric name</p></li>
+<li><p><strong>compute_on_call</strong> – Computes and returns metric value during metric call.
+Used for per-batch logging. default: True</p></li>
+<li><p><strong>prefix</strong> – metric prefix</p></li>
+<li><p><strong>suffix</strong> – metric suffix</p></li>
 </ul>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Loader metrics calculated as average over all batch metrics.</p>
+</div>
 </dd></dl>
 
 </div>
@@ -2528,7 +2535,7 @@ with shape [bs; …, 1]</p></li>
 <li><a class="reference internal" href="#general-metrics">General Metrics</a><ul>
 <li><a class="reference internal" href="#additivevaluemetric">AdditiveValueMetric</a></li>
 <li><a class="reference internal" href="#confusionmatrixmetric">ConfusionMatrixMetric</a></li>
-<li><a class="reference internal" href="#batchfunctionalmetric">BatchFunctionalMetric</a></li>
+<li><a class="reference internal" href="#functionalbatchmetric">FunctionalBatchMetric</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#runner-metrics">Runner Metrics</a><ul>

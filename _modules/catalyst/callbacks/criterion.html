@@ -306,11 +306,9 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.callbacks.criterion</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">torch</span>
-
-<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
+<span></span><span class="kn">from</span> <span class="nn">catalyst.callbacks.metrics.functional_metric</span> <span class="kn">import</span> <span class="n">FunctionalMetricCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
-<span class="kn">from</span> <span class="nn">catalyst.metrics._additive</span> <span class="kn">import</span> <span class="n">AdditiveValueMetric</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_attr</span>
 
 
@@ -320,30 +318,42 @@
     <span class="k">pass</span>
 
 
-<span class="c1"># @TODO: add KV support</span>
-<div class="viewcode-block" id="CriterionCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.criterion.CriterionCallback">[docs]</a><span class="k">class</span> <span class="nc">CriterionCallback</span><span class="p">(</span><span class="n">ICriterionCallback</span><span class="p">):</span>
+<div class="viewcode-block" id="CriterionCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.criterion.CriterionCallback">[docs]</a><span class="k">class</span> <span class="nc">CriterionCallback</span><span class="p">(</span><span class="n">FunctionalMetricCallback</span><span class="p">,</span> <span class="n">ICriterionCallback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Criterion callback, abstraction over criterion step.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        input_key:</span>
-<span class="sd">        target_key:</span>
-<span class="sd">        metric_key: prefix for metrics and output key for loss</span>
-<span class="sd">            in ``runner.batch_metrics`` dictionary</span>
+<span class="sd">        input_key: input key to use for metric calculation, specifies our `y_pred`</span>
+<span class="sd">        target_key: output key to use for metric calculation, specifies our `y_true`</span>
+<span class="sd">        metric_key: key to store computed metric in ``runner.batch_metrics`` dictionary</span>
 <span class="sd">        criterion_key: A key to take a criterion in case</span>
-<span class="sd">            there are several of them and they are in a dictionary format.</span>
+<span class="sd">            there are several of them, and they are in a dictionary format.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">criterion_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">criterion_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">metric</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">target_key</span> <span class="o">=</span> <span class="n">target_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span> <span class="o">=</span> <span class="n">metric_key</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
+            <span class="n">metric_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_metric_fn</span><span class="p">,</span>
+            <span class="n">metric_key</span><span class="o">=</span><span class="n">metric_key</span><span class="p">,</span>
+            <span class="n">compute_on_call</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">log_on_batch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">criterion_key</span> <span class="o">=</span> <span class="n">criterion_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">additive_metric</span> <span class="o">=</span> <span class="n">AdditiveValueMetric</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_metric_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Checks that the current stage has correct criterion.</span>
@@ -352,33 +362,7 @@
 <span class="sd">            runner: current runner</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="o">=</span> <span class="n">get_attr</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="n">inner_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">criterion_key</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-
-    <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">additive_metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
-        <span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">],</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">target_key</span><span class="p">]</span>
-
-        <span class="c1"># NOTE: similar to amp guides in docs</span>
-        <span class="c1"># https://pytorch.org/docs/stable/notes/amp_examples.html</span>
-        <span class="c1"># with runner.engine.autocast():</span>
-        <span class="n">loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
-
-        <span class="n">runner</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span><span class="p">:</span> <span class="n">loss</span><span class="p">})</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">additive_metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">(),</span> <span class="nb">len</span><span class="p">(</span><span class="n">targets</span><span class="p">))</span>
-
-    <span class="k">def</span> <span class="nf">on_loader_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
-        <span class="n">mean</span><span class="p">,</span> <span class="n">std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">additive_metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
-        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span><span class="p">:</span> <span class="n">mean</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span><span class="si">}</span><span class="s2">/std&quot;</span><span class="p">:</span> <span class="n">std</span><span class="p">}</span>
-        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">k</span><span class="p">:</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">sync_tensor</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">device</span><span class="p">),</span> <span class="s2">&quot;mean&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-        <span class="p">}</span>
-        <span class="n">runner</span><span class="o">.</span><span class="n">loader_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span></div>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">criterion</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ICriterionCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;CriterionCallback&quot;</span><span class="p">]</span>
