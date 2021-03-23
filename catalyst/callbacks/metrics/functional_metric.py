@@ -45,4 +45,4 @@ class FunctionalMetricCallback(FunctionalBatchMetricCallback):
         )
 
 
-__all__ = ["FunctionalBatchMetricCallback"]
+__all__ = ["FunctionalMetricCallback"]

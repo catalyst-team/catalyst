@@ -15,7 +15,7 @@ from catalyst.callbacks.metrics.cmc_score import CMCScoreCallback
 if SETTINGS.ml_required:
     from catalyst.callbacks.metrics.confusion_matrix import ConfusionMatrixCallback
 
-from catalyst.callbacks.metrics.functional_metric import FunctionalBatchMetricCallback
+from catalyst.callbacks.metrics.functional_metric import FunctionalMetricCallback
 
 from catalyst.callbacks.metrics.recsys import (
     HitrateCallback,
