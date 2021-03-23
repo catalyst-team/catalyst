@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generator
+from typing import Any, Dict
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 
@@ -6,7 +6,7 @@ from catalyst.typing import Criterion, Model, Optimizer, Scheduler
 
 
 @contextmanager
-def nullcontext(enter_result: Any = None) -> Generator[Any]:
+def nullcontext(enter_result: Any = None):
     """Context handler."""
     yield enter_result
 

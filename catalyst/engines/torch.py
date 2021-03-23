@@ -71,7 +71,7 @@ class DeviceEngine(IEngine):
 
     @property
     def world_size(self) -> int:
-        """Process world size  for distributed training."""
+        """Process world size for distributed training."""
         return 1
 
     def sync_device(
@@ -293,7 +293,14 @@ class DistributedDataParallelEngine(DeviceEngine):
         return self._rank > 0
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
-        """Initialize DDP variables and processes."""
+        """Initialize DDP variables and processes.
+        
+        Args:
+            rank: process rank. Default is `-1`.
+            world_size: number of devices in netwok to expect for train.
+                Default is `1`.
+
+        """
         self._rank = rank
         self._world_size = world_size
         os.environ["MASTER_ADDR"] = str(self.address)
@@ -367,7 +374,7 @@ class DistributedDataParallelEngine(DeviceEngine):
     def optimizer_step(self, loss, model, optimizer) -> None:
         """Abstraction over ``optimizer.step()`` step."""
         optimizer.step()
-        dist.barrier()
+        # dist.barrier()
 
 
 __all__ = ["DeviceEngine", "DataParallelEngine", "DistributedDataParallelEngine"]
