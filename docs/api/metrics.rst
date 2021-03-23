@@ -63,9 +63,9 @@ ConfusionMatrixMetric
     :undoc-members:
     :show-inheritance:
 
-BatchFunctionalMetric
+FunctionalBatchMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._functional_metric.BatchFunctionalMetric
+.. autoclass:: catalyst.metrics._functional_metric.FunctionalBatchMetric
     :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
