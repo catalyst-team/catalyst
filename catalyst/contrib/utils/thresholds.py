@@ -40,10 +40,7 @@ def get_baseline_thresholds(
 
 
 def get_binary_threshold(
-    scores: np.ndarray,
-    labels: np.ndarray,
-    objective: METRIC_FN,
-    num_thresholds: int = 100,
+    scores: np.ndarray, labels: np.ndarray, objective: METRIC_FN, num_thresholds: int = 100,
 ) -> Tuple[float, float]:
     """Finds best threshold for binary classification task based on cross-validation estimates.
 
