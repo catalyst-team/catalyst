@@ -41,7 +41,7 @@ class OptimizerCallback(IOptimizerCallback):
         optimizer_key: a key to select a optimizer from ``runner.optimizer`` in case
             there are several of them and they are in a dictionary format.
         accumulation_steps: number of steps before ``model.zero_grad()``
-        grad_clip_fn: callable gradient cliping function or name or name
+        grad_clip_fn: callable gradient cliping function or it's name or
         grad_clip_params: key-value parameters for grad_clip_fn
     """
 
