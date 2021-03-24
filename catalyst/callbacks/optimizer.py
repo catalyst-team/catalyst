@@ -1,12 +1,12 @@
-from typing import Dict, TYPE_CHECKING, Callable, Union
-import logging
+from typing import Callable, Dict, TYPE_CHECKING, Union
 from functools import partial
+import logging
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.registry import REGISTRY
 from catalyst.typing import Optimizer
 from catalyst.utils import get_optimizer_momentum_list
 from catalyst.utils.misc import get_attr
-from catalyst.registry import REGISTRY
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -86,7 +86,6 @@ class OptimizerCallback(IOptimizerCallback):
 
         if grad_clip_params is not None:
             self.grad_clip_fn = partial(self.grad_clip_fn, **grad_clip_params)
-
 
     def _get_lr_momentum_stats(self) -> Dict:
         lr_list = [param_group["lr"] for param_group in self.optimizer.param_groups]
