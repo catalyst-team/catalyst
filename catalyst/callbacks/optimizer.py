@@ -1,5 +1,6 @@
-from typing import Dict, TYPE_CHECKING
+from typing import Dict, TYPE_CHECKING, Callable, Union
 import logging
+from functools import partial
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.typing import Optimizer
@@ -40,6 +41,8 @@ class OptimizerCallback(IOptimizerCallback):
         optimizer_key: a key to select a optimizer from ``runner.optimizer`` in case
             there are several of them and they are in a dictionary format.
         accumulation_steps: number of steps before ``model.zero_grad()``
+        grad_clip_fn: callable gradient cliping function or name or name
+        grad_clip_params: key-value parameters for grad_clip_fn
     """
 
     def __init__(
@@ -48,7 +51,8 @@ class OptimizerCallback(IOptimizerCallback):
         model_key: str = None,
         optimizer_key: str = None,
         accumulation_steps: int = 1,
-        grad_clip_params: dict = None,
+        grad_clip_fn: Union[str, Callable] = None,
+        grad_clip_params: Dict = None,
     ):
         """Init."""
         super().__init__(order=CallbackOrder.optimizer, node=CallbackNode.all)
@@ -58,8 +62,12 @@ class OptimizerCallback(IOptimizerCallback):
         self.model = None
         self.optimizer = None
         self.criterion = None
-        self.grad_clip_fn = None
-        self.grad_clip_params = None
+
+        if isinstance(grad_clip_fn, str):
+            self.grad_clip_fn = REGISTRY.get(grad_clip_fn)
+        else:
+            self.grad_clip_fn = grad_clip_fn
+
         self.accumulation_steps: int = accumulation_steps
         self._accumulation_counter: int = 0
 
@@ -77,8 +85,7 @@ class OptimizerCallback(IOptimizerCallback):
             self._prefix_momentum = "momentum"
 
         if grad_clip_params is not None:
-            self.grad_clip_fn = REGISTRY.get(grad_clip_params.pop("fn_name"))
-            self.grad_clip_params = grad_clip_params
+            self.grad_clip_fn = partial(self.grad_clip_fn, **grad_clip_params)
 
 
     def _get_lr_momentum_stats(self) -> Dict:
@@ -104,7 +111,7 @@ class OptimizerCallback(IOptimizerCallback):
             runner.engine.backward_loss(loss, self.model, self.optimizer)
 
             if self.grad_clip_fn is not None:
-                self.grad_clip_fn(self.model.parameters(), **self.grad_clip_params)
+                self.grad_clip_fn(self.model.parameters())
 
             if need_gradient_step:
                 runner.engine.optimizer_step(loss, self.model, self.optimizer)

@@ -81,7 +81,8 @@ class CustomRunner(dl.IRunner):
             "criterion": dl.CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
-            "optimizer": dl.OptimizerCallback(metric_key="loss"),
+            "optimizer": dl.OptimizerCallback(
+                metric_key="loss", grad_clip_fn=nn.utils.clip_grad_norm_, grad_clip_params={"max_norm": 1.0}),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "accuracy": dl.AccuracyCallback(
                 input_key="logits", target_key="targets", topk_args=(1, 3, 5)

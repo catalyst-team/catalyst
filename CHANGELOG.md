@@ -397,7 +397,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [20.04] - 2020-04-06
 
 ### Added
-
+- Added gradient clipping function to optimizer callback ([1124](https://github.com/catalyst-team/catalyst/pull/1124))
 - 
 
 ### Changed
