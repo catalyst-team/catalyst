@@ -2,7 +2,7 @@
 
 [![Catalyst logo](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png)](https://github.com/catalyst-team/catalyst)
 
-**Accelerated deep learning R&D**
+**Accelerated Deep Learning R&D**
 
 [![CodeFactor](https://www.codefactor.io/repository/github/catalyst-team/catalyst/badge)](https://www.codefactor.io/repository/github/catalyst-team/catalyst)
 [![Pipi version](https://img.shields.io/pypi/v/catalyst.svg)](https://pypi.org/project/catalyst/)
@@ -28,17 +28,17 @@
 [![os](https://img.shields.io/badge/WSL-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
 </div>
 
-PyTorch framework for Deep Learning research and development.
-It focuses on reproducibility, rapid experimentation, and codebase reuse 
-so you can create something new rather than write another regular train loop.
-<br/> Break the cycle - use the Catalyst!
+Catalyst is a PyTorch framework for Deep Learning Research and Development.
+Catalyst focuses on reproducibility, rapid experimentation, and codebase reuse 
+so you can create something new rather than write yet another train loop.
+<br/> Break the cycle, use Catalyst!
 
-Project [manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md). Part of [PyTorch Ecosystem](https://pytorch.org/ecosystem/). Part of [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing):
+Read more about our vision in the [Project Manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md).  Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/).  [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing) consists of:
 - [Alchemy](https://github.com/catalyst-team/alchemy) - experiments logging & visualization
 - [Catalyst](https://github.com/catalyst-team/catalyst) - accelerated deep learning R&D
-- [Reaction](https://github.com/catalyst-team/reaction) - convenient deep learning models serving
+- [Reaction](https://github.com/catalyst-team/reaction) - convenient deep learning model serving
 
-[Catalyst at AI Landscape](https://landscape.lfai.foundation/selected=catalyst).
+[Catalyst at AI Landscape](https://landscape.lfai.foundation/selected=catalyst)
 
 ----
 
@@ -61,11 +61,17 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "train": DataLoader(
+        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+    ),
+    "valid": DataLoader(
+        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+    ),
 }
 
-runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
+runner = dl.SupervisedRunner(
+    input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+)
 # model training
 runner.train(
     model=model,
@@ -75,10 +81,12 @@ runner.train(
     num_epochs=1,
     callbacks=[
         dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-        dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+        dl.PrecisionRecallF1SupportCallback(
+            input_key="logits", target_key="targets", num_classes=10
+        ),
         dl.AUCCallback(input_key="logits", target_key="targets"),
         # catalyst[ml] required ``pip install catalyst[ml]``
-        dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
+        # dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
     ],
     logdir="./logs",
     valid_loader="valid",
@@ -104,15 +112,15 @@ utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
 utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.onnx", verbose=True)
 ```
 
-### Step by step guide
+### Step-by-step Guide
 1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction. 
-1. Check [minimal examples](#minimal-examples).
+1. Check the [minimal examples](#minimal-examples).
 1. Try [notebook tutorials with Google Colab](#notebooks).
-1. Read [blogposts](#blogposts) with use-cases and guides.
+1. Read the [blog posts](#notable-blog-posts) with use-cases and guides.
 1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://catalyst-team.com/#course). 
 1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
 1. If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
-1. **And do not forget to [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for collaboration**.
+1. **And finally, [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) if you want to contribute or chat about the project**.
 
 
 ## Table of Contents
@@ -124,12 +132,12 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 - [Catalyst](#catalyst)
   * [Documentation](#documentation)
   * [Notebooks](#notebooks)
-  * [Blogposts](#blogposts)
+  * [Blog Posts](#notable-blog-posts)
   * [Talks](#talks)
   * [Projects](#projects)
 - [Community](#community)
-  * [Contribution guide](#contribution-guide)
-  * [User feedback](#user-feedback)
+  * [Contribution Guide](#contribution-guide)
+  * [User Feedback](#user-feedback)
   * [Acknowledgments](#acknowledgments)
   * [Trusted by](#trusted-by)
   * [Supported by](#supported-by)
@@ -137,21 +145,21 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 
 
 ## Overview
-Catalyst helps you write compact
-but full-featured Deep Learning pipelines in a few lines of code.
-You get a training loop with metrics, early-stopping, model checkpointing
+Catalyst helps you implement compact
+but full-featured Deep Learning pipelines with just a few lines of code.
+You get a training loop with metrics, early-stopping, model checkpointing,
 and other features without the boilerplate.
 
 
 ### Installation
 
-Common installation:
+Generic installation:
 ```bash
 pip install -U catalyst
 ```
 
 <details>
-<summary>Specific versions with additional requirements</summary>
+<summary>Specialized versions, extra requirements might apply</summary>
 <p>
 
 ```bash
@@ -164,12 +172,12 @@ pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 </details>
 
 Catalyst is compatible with: Python 3.6+. PyTorch 1.3+. <br/>
-Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsystem for Linux.
+Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10, and Windows Subsystem for Linux.
 
 
 ### Minimal Examples
 
-*MNIST-driven development.*
+*MNIST-based examples.*
 
 <details>
 <summary>ML - linear regression</summary>
@@ -239,7 +247,9 @@ optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
 # model training
-runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
+runner = dl.SupervisedRunner(
+    input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+)
 runner.train(
     model=model,
     criterion=criterion,
@@ -252,12 +262,17 @@ runner.train(
     valid_metric="accuracy03",
     minimize_valid_metric=False,
     verbose=True,
-# uncomment for extra metrics:
     callbacks=[
-        dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=num_classes)
-#         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=num_classes),
-#         dl.AUCCallback(input_key="logits", target_key="targets"),
-#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes), # catalyst[ml] required
+        dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=num_classes),
+        # uncomment for extra metrics:
+        # dl.PrecisionRecallF1SupportCallback(
+        #     input_key="logits", target_key="targets", num_classes=num_classes
+        # ),
+        # dl.AUCCallback(input_key="logits", target_key="targets"),
+        # catalyst[ml] required
+        # dl.ConfusionMatrixCallback(
+        #     input_key="logits", target_key="targets", num_classes=num_classes
+        # ), 
     ],
 )
 ```
@@ -291,7 +306,9 @@ optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
 # model training
-runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
+runner = dl.SupervisedRunner(
+    input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+)
 runner.train(
     model=model,
     criterion=criterion,
@@ -382,12 +399,27 @@ runner.train(
         dl.MetricAggregationCallback(prefix="loss", metrics=["loss1", "loss2"], mode="mean"),
         dl.OptimizerCallback(metric_key="loss"),
         dl.SchedulerCallback(),
-        dl.AccuracyCallback(input_key="logits1", target_key="targets1", num_classes=num_classes1, prefix="one_"),
-        dl.AccuracyCallback(input_key="logits2", target_key="targets2", num_classes=num_classes2, prefix="two_"),
-        dl.ConfusionMatrixCallback(input_key="logits1", target_key="targets1", num_classes=num_classes1, prefix="one_cm"), # catalyst[ml] required
-        dl.ConfusionMatrixCallback(input_key="logits2", target_key="targets2", num_classes=num_classes2, prefix="two_cm"), # catalyst[ml] required
-        dl.CheckpointCallback("./logs/one", loader_key="valid", metric_key="one_accuracy", minimize=False, save_n_best=1),
-        dl.CheckpointCallback("./logs/two", loader_key="valid", metric_key="two_accuracy03", minimize=False, save_n_best=3),
+        dl.AccuracyCallback(
+            input_key="logits1", target_key="targets1", num_classes=num_classes1, prefix="one_"
+        ),
+        dl.AccuracyCallback(
+            input_key="logits2", target_key="targets2", num_classes=num_classes2, prefix="two_"
+        ),
+        # catalyst[ml] required
+        # dl.ConfusionMatrixCallback(
+        #     input_key="logits1", target_key="targets1", num_classes=num_classes1, prefix="one_cm"
+        # ), 
+        # dl.ConfusionMatrixCallback(
+        #     input_key="logits2", target_key="targets2", num_classes=num_classes2, prefix="two_cm"
+        # ),
+        dl.CheckpointCallback(
+            logdir="./logs/one", 
+            loader_key="valid", metric_key="one_accuracy", minimize=False, save_n_best=1
+        ),
+        dl.CheckpointCallback(
+            logdir="./logs/two", 
+            loader_key="valid", metric_key="two_accuracy03", minimize=False, save_n_best=3
+        ),
     ],
     loggers={"console": dl.ConsoleLogger(), "tb": dl.TensorboardLogger("./logs/tb")},
 )
@@ -425,7 +457,9 @@ class CustomRunner(dl.Runner):
     def handle_batch(self, batch):
         x, y = batch
         logits = self.model(x)
-        self.batch = {"features": x, "logits": logits, "scores": torch.sigmoid(logits), "targets": y}
+        self.batch = {
+            "features": x, "logits": logits, "scores": torch.sigmoid(logits), "targets": y
+        }
 
 # model training
 runner = CustomRunner()
@@ -439,14 +473,17 @@ runner.train(
     verbose=True,
     callbacks=[
         dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
+        # uncomment for extra metrics:
 #         dl.AUCCallback(input_key="scores", target_key="targets"),
 #         dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
 #         dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-        dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+#         dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
 #         dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
         dl.OptimizerCallback(metric_key="loss"),
         dl.SchedulerCallback(),
-        dl.CheckpointCallback(logdir="./logs", loader_key="valid", metric_key="map01", minimize=False),
+        dl.CheckpointCallback(
+            logdir="./logs", loader_key="valid", metric_key="map01", minimize=False
+        ),
     ]
 )
 ```
@@ -470,8 +507,12 @@ criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "train": DataLoader(
+        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+    ),
+    "valid": DataLoader(
+        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+    ),
 }
 
 runner = dl.SupervisedRunner()
@@ -490,10 +531,14 @@ runner.train(
 # uncomment for extra metrics:
 #     callbacks=[
 #         dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
-#         dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
+#         dl.PrecisionRecallF1SupportCallback(
+#             input_key="logits", target_key="targets", num_classes=10
+#         ),
 #         dl.AUCCallback(input_key="logits", target_key="targets"),
 #         # catalyst[ml] required ``pip install catalyst[ml]``
-#         dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=num_classes), 
+#         dl.ConfusionMatrixCallback(
+#             input_key="logits", target_key="targets", num_classes=num_classes
+#         ), 
 #     ]
 )
 ```
@@ -524,8 +569,12 @@ criterion = IoULoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "train": DataLoader(
+        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+    ),
+    "valid": DataLoader(
+        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+    ),
 }
 
 class CustomRunner(dl.SupervisedRunner):
@@ -535,7 +584,9 @@ class CustomRunner(dl.SupervisedRunner):
         x_ = self.model(x_noise)
         self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
 
-runner = CustomRunner(input_key="features", output_key="scores", target_key="targets", loss_key="loss")
+runner = CustomRunner(
+    input_key="features", output_key="scores", target_key="targets", loss_key="loss"
+)
 # model training
 runner.train(
     model=model,
@@ -580,8 +631,12 @@ criterion = {"cls": nn.CrossEntropyLoss(), "kl": nn.KLDivLoss(reduction="batchme
 optimizer = optim.Adam(student.parameters(), lr=0.02)
 
 loaders = {
-    "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-    "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+    "train": DataLoader(
+        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+    ),
+    "valid": DataLoader(
+        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+    ),
 }
 
 class DistilRunner(dl.Runner):
@@ -599,6 +654,25 @@ class DistilRunner(dl.Runner):
         }
 
 runner = DistilRunner()
+callbacks = [
+    dl.AccuracyCallback(
+        input_key="t_logits", target_key="targets", num_classes=2, prefix="teacher_"
+    ),
+    dl.AccuracyCallback(
+        input_key="s_logits", target_key="targets", num_classes=2, prefix="student_"
+    ),
+    dl.CriterionCallback(
+        input_key="s_logits", target_key="targets", metric_key="cls_loss", criterion_key="cls"
+    ),
+    dl.CriterionCallback(
+        input_key="s_logprobs", target_key="t_probs", metric_key="kl_div_loss", criterion_key="kl"
+    ),
+    dl.MetricAggregationCallback(prefix="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"),
+    dl.OptimizerCallback(metric_key="loss", model_key="student"),
+    dl.CheckpointCallback(
+        logdir="./logs", loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+    ),
+]
 # model training
 runner.train(
     model={"teacher": teacher, "student": student},
@@ -608,15 +682,7 @@ runner.train(
     num_epochs=1,
     logdir="./logs",
     verbose=True,
-    callbacks=[
-        dl.AccuracyCallback(input_key="t_logits", target_key="targets", num_classes=2, prefix="teacher_"),
-        dl.AccuracyCallback(input_key="s_logits", target_key="targets", num_classes=2, prefix="student_"),
-        dl.CriterionCallback(input_key="s_logits", target_key="targets", metric_key="cls_loss", criterion_key="cls"),
-        dl.CriterionCallback(input_key="s_logprobs", target_key="t_probs", metric_key="kl_div_loss", criterion_key="kl"),
-        dl.MetricAggregationCallback(prefix="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"),
-        dl.OptimizerCallback(metric_key="loss", model_key="student"),
-        dl.CheckpointCallback(logdir="./logs", loader_key="valid", metric_key="loss", minimize=True, save_n_best=3),
-    ],
+    callbacks=callbacks,
 )
 ```
 </p>
@@ -662,15 +728,14 @@ class CustomRunner(dl.SupervisedRunner):
             features = self.model(images)
             self.batch = {"embeddings": features, "targets": targets,}
         else:
-            images, targets, is_query = batch["features"].float(), batch["targets"].long(), batch["is_query"].bool()
+            images, targets, is_query = \
+                batch["features"].float(), batch["targets"].long(), batch["is_query"].bool()
             features = self.model(images)
             self.batch = {"embeddings": features, "targets": targets, "is_query": is_query}
 
 callbacks = [
     dl.ControlFlowCallback(
-        dl.CriterionCallback(
-            input_key="embeddings", target_key="targets", metric_key="loss"
-        ),
+        dl.CriterionCallback(input_key="embeddings", target_key="targets", metric_key="loss"),
         loaders="train",
     ),
     dl.ControlFlowCallback(
@@ -749,7 +814,11 @@ optimizer = {
     "generator": torch.optim.Adam(generator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
     "discriminator": torch.optim.Adam(discriminator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
 }
-loaders = {"train": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32)}
+loaders = {
+    "train": DataLoader(
+        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+    )
+}
 
 class CustomRunner(dl.Runner):
     def predict_batch(self, batch):
@@ -773,7 +842,8 @@ class CustomRunner(dl.Runner):
         combined_images = torch.cat([generated_images, real_images])
 
         # Assemble labels discriminating real from fake images
-        labels = torch.cat([torch.ones((batch_size, 1)), torch.zeros((batch_size, 1))]).to(self.device)
+        labels = \
+            torch.cat([torch.ones((batch_size, 1)), torch.zeros((batch_size, 1))]).to(self.device)
         # Add random noise to the labels - important trick!
         labels += 0.05 * torch.rand(labels.shape).to(self.device)
 
@@ -816,8 +886,16 @@ runner.train(
             metric_key="loss_generator",
             criterion_key="generator",
         ),
-        dl.OptimizerCallback(model_key="generator", optimizer_key="generator", metric_key="loss_generator"),
-        dl.OptimizerCallback(model_key="discriminator", optimizer_key="discriminator", metric_key="loss_discriminator"),
+        dl.OptimizerCallback(
+            model_key="generator", 
+            optimizer_key="generator", 
+            metric_key="loss_generator"
+        ),
+        dl.OptimizerCallback(
+            model_key="discriminator", 
+            optimizer_key="discriminator", 
+            metric_key="loss_discriminator"
+        ),
     ],
     valid_loader="train",
     valid_metric="loss_generator",
@@ -902,8 +980,12 @@ class CustomRunner(dl.IRunner):
 
     def get_loaders(self, stage: str):
         loaders = {
-            "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-            "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            ),
         }
         return loaders
 
@@ -917,7 +999,9 @@ class CustomRunner(dl.IRunner):
     def get_callbacks(self, stage: str):
         return {
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
-            "checkpoint": dl.CheckpointCallback(self._logdir, loader_key="valid", metric_key="loss", minimize=True),
+            "checkpoint": dl.CheckpointCallback(
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True
+            ),
         }
 
     def on_loader_start(self, runner):
@@ -999,8 +1083,12 @@ class CustomRunner(dl.IRunner):
 
     def get_loaders(self, stage: str):
         loaders = {
-            "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-            "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            ),
         }
         return loaders
 
@@ -1036,10 +1124,18 @@ class CustomRunner(dl.IRunner):
             ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            # "accuracy": dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-            # "classification": dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
-            # "confusion_matrix": dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
-            "checkpoint": dl.CheckpointCallback(self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3),
+            # "accuracy": dl.AccuracyCallback(
+            #     input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+            # ),
+            # "classification": dl.PrecisionRecallF1SupportCallback(
+            #     input_key="logits", target_key="targets", num_classes=10
+            # ),
+            # "confusion_matrix": dl.ConfusionMatrixCallback(
+            #     input_key="logits", target_key="targets", num_classes=10
+            # ),
+            "checkpoint": dl.CheckpointCallback(
+                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            ),
         }
 
     def handle_batch(self, batch):
@@ -1096,8 +1192,12 @@ class CustomRunner(dl.IRunner):
 
     def get_loaders(self, stage: str):
         loaders = {
-            "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-            "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+            ),
         }
         return loaders
 
@@ -1120,11 +1220,20 @@ class CustomRunner(dl.IRunner):
 
     def get_callbacks(self, stage: str):
         return {
-            "criterion": dl.CriterionCallback(metric_key="loss", input_key="logits", target_key="targets"),
+            "criterion": dl.CriterionCallback(
+                metric_key="loss", input_key="logits", target_key="targets"
+            ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
-            "accuracy": dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-            "classification": dl.PrecisionRecallF1SupportCallback(input_key="logits", target_key="targets", num_classes=10),
-            "confusion_matrix": dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
+            "accuracy": dl.AccuracyCallback(
+                input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+            ),
+            "classification": dl.PrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
+            # catalyst[ml] required
+            "confusion_matrix": dl.ConfusionMatrixCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
             "checkpoint": dl.CheckpointCallback(
                 self._logdir,
                 loader_key="valid",
@@ -1180,10 +1289,16 @@ def objective(trial):
     num_hidden = int(trial.suggest_loguniform("num_hidden", 32, 128))
 
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        ),
+        "valid": DataLoader(
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+        ),
     }
-    model = nn.Sequential(nn.Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10))
+    model = nn.Sequential(
+        nn.Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10)
+    )
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = nn.CrossEntropyLoss()
 
@@ -1194,8 +1309,12 @@ def objective(trial):
         optimizer=optimizer,
         loaders=loaders,
         callbacks={
-            "accuracy": dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
-            "optuna": dl.OptunaPruningCallback(loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial),
+            "accuracy": dl.AccuracyCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
+            "optuna": dl.OptunaPruningCallback(
+                loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial
+            ),
         },
         num_epochs=3,
     )
@@ -1219,26 +1338,25 @@ print(study.best_value, study.best_params)
 
 ### Features
 - Universal train/inference loop.
-- Configuration files for model/data hyperparameters.
-- Reproducibility – all source code and environment variables will be saved.
+- Configuration files for model and data hyperparameters.
+- Reproducibility – all source code and environment variables are saved.
 - Callbacks – reusable train/inference pipeline parts with easy customization.
 - Training stages support.
-- Deep Learning best practices - SWA, AdamW, Ranger optimizer, OneCycle, and more.
-- Developments best practices - fp16 support, distributed training, slurm support.
+- Deep Learning best practices: SWA, AdamW, Ranger optimizer, OneCycle, and more.
+- Workflow best practices: fp16 support, distributed training, slurm support.
 
 
 ### Tests
-All Catalyst code, features and pipelines [are fully tested](./tests) 
-with our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle).
+All Catalyst code, features, and pipelines [are fully tested](./catalyst/tests).
+We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle).
 
-In fact, we train a number of different models for various of tasks - 
-image classification, image segmentation, text classification, GANs training 
-and much more.
-During the tests, we compare their convergence metrics in order to verify 
+During testing, we train a variety of different models: image classification,
+image segmentation, text classification, GANs, and much more.
+We then compare their convergence metrics in order to verify 
 the correctness of the training procedure and its reproducibility.
 
 As a result, Catalyst provides fully tested and reproducible 
-best practices for your deep learning research.
+best practices for your deep learning research and development.
 
 
 ## Catalyst
@@ -1259,19 +1377,17 @@ best practices for your deep learning research.
 ### Notebooks
 - [Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb)
 - [Demo with minimal examples](./examples/notebooks/demo.ipynb) for ML, CV, NLP, GANs and RecSys [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
-- Metric Learning tutorial [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xcob6Y2W0O1JiN-juoF1YfJMJsScCVhV?usp=sharing)
-- Catalyst with Google TPU [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)
-- Detailed [classification tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
-- Advanced [segmentation tutorial](./examples/notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
+- Metric Learning Tutorial [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xcob6Y2W0O1JiN-juoF1YfJMJsScCVhV?usp=sharing)
+- Catalyst with Google TPUs [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)
 
-### Blogposts
+### Notable Blog Posts
 - [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)
-- [Catalyst 102 — Core Trinity](https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&sk=2aff824412e2f653587a30cd853b030c)
+- [Catalyst 102 — The Core Trinity](https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&sk=2aff824412e2f653587a30cd853b030c)
 - [BERT Distillation with Catalyst](https://medium.com/pytorch/bert-distillation-with-catalyst-c6f30c985854?source=friends_link&sk=1a28469ac8c0e6e6ad35bd26dfd95dd9)
 - [Metric Learning with Catalyst](https://medium.com/pytorch/metric-learning-with-catalyst-8c8337dfab1a?source=friends_link&sk=320b95f9b2a9074aab8d916ed78912d6)
 - [Pruning with Catalyst](https://medium.com/pytorch/pruning-with-catalyst-50e98f2cef2d?source=friends_link&sk=688e7a2c2e963c69c7e022e3204de5ef)
 - [Distributed training best practices](https://catalyst-team.github.io/catalyst/tutorials/ddp.html)
-- [Addressing the Cocktail Party Problem using PyTorch](https://medium.com/pytorch/addressing-the-cocktail-party-problem-using-pytorch-305fb74560ea)
+- [Solving the Cocktail Party Problem using PyTorch](https://medium.com/pytorch/addressing-the-cocktail-party-problem-using-pytorch-305fb74560ea)
 - [Beyond fashion: Deep Learning with Catalyst (Config API)](https://evilmartians.com/chronicles/beyond-fashion-deep-learning-with-catalyst)
 - [Tutorial from Notebook API to Config API (RU)](https://github.com/Bekovmi/Segmentation_tutorial)
 
@@ -1289,7 +1405,7 @@ best practices for your deep learning research.
 
 ### Projects
 
-#### Examples, notebooks and starter kits
+#### Examples, Notebooks, and Starter Kits
 - [CamVid Segmentation Example](https://github.com/BloodAxe/Catalyst-CamVid-Segmentation-Example) - Example of semantic segmentation for CamVid dataset
 - [Notebook API tutorial for segmentation in Understanding Clouds from Satellite Images Competition](https://www.kaggle.com/artgor/segmentation-in-pytorch-using-convenient-tools/)
 - [Catalyst.RL - NeurIPS 2019: Learn to Move - Walk Around](https://github.com/Scitator/learning-to-move-starter-kit) – starter kit
@@ -1298,29 +1414,29 @@ best practices for your deep learning research.
 - [iglovikov_segmentation](https://github.com/ternaus/iglovikov_segmentation) - Semantic segmentation pipeline using Catalyst
 
 #### Competitions
-- [Kaggle Quick, Draw! Doodle Recognition Challenge](https://github.com/ngxbac/Kaggle-QuickDraw) - 11th place solution
-- [Catalyst.RL - NeurIPS 2018: AI for Prosthetics Challenge](https://github.com/Scitator/neurips-18-prosthetics-challenge) – 3rd place solution
-- [Kaggle Google Landmark 2019](https://github.com/ngxbac/Kaggle-Google-Landmark-2019) - 30th place solution
-- [iMet Collection 2019 - FGVC6](https://github.com/ngxbac/Kaggle-iMet) - 24th place solution
-- [ID R&D Anti-spoofing Challenge](https://github.com/bagxi/idrnd-anti-spoofing-challenge-solution) - 14th place solution
-- [NeurIPS 2019: Recursion Cellular Image Classification](https://github.com/ngxbac/Kaggle-Recursion-Cellular) - 4th place solution
+- [Kaggle Quick, Draw! Doodle Recognition Challenge](https://github.com/ngxbac/Kaggle-QuickDraw) - 11th place
+- [Catalyst.RL - NeurIPS 2018: AI for Prosthetics Challenge](https://github.com/Scitator/neurips-18-prosthetics-challenge) – 3rd place
+- [Kaggle Google Landmark 2019](https://github.com/ngxbac/Kaggle-Google-Landmark-2019) - 30th place
+- [iMet Collection 2019 - FGVC6](https://github.com/ngxbac/Kaggle-iMet) - 24th place
+- [ID R&D Anti-spoofing Challenge](https://github.com/bagxi/idrnd-anti-spoofing-challenge-solution) - 14th place
+- [NeurIPS 2019: Recursion Cellular Image Classification](https://github.com/ngxbac/Kaggle-Recursion-Cellular) - 4th place
 - [MICCAI 2019: Automatic Structure Segmentation for Radiotherapy Planning Challenge 2019](https://github.com/ngxbac/StructSeg2019) 
   * 3rd place solution for `Task 3: Organ-at-risk segmentation from chest CT scans`
   * and 4th place solution for `Task 4: Gross Target Volume segmentation of lung cancer`
-- [Kaggle Seversteal steel detection](https://github.com/bamps53/kaggle-severstal) - 5th place solution
-- [RSNA Intracranial Hemorrhage Detection](https://github.com/ngxbac/Kaggle-RSNA) - 5th place solution
-- [APTOS 2019 Blindness Detection](https://github.com/BloodAxe/Kaggle-2019-Blindness-Detection) – 7th place solution
-- [Catalyst.RL - NeurIPS 2019: Learn to Move - Walk Around](https://github.com/Scitator/run-skeleton-run-in-3d) – 2nd place solution
-- [xView2 Damage Assessment Challenge](https://github.com/BloodAxe/xView2-Solution) - 3rd place solution
+- [Kaggle Seversteal steel detection](https://github.com/bamps53/kaggle-severstal) - 5th place
+- [RSNA Intracranial Hemorrhage Detection](https://github.com/ngxbac/Kaggle-RSNA) - 5th place
+- [APTOS 2019 Blindness Detection](https://github.com/BloodAxe/Kaggle-2019-Blindness-Detection) – 7th place
+- [Catalyst.RL - NeurIPS 2019: Learn to Move - Walk Around](https://github.com/Scitator/run-skeleton-run-in-3d) – 2nd place
+- [xView2 Damage Assessment Challenge](https://github.com/BloodAxe/xView2-Solution) - 3rd place
 
-#### Research papers
-- [Hierarchical attention for sentiment classification with visualization](https://github.com/neuromation/ml-recipe-hier-attention)
-- [Pediatric bone age assessment](https://github.com/neuromation/ml-recipe-bone-age)
-- [Implementation of paper "Tell Me Where to Look: Guided Attention Inference Network"](https://github.com/ngxbac/GAIN)
-- [Implementation of paper "Filter Response Normalization Layer: Eliminating Batch Dependence in the Training of Deep Neural Networks"](https://github.com/yukkyo/PyTorch-FilterResponseNormalizationLayer)
-- [Implementation of paper "Utterance-level Aggregation For Speaker Recognition In The Wild"](https://github.com/ptJexio/Speaker-Recognition)
-- [Implementation of paper "Looking to Listen at the Cocktail Party: A Speaker-Independent Audio-Visual Model for Speech Separation"](https://github.com/vitrioil/Speech-Separation)
-- [Implementation of paper "ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks"](https://github.com/leverxgroup/esrgan)
+#### Research Papers
+- [Hierarchical Attention for Sentiment Classification with Visualization](https://github.com/neuromation/ml-recipe-hier-attention)
+- [Pediatric Bone Age Assessment](https://github.com/neuromation/ml-recipe-bone-age)
+- [Implementation of the paper "Tell Me Where to Look: Guided Attention Inference Network"](https://github.com/ngxbac/GAIN)
+- [Implementation of the paper "Filter Response Normalization Layer: Eliminating Batch Dependence in the Training of Deep Neural Networks"](https://github.com/yukkyo/PyTorch-FilterResponseNormalizationLayer)
+- [Implementation of the paper "Utterance-level Aggregation For Speaker Recognition In The Wild"](https://github.com/ptJexio/Speaker-Recognition)
+- [Implementation of the paper "Looking to Listen at the Cocktail Party: A Speaker-Independent Audio-Visual Model for Speech Separation"](https://github.com/vitrioil/Speech-Separation)
+- [Implementation of the paper "ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks"](https://github.com/leverxgroup/esrgan)
 
 #### Toolkits
 - [Catalyst.RL](https://github.com/Scitator/catalyst-rl-framework) – A Distributed Framework for Reproducible RL Research by [Scitator](https://github.com/Scitator)
@@ -1329,39 +1445,39 @@ best practices for your deep learning research.
 - [Catalyst.Detection](https://github.com/catalyst-team/detection) - Anchor-free detection pipeline by [Avi2011class](https://github.com/Avi2011class) and [TezRomacH](https://github.com/TezRomacH)
 - [Catalyst.GAN](https://github.com/catalyst-team/gan) - Reproducible GANs pipelines by [Asmekal](https://github.com/asmekal)
 - [Catalyst.Neuro](https://github.com/catalyst-team/neuro) - Brain image analysis project, in collaboration with [TReNDS Center](https://trendscenter.org)
-- [MLComp](https://github.com/catalyst-team/mlcomp) – distributed DAG framework for machine learning with UI by [Lightforever](https://github.com/lightforever)
+- [MLComp](https://github.com/catalyst-team/mlcomp) – Distributed DAG framework for machine learning with UI by [Lightforever](https://github.com/lightforever)
 - [Pytorch toolbelt](https://github.com/BloodAxe/pytorch-toolbelt) - PyTorch extensions for fast R&D prototyping and Kaggle farming by [BloodAxe](https://github.com/BloodAxe)
-- [Helper functions](https://github.com/ternaus/iglovikov_helper_functions) - An unstructured set of helper functions by [Ternaus](https://github.com/ternaus)
+- [Helper functions](https://github.com/ternaus/iglovikov_helper_functions) - An assorted collection of helper functions by [Ternaus](https://github.com/ternaus)
 - [BERT Distillation with Catalyst](https://github.com/elephantmipt/bert-distillation) by [elephantmipt](https://github.com/elephantmipt)
 
-See other projects at ["Used by"](https://github.com/catalyst-team/catalyst/network/dependents).
+See other projects at [the GitHub dependency graph](https://github.com/catalyst-team/catalyst/network/dependents).
 
 If your project implements a paper, 
-represents use-case/tutorial, Kaggle competition's code 
-or just your code presents interesting results and uses Catalyst... 
-we would be happy to add your project to the list above, 
-so please send a PR with a brief description of the project.
+a notable use-case/tutorial, or a Kaggle competition solution, or
+if your code simply presents interesting results and uses Catalyst,
+we would be happy to add your project to the list above!  
+Do not hesitate to send us a PR with a brief description of the project similar to the above.
 
 ## Community
 
-### Contribution guide
+### Contribution Guide
 
 We appreciate all contributions.
-If you are planning to contribute back bug-fixes,
-please do so without any further discussion.
-If you plan to contribute new features, utility functions or extensions,
-please first open an issue and discuss the feature with us.
+If you are planning to contribute back bug-fixes, there is no need to run that by us; just send a PR.
+If you plan to contribute new features, new utility functions, or extensions,
+please open an issue first and discuss it with us.
 
-- Please see the [contribution guide](CONTRIBUTING.md) for more information.
+- Please see the [Contribution Guide](CONTRIBUTING.md) for more information.
 - By participating in this project, you agree to abide by its [Code of Conduct](CODE_OF_CONDUCT.md).
 
 
-### User feedback
+### User Feedback
 
-We have created `catalyst.team.core@gmail.com` for "user feedback".
-- If you like the project and want to say thanks, this the right place.
-- If you would like to start a collaboration between your team and Catalyst team to do better Deep Learning R&D - you are always welcome.
-- If you just don't like Github issues and this ways suits you better - feel free to email us.
+We've created `feedback@catalyst-team.com` as an additional channel for user feedback.
+
+- If you like the project and want to thanks us, this the right place.
+- If you would like to start a collaboration between your team and Catalyst team to improve Deep Learning R&D, you are always welcome.
+- If you just don't like Github Issues and this prefer email, feel free to email us.
 - Finally, if you do not like something, please, share it with us and we can see how to improve it.
 
 We appreciate any type of feedback. Thank you!
@@ -1369,8 +1485,7 @@ We appreciate any type of feedback. Thank you!
 
 ### Acknowledgments
 
-Since the beginning of the development of the Сatalyst, 
-a lot of people have influenced it in a lot of different ways.
+Since the beginning of the Сatalyst development, a lot of people have influenced it in a lot of different ways.
 
 #### Catalyst.Team
 - [Dmytro Doroshenko](https://www.linkedin.com/in/dmytro-doroshenko-05671112a/) ([ditwoo](https://github.com/Ditwoo))
@@ -1399,24 +1514,24 @@ a lot of people have influenced it in a lot of different ways.
 
 ### Trusted by
 - [Awecom](https://www.awecom.com)
-- Researchers@[Center for Translational Research in Neuroimaging and Data Science (TReNDS)](https://trendscenter.org)
+- Researchers at the [Center for Translational Research in Neuroimaging and Data Science (TReNDS)](https://trendscenter.org)
 - [Deep Learning School](https://en.dlschool.org)
-- Researchers@[Emory University](https://www.emory.edu)
+- Researchers at [Emory University](https://www.emory.edu)
 - [Evil Martians](https://evilmartians.com)
-- Researchers@[Georgia Institute of Technology](https://www.gatech.edu)
-- Researchers@[Georgia State University](https://www.gsu.edu)
+- Researchers at the [Georgia Institute of Technology](https://www.gatech.edu)
+- Researchers at [Georgia State University](https://www.gsu.edu)
 - [Helios](http://helios.to)
 - [HPCD Lab](https://www.hpcdlab.com)
 - [iFarm](https://ifarmproject.com)
 - [Kinoplan](http://kinoplan.io/)
-- Researchers@[Moscow Institute of Physics and Technology](https://mipt.ru/english/)
+- Researchers at the [Moscow Institute of Physics and Technology](https://mipt.ru/english/)
 - [Neuromation](https://neuromation.io)
 - [Poteha Labs](https://potehalabs.com/en/)
 - [Provectus](https://provectus.com)
-- Researchers@[Skolkovo Institute of Science and Technology](https://www.skoltech.ru/en)
+- Researchers at the [Skolkovo Institute of Science and Technology](https://www.skoltech.ru/en)
 - [SoftConstruct](https://www.softconstruct.io/)
-- Researchers@[Tinkoff](https://www.tinkoff.ru/eng/)
-- Researchers@[Yandex.Research](https://research.yandex.com)
+- Researchers at [Tinkoff](https://www.tinkoff.ru/eng/)
+- Researchers at [Yandex.Research](https://research.yandex.com)
 
 
 ### Citation

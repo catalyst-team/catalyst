@@ -230,11 +230,9 @@ Indices and tables
     faq/debugging
     faq/logging
     faq/inference
-    faq/finetuning
-
-    faq/stages
-    faq/config_api
     faq/optuna
+    faq/finetuning
+    faq/config_api
 
 
 .. toctree::
