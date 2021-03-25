@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Key-value support for CriterionCallback ([#1130](https://github.com/catalyst-team/catalyst/issues/1130))
 - Engine configuration through cmd ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
 - Extra utils for thresholds ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
+- Added gradient clipping function to optimizer callback ([1124](https://github.com/catalyst-team/catalyst/pull/1124))
 
 ### Changed
 
@@ -27,6 +28,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
     - united metrics computation logic
 
 ### Removed
+
 
 
 ### Fixed
@@ -438,7 +440,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
 
 ### Changed
 
