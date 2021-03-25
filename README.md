@@ -29,11 +29,13 @@
 </div>
 
 Catalyst is a PyTorch framework for Deep Learning Research and Development.
-Catalyst focuses on reproducibility, rapid experimentation, and codebase reuse 
+It focuses on reproducibility, rapid experimentation, and codebase reuse 
 so you can create something new rather than write yet another train loop.
-<br/> Break the cycle, use Catalyst!
+<br/> Break the cycle – use the Catalyst!
 
-Read more about our vision in the [Project Manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md).  Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/).  [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing) consists of:
+Read more about our vision in the [Project Manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md). 
+Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/). 
+<br/> [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing) consists of:
 - [Alchemy](https://github.com/catalyst-team/alchemy) - experiments logging & visualization
 - [Catalyst](https://github.com/catalyst-team/catalyst) - accelerated deep learning R&D
 - [Reaction](https://github.com/catalyst-team/reaction) - convenient deep learning model serving
