@@ -19,8 +19,8 @@ jobs:
       fail-fast: false
       # max-parallel: 6
       matrix:
-        os: [ubuntu-20.04]  # windows-2019,
-        python-version: [3.6]
+        os: [ubuntu-18.04, ubuntu-20.04, macOS-10.15]  # windows-2019,
+        python-version: [3.6, 3.7, 3.8]
         requirements: ['minimal', 'latest']
         exclude:
           # pickle problems
@@ -28,6 +28,19 @@ jobs:
             os: macOS-10.15
           - python-version: 3.6
             os: macOS-10.15
+          - python-version: 3.7
+            os: macOS-10.15
+          - python-version: 3.6
+            os: ubuntu-18.04
+          - python-version: 3.7
+            os: ubuntu-18.04
+          - python-version: 3.8
+            os: ubuntu-18.04
+          - python-version: 3.7
+            os: ubuntu-20.04
+          - python-version: 3.8
+            os: ubuntu-20.04
+          
 
     timeout-minutes: 60
     steps:
