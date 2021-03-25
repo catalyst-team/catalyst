@@ -125,24 +125,56 @@ class APEXEngine(DeviceEngine):
     """Apex single training device engine.
 
     Args:
-        device: use device, default is `"cuda"`.
-        opt_level: optimization level, should be one of "O0", "O1", "O2", "O3" or "O4".
+        device (str of int): use device, default is `"cuda"`.
+        opt_level (str): optimization level, should be one of ``"O0"``,
+            ``"O1"``, ``"O2"`` or ``"O3"``.
 
-            - "O0" - no-op training
-            - "O1" - mixed precision (FP16) training (default)
-            - "O2" - "almost" mixed precision training
-            - "O3" - another implementation of mixed precision training
+            - ``"O0"`` - no-op training
+            - ``"O1"`` - mixed precision (FP16) training (default)
+            - ``"O2"`` - "almost" mixed precision training
+            - ``"O3"`` - another implementation of mixed precision training
 
             Details about levels can be found here:
             https://nvidia.github.io/apex/amp.html#opt-levels
-        keep_batchnorm_fp32: To enhance precision and enable cudnn batchnorm
+        keep_batchnorm_fp32 (bool): To enhance precision and enable CUDNN batchnorm
             (which improves performance),
             it’s often beneficial to keep batchnorm weights in FP32 even
             if the rest of the model is FP16.
-        loss_scale: If loss_scale is a float value,
-            use this value as the static (fixed) loss scale. If loss_scale is the string "dynamic",
+        loss_scale (float or str): If loss_scale is a float value,
+            use this value as the static (fixed) loss scale
+            If loss_scale is the string "dynamic",
             adaptively adjust the loss scale over time.
             Dynamic loss scale adjustments are performed by Amp automatically.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.APEXEngine(opt_level="O1", keep_batchnorm_fp32=False)
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: APEXEngine
+            opt_level: O1
+            keep_batchnorm_fp32: false
+
+        stages:
+            ...
+
     """
 
     def __init__(
@@ -264,7 +296,49 @@ class APEXEngine(DeviceEngine):
 
 
 class DataParallelApexEngine(APEXEngine):
-    """Apex multi-gpu training device engine."""
+    """Apex multi-gpu training device engine.
+
+    Args:
+        opt_level (str): optimization level, should be one of ``"O0"``,
+            ``"O1"``, ``"O2"`` or ``"O3"``.
+
+            - ``"O0"`` - no-op training
+            - ``"O1"`` - mixed precision (FP16) training (default)
+            - ``"O2"`` - "almost" mixed precision training
+            - ``"O3"`` - another implementation of mixed precision training
+
+            Details about levels can be found here:
+            https://nvidia.github.io/apex/amp.html#opt-levels
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DataParallelApexEngine(opt_level="O1")
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DataParallelApexEngine
+            opt_level: O1
+
+        stages:
+            ...
+
+    """
 
     def __init__(self, opt_level: str = "O1"):
         """Init."""
@@ -303,29 +377,60 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
     """Distributed Apex MultiGPU training device engine.
 
     Args:
-        address: process address to use (required for PyTorch backend), default is `"localhost"`.
-        port: process port to listen (required for PyTorch backend), default is `"12345"`.
-        backend: multiprocessing backend to use, default is `"nccl"`.
-        world_size: number of processes.
-        opt_level: optimization level, should be one of "O0", "O1", "O2", "O3" or "O4".
+        address (str): process address to use (required for PyTorch backend), default is `"localhost"`.
+        port (str or int): process port to listen (required for PyTorch backend), default is `"12345"`.
+        backend (str): multiprocessing backend to use, default is `"nccl"`.
+        world_size (int): number of processes.
+        opt_level (str): optimization level, should be one of ``"O0"``,
+            ``"O1"``, ``"O2"`` or ``"O3"``.
 
-            - "O0" - no-op training
-            - "O1" - mixed precision (FP16) training (default)
-            - "O2" - "almost" mixed precision training
-            - "O3" - another implementation of mixed precision training
+            - ``"O0"`` - no-op training
+            - ``"O1"`` - mixed precision (FP16) training (default)
+            - ``"O2"`` - "almost" mixed precision training
+            - ``"O3"`` - another implementation of mixed precision training
 
             Details about levels can be found here:
             https://nvidia.github.io/apex/amp.html#opt-levels
 
-        keep_batchnorm_fp32: To enhance precision and enable cudnn batchnorm
+        keep_batchnorm_fp32 (bool): To enhance precision and enable cudnn batchnorm
             (which improves performance),
             it’s often beneficial to keep batchnorm weights in FP32 even
             if the rest of the model is FP16.
-        loss_scale: If loss_scale is a float value,
-            use this value as the static (fixed) loss scale. If loss_scale is the string "dynamic",
+        loss_scale (float or str): If loss_scale is a float value,
+            use this value as the static (fixed) loss scale.
+            If loss_scale is the string "dynamic",
             adaptively adjust the loss scale over time.
             Dynamic loss scale adjustments are performed by Amp automatically.
-        delay_all_reduce: boolean flag for delayed all reduce
+        delay_all_reduce (bool): boolean flag for delayed all reduce, default is `True`.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DistributedDataParallelApexEngine(port=12345, opt_level="O1")
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DistributedDataParallelApexEngine
+            port: 12345
+            opt_level: O1
+
+        stages:
+            ...
     """
 
     def __init__(

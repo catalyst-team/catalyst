@@ -24,7 +24,7 @@ class DeviceEngine(IEngine):
     Args:
         device (str, optional): use device, default is `"cpu"`.
 
-    Runner example:
+    Examples:
 
     .. code-block:: python
 
@@ -35,8 +35,6 @@ class DeviceEngine(IEngine):
             def get_engine(self):
                 return dl.DeviceEngine("cuda:1")
             # ...
-
-    Config example:
 
     .. code-block:: yaml
 
@@ -198,7 +196,36 @@ class DeviceEngine(IEngine):
 
 
 class DataParallelEngine(DeviceEngine):
-    """MultiGPU training device engine."""
+    """MultiGPU training device engine.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DataParallelEngine()
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DataParallelEngine
+
+        stages:
+            ...
+
+    """
 
     def __init__(self):
         """Init"""
@@ -233,10 +260,39 @@ class DistributedDataParallelEngine(DeviceEngine):
     """Distributed MultiGPU training device engine.
 
     Args:
-        address: process address to use (required for PyTorch backend), default is `"localhost"`.
-        port: process port to listen (required for PyTorch backend), default is `"12345"`.
-        backend: multiprocessing backend to use, default is `"nccl"`.
-        world_size: number of processes.
+        address (str): process address to use (required for PyTorch backend), default is `"localhost"`.
+        port (str or int): process port to listen (required for PyTorch backend), default is `"12345"`.
+        backend (str): multiprocessing backend to use, default is `"nccl"`.
+        world_size (int): number of processes.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DistributedDataParallelEngine(port=12345)
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DistributedDataParallelEngine
+            port: 12345
+
+        stages:
+            ...
+
     """
 
     def __init__(
