@@ -287,16 +287,10 @@ class HydraRunner(IRunner):
         is_key_value = optimizer_params._key_value or False
 
         if is_key_value:
-            optimizer = {}
-            for key, params in optimizer_params.items():
-                # load specified optimizer from checkpoint
-                optimizer_key = "_optimizer"
-                assert optimizer_key not in params, "keyword reserved"
-                params[optimizer_key] = key
-
-                optimizer[key] = self._get_optimizer_from_params(
-                    model=model, stage=stage, params=params
-                )
+            optimizer = {
+                key: self._get_optimizer_from_params(model=model, stage=stage, params=params)
+                for key, params in optimizer_params.items()
+            }
         else:
             optimizer = self._get_optimizer_from_params(
                 model=model, stage=stage, params=optimizer_params

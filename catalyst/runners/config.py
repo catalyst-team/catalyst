@@ -288,16 +288,10 @@ class ConfigRunner(IRunner):
         is_key_value = optimizer_params.pop("_key_value", False)
 
         if is_key_value:
-            optimizer = {}
-            for key, params in optimizer_params.items():
-                # load specified optimizer from checkpoint
-                optimizer_key = "_optimizer"
-                assert optimizer_key not in params, "keyword reserved"
-                params[optimizer_key] = key
-
-                optimizer[key] = self._get_optimizer_from_params(
-                    model=model, stage=stage, **params
-                )
+            optimizer = {
+                key: self._get_optimizer_from_params(model=model, stage=stage, **params)
+                for key, params in optimizer_params.items()
+            }
         else:
             optimizer = self._get_optimizer_from_params(
                 model=model, stage=stage, **optimizer_params
