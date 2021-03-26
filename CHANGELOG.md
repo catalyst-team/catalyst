@@ -27,24 +27,53 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - Data-Model device sync and ``Engine`` logic during `runner.predict_loader` ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
+- BatchLimitLoaderWrapper logic for loaders with shuffle flag ([#1136](https://github.com/catalyst-team/catalyst/issues/1136)) 
 
-## [21.03] - 2021-03-13
+## [21.03] - 2021-03-13 ([#1095](https://github.com/catalyst-team/catalyst/issues/1095))
 
 ### Added
 
-- 
+- [``Engine`` abstraction](https://catalyst-team.github.io/catalyst/api/engines.html) to support various hardware backends and accelerators: CPU, GPU, multi GPU, distributed GPU, TPU, Apex, and AMP half-precision training.
+- [``Logger`` abstraction](https://catalyst-team.github.io/catalyst/api/loggers.html) to support various monitoring tools: console, tensorboard, MLflow, etc.
+- ``Trial`` abstraction to support various hyperoptimization tools: Optuna, Ray, etc.
+- [``Metric`` abstraction](https://catalyst-team.github.io/catalyst/api/metrics.html) to support various of machine learning metrics: classification, segmentation, RecSys and NLP.
+- Full support for Hydra API.
+- Full DDP support for Python API.
+- MLflow support for metrics logging.
+- United API for model post-processing: tracing, quantization, pruning, onnx-exporting.
+- United API for metrics: classification, segmentation, RecSys, and NLP with full DDP and micro/macro/weighted/etc aggregations support.
 
 ### Changed
 
-- 
+- ``Experiment`` abstraction merged into ``Runner`` one.
+- Runner, SupervisedRunner, ConfigRunner, HydraRunner architectures and dependencies redesigned.
+- Internal [settings](https://github.com/catalyst-team/catalyst/blob/master/catalyst/settings.py) and [registry](https://github.com/catalyst-team/catalyst/blob/master/catalyst/registry.py) mechanisms refactored to be simpler, user-friendly and more extendable.
+- Bunch of Config API test removed with Python API and pytest.
+- Codestyle now supports up to 99 symbols per line :)
+- All callbacks/runners moved for contrib to the library core if was possible.
+- ``Runner`` abstraction simplified to store only current state of the experiment run: all validation logic was moved to the callbacks (by this way, you could easily select best model on various metrics simultaneously).
+- ``Runner.input`` and ``Runner.output`` merged into united ``Runner.batch`` storage for simplicity.
+- All metric moved from ``catalyst.utils.metrics`` to ``catalyst.metrics``.
+- All metrics now works on scores/metric-defined-input rather that logits (!).
+- Logging logic moved from ``Callbacks`` to appropriate ``Loggers``.
+- ``KorniaCallbacks`` refactored to ``BatchTransformCallback``.
 
 ### Removed
 
-- 
+- Lots of unnecessary contrib extensions.
+- Transforms configuration support through Config API (could be returned in next releases).
+- Integrated Python cmd command for model pruning, swa, etc (should be returned in next releases).
+- ``CallbackOrder.Validation`` and ``CallbackOrder.Logging``
+- All 2020 year backward compatibility fixes and legacy support.
 
 ### Fixed
 
-- 
+- Docs rendering simplified.
+- LrFinderCallback.
+
+[Release docs](https://catalyst-team.github.io/catalyst/v21.03/index.html),
+[Python API minimal examples](https://github.com/catalyst-team/catalyst#minimal-examples), 
+[Config/Hydra API example](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
 
 ## [20.12.1] - XXXX-XX-XX
 
