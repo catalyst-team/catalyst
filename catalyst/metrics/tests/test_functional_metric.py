@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict
 import pytest
 import torch
 
-from catalyst.metrics import BatchFunctionalMetric
+from catalyst.metrics import FunctionalBatchMetric
 
 base_outputs = torch.tensor([[0.8, 0.1, 0], [0, 0.4, 0.3], [0, 0, 1]])
 base_targets = torch.tensor([[1.0, 0, 0], [0, 1, 0], [1, 1, 0]])
@@ -71,9 +71,9 @@ def test_mae_metric(
     batch_answer_2: Dict[str, Any],
     total_answer: Dict[str, Any],
 ):
-    metric = BatchFunctionalMetric(metric_fn=metric_function, metric_name=prefix)
-    batch_score_1 = metric.update_key_value(outputs_1, targets_1)
-    batch_score_2 = metric.update_key_value(outputs_2, targets_2)
+    metric = FunctionalBatchMetric(metric_fn=metric_function, metric_key=prefix)
+    batch_score_1 = metric.update_key_value(len(outputs_1), outputs_1, targets_1)
+    batch_score_2 = metric.update_key_value(len(outputs_2), outputs_2, targets_2)
     loader_metric = metric.compute_key_value()
     for key, value in batch_answer_1.items():
         assert key in batch_score_1

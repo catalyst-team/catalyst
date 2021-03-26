@@ -35,6 +35,7 @@ from catalyst.typing import (
 )
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import get_short_hash, get_utcnow_time
+from catalyst.utils.torch import get_available_engine
 
 logger = logging.getLogger(__name__)
 
@@ -51,11 +52,17 @@ class HydraRunner(IRunner):
         super().__init__()
         self._config: DictConfig = deepcopy(cfg)
 
-        self._seed: int = self._config.args.seed
-        self._verbose: bool = self._config.args.verbose
-        self._timeit: bool = self._config.args.timeit
-        self._check: bool = self._config.args.check
-        self._overfit: bool = self._config.args.overfit
+        self._apex: bool = self._config.args.apex or False
+        self._amp: bool = self._config.args.amp or False
+        self._ddp: bool = self._config.args.ddp or False
+        self._fp16: bool = self._config.args.fp16 or False
+
+        self._seed: int = self._config.args.seed or 42
+        self._verbose: bool = self._config.args.verbose or False
+        self._timeit: bool = self._config.args.timeit or False
+        self._check: bool = self._config.args.check or False
+        self._overfit: bool = self._config.args.overfit or False
+
         self._name: str = self._get_run_name()
         self._logdir: str = self._get_run_logdir()
 
@@ -138,7 +145,12 @@ class HydraRunner(IRunner):
     def get_engine(self) -> IEngine:
         """Returns the engine for the run."""
         engine_params = self._config.engine
-        engine = hydra.utils.instantiate(engine_params)
+        if engine_params is not None:
+            engine = hydra.utils.instantiate(engine_params)
+        else:
+            engine = get_available_engine(
+                fp16=self._fp16, ddp=self._ddp, amp=self._amp, apex=self._apex
+            )
         return engine
 
     def get_loggers(self) -> Dict[str, ILogger]:
