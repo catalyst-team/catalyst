@@ -32,9 +32,9 @@ class OnnxCallback(Callback):
 
     def __init__(
         self,
+        batch: Tensor,
         logdir: Union[str, Path] = None,
         filename: str = "onnx.py",
-        batch: Tensor = None,
         method_name: str = "forward",
         input_names: Iterable = None,
         output_names: List[str] = None,
@@ -47,9 +47,9 @@ class OnnxCallback(Callback):
         Callback for converting model to onnx runtime.
 
         Args:
+            batch: input tensor for model
             logdir: path to folder for saving
             filename: filename
-            batch: input tensor for model. If None will take batch from train loader.
             method_name (str, optional): Forward pass method to be converted.
                 Defaults to "forward".
             input_names (Iterable, optional): name of inputs in graph. Defaults to None.
@@ -84,8 +84,8 @@ class OnnxCallback(Callback):
         Args:
             runner: runner for experiment
         """
-        model = runner.model.cpu()
-        batch = self.batch or next(iter(runner.loaders["train"]))
+        model = runner.model
+        batch = self.batch
         onnx_export(
             model=model,
             file=self.filename,

@@ -55,7 +55,8 @@ class QuantizationCallback(Callback):
     def on_stage_end(self, runner: "IRunner") -> None:
         model = runner.model.cpu()
         q_model = quantize_model(model.cpu(), qconfig_spec=self.qconfig_spec, dtype=self.dtype)
-        torch.save(q_model.state_dict(), self.filename)
+        checkpoint = runner.engine.pack_checkpoint(model=q_model)
+        runner.engine.save_checkpoint(checkpoint=checkpoint, path=self.filename)
 
 
 __all__ = ["QuantizationCallback"]

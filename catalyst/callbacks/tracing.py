@@ -24,18 +24,18 @@ class TracingCallback(Callback):
 
     def __init__(
         self,
+        batch: Tensor,
         logdir: Union[str, Path] = None,
         filename: str = "traced_model.pth",
-        batch: Tensor = None,
         method_name: str = "forward",
     ):
         """
         Callback for model tracing.
 
         Args:
+            batch: input tensor for model
             logdir: path to folder for saving
             filename: filename
-            batch: input tensor for model. If None will take batch from train loader.
             method_name: Model's method name that will be used as entrypoint during tracing
         """
         super().__init__(order=CallbackOrder.ExternalExtra, node=CallbackNode.Master)
@@ -54,7 +54,7 @@ class TracingCallback(Callback):
             runner: runner for experiment
         """
         model = runner.model
-        batch = self.batch or next(iter(runner.loaders["train"]))
+        batch = self.batch
         traced_model = trace_model(model=model, batch=batch, method_name=self.method_name)
         torch.jit.save(traced_model, self.filename)
 
