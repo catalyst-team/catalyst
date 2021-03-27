@@ -244,9 +244,43 @@ def test_mean_avg_precision():
 
     top_k = [10]
     map_at10 = metrics.mean_avg_precision(y_pred_torch, y_true_torch, top_k)[0]
+<<<<<<< HEAD
 
     assert np.allclose(map_at10, 0.5325, atol=1e-3)
 
+    # check 2
+    # map_at1: (1.0 + 0.0) / 2 = 0.5
+    # map_at3: ((1 + 0.67)/2 + 0.5) / 2 = 0.6675
+    # map_at5: ((1 + 0.67)/2 + (0.5 + 0.4)/2) / 2 = 0.6425
+    # map_at10: ((1 + 0.67 + 0.5 + 0.44 + 0.5)/5 + (0.5 + 0.4 + 0.43)/3 ) / 2  = 0.53
+
+    y_pred1 = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+    y_pred2 = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+
+    y_true1 = [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0]
+    y_true2 = [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0]
+
+    y_pred_torch = torch.Tensor([y_pred1, y_pred2])
+    y_true_torch = torch.Tensor([y_true1, y_true2])
+
+    top_k = [1, 3, 5, 10]
+
+    map_k = metrics.mean_avg_precision(y_pred_torch, y_true_torch, top_k)
+
+    map_at1 = map_k[0]
+    map_at3 = map_k[1]
+    map_at5 = map_k[2]
+    map_at10 = map_k[3]
+=======
+>>>>>>> af7358793fd3102bb184d447939540a7cf47a63c
+
+    assert np.allclose(map_at1, 0.5, atol=1e-3)
+    assert np.allclose(map_at3, 0.6675, atol=1e-3)
+    assert np.allclose(map_at5, 0.6425, atol=1e-3)
+    assert np.allclose(map_at10, 0.5325, atol=1e-3)
+
+<<<<<<< HEAD
+=======
     # check 2
     # map_at1: (1.0 + 0.0) / 2 = 0.5
     # map_at3: ((1 + 0.67)/2 + 0.5) / 2 = 0.6675
@@ -276,6 +310,7 @@ def test_mean_avg_precision():
     assert np.allclose(map_at5, 0.6425, atol=1e-3)
     assert np.allclose(map_at10, 0.5325, atol=1e-3)
 
+>>>>>>> 0ac32a723773eb51268247bd77ad2b3163c9a548
 
 def test_wrapper_metrics():
     """
