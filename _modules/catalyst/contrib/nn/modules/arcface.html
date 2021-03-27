@@ -338,7 +338,7 @@
 
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; layer = ArcFace(5, 10, s=1.31, m=0.5)</span>
-<span class="sd">        &gt;&gt;&gt; loss_fn = nn.CrosEntropyLoss()</span>
+<span class="sd">        &gt;&gt;&gt; loss_fn = nn.CrossEntropyLoss()</span>
 <span class="sd">        &gt;&gt;&gt; embedding = torch.randn(3, 5, requires_grad=True)</span>
 <span class="sd">        &gt;&gt;&gt; target = torch.empty(3, dtype=torch.long).random_(10)</span>
 <span class="sd">        &gt;&gt;&gt; output = layer(embedding, target)</span>
