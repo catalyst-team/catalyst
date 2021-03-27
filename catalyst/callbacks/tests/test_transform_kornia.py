@@ -2,6 +2,7 @@
 import os
 
 import pytest
+
 import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
@@ -58,10 +59,16 @@ def test_transform_kornia():
 
     loaders = {
         "train": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32,
+            MNIST(
+                os.getcwd(), train=False, download=True, transform=ToTensor()
+            ),
+            batch_size=32,
         ),
         "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32,
+            MNIST(
+                os.getcwd(), train=False, download=True, transform=ToTensor()
+            ),
+            batch_size=32,
         ),
     }
 

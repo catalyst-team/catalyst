@@ -38,11 +38,16 @@ class TestSwa(unittest.TestCase):
 
     def test_averaging(self):
         """Test SWA method."""
-        weights = get_averaged_weights_by_path_mask(logdir=Path("./"), path_mask="net*")
+        weights = get_averaged_weights_by_path_mask(
+            logdir=Path("./"), path_mask="net*"
+        )
         torch.save(weights, str("./checkpoints/swa_weights.pth"))
         model = Net()
         model.load_state_dict(
-            torch.load("./checkpoints/swa_weights.pth", map_location=lambda storage, loc: storage)
+            torch.load(
+                "./checkpoints/swa_weights.pth",
+                map_location=lambda storage, loc: storage,
+            )
         )
         self.assertEqual(float(model.fc.weight.data[0][0]), 3.5)
         self.assertEqual(float(model.fc.weight.data[0][1]), 3.5)

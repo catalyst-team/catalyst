@@ -5,6 +5,7 @@ import logging
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -107,7 +108,10 @@ class CustomRunner(dl.IRunner):
         return DeviceEngine(self._device)
 
     def get_loggers(self):
-        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+        return {
+            "console": dl.ConsoleLogger(),
+            "csv": dl.CSVLogger(logdir=self._logdir),
+        }
 
     @property
     def stages(self) -> List[str]:
@@ -150,10 +154,18 @@ class CustomRunner(dl.IRunner):
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
-            "check_freezed": CheckRequiresGrad("layer1", "train_freezed", False),
-            "check_unfreezed": CheckRequiresGrad("layer1", "train_unfreezed", True),
+            "check_freezed": CheckRequiresGrad(
+                "layer1", "train_freezed", False
+            ),
+            "check_unfreezed": CheckRequiresGrad(
+                "layer1", "train_unfreezed", True
+            ),
         }
 
     def handle_batch(self, batch):
@@ -231,7 +243,8 @@ def test_finetune_on_config_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")
@@ -239,7 +252,8 @@ def test_finetune_on_cuda_device():
 
 @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_config_cuda_device():
     train_config_experiment("cuda:1")

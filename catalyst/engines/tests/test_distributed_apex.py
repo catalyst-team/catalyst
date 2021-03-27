@@ -7,18 +7,19 @@ import random
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
+from catalyst.callbacks import (
+    CheckpointCallback,
+    CriterionCallback,
+    OptimizerCallback,
+)
 from catalyst.core.runner import IRunner
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
-
-if SETTINGS.apex_required:
-    from catalyst.engines.apex import DistributedDataParallelApexEngine
-
 from .misc import (  # DistributedDataParallelTypeChecker,
     DummyDataset,
     DummyModel,
@@ -26,6 +27,10 @@ from .misc import (  # DistributedDataParallelTypeChecker,
     OPTTensorTypeChecker,
     WorldSizeCheckCallback,
 )
+
+if SETTINGS.apex_required:
+    from catalyst.engines.apex import DistributedDataParallelApexEngine
+
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +51,9 @@ class CustomRunner(IRunner):
         self._port = port
 
     def get_engine(self):
-        return DistributedDataParallelApexEngine(port=self._port, opt_level=self._opt_level)
+        return DistributedDataParallelApexEngine(
+            port=self._port, opt_level=self._opt_level
+        )
 
     def get_callbacks(self, stage: str):
         return {
@@ -56,12 +63,22 @@ class CustomRunner(IRunner):
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
             # "test_nn_parallel_distributed_data_parallel": DistributedDataParallelTypeChecker(),
-            "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
-            "test_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
-            "test_logits_type": OPTTensorTypeChecker("logits", self._opt_level),
+            "test_loss_minimization": LossMinimizationCallback(
+                "loss", logger=logger
+            ),
+            "test_world_size": WorldSizeCheckCallback(
+                NUM_CUDA_DEVICES, logger=logger
+            ),
+            "test_logits_type": OPTTensorTypeChecker(
+                "logits", self._opt_level
+            ),
         }
 
     @property
@@ -92,7 +109,10 @@ class CustomRunner(IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
+        return {
+            "console": ConsoleLogger(),
+            "csv": CSVLogger(logdir=self._logdir),
+        }
 
     def handle_batch(self, batch):
         x, y = batch
@@ -102,12 +122,15 @@ class CustomRunner(IRunner):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_train_distributed_parallel_apex():
     for idx, opt_level in enumerate(OPT_LEVELS):
         with TemporaryDirectory() as logdir:
-            runner = CustomRunner(logdir, opt_level, DDP_ADDRESS + random.randint(1, 100))
+            runner = CustomRunner(
+                logdir, opt_level, DDP_ADDRESS + random.randint(1, 100)
+            )
             runner.run()
 
 
@@ -123,7 +146,11 @@ def train_from_config(port, logdir, opt_lvl):
     runner = MyConfigRunner(
         config={
             "args": {"logdir": logdir},
-            "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
+            "model": {
+                "_target_": "DummyModel",
+                "in_features": 4,
+                "out_features": 2,
+            },
             "engine": {
                 "_target_": "DistributedDataParallelApexEngine",
                 "port": port,
@@ -143,7 +170,10 @@ def train_from_config(port, logdir, opt_lvl):
                             "input_key": "logits",
                             "target_key": "targets",
                         },
-                        "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                        "optimizer": {
+                            "_target_": "OptimizerCallback",
+                            "metric_key": "loss",
+                        },
                         # "test_nn_parallel_distributed_data_parallel": {
                         #     "_target_": "DistributedDataParallelTypeChecker"
                         # },
@@ -169,9 +199,12 @@ def train_from_config(port, logdir, opt_lvl):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_config_train_distributed_parallel_apex():
     for idx, opt_level in enumerate(OPT_LEVELS):
         with TemporaryDirectory() as logdir:
-            train_from_config(DDP_ADDRESS + random.randint(100, 200), logdir, opt_level)
+            train_from_config(
+                DDP_ADDRESS + random.randint(100, 200), logdir, opt_level
+            )

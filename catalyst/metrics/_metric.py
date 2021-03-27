@@ -69,7 +69,12 @@ class IMetric(ABC):
 class ICallbackBatchMetric(IMetric):
     """@TODO: docs here"""
 
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+    def __init__(
+        self,
+        compute_on_call: bool = True,
+        prefix: str = None,
+        suffix: str = None,
+    ):
         """@TODO: docs here"""
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
@@ -102,7 +107,12 @@ class ICallbackLoaderMetric(IMetric):
         suffix:  @TODO: docs
     """
 
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+    def __init__(
+        self,
+        compute_on_call: bool = True,
+        prefix: str = None,
+        suffix: str = None,
+    ):
         """Init."""
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
@@ -167,7 +177,9 @@ class AccumulationMetric(ICallbackLoaderMetric):
         suffix: Optional[str] = None,
     ) -> None:
         """Init AccumulationMetric"""
-        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        super().__init__(
+            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix
+        )
         self.accumulative_fields = accumulative_fields or ()
         self.storage = None
         self.num_samples = None
@@ -198,7 +210,8 @@ class AccumulationMetric(ICallbackLoaderMetric):
         self.storage = defaultdict(torch.Tensor)
         for key in shape_type_dict:
             self.storage[key] = torch.empty(
-                size=shape_type_dict[key]["shape"], dtype=shape_type_dict[key]["dtype"],
+                size=shape_type_dict[key]["shape"],
+                dtype=shape_type_dict[key]["dtype"],
             )
 
     def update(self, **kwargs) -> None:
@@ -221,9 +234,9 @@ class AccumulationMetric(ICallbackLoaderMetric):
         bs = 0
         for field_name in self.accumulative_fields:
             bs = kwargs[field_name].shape[0]
-            self.storage[field_name][self.collected_samples : self.collected_samples + bs, ...] = (
-                kwargs[field_name].detach().cpu()
-            )
+            self.storage[field_name][
+                self.collected_samples : self.collected_samples + bs, ...
+            ] = (kwargs[field_name].detach().cpu())
         self.collected_samples += bs
         self.collected_batches += 1
 
@@ -246,4 +259,9 @@ class AccumulationMetric(ICallbackLoaderMetric):
         return self.compute()
 
 
-__all__ = ["IMetric", "ICallbackBatchMetric", "ICallbackLoaderMetric", "AccumulationMetric"]
+__all__ = [
+    "IMetric",
+    "ICallbackBatchMetric",
+    "ICallbackLoaderMetric",
+    "AccumulationMetric",
+]

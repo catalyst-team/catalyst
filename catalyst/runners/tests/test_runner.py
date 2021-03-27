@@ -42,11 +42,18 @@ def run_train_with_empty_loader() -> None:
     use batch_size > len(dataset) and drop_last=True.
     """
     dataset = DummyDataset()
-    model = nn.Linear(in_features=dataset.features_dim, out_features=dataset.out_dim)
-    loader = DataLoader(dataset=dataset, batch_size=len(dataset) + 1, drop_last=True)
+    model = nn.Linear(
+        in_features=dataset.features_dim, out_features=dataset.out_dim
+    )
+    loader = DataLoader(
+        dataset=dataset, batch_size=len(dataset) + 1, drop_last=True
+    )
     runner = SupervisedRunner()
     runner.train(
-        loaders={"train": loader}, model=model, num_epochs=1, criterion=nn.BCEWithLogitsLoss(),
+        loaders={"train": loader},
+        model=model,
+        num_epochs=1,
+        criterion=nn.BCEWithLogitsLoss(),
     )
 
 

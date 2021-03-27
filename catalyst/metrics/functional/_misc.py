@@ -2,6 +2,7 @@ from typing import Optional, Sequence, Tuple
 import logging
 
 import numpy as np
+
 import torch
 from torch import Tensor
 from torch.nn import functional as F
@@ -39,13 +40,16 @@ def process_multiclass_components(
     if outputs.dim() == targets.dim() + 1:
         # looks like we have scores/probabilities in our outputs
         # let's convert them to final model predictions
-        num_classes = max(outputs.shape[argmax_dim], int(targets.max().detach().item() + 1))
+        num_classes = max(
+            outputs.shape[argmax_dim], int(targets.max().detach().item() + 1)
+        )
         outputs = torch.argmax(outputs, dim=argmax_dim)
     if num_classes is None:
         # as far as we expect the outputs/targets tensors to be int64
         # we could find number of classes as max available number
         num_classes = max(
-            int(outputs.max().detach().item() + 1), int(targets.max().detach().item() + 1),
+            int(outputs.max().detach().item() + 1),
+            int(targets.max().detach().item() + 1),
         )
 
     if outputs.dim() == 1:
@@ -67,13 +71,16 @@ def process_multiclass_components(
         targets.permute(1, 0)
     else:
         assert targets.size(1) == 1 and targets.dim() == 2, (
-            "Wrong `outputs` shape, " "expected 1D or 2D with size 1 in the second dim"
+            "Wrong `outputs` shape, "
+            "expected 1D or 2D with size 1 in the second dim"
         )
 
     return outputs, targets, num_classes
 
 
-def process_recsys_components(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+def process_recsys_components(
+    outputs: torch.Tensor, targets: torch.Tensor
+) -> torch.Tensor:
     """
     General pre-processing for calculation recsys metrics
 
@@ -95,12 +102,16 @@ def process_recsys_components(outputs: torch.Tensor, targets: torch.Tensor) -> t
     """
     check_consistent_length(outputs, targets)
     outputs_order = torch.argsort(outputs, descending=True, dim=-1)
-    targets_sorted_by_outputs = torch.gather(targets, dim=-1, index=outputs_order)
+    targets_sorted_by_outputs = torch.gather(
+        targets, dim=-1, index=outputs_order
+    )
     return targets_sorted_by_outputs
 
 
 def process_multilabel_components(
-    outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None,
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    weights: Optional[torch.Tensor] = None,
 ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
     """General preprocessing for multilabel-based metrics.
 
@@ -131,7 +142,8 @@ def process_multilabel_components(
         outputs = outputs.view(-1, 1)
     else:
         assert outputs.dim() == 2, (
-            "wrong `outputs` size " "(should be 1D or 2D with one column per class)"
+            "wrong `outputs` size "
+            "(should be 1D or 2D with one column per class)"
         )
 
     if targets.dim() == 1:
@@ -144,7 +156,8 @@ def process_multilabel_components(
             targets = targets.view(-1, 1)
     else:
         assert targets.dim() == 2, (
-            "wrong `targets` size " "(should be 1D or 2D with one column per class)"
+            "wrong `targets` size "
+            "(should be 1D or 2D with one column per class)"
         )
 
     if weights is not None:
@@ -154,7 +167,9 @@ def process_multilabel_components(
         ), "Weights dimension 1 should be the same as that of target"
         assert torch.min(weights) >= 0, "Weight should be non-negative only"
 
-    assert torch.equal(targets ** 2, targets), "targets should be binary (0 or 1)"
+    assert torch.equal(
+        targets ** 2, targets
+    ), "targets should be binary (0 or 1)"
 
     return outputs, targets, weights
 
@@ -194,7 +209,10 @@ def get_binary_statistics(
 
 
 def get_multiclass_statistics(
-    outputs: Tensor, targets: Tensor, argmax_dim: int = -1, num_classes: Optional[int] = None,
+    outputs: Tensor,
+    targets: Tensor,
+    argmax_dim: int = -1,
+    num_classes: Optional[int] = None,
 ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
     """
     Computes the number of true negative, false positive,
@@ -223,7 +241,10 @@ def get_multiclass_statistics(
         tensor([1., 1., 0., 1., 1.])
     """
     outputs, targets, num_classes = process_multiclass_components(
-        outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes,
+        outputs=outputs,
+        targets=targets,
+        argmax_dim=argmax_dim,
+        num_classes=num_classes,
     )
 
     tn = torch.zeros((num_classes,), device=outputs.device)
@@ -239,7 +260,9 @@ def get_multiclass_statistics(
             fn[class_index],
             tp[class_index],
             support[class_index],
-        ) = get_binary_statistics(outputs=outputs, targets=targets, label=class_index)
+        ) = get_binary_statistics(
+            outputs=outputs, targets=targets, label=class_index
+        )
 
     return tn, fp, fn, tp, support
 
@@ -285,7 +308,9 @@ def get_multilabel_statistics(
         tensor([1., 1., 1.])
 
     """
-    outputs, targets, _ = process_multilabel_components(outputs=outputs, targets=targets)
+    outputs, targets, _ = process_multilabel_components(
+        outputs=outputs, targets=targets
+    )
     assert outputs.shape == targets.shape
     num_classes = outputs.shape[-1]
 
@@ -304,7 +329,9 @@ def get_multilabel_statistics(
             fn[class_index],
             tp[class_index],
             support[class_index],
-        ) = get_binary_statistics(outputs=class_outputs, targets=class_targets, label=1)
+        ) = get_binary_statistics(
+            outputs=class_outputs, targets=class_targets, label=1
+        )
 
     return tn, fp, fn, tp, support
 

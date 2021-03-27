@@ -3,6 +3,7 @@
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -51,16 +52,37 @@ def train_experiment(device):
             num_epochs=1,
             verbose=False,
             callbacks=[
-                dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
+                dl.CriterionCallback(
+                    input_key="logits", target_key="targets", metric_key="loss"
+                ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
-                dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+                dl.HitrateCallback(
+                    input_key="scores",
+                    target_key="targets",
+                    topk_args=(1, 3, 5),
+                ),
+                dl.MRRCallback(
+                    input_key="scores",
+                    target_key="targets",
+                    topk_args=(1, 3, 5),
+                ),
+                dl.MAPCallback(
+                    input_key="scores",
+                    target_key="targets",
+                    topk_args=(1, 3, 5),
+                ),
+                dl.NDCGCallback(
+                    input_key="scores",
+                    target_key="targets",
+                    topk_args=(1, 3, 5),
+                ),
                 dl.OptimizerCallback(metric_key="loss"),
                 dl.SchedulerCallback(),
                 dl.CheckpointCallback(
-                    logdir=logdir, loader_key="valid", metric_key="map01", minimize=False
+                    logdir=logdir,
+                    loader_key="valid",
+                    metric_key="map01",
+                    minimize=False,
                 ),
             ],
         )
@@ -76,7 +98,8 @@ def test_finetune_on_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")

@@ -2,6 +2,7 @@
 from typing import Dict, List
 
 import pytest
+
 import torch
 
 from catalyst.metrics import DiceMetric, IOUMetric, TrevskyMetric
@@ -135,7 +136,9 @@ def test_trevsky_metric(
     batch_answer: Dict[str, float],
     total_answer: Dict[str, float],
 ):
-    metric = TrevskyMetric(alpha=alpha, weights=weights, class_names=class_names)
+    metric = TrevskyMetric(
+        alpha=alpha, weights=weights, class_names=class_names
+    )
     batch_score = metric.update_key_value(outputs, targets)
     total_score = metric.compute_key_value()
     for key, value in batch_answer.items():

@@ -3,6 +3,7 @@ import os
 
 import numpy as np
 import pytest  # noqa: F401
+
 import torch
 
 from catalyst.callbacks import AccuracyCallback
@@ -63,7 +64,10 @@ def test_accuracy():
         "train": MNIST("./data", transform=ToTensor(), download=True),
         "valid": MNIST("./data", transform=ToTensor(), train=False),
     }
-    dataloaders = {k: torch.utils.data.DataLoader(d, batch_size=32) for k, d in datasets.items()}
+    dataloaders = {
+        k: torch.utils.data.DataLoader(d, batch_size=32)
+        for k, d in datasets.items()
+    }
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
     runner = SupervisedRunner()
     runner.train(

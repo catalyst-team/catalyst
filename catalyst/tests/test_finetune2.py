@@ -4,6 +4,7 @@ import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 from torch import nn, optim
 from torch.utils.data import DataLoader
 
@@ -41,11 +42,21 @@ class CustomRunner(dl.IRunner):
     def get_loaders(self, stage: str):
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(
+                    os.getcwd(),
+                    train=False,
+                    download=True,
+                    transform=ToTensor(),
+                ),
                 batch_size=32,
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                MNIST(
+                    os.getcwd(),
+                    train=False,
+                    download=True,
+                    transform=ToTensor(),
+                ),
                 batch_size=32,
             ),
         }
@@ -55,7 +66,12 @@ class CustomRunner(dl.IRunner):
         model = (
             self.model
             if self.model is not None
-            else nn.Sequential(nn.Flatten(), nn.Linear(784, 128), nn.ReLU(), nn.Linear(128, 10))
+            else nn.Sequential(
+                nn.Flatten(),
+                nn.Linear(784, 128),
+                nn.ReLU(),
+                nn.Linear(128, 10),
+            )
         )
         if stage == "train_freezed":
             # freeze layer
@@ -97,7 +113,11 @@ class CustomRunner(dl.IRunner):
                 input_key="logits", target_key="targets", num_classes=10
             ),
             "checkpoint": dl.CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
         }
 
@@ -176,7 +196,8 @@ def test_finetune_on_config_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")
@@ -184,7 +205,8 @@ def test_finetune_on_cuda_device():
 
 @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_config_cuda_device():
     train_config_experiment("cuda:1")

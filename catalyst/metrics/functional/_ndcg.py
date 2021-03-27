@@ -5,7 +5,9 @@ import torch
 from catalyst.metrics.functional._misc import process_recsys_components
 
 
-def dcg(outputs: torch.Tensor, targets: torch.Tensor, gain_function="exp_rank") -> torch.Tensor:
+def dcg(
+    outputs: torch.Tensor, targets: torch.Tensor, gain_function="exp_rank"
+) -> torch.Tensor:
     """
     Computes Discounted cumulative gain (DCG)
     DCG@topk for the specified values of `k`.
@@ -85,7 +87,9 @@ def dcg(outputs: torch.Tensor, targets: torch.Tensor, gain_function="exp_rank") 
         gains = gain_function(targets_sort_by_outputs)
         discounts = torch.tensor(1) / torch.log2(
             torch.arange(
-                targets_sort_by_outputs.shape[1], dtype=torch.float, device=target_device,
+                targets_sort_by_outputs.shape[1],
+                dtype=torch.float,
+                device=target_device,
             )
             + 2.0
         )
@@ -94,7 +98,9 @@ def dcg(outputs: torch.Tensor, targets: torch.Tensor, gain_function="exp_rank") 
     elif gain_function == "linear_rank":
         discounts = torch.tensor(1) / torch.log2(
             torch.arange(
-                targets_sort_by_outputs.shape[1], dtype=torch.float, device=target_device,
+                targets_sort_by_outputs.shape[1],
+                dtype=torch.float,
+                device=target_device,
             )
             + 1.0
         )
@@ -109,7 +115,10 @@ def dcg(outputs: torch.Tensor, targets: torch.Tensor, gain_function="exp_rank") 
 
 
 def ndcg(
-    outputs: torch.Tensor, targets: torch.Tensor, topk: List[int], gain_function="exp_rank",
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    topk: List[int],
+    gain_function="exp_rank",
 ) -> List[torch.Tensor]:
     """
     Computes nDCG@topk for the specified values of `topk`.

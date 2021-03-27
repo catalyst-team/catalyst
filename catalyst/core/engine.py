@@ -82,7 +82,11 @@ class IEngine(ABC):
 
     @abstractmethod
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         """Inits the runs components."""
         pass

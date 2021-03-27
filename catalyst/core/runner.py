@@ -12,7 +12,11 @@ from torch.utils.data import DataLoader, Dataset, DistributedSampler
 from catalyst.core.callback import Callback, ICallback
 from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
-from catalyst.core.misc import filter_callbacks_by_node, sort_callbacks_by_order, validate_loaders
+from catalyst.core.misc import (
+    filter_callbacks_by_node,
+    sort_callbacks_by_order,
+    validate_loaders,
+)
 from catalyst.core.trial import ITrial
 from catalyst.engines.torch import DistributedDataParallelEngine
 from catalyst.typing import (
@@ -337,7 +341,9 @@ class IRunner(ICallback, ILogger, ABC):
         """
         return None  # noqa: WPS324
 
-    def get_scheduler(self, stage: str, optimizer: Optimizer) -> Optional[Scheduler]:
+    def get_scheduler(
+        self, stage: str, optimizer: Optimizer
+    ) -> Optional[Scheduler]:
         """Returns the scheduler for a given stage and optimizer.
 
         Example::
@@ -364,12 +370,16 @@ class IRunner(ICallback, ILogger, ABC):
 
     def _get_optimizer(self) -> Optimizer:
         assert self.model is not None, "You need to setup model first"
-        self.optimizer = self.get_optimizer(stage=self.stage_key, model=self.model)
+        self.optimizer = self.get_optimizer(
+            stage=self.stage_key, model=self.model
+        )
         return self.optimizer
 
     def _get_scheduler(self) -> Scheduler:
         # assert self.optimizer is not None, "You need to setup optimizer first"
-        self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
+        self.scheduler = self.get_scheduler(
+            stage=self.stage_key, optimizer=self.optimizer
+        )
         return self.scheduler
 
     def get_callbacks(self, stage: str) -> "OrderedDict[str, ICallback]":
@@ -463,7 +473,12 @@ class IRunner(ICallback, ILogger, ABC):
 
     def _setup_components(self) -> None:
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
-        self.model, self.criterion, self.optimizer, self.scheduler = self.engine.init_components(
+        (
+            self.model,
+            self.criterion,
+            self.optimizer,
+            self.scheduler,
+        ) = self.engine.init_components(
             model_fn=self._get_model,
             criterion_fn=self._get_criterion,
             optimizer_fn=self._get_optimizer,
@@ -515,7 +530,9 @@ class IRunner(ICallback, ILogger, ABC):
         assert self.loaders is not None
         for loader_key, loader in self.loaders.items():
             if len(loader) == 0:
-                raise RunnerException(f"DataLoader with name {loader_key} is empty.")
+                raise RunnerException(
+                    f"DataLoader with name {loader_key} is empty."
+                )
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
 
     def on_loader_start(self, runner: "IRunner"):
@@ -524,7 +541,11 @@ class IRunner(ICallback, ILogger, ABC):
         self.is_train_loader: bool = self.loader_key.startswith("train")
         self.is_valid_loader: bool = self.loader_key.startswith("valid")
         self.is_infer_loader: bool = self.loader_key.startswith("infer")
-        assert self.is_train_loader or self.is_valid_loader or self.is_infer_loader
+        assert (
+            self.is_train_loader
+            or self.is_valid_loader
+            or self.is_infer_loader
+        )
         self.loader_batch_size: int = self.loader.batch_size
         self.loader_batch_len: int = len(self.loader)
         self.loader_sample_len: int = len(self.loader.dataset)
@@ -533,7 +554,9 @@ class IRunner(ICallback, ILogger, ABC):
         self.loader_metrics: Dict = defaultdict(None)
 
         if self.loader_batch_len == 0:
-            raise NotImplementedError(f"DataLoader with name {self.loader_key} is empty.")
+            raise NotImplementedError(
+                f"DataLoader with name {self.loader_key} is empty."
+            )
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
 
         maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
@@ -563,7 +586,9 @@ class IRunner(ICallback, ILogger, ABC):
         # they could not be synced before, so we have to sync them in the end of the batch
         # @TODO: could be done better
         self.batch_metrics = {
-            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+            k: runner.engine.sync_tensor(
+                torch.tensor(v, device=runner.device), "mean"
+            )
             for k, v in self.batch_metrics.items()
         }
         self.log_metrics(metrics=self.batch_metrics, scope="batch")
@@ -658,7 +683,10 @@ class IRunner(ICallback, ILogger, ABC):
                 # ddp-device branch
                 world_size = self.engine.world_size
                 torch.multiprocessing.spawn(
-                    self._run_stage, args=(world_size,), nprocs=world_size, join=True,
+                    self._run_stage,
+                    args=(world_size,),
+                    nprocs=world_size,
+                    join=True,
                 )
             else:
                 # single-device branch (cpu, gpu, dp)

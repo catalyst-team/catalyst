@@ -5,6 +5,7 @@ import sys
 import threading
 
 import numpy as np
+
 import torch
 from torch.utils.data import DataLoader
 
@@ -99,11 +100,13 @@ class BatchLimitLoaderWrapper(ILoaderWrapper):
         """
         super().__init__(loader)
         assert isinstance(num_batches, (int, float)), (
-            "Expected ``num_batches`` type is int/float" f"but got {type(num_batches)}"
+            "Expected ``num_batches`` type is int/float"
+            f"but got {type(num_batches)}"
         )
         if isinstance(num_batches, float):
             assert 0.0 <= num_batches <= 1, (
-                "Expected ``num_batches`` to be in range [0; 1]" f"but got {num_batches}"
+                "Expected ``num_batches`` to be in range [0; 1]"
+                f"but got {num_batches}"
             )
             num_batches = int(len(loader) * num_batches)
 
@@ -145,8 +148,14 @@ def _any2cuda_non_blocking(value: Any):
         return [_any2cuda_non_blocking(v) for v in value]
     elif torch.is_tensor(value):
         return value.cuda(non_blocking=True)
-    elif isinstance(value, (np.ndarray, np.void)) and value.dtype.fields is not None:
-        return {k: _any2cuda_non_blocking(value[k]) for k in value.dtype.fields.keys()}
+    elif (
+        isinstance(value, (np.ndarray, np.void))
+        and value.dtype.fields is not None
+    ):
+        return {
+            k: _any2cuda_non_blocking(value[k])
+            for k in value.dtype.fields.keys()
+        }
     elif isinstance(value, np.ndarray):
         return torch.tensor(value).cuda(non_blocking=True)
 
@@ -169,13 +178,17 @@ def _map_loop(
 
 
 def _prefetch_map(
-    func: Callable, iterable: Iterable, num_prefetches: int = 1, timeout: int = 2,
+    func: Callable,
+    iterable: Iterable,
+    num_prefetches: int = 1,
+    timeout: int = 2,
 ) -> Iterable:
     result_queue = queue.Queue(num_prefetches)
     error_queue = queue.Queue(1)
     done_event = threading.Event()
     map_thread = threading.Thread(
-        target=_map_loop, args=(func, iterable, result_queue, error_queue, done_event),
+        target=_map_loop,
+        args=(func, iterable, result_queue, error_queue, done_event),
     )
     map_thread.daemon = True
     map_thread.start()
@@ -191,7 +204,9 @@ def _prefetch_map(
 
 def _prefetch_loader(loader: DataLoader, num_prefetches: int) -> Iterable:
     if torch.cuda.is_available():
-        return _prefetch_map(_any2cuda_non_blocking, loader, num_prefetches=num_prefetches)
+        return _prefetch_map(
+            _any2cuda_non_blocking, loader, num_prefetches=num_prefetches
+        )
     else:
         return iter(loader)
 

@@ -4,6 +4,7 @@ import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch import nn, optim
 from torch.nn import functional as F
@@ -28,7 +29,9 @@ class VAE(nn.Module):
         super().__init__()
         self.hid_features = hid_features
         self.encoder = nn.Linear(in_features, hid_features * 2)
-        self.decoder = nn.Sequential(nn.Linear(hid_features, in_features), nn.Sigmoid())
+        self.decoder = nn.Sequential(
+            nn.Linear(hid_features, in_features), nn.Sigmoid()
+        )
 
     def forward(self, x, deterministic=False):
         z = self.encoder(x)
@@ -70,10 +73,22 @@ class CustomRunner(dl.IRunner):
     def get_loaders(self, stage: str):
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+                MNIST(
+                    os.getcwd(),
+                    train=False,
+                    download=True,
+                    transform=ToTensor(),
+                ),
+                batch_size=32,
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+                MNIST(
+                    os.getcwd(),
+                    train=False,
+                    download=True,
+                    transform=ToTensor(),
+                ),
+                batch_size=32,
             ),
         }
         return loaders
@@ -89,7 +104,11 @@ class CustomRunner(dl.IRunner):
         return {
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
             "checkpoint": dl.CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
         }
 
@@ -103,15 +122,26 @@ class CustomRunner(dl.IRunner):
     def handle_batch(self, batch):
         x, _ = batch
         x = x.view(x.size(0), -1)
-        x_, loc, log_scale = self.model(x, deterministic=not self.is_train_loader)
+        x_, loc, log_scale = self.model(
+            x, deterministic=not self.is_train_loader
+        )
 
         loss_ae = F.mse_loss(x_, x)
-        loss_kld = (-0.5 * torch.sum(1 + log_scale - loc.pow(2) - log_scale.exp(), dim=1)).mean()
+        loss_kld = (
+            -0.5
+            * torch.sum(1 + log_scale - loc.pow(2) - log_scale.exp(), dim=1)
+        ).mean()
         loss = loss_ae + loss_kld * 0.01
 
-        self.batch_metrics = {"loss_ae": loss_ae, "loss_kld": loss_kld, "loss": loss}
+        self.batch_metrics = {
+            "loss_ae": loss_ae,
+            "loss_kld": loss_kld,
+            "loss": loss,
+        }
         for key in ["loss_ae", "loss_kld", "loss"]:
-            self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
+            self.meters[key].update(
+                self.batch_metrics[key].item(), self.batch_size
+            )
 
     def on_loader_end(self, runner):
         for key in ["loss_ae", "loss_kld", "loss"]:
@@ -119,7 +149,9 @@ class CustomRunner(dl.IRunner):
         super().on_loader_end(runner)
 
     def predict_batch(self, batch):
-        random_latent_vectors = torch.randn(1, self.model.hid_features).to(self.device)
+        random_latent_vectors = torch.randn(1, self.model.hid_features).to(
+            self.device
+        )
         generated_images = self.model.decoder(random_latent_vectors).detach()
         return generated_images
 
@@ -141,7 +173,8 @@ def test_finetune_on_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")

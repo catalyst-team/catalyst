@@ -7,6 +7,7 @@ import tarfile
 import zipfile
 
 import numpy as np
+
 import torch
 from torch.utils.model_zoo import tqdm
 
@@ -73,7 +74,9 @@ def download_url(url, root, filename=None, md5=None):
     else:  # download the file
         try:
             print("Downloading " + url + " to " + fpath)
-            urllib.request.urlretrieve(url, fpath, reporthook=_gen_bar_updater())
+            urllib.request.urlretrieve(
+                url, fpath, reporthook=_gen_bar_updater()
+            )
         except (urllib.error.URLError, IOError) as e:
             if url[:5] == "https":
                 url = url.replace("https:", "http:")
@@ -81,7 +84,9 @@ def download_url(url, root, filename=None, md5=None):
                     "Failed download. Trying https -> http instead."
                     " Downloading " + url + " to " + fpath
                 )
-                urllib.request.urlretrieve(url, fpath, reporthook=_gen_bar_updater())
+                urllib.request.urlretrieve(
+                    url, fpath, reporthook=_gen_bar_updater()
+                )
             else:
                 raise e
         # check integrity of downloaded file
@@ -105,7 +110,9 @@ def _extract_archive(from_path, to_path=None, remove_finished=False):
     elif from_path.endswith(".gz"):
         root, _ = os.path.splitext(os.path.basename(from_path))
         to_path = os.path.join(to_path, root)
-        with open(to_path, "wb") as out_f, gzip.GzipFile(from_path) as zip_f:  # noqa: WPS316
+        with open(to_path, "wb") as out_f, gzip.GzipFile(
+            from_path
+        ) as zip_f:  # noqa: WPS316
             out_f.write(zip_f.read())
     elif from_path.endswith(".zip"):
         with zipfile.ZipFile(from_path, "r") as z:
@@ -118,7 +125,12 @@ def _extract_archive(from_path, to_path=None, remove_finished=False):
 
 
 def download_and_extract_archive(
-    url, download_root, extract_root=None, filename=None, md5=None, remove_finished=False,
+    url,
+    download_root,
+    extract_root=None,
+    filename=None,
+    md5=None,
+    remove_finished=False,
 ):
     """@TODO: Docs. Contribution is welcome."""
     download_root = os.path.expanduser(download_root)
@@ -187,4 +199,8 @@ def read_sn3_pascalvincent_tensor(path, strict=True):
     return torch.from_numpy(parsed.astype(m[2], copy=False)).view(*s)
 
 
-__all__ = ["download_and_extract_archive", "download_url", "read_sn3_pascalvincent_tensor"]
+__all__ = [
+    "download_and_extract_archive",
+    "download_url",
+    "read_sn3_pascalvincent_tensor",
+]

@@ -47,7 +47,11 @@ class DataParallelAMPEngine(AMPEngine):
         return f"{self.__class__.__name__}(device='{self.device}')"
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -110,4 +114,8 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         return amp.autocast()
 
 
-__all__ = ["AMPEngine", "DataParallelAMPEngine", "DistributedDataParallelAMPEngine"]
+__all__ = [
+    "AMPEngine",
+    "DataParallelAMPEngine",
+    "DistributedDataParallelAMPEngine",
+]

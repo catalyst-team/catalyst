@@ -7,15 +7,19 @@ import random
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
+from catalyst.callbacks import (
+    CheckpointCallback,
+    CriterionCallback,
+    OptimizerCallback,
+)
 from catalyst.core.runner import IRunner
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
-
 from .misc import (
     DistributedDataParallelTypeChecker,
     DummyDataset,
@@ -43,7 +47,9 @@ class CustomRunner(IRunner):
         self._logdir = logdir
 
     def get_engine(self):
-        return DistributedDataParallelAMPEngine(port=DDP_ADDRESS + random.randint(1, 100))
+        return DistributedDataParallelAMPEngine(
+            port=DDP_ADDRESS + random.randint(1, 100)
+        )
 
     def get_callbacks(self, stage: str):
         return {
@@ -53,11 +59,19 @@ class CustomRunner(IRunner):
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
             "test_nn_parallel_distributed_data_parallel": DistributedDataParallelTypeChecker(),
-            "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
-            "test_world_size": WorldSizeCheckCallback(NUM_CUDA_DEVICES, logger=logger),
+            "test_loss_minimization": LossMinimizationCallback(
+                "loss", logger=logger
+            ),
+            "test_world_size": WorldSizeCheckCallback(
+                NUM_CUDA_DEVICES, logger=logger
+            ),
         }
 
     @property
@@ -88,7 +102,10 @@ class CustomRunner(IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
+        return {
+            "console": ConsoleLogger(),
+            "csv": CSVLogger(logdir=self._logdir),
+        }
 
     def handle_batch(self, batch):
         x, y = batch
@@ -98,7 +115,8 @@ class CustomRunner(IRunner):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_train_with_experiment_distributed_parallel_amp_device():
     with TemporaryDirectory() as logdir:
@@ -115,14 +133,19 @@ class MyConfigRunner(SupervisedConfigRunner):
 
 # @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_train_with_config_experiment_distributed_parallel_amp_device():
     with TemporaryDirectory() as logdir:
         runner = MyConfigRunner(
             config={
                 "args": {"logdir": logdir},
-                "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
+                "model": {
+                    "_target_": "DummyModel",
+                    "in_features": 4,
+                    "out_features": 2,
+                },
                 "engine": {
                     "_target_": "DistributedDataParallelAMPEngine",
                     "port": DDP_ADDRESS + random.randint(100, 200),
@@ -141,7 +164,10 @@ def test_train_with_config_experiment_distributed_parallel_amp_device():
                                 "input_key": "logits",
                                 "target_key": "targets",
                             },
-                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            "optimizer": {
+                                "_target_": "OptimizerCallback",
+                                "metric_key": "loss",
+                            },
                             "test_nn_parallel_distributed_data_parallel": {
                                 "_target_": "DistributedDataParallelTypeChecker"
                             },
@@ -153,7 +179,10 @@ def test_train_with_config_experiment_distributed_parallel_amp_device():
                                 "_target_": "WorldSizeCheckCallback",
                                 "assert_world_size": NUM_CUDA_DEVICES,
                             },
-                            "test_logits_type": {"_target_": "TensorTypeChecker", "key": "logits"},
+                            "test_logits_type": {
+                                "_target_": "TensorTypeChecker",
+                                "key": "logits",
+                            },
                         },
                     },
                 },

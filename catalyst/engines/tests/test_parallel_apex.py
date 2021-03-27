@@ -5,18 +5,19 @@ import logging
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
+from catalyst.callbacks import (
+    CheckpointCallback,
+    CriterionCallback,
+    OptimizerCallback,
+)
 from catalyst.core.runner import IRunner
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
-
-if SETTINGS.apex_required:
-    from catalyst.engines.apex import DataParallelApexEngine
-
 from .misc import (
     DataParallelTypeChecker,
     DummyDataset,
@@ -25,6 +26,10 @@ from .misc import (
     OPTTensorTypeChecker,
     TensorTypeChecker,
 )
+
+if SETTINGS.apex_required:
+    from catalyst.engines.apex import DataParallelApexEngine
+
 
 logger = logging.getLogger(__name__)
 
@@ -54,11 +59,19 @@ class CustomRunner(IRunner):
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
             "test_nn_parallel_data_parallel": DataParallelTypeChecker(),
-            "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
-            "test_logits_type": OPTTensorTypeChecker("logits", self._opt_level),
+            "test_loss_minimization": LossMinimizationCallback(
+                "loss", logger=logger
+            ),
+            "test_logits_type": OPTTensorTypeChecker(
+                "logits", self._opt_level
+            ),
         }
 
     @property
@@ -89,7 +102,10 @@ class CustomRunner(IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
+        return {
+            "console": ConsoleLogger(),
+            "csv": CSVLogger(logdir=self._logdir),
+        }
 
     def handle_batch(self, batch):
         x, y = batch
@@ -110,8 +126,15 @@ def train_from_config(opt_level):
         runner = SupervisedConfigRunner(
             config={
                 "args": {"logdir": logdir},
-                "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
-                "engine": {"_target_": "DataParallelApexEngine", "opt_level": opt_level},
+                "model": {
+                    "_target_": "DummyModel",
+                    "in_features": 4,
+                    "out_features": 2,
+                },
+                "engine": {
+                    "_target_": "DataParallelApexEngine",
+                    "opt_level": opt_level,
+                },
                 "args": {"logdir": logdir},
                 "stages": {
                     "stage1": {
@@ -126,7 +149,10 @@ def train_from_config(opt_level):
                                 "input_key": "logits",
                                 "target_key": "targets",
                             },
-                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                            "optimizer": {
+                                "_target_": "OptimizerCallback",
+                                "metric_key": "loss",
+                            },
                             "test_nn_parallel_data_parallel": {
                                 "_target_": "DataParallelTypeChecker"
                             },

@@ -156,7 +156,9 @@ class CMCMetric(AccumulationMetric):
         gallery_embeddings = embeddings[~query_mask]
         gallery_labels = labels[~query_mask]
 
-        conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).to(torch.bool)
+        conformity_matrix = (gallery_labels == query_labels.reshape(-1, 1)).to(
+            torch.bool
+        )
 
         metrics = []
         for k in self.topk_args:
@@ -179,7 +181,8 @@ class CMCMetric(AccumulationMetric):
         """
         values = self.compute()
         kv_metrics = {
-            f"{self.metric_name}{k:02d}": value for k, value in zip(self.topk_args, values)
+            f"{self.metric_name}{k:02d}": value
+            for k, value in zip(self.topk_args, values)
         }
         return kv_metrics
 

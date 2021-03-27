@@ -10,7 +10,9 @@ def test_batch_limit1() -> None:
         num_samples, num_features = int(1e2), int(1e1)
         X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
         dataset = TensorDataset(X, y)
-        loader = DataLoader(dataset, batch_size=4, num_workers=1, shuffle=shuffle)
+        loader = DataLoader(
+            dataset, batch_size=4, num_workers=1, shuffle=shuffle
+        )
         loader = BatchLimitLoaderWrapper(loader, num_batches=1)
 
         batch1 = next(iter(loader))[0]
@@ -25,7 +27,9 @@ def test_batch_limit2() -> None:
         num_samples, num_features = int(1e2), int(1e1)
         X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
         dataset = TensorDataset(X, y)
-        loader = DataLoader(dataset, batch_size=4, num_workers=1, shuffle=shuffle)
+        loader = DataLoader(
+            dataset, batch_size=4, num_workers=1, shuffle=shuffle
+        )
         loader = BatchLimitLoaderWrapper(loader, num_batches=2)
 
         batch1 = next(iter(loader))[0]

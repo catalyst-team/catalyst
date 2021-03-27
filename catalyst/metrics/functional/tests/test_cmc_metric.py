@@ -4,6 +4,7 @@ from itertools import chain
 
 import numpy as np
 import pytest
+
 import torch
 
 from catalyst.metrics.functional._cmc_score import cmc_score, cmc_score_count
@@ -14,8 +15,18 @@ TEST_DATA_SIMPLE = (
     # (distance_matrix, conformity_matrix,
     #  topk, expected_value)
     (torch.tensor([[1, 2], [2, 1]]), torch.tensor([[0, 1], [1, 0]]), 1, 0.0),
-    (torch.tensor([[0, 0.5], [0.0, 0.5]]), torch.tensor([[0, 1], [1, 0]]), 1, 0.5),
-    (torch.tensor([[0, 0.5], [0.0, 0.5]]), torch.tensor([[0, 1], [1, 0]]), 2, 1),
+    (
+        torch.tensor([[0, 0.5], [0.0, 0.5]]),
+        torch.tensor([[0, 1], [1, 0]]),
+        1,
+        0.5,
+    ),
+    (
+        torch.tensor([[0, 0.5], [0.0, 0.5]]),
+        torch.tensor([[0, 1], [1, 0]]),
+        2,
+        1,
+    ),
     (
         torch.tensor([[1, 0.5, 0.2], [2, 3, 4], [0.4, 3, 4]]),
         torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
@@ -26,7 +37,12 @@ TEST_DATA_SIMPLE = (
 )
 
 TEST_DATA_LESS_SMALL = (
-    (torch.rand((10, 10)) + torch.tril(torch.ones((10, 10))), torch.eye(10), i, i / 10)
+    (
+        torch.rand((10, 10)) + torch.tril(torch.ones((10, 10))),
+        torch.eye(10),
+        i,
+        i / 10,
+    )
     for i in range(1, 10)
 )
 
@@ -41,16 +57,25 @@ TEST_DATA_GREATER_SMALL = (
 )
 
 TEST_DATA_LESS_BIG = (
-    (torch.rand((100, 100)) + torch.tril(torch.ones((100, 100))), torch.eye(100), i, i / 100)
+    (
+        torch.rand((100, 100)) + torch.tril(torch.ones((100, 100))),
+        torch.eye(100),
+        i,
+        i / 100,
+    )
     for i in range(1, 101, 10)
 )
 
 
-@pytest.mark.parametrize("distance_matrix,conformity_matrix,topk,expected", TEST_DATA_SIMPLE)
+@pytest.mark.parametrize(
+    "distance_matrix,conformity_matrix,topk,expected", TEST_DATA_SIMPLE
+)
 def test_metric_count(distance_matrix, conformity_matrix, topk, expected):
     """Simple test"""
     out = cmc_score_count(
-        distances=distance_matrix, conformity_matrix=conformity_matrix, topk=topk,
+        distances=distance_matrix,
+        conformity_matrix=conformity_matrix,
+        topk=topk,
     )
     assert np.isclose(out, expected)
 
@@ -62,18 +87,23 @@ def test_metric_count(distance_matrix, conformity_matrix, topk, expected):
 def test_metric_less(distance_matrix, conformity_matrix, topk, expected):
     """Simple test"""
     out = cmc_score_count(
-        distances=distance_matrix, conformity_matrix=conformity_matrix, topk=topk,
+        distances=distance_matrix,
+        conformity_matrix=conformity_matrix,
+        topk=topk,
     )
     assert out - EPS <= expected
 
 
 @pytest.mark.parametrize(
-    "distance_matrix,conformity_matrix,topk,expected", chain(TEST_DATA_GREATER_SMALL),
+    "distance_matrix,conformity_matrix,topk,expected",
+    chain(TEST_DATA_GREATER_SMALL),
 )
 def test_metric_greater(distance_matrix, conformity_matrix, topk, expected):
     """Simple test"""
     out = cmc_score_count(
-        distances=distance_matrix, conformity_matrix=conformity_matrix, topk=topk,
+        distances=distance_matrix,
+        conformity_matrix=conformity_matrix,
+        topk=topk,
     )
     assert out + EPS >= expected
 
@@ -111,7 +141,9 @@ def generate_samples_for_cmc_score() -> List[
                 labels = np.concatenate((labels, [i] * samples_per_label))
             return samples.reshape((-1, 1)), labels
 
-        query_embs, query_labels = generate_samples(n_labels=class_number, samples_per_label=kq)
+        query_embs, query_labels = generate_samples(
+            n_labels=class_number, samples_per_label=kq
+        )
 
         gallery_embs, gallery_labels = generate_samples(
             n_labels=class_number, samples_per_label=kg
@@ -124,7 +156,9 @@ def generate_samples_for_cmc_score() -> List[
             size = len(labels)
             for i in range(size):
                 if np.random.binomial(n=1, p=error_rate, size=1)[0]:
-                    labels[i] = np.random.choice(list(unique_labels - {labels[i]}))
+                    labels[i] = np.random.choice(
+                        list(unique_labels - {labels[i]})
+                    )
             return labels
 
         gallery_labels = confuse_labels(gallery_labels, error_rate=error_rate)
@@ -134,7 +168,15 @@ def generate_samples_for_cmc_score() -> List[
         query_labels = torch.tensor(query_labels, dtype=torch.long)
         gallery_labels = torch.tensor(gallery_labels, dtype=torch.long)
 
-        data.append((error_rate, query_embs, query_labels, gallery_embs, gallery_labels,))
+        data.append(
+            (
+                error_rate,
+                query_embs,
+                query_labels,
+                gallery_embs,
+                gallery_labels,
+            )
+        )
     return data
 
 
@@ -151,7 +193,9 @@ def test_cmc_score_with_samples(generate_samples_for_cmc_score):
         gallery_labels,
     ) in generate_samples_for_cmc_score:
         true_cmc_01 = 1 - error_rate
-        conformity_matrix = (query_labels.reshape((-1, 1)) == gallery_labels).to(torch.bool)
+        conformity_matrix = (
+            query_labels.reshape((-1, 1)) == gallery_labels
+        ).to(torch.bool)
         cmc = cmc_score(
             query_embeddings=query_embs,
             gallery_embeddings=gallery_embs,

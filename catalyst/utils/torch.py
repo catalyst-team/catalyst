@@ -1,9 +1,19 @@
-from typing import Any, Callable, Dict, Iterable, List, Mapping, TYPE_CHECKING, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    List,
+    Mapping,
+    TYPE_CHECKING,
+    Union,
+)
 import collections
 import os
 import re
 
 import numpy as np
+
 import torch
 from torch import nn, Tensor
 import torch.backends
@@ -44,7 +54,9 @@ def _nonlinearity2name(nonlinearity):
     return nonlinearity
 
 
-def get_optimal_inner_init(nonlinearity: nn.Module, **kwargs) -> Callable[[nn.Module], None]:
+def get_optimal_inner_init(
+    nonlinearity: nn.Module, **kwargs
+) -> Callable[[nn.Module], None]:
     """
     Create initializer for inner layers
     based on their activation function (nonlinearity).
@@ -133,7 +145,9 @@ def get_optimizer_momentum(optimizer: Optimizer) -> float:
     return betas[0] if betas is not None else momentum
 
 
-def get_optimizer_momentum_list(optimizer: Optimizer) -> List[Union[float, None]]:
+def get_optimizer_momentum_list(
+    optimizer: Optimizer,
+) -> List[Union[float, None]]:
     """Get list of optimizer momentums (for each param group)
 
     Args:
@@ -184,7 +198,10 @@ def get_device() -> torch.device:
 
 
 def get_available_engine(
-    fp16: bool = False, ddp: bool = False, amp: bool = False, apex: bool = False
+    fp16: bool = False,
+    ddp: bool = False,
+    amp: bool = False,
+    apex: bool = False,
 ) -> "IEngine":
     """Returns available engine based on given arguments.
 
@@ -204,7 +221,9 @@ def get_available_engine(
     )
 
     if fp16 and not amp and not apex:
-        amp = SETTINGS.amp_required or (SETTINGS.amp_required and SETTINGS.apex_required)
+        amp = SETTINGS.amp_required or (
+            SETTINGS.amp_required and SETTINGS.apex_required
+        )
         apex = SETTINGS.apex_required and (not SETTINGS.amp_required)
 
     if amp:
@@ -312,8 +331,13 @@ def any2device(value, device: Device):
         return [any2device(v, device) for v in value]
     elif torch.is_tensor(value):
         return value.to(device, non_blocking=True)
-    elif isinstance(value, (np.ndarray, np.void)) and value.dtype.fields is not None:
-        return {k: any2device(value[k], device) for k in value.dtype.fields.keys()}
+    elif (
+        isinstance(value, (np.ndarray, np.void))
+        and value.dtype.fields is not None
+    ):
+        return {
+            k: any2device(value[k], device) for k in value.dtype.fields.keys()
+        }
     elif isinstance(value, np.ndarray):
         return torch.tensor(value, device=device)
     elif isinstance(value, nn.Module):
@@ -337,7 +361,9 @@ def prepare_cudnn(deterministic: bool = None, benchmark: bool = None) -> None:
         # CuDNN reproducibility
         # https://pytorch.org/docs/stable/notes/randomness.html#cudnn
         if deterministic is None:
-            deterministic = os.environ.get("CUDNN_DETERMINISTIC", "True") == "True"
+            deterministic = (
+                os.environ.get("CUDNN_DETERMINISTIC", "True") == "True"
+            )
         cudnn.deterministic = deterministic
 
         # https://discuss.pytorch.org/t/how-should-i-disable-using-cudnn-in-my-code/38053/4
@@ -422,7 +448,9 @@ def get_requires_grad(model: Model):
     return requires_grad
 
 
-def set_requires_grad(model: Model, requires_grad: Union[bool, Dict[str, bool]]):
+def set_requires_grad(
+    model: Model, requires_grad: Union[bool, Dict[str, bool]]
+):
     """Sets the ``requires_grad`` value for all model parameters.
 
     Example::
@@ -439,7 +467,9 @@ def set_requires_grad(model: Model, requires_grad: Union[bool, Dict[str, bool]])
     """
     if isinstance(requires_grad, dict):
         for name, param in model.named_parameters():
-            assert name in requires_grad, f"Parameter `{name}` does not exist in requires_grad"
+            assert (
+                name in requires_grad
+            ), f"Parameter `{name}` does not exist in requires_grad"
             param.requires_grad = requires_grad[name]
     else:
         requires_grad = bool(requires_grad)
@@ -464,7 +494,9 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
         tensor with network output
     """
 
-    def _rand_sample(input_shape) -> Union[torch.Tensor, Dict[str, torch.Tensor]]:
+    def _rand_sample(
+        input_shape,
+    ) -> Union[torch.Tensor, Dict[str, torch.Tensor]]:
         if isinstance(input_shape, dict):
             input_t = {
                 key: torch.Tensor(torch.randn((1,) + key_input_shape))
@@ -474,9 +506,12 @@ def get_network_output(net: Model, *input_shapes_args, **input_shapes_kwargs):
             input_t = torch.Tensor(torch.randn((1,) + input_shape))
         return input_t
 
-    input_args = [_rand_sample(input_shape) for input_shape in input_shapes_args]
+    input_args = [
+        _rand_sample(input_shape) for input_shape in input_shapes_args
+    ]
     input_kwargs = {
-        key: _rand_sample(input_shape) for key, input_shape in input_shapes_kwargs.items()
+        key: _rand_sample(input_shape)
+        for key, input_shape in input_shapes_kwargs.items()
     }
 
     output_t = net(*input_args, **input_kwargs)
@@ -551,10 +586,13 @@ def pack_checkpoint(
             )
     else:
         model_module = get_nn_from_ddp_module(model)
-        checkpoint["model_state_dict"] = maybe_recursive_call(model_module, "state_dict")
+        checkpoint["model_state_dict"] = maybe_recursive_call(
+            model_module, "state_dict"
+        )
 
     for dict2save, name2save in zip(
-        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler],
+        ["criterion", "optimizer", "scheduler"],
     ):
         if dict2save is None:
             continue
@@ -593,11 +631,14 @@ def unpack_checkpoint(
     if model is not None:
         model = get_nn_from_ddp_module(model)
         maybe_recursive_call(
-            model, "load_state_dict", recursive_args=checkpoint["model_state_dict"],
+            model,
+            "load_state_dict",
+            recursive_args=checkpoint["model_state_dict"],
         )
 
     for dict2load, name2load in zip(
-        [criterion, optimizer, scheduler], ["criterion", "optimizer", "scheduler"],
+        [criterion, optimizer, scheduler],
+        ["criterion", "optimizer", "scheduler"],
     ):
         if dict2load is None:
             continue

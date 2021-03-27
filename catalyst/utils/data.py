@@ -56,7 +56,9 @@ def get_loader(
     """
     from catalyst.data.dataset import ListDataset
 
-    dataset = ListDataset(list_data=data_source, open_fn=open_fn, dict_transform=dict_transform)
+    dataset = ListDataset(
+        list_data=data_source, open_fn=open_fn, dict_transform=dict_transform
+    )
     loader = torch.utils.data.DataLoader(
         dataset=dataset,
         sampler=sampler,
@@ -144,7 +146,9 @@ def get_loaders_from_params(
         ), f"{datasource} should be Dataset or Dict. Got: {datasource}"
 
         loader_params = loaders_params.pop(name, {})
-        assert isinstance(loader_params, dict), f"{loader_params} should be Dict"
+        assert isinstance(
+            loader_params, dict
+        ), f"{loader_params} should be Dict"
 
         sampler_params = samplers_params.pop(name, None)
         if sampler_params is None:
@@ -185,7 +189,9 @@ def get_loaders_from_params(
         if isinstance(datasource, Dataset):
             loader_params["dataset"] = datasource
         elif isinstance(datasource, dict):
-            assert "dataset" in datasource, "You need to specify dataset for dataloader"
+            assert (
+                "dataset" in datasource
+            ), "You need to specify dataset for dataloader"
             loader_params = merge_dicts(datasource, loader_params)
         else:
             raise NotImplementedError
@@ -203,13 +209,18 @@ def get_loaders_from_params(
 
         if "batch_sampler" in loader_params:
             if distributed:
-                raise ValueError("batch_sampler option is mutually " "exclusive with distributed")
+                raise ValueError(
+                    "batch_sampler option is mutually "
+                    "exclusive with distributed"
+                )
 
             for k in ("batch_size", "shuffle", "sampler", "drop_last"):
                 loader_params.pop(k, None)
 
         if "worker_init_fn" not in loader_params:
-            loader_params["worker_init_fn"] = partial(_worker_init_fn, initial_seed=initial_seed)
+            loader_params["worker_init_fn"] = partial(
+                _worker_init_fn, initial_seed=initial_seed
+            )
 
         loaders[name] = DataLoader(**loader_params)
 

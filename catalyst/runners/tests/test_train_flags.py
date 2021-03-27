@@ -3,6 +3,7 @@
 from tempfile import TemporaryDirectory
 
 import pytest
+
 import torch
 from torch.utils.data import DataLoader
 
@@ -18,7 +19,11 @@ if SETTINGS.apex_required:
     )
 
 if SETTINGS.amp_required:
-    from catalyst.engines import AMPEngine, DataParallelAMPEngine, DistributedDataParallelAMPEngine
+    from catalyst.engines import (
+        AMPEngine,
+        DataParallelAMPEngine,
+        DistributedDataParallelAMPEngine,
+    )
 
 
 class DummyDataset:
@@ -78,14 +83,18 @@ class CustomRunner(Runner):
 
 
 @pytest.mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required and NUM_CUDA_DEVICES == 1),
+    not (
+        IS_CUDA_AVAILABLE and SETTINGS.amp_required and NUM_CUDA_DEVICES == 1
+    ),
     reason="AMP is unavailable",
 )
 def test_amp_arg():
     with TemporaryDirectory(), pytest.raises(EngineIsOk):
         runner = CustomRunner()
         runner._expected_engine = AMPEngine
-        runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), fp16=True)
+        runner.train(
+            loaders=get_loaders(), model=torch.nn.Linear(4, 2), fp16=True
+        )
 
 
 @pytest.mark.skipif(
@@ -96,29 +105,39 @@ def test_dp_amp_arg():
     with TemporaryDirectory(), pytest.raises(EngineIsOk):
         runner = CustomRunner()
         runner._expected_engine = DataParallelAMPEngine
-        runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), fp16=True)
+        runner.train(
+            loaders=get_loaders(), model=torch.nn.Linear(4, 2), fp16=True
+        )
 
 
 @pytest.mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required and NUM_CUDA_DEVICES == 1),
+    not (
+        IS_CUDA_AVAILABLE and SETTINGS.apex_required and NUM_CUDA_DEVICES == 1
+    ),
     reason="APEX is unavailable",
 )
 def test_apex_arg():
     with TemporaryDirectory(), pytest.raises(EngineIsOk):
         runner = CustomRunner()
         runner._expected_engine = APEXEngine
-        runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), apex=True)
+        runner.train(
+            loaders=get_loaders(), model=torch.nn.Linear(4, 2), apex=True
+        )
 
 
 @pytest.mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required and NUM_CUDA_DEVICES > 1),
+    not (
+        IS_CUDA_AVAILABLE and SETTINGS.apex_required and NUM_CUDA_DEVICES > 1
+    ),
     reason="APEX is unavailable or not enough GPUs",
 )
 def test_dp_apex_arg():
     with TemporaryDirectory(), pytest.raises(EngineIsOk):
         runner = CustomRunner()
         runner._expected_engine = DataParallelApexEngine
-        runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), apex=True)
+        runner.train(
+            loaders=get_loaders(), model=torch.nn.Linear(4, 2), apex=True
+        )
 
 
 @pytest.mark.skipif(
@@ -128,7 +147,9 @@ def test_ddp_arg():
     with TemporaryDirectory(), pytest.raises(Exception):
         runner = CustomRunner()
         runner._expected_engine = DistributedDataParallelEngine
-        runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True)
+        runner.train(
+            loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True
+        )
 
 
 @pytest.mark.skipif(
@@ -139,15 +160,27 @@ def test_ddp_amp_arg():
     with TemporaryDirectory(), pytest.raises(Exception):
         runner = CustomRunner()
         runner._expected_engine = DistributedDataParallelAMPEngine
-        runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True, fp16=True)
+        runner.train(
+            loaders=get_loaders(),
+            model=torch.nn.Linear(4, 2),
+            ddp=True,
+            fp16=True,
+        )
 
 
 @pytest.mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required and NUM_CUDA_DEVICES > 1),
+    not (
+        IS_CUDA_AVAILABLE and SETTINGS.apex_required and NUM_CUDA_DEVICES > 1
+    ),
     reason="APEX is unavailable or not enough GPUs",
 )
 def test_ddp_apex_arg():
     with TemporaryDirectory(), pytest.raises(Exception):
         runner = CustomRunner()
         runner._expected_engine = DistributedDataParallelApexEngine
-        runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True, apex=True)
+        runner.train(
+            loaders=get_loaders(),
+            model=torch.nn.Linear(4, 2),
+            ddp=True,
+            apex=True,
+        )

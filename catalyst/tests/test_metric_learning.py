@@ -4,6 +4,7 @@ import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
@@ -22,9 +23,13 @@ def train_experiment(device):
         train_dataset = datasets.MnistMLDataset(
             root=os.getcwd(), download=True, transform=transforms
         )
-        sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=10)
+        sampler = data.BalanceBatchSampler(
+            labels=train_dataset.get_labels(), p=5, k=10
+        )
         train_loader = DataLoader(
-            dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
+            dataset=train_dataset,
+            sampler=sampler,
+            batch_size=sampler.batch_size,
         )
 
         valid_dataset = datasets.MnistQGDataset(
@@ -38,13 +43,18 @@ def train_experiment(device):
 
         # 3. criterion with triplets sampling
         sampler_inbatch = data.HardTripletsSampler(norm_required=False)
-        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+        criterion = nn.TripletMarginLossWithSampler(
+            margin=0.5, sampler_inbatch=sampler_inbatch
+        )
 
         # 4. training with catalyst Runner
         class CustomRunner(dl.SupervisedRunner):
             def handle_batch(self, batch) -> None:
                 if self.is_train_loader:
-                    images, targets = batch["features"].float(), batch["targets"].long()
+                    images, targets = (
+                        batch["features"].float(),
+                        batch["targets"].long(),
+                    )
                     features = self.model(images)
                     self.batch = {
                         "embeddings": features,
@@ -66,7 +76,9 @@ def train_experiment(device):
         callbacks = [
             dl.ControlFlowCallback(
                 dl.CriterionCallback(
-                    input_key="embeddings", target_key="targets", metric_key="loss"
+                    input_key="embeddings",
+                    target_key="targets",
+                    metric_key="loss",
                 ),
                 loaders="train",
             ),
@@ -80,7 +92,10 @@ def train_experiment(device):
                 loaders="valid",
             ),
             dl.PeriodicLoaderCallback(
-                valid_loader_key="valid", valid_metric_key="cmc01", minimize=False, valid=2
+                valid_loader_key="valid",
+                valid_metric_key="cmc01",
+                minimize=False,
+                valid=2,
             ),
         ]
 
@@ -111,7 +126,8 @@ def test_finetune_on_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")

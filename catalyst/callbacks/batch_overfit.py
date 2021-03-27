@@ -94,7 +94,8 @@ class BatchOverfitCallback(Callback):
         for loader, num_batches in kwargs.items():
             if not isinstance(num_batches, (int, float)):
                 raise TypeError(
-                    "Expected loader num_batches type is int/float " f"but got {type(num_batches)}"
+                    "Expected loader num_batches type is int/float "
+                    f"but got {type(num_batches)}"
                 )
             self.loader_batches[loader] = num_batches
 
@@ -112,7 +113,9 @@ class BatchOverfitCallback(Callback):
             num_batches = self.loader_batches.get(name, 1)
             if isinstance(num_batches, float):
                 num_batches = int(len(loader) * num_batches)
-            epoch_loaders[name] = BatchLimitLoaderWrapper(loader=loader, num_batches=num_batches)
+            epoch_loaders[name] = BatchLimitLoaderWrapper(
+                loader=loader, num_batches=num_batches
+            )
 
         runner.loaders = epoch_loaders
 
@@ -123,7 +126,9 @@ class BatchOverfitCallback(Callback):
             runner: current runner
         """
         runner.loaders = {
-            key: value.origin if isinstance(value, BatchLimitLoaderWrapper) else value
+            key: value.origin
+            if isinstance(value, BatchLimitLoaderWrapper)
+            else value
             for key, value in runner.loaders.items()
         }
 

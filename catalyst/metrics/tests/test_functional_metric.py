@@ -2,6 +2,7 @@
 from typing import Any, Callable, Dict
 
 import pytest
+
 import torch
 
 from catalyst.metrics import FunctionalBatchMetric
@@ -71,9 +72,15 @@ def test_mae_metric(
     batch_answer_2: Dict[str, Any],
     total_answer: Dict[str, Any],
 ):
-    metric = FunctionalBatchMetric(metric_fn=metric_function, metric_key=prefix)
-    batch_score_1 = metric.update_key_value(len(outputs_1), outputs_1, targets_1)
-    batch_score_2 = metric.update_key_value(len(outputs_2), outputs_2, targets_2)
+    metric = FunctionalBatchMetric(
+        metric_fn=metric_function, metric_key=prefix
+    )
+    batch_score_1 = metric.update_key_value(
+        len(outputs_1), outputs_1, targets_1
+    )
+    batch_score_2 = metric.update_key_value(
+        len(outputs_2), outputs_2, targets_2
+    )
     loader_metric = metric.compute_key_value()
     for key, value in batch_answer_1.items():
         assert key in batch_score_1

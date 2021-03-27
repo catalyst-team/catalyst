@@ -2,7 +2,9 @@ from typing import Optional, Union
 
 import torch
 
-from catalyst.metrics.functional._classification import precision_recall_fbeta_support
+from catalyst.metrics.functional._classification import (
+    precision_recall_fbeta_support,
+)
 
 
 def fbeta_score(

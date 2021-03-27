@@ -9,12 +9,17 @@ import sys
 from tempfile import TemporaryDirectory
 
 import pytest
+
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
 # local
 import catalyst.dl as dl
-from catalyst.engines import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
+from catalyst.engines import (
+    DataParallelEngine,
+    DeviceEngine,
+    DistributedDataParallelEngine,
+)
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 if NUM_CUDA_DEVICES > 1:
@@ -53,13 +58,17 @@ class CheckModelStateLoadAfterStages(dl.Callback):
         self.checkpoint = checkpoint
 
     def on_stage_start(self, runner):
-        if runner.stage_key != self.stage or not runner.engine.is_master_process:
+        if (
+            runner.stage_key != self.stage
+            or not runner.engine.is_master_process
+        ):
             return
         # modify model state
         checkpoint_file = os.path.join(self.logdir, self.checkpoint)
         checkpoint = runner.engine.load_checkpoint(checkpoint_file)
         checkpoint["model_state_dict"] = OrderedDict(
-            (k, torch.ones_like(v)) for k, v in checkpoint["model_state_dict"].items()
+            (k, torch.ones_like(v))
+            for k, v in checkpoint["model_state_dict"].items()
         )
         print("-" * 100)
         print(checkpoint)
@@ -68,7 +77,9 @@ class CheckModelStateLoadAfterStages(dl.Callback):
         runner.engine.save_checkpoint(checkpoint, checkpoint_file)
 
     def on_batch_start(self, runner):
-        if not (runner.stage_key == self.stage and runner.stage_batch_step == 0):
+        if not (
+            runner.stage_key == self.stage and runner.stage_batch_step == 0
+        ):
             return
         # check if model loaded right checkpoint
         model = runner.model
@@ -111,7 +122,9 @@ class CustomRunner(dl.IRunner):
                 save_n_best=3,
                 load_on_stage_start="best",
             ),
-            "test_model_load": CheckModelStateLoadAfterStages("second", self._logdir, "best.pth"),
+            "test_model_load": CheckModelStateLoadAfterStages(
+                "second", self._logdir, "best.pth"
+            ),
         }
 
     @property
@@ -142,7 +155,10 @@ class CustomRunner(dl.IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+        return {
+            "console": dl.ConsoleLogger(),
+            "csv": dl.CSVLogger(logdir=self._logdir),
+        }
 
     def handle_batch(self, batch):
         x, y = batch
@@ -159,7 +175,9 @@ def test_device_load_on_stage_start():
             runner.run()
 
 
-@pytest.mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+@pytest.mark.skipif(
+    not IS_CUDA_AVAILABLE, reason="CUDA device is not available"
+)
 def test_dp_load_on_stage_start():
     with TemporaryDirectory() as logdir:
         runner = CustomRunner(logdir, DataParallelEngine())
@@ -167,7 +185,8 @@ def test_dp_load_on_stage_start():
 
 
 @pytest.mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_ddp_load_on_stage_start():
     with TemporaryDirectory() as logdir:
@@ -287,7 +306,11 @@ def test_multiple_stages_and_different_checkpoints_to_load():
                 metric_key="loss",
                 minimize=True,
                 save_n_best=2,
-                load_on_stage_end={"model": "best", "criterion": "best", "optimizer": "last"},
+                load_on_stage_end={
+                    "model": "best",
+                    "criterion": "best",
+                    "optimizer": "last",
+                },
             ),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
         ],
@@ -311,7 +334,11 @@ def test_multiple_stages_and_different_checkpoints_to_load():
                 metric_key="loss",
                 minimize=True,
                 save_n_best=3,
-                load_on_stage_start={"model": "last", "criterion": "last", "optimizer": "best"},
+                load_on_stage_start={
+                    "model": "last",
+                    "criterion": "last",
+                    "optimizer": "best",
+                },
             ),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
         ],
@@ -383,7 +410,11 @@ def test_resume_with_missing_file():
                     metric_key="loss",
                     minimize=True,
                     save_n_best=2,
-                    load_on_stage_end={"model": "best", "criterion": "best", "optimizer": "last"},
+                    load_on_stage_end={
+                        "model": "best",
+                        "criterion": "best",
+                        "optimizer": "last",
+                    },
                     resume="not_existing_file.pth",
                 ),
                 dl.CheckRunCallback(num_epoch_steps=num_epochs),
@@ -435,7 +466,11 @@ def test_load_on_stage_start_with_empty_dict():
         minimize_valid_metric=True,
         callbacks=[
             dl.CheckpointCallback(
-                logdir=logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=2
+                logdir=logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=2,
             ),
             dl.CheckRunCallback(num_epoch_steps=num_epochs),
         ],

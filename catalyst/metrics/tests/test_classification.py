@@ -2,6 +2,7 @@
 from typing import Dict, Iterable
 
 import pytest
+
 import torch
 
 from catalyst.metrics import (
@@ -261,8 +262,12 @@ def test_multiclass_metrics(
     "outputs,targets,num_classes,zero_division,true_values",
     (
         (
-            torch.tensor([[0, 1, 0], [1, 1, 0], [0, 0, 1], [0, 0, 0], [0, 1, 1]]),
-            torch.tensor([[0, 1, 1], [1, 1, 1], [0, 0, 0], [0, 0, 1], [0, 1, 1]]),
+            torch.tensor(
+                [[0, 1, 0], [1, 1, 0], [0, 0, 1], [0, 0, 0], [0, 1, 1]]
+            ),
+            torch.tensor(
+                [[0, 1, 1], [1, 1, 1], [0, 0, 0], [0, 0, 1], [0, 1, 1]]
+            ),
             3,
             0,
             {
@@ -290,8 +295,24 @@ def test_multiclass_metrics(
             },
         ),
         (
-            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]),
-            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]),
+            torch.tensor(
+                [
+                    [0, 1, 0, 0],
+                    [1, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 0],
+                    [0, 1, 1, 0],
+                ]
+            ),
+            torch.tensor(
+                [
+                    [0, 1, 1, 1],
+                    [1, 1, 1, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 1, 1],
+                    [0, 1, 1, 0],
+                ]
+            ),
             4,
             0,
             {
@@ -323,8 +344,24 @@ def test_multiclass_metrics(
             },
         ),
         (
-            torch.tensor([[0, 1, 0, 0], [1, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 0], [0, 1, 1, 0]]),
-            torch.tensor([[0, 1, 1, 1], [1, 1, 1, 0], [0, 0, 0, 0], [0, 0, 1, 1], [0, 1, 1, 0]]),
+            torch.tensor(
+                [
+                    [0, 1, 0, 0],
+                    [1, 1, 0, 0],
+                    [0, 0, 1, 0],
+                    [0, 0, 0, 0],
+                    [0, 1, 1, 0],
+                ]
+            ),
+            torch.tensor(
+                [
+                    [0, 1, 1, 1],
+                    [1, 1, 1, 0],
+                    [0, 0, 0, 0],
+                    [0, 0, 1, 1],
+                    [0, 1, 1, 0],
+                ]
+            ),
             4,
             1,
             {
@@ -523,8 +560,16 @@ def test_binary_metrics(
     "outputs_list,targets_list,num_classes,zero_division,true_values",
     (
         (
-            [torch.tensor([1, 2, 3]), torch.tensor([0, 3, 4]), torch.tensor([4, 5])],
-            [torch.tensor([1, 2, 4]), torch.tensor([0, 3, 4]), torch.tensor([5, 5])],
+            [
+                torch.tensor([1, 2, 3]),
+                torch.tensor([0, 3, 4]),
+                torch.tensor([4, 5]),
+            ],
+            [
+                torch.tensor([1, 2, 4]),
+                torch.tensor([0, 3, 4]),
+                torch.tensor([5, 5]),
+            ],
             6,
             0,
             {
@@ -596,8 +641,16 @@ def test_update(
     "outputs_list,targets_list,num_classes,zero_division,update_true_values,compute_true_value",
     (
         (
-            [torch.tensor([0, 1, 2]), torch.tensor([2, 3]), torch.tensor([0, 1, 3])],
-            [torch.tensor([0, 1, 1]), torch.tensor([2, 3]), torch.tensor([0, 1, 2])],
+            [
+                torch.tensor([0, 1, 2]),
+                torch.tensor([2, 3]),
+                torch.tensor([0, 1, 3]),
+            ],
+            [
+                torch.tensor([0, 1, 1]),
+                torch.tensor([2, 3]),
+                torch.tensor([0, 1, 2]),
+            ],
             4,
             0,
             [
@@ -712,8 +765,16 @@ def test_update(
             },
         ),
         (
-            [torch.tensor([0, 1, 2, 4]), torch.tensor([2, 3, 3, 2]), torch.tensor([0, 1, 3, 4]),],
-            [torch.tensor([0, 1, 1, 4]), torch.tensor([2, 3, 3, 4]), torch.tensor([0, 1, 2, 4]),],
+            [
+                torch.tensor([0, 1, 2, 4]),
+                torch.tensor([2, 3, 3, 2]),
+                torch.tensor([0, 1, 3, 4]),
+            ],
+            [
+                torch.tensor([0, 1, 1, 4]),
+                torch.tensor([2, 3, 3, 4]),
+                torch.tensor([0, 1, 2, 4]),
+            ],
             5,
             1,
             [
@@ -871,11 +932,17 @@ def test_update_key_value_multiclass(
     metric = MulticlassPrecisionRecallF1SupportMetric(
         num_classes=num_classes, zero_division=zero_division
     )
-    for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
-        intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
+    for outputs, targets, update_true_value in zip(
+        outputs_list, targets_list, update_true_values
+    ):
+        intermediate_metrics = metric.update_key_value(
+            outputs=outputs, targets=targets
+        )
         for key in update_true_value:
             assert key in intermediate_metrics
-            assert abs(intermediate_metrics[key] - update_true_value[key]) < EPS
+            assert (
+                abs(intermediate_metrics[key] - update_true_value[key]) < EPS
+            )
     metrics = metric.compute_key_value()
     for key in compute_true_value:
         assert key in metrics
@@ -1037,11 +1104,17 @@ def test_update_key_value_multilabel(
     metric = MultilabelPrecisionRecallF1SupportMetric(
         num_classes=num_classes, zero_division=zero_division
     )
-    for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
-        intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
+    for outputs, targets, update_true_value in zip(
+        outputs_list, targets_list, update_true_values
+    ):
+        intermediate_metrics = metric.update_key_value(
+            outputs=outputs, targets=targets
+        )
         for key in update_true_value:
             assert key in intermediate_metrics
-            assert abs(intermediate_metrics[key] - update_true_value[key]) < EPS
+            assert (
+                abs(intermediate_metrics[key] - update_true_value[key]) < EPS
+            )
     metrics = metric.compute_key_value()
     for key in compute_true_value:
         assert key in metrics
@@ -1085,11 +1158,17 @@ def test_update_key_value_binary(
         compute_true_value: total metrics value for all the items from output_list and targets_list
     """
     metric = BinaryPrecisionRecallF1Metric(zero_division=zero_division)
-    for outputs, targets, update_true_value in zip(outputs_list, targets_list, update_true_values):
-        intermediate_metrics = metric.update_key_value(outputs=outputs, targets=targets)
+    for outputs, targets, update_true_value in zip(
+        outputs_list, targets_list, update_true_values
+    ):
+        intermediate_metrics = metric.update_key_value(
+            outputs=outputs, targets=targets
+        )
         for key in update_true_value:
             assert key in intermediate_metrics
-            assert abs(intermediate_metrics[key] - update_true_value[key]) < EPS
+            assert (
+                abs(intermediate_metrics[key] - update_true_value[key]) < EPS
+            )
     metrics = metric.compute_key_value()
     for key in compute_true_value:
         assert key in metrics

@@ -34,7 +34,9 @@ class HitrateCallback(BatchMetricCallback):
     ):
         """Init."""
         super().__init__(
-            metric=HitrateMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
+            metric=HitrateMetric(
+                topk_args=topk_args, prefix=prefix, suffix=suffix
+            ),
             input_key=input_key,
             target_key=target_key,
             log_on_batch=log_on_batch,
@@ -69,7 +71,9 @@ class MAPCallback(BatchMetricCallback):
     ):
         """Init."""
         super().__init__(
-            metric=MAPMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
+            metric=MAPMetric(
+                topk_args=topk_args, prefix=prefix, suffix=suffix
+            ),
             input_key=input_key,
             target_key=target_key,
             log_on_batch=log_on_batch,
@@ -104,7 +108,9 @@ class MRRCallback(BatchMetricCallback):
     ):
         """Init."""
         super().__init__(
-            metric=MRRMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
+            metric=MRRMetric(
+                topk_args=topk_args, prefix=prefix, suffix=suffix
+            ),
             input_key=input_key,
             target_key=target_key,
             log_on_batch=log_on_batch,
@@ -139,7 +145,9 @@ class NDCGCallback(BatchMetricCallback):
     ):
         """Init."""
         super().__init__(
-            metric=NDCGMetric(topk_args=topk_args, prefix=prefix, suffix=suffix),
+            metric=NDCGMetric(
+                topk_args=topk_args, prefix=prefix, suffix=suffix
+            ),
             input_key=input_key,
             target_key=target_key,
             log_on_batch=log_on_batch,

@@ -3,6 +3,7 @@
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch import nn, optim
 from torch.utils.data import DataLoader, TensorDataset
@@ -14,7 +15,12 @@ from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 def train_experiment(device):
     with TemporaryDirectory() as logdir:
         # sample data
-        num_samples, num_features, num_classes1, num_classes2 = int(1e4), int(1e1), 4, 10
+        num_samples, num_features, num_classes1, num_classes2 = (
+            int(1e4),
+            int(1e1),
+            4,
+            10,
+        )
         X = torch.rand(num_samples, num_features)
         y1 = (torch.rand(num_samples,) * num_classes1).to(torch.int64)
         y2 = (torch.rand(num_samples,) * num_classes2).to(torch.int64)
@@ -25,7 +31,9 @@ def train_experiment(device):
         loaders = {"train": loader, "valid": loader}
 
         class CustomModule(nn.Module):
-            def __init__(self, in_features: int, out_features1: int, out_features2: int):
+            def __init__(
+                self, in_features: int, out_features1: int, out_features2: int
+            ):
                 super().__init__()
                 self.shared = nn.Linear(in_features, 128)
                 self.head1 = nn.Linear(128, out_features1)
@@ -67,10 +75,14 @@ def train_experiment(device):
             verbose=False,
             callbacks=[
                 dl.CriterionCallback(
-                    metric_key="loss1", input_key="logits1", target_key="targets1"
+                    metric_key="loss1",
+                    input_key="logits1",
+                    target_key="targets1",
                 ),
                 dl.CriterionCallback(
-                    metric_key="loss2", input_key="logits2", target_key="targets2"
+                    metric_key="loss2",
+                    input_key="logits2",
+                    target_key="targets2",
                 ),
                 dl.MetricAggregationCallback(
                     prefix="loss", metrics=["loss1", "loss2"], mode="mean"
@@ -118,7 +130,10 @@ def train_experiment(device):
                     save_n_best=3,
                 ),
             ],
-            loggers={"console": dl.ConsoleLogger(), "tb": dl.TensorboardLogger("./logs/tb")},
+            loggers={
+                "console": dl.ConsoleLogger(),
+                "tb": dl.TensorboardLogger("./logs/tb"),
+            },
         )
 
 
@@ -132,7 +147,8 @@ def test_finetune_on_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")

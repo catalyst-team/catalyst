@@ -3,6 +3,7 @@ from typing import Dict, Iterable, List, Union
 
 import numpy as np
 import pytest
+
 import torch
 
 from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
@@ -33,7 +34,13 @@ from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
             },
         ),
         (
-            torch.tensor([[0.1, 0.2, 0.7, 0.0], [0.49, 0.51, 0.0, 0.0], [0.6, 0.3, 0.1, 0.0]]),
+            torch.tensor(
+                [
+                    [0.1, 0.2, 0.7, 0.0],
+                    [0.49, 0.51, 0.0, 0.0],
+                    [0.6, 0.3, 0.1, 0.0],
+                ]
+            ),
             torch.tensor([0, 1, 3]),
             4,
             [1, 3],
@@ -87,7 +94,12 @@ def test_accuracy(
             2,
             [1],
             [
-                {"accuracy01": 0.5, "accuracy": 0.5, "accuracy/std": 0.0, "accuracy01/std": 0.0},
+                {
+                    "accuracy01": 0.5,
+                    "accuracy": 0.5,
+                    "accuracy/std": 0.0,
+                    "accuracy01/std": 0.0,
+                },
                 {
                     "accuracy01": 0.75,
                     "accuracy": 0.75,
@@ -103,7 +115,10 @@ def test_accuracy(
             ],
         ),
         (
-            [torch.tensor([[0.0, 0.0, 1.0], [0.0, 0.7, 0.3]]), torch.tensor([[0.0, 0.6, 0.4]])],
+            [
+                torch.tensor([[0.0, 0.0, 1.0], [0.0, 0.7, 0.3]]),
+                torch.tensor([[0.0, 0.6, 0.4]]),
+            ],
             [torch.tensor([2, 2]), torch.tensor([0])],
             3,
             [1, 2],
@@ -148,12 +163,16 @@ def test_accuracy_update(
         true_values_list: list of correct metrics intermediate values
     """
     metric = AccuracyMetric(topk_args=topk, num_classes=num_classes)
-    for outputs, targets, true_values in zip(outputs_list, targets_list, true_values_list):
+    for outputs, targets, true_values in zip(
+        outputs_list, targets_list, true_values_list
+    ):
         metric.update(logits=outputs, targets=targets)
         intermediate_metric_values = metric.compute_key_value()
         for key in true_values.keys():
             assert key in intermediate_metric_values
-            assert np.isclose(true_values[key], intermediate_metric_values[key])
+            assert np.isclose(
+                true_values[key], intermediate_metric_values[key]
+            )
 
 
 @pytest.mark.parametrize(
@@ -168,7 +187,9 @@ def test_accuracy_update(
                     [0.1, 0.89, 0.2, 0.0],
                 ]
             ),
-            torch.tensor([[0, 1, 1, 0], [1, 0, 1, 0], [0, 1, 0, 0], [0, 1, 0, 0]]),
+            torch.tensor(
+                [[0, 1, 1, 0], [1, 0, 1, 0], [0, 1, 0, 0], [0, 1, 0, 0]]
+            ),
             0.6,
             {"accuracy": 0.75, "accuracy/std": 0},
         ),
@@ -236,8 +257,14 @@ def test_multilabel_accuracy(
             [0.875, 0.8125, 0.833333],
         ),
         (
-            [torch.tensor([[0, 1], [1, 0], [1, 1]]), torch.tensor([[1, 1], [0, 0]])],
-            [torch.tensor([[0, 1], [0, 0], [0, 0]]), torch.tensor([[1, 1], [1, 0]])],
+            [
+                torch.tensor([[0, 1], [1, 0], [1, 1]]),
+                torch.tensor([[1, 1], [0, 0]]),
+            ],
+            [
+                torch.tensor([[0, 1], [0, 0], [0, 0]]),
+                torch.tensor([[1, 1], [1, 0]]),
+            ],
             torch.tensor([0.5, 0.6]),
             [0.5, 0.6],
         ),
@@ -259,7 +286,9 @@ def test_multilabel_accuracy_mean(
         true_values_list: true intermediate metric results
     """
     metric = MultilabelAccuracyMetric(threshold=thresholds)
-    for outputs, targets, true_value in zip(outputs_list, targets_list, true_values_list):
+    for outputs, targets, true_value in zip(
+        outputs_list, targets_list, true_values_list
+    ):
         metric.update(outputs=outputs, targets=targets)
         mean, _ = metric.compute()
         assert np.isclose(mean, true_value)
@@ -297,8 +326,14 @@ def test_multilabel_accuracy_mean(
             [0, 0.06455, 0.0601929],
         ),
         (
-            [torch.tensor([[0, 1], [1, 0], [1, 1]]), torch.tensor([[1, 1], [0, 0]])],
-            [torch.tensor([[0, 1], [0, 0], [0, 0]]), torch.tensor([[1, 1], [1, 0]])],
+            [
+                torch.tensor([[0, 1], [1, 0], [1, 1]]),
+                torch.tensor([[1, 1], [0, 0]]),
+            ],
+            [
+                torch.tensor([[0, 1], [0, 0], [0, 0]]),
+                torch.tensor([[1, 1], [1, 0]]),
+            ],
             torch.tensor([0.5, 0.6]),
             [0, 0.129099],
         ),
@@ -321,7 +356,9 @@ def test_multilabel_accuracy_std(
         true_values_list: true intermediate metric results
     """
     metric = MultilabelAccuracyMetric(threshold=thresholds)
-    for outputs, targets, true_value in zip(outputs_list, targets_list, true_values_list):
+    for outputs, targets, true_value in zip(
+        outputs_list, targets_list, true_values_list
+    ):
         metric.update(outputs=outputs, targets=targets)
         _, std = metric.compute()
         assert np.isclose(std, true_value)

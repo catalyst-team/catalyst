@@ -5,7 +5,10 @@ from catalyst.metrics._confusion_matrix import ConfusionMatrixMetric
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
-    from catalyst.contrib.utils.visualization import plot_confusion_matrix, render_figure_to_array
+    from catalyst.contrib.utils.visualization import (
+        plot_confusion_matrix,
+        render_figure_to_array,
+    )
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -46,8 +49,12 @@ class ConfusionMatrixCallback(Callback):
 
         self._plot_params = plot_params or {}
 
-        self.class_names = class_names or [f"class_{i:02d}" for i in range(num_classes)]
-        self.num_classes = num_classes if class_names is None else len(class_names)
+        self.class_names = class_names or [
+            f"class_{i:02d}" for i in range(num_classes)
+        ]
+        self.num_classes = (
+            num_classes if class_names is None else len(class_names)
+        )
         self.normalized = normalized
 
         assert self.num_classes is not None

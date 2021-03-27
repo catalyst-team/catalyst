@@ -5,15 +5,19 @@ import logging
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch.utils.data import DataLoader
 
-from catalyst.callbacks import CheckpointCallback, CriterionCallback, OptimizerCallback
+from catalyst.callbacks import (
+    CheckpointCallback,
+    CriterionCallback,
+    OptimizerCallback,
+)
 from catalyst.core.runner import IRunner
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
-
 from .misc import (
     DeviceCheckCallback,
     DummyDataset,
@@ -46,11 +50,17 @@ class CustomRunner(IRunner):
             "optimizer": OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "checkpoint": CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+                self._logdir,
+                loader_key="valid",
+                metric_key="loss",
+                minimize=True,
+                save_n_best=3,
             ),
             "test_nn_module": ModuleTypeChecker(),
             "test_device": DeviceCheckCallback(self._device, logger=logger),
-            "test_loss_minimization": LossMinimizationCallback("loss", logger=logger),
+            "test_loss_minimization": LossMinimizationCallback(
+                "loss", logger=logger
+            ),
             "test_logits_type": TensorTypeChecker("logits"),
             # "loss_type_checker": TensorTypeChecker("loss", True),
         }
@@ -83,7 +93,10 @@ class CustomRunner(IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": ConsoleLogger(), "csv": CSVLogger(logdir=self._logdir)}
+        return {
+            "console": ConsoleLogger(),
+            "csv": CSVLogger(logdir=self._logdir),
+        }
 
     def handle_batch(self, batch):
         x, y = batch
@@ -104,7 +117,11 @@ def train_from_config(device):
         runner = SupervisedConfigRunner(
             config={
                 "args": {"logdir": logdir},
-                "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
+                "model": {
+                    "_target_": "DummyModel",
+                    "in_features": 4,
+                    "out_features": 2,
+                },
                 "engine": {"_target_": "AMPEngine", "device": device},
                 "args": {"logdir": logdir},
                 "stages": {
@@ -120,8 +137,13 @@ def train_from_config(device):
                                 "input_key": "logits",
                                 "target_key": "targets",
                             },
-                            "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
-                            "test_nn_module": {"_target_": "ModuleTypeChecker"},
+                            "optimizer": {
+                                "_target_": "OptimizerCallback",
+                                "metric_key": "loss",
+                            },
+                            "test_nn_module": {
+                                "_target_": "ModuleTypeChecker"
+                            },
                             "test_device": {
                                 "_target_": "DeviceCheckCallback",
                                 "assert_device": device,
@@ -130,7 +152,10 @@ def train_from_config(device):
                                 "_target_": "LossMinimizationCallback",
                                 "key": "loss",
                             },
-                            "test_logits_type": {"_target_": "TensorTypeChecker", "key": "logits"},
+                            "test_logits_type": {
+                                "_target_": "TensorTypeChecker",
+                                "key": "logits",
+                            },
                         },
                     },
                 },
@@ -144,7 +169,8 @@ def train_from_config(device):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required, reason="CUDA device is not available"
+    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required,
+    reason="CUDA device is not available",
 )
 def test_experiment_engine_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
@@ -153,7 +179,8 @@ def test_experiment_engine_with_devices():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required, reason="CUDA device is not available"
+    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required,
+    reason="CUDA device is not available",
 )
 def test_config_experiment_engine_with_cuda():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]

@@ -16,9 +16,16 @@ class AUCMetric(ICallbackLoaderMetric):
         suffix: metric suffix
     """
 
-    def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
+    def __init__(
+        self,
+        compute_on_call: bool = True,
+        prefix: str = None,
+        suffix: str = None,
+    ):
         """Init."""
-        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        super().__init__(
+            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix
+        )
         self.metric_name = f"{self.prefix}auc{self.suffix}"
         self.scores = []
         self.targets = []

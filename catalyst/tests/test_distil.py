@@ -4,6 +4,7 @@ import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch import nn, optim
 from torch.nn import functional as F
@@ -19,15 +20,30 @@ def train_experiment(device):
     with TemporaryDirectory() as logdir:
         teacher = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
         student = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-        criterion = {"cls": nn.CrossEntropyLoss(), "kl": nn.KLDivLoss(reduction="batchmean")}
+        criterion = {
+            "cls": nn.CrossEntropyLoss(),
+            "kl": nn.KLDivLoss(reduction="batchmean"),
+        }
         optimizer = optim.Adam(student.parameters(), lr=0.02)
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+                MNIST(
+                    os.getcwd(),
+                    train=True,
+                    download=True,
+                    transform=ToTensor(),
+                ),
+                batch_size=32,
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+                MNIST(
+                    os.getcwd(),
+                    train=False,
+                    download=True,
+                    transform=ToTensor(),
+                ),
+                batch_size=32,
             ),
         }
 
@@ -61,10 +77,16 @@ def train_experiment(device):
             verbose=True,
             callbacks=[
                 dl.AccuracyCallback(
-                    input_key="t_logits", target_key="targets", num_classes=2, prefix="teacher_"
+                    input_key="t_logits",
+                    target_key="targets",
+                    num_classes=2,
+                    prefix="teacher_",
                 ),
                 dl.AccuracyCallback(
-                    input_key="s_logits", target_key="targets", num_classes=2, prefix="student_"
+                    input_key="s_logits",
+                    target_key="targets",
+                    num_classes=2,
+                    prefix="student_",
                 ),
                 dl.CriterionCallback(
                     input_key="s_logits",
@@ -79,7 +101,9 @@ def train_experiment(device):
                     criterion_key="kl",
                 ),
                 dl.MetricAggregationCallback(
-                    prefix="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"
+                    prefix="loss",
+                    metrics=["kl_div_loss", "cls_loss"],
+                    mode="mean",
                 ),
                 dl.OptimizerCallback(metric_key="loss", model_key="student"),
                 dl.CheckpointCallback(
@@ -103,7 +127,8 @@ def test_finetune_on_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")

@@ -2,6 +2,7 @@ from typing import Dict
 import os
 
 import numpy as np
+
 from tensorboardX import SummaryWriter
 
 from catalyst.core.logger import ILogger
@@ -29,7 +30,9 @@ class TensorboardLogger(ILogger):
             logdir = os.path.join(self.logdir, f"{loader_key}")
             self.loggers[loader_key] = SummaryWriter(logdir)
 
-    def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
+    def _log_metrics(
+        self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""
+    ):
         for key, value in metrics.items():
             self.loggers[loader_key].add_scalar(f"{key}{suffix}", value, step)
 
@@ -60,7 +63,10 @@ class TensorboardLogger(ILogger):
             self._check_loader_key(loader_key=loader_key)
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
-                metrics=metrics, step=global_batch_step, loader_key=loader_key, suffix="/batch"
+                metrics=metrics,
+                step=global_batch_step,
+                loader_key=loader_key,
+                suffix="/batch",
             )
         elif scope == "epoch":
             for loader_key, per_loader_metrics in metrics.items():
@@ -99,7 +105,9 @@ class TensorboardLogger(ILogger):
         assert loader_key is not None
         self._check_loader_key(loader_key=loader_key)
         tensor = image_to_tensor(image)
-        self.loggers[loader_key].add_image(f"{tag}/{scope}", tensor, global_step=global_epoch_step)
+        self.loggers[loader_key].add_image(
+            f"{tag}/{scope}", tensor, global_step=global_epoch_step
+        )
 
     def flush_log(self) -> None:
         """Flushes the loggers."""

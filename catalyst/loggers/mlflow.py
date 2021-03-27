@@ -32,7 +32,11 @@ def _get_or_start_run(run_name):
     return mlflow.start_run(run_name=run_name)
 
 
-def _mlflow_log_dict(dictionary: Dict[str, Any], prefix: str = "", log_type: Optional[str] = None):
+def _mlflow_log_dict(
+    dictionary: Dict[str, Any],
+    prefix: str = "",
+    log_type: Optional[str] = None,
+):
     """The function of MLflow. Logs any value by its type from dictionary recursively.
 
     Args:
@@ -132,7 +136,9 @@ class MLflowLogger(ILogger):
         _get_or_start_run(run_name=self.run)
 
     @staticmethod
-    def _log_metrics(metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
+    def _log_metrics(
+        metrics: Dict[str, float], step: int, loader_key: str, suffix=""
+    ):
         for key, value in metrics.items():
             mlflow.log_metric(f"{key}/{loader_key}{suffix}", value, step=step)
 
@@ -162,7 +168,10 @@ class MLflowLogger(ILogger):
         if scope == "batch":
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
-                metrics=metrics, step=global_batch_step, loader_key=loader_key, suffix="/batch"
+                metrics=metrics,
+                step=global_batch_step,
+                loader_key=loader_key,
+                suffix="/batch",
             )
         elif scope == "epoch":
             for loader_key, per_loader_metrics in metrics.items():
@@ -197,7 +206,9 @@ class MLflowLogger(ILogger):
         loader_sample_step: int = 0,
     ) -> None:
         """Logs image to MLflow for current scope on current step."""
-        mlflow.log_image(image, f"{tag}_scope_{scope}_epoch_{global_epoch_step}.png")
+        mlflow.log_image(
+            image, f"{tag}_scope_{scope}_epoch_{global_epoch_step}.png"
+        )
 
     def log_hparams(
         self,
@@ -221,7 +232,11 @@ class MLflowLogger(ILogger):
             run_key: Experiment info.
             stage_key: Stage info.
         """
-        stages = set(hparams.get("stages", {})) - set(STAGE_PARAMS) - set(EXCLUDE_PARAMS)
+        stages = (
+            set(hparams.get("stages", {}))
+            - set(STAGE_PARAMS)
+            - set(EXCLUDE_PARAMS)
+        )
         self._multistage = len(stages) > 1
 
         if scope == "experiment":
