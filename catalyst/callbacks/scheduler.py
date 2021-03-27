@@ -5,11 +5,9 @@ import torch
 
 from catalyst.contrib.nn.schedulers import BatchScheduler, OneCycleLRWithWarmup
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.typing import Optimizer
 from catalyst.utils.misc import get_attr
-from catalyst.utils.torch import (
-    get_optimizer_momentum,
-    get_optimizer_momentum_list,
-)
+from catalyst.utils.torch import get_optimizer_momentum, get_optimizer_momentum_list
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -22,7 +20,20 @@ class ISchedulerCallback(Callback):
 
 
 class SchedulerCallback(ISchedulerCallback):
-    """Callback for wrapping schedulers.
+    """Scheduler callback, abstraction over scheduler step.
+
+    Args:
+        scheduler_key: scheduler name, if ``None``,
+            default is ``None``.
+        mode: scheduler mode, should be one of
+            ``"epoch"`` or ``"batch"``, default is ``None``.
+            If ``None`` and object is instance of ``BatchScheduler``
+            or ``OneCycleLRWithWarmup`` then will be used ``"batch"``
+            otherwise - ``"epoch"``.
+        loader_key: @TODO: docs.
+        metric_key: metric name to forward to scheduler
+            object, if ``None`` then will be used main metric
+            specified in experiment.
 
     Notebook API example:
 
@@ -57,7 +68,7 @@ class SchedulerCallback(ISchedulerCallback):
             logdir="./logdir",
             num_epochs=5,
             verbose=False,
-            main_metric="accuracy03",
+            valid_metric="accuracy03",
             minimize_metric=False,
             callbacks=[
                 AccuracyCallback(
@@ -93,47 +104,39 @@ class SchedulerCallback(ISchedulerCallback):
         self,
         scheduler_key: str = None,
         mode: str = None,
-        reduced_metric: str = None,
+        loader_key: str = None,
+        metric_key: str = None,
     ):
-        """
-        Args:
-            scheduler_key: scheduler name, if ``None``,
-                default is ``None``.
-            mode: scheduler mode, should be one of
-                ``"epoch"`` or ``"batch"``, default is ``None``.
-                If ``None`` and object is instance of ``BatchScheduler``
-                or ``OneCycleLRWithWarmup`` then will be used ``"batch"``
-                otherwise - ``"epoch"``.
-            reduced_metric: metric name to forward to scheduler
-                object, if ``None`` then will be used main metric
-                specified in experiment.
-        """
+        """Init."""
         super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
+        if loader_key is not None or metric_key is not None:
+            assert loader_key is not None and metric_key is not None, (
+                "For metric reduction `SchedulerCallback` "
+                "requires both `loader_key` and `metric_key` specified."
+            )
+            self._use_metric_reduction = True
+        else:
+            self._use_metric_reduction = False
+        assert mode in ("batch", "epoch", None)
         self.scheduler_key = scheduler_key
         self.mode = mode
-        self.reduced_metric = reduced_metric
+        self.loader_key = loader_key
+        self.metric_key = metric_key
+        self.scheduler = None
 
     @staticmethod
-    def _scheduler_step(
-        scheduler, reduced_metric=None,
-    ):
+    def _scheduler_step(scheduler, reduced_metric=None):
         if isinstance(scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
             scheduler.step(reduced_metric)
         else:
             scheduler.step()
 
-        lr_list = [
-            param_group["lr"]
-            for param_group in scheduler.optimizer.param_groups
-        ]
+        lr_list = [param_group["lr"] for param_group in scheduler.optimizer.param_groups]
         momentum_list = get_optimizer_momentum_list(scheduler.optimizer)
         return lr_list, momentum_list
 
     def _update_lr_and_momentum_in_metrics_dict(
-        self,
-        metrics_dict: dict,
-        lr_list: List[float],
-        momentum_list: List[Union[float, None]],
+        self, metrics_dict: dict, lr_list: List[float], momentum_list: List[Union[float, None]],
     ):
         """Update learning rate and momentum in metrics_dict
         (consider only 0-th param group)
@@ -144,50 +147,43 @@ class SchedulerCallback(ISchedulerCallback):
             momentum_list: momentum for each param group
 
         """
-        # todo: consider saving lr and momentum for all param groups ?
         lr = lr_list[0]
         momentum = momentum_list[0]
 
-        lr_key = (
-            f"lr/{self.scheduler_key}"
-            if self.scheduler_key is not None
-            else "lr"
-        )
+        lr_key = f"lr/{self.scheduler_key}" if self.scheduler_key is not None else "lr"
         metrics_dict[lr_key] = lr
 
         if momentum is not None:
             momentum_key = (
-                f"momentum/{self.scheduler_key}"
-                if self.scheduler_key is not None
-                else "momentum"
+                f"momentum/{self.scheduler_key}" if self.scheduler_key is not None else "momentum"
             )
             metrics_dict[momentum_key] = momentum
 
-    def step_batch(self, runner: "IRunner") -> None:
+    def make_batch_step(self, runner: "IRunner") -> None:
         """Perform scheduler step and update batch metrics
 
         Args:
             runner: current runner
         """
-        lr_list, momentum_list = self._scheduler_step(
-            scheduler=self._scheduler
-        )
-        self._update_lr_and_momentum_in_metrics_dict(
-            runner.batch_metrics, lr_list, momentum_list
-        )
+        lr_list, momentum_list = self._scheduler_step(scheduler=self.scheduler)
+        self._update_lr_and_momentum_in_metrics_dict(runner.batch_metrics, lr_list, momentum_list)
 
-    def step_epoch(self, runner: "IRunner") -> None:
+    def make_epoch_step(self, runner: "IRunner") -> None:
         """Perform scheduler step and update epoch metrics
 
         Args:
             runner: current runner
         """
-        reduced_metric = runner.valid_metrics[self.reduced_metric]
+        if self._use_metric_reduction:
+            reduced_metric = runner.epoch_metrics[self.loader_key][self.metric_key]
+        else:
+            reduced_metric = None
         lr_list, momentum_list = self._scheduler_step(
-            scheduler=self._scheduler, reduced_metric=reduced_metric
+            scheduler=self.scheduler, reduced_metric=reduced_metric
         )
+        # @TODO: trick to save pure epoch-based metrics, like lr/momentum
         self._update_lr_and_momentum_in_metrics_dict(
-            runner.epoch_metrics, lr_list, momentum_list
+            runner.epoch_metrics["_epoch_"], lr_list, momentum_list
         )
 
     def on_stage_start(self, runner: "IRunner") -> None:
@@ -196,25 +192,23 @@ class SchedulerCallback(ISchedulerCallback):
         Args:
             runner: current runner
         """
-        self.reduced_metric = self.reduced_metric or runner.main_metric
+        self.scheduler = get_attr(runner, key="scheduler", inner_key=self.scheduler_key)
+        assert self.scheduler is not None
 
-        scheduler = get_attr(
-            runner, key="scheduler", inner_key=self.scheduler_key
-        )
-        assert scheduler is not None
-        self._scheduler = scheduler
+        if isinstance(self.scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+            assert self.loader_key is not None and self.metric_key is not None, (
+                "For `ReduceLROnPlateau` scheduler `SchedulerCallback` "
+                "required both `loader_key` and `metric_key` specified"
+            )
 
         if self.mode is None:
-            if isinstance(scheduler, BatchScheduler):
+            if isinstance(self.scheduler, BatchScheduler):
                 self.mode = "batch"
             else:
                 self.mode = "epoch"
 
-        if (
-            isinstance(scheduler, OneCycleLRWithWarmup)
-            and self.mode == "batch"
-        ):
-            scheduler.reset()
+        if isinstance(self.scheduler, OneCycleLRWithWarmup) and self.mode == "batch":
+            self.scheduler.reset()
         assert self.mode is not None
 
     def on_loader_start(self, runner: "IRunner") -> None:
@@ -225,11 +219,12 @@ class SchedulerCallback(ISchedulerCallback):
         """
         if (
             runner.is_train_loader
-            and isinstance(self._scheduler, OneCycleLRWithWarmup)
+            and isinstance(self.scheduler, OneCycleLRWithWarmup)
             and self.mode == "batch"
         ):
-            self._scheduler.recalculate(
-                loader_len=runner.loader_len, current_step=runner.epoch - 1
+            self.scheduler.recalculate(
+                loader_batch_len=runner.loader_batch_len,
+                current_batch_step=runner.stage_batch_step,
             )
 
     def on_batch_end(self, runner: "IRunner") -> None:
@@ -239,7 +234,7 @@ class SchedulerCallback(ISchedulerCallback):
             runner: current runner
         """
         if runner.is_train_loader and self.mode == "batch":
-            self.step_batch(runner=runner)
+            self.make_batch_step(runner=runner)
 
     def on_epoch_end(self, runner: "IRunner") -> None:
         """Epoch end hook.
@@ -248,11 +243,11 @@ class SchedulerCallback(ISchedulerCallback):
             runner: current runner
         """
         if self.mode == "epoch":
-            self.step_epoch(runner=runner)
+            self.make_epoch_step(runner=runner)
 
 
 class ILRUpdater(ABC, Callback):
-    """Basic class that all Lr updaters inherit from."""
+    """Class interface for all Lr updaters."""
 
     def __init__(self, optimizer_key: str = None):
         """
@@ -263,24 +258,25 @@ class ILRUpdater(ABC, Callback):
         super().__init__(order=CallbackOrder.scheduler, node=CallbackNode.all)
         self.init_lr = 0
         self.optimizer_key = optimizer_key
+        self.optimizer = None
 
     @abstractmethod
-    def calc_lr(self):
+    def calc_lr(self) -> float:
         """Interface for calculating learning rate."""
         pass
 
     @abstractmethod
-    def calc_momentum(self):
+    def calc_momentum(self) -> float:
         """Interface for calculating momentum"""
         pass
 
     @staticmethod
-    def _update_lr(optimizer, new_lr) -> None:
+    def _update_lr(optimizer: Optimizer, new_lr: float) -> None:
         for pg in optimizer.param_groups:
             pg["lr"] = new_lr
 
     @staticmethod
-    def _update_momentum(optimizer, new_momentum) -> None:
+    def _update_momentum(optimizer: Optimizer, new_momentum: float) -> None:
         if "betas" in optimizer.param_groups[0]:
             for pg in optimizer.param_groups:
                 pg["betas"] = (new_momentum, pg["betas"][1])
@@ -288,10 +284,12 @@ class ILRUpdater(ABC, Callback):
             for pg in optimizer.param_groups:
                 pg["momentum"] = new_momentum
 
-    def _update_optimizer(self, optimizer) -> Tuple[float, float]:
+    def _update_optimizer(self, optimizer: Optimizer) -> Tuple[float, float]:
         new_lr = self.calc_lr()
         if new_lr is not None:
             self._update_lr(optimizer, new_lr)
+        else:
+            new_lr = optimizer.param_groups[0]["lr"]
 
         new_momentum = self.calc_momentum()
         if new_momentum is not None:
@@ -307,7 +305,7 @@ class ILRUpdater(ABC, Callback):
         Args:
             runner: current runner
         """
-        lr, momentum = self._update_optimizer(optimizer=self._optimizer)
+        lr, momentum = self._update_optimizer(optimizer=self.optimizer)
 
         if self.optimizer_key is not None:
             runner.batch_metrics[f"lr_{self.optimizer_key}"] = lr
@@ -322,12 +320,11 @@ class ILRUpdater(ABC, Callback):
         Args:
             runner: current runner
         """
-        optimizer = get_attr(
+        self.optimizer = optimizer = get_attr(
             runner, key="optimizer", inner_key=self.optimizer_key
         )
-        assert optimizer is not None
-        self._optimizer = optimizer
-        self.init_lr = optimizer.defaults["lr"]
+        self.optimizer = optimizer
+        self.init_lr = optimizer.param_groups[0]["lr"]
 
     def on_loader_start(self, runner: "IRunner") -> None:
         """Loader start hook.
@@ -364,7 +361,7 @@ class LRFinder(ILRUpdater):
 
     def __init__(
         self,
-        final_lr,
+        final_lr: float,
         scale: str = "log",
         num_steps: Optional[int] = None,
         optimizer_key: str = None,
@@ -373,10 +370,8 @@ class LRFinder(ILRUpdater):
         Args:
             final_lr: final learning rate to try with
             scale: learning rate increasing scale ("log" or "linear")
-            num_steps:  number of batches to try;
-                if None - whole loader would be used.
-            optimizer_key: which optimizer key to use
-                for learning rate scheduling
+            num_steps:  number of batches to try, if None - whole loader would be used.
+            optimizer_key: which optimizer key to use for learning rate scheduling
         """
         super().__init__(optimizer_key=optimizer_key)
 
@@ -385,7 +380,7 @@ class LRFinder(ILRUpdater):
         self.num_steps = num_steps
         self.multiplier = 0
         self.lr_step = 0
-        self.find_iter = 0
+        self.iteration = 0
 
         self._calc_lr = None
         if scale == "log":
@@ -393,13 +388,13 @@ class LRFinder(ILRUpdater):
         elif scale == "linear":
             self._calc_lr = self._calc_lr_linear
         else:
-            raise Exception("Not supported")
+            raise NotImplementedError("Not supported")
 
     def _calc_lr_log(self):
-        return self.init_lr * self.multiplier ** self.find_iter
+        return self.init_lr * self.multiplier ** self.iteration
 
     def _calc_lr_linear(self):
-        return self.init_lr + self.lr_step * self.find_iter
+        return self.init_lr + self.lr_step * self.iteration
 
     def calc_lr(self):
         """Calculates learning rate.
@@ -408,7 +403,7 @@ class LRFinder(ILRUpdater):
             learning rate.
         """
         res = self._calc_lr()
-        self.find_iter += 1
+        self.iteration += 1
         return res
 
     def calc_momentum(self):
@@ -423,7 +418,7 @@ class LRFinder(ILRUpdater):
         """
         if runner.is_train_loader:
             lr_step = self.final_lr / self.init_lr
-            self.num_steps = self.num_steps or runner.loader_len
+            self.num_steps = self.num_steps or runner.loader_batch_len
             self.multiplier = lr_step ** (1 / self.num_steps)
             self.lr_step = (self.final_lr - self.init_lr) / self.num_steps
 
@@ -436,11 +431,12 @@ class LRFinder(ILRUpdater):
             runner: current runner
 
         Raises:
-            NotImplementedError: at the end of LRFinder
+            KeyboardInterrupt: at the end of LRFinder
         """
         super().on_batch_end(runner=runner)
-        if self.find_iter > self.num_steps:
-            raise NotImplementedError("End of LRFinder")
+        if self.iteration > self.num_steps:
+            # runner.need_early_stop = True
+            raise KeyboardInterrupt("End of LRFinder")
 
 
 __all__ = ["ISchedulerCallback", "SchedulerCallback", "ILRUpdater", "LRFinder"]

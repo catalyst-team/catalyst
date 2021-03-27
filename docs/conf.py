@@ -44,9 +44,7 @@ def get_version(mode: str = "full") -> str:
     version_ = "1.0"
     try:
         with open(version_file) as f:
-            version_ = re.search(
-                r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M
-            ).group(1)
+            version_ = re.search(r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M).group(1)
     except Exception:
         pass
 
@@ -172,9 +170,7 @@ html_short_title = "Accelerated deep learning R&D"
 
 html_context = {
     "display_github": True,
-    "source_url_prefix": (
-        f"https://github.com/{docs_user}/{docs_repo}/tree/master/docs"
-    ),
+    "source_url_prefix": (f"https://github.com/{docs_user}/{docs_repo}/tree/master/docs"),
     "github_host": "github.com",
     "github_user": docs_user,
     "github_repo": docs_repo,
@@ -209,13 +205,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (
-        master_doc,
-        "Catalyst.tex",
-        "Catalyst Documentation",
-        "Scitator",
-        "manual",
-    ),
+    (master_doc, "Catalyst.tex", "Catalyst Documentation", "Scitator", "manual",),
 ]
 
 # -- Options for manual page output ------------------------------------------

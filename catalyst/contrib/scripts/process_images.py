@@ -18,11 +18,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from catalyst.contrib.utils.cv.image import (
-    has_image_extension,
-    imread,
-    imwrite,
-)
+from catalyst.contrib.utils.image import has_image_extension, imread, imwrite
 from catalyst.contrib.utils.parallel import get_pool, tqdm_parallel_imap
 from catalyst.utils.misc import boolean_flag
 
@@ -38,15 +34,10 @@ def build_args(parser):
     Returns:
         updated parser
     """
-    parser.add_argument(
-        "--in-dir", required=True, type=Path, help="Raw data folder path"
-    )
+    parser.add_argument("--in-dir", required=True, type=Path, help="Raw data folder path")
 
     parser.add_argument(
-        "--out-dir",
-        required=True,
-        type=Path,
-        help="Processed images folder path",
+        "--out-dir", required=True, type=Path, help="Processed images folder path",
     )
 
     parser.add_argument(
@@ -67,15 +58,10 @@ def build_args(parser):
 
     boolean_flag(parser, "clear-exif", default=True, help="Clear EXIF data")
 
-    boolean_flag(
-        parser, "grayscale", default=False, help="Read images in grayscale"
-    )
+    boolean_flag(parser, "grayscale", default=False, help="Read images in grayscale")
 
     boolean_flag(
-        parser,
-        "expand-dims",
-        default=True,
-        help="Expand array shape for grayscale images",
+        parser, "expand-dims", default=True, help="Expand array shape for grayscale images",
     )
 
     return parser
@@ -187,13 +173,7 @@ class Preprocessor:
         images: List[Path] = []
         for root, _, files in os.walk(self.in_dir):
             root = Path(root)
-            images.extend(
-                [
-                    root / filename
-                    for filename in files
-                    if has_image_extension(filename)
-                ]
-            )
+            images.extend([root / filename for filename in files if has_image_extension(filename)])
 
         tqdm_parallel_imap(self.preprocess, images, pool)
 

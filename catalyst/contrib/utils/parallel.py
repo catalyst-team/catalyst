@@ -1,4 +1,4 @@
-# description     :Multiprocessing and tqdm wrapper for easy paralelizing
+# description     :Multiprocessing and tqdm wrapper for easy parallelizing
 # author          :Vsevolod Poletaev
 # author_email    :poletaev.va@gmail.com
 # date            :20190822
@@ -9,7 +9,8 @@
 from typing import List, TypeVar, Union
 from multiprocessing.pool import Pool
 
-from tqdm import tqdm
+# from tqdm import tqdm
+from torch.utils.model_zoo import tqdm
 
 T = TypeVar("T")
 

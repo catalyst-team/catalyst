@@ -1,519 +1,334 @@
-from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
+from typing import Dict, Iterable, Optional, Tuple, Union
 from abc import ABC, abstractmethod
-from collections import defaultdict
-import logging
-
-import numpy as np
 
 import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.tools.meters.averagevaluemeter import AverageValueMeter
-from catalyst.utils.distributed import get_distributed_mean
-from catalyst.utils.misc import get_dictkey_auto_fn
-
-if TYPE_CHECKING:
-    from catalyst.core.runner import IRunner
-
-logger = logging.getLogger(__name__)
+from catalyst.core.runner import IRunner
+from catalyst.metrics._functional_metric import FunctionalBatchMetric
+from catalyst.metrics._metric import ICallbackBatchMetric, ICallbackLoaderMetric, IMetric
 
 
-class IMetricCallback(ABC, Callback):
-    """Callback abstraction for metric computation."""
+class IMetricCallback(Callback, ABC):
+    """Metric callback interface, abstraction over metric step."""
 
-    def __init__(
-        self,
-        prefix: str,
-        input_key: Union[str, List[str], Dict[str, str]] = "targets",
-        output_key: Union[str, List[str], Dict[str, str]] = "logits",
-        multiplier: float = 1.0,
-        **metrics_kwargs,
-    ):
-        """
-        Args:
-            prefix: key prefix to store computed
-                batch/loader/epoch metrics
-            input_key: input key to use for metric calculation;
-                specifies our `y_true`
-            output_key: output key to use for metric calculation;
-                specifies our `y_pred`
-            multiplier: scalar for metric reweighting
-            **metrics_kwargs: extra metric params
-                to pass for metric computation
-        """
-        super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
-        self.prefix = prefix
-        self.input_key = input_key
-        self.output_key = output_key
-        self.multiplier = multiplier
-        self.metrics_kwargs = metrics_kwargs
-
-        self._get_input = get_dictkey_auto_fn(self.input_key)
-        self._get_output = get_dictkey_auto_fn(self.output_key)
-
-        kv_types = (dict, tuple, list, type(None))
-
-        is_value_input = (
-            isinstance(self.input_key, str) and self.input_key != "__all__"
-        )
-        is_value_output = (
-            isinstance(self.output_key, str) and self.output_key != "__all__"
-        )
-        is_kv_input = (
-            isinstance(self.input_key, kv_types) or self.input_key == "__all__"
-        )
-        is_kv_output = (
-            isinstance(self.output_key, kv_types)
-            or self.output_key == "__all__"
-        )
-
-        if hasattr(self, "_compute_metric"):
-            pass  # overridden in descendants
-        elif is_value_input and is_value_output:
-            self._compute_metric = self._compute_metric_value
-        elif is_kv_input and is_kv_output:
-            self._compute_metric = self._compute_metric_key_value
-        else:
-            raise NotImplementedError()
-
-    @property
     @abstractmethod
-    def metric_fn(self):
-        """Specifies used metric function."""
+    def on_loader_start(self, runner: "IRunner") -> None:
+        """
+        On loader start action
+
+        Args:
+            runner: current runner
+        """
         pass
 
-    def _compute_metric_value(self, output: Dict, input: Dict):
+    @abstractmethod
+    def on_batch_end(self, runner: "IRunner") -> None:
         """
-        Compute metric for value-based case.
-        For example accuracy on `y_pred` and `y_true`.
+        On batch end action
 
         Args:
-            output: dictionary with output (`y_pred`) values
-                for metric computation
-            input: dictionary with input (`y_true`) values
-                for metric computation
-
-        Returns:
-            computed metric
+            runner: current runner
         """
-        output = self._get_output(output, self.output_key)
-        input = self._get_input(input, self.input_key)
+        pass
 
-        metric = self.metric_fn(output, input, **self.metrics_kwargs)
-        return metric
-
-    def _compute_metric_key_value(self, output: Dict, input: Dict):
+    @abstractmethod
+    def on_loader_end(self, runner: "IRunner") -> None:
         """
-        Compute metric for key-value-based case.
-        For example accuracy on `y_pred` and `y_true` and `sample_weights`.
+        On loader end action
 
         Args:
-            output: dictionary with output (`y_pred`) values
-                for metric computation
-            input: dictionary with input (`y_true`, `sample_weights`)
-                values for metric computation
-
-        Returns:
-            computed metric
+            runner: current runner
         """
-        output = self._get_output(output, self.output_key)
-        input = self._get_input(input, self.input_key)
+        pass
 
-        metric = self.metric_fn(**output, **input, **self.metrics_kwargs)
-        return metric
 
-    def _process_computed_metric(self, metric: Union[Dict, float]) -> Dict:
-        """
-        Process metric for key-value-based logging.
-        Scales by `multiplier`, add appropriate naming.
+class MetricCallback(IMetricCallback):
+    """
+    MetricCallback is a base implementation of callback that updates metrics over batch or loader.
 
-        Args:
-            metric:
+    Args:
+        metric: metric to calculate in callback
+        input_key: keys of tensors that should be used as inputs in metric calculation
+        target_key: keys of tensors that should be used as targets in metric calculation
+    """
 
-        Returns:
-            Dict: processed scaled metric(s) with names
-        """
-        if isinstance(metric, dict):
-            metric = {
-                f"{self.prefix}{key}": value * self.multiplier
-                for key, value in metric.items()
-            }
-        elif isinstance(metric, (float, int, torch.Tensor)):
-            metric = {f"{self.prefix}": metric * self.multiplier}
+    def __init__(
+        self,
+        metric: Union[ICallbackBatchMetric, ICallbackLoaderMetric],
+        input_key: Union[str, Iterable[str], Dict[str, str]],
+        target_key: Union[str, Iterable[str], Dict[str, str]],
+    ):
+        """Init MetricCallback"""
+        super().__init__(order=CallbackOrder.metric, node=CallbackNode.all)
+        self.metric = metric
+        assert isinstance(metric, IMetric)
+        self._metric_update_method = self.metric.update
+
+        kv_types = (dict, list, tuple)
+
+        is_value_input = isinstance(input_key, str)
+        is_value_targets = isinstance(target_key, str)
+        is_key_value_input = isinstance(input_key, kv_types)
+        is_key_value_targets = isinstance(target_key, kv_types)
+
+        if is_value_input and is_value_targets:
+            self._get_inputs = self._get_value_inputs
+            self._update_metric = self._update_value_metric
+        elif is_key_value_input and is_key_value_targets:
+            self._get_inputs = self._get_key_value_inputs
+            self._update_metric = self._update_key_value_metric
         else:
             raise NotImplementedError()
-        return metric
 
-
-class IBatchMetricCallback(IMetricCallback):
-    """
-    Batch-based metric callback.
-    Computes metric on batch and saves for logging.
-    """
-
-    def on_batch_end(self, runner: "IRunner") -> None:
-        """Computes metrics and add them to batch metrics."""
-        metrics = self._compute_metric(runner.output, runner.input)
-        metrics = self._process_computed_metric(metrics)
-        runner.batch_metrics.update(**metrics)
-
-
-class ILoaderMetricCallback(IMetricCallback):
-    """
-    Loader-based metric callback.
-    Stores input/output values during loaders run
-    and computes metric in the end.
-    """
-
-    def __init__(self, **kwargs):
-        """Init.
-
-        Args:
-            **kwargs: `IMetricCallback` params.
-        """
-        super().__init__(**kwargs)
-
-        self.input = defaultdict(lambda: [])
-        self.output = defaultdict(lambda: [])
-
-    def on_loader_start(self, runner: "IRunner"):
-        """Reinitialises internal storage."""
-        self.input = defaultdict(lambda: [])
-        self.output = defaultdict(lambda: [])
-
-    def on_batch_end(self, runner: "IRunner") -> None:
-        """Stores new input/output for the metric computation."""
-        output = self._get_output(runner.output, self.output_key)
-        input = self._get_input(runner.input, self.input_key)
-
-        for data, storage in zip((input, output), (self.input, self.output)):
-            if isinstance(data, dict):
-                for key, value in data.items():
-                    storage[key].append(value.detach().cpu().numpy())
-            else:
-                storage["_data"].append(data.detach().cpu().numpy())
-
-    def on_loader_end(self, runner: "IRunner"):
-        """Computes loader-based metric.
-
-        Args:
-            runner: current runner
-        """
-        input = {
-            key: torch.from_numpy(np.concatenate(self.input[key], axis=0))
-            for key in self.input
+        self.input_key = input_key
+        self.target_key = target_key
+        self._keys = {
+            **self._convert_keys_to_kv(input_key),
+            **self._convert_keys_to_kv(target_key),
         }
-        output = {
-            key: torch.from_numpy(np.concatenate(self.output[key], axis=0))
-            for key in self.output
-        }
-
-        input = {self.input_key: input["_data"]} if len(input) == 1 else input
-        output = (
-            {self.output_key: output["_data"]} if len(output) == 1 else output
-        )
-
-        metrics = self._compute_metric(output, input)
-        metrics = self._process_computed_metric(metrics)
-        runner.loader_metrics.update(**metrics)
-
-
-class BatchMetricCallback(IBatchMetricCallback):
-    """A callback that returns single metric on `runner.on_batch_end`."""
-
-    def __init__(
-        self,
-        prefix: str,
-        metric_fn: Callable,
-        input_key: Union[str, List[str], Dict[str, str]] = "targets",
-        output_key: Union[str, List[str], Dict[str, str]] = "logits",
-        multiplier: float = 1.0,
-        **metric_kwargs,
-    ):
-        """Init.
-
-        Args:
-            prefix: key prefix to store computed
-                batch/loader/epoch metrics
-            input_key: input key to use for metric calculation;
-                specifies our `y_true`
-            output_key: output key to use for metric calculation;
-                specifies our `y_pred`
-            multiplier: scalar for metric reweighting
-            **metrics_kwargs: extra metric params
-                to pass for metric computation
-        """
-        # @TODO:
-        # - add ~(transform: Callable = lambda x: x) for runner
-        # - add ~(transform: Callable = lambda x: x) for metrics output
-        super().__init__(
-            prefix=prefix,
-            input_key=input_key,
-            output_key=output_key,
-            multiplier=multiplier,
-            **metric_kwargs,
-        )
-        self.metric = metric_fn
-
-    @property
-    def metric_fn(self):
-        """Specifies used metric function."""
-        return self.metric
-
-
-class LoaderMetricCallback(ILoaderMetricCallback):
-    """A callback that returns single metric on `runner.on_batch_end`."""
-
-    def __init__(
-        self,
-        prefix: str,
-        metric_fn: Callable,
-        input_key: Union[str, List[str], Dict[str, str]] = "targets",
-        output_key: Union[str, List[str], Dict[str, str]] = "logits",
-        multiplier: float = 1.0,
-        **metric_kwargs,
-    ):
-        """Init.
-
-        Args:
-            prefix: key prefix to store computed
-                batch/loader/epoch metrics
-            input_key: input key to use for metric calculation;
-                specifies our `y_true`
-            output_key: output key to use for metric calculation;
-                specifies our `y_pred`
-            multiplier: scalar for metric reweighting
-            **metrics_kwargs: extra metric params
-                to pass for metric computation
-        """
-        super().__init__(
-            prefix=prefix,
-            input_key=input_key,
-            output_key=output_key,
-            multiplier=multiplier,
-            **metric_kwargs,
-        )
-        self.metric = metric_fn
-
-    @property
-    def metric_fn(self):
-        """Specifies used metric function."""
-        return self.metric
-
-
-class MetricAggregationCallback(Callback):
-    """A callback to aggregate several metrics in one value."""
-
-    def __init__(
-        self,
-        prefix: str,
-        metrics: Union[str, List[str], Dict[str, float]] = None,
-        mode: str = "mean",
-        scope: str = "batch",
-        multiplier: float = 1.0,
-    ) -> None:
-        """
-        Args:
-            prefix: new key for aggregated metric.
-            metrics (Union[str, List[str], Dict[str, float]]): If not None,
-                it aggregates only the values from the metric by these keys.
-                for ``weighted_sum`` aggregation it must be a Dict[str, float].
-            mode: function for aggregation.
-                Must be either ``sum``, ``mean`` or ``weighted_sum``.
-            multiplier: scale factor for the aggregated metric.
-        """
-        super().__init__(
-            order=CallbackOrder.metric_aggregation, node=CallbackNode.all
-        )
-
-        if prefix is None or not isinstance(prefix, str):
-            raise ValueError("prefix must be str")
-
-        if mode in ("sum", "mean"):
-            if metrics is not None and not isinstance(metrics, list):
-                raise ValueError(
-                    "For `sum` or `mean` mode the metrics must be "
-                    "None or list or str (not dict)"
-                )
-        elif mode in ("weighted_sum", "weighted_mean"):
-            if metrics is None or not isinstance(metrics, dict):
-                raise ValueError(
-                    "For `weighted_sum` or `weighted_mean` mode "
-                    "the metrics must be specified "
-                    "and must be a dict"
-                )
-        else:
-            raise NotImplementedError(
-                "mode must be `sum`, `mean` "
-                "or `weighted_sum` or `weighted_mean`"
-            )
-
-        assert scope in ("batch", "loader", "epoch")
-
-        if isinstance(metrics, str):
-            metrics = [metrics]
-
-        self.prefix = prefix
-        self.metrics = metrics
-        self.mode = mode
-        self.scope = scope
-        self.multiplier = multiplier
-
-        if mode in ("sum", "weighted_sum", "weighted_mean"):
-            self.aggregation_fn = (
-                lambda x: torch.sum(torch.stack(x)) * multiplier
-            )
-            if mode == "weighted_mean":
-                weights_sum = sum(metrics.items())
-                self.metrics = {
-                    key: weight / weights_sum
-                    for key, weight in metrics.items()
-                }
-        elif mode == "mean":
-            self.aggregation_fn = (
-                lambda x: torch.mean(torch.stack(x)) * multiplier
-            )
-
-    def _preprocess(self, metrics: Any) -> List[float]:
-        if self.metrics is not None:
-            if self.mode == "weighted_sum":
-                result = [
-                    metrics[key] * value for key, value in self.metrics.items()
-                ]
-            else:
-                result = [metrics[key] for key in self.metrics]
-        else:
-            result = list(metrics.values())
-        return result
-
-    def _process_metrics(self, metrics: Dict):
-        metrics_processed = self._preprocess(metrics)
-        metric_aggregated = self.aggregation_fn(metrics_processed)
-        metrics[self.prefix] = metric_aggregated
-
-    def on_batch_end(self, runner: "IRunner") -> None:
-        """Computes the metric and add it to the batch metrics.
-
-        Args:
-            runner: current runner
-        """
-        if self.scope == "batch":
-            self._process_metrics(runner.batch_metrics)
-
-    def on_loader_end(self, runner: "IRunner"):
-        """Computes the metric and add it to the loader metrics.
-
-        Args:
-            runner: current runner
-        """
-        if self.scope == "loader":
-            self._process_metrics(runner.loader_metrics)
-
-    def on_epoch_end(self, runner: "IRunner"):
-        """Computes the metric and add it to the epoch metrics.
-
-        Args:
-            runner: current runner
-        """
-        if self.scope == "epoch":
-            self._process_metrics(runner.epoch_metrics)
-
-
-class MetricManagerCallback(Callback):
-    """
-    Prepares metrics for logging, transferring values from PyTorch to numpy.
-    """
-
-    def __init__(self):
-        """Init."""
-        super().__init__(
-            order=CallbackOrder.logging - 1, node=CallbackNode.all,
-        )
-        self.meters: Dict[str, AverageValueMeter] = None
 
     @staticmethod
-    def to_single_value(value: Any) -> float:
-        """Convert any value to float.
+    def _convert_keys_to_kv(keys: Union[str, Iterable[str], Dict[str, str]]) -> Dict[str, str]:
+        """
+        Convert keys to key-value format
 
         Args:
-            value: some value
+            keys: keys to convert
 
         Returns:
-            result
+            dict of keys like {"a": "b"} where "a" is a field name of field in batch,
+                "b" is a name of the same data for metric
         """
-        if hasattr(value, "item"):
-            value = value.item()
+        kv_keys = {}
+        if isinstance(keys, dict):
+            kv_keys.update(keys)
+        elif isinstance(keys, str):
+            kv_keys[keys] = keys
+        else:
+            for key in keys:
+                kv_keys[key] = key
+        return kv_keys
 
-        value = float(value)
-        return value
-
-    @staticmethod
-    def _process_metrics(metrics: Dict[str, Any]):
-        output = {}
-        for key, value in metrics.items():
-            value = get_distributed_mean(value)
-            value = MetricManagerCallback.to_single_value(value)
-            output[key] = value
-        return output
-
-    def on_epoch_start(self, runner: "IRunner") -> None:
-        """Epoch start hook.
+    def _get_value_inputs(self, runner: "IRunner") -> Tuple[torch.Tensor, torch.Tensor]:
+        """
+        Get data from batch in value input case
 
         Args:
             runner: current runner
+
+        Returns:
+            tuple of tensor of inputs and tensor of targets
         """
-        runner.epoch_metrics = defaultdict(None)
+        return runner.batch[self.input_key], runner.batch[self.target_key]
+
+    def _get_key_value_inputs(self, runner: "IRunner") -> Dict[str, torch.Tensor]:
+        """
+        Get data from batch in key-value input case
+
+        Args:
+            runner: current runner
+
+        Returns:
+            dict of inputs and targets tensors
+        """
+        kv_inputs = {}
+        for key in self._keys:
+            kv_inputs[self._keys[key]] = runner.batch[key]
+        return kv_inputs
+
+    def _update_value_metric(
+        self, value_inputs: Tuple[torch.Tensor, torch.Tensor]
+    ) -> Optional[Dict[str, float]]:
+        """
+        Update metric in value input case
+
+        Args:
+            value_inputs: tuple of input tensor and target tensor
+
+        Returns:
+            result of metric update: None or metric values
+        """
+        return self._metric_update_method(*value_inputs)
+
+    def _update_key_value_metric(
+        self, kv_inputs: Dict[str, torch.Tensor]
+    ) -> Optional[Dict[str, float]]:
+        """
+        Update metric in key-value input case
+
+        Args:
+            kv_inputs: input tensors in key-value format
+
+        Returns:
+            result of metric update: None or metric values
+        """
+        return self._metric_update_method(**kv_inputs)
+
+
+class BatchMetricCallback(MetricCallback):
+    """BatchMetricCallback implements batch-based metrics update and computation over loader
+
+    Args:
+        metric: metric to calculate in callback
+        input_key: keys of tensors that should be used as inputs in metric calculation
+        target_key: keys of tensors that should be used as targets in metric calculation
+        log_on_batch: boolean flag to log computed metrics every batch
+    """
+
+    def __init__(
+        self,
+        metric: ICallbackBatchMetric,
+        input_key: Union[str, Iterable[str], Dict[str, str]],
+        target_key: Union[str, Iterable[str], Dict[str, str]],
+        log_on_batch: bool = True,
+    ) -> None:
+        """Init BatchMetricCallback"""
+        super().__init__(metric=metric, input_key=input_key, target_key=target_key)
+        assert isinstance(metric, ICallbackBatchMetric)
+        self.log_on_batch = log_on_batch
+        self._metric_update_method = self.metric.update_key_value
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """Loader start hook.
+        """On loader start action: reset metric values
 
         Args:
             runner: current runner
         """
-        runner.loader_metrics = defaultdict(None)
-        self.meters = defaultdict(AverageValueMeter)
-
-    def on_batch_start(self, runner: "IRunner") -> None:
-        """Batch start hook.
-
-        Args:
-            runner: current runner
-        """
-        runner.batch_metrics = defaultdict(None)
+        self.metric.reset()
 
     def on_batch_end(self, runner: "IRunner") -> None:
-        """Batch end hook.
+        """On batch end action: update metric with new batch data and log it's value if necessary
 
         Args:
             runner: current runner
         """
-        runner.batch_metrics = self._process_metrics(runner.batch_metrics)
-        for key, value in runner.batch_metrics.items():
-            self.meters[key].add(value, runner.batch_size)
+        metrics_inputs = self._get_inputs(runner=runner)
+        metrics = self._update_metric(metrics_inputs)
+        if self.log_on_batch:
+            runner.batch_metrics.update(metrics)
 
     def on_loader_end(self, runner: "IRunner") -> None:
-        """Loader end hook.
+        """On loader end action: compute metric values and update runner's loader metrics with it
 
         Args:
             runner: current runner
         """
-        for key, value in self.meters.items():
-            value = value.mean
-            runner.loader_metrics[key] = value
-        for key, value in runner.loader_metrics.items():
-            runner.epoch_metrics[f"{runner.loader_key}_{key}"] = value
+        metrics = self.metric.compute_key_value()
+        metrics = {
+            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+            for k, v in metrics.items()
+        }
+        runner.loader_metrics.update(metrics)
 
 
-# backward compatibility
-MetricCallback = BatchMetricCallback
+class FunctionalBatchMetricCallback(BatchMetricCallback):
+    """FunctionalBatchMetricCallback implements batch-based metrics update
+    and computation over loader for ``FunctionalBatchMetric`` metrics.
+
+    Args:
+        metric: metric to calculate in callback
+        input_key: keys of tensors that should be used as inputs in metric calculation
+        target_key: keys of tensors that should be used as targets in metric calculation
+        log_on_batch: boolean flag to log computed metrics every batch
+
+    .. note::
+
+        The main difference from BatchMetricCallback:
+        FunctionalBatchMetricCallback also propagates current ``batch_size``
+        to the FunctionalBatchMetric for correct metric computation.
+    """
+
+    def __init__(
+        self,
+        metric: FunctionalBatchMetric,
+        input_key: Union[str, Iterable[str], Dict[str, str]],
+        target_key: Union[str, Iterable[str], Dict[str, str]],
+        log_on_batch: bool = True,
+    ) -> None:
+        """Init."""
+        assert isinstance(metric, FunctionalBatchMetric)
+        super().__init__(
+            metric=metric, input_key=input_key, target_key=target_key, log_on_batch=log_on_batch
+        )
+
+    def _get_value_inputs(self, runner: "IRunner") -> Tuple[float, torch.Tensor, torch.Tensor]:
+        """Get data from batch in value input case
+
+        Args:
+            runner: current runner
+
+        Returns:
+            tuple of tensor of inputs and tensor of targets
+        """
+        return runner.batch_size, runner.batch[self.input_key], runner.batch[self.target_key]
+
+    def _get_key_value_inputs(self, runner: "IRunner") -> Dict[str, torch.Tensor]:
+        """Get data from batch in key-value input case
+
+        Args:
+            runner: current runner
+
+        Returns:
+            dict of inputs and targets tensors
+        """
+        kv_inputs = {}
+        for key in self._keys:
+            kv_inputs[self._keys[key]] = runner.batch[key]
+        kv_inputs["batch_size"] = runner.batch_size
+        return kv_inputs
+
+
+class LoaderMetricCallback(MetricCallback):
+    """LoaderMetricCallback implements loader-based metrics update and computation over loader
+
+    Args:
+        metric: metric to calculate in callback
+        input_key: keys of tensors that should be used as inputs in metric calculation
+        target_key: keys of tensors that should be used as targets in metric calculation
+    """
+
+    def __init__(
+        self,
+        metric: ICallbackLoaderMetric,
+        input_key: Union[str, Iterable[str], Dict[str, str]],
+        target_key: Union[str, Iterable[str], Dict[str, str]],
+    ):
+        super().__init__(metric=metric, input_key=input_key, target_key=target_key)
+        assert isinstance(metric, ICallbackLoaderMetric)
+
+    def on_loader_start(self, runner: "IRunner") -> None:
+        """On loader star action: reset metric values in case of ICallbackLoaderMetric metric
+
+        Args:
+            runner: current runner
+        """
+        self.metric.reset(
+            num_batches=runner.loader_batch_len, num_samples=runner.loader_sample_len,
+        )
+
+    def on_batch_end(self, runner: "IRunner") -> None:
+        """On batch end action: get data from runner's batch and update metrics with it
+
+        Args:
+            runner: current runner
+        """
+        metrics_inputs = self._get_inputs(runner=runner)
+        self._update_metric(metrics_inputs)
+
+    def on_loader_end(self, runner: "IRunner") -> None:
+        """On loader end action: compute metric values and update runner's loader metrics with it
+
+        Args:
+            runner: current runner
+        """
+        metrics = self.metric.compute_key_value()
+        runner.loader_metrics.update(metrics)
+
 
 __all__ = [
     "IMetricCallback",
-    "IBatchMetricCallback",
-    "ILoaderMetricCallback",
     "BatchMetricCallback",
+    "FunctionalBatchMetricCallback",
     "LoaderMetricCallback",
-    "MetricCallback",
-    "MetricAggregationCallback",
-    "MetricManagerCallback",
 ]

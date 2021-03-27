@@ -24,12 +24,11 @@ Example of dataflow:
 
     class MyRunner:
 
-        def _handle_batch(self, batch):
-            # on this step we also have self.input = batch = {"features": ..., "targets": ...}
+        def handle_batch(self, batch):
+            # on this step we also have self.batch = batch = {"features": ..., "targets": ...}
             logits = self.model(batch["features"])
-            loss = self.criterion(logits, batch["targets"])
-            self.output = {"logits": logits}
-            # this is useful for other components of the pipiline
+            self.batch.update({"logits": logits})
+            # this is useful for other components of the pipeline
 
     loader = MyDataset()
     model = MyModel()
@@ -60,12 +59,12 @@ very convenient to read, thanks to "automatic naming documentation" - keys for t
 
     class MyRunner:
 
-        def _handle_batch(self, batch):
-            # on this step we also have self.input = batch = {"features": ..., "extra_features": ...,"targets": ...}
+        def handle_batch(self, batch):
+            # on this step we also have
+            # self.batch = batch = {"features": ..., "extra_features": ...,"targets": ...}
             logits = self.model(batch["features"], batch["extra_features"])
-            loss = self.criterion(logits, batch["targets"])
-            self.output = {"logits": logits}
-            # this is useful for other components of the pipiline
+            self.batch.update()"logits": logits})
+            # this is useful for other components of the pipeline
 
     loader = MyDataset()
     model = MyModel()
@@ -91,12 +90,12 @@ you don't have to rewrite your code:
 
     class MyRunner:
 
-        def _handle_batch(self, batch):
-            # on this step we also have self.input = batch = {"features": ..., "extra_features": ...,"targets": ...}
+        def handle_batch(self, batch):
+            # on this step we also have
+            # self.batch = batch = {"features": ..., "extra_features": ...,"targets": ...}
             logits = self.model(batch["features"])
-            loss = self.criterion(logits, batch["targets"])
-            self.output = {"logits": logits}
-            # this is useful for other components of the pipiline
+            self.batch.update({"logits": logits})
+            # this is useful for other components of the pipeline
 
     loader = MyDataset()
     model = MyModel()
@@ -116,19 +115,19 @@ and only then will be evaluated on some ``valid`` dataset:
     loaders = OrderedDict("train": train_loader, "valid": valid_loader)
     model = MyModel()
     runner = MyRunner()
-    runner.train(model=model, loaders=loaders)
+    runner.train(model=model, loaders=loaders, ...)
 
 Catalyst uses the following "automatic naming documentation" for loader keys handling:
 
-- if loader_key starts with "train" - is's our train datasoure, we need to run forward and backward passes on it.
-- if loader_key starts with "valid" - is's our validation datasoure, we need to run forward, but not the backward pass on it.
-- if loader_key starts with "infer" - is's our datasoure for model inference, we need to run forward, but not the backward pass on it.
+- if ``loader_key`` starts with "train" - is's train datasoure, we need to run forward and backward passes on it.
+- if ``loader_key`` starts with "valid" - is's validation datasoure, we need to run forward, but not the backward pass on it.
+- if ``loader_key`` starts with "infer" - is's inference datasoure, we need to run forward, but not the backward pass on it.
 
 Multiple datasources
 ----------------------------------------------------
 Thanks to key-value approach,
 it's possible to handle any number of datasets/loader
-without code changes or tricks with Datasets concatination, etc:
+without code changes or tricks with Datasets concatenation, etc:
 
 .. code-block:: python
 
@@ -144,7 +143,7 @@ without code changes or tricks with Datasets concatination, etc:
     )
     model = MyModel()
     runner = MyRunner()
-    runner.train(model=model, loaders=loaders)
+    runner.train(model=model, loaders=loaders, ...)
 
 What is even more interesting, you could also do something like:
 
@@ -163,7 +162,7 @@ What is even more interesting, you could also do something like:
     )
     model = MyModel()
     runner = MyRunner()
-    runner.train(model=model, loaders=loaders)
+    runner.train(model=model, loaders=loaders, ...)
 
 Once again, it's also valid to do something like:
 
@@ -185,7 +184,7 @@ Once again, it's also valid to do something like:
 Loader for model selection
 ----------------------------------------------------
 In case of multiple loaders, you could select one of them for model selection
-with ``valid_loader`` param in the ``runner.train``.
+with ``valid_loader``, ``valid_metric`` and ``minimize_valid_metric`` params in the ``runner.train``.
 For example, to use ``valid2`` loaders as your
 model selection one you could do the following:
 
@@ -202,13 +201,24 @@ model selection one you could do the following:
         "valid2": valid2_loader,
     )
     model = MyModel()
+    criterion = ...
+    optimizer = ...
     runner = MyRunner()
-    runner.train(model=model, loaders=loaders, valid_loader="valid2")
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        loaders=loaders,
+        valid_loader="valid2",
+        valid_metric="loss",
+        minimize_valid_metric=True
+    )
 
 .. note::
 
-    By default, Catalyst suppose to use
-    ``valid_loader=valid`` for model selection.
+    By default, Catalyst doesn't suppose to use
+    ``valid_loader``, ``valid_metric`` and ``minimize_valid_metric``
+    for model selection.
 
 
 Metric for model selection
@@ -219,55 +229,64 @@ Suppose, you are using set of different metrics in your pipeline:
 
     class MyRunner:
 
-        def _handle_batch(self, batch):
-            # on this step we also have self.input = batch = {"features": ..., "targets": ...}
+        def handle_batch(self, batch):
+            # on this step we also have self.batch = batch = {"features": ..., "targets": ...}
             logits = self.model(batch["features"])
-            loss = self.criterion(logits, batch["targets"])
-            accuracy01, accuracy03 = accuracy(logits, batch["targets"], topk=(1, 3))
-            self.batch_metrics.update(**{
-                "loss": loss,
-                "accuracy01": accuracy01,
-                "accuracy03": accuracy03,
-            })
             self.output = {"logits": logits}
-            # this is useful for other components of the pipiline
+            # this is useful for other components of the pipeline
 
-    loaders = ...
+    loaders = {"train": ..., "valid": ...}
     model = ...
+    criterion = ...
+    optimizer = ...
     runner = MyRunner()
-    runner.train(model=model, loaders=loaders)
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        loaders=loaders,
+        callbacks=[
+            AccuracyCallback(input_key="logits", target_key="targets", topk=(1, 3))
+        ]
+    )
 
-You could select one for model selection with ``main_metric`` and ``minimize_metric``
-params in the ``runner.train``. For example, to use ``accuracy01`` metric
-as your model selection one you could do the following:
+You could select one for model selection with ``valid_loader``, ``valid_metric``
+and ``minimize_valid_metric`` params in the ``runner.train``.
+For example, to use ``accuracy01`` metric as your model selection one you could do the following:
 
 .. code-block:: python
 
     class MyRunner:
 
-        def _handle_batch(self, batch):
-            # on this step we also have self.input = batch = {"features": ..., "targets": ...}
+        def handle_batch(self, batch):
+            # on this step we also have self.batch = batch = {"features": ..., "targets": ...}
             logits = self.model(batch["features"])
-            loss = self.criterion(logits, batch["targets"])
-            accuracy01, accuracy03 = accuracy(logits, batch["targets"], topk=(1, 3))
-            self.batch_metrics.update(**{
-                "loss": loss,
-                "accuracy01": accuracy01,
-                "accuracy03": accuracy03,
-            })
             self.output = {"logits": logits}
-            # this is useful for other components of the pipiline
+            # this is useful for other components of the pipeline
 
-    loaders = ...
+    loaders = {"train": ..., "valid": ...}
     model = ...
+    criterion = ...
+    optimizer = ...
     runner = MyRunner()
     # as far as we would like to maximize our model accuracy...
-    runner.train(model=model, loaders=loaders, main_metric="accuracy01", minimize_metric=False)
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        loaders=loaders,
+        valid_loader="valid",
+        valid_metric="accuracy01",
+        minimize_valid_metric=False,
+        callbacks=[
+            AccuracyCallback(input_key="logits", target_key="targets", topk=(1, 3))
+        ]
+    )
 
 .. note::
 
-    By default, Catalyst suppose to use
-    ``main_metric=loss`` and ``minimize_metric=False``
+    By default, Catalyst doesn't suppose to use
+    ``valid_loader``, ``valid_metric`` and ``minimize_valid_metric``
     for model selection.
 
 Use part of the data

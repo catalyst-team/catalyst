@@ -35,8 +35,12 @@ After that you could stop the pipeline in the place you prefer, for example:
     optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        ),
+        "valid": DataLoader(
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+        ),
     }
 
     class CustomRunner(dl.Runner):
@@ -45,7 +49,7 @@ After that you could stop the pipeline in the place you prefer, for example:
             # model inference step
             return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # model train/valid step
             x, y = batch
             y_hat = self.model(x.view(x.size(0), -1))
