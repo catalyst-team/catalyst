@@ -5,6 +5,7 @@ from tempfile import TemporaryDirectory
 
 import optuna
 from pytest import mark
+
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -24,16 +25,29 @@ def train_experiment(device):
 
             loaders = {
                 "train": DataLoader(
-                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                    MNIST(
+                        os.getcwd(),
+                        train=False,
+                        download=True,
+                        transform=ToTensor(),
+                    ),
                     batch_size=32,
                 ),
                 "valid": DataLoader(
-                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                    MNIST(
+                        os.getcwd(),
+                        train=False,
+                        download=True,
+                        transform=ToTensor(),
+                    ),
                     batch_size=32,
                 ),
             }
             model = nn.Sequential(
-                nn.Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10)
+                nn.Flatten(),
+                nn.Linear(784, num_hidden),
+                nn.ReLU(),
+                nn.Linear(num_hidden, 10),
             )
             optimizer = torch.optim.Adam(model.parameters(), lr=lr)
             criterion = nn.CrossEntropyLoss()
@@ -49,10 +63,15 @@ def train_experiment(device):
                 loaders=loaders,
                 callbacks={
                     "optuna": dl.OptunaPruningCallback(
-                        loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial
+                        loader_key="valid",
+                        metric_key="accuracy01",
+                        minimize=False,
+                        trial=trial,
                     ),
                     "accuracy": dl.AccuracyCallback(
-                        input_key="logits", target_key="targets", num_classes=10
+                        input_key="logits",
+                        target_key="targets",
+                        num_classes=10,
                     ),
                 },
                 num_epochs=2,
@@ -80,7 +99,8 @@ def test_finetune_on_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")

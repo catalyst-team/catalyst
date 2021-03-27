@@ -7,7 +7,12 @@ import torch.nn as nn
 from torch.nn.parallel import DataParallel, DistributedDataParallel
 
 from catalyst.core.engine import IEngine
-from catalyst.typing import RunnerCriterion, RunnerModel, RunnerOptimizer, RunnerScheduler
+from catalyst.typing import (
+    RunnerCriterion,
+    RunnerModel,
+    RunnerOptimizer,
+    RunnerScheduler,
+)
 from catalyst.utils.distributed import mean_reduce, sum_reduce
 from catalyst.utils.torch import (
     any2device,
@@ -44,7 +49,8 @@ class DeviceEngine(IEngine):
         return 1
 
     def sync_device(
-        self, tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module]
+        self,
+        tensor_or_module: Union[dict, list, tuple, torch.Tensor, nn.Module],
     ) -> Any:
         """Moves ``tensor_or_module`` to Engine's deivce."""
         return any2device(tensor_or_module, device=self.device)
@@ -54,7 +60,11 @@ class DeviceEngine(IEngine):
         return tensor
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         """Inits the runs components."""
         # model
@@ -113,7 +123,11 @@ class DeviceEngine(IEngine):
             ``scheduler_state_dict`` keys.
         """
         return pack_checkpoint(
-            model=model, criterion=criterion, optimizer=optimizer, scheduler=scheduler, **kwargs
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **kwargs,
         )
 
     def unpack_checkpoint(
@@ -178,7 +192,11 @@ class DataParallelEngine(DeviceEngine):
         return f"{self.__class__.__name__}(device_count={self.device_count})"
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -267,7 +285,9 @@ class DistributedDataParallelEngine(DeviceEngine):
         self._world_size = world_size
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
-        dist.init_process_group(self.backend, rank=self.rank, world_size=self.world_size)
+        dist.init_process_group(
+            self.backend, rank=self.rank, world_size=self.world_size
+        )
         torch.cuda.set_device(int(self._rank))
         self.device = f"cuda:{int(self._rank)}"
 
@@ -299,7 +319,11 @@ class DistributedDataParallelEngine(DeviceEngine):
             return mean_reduce(tensor, self.world_size)
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -339,4 +363,8 @@ class DistributedDataParallelEngine(DeviceEngine):
         dist.barrier()
 
 
-__all__ = ["DeviceEngine", "DataParallelEngine", "DistributedDataParallelEngine"]
+__all__ = [
+    "DeviceEngine",
+    "DataParallelEngine",
+    "DistributedDataParallelEngine",
+]

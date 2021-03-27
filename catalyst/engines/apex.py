@@ -12,7 +12,9 @@ from catalyst.utils.misc import get_fn_default_params
 if SETTINGS.apex_required:
     import apex
     import apex.amp as amp
-    from apex.parallel import DistributedDataParallel as ApexDistributedDataParallel
+    from apex.parallel import (
+        DistributedDataParallel as ApexDistributedDataParallel,
+    )
 
 
 def _initialize_apex(model, optimizer=None, **engine_params):
@@ -27,7 +29,9 @@ def _initialize_apex(model, optimizer=None, **engine_params):
     Returns:
         model and optimizer, wrapped with Nvidia Apex initialization
     """
-    amp_params = get_fn_default_params(apex.amp.initialize, ["models", "optimizers"])
+    amp_params = get_fn_default_params(
+        apex.amp.initialize, ["models", "optimizers"]
+    )
     amp_params["opt_level"] = "O0"
     for dp in engine_params:
         if dp in amp_params:
@@ -89,8 +93,12 @@ def _patch_forward(model):
     ):
         return apex.amp._initialize.applier(  # noqa: WPS437
             old_fwd(
-                *apex.amp._initialize.applier(args, input_caster),  # noqa: WPS437
-                **apex.amp._initialize.applier(kwargs, input_caster),  # noqa: WPS437
+                *apex.amp._initialize.applier(
+                    args, input_caster
+                ),  # noqa: WPS437
+                **apex.amp._initialize.applier(
+                    kwargs, input_caster
+                ),  # noqa: WPS437
             ),
             output_caster,
         )
@@ -107,12 +115,16 @@ def _wrap_into_data_parallel_with_apex(
 ):
     if isinstance(model, nn.Module):
         model = nn.Sequential(model)
-        model, optimizer = _initialize_apex(model, optimizer, **distributed_params)
+        model, optimizer = _initialize_apex(
+            model, optimizer, **distributed_params
+        )
         model = torch.nn.DataParallel(model[0])
         model = _patch_forward(model)
     elif isinstance(model, dict):
         model = {k: nn.Sequential(v) for k, v in model.items()}
-        model, optimizer = _initialize_apex(model, optimizer, **distributed_params)
+        model, optimizer = _initialize_apex(
+            model, optimizer, **distributed_params
+        )
         model = {k: nn.DataParallel(v[0]) for k, v in model.items()}
         model = {k: _patch_forward(v) for k, v in model.items()}
     else:
@@ -162,7 +174,11 @@ class APEXEngine(DeviceEngine):
         return f"{self.__class__.__name__}(device='{self.device}',opt_level='{self.opt_level}')"
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         """Inits the runs components."""
         # model
@@ -199,7 +215,12 @@ class APEXEngine(DeviceEngine):
             scaled_loss.backward()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> Dict:
         """
         Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
@@ -275,7 +296,11 @@ class DataParallelApexEngine(APEXEngine):
         return f"{self.__class__.__name__}(device='{self.device}',opt_level='{self.opt_level}')"
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -361,7 +386,11 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         )
 
     def init_components(
-        self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
+        self,
+        model_fn=None,
+        criterion_fn=None,
+        optimizer_fn=None,
+        scheduler_fn=None,
     ):
         """Inits the runs components."""
         model = model_fn()
@@ -390,7 +419,9 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             keep_batchnorm_fp32=self.keep_batchnorm_fp32,
             loss_scale=self.loss_scale,
         )
-        model = ApexDistributedDataParallel(model, delay_allreduce=self.delay_all_reduce)
+        model = ApexDistributedDataParallel(
+            model, delay_allreduce=self.delay_all_reduce
+        )
 
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
@@ -402,7 +433,12 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             scaled_loss.backward()
 
     def pack_checkpoint(
-        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+        self,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
     ) -> Dict:
         """
         Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
@@ -466,4 +502,8 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             amp.load_state_dict(checkpoint["amp"])
 
 
-__all__ = ["APEXEngine", "DataParallelApexEngine", "DistributedDataParallelApexEngine"]
+__all__ = [
+    "APEXEngine",
+    "DataParallelApexEngine",
+    "DistributedDataParallelApexEngine",
+]

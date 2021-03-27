@@ -32,7 +32,10 @@ class PrecisionRecallF1SupportCallback(BatchMetricCallback):
         """Init."""
         super().__init__(
             metric=MulticlassPrecisionRecallF1SupportMetric(
-                num_classes=num_classes, zero_division=zero_division, prefix=prefix, suffix=suffix
+                num_classes=num_classes,
+                zero_division=zero_division,
+                prefix=prefix,
+                suffix=suffix,
             ),
             input_key=input_key,
             target_key=target_key,
@@ -67,7 +70,10 @@ class MultilabelPrecisionRecallF1SupportCallback(BatchMetricCallback):
         """Init."""
         super().__init__(
             metric=MultilabelPrecisionRecallF1SupportMetric(
-                num_classes=num_classes, zero_division=zero_division, prefix=prefix, suffix=suffix
+                num_classes=num_classes,
+                zero_division=zero_division,
+                prefix=prefix,
+                suffix=suffix,
             ),
             input_key=input_key,
             target_key=target_key,

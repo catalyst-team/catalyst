@@ -103,12 +103,16 @@ def _lovasz_hinge(logits, targets, per_image=True, ignore=None):
     if per_image:
         loss = mean(
             _lovasz_hinge_flat(
-                *_flatten_binary_scores(logit.unsqueeze(0), target.unsqueeze(0), ignore)
+                *_flatten_binary_scores(
+                    logit.unsqueeze(0), target.unsqueeze(0), ignore
+                )
             )
             for logit, target in zip(logits, targets)
         )
     else:
-        loss = _lovasz_hinge_flat(*_flatten_binary_scores(logits, targets, ignore))
+        loss = _lovasz_hinge_flat(
+            *_flatten_binary_scores(logits, targets, ignore)
+        )
     return loss
 
 
@@ -170,7 +174,9 @@ def _lovasz_softmax_flat(probabilities, targets, classes="present"):
     return mean(losses)
 
 
-def _lovasz_softmax(probabilities, targets, classes="present", per_image=False, ignore=None):
+def _lovasz_softmax(
+    probabilities, targets, classes="present", per_image=False, ignore=None
+):
     """The multiclass Lovasz-Softmax loss.
 
     Args:
@@ -188,14 +194,17 @@ def _lovasz_softmax(probabilities, targets, classes="present", per_image=False, 
     if per_image:
         loss = mean(
             _lovasz_softmax_flat(
-                *_flatten_probabilities(prob.unsqueeze(0), lab.unsqueeze(0), ignore),
+                *_flatten_probabilities(
+                    prob.unsqueeze(0), lab.unsqueeze(0), ignore
+                ),
                 classes=classes
             )
             for prob, lab in zip(probabilities, targets)
         )
     else:
         loss = _lovasz_softmax_flat(
-            *_flatten_probabilities(probabilities, targets, ignore), classes=classes
+            *_flatten_probabilities(probabilities, targets, ignore),
+            classes=classes
         )
     return loss
 
@@ -230,7 +239,9 @@ class LovaszLossBinary(_Loss):
 
         @TODO: Docs. Contribution is welcome.
         """
-        loss = _lovasz_hinge(logits, targets, per_image=self.per_image, ignore=self.ignore)
+        loss = _lovasz_hinge(
+            logits, targets, per_image=self.per_image, ignore=self.ignore
+        )
         return loss
 
 
@@ -261,7 +272,9 @@ class LovaszLossMultiClass(_Loss):
 
         @TODO: Docs. Contribution is welcome.
         """
-        loss = _lovasz_softmax(logits, targets, per_image=self.per_image, ignore=self.ignore)
+        loss = _lovasz_softmax(
+            logits, targets, per_image=self.per_image, ignore=self.ignore
+        )
         return loss
 
 

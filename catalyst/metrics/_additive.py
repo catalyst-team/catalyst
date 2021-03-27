@@ -54,10 +54,12 @@ class AdditiveValueMetric(IMetric):
             self.mean_old = self.mean
             self.m_s = 0.0
         else:
-            self.mean = self.mean_old + (value - self.mean_old) * num_samples / float(
-                self.num_samples
+            self.mean = self.mean_old + (
+                value - self.mean_old
+            ) * num_samples / float(self.num_samples)
+            self.m_s += (
+                (value - self.mean_old) * (value - self.mean) * num_samples
             )
-            self.m_s += (value - self.mean_old) * (value - self.mean) * num_samples
             self.mean_old = self.mean
             self.std = np.sqrt(self.m_s / (self.num_samples - 1.0))
         return value

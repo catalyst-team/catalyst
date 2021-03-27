@@ -16,7 +16,9 @@ from catalyst.metrics.functional._average_precision import (
     mean_average_precision,
     binary_average_precision,
 )
-from catalyst.metrics.functional._classification import precision_recall_fbeta_support
+from catalyst.metrics.functional._classification import (
+    precision_recall_fbeta_support,
+)
 from catalyst.metrics.functional._cmc_score import cmc_score, cmc_score_count
 from catalyst.metrics.functional._f1_score import f1_score, fbeta_score
 from catalyst.metrics.functional._focal import (

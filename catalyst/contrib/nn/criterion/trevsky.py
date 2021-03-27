@@ -52,7 +52,9 @@ class TrevskyLoss(nn.Module):
             weights=weights,
         )
 
-    def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> torch.Tensor:
         """Calculates loss between ``logits`` and ``target`` tensors."""
         trevsky_score = self.loss_fn(outputs, targets)
         return 1 - trevsky_score
@@ -97,10 +99,17 @@ class FocalTrevskyLoss(nn.Module):
         super().__init__()
         self.gamma = gamma
         self.trevsky_loss = TrevskyLoss(
-            alpha=alpha, beta=beta, class_dim=class_dim, mode=mode, weights=weights, eps=eps,
+            alpha=alpha,
+            beta=beta,
+            class_dim=class_dim,
+            mode=mode,
+            weights=weights,
+            eps=eps,
         )
 
-    def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    def forward(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> torch.Tensor:
         """Calculates loss between ``logits`` and ``target`` tensors."""
         loss = 0
         batch_size = len(outputs)

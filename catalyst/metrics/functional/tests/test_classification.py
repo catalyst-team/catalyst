@@ -54,7 +54,9 @@ def test_recall(tp: int, fn: int, zero_division: int, true_value: float):
     "precision_value,recall_value,true_value",
     ((0.8, 0.7, 0.746667), (0.5, 0.5, 0.5), (0.6, 0.4, 0.48)),
 )
-def test_f1score(precision_value: float, recall_value: float, true_value: float):
+def test_f1score(
+    precision_value: float, recall_value: float, true_value: float
+):
     """
     Test f1 score
 

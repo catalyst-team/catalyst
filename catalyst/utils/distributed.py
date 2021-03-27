@@ -8,7 +8,6 @@ import subprocess
 
 import torch
 from torch import nn
-import torch.distributed
 import torch.distributed as dist
 
 from catalyst.settings import SETTINGS
@@ -16,7 +15,9 @@ from catalyst.settings import SETTINGS
 
 def _is_torch_distributed_initialized() -> bool:
     """Checks if torch.distributed is available and initialized."""
-    return torch.distributed.is_available() and torch.distributed.is_initialized()
+    return (
+        torch.distributed.is_available() and torch.distributed.is_initialized()
+    )
 
 
 def _is_slurm_available():
@@ -192,10 +193,14 @@ def all_gather(data: Any) -> List[Any]:
     # gathering tensors of different shapes
     tensor_list = []
     for _ in size_list:  # noqa: WPS122
-        tensor_list.append(torch.empty((max_size,), dtype=torch.uint8, device="cuda"))
+        tensor_list.append(
+            torch.empty((max_size,), dtype=torch.uint8, device="cuda")
+        )
 
     if local_size != max_size:
-        padding = torch.empty(size=(max_size - local_size,), dtype=torch.uint8, device="cuda")
+        padding = torch.empty(
+            size=(max_size - local_size,), dtype=torch.uint8, device="cuda"
+        )
         tensor = torch.cat((tensor, padding), dim=0)
     dist.all_gather(tensor_list, tensor)
 

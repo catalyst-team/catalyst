@@ -45,7 +45,9 @@ def _save_checkpoint(
     return filename
 
 
-def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> None:
+def _load_checkpoint(
+    *, filename, runner: "IRunner", load_full: bool = True
+) -> None:
     """
     Load checkpoint from a file.
 
@@ -106,7 +108,9 @@ def _load_checkpoint(*, filename, runner: "IRunner", load_full: bool = True) -> 
             )
 
 
-def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]:
+def _get_required_files(
+    logdir: str, load_map: Dict[str, str]
+) -> Dict[str, str]:
     """
     Generate required files for load model, criterion,
     scheduler, optimizer specified in ``load_map``.
@@ -131,7 +135,9 @@ def _get_required_files(logdir: str, load_map: Dict[str, str]) -> Dict[str, str]
     experiment_parts = ["model"] + required_full_checkpoint + steps
 
     # keep required parts
-    experiment_parts = list(filter(lambda part: part in load_map, experiment_parts))
+    experiment_parts = list(
+        filter(lambda part: part in load_map, experiment_parts)
+    )
 
     # avoid unnecessary loading
     if "model" in experiment_parts and len(experiment_parts) > 1:
@@ -198,7 +204,10 @@ def _load_states_from_file_map(
 
 
 def _load_runner(
-    logdir: str, runner: "IRunner", mapping: Union[str, Dict[str, str]], load_full: bool = False,
+    logdir: str,
+    runner: "IRunner",
+    mapping: Union[str, Dict[str, str]],
+    load_full: bool = False,
 ) -> None:
     """
     Selects a loading method based on type of mapping.
@@ -214,9 +223,13 @@ def _load_runner(
             checkpoint = f"{logdir}/{mapping}.pth"
         else:
             checkpoint = mapping
-        _load_checkpoint(filename=checkpoint, runner=runner, load_full=load_full)
+        _load_checkpoint(
+            filename=checkpoint, runner=runner, load_full=load_full
+        )
     elif isinstance(mapping, dict):
-        _load_states_from_file_map(logdir=logdir, runner=runner, load_map=mapping)
+        _load_states_from_file_map(
+            logdir=logdir, runner=runner, load_map=mapping
+        )
 
 
 class ICheckpointCallback(Callback):
@@ -350,7 +363,9 @@ class CheckpointCallback(ICheckpointCallback):
                 "requires both `loader_key` and `metric_key` specified."
             )
             self._use_model_selection = True
-            self.minimize = minimize if minimize is not None else True  # loss-oriented selection
+            self.minimize = (
+                minimize if minimize is not None else True
+            )  # loss-oriented selection
         else:
             self._use_model_selection = False
             self.minimize = False  # epoch-num-oriented selection
@@ -403,7 +418,9 @@ class CheckpointCallback(ICheckpointCallback):
             stage_batch_step=runner.stage_batch_step,
             stage_sample_step=runner.stage_sample_step,
             # epoch info
-            epoch_metrics={k: dict(v) for k, v in runner.epoch_metrics.items()},
+            epoch_metrics={
+                k: dict(v) for k, v in runner.epoch_metrics.items()
+            },
             # loader info
             loader_key=runner.loader_key,
             loader_batch_step=runner.loader_batch_step,
@@ -454,16 +471,22 @@ class CheckpointCallback(ICheckpointCallback):
 
     def _truncate_checkpoints(self) -> None:
         self.top_best_metrics = sorted(
-            self.top_best_metrics, key=lambda x: x[0], reverse=not self.minimize,
+            self.top_best_metrics,
+            key=lambda x: x[0],
+            reverse=not self.minimize,
         )
         if len(self.top_best_metrics) > self.save_n_best:
             last_item = self.top_best_metrics.pop(-1)
             last_filepath = Path(last_item[1])
-            last_filepaths = last_filepath.parent.glob(last_filepath.name.replace(".pth", "*"))
+            last_filepaths = last_filepath.parent.glob(
+                last_filepath.name.replace(".pth", "*")
+            )
             for filepath in last_filepaths:
                 os.remove(filepath)
 
-    def _prepare_metrics_log(self, last_epoch_score: float, last_epoch_metrics: Dict) -> Dict:
+    def _prepare_metrics_log(
+        self, last_epoch_score: float, last_epoch_metrics: Dict
+    ) -> Dict:
         top_best_checkpoints = [
             (Path(filepath).stem, {**epoch_metrics, **{"_score_": score}})
             for (score, filepath, _, _, epoch_metrics) in self.top_best_metrics
@@ -472,11 +495,22 @@ class CheckpointCallback(ICheckpointCallback):
             best_epoch_score = top_best_checkpoints[0][0]
             best_epoch_metrics = top_best_checkpoints[0][-1]
             metrics = [
-                ("best", {**best_epoch_metrics, **{"_score_": best_epoch_score}}),
-                ("last", {**last_epoch_metrics, **{"_score_": last_epoch_score}}),
+                (
+                    "best",
+                    {**best_epoch_metrics, **{"_score_": best_epoch_score}},
+                ),
+                (
+                    "last",
+                    {**last_epoch_metrics, **{"_score_": last_epoch_score}},
+                ),
             ] + top_best_checkpoints
         else:
-            metrics = [("last", {**last_epoch_metrics, **{"_score_": last_epoch_score}})]
+            metrics = [
+                (
+                    "last",
+                    {**last_epoch_metrics, **{"_score_": last_epoch_score}},
+                )
+            ]
         return OrderedDict(metrics)
 
     def on_stage_start(self, runner: "IRunner") -> None:
@@ -520,12 +554,18 @@ class CheckpointCallback(ICheckpointCallback):
             file_exists = False
             if isinstance(self.load_on_stage_start, str):
                 need_full = self.load_on_stage_start.endswith("full")
-                use_file = os.path.join(self.logdir, f"{self.load_on_stage_start}.pth")
+                use_file = os.path.join(
+                    self.logdir, f"{self.load_on_stage_start}.pth"
+                )
                 file_exists = os.path.isfile(use_file)
                 if not file_exists:
-                    raise FileNotFoundError(f"Missing file '{use_file}'!")  # noqa: F821
+                    raise FileNotFoundError(
+                        f"Missing file '{use_file}'!"
+                    )  # noqa: F821
             elif isinstance(self.load_on_stage_start, dict):
-                required_files = _get_required_files(self.logdir, self.load_on_stage_start).keys()
+                required_files = _get_required_files(
+                    self.logdir, self.load_on_stage_start
+                ).keys()
                 file_exists = True
                 for use_file in required_files:
                     if not os.path.isfile(use_file):
@@ -608,7 +648,10 @@ class CheckpointCallback(ICheckpointCallback):
             checkpoint = self._pack_checkpoint(runner)
             # save checkpoint
             checkpoint_path = self._save_checkpoint(
-                runner=runner, checkpoint=checkpoint, is_best=is_best, is_last=True,
+                runner=runner,
+                checkpoint=checkpoint,
+                is_best=is_best,
+                is_last=True,
             )
             # add metrics to records
             metrics_record = (
@@ -622,7 +665,9 @@ class CheckpointCallback(ICheckpointCallback):
             # truncate checkpoints
             self._truncate_checkpoints()
             # save checkpoint metrics
-            metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
+            metrics_log = self._prepare_metrics_log(
+                float(score), dict(runner.epoch_metrics)
+            )
             save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
 
     def on_stage_end(self, runner: "IRunner") -> None:
@@ -656,12 +701,17 @@ class CheckpointCallback(ICheckpointCallback):
             )
             # add metrics to records
             # save checkpoint metrics
-            metrics_log = self._prepare_metrics_log(float(score), dict(runner.epoch_metrics))
+            metrics_log = self._prepare_metrics_log(
+                float(score), dict(runner.epoch_metrics)
+            )
             save_config(metrics_log, f"{self.logdir}/{self.metrics_filename}")
             log_message += f"{checkpoint_path}\t{score:3.4f}"
         else:
             log_message += "\n".join(
-                [f"{filepath}\t{score:3.4f}" for score, filepath, _, _, _ in self.top_best_metrics]
+                [
+                    f"{filepath}\t{score:3.4f}"
+                    for score, filepath, _, _, _ in self.top_best_metrics
+                ]
             )
         print(log_message)
 

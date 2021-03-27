@@ -1,6 +1,7 @@
 from typing import Sequence, Union
 
 import numpy as np
+
 import torch
 
 from catalyst.metrics.functional import process_multilabel_components
@@ -76,13 +77,17 @@ def accuracy(
 
     output = []
     for k in topk:
-        correct_k = correct[:k].contiguous().view(-1).float().sum(0, keepdim=True)
+        correct_k = (
+            correct[:k].contiguous().view(-1).float().sum(0, keepdim=True)
+        )
         output.append(correct_k.mul_(1.0 / batch_size))
     return output
 
 
 def multilabel_accuracy(
-    outputs: torch.Tensor, targets: torch.Tensor, threshold: Union[float, torch.Tensor],
+    outputs: torch.Tensor,
+    targets: torch.Tensor,
+    threshold: Union[float, torch.Tensor],
 ) -> torch.Tensor:
     """
     Computes multilabel accuracy for the specified activation and threshold.
@@ -138,10 +143,14 @@ def multilabel_accuracy(
         >>> )
         tensor(1.0)
     """
-    outputs, targets, _ = process_multilabel_components(outputs=outputs, targets=targets)
+    outputs, targets, _ = process_multilabel_components(
+        outputs=outputs, targets=targets
+    )
 
     outputs = (outputs > threshold).long()
-    output = (targets.long() == outputs.long()).sum().float() / np.prod(targets.shape)
+    output = (targets.long() == outputs.long()).sum().float() / np.prod(
+        targets.shape
+    )
     return output
 
 

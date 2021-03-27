@@ -3,6 +3,7 @@
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -30,7 +31,10 @@ def train_experiment(device):
 
         # model training
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss",
         )
         runner.train(
             engine=dl.DeviceEngine(device),
@@ -47,7 +51,9 @@ def train_experiment(device):
             verbose=False,
             callbacks=[
                 dl.AccuracyCallback(
-                    input_key="logits", target_key="targets", num_classes=num_classes
+                    input_key="logits",
+                    target_key="targets",
+                    num_classes=num_classes,
                 ),
                 dl.PrecisionRecallF1SupportCallback(
                     input_key="logits", target_key="targets", num_classes=4
@@ -70,7 +76,8 @@ def test_finetune_on_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")

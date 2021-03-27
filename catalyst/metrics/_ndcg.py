@@ -30,7 +30,9 @@ class NDCGMetric(ICallbackBatchMetric):
         suffix: str = None,
     ):
         """Init NDCGMetric"""
-        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        super().__init__(
+            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix
+        )
         self.metric_name_mean = f"{self.prefix}ndcg{self.suffix}"
         self.metric_name_std = f"{self.prefix}ndcg{self.suffix}/std"
         self.topk_args: List[int] = topk_args or [1]
@@ -43,7 +45,9 @@ class NDCGMetric(ICallbackBatchMetric):
         for metric in self.additive_metrics:
             metric.reset()
 
-    def update(self, logits: torch.Tensor, targets: torch.Tensor) -> List[float]:
+    def update(
+        self, logits: torch.Tensor, targets: torch.Tensor
+    ) -> List[float]:
         """
         Update metric value with ndcg for new data and return intermediate metrics values.
 
@@ -60,7 +64,9 @@ class NDCGMetric(ICallbackBatchMetric):
             metric.update(value, len(targets))
         return values
 
-    def update_key_value(self, logits: torch.Tensor, targets: torch.Tensor) -> Dict[str, float]:
+    def update_key_value(
+        self, logits: torch.Tensor, targets: torch.Tensor
+    ) -> Dict[str, float]:
         """
         Update metric value with ndcg for new data and return intermediate metrics
         values in key-value format.
@@ -77,7 +83,9 @@ class NDCGMetric(ICallbackBatchMetric):
             f"{self.prefix}ndcg{key:02d}{self.suffix}": value
             for key, value in zip(self.topk_args, values)
         }
-        output[self.metric_name_mean] = output[f"{self.prefix}ndcg01{self.suffix}"]
+        output[self.metric_name_mean] = output[
+            f"{self.prefix}ndcg01{self.suffix}"
+        ]
         return output
 
     def compute(self) -> Any:
@@ -87,7 +95,9 @@ class NDCGMetric(ICallbackBatchMetric):
         Returns:
             list of mean values, list of std values
         """
-        means, stds = zip(*(metric.compute() for metric in self.additive_metrics))
+        means, stds = zip(
+            *(metric.compute() for metric in self.additive_metrics)
+        )
         return means, stds
 
     def compute_key_value(self) -> Dict[str, float]:
@@ -106,8 +116,12 @@ class NDCGMetric(ICallbackBatchMetric):
             f"{self.prefix}ndcg{key:02d}{self.suffix}/std": value
             for key, value in zip(self.topk_args, stds)
         }
-        output_mean[self.metric_name_mean] = output_mean[f"{self.prefix}ndcg01{self.suffix}"]
-        output_std[self.metric_name_std] = output_std[f"{self.prefix}ndcg01{self.suffix}/std"]
+        output_mean[self.metric_name_mean] = output_mean[
+            f"{self.prefix}ndcg01{self.suffix}"
+        ]
+        output_std[self.metric_name_std] = output_std[
+            f"{self.prefix}ndcg01{self.suffix}/std"
+        ]
         return {**output_mean, **output_std}
 
 

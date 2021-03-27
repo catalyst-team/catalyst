@@ -63,7 +63,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 f" {len(self.class_names)} and classes: {len(self.statistics)}"
             )
         else:
-            self.class_names = [f"class_{idx:02d}" for idx in range(len(self.statistics))]
+            self.class_names = [
+                f"class_{idx:02d}" for idx in range(len(self.statistics))
+            ]
         if self.weights is not None:
             assert len(self.weights) == len(self.statistics), (
                 f"the number of weights must be equal to the number of classes, got weights"
@@ -75,7 +77,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
         self.statistics = {}
         self._is_ddp = get_rank() > -1
 
-    def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+    def update(
+        self, outputs: torch.Tensor, targets: torch.Tensor
+    ) -> torch.Tensor:
         """Updates segmentation statistics with new data and return intermediate metrics values.
 
         Args:
@@ -133,7 +137,9 @@ class RegionBasedMetric(ICallbackBatchMetric):
             weighted_metric = 0
             for idx, value in enumerate(metrics_per_class):
                 weighted_metric += value * self.weights[idx]
-            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/weighted"] = weighted_metric
+            metrics[
+                f"{self.prefix}{self.metric_name}{self.suffix}/weighted"
+            ] = weighted_metric
         # convert torch.Tensor to float
         # metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
@@ -155,8 +161,12 @@ class RegionBasedMetric(ICallbackBatchMetric):
             for _, statistics in self.statistics.items():
                 for key in statistics:
                     device = statistics[key].device
-                    value: List[torch.Tensor] = all_gather(statistics[key].cpu())
-                    value: torch.Tensor = torch.sum(torch.vstack(value), dim=0).to(device)
+                    value: List[torch.Tensor] = all_gather(
+                        statistics[key].cpu()
+                    )
+                    value: torch.Tensor = torch.sum(
+                        torch.vstack(value), dim=0
+                    ).to(device)
                     statistics[key] = value
 
         for class_idx, statistics in self.statistics.items():
@@ -168,14 +178,22 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[class_idx]}"
             ] = value
             for stats_name, value in statistics.items():
-                total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
+                total_statistics[stats_name] = (
+                    total_statistics.get(stats_name, 0) + value
+                )
         macro_metric /= len(self.statistics)
         micro_metric = self.metric_fn(**total_statistics)
-        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/micro"] = micro_metric
+        metrics[
+            f"{self.prefix}{self.metric_name}{self.suffix}/micro"
+        ] = micro_metric
         metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
-        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/macro"] = macro_metric
+        metrics[
+            f"{self.prefix}{self.metric_name}{self.suffix}/macro"
+        ] = macro_metric
         if self.weights is not None:
-            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/weighted"] = weighted_metric
+            metrics[
+                f"{self.prefix}{self.metric_name}{self.suffix}/weighted"
+            ] = weighted_metric
         # convert torch.Tensor to float
         # metrics = {k: float(v) for k, v in metrics.items()}
         return metrics

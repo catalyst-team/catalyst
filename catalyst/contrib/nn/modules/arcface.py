@@ -55,7 +55,9 @@ class ArcFace(nn.Module):
         self.threshold = math.pi - m
         self.eps = eps
 
-        self.weight = nn.Parameter(torch.FloatTensor(out_features, in_features))
+        self.weight = nn.Parameter(
+            torch.FloatTensor(out_features, in_features)
+        )
         nn.init.xavier_uniform_(self.weight)
 
     def __repr__(self) -> str:
@@ -71,7 +73,9 @@ class ArcFace(nn.Module):
         )
         return rep
 
-    def forward(self, input: torch.Tensor, target: torch.LongTensor = None) -> torch.Tensor:
+    def forward(
+        self, input: torch.Tensor, target: torch.LongTensor = None
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -95,12 +99,16 @@ class ArcFace(nn.Module):
         if target is None:
             return cos_theta
 
-        theta = torch.acos(torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps))
+        theta = torch.acos(
+            torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
+        )
 
         one_hot = torch.zeros_like(cos_theta)
         one_hot.scatter_(1, target.view(-1, 1).long(), 1)
 
-        mask = torch.where(theta > self.threshold, torch.zeros_like(one_hot), one_hot)
+        mask = torch.where(
+            theta > self.threshold, torch.zeros_like(one_hot), one_hot
+        )
 
         logits = torch.cos(torch.where(mask.bool(), theta + self.m, theta))
         logits *= self.s
@@ -164,7 +172,9 @@ class SubCenterArcFace(nn.Module):
         self.k = k
         self.eps = eps
 
-        self.weight = nn.Parameter(torch.FloatTensor(k, in_features, out_features))
+        self.weight = nn.Parameter(
+            torch.FloatTensor(k, in_features, out_features)
+        )
         nn.init.xavier_uniform_(self.weight)
 
         self.threshold = math.pi - self.m
@@ -183,7 +193,9 @@ class SubCenterArcFace(nn.Module):
         )
         return rep
 
-    def forward(self, input: torch.Tensor, target: torch.LongTensor = None) -> torch.Tensor:
+    def forward(
+        self, input: torch.Tensor, target: torch.LongTensor = None
+    ) -> torch.Tensor:
         """
         Args:
             input: input features,
@@ -201,11 +213,15 @@ class SubCenterArcFace(nn.Module):
             tensor (logits) with shapes ``BxC``
             where ``C`` is a number of classes.
         """
-        feats = F.normalize(input).unsqueeze(0).expand(self.k, *input.shape)  # k*b*f
+        feats = (
+            F.normalize(input).unsqueeze(0).expand(self.k, *input.shape)
+        )  # k*b*f
         wght = F.normalize(self.weight, dim=1)  # k*f*c
         cos_theta = torch.bmm(feats, wght)  # k*b*f
         cos_theta = torch.max(cos_theta, dim=0)[0]  # b*f
-        theta = torch.acos(torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps))
+        theta = torch.acos(
+            torch.clamp(cos_theta, -1.0 + self.eps, 1.0 - self.eps)
+        )
 
         if target is None:
             return cos_theta
@@ -213,7 +229,9 @@ class SubCenterArcFace(nn.Module):
         one_hot = torch.zeros_like(cos_theta)
         one_hot.scatter_(1, target.view(-1, 1).long(), 1)
 
-        selected = torch.where(theta > self.threshold, torch.zeros_like(one_hot), one_hot)
+        selected = torch.where(
+            theta > self.threshold, torch.zeros_like(one_hot), one_hot
+        )
 
         logits = torch.cos(torch.where(selected.bool(), theta + self.m, theta))
         logits *= self.s

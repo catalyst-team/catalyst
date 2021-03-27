@@ -32,7 +32,9 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
         suffix: str = None,
     ):
         """Init"""
-        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        super().__init__(
+            compute_on_call=compute_on_call, prefix=prefix, suffix=suffix
+        )
         self.metric_fn = metric_fn
         self.metric_name = f"{self.prefix}{metric_key}{self.suffix}"
         self.additive_metric = AdditiveValueMetric()
@@ -57,7 +59,9 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
         self.additive_metric.update(float(value), batch_size)
         return value
 
-    def update_key_value(self, batch_size: int, *args, **kwargs) -> Dict[str, torch.Tensor]:
+    def update_key_value(
+        self, batch_size: int, *args, **kwargs
+    ) -> Dict[str, torch.Tensor]:
         """
         Calculate metric and update average metric
 

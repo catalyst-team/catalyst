@@ -110,7 +110,9 @@ class MetricAggregationCallback(Callback):
         multiplier: float = 1.0,
     ) -> None:
         """Init."""
-        super().__init__(order=CallbackOrder.metric_aggregation, node=CallbackNode.all)
+        super().__init__(
+            order=CallbackOrder.metric_aggregation, node=CallbackNode.all
+        )
 
         if prefix is None or not isinstance(prefix, str):
             raise ValueError("prefix must be str")
@@ -130,7 +132,8 @@ class MetricAggregationCallback(Callback):
                 )
         elif not callable(mode):
             raise NotImplementedError(
-                "mode must be `sum`, `mean` " "or `weighted_sum` or `weighted_mean` or be Callable"
+                "mode must be `sum`, `mean` "
+                "or `weighted_sum` or `weighted_mean` or be Callable"
             )
 
         assert scope in ("batch", "loader")
@@ -148,7 +151,10 @@ class MetricAggregationCallback(Callback):
             self.aggregation_fn = _sum_aggregation
             if mode == "weighted_mean":
                 weights_sum = sum(metrics.items())
-                self.metrics = {key: weight / weights_sum for key, weight in metrics.items()}
+                self.metrics = {
+                    key: weight / weights_sum
+                    for key, weight in metrics.items()
+                }
         elif mode == "mean":
             self.aggregation_fn = _mean_aggregation
         elif callable(mode):
@@ -158,11 +164,16 @@ class MetricAggregationCallback(Callback):
         if self.metrics is not None:
             try:
                 if self.mode == "weighted_sum":
-                    result = [metrics[key] * value for key, value in self.metrics.items()]
+                    result = [
+                        metrics[key] * value
+                        for key, value in self.metrics.items()
+                    ]
                 else:
                     result = [metrics[key] for key in self.metrics]
             except KeyError:
-                raise KeyError(f"Could not found required key out of {metrics.keys()}")
+                raise KeyError(
+                    f"Could not found required key out of {metrics.keys()}"
+                )
         else:
             result = list(metrics.values())
         result = [metric.float() for metric in result]
@@ -170,10 +181,14 @@ class MetricAggregationCallback(Callback):
 
     def _process_metrics(self, metrics: Dict, runner: "IRunner") -> None:
         if callable(self.mode):
-            metric_aggregated = self.aggregation_fn(metrics, runner) * self.multiplier
+            metric_aggregated = (
+                self.aggregation_fn(metrics, runner) * self.multiplier
+            )
         else:
             metrics_processed = self._preprocess(metrics)
-            metric_aggregated = self.aggregation_fn(metrics_processed) * self.multiplier
+            metric_aggregated = (
+                self.aggregation_fn(metrics_processed) * self.multiplier
+            )
         metrics[self.prefix] = metric_aggregated
 
     def on_batch_end(self, runner: "IRunner") -> None:

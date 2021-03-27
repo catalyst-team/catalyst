@@ -79,7 +79,11 @@ class OptunaPruningCallback(Callback):
             NotImplementedError: if no Optuna trial was found on stage start.
         """
         trial = runner.trial
-        if self.trial is None and trial is not None and isinstance(trial, optuna.Trial):
+        if (
+            self.trial is None
+            and trial is not None
+            and isinstance(trial, optuna.Trial)
+        ):
             self.trial = trial
 
         if self.trial is None:
@@ -106,7 +110,9 @@ class OptunaPruningCallback(Callback):
         self.trial.best_score = self.best_score
 
         if self.trial.should_prune():
-            message = "Trial was pruned at epoch {}.".format(runner.stage_epoch_step)
+            message = "Trial was pruned at epoch {}.".format(
+                runner.stage_epoch_step
+            )
             raise optuna.TrialPruned(message)
 
 

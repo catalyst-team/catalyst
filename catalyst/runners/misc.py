@@ -73,7 +73,10 @@ def get_model_parameters(
         )
     elif isinstance(models_keys, str):
         model_params = process_model_params(
-            models[models_keys], layerwise_params, no_bias_weight_decay, lr_scaling,
+            models[models_keys],
+            layerwise_params,
+            no_bias_weight_decay,
+            lr_scaling,
         )
     elif (
         SETTINGS.hydra_required
@@ -83,7 +86,10 @@ def get_model_parameters(
         model_params = []
         for model_key_el in models_keys:
             model_params_el = process_model_params(
-                models[model_key_el], layerwise_params, no_bias_weight_decay, lr_scaling,
+                models[model_key_el],
+                layerwise_params,
+                no_bias_weight_decay,
+                lr_scaling,
             )
             model_params.extend(model_params_el)
     else:

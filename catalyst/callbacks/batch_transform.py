@@ -148,7 +148,9 @@ class BatchTransformCallback(Callback):
         self.output_key = output_key or self.input_key
 
         transforms: Sequence[nn.Module] = [
-            item if isinstance(item, nn.Module) else REGISTRY.get_from_params(**item)
+            item
+            if isinstance(item, nn.Module)
+            else REGISTRY.get_from_params(**item)
             for item in transform
         ]
         assert all(

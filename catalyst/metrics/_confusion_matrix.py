@@ -1,6 +1,7 @@
 from typing import Any, List
 
 import numpy as np
+
 import torch
 
 from catalyst.metrics._metric import IMetric
@@ -17,7 +18,12 @@ class ConfusionMatrixMetric(IMetric):
             default: True
     """
 
-    def __init__(self, num_classes: int, normalized: bool = False, compute_on_call: bool = True):
+    def __init__(
+        self,
+        num_classes: int,
+        normalized: bool = False,
+        compute_on_call: bool = True,
+    ):
         """Constructs a confusion matrix for a multiclass classification problems."""
         super().__init__(compute_on_call=compute_on_call)
         self.num_classes = num_classes
@@ -67,7 +73,9 @@ class ConfusionMatrixMetric(IMetric):
             assert (targets >= 0).all() and (
                 targets <= 1
             ).all(), "in one-hot encoding, target values should be 0 or 1"
-            assert (targets.sum(1) == 1).all(), "multilabel setting is not supported"
+            assert (
+                targets.sum(1) == 1
+            ).all(), "multilabel setting is not supported"
             targets = np.argmax(targets, 1)
         else:
             assert (predictions.max() < self.num_classes) and (

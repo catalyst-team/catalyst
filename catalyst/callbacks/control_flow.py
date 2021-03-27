@@ -41,11 +41,16 @@ def _filter_fn_from_epochs(
         else:
             filter_fn = lambda stage, epoch, loader: epoch in epochs
     else:
-        raise ValueError("'epochs' should be int/float/Sequence[int]! " f"(got {type(epochs)})")
+        raise ValueError(
+            "'epochs' should be int/float/Sequence[int]! "
+            f"(got {type(epochs)})"
+        )
     return filter_fn
 
 
-def _filter_fn_from_loaders(loaders: LOADERS, reverse_condition: bool) -> FILTER_FN:
+def _filter_fn_from_loaders(
+    loaders: LOADERS, reverse_condition: bool
+) -> FILTER_FN:
     """Build ``filter_fn`` from loaders for ``ControlFlowCallback``.
 
     Args:
@@ -95,7 +100,9 @@ def _filter_fn_from_loaders(loaders: LOADERS, reverse_condition: bool) -> FILTER
                 ignore_list.get(loader) or {}  # {loader: [epoch]}.get(loader)
             )
         else:
-            filter_fn = lambda stage, epoch, loader: epoch in (ignore_list.get(loader) or {})
+            filter_fn = lambda stage, epoch, loader: epoch in (
+                ignore_list.get(loader) or {}
+            )
     else:
         raise ValueError(
             "'loaders' type should be one of - str, "
@@ -140,7 +147,8 @@ def _filter_fn_from_arg(filter_fn: Union[str, FILTER_FN]) -> FILTER_FN:
         raise ValueError("'filter_fn' should be a callable!")
     if filter_fn.__code__.co_argcount != 3:
         raise ValueError(
-            "Filter function should have three arguments - " "'stage', 'epoch' and 'loader'!"
+            "Filter function should have three arguments - "
+            "'stage', 'epoch' and 'loader'!"
         )
     return filter_fn
 
@@ -372,7 +380,11 @@ class ControlFlowCallback(CallbackWrapper):
         """
         stage = runner.stage_key
         loader = runner.loader_key
-        epoch = runner.global_epoch_step if self.use_global_epochs else runner.stage_epoch_step
+        epoch = (
+            runner.global_epoch_step
+            if self.use_global_epochs
+            else runner.stage_epoch_step
+        )
 
         if self.filter_fn is not None:
             self._is_enabled = self.filter_fn(stage, epoch, loader)

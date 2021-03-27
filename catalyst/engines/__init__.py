@@ -2,7 +2,11 @@
 
 from catalyst.core.engine import IEngine
 
-from catalyst.engines.torch import DeviceEngine, DataParallelEngine, DistributedDataParallelEngine
+from catalyst.engines.torch import (
+    DeviceEngine,
+    DataParallelEngine,
+    DistributedDataParallelEngine,
+)
 
 from catalyst.settings import SETTINGS
 
@@ -30,7 +34,15 @@ __all__ = [
 ]
 
 if SETTINGS.amp_required:
-    __all__ += ["AMPEngine", "DataParallelAMPEngine", "DistributedDataParallelAMPEngine"]
+    __all__ += [
+        "AMPEngine",
+        "DataParallelAMPEngine",
+        "DistributedDataParallelAMPEngine",
+    ]
 
 if SETTINGS.apex_required:
-    __all__ += ["APEXEngine", "DataParallelApexEngine", "DistributedDataParallelApexEngine"]
+    __all__ += [
+        "APEXEngine",
+        "DataParallelApexEngine",
+        "DistributedDataParallelApexEngine",
+    ]

@@ -1,5 +1,6 @@
 # flake8: noqa
 import numpy as np
+
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
@@ -22,7 +23,10 @@ def prepare_experiment():
 
     # model, criterion, optimizer
     model = torch.nn.Linear(num_features, num_classes)
-    criterion = {"bce": torch.nn.BCEWithLogitsLoss(), "focal": FocalLossBinary()}
+    criterion = {
+        "bce": torch.nn.BCEWithLogitsLoss(),
+        "focal": FocalLossBinary(),
+    }
     optimizer = torch.optim.Adam(model.parameters())
     return loaders, model, criterion, optimizer
 
@@ -55,7 +59,9 @@ def test_aggregation_1():
             ),
             # loss aggregation
             dl.MetricAggregationCallback(
-                prefix="loss", metrics={"loss_focal": 0.6, "loss_bce": 0.4}, mode="weighted_sum"
+                prefix="loss",
+                metrics={"loss_focal": 0.6, "loss_bce": 0.4},
+                mode="weighted_sum",
             ),
         ],
     )
@@ -75,9 +81,9 @@ def test_aggregation_2():
 
     def aggregation_function(metrics, runner):
         epoch = runner.stage_epoch_step
-        loss = (3 / 2 - epoch / 2) * metrics["loss_focal"] + (1 / 2 * epoch - 1 / 2) * metrics[
-            "loss_bce"
-        ]
+        loss = (3 / 2 - epoch / 2) * metrics["loss_focal"] + (
+            1 / 2 * epoch - 1 / 2
+        ) * metrics["loss_bce"]
         return loss
 
     runner.train(
@@ -101,7 +107,9 @@ def test_aggregation_2():
                 criterion_key="focal",
             ),
             # loss aggregation
-            dl.MetricAggregationCallback(prefix="loss", mode=aggregation_function),
+            dl.MetricAggregationCallback(
+                prefix="loss", mode=aggregation_function
+            ),
         ],
     )
     for loader in ["train", "valid"]:

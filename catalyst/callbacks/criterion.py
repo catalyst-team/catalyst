@@ -1,4 +1,6 @@
-from catalyst.callbacks.metrics.functional_metric import FunctionalMetricCallback
+from catalyst.callbacks.metrics.functional_metric import (
+    FunctionalMetricCallback,
+)
 from catalyst.core.callback import Callback
 from catalyst.core.runner import IRunner
 from catalyst.utils.misc import get_attr
@@ -53,7 +55,9 @@ class CriterionCallback(FunctionalMetricCallback, ICriterionCallback):
         Args:
             runner: current runner
         """
-        self.criterion = get_attr(runner, key="criterion", inner_key=self.criterion_key)
+        self.criterion = get_attr(
+            runner, key="criterion", inner_key=self.criterion_key
+        )
         assert self.criterion is not None
 
 

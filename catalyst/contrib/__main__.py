@@ -59,7 +59,11 @@ from catalyst.settings import SETTINGS
 COMMANDS = OrderedDict([("collect-env", collect_env)])
 
 if SETTINGS.ml_required:
-    from catalyst.contrib.scripts import project_embeddings, split_dataframe, tag2label
+    from catalyst.contrib.scripts import (
+        project_embeddings,
+        split_dataframe,
+        tag2label,
+    )
 
     COMMANDS["project-embeddings"] = project_embeddings
     COMMANDS["tag2label"] = tag2label
@@ -81,12 +85,18 @@ def build_parser() -> ArgumentParser:
     Returns:
         parser
     """
-    parser = ArgumentParser("catalyst-contrib", formatter_class=RawTextHelpFormatter)
-    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}")
+    parser = ArgumentParser(
+        "catalyst-contrib", formatter_class=RawTextHelpFormatter
+    )
+    parser.add_argument(
+        "-v", "--version", action="version", version=f"%(prog)s {__version__}"
+    )
     all_commands = ", \n".join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
     subparsers = parser.add_subparsers(
-        metavar="{command}", dest="command", help=f"available commands: \n{all_commands}",
+        metavar="{command}",
+        dest="command",
+        help=f"available commands: \n{all_commands}",
     )
     subparsers.required = True
 

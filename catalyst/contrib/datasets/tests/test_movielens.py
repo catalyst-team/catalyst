@@ -14,7 +14,11 @@ def setup_module():
     try:
         shutil.rmtree(data_path)
     except Exception as e:
-        print("Error! Code: {c}, Message, {m}".format(c=type(e).__name__, m=str(e)))
+        print(
+            "Error! Code: {c}, Message, {m}".format(
+                c=type(e).__name__, m=str(e)
+            )
+        )
 
 
 def test_download():
@@ -41,16 +45,26 @@ def test_download():
     assert os.path.isdir("./data/MovieLens/raw") is True
 
     # check some random file from MovieLens
-    assert os.path.isfile("./data/MovieLens/raw/{}/u.info".format(filename)) is True
+    assert (
+        os.path.isfile("./data/MovieLens/raw/{}/u.info".format(filename))
+        is True
+    )
 
     # check Readme file from MovieLens
-    assert os.path.isfile("./data/MovieLens/raw/{}/README".format(filename)) is True
+    assert (
+        os.path.isfile("./data/MovieLens/raw/{}/README".format(filename))
+        is True
+    )
 
     # check if data file is not Nulll
-    assert os.path.getsize("./data/MovieLens/raw/{}/u.data".format(filename)) > 0
+    assert (
+        os.path.getsize("./data/MovieLens/raw/{}/u.data".format(filename)) > 0
+    )
 
     # check if info file is not Nulll
-    assert os.path.getsize("./data/MovieLens/raw/{}/u.info".format(filename)) > 0
+    assert (
+        os.path.getsize("./data/MovieLens/raw/{}/u.info".format(filename)) > 0
+    )
 
 
 def test_reading():
@@ -61,10 +75,12 @@ def test_reading():
     test_file = "test.pt"
     processed_folder = "data/MovieLens/processed"
 
-    assert torch.load(os.path.join(processed_folder, test_file)).size() == torch.Size([943, 1682])
-    assert torch.load(os.path.join(processed_folder, training_file)).size() == torch.Size(
-        [943, 1682]
-    )
+    assert torch.load(
+        os.path.join(processed_folder, test_file)
+    ).size() == torch.Size([943, 1682])
+    assert torch.load(
+        os.path.join(processed_folder, training_file)
+    ).size() == torch.Size([943, 1682])
 
 
 def test_minimal_ranking():
@@ -85,4 +101,8 @@ def teardown_module():
     try:
         shutil.rmtree(data_path)
     except Exception as e:
-        print("Error! Code: {c}, Message, {m}".format(c=type(e).__name__, m=str(e)))
+        print(
+            "Error! Code: {c}, Message, {m}".format(
+                c=type(e).__name__, m=str(e)
+            )
+        )

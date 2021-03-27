@@ -2,6 +2,7 @@
 import math
 
 import numpy as np
+
 import torch
 
 from catalyst.metrics.functional._average_precision import (
@@ -19,7 +20,9 @@ def test_binary_average_precision_base():
     targets = torch.Tensor([0, 0, 1, 1])
 
     assert torch.isclose(
-        binary_average_precision(outputs, targets), torch.tensor(0.8333), atol=1e-3
+        binary_average_precision(outputs, targets),
+        torch.tensor(0.8333),
+        atol=1e-3,
     )
 
 
@@ -30,7 +33,9 @@ def test_binary_average_precision_weighted():
     target = torch.Tensor([0, 1, 0, 1])
     output = torch.Tensor([0.1, 0.2, 0.3, 4])
     weight = torch.Tensor([0.5, 1.0, 2.0, 0.1])
-    ap = binary_average_precision(outputs=output, targets=target, weights=weight)
+    ap = binary_average_precision(
+        outputs=output, targets=target, weights=weight
+    )
     val = (1 * 0.1 / 0.1 + 0 * 2.0 / 2.1 + 1.1 * 1 / 3.1 + 0 * 1 / 4) / 2.0
     assert math.fabs(ap - val) < 0.01, "ap test1 failed"
 
@@ -41,8 +46,12 @@ def test_binary_average_precision_weighted():
     target = torch.Tensor([0, 1, 0, 1])
     output = torch.Tensor([4, 3, 2, 1])
     weight = torch.Tensor([1, 2, 3, 4])
-    ap = binary_average_precision(outputs=output, targets=target, weights=weight)
-    val = (0 * 1.0 / 1.0 + 1.0 * 2.0 / 3.0 + 2.0 * 0 / 6.0 + 6.0 * 1.0 / 10.0) / 2.0
+    ap = binary_average_precision(
+        outputs=output, targets=target, weights=weight
+    )
+    val = (
+        0 * 1.0 / 1.0 + 1.0 * 2.0 / 3.0 + 2.0 * 0 / 6.0 + 6.0 * 1.0 / 10.0
+    ) / 2.0
     assert math.fabs(ap - val) < 0.01, "ap test3 failed"
 
     ap = binary_average_precision(outputs=output, targets=target, weights=None)
@@ -52,8 +61,12 @@ def test_binary_average_precision_weighted():
     target = torch.Tensor([0, 1, 0, 1])
     output = torch.Tensor([1, 4, 2, 3])
     weight = torch.Tensor([1, 2, 3, 4])
-    ap = binary_average_precision(outputs=output, targets=target, weights=weight)
-    val = (4 * 1.0 / 4.0 + 6 * 1.0 / 6.0 + 0 * 6.0 / 9.0 + 0 * 6.0 / 10.0) / 2.0
+    ap = binary_average_precision(
+        outputs=output, targets=target, weights=weight
+    )
+    val = (
+        4 * 1.0 / 4.0 + 6 * 1.0 / 6.0 + 0 * 6.0 / 9.0 + 0 * 6.0 / 10.0
+    ) / 2.0
     assert math.fabs(ap - val) < 0.01, "ap test5 failed"
 
     ap = binary_average_precision(outputs=output, targets=target, weights=None)
@@ -63,7 +76,9 @@ def test_binary_average_precision_weighted():
     target = torch.Tensor([0, 0, 0, 0])
     output = torch.Tensor([1, 4, 2, 3])
     weight = torch.Tensor([1.0, 0.1, 0.0, 0.5])
-    ap = binary_average_precision(outputs=output, targets=target, weights=weight)
+    ap = binary_average_precision(
+        outputs=output, targets=target, weights=weight
+    )
     val = 0.0
     assert math.fabs(ap - val) < 0.01, "ap test7 failed"
 
@@ -74,7 +89,9 @@ def test_binary_average_precision_weighted():
     target = torch.Tensor([1, 1, 0])
     output = torch.Tensor([3, 1, 2])
     weight = torch.Tensor([1, 0.1, 3])
-    ap = binary_average_precision(outputs=output, targets=target, weights=weight)
+    ap = binary_average_precision(
+        outputs=output, targets=target, weights=weight
+    )
     val = (1 * 1.0 / 1.0 + 1 * 0.0 / 4.0 + 1.1 / 4.1) / 2.0
     assert math.fabs(ap - val) < 0.01, "ap test9 failed"
 
@@ -86,14 +103,28 @@ def test_binary_average_precision_weighted():
     target = torch.Tensor([[0, 1, 0, 1], [0, 1, 0, 1]]).transpose(0, 1)
     output = torch.Tensor([[0.1, 0.2, 0.3, 4], [4, 3, 2, 1]]).transpose(0, 1)
     weight = torch.Tensor([[1.0, 0.5, 2.0, 3.0]]).transpose(0, 1)
-    ap = binary_average_precision(outputs=output, targets=target, weights=weight)
+    ap = binary_average_precision(
+        outputs=output, targets=target, weights=weight
+    )
     assert (
         math.fabs(
             ap.sum()
             - torch.Tensor(
                 [
-                    (1 * 3.0 / 3.0 + 0 * 3.0 / 5.0 + 3.5 * 1 / 5.5 + 0 * 3.5 / 6.5) / 2.0,
-                    (0 * 1.0 / 1.0 + 1 * 0.5 / 1.5 + 0 * 0.5 / 3.5 + 1 * 3.5 / 6.5) / 2.0,
+                    (
+                        1 * 3.0 / 3.0
+                        + 0 * 3.0 / 5.0
+                        + 3.5 * 1 / 5.5
+                        + 0 * 3.5 / 6.5
+                    )
+                    / 2.0,
+                    (
+                        0 * 1.0 / 1.0
+                        + 1 * 0.5 / 1.5
+                        + 0 * 0.5 / 3.5
+                        + 1 * 3.5 / 6.5
+                    )
+                    / 2.0,
                 ]
             ).sum()
         )
@@ -106,8 +137,10 @@ def test_binary_average_precision_weighted():
             ap.sum()
             - torch.Tensor(
                 [
-                    (1 * 1.0 + 0 * 1.0 / 2.0 + 2 * 1.0 / 3 + 0 * 1.0 / 4.0) / 2.0,
-                    (0 * 1.0 + 1 * 1.0 / 2.0 + 0 * 1.0 / 3.0 + 2.0 * 1.0 / 4.0) / 2.0,
+                    (1 * 1.0 + 0 * 1.0 / 2.0 + 2 * 1.0 / 3 + 0 * 1.0 / 4.0)
+                    / 2.0,
+                    (0 * 1.0 + 1 * 1.0 / 2.0 + 0 * 1.0 / 3.0 + 2.0 * 1.0 / 4.0)
+                    / 2.0,
                 ]
             ).sum()
         )
@@ -131,7 +164,8 @@ def test_avg_precision():
     y_true = [1.0, 1.0, 1.0, 1.0]
 
     ap_val = average_precision(
-        torch.Tensor([y_pred, y_pred, y_pred]), torch.Tensor([y_true, y_true, y_true]),
+        torch.Tensor([y_pred, y_pred, y_pred]),
+        torch.Tensor([y_true, y_true, y_true]),
     )
     assert torch.equal(ap_val, torch.ones(3))
 
@@ -147,7 +181,8 @@ def test_avg_precision():
     y_true = [0.0, 0.0, 0.0, 0.0]
 
     ap_val = average_precision(
-        torch.Tensor([y_pred, y_pred, y_pred]), torch.Tensor([y_true, y_true, y_true]),
+        torch.Tensor([y_pred, y_pred, y_pred]),
+        torch.Tensor([y_true, y_true, y_true]),
     )
     assert torch.equal(ap_val, torch.zeros(3))
 

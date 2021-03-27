@@ -6,7 +6,11 @@ import torch
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.metrics._functional_metric import FunctionalBatchMetric
-from catalyst.metrics._metric import ICallbackBatchMetric, ICallbackLoaderMetric, IMetric
+from catalyst.metrics._metric import (
+    ICallbackBatchMetric,
+    ICallbackLoaderMetric,
+    IMetric,
+)
 
 
 class IMetricCallback(Callback, ABC):
@@ -89,7 +93,9 @@ class MetricCallback(IMetricCallback):
         }
 
     @staticmethod
-    def _convert_keys_to_kv(keys: Union[str, Iterable[str], Dict[str, str]]) -> Dict[str, str]:
+    def _convert_keys_to_kv(
+        keys: Union[str, Iterable[str], Dict[str, str]]
+    ) -> Dict[str, str]:
         """
         Convert keys to key-value format
 
@@ -110,7 +116,9 @@ class MetricCallback(IMetricCallback):
                 kv_keys[key] = key
         return kv_keys
 
-    def _get_value_inputs(self, runner: "IRunner") -> Tuple[torch.Tensor, torch.Tensor]:
+    def _get_value_inputs(
+        self, runner: "IRunner"
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         """
         Get data from batch in value input case
 
@@ -122,7 +130,9 @@ class MetricCallback(IMetricCallback):
         """
         return runner.batch[self.input_key], runner.batch[self.target_key]
 
-    def _get_key_value_inputs(self, runner: "IRunner") -> Dict[str, torch.Tensor]:
+    def _get_key_value_inputs(
+        self, runner: "IRunner"
+    ) -> Dict[str, torch.Tensor]:
         """
         Get data from batch in key-value input case
 
@@ -184,7 +194,9 @@ class BatchMetricCallback(MetricCallback):
         log_on_batch: bool = True,
     ) -> None:
         """Init BatchMetricCallback"""
-        super().__init__(metric=metric, input_key=input_key, target_key=target_key)
+        super().__init__(
+            metric=metric, input_key=input_key, target_key=target_key
+        )
         assert isinstance(metric, ICallbackBatchMetric)
         self.log_on_batch = log_on_batch
         self._metric_update_method = self.metric.update_key_value
@@ -216,7 +228,9 @@ class BatchMetricCallback(MetricCallback):
         """
         metrics = self.metric.compute_key_value()
         metrics = {
-            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+            k: runner.engine.sync_tensor(
+                torch.tensor(v, device=runner.device), "mean"
+            )
             for k, v in metrics.items()
         }
         runner.loader_metrics.update(metrics)
@@ -249,10 +263,15 @@ class FunctionalBatchMetricCallback(BatchMetricCallback):
         """Init."""
         assert isinstance(metric, FunctionalBatchMetric)
         super().__init__(
-            metric=metric, input_key=input_key, target_key=target_key, log_on_batch=log_on_batch
+            metric=metric,
+            input_key=input_key,
+            target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
-    def _get_value_inputs(self, runner: "IRunner") -> Tuple[float, torch.Tensor, torch.Tensor]:
+    def _get_value_inputs(
+        self, runner: "IRunner"
+    ) -> Tuple[float, torch.Tensor, torch.Tensor]:
         """Get data from batch in value input case
 
         Args:
@@ -261,9 +280,15 @@ class FunctionalBatchMetricCallback(BatchMetricCallback):
         Returns:
             tuple of tensor of inputs and tensor of targets
         """
-        return runner.batch_size, runner.batch[self.input_key], runner.batch[self.target_key]
+        return (
+            runner.batch_size,
+            runner.batch[self.input_key],
+            runner.batch[self.target_key],
+        )
 
-    def _get_key_value_inputs(self, runner: "IRunner") -> Dict[str, torch.Tensor]:
+    def _get_key_value_inputs(
+        self, runner: "IRunner"
+    ) -> Dict[str, torch.Tensor]:
         """Get data from batch in key-value input case
 
         Args:
@@ -294,7 +319,9 @@ class LoaderMetricCallback(MetricCallback):
         input_key: Union[str, Iterable[str], Dict[str, str]],
         target_key: Union[str, Iterable[str], Dict[str, str]],
     ):
-        super().__init__(metric=metric, input_key=input_key, target_key=target_key)
+        super().__init__(
+            metric=metric, input_key=input_key, target_key=target_key
+        )
         assert isinstance(metric, ICallbackLoaderMetric)
 
     def on_loader_start(self, runner: "IRunner") -> None:
@@ -304,7 +331,8 @@ class LoaderMetricCallback(MetricCallback):
             runner: current runner
         """
         self.metric.reset(
-            num_batches=runner.loader_batch_len, num_samples=runner.loader_sample_len,
+            num_batches=runner.loader_batch_len,
+            num_samples=runner.loader_sample_len,
         )
 
     def on_batch_end(self, runner: "IRunner") -> None:

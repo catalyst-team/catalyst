@@ -19,7 +19,9 @@ def construct_mapping(loader, node):
     return OrderedDict(loader.construct_pairs(node))
 
 
-OrderedLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping)
+OrderedLoader.add_constructor(
+    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
+)
 OrderedLoader.add_implicit_resolver(
     "tag:yaml.org,2002:float",
     re.compile(
@@ -82,7 +84,11 @@ def load_config(
     else:
         suffix = path.suffix
 
-    assert suffix in [".json", ".yml", ".yaml"], f"Unknown file format '{suffix}'"
+    assert suffix in [
+        ".json",
+        ".yml",
+        ".yaml",
+    ], f"Unknown file format '{suffix}'"
 
     config = None
     with path.open(encoding=encoding) as stream:
@@ -134,7 +140,11 @@ def save_config(
     else:
         suffix = path.suffix
 
-    assert suffix in [".json", ".yml", ".yaml"], f"Unknown file format '{suffix}'"
+    assert suffix in [
+        ".json",
+        ".yml",
+        ".yaml",
+    ], f"Unknown file format '{suffix}'"
 
     with path.open(encoding=encoding, mode="w") as stream:
         if suffix == ".json":

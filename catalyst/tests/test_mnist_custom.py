@@ -4,6 +4,7 @@ import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
@@ -23,10 +24,22 @@ def train_experiment(device):
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+                MNIST(
+                    os.getcwd(),
+                    train=True,
+                    download=True,
+                    transform=ToTensor(),
+                ),
+                batch_size=32,
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+                MNIST(
+                    os.getcwd(),
+                    train=False,
+                    download=True,
+                    transform=ToTensor(),
+                ),
+                batch_size=32,
             ),
         }
 
@@ -51,13 +64,21 @@ def train_experiment(device):
                 # compute the loss
                 loss = self.criterion(logits, y)
                 # compute other metrics of interest
-                accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
+                accuracy01, accuracy03 = metrics.accuracy(
+                    logits, y, topk=(1, 3)
+                )
                 # log metrics
                 self.batch_metrics.update(
-                    {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
+                    {
+                        "loss": loss,
+                        "accuracy01": accuracy01,
+                        "accuracy03": accuracy03,
+                    }
                 )
                 for key in ["loss", "accuracy01", "accuracy03"]:
-                    self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
+                    self.meters[key].update(
+                        self.batch_metrics[key].item(), self.batch_size
+                    )
                 # run model backward pass
                 if self.is_train_loader:
                     loss.backward()
@@ -96,7 +117,8 @@ def test_finetune_on_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")

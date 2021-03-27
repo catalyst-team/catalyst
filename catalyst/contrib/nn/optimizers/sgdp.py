@@ -103,8 +103,12 @@ class SGDP(Optimizer):
             cosine_sim = self._cosine_similarity(grad, p.data, eps, view_func)
 
             if cosine_sim.max() < delta / math.sqrt(view_func(p.data).size(1)):
-                p_n = p.data / view_func(p.data).norm(dim=1).view(expand_size).add_(eps)
-                perturb -= p_n * view_func(p_n * perturb).sum(dim=1).view(expand_size)
+                p_n = p.data / view_func(p.data).norm(dim=1).view(
+                    expand_size
+                ).add_(eps)
+                perturb -= p_n * view_func(p_n * perturb).sum(dim=1).view(
+                    expand_size
+                )
                 wd = wd_ratio
 
                 return perturb, wd
@@ -153,13 +157,22 @@ class SGDP(Optimizer):
                 wd_ratio = 1
                 if len(p.shape) > 1:
                     d_p, wd_ratio = self._projection(
-                        p, grad, d_p, group["delta"], group["wd_ratio"], group["eps"],
+                        p,
+                        grad,
+                        d_p,
+                        group["delta"],
+                        group["wd_ratio"],
+                        group["eps"],
                     )
 
                 # Weight decay
                 if group["weight_decay"] > 0:
                     p.data.mul_(
-                        1 - group["lr"] * group["weight_decay"] * wd_ratio / (1 - momentum)
+                        1
+                        - group["lr"]
+                        * group["weight_decay"]
+                        * wd_ratio
+                        / (1 - momentum)
                     )
 
                 # Step

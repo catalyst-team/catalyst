@@ -65,7 +65,10 @@ def build_args(parser: ArgumentParser):
         help="Run in half-precision mode",
     )
     boolean_flag(
-        parser, "ddp", default=os.getenv("USE_DDP", "0") == "1", help="Run in distributed mode",
+        parser,
+        "ddp",
+        default=os.getenv("USE_DDP", "0") == "1",
+        help="Run in distributed mode",
     )
     boolean_flag(parser, "verbose", default=None)
     boolean_flag(parser, "timeit", default=None)
@@ -97,10 +100,14 @@ def config_main(args, unknown_args):
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)
 
-    runner: ConfigRunner = get_config_runner(expdir=Path(args.expdir), config=config)
+    runner: ConfigRunner = get_config_runner(
+        expdir=Path(args.expdir), config=config
+    )
 
     if get_rank() <= 0:
-        dump_environment(logdir=runner.logdir, config=config, configs_path=args.configs)
+        dump_environment(
+            logdir=runner.logdir, config=config, configs_path=args.configs
+        )
         dump_code(expdir=args.expdir, logdir=runner.logdir)
 
     runner.run()

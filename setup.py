@@ -72,7 +72,9 @@ class UploadCommand(Command):
             pass
 
         self.status("Building Source and Wheel (universal) distribution…")
-        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
+        os.system(
+            "{0} setup.py sdist bdist_wheel --universal".format(sys.executable)
+        )
 
         self.status("Uploading the package to PyPI via Twine…")
         os.system("twine upload dist/*")
@@ -95,7 +97,9 @@ extras = {
     "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
     "mlflow": load_requirements("requirements/requirements-mlflow.txt"),
 }
-extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
+extras["all"] = (
+    extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
+)
 
 # Meta dependency groups.
 # all_deps = []

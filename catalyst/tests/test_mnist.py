@@ -4,6 +4,7 @@ import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+
 from torch import nn, optim
 from torch.utils.data import DataLoader
 
@@ -21,15 +22,30 @@ def train_experiment(device):
 
         loaders = {
             "train": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+                MNIST(
+                    os.getcwd(),
+                    train=False,
+                    download=True,
+                    transform=ToTensor(),
+                ),
+                batch_size=32,
             ),
             "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+                MNIST(
+                    os.getcwd(),
+                    train=False,
+                    download=True,
+                    transform=ToTensor(),
+                ),
+                batch_size=32,
             ),
         }
 
         runner = dl.SupervisedRunner(
-            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+            input_key="features",
+            output_key="logits",
+            target_key="targets",
+            loss_key="loss",
         )
         # model training
         runner.train(
@@ -40,7 +56,11 @@ def train_experiment(device):
             loaders=loaders,
             num_epochs=1,
             callbacks=[
-                dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
+                dl.AccuracyCallback(
+                    input_key="logits",
+                    target_key="targets",
+                    topk_args=(1, 3, 5),
+                ),
                 dl.PrecisionRecallF1SupportCallback(
                     input_key="logits", target_key="targets", num_classes=10
                 ),
@@ -69,7 +89,9 @@ def train_experiment(device):
         features_batch = next(iter(loaders["valid"]))[0]
         # model stochastic weight averaging
         model.load_state_dict(
-            utils.get_averaged_weights_by_path_mask(logdir=logdir, path_mask="*.pth")
+            utils.get_averaged_weights_by_path_mask(
+                logdir=logdir, path_mask="*.pth"
+            )
         )
         # model tracing
         utils.trace_model(model=runner.model, batch=features_batch)
@@ -82,7 +104,9 @@ def train_experiment(device):
             utils.quantize_model(model=runner.model)
         if SETTINGS.pruning_required:
             # model pruning
-            utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
+            utils.prune_model(
+                model=runner.model, pruning_fn="l1_unstructured", amount=0.8
+            )
 
 
 def test_finetune_on_cpu():
@@ -95,7 +119,8 @@ def test_finetune_on_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2,
+    reason="Number of CUDA devices is less than 2",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")

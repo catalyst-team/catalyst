@@ -28,7 +28,11 @@ def _layer_fn(layer_fn, f_in, f_out, **kwargs):
 
 def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
     normalization_fn = REGISTRY.get_if_str(normalization_fn)
-    normalization_fn = normalization_fn(f_out, **kwargs) if normalization_fn is not None else None
+    normalization_fn = (
+        normalization_fn(f_out, **kwargs)
+        if normalization_fn is not None
+        else None
+    )
     return normalization_fn
 
 
@@ -40,7 +44,9 @@ def _dropout_fn(dropout_fn, f_in, f_out, **kwargs):
 
 def _activation_fn(activation_fn, f_in, f_out, **kwargs):
     activation_fn = REGISTRY.get_if_str(activation_fn)
-    activation_fn = activation_fn(**kwargs) if activation_fn is not None else None
+    activation_fn = (
+        activation_fn(**kwargs) if activation_fn is not None else None
+    )
     return activation_fn
 
 
@@ -124,7 +130,9 @@ class SequentialNet(nn.Module):
 
             if block_dict.get("act", None) is not None:
                 activation = block_dict["act"]
-                activation_init = utils.get_optimal_inner_init(nonlinearity=activation)
+                activation_init = utils.get_optimal_inner_init(
+                    nonlinearity=activation
+                )
                 block_net.apply(activation_init)
 
             if residual == "hard" or (residual == "soft" and f_in == f_out):
