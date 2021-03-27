@@ -30,7 +30,7 @@ class ArcFace(nn.Module):
 
     Example:
         >>> layer = ArcFace(5, 10, s=1.31, m=0.5)
-        >>> loss_fn = nn.CrosEntropyLoss()
+        >>> loss_fn = nn.CrossEntropyLoss()
         >>> embedding = torch.randn(3, 5, requires_grad=True)
         >>> target = torch.empty(3, dtype=torch.long).random_(10)
         >>> output = layer(embedding, target)
