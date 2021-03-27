@@ -8,9 +8,7 @@ import torch.nn.functional as F
 _EPS = 1e-8
 
 
-def euclidean_distance(
-    x: torch.Tensor, y: torch.Tensor = None,
-) -> torch.Tensor:
+def euclidean_distance(x: torch.Tensor, y: torch.Tensor = None) -> torch.Tensor:
     """@TODO: Docs. Contribution is welcome."""
     x_norm = (x ** 2).sum(1).unsqueeze(1)
     if y is not None:
@@ -24,9 +22,7 @@ def euclidean_distance(
     return dist
 
 
-def cosine_distance(
-    x: torch.Tensor, z: Optional[torch.Tensor] = None,
-) -> torch.Tensor:
+def cosine_distance(x: torch.Tensor, z: Optional[torch.Tensor] = None) -> torch.Tensor:
     """Calculate cosine distance between x and z.
     @TODO: Docs. Contribution is welcome.
     """
@@ -40,16 +36,12 @@ def cosine_distance(
     return torch.sub(1, torch.mm(x, z.transpose(0, 1)))
 
 
-def batch_all(
-    labels: torch.Tensor, exclude_negatives: bool = True,
-) -> torch.Tensor:
+def batch_all(labels: torch.Tensor, exclude_negatives: bool = True) -> torch.Tensor:
     """Create a 3D mask of all possible triplets.
     @TODO: Docs. Contribution is welcome.
     """
     batch_size = labels.size(0)
-    indices_equal = torch.eye(batch_size, device=labels.device).type(
-        torch.bool
-    )
+    indices_equal = torch.eye(batch_size, device=labels.device).type(torch.bool)
     indices_not_equal = ~indices_equal
 
     i_not_equal_j = indices_not_equal.unsqueeze(2)
@@ -74,9 +66,7 @@ def batch_all(
     return mask.float()
 
 
-def create_negative_mask(
-    labels: torch.Tensor, neg_label: int = -1
-) -> torch.Tensor:
+def create_negative_mask(labels: torch.Tensor, neg_label: int = -1) -> torch.Tensor:
     """@TODO: Docs. Contribution is welcome."""
     neg_labels = torch.ge(labels, neg_label)
     pos_labels = ~neg_labels
@@ -104,15 +94,11 @@ def triplet_loss(
 
     anchor_positive_dist = cosine_dists.unsqueeze(2)
     anchor_negative_dist = cosine_dists.unsqueeze(1)
-    triplet_loss_value = F.relu(
-        anchor_positive_dist - anchor_negative_dist + margin
-    )
+    triplet_loss_value = F.relu(anchor_positive_dist - anchor_negative_dist + margin)
     triplet_loss_value = torch.mul(triplet_loss_value, mask)
 
     num_positive_triplets = torch.gt(triplet_loss_value, _EPS).sum().float()
-    triplet_loss_value = triplet_loss_value.sum() / (
-        num_positive_triplets + _EPS
-    )
+    triplet_loss_value = triplet_loss_value.sum() / (num_positive_triplets + _EPS)
 
     return triplet_loss_value
 
@@ -123,12 +109,8 @@ def _create_margin_mask(labels: torch.Tensor) -> torch.Tensor:
     return marign_mask
 
 
-def _skip_labels_mask(
-    labels: torch.Tensor, skip_labels: Union[int, List[int]]
-) -> torch.Tensor:
-    skip_labels = torch.tensor(
-        skip_labels, dtype=labels.dtype, device=labels.device
-    ).reshape(-1)
+def _skip_labels_mask(labels: torch.Tensor, skip_labels: Union[int, List[int]]) -> torch.Tensor:
+    skip_labels = torch.tensor(skip_labels, dtype=labels.dtype, device=labels.device).reshape(-1)
     skip_condition = (labels.unsqueeze(-1) == skip_labels).any(-1)
     skip_mask = ~(skip_condition.unsqueeze(-1) & skip_condition.unsqueeze(0))
     return skip_mask
@@ -148,7 +130,6 @@ def margin_loss(
     margin_mask = _create_margin_mask(labels)
     skip_mask = _skip_labels_mask(labels, skip_labels).float()
     loss = torch.mul(
-        skip_mask,
-        F.relu(alpha + torch.mul(margin_mask, torch.sub(distances, beta))),
+        skip_mask, F.relu(alpha + torch.mul(margin_mask, torch.sub(distances, beta))),
     )
     return loss.sum() / (skip_mask.sum() + _EPS)

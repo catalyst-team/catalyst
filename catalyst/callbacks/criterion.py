@@ -1,54 +1,51 @@
-from typing import Dict, List, TYPE_CHECKING, Union
-
-from catalyst.callbacks.metric import IBatchMetricCallback
+from catalyst.callbacks.metrics.functional_metric import FunctionalMetricCallback
+from catalyst.core.callback import Callback
+from catalyst.core.runner import IRunner
 from catalyst.utils.misc import get_attr
 
-if TYPE_CHECKING:
-    from catalyst.core.runner import IRunner
+
+class ICriterionCallback(Callback):
+    """Criterion callback interface, abstraction over criterion step."""
+
+    pass
 
 
-class CriterionCallback(IBatchMetricCallback):
-    """Callback for that measures loss with specified criterion."""
+class CriterionCallback(FunctionalMetricCallback, ICriterionCallback):
+    """Criterion callback, abstraction over criterion step.
+
+    Args:
+        input_key: input key to use for metric calculation, specifies our `y_pred`
+        target_key: output key to use for metric calculation, specifies our `y_true`
+        metric_key: key to store computed metric in ``runner.batch_metrics`` dictionary
+        criterion_key: A key to take a criterion in case
+            there are several of them, and they are in a dictionary format.
+    """
 
     def __init__(
         self,
-        input_key: Union[str, List[str], Dict[str, str]] = "targets",
-        output_key: Union[str, List[str], Dict[str, str]] = "logits",
-        prefix: str = "loss",
+        input_key: str,
+        target_key: str,
+        metric_key: str,
         criterion_key: str = None,
-        multiplier: float = 1.0,
-        **metric_kwargs,
+        prefix: str = None,
+        suffix: str = None,
     ):
-        """
-        Args:
-            input_key (Union[str, List[str], Dict[str, str]]): key/list/dict
-                of keys that takes values from the input dictionary
-                If '__all__', the whole input will be passed to the criterion
-                If None, empty dict will be passed to the criterion.
-            output_key (Union[str, List[str], Dict[str, str]]): key/list/dict
-                of keys that takes values from the input dictionary
-                If '__all__', the whole output will be passed to the criterion
-                If None, empty dict will be passed to the criterion.
-            prefix: prefix for metrics and output key for loss
-                in ``runner.batch_metrics`` dictionary
-            criterion_key: A key to take a criterion in case
-                there are several of them and they are in a dictionary format.
-            multiplier: scale factor for the output loss.
-        """
+        """Init."""
         super().__init__(
-            prefix=prefix,
             input_key=input_key,
-            output_key=output_key,
-            multiplier=multiplier,
-            **metric_kwargs,
+            target_key=target_key,
+            metric_fn=self._metric_fn,
+            metric_key=metric_key,
+            compute_on_call=True,
+            log_on_batch=True,
+            prefix=prefix,
+            suffix=suffix,
         )
         self.criterion_key = criterion_key
-        self._criterion = None
+        self.criterion = None
 
-    @property
-    def metric_fn(self):
-        """Criterion function."""
-        return self._criterion
+    def _metric_fn(self, *args, **kwargs):
+        return self.criterion(*args, **kwargs)
 
     def on_stage_start(self, runner: "IRunner"):
         """Checks that the current stage has correct criterion.
@@ -56,13 +53,8 @@ class CriterionCallback(IBatchMetricCallback):
         Args:
             runner: current runner
         """
-        criterion = get_attr(
-            runner, key="criterion", inner_key=self.criterion_key
-        )
-        assert criterion is not None
-        self._criterion = criterion
+        self.criterion = get_attr(runner, key="criterion", inner_key=self.criterion_key)
+        assert self.criterion is not None
 
 
-__all__ = [
-    "CriterionCallback",
-]
+__all__ = ["ICriterionCallback", "CriterionCallback"]

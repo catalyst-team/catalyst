@@ -1,7 +1,7 @@
 .PHONY: check-docs docker docker-fp16 docker-dev docker-dev-fp16 install-from-source clean
 
 check-docs:
-	bash ./bin/tests/check_docs.sh
+	bash ./bin/workflows/check_docs.sh
 
 docker: ./requirements/
 	echo building $${REPO_NAME:-catalyst-base}:$${TAG:-latest} ...

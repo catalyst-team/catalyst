@@ -1,7 +1,7 @@
 from typing import Optional, Tuple, Union
 
 from catalyst.contrib.data.reader import IReader
-from catalyst.contrib.utils.cv.image import imread, mimread
+from catalyst.contrib.utils.image import imread, mimread
 
 
 class ImageReader(IReader):
@@ -39,9 +39,7 @@ class ImageReader(IReader):
             np.ndarray: Image
         """
         image_name = str(element[self.input_key])
-        img = imread(
-            image_name, rootpath=self.rootpath, grayscale=self.grayscale
-        )
+        img = imread(image_name, rootpath=self.rootpath, grayscale=self.grayscale)
 
         output = {self.output_key: img}
         return output

@@ -6,10 +6,7 @@ from random import randint, shuffle
 import numpy as np
 import pytest
 
-from catalyst.data.sampler import (
-    BalanceBatchSampler,
-    DynamicBalanceClassSampler,
-)
+from catalyst.data.sampler import BalanceBatchSampler, DynamicBalanceClassSampler
 
 TLabelsPK = List[Tuple[List[int], int, int]]
 
@@ -68,9 +65,7 @@ def input_for_balance_batch_sampler() -> TLabelsPK:
     return input_cases
 
 
-def check_balance_batch_sampler_epoch(
-    labels: List[int], p: int, k: int
-) -> None:
+def check_balance_batch_sampler_epoch(labels: List[int], p: int, k: int) -> None:
     """
     Args:
         labels: list of classes labels
@@ -117,9 +112,7 @@ def check_balance_batch_sampler_epoch(
     assert max(sampled_ids) <= len(labels) - 1
 
 
-def test_balance_batch_sampler(
-    input_for_balance_batch_sampler,  # noqa: WPS442
-) -> None:
+def test_balance_batch_sampler(input_for_balance_batch_sampler) -> None:  # noqa: WPS442
     """
     Args:
         input_for_balance_batch_sampler: list of (labels, p, k)
@@ -163,14 +156,10 @@ def check_dynamic_balance_class_sampler(labels: List, exp_l: float) -> None:
     n_labels = len(np.unique(labels))
     labels_counter = Counter(labels)
     min_class_key, min_class_size = labels_counter.most_common(n_labels)[-1]
-    current_d = {
-        key: value / min_class_size for key, value in Counter(labels).items()
-    }
+    current_d = {key: value / min_class_size for key, value in Counter(labels).items()}
     for _ in range(10):  # noqa: WPS122
         new_counter = Counter(labels[list(sampler.__iter__())])
-        new_d = {
-            key: value / min_class_size for key, value in new_counter.items()
-        }
+        new_d = {key: value / min_class_size for key, value in new_counter.items()}
         for key, value in new_d.items():
             assert value <= current_d[key]
         assert new_d[min_class_key] == 1

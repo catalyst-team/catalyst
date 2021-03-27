@@ -29,9 +29,7 @@ class TestWrapperCallback(unittest.TestCase):
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
 
@@ -63,9 +61,7 @@ class TestWrapperCallback(unittest.TestCase):
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
 

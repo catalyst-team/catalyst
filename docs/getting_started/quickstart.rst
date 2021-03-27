@@ -26,30 +26,34 @@ Step 2 - Make python imports
 .. code-block:: python
 
     import os
-    import torch
-    from torch.nn import functional as F
+    from torch import nn, optim
     from torch.utils.data import DataLoader
-    from torchvision.datasets import MNIST
-    from torchvision.transforms import ToTensor
-    from catalyst import dl, metrics
+    from catalyst import dl
+    from catalyst.data.transforms import ToTensor
+    from catalyst.contrib.datasets import MNIST
 
 Step 3 - Write PyTorch code
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Let's define **what** we are experimenting with:
+Let's define **what** we would like to run:
 
 .. code-block:: python
 
-    model = torch.nn.Linear(28 * 28, 10)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+    model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+    criterion = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        ),
+        "valid": DataLoader(
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+        ),
     }
 
 Step 4 - Accelerate it with Catalyst
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Let's define **how** we are running the experiment (in pure PyTorch):
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Let's define **how** we would like to handle the data (in pure PyTorch):
 
 .. code-block:: python
 
@@ -57,27 +61,19 @@ Let's define **how** we are running the experiment (in pure PyTorch):
 
         def predict_batch(self, batch):
             # model inference step
-            return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
+            return self.model(batch[0].to(self.device))
 
-        def _handle_batch(self, batch):
+        def handle_batch(self, batch):
             # model train/valid step
             x, y = batch
-            y_hat = self.model(x.view(x.size(0), -1))
+            logits = self.model(x)
+            self.batch = {"features": x, "targets": y, "logits": logits}
 
-            loss = F.cross_entropy(y_hat, y)
-            accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
-            self.batch_metrics.update(
-                {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
-            )
-
-            if self.is_train_loader:
-                loss.backward()
-                self.optimizer.step()
-                self.optimizer.zero_grad()
-
-Step 5 - Run
+Step 5 - Train the model
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-Let's **train**, **evaluate**, and **trace** your model with a few lines of code.
+Let's **train** and **evaluate** your model (`supported metrics`_) with a few lines of code.
+
+.. _`supported metrics`: https://catalyst-team.github.io/catalyst/api/metrics.html
 
 .. code-block:: python
 
@@ -85,17 +81,57 @@ Let's **train**, **evaluate**, and **trace** your model with a few lines of code
     # model training
     runner.train(
         model=model,
+        criterion=criterion,
         optimizer=optimizer,
         loaders=loaders,
         logdir="./logs",
         num_epochs=5,
         verbose=True,
         load_best_on_end=True,
+        callbacks=[
+            dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=10),
+            dl.PrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
+            dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
+            dl.OptimizerCallback(metric_key="loss"),
+            dl.CheckpointCallback(
+                "./logs", loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
+            ),
+        ]
     )
-    # model inference
+
+Step 6 - Make predictions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+You could easily use your custom logic for model inference on batch or loader thanks to ``runner.predict_batch`` method.
+
+.. code-block:: python
+
+    # model batch inference
+    features_batch = next(iter(loaders["valid"]))[0]
+    prediction_batch = runner.predict_batch(features_batch)
+    # model loader inference
     for prediction in runner.predict_loader(loader=loaders["valid"]):
         assert prediction.detach().cpu().numpy().shape[-1] == 10
-    # model tracing
-    traced_model = runner.trace(loader=loaders["valid"])
 
-PS. Yes, this file is exactly 101 line.
+Step 7 - Prepare for development stage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Finally, you could use a large number of model post-processing utils for production use cases.
+
+.. code-block:: python
+
+    features_batch = next(iter(loaders["valid"]))[0]
+    # model stochastic weight averaging
+    model.load_state_dict(
+        utils.get_averaged_weights_by_path_mask(logdir="./logs", path_mask="*.pth")
+    )
+    # model tracing
+    utils.trace_model(model=runner.model, batch=features_batch)
+    # model quantization
+    utils.quantize_model(model=runner.model)
+    # model pruning
+    utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
+    # onnx export
+    utils.onnx_export(
+        model=runner.model, batch=features_batch, file="./logs/mnist.onnx", verbose=True
+    )
