@@ -7,7 +7,7 @@ import torch
 
 from catalyst.contrib.models.cv.segmentation.abn import ABN
 from catalyst.contrib.models.cv.segmentation.blocks.core import (
-    _get_block,  # noqa: WPS450, E501,
+    _get_block,  # noqa: WPS450, E501,,
 )
 from catalyst.contrib.models.cv.segmentation.blocks.psp import PSPBlock
 from catalyst.contrib.models.cv.segmentation.decoder.core import DecoderSpec
