@@ -60,10 +60,12 @@ def build_args(parser: ArgumentParser):
     )
     boolean_flag(
         parser,
-        "distributed",
-        shorthand="ddp",
-        default=os.getenv("USE_DDP", "0") == "1",
-        help="Run in distributed mode",
+        "fp16",
+        default=os.getenv("USE_FP16", "0") == "1",
+        help="Run in half-precision mode",
+    )
+    boolean_flag(
+        parser, "ddp", default=os.getenv("USE_DDP", "0") == "1", help="Run in distributed mode",
     )
     boolean_flag(parser, "verbose", default=None)
     boolean_flag(parser, "timeit", default=None)

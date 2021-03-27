@@ -42,7 +42,7 @@ class OptunaPruningCallback(Callback):
                 ],
                 num_epochs=num_epochs,
             )
-            return runner.best_valid_metrics[runner.main_metric]
+            return runner.best_valid_metrics[runner.valid_metric]
 
         study = optuna.create_study()
         study.optimize(objective, n_trials=100, timeout=600)

@@ -103,7 +103,7 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> List[t
         >>>         [0, 0, 1.0, 1.0],
         >>>         [0, 0, 1.0, 1.0],
         >>>     ]),
-        >>>     k=[1, 3],
+        >>>     topk=[1, 3],
         >>> )
         [tensor(0.5000), tensor(0.7500)]
     """

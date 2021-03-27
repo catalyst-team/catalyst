@@ -14,7 +14,7 @@ def hitrate(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> Li
     By rate we mean any explicit form of user's interactions.
     Add up all of the hits for all users and then divide by number of users
 
-    Compute top-N recomendation for each user in the training stage
+    Compute top-N recommendation for each user in the training stage
     and intentionally remove one of this items fro the training data.
 
     Args:
@@ -32,8 +32,7 @@ def hitrate(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> Li
             Parameter fro evaluation on top-k items
 
     Returns:
-        hitrate_at_k (List[torch.Tensor]):
-            the hit rate score
+        hitrate_at_k (List[torch.Tensor]): the hitrate score
     """
     results = []
 
