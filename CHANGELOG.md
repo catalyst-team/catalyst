@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Extra init params for ``ConsoleLogger`` ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
 - Tracing, Quantization, Onnx, Pruninng Callbacks ([1127](https://github.com/catalyst-team/catalyst/pull/1127))
 
+
 ### Changed
 
 - CriterionCallback now inherits from BatchMetricCallback [#1130](https://github.com/catalyst-team/catalyst/issues/1130))
