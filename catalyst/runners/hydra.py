@@ -311,9 +311,9 @@ class HydraRunner(IRunner):
             for key, scheduler_params in params.items():
                 scheduler_params = deepcopy(scheduler_params)
                 optimizer_key = scheduler_params._optimizer or None
-                optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
+                optim = optimizer[optimizer_key] if optimizer_key else optimizer
                 scheduler[key] = HydraRunner._get_scheduler_from_params(  # noqa: WPS437
-                    optimizer=optimizer, params=scheduler_params
+                    optimizer=optim, params=scheduler_params
                 )
         else:
             optimizer_key = params._optimizer or None

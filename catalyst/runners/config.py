@@ -310,9 +310,9 @@ class ConfigRunner(IRunner):
             for key, scheduler_params in params.items():
                 scheduler_params = deepcopy(scheduler_params)
                 optimizer_key = scheduler_params.pop("_optimizer", None)
-                optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
+                optim = optimizer[optimizer_key] if optimizer_key else optimizer
                 scheduler[key] = ConfigRunner._get_scheduler_from_params(
-                    **scheduler_params, optimizer=optimizer
+                    **scheduler_params, optimizer=optim
                 )  # noqa: WPS437
         else:
             optimizer_key = params.pop("_optimizer", None)
