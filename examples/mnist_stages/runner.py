@@ -28,8 +28,11 @@ class IRunnerMixin(IRunner):
     def get_transform(self, stage: str = None, mode: str = None):
         return ToTensor()
 
-    def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
+    def get_datasets(
+        self, stage: str, num_samples_per_class: int = None
+    ) -> "OrderedDict[str, Dataset]":
         """Provides train/validation datasets from MNIST dataset."""
+        num_samples_per_class = num_samples_per_class or 320
         datasets = OrderedDict()
         for mode in ("train", "valid"):
             dataset = MNIST(
@@ -41,7 +44,9 @@ class IRunnerMixin(IRunner):
             if mode == "train":
                 dataset = {
                     "dataset": dataset,
-                    "sampler": BalanceClassSampler(labels=dataset.targets, mode=320),
+                    "sampler": BalanceClassSampler(
+                        labels=dataset.targets, mode=num_samples_per_class
+                    ),
                 }
             datasets[mode] = dataset
 

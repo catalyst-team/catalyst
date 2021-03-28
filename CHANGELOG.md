@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 
-## [XX.XX] - XXXX-XX-XX
+## [21.03.1] - XXXX-XX-XX
 
 ### Added
 
@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Engine configuration through cmd ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
 - Extra utils for thresholds ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
 - Added gradient clipping function to optimizer callback ([1124](https://github.com/catalyst-team/catalyst/pull/1124))
+- FactorizedLinear to contrib
 
 ### Changed
 
@@ -27,7 +28,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - Data-Model device sync and ``Engine`` logic during `runner.predict_loader` ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
-- BatchLimitLoaderWrapper logic for loaders with shuffle flag ([#1136](https://github.com/catalyst-team/catalyst/issues/1136)) 
+- BatchLimitLoaderWrapper logic for loaders with shuffle flag ([#1136](https://github.com/catalyst-team/catalyst/issues/1136))
+- config description in the examples
 
 ## [21.03] - 2021-03-13 ([#1095](https://github.com/catalyst-team/catalyst/issues/1095))
 
