@@ -102,6 +102,11 @@ class IEngine(ABC):
         for ``model.zero_grad()`` like `set_to_none=True` or
         you need to use custom scheme which replaces/improves
         `.zero_grad()` method.
+
+        Args:
+            loss: tensor with loss value.
+            model: model module.
+            optimizer: model optimizer.
         """
         pass
 
@@ -110,6 +115,11 @@ class IEngine(ABC):
         """Abstraction over ``loss.backward()`` step.
         Should be overloaded in cases when required loss scaling.
         Examples - APEX and AMP.
+
+        Args:
+            loss: tensor with loss value.
+            model: model module.
+            optimizer: model optimizer.
         """
         pass
 

@@ -357,7 +357,7 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes.
-        
+
         Args:
             rank: process rank. Default is `-1`.
             world_size: number of devices in netwok to expect for train.
