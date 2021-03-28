@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl
 from catalyst.data.transforms import ToTensor
+
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.modules import Flatten
 

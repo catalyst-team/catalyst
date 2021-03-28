@@ -31,6 +31,21 @@ def train_experiment(device):
         runner = dl.SupervisedRunner(
             input_key="features", output_key="logits", target_key="targets", loss_key="loss"
         )
+        callbacks = [
+            dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
+            dl.PrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
+            dl.AUCCallback(input_key="logits", target_key="targets"),
+            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
+        ]
+        if SETTINGS.onnx_required:
+            callbacks.append(dl.OnnxCallback(logdir=logdir, input_key="features"))
+        if SETTINGS.pruning_required:
+            callbacks.append(dl.PruningCallback(pruning_fn="l1_unstructured", amount=0.5))
+        if SETTINGS.quantization_required:
+            callbacks.append(dl.QuantizationCallback(logdir=logdir))
+        callbacks.append(dl.TracingCallback(logdir=logdir, input_key="features"))
         # model training
         runner.train(
             engine=dl.DeviceEngine(device),
@@ -39,16 +54,7 @@ def train_experiment(device):
             optimizer=optimizer,
             loaders=loaders,
             num_epochs=1,
-            callbacks=[
-                dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-                dl.PrecisionRecallF1SupportCallback(
-                    input_key="logits", target_key="targets", num_classes=10
-                ),
-                dl.AUCCallback(input_key="logits", target_key="targets"),
-                dl.ConfusionMatrixCallback(
-                    input_key="logits", target_key="targets", num_classes=10
-                ),
-            ],
+            callbacks=callbacks,
             logdir=logdir,
             valid_loader="valid",
             valid_metric="loss",
@@ -64,25 +70,28 @@ def train_experiment(device):
         # model inference
         for prediction in runner.predict_loader(loader=loaders["valid"]):
             assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
-
         # model post-processing
         features_batch = next(iter(loaders["valid"]))[0]
         # model stochastic weight averaging
         model.load_state_dict(
             utils.get_averaged_weights_by_path_mask(logdir=logdir, path_mask="*.pth")
         )
+        # model onnx export
+        if SETTINGS.onnx_required:
+            utils.onnx_export(
+                model=runner.model,
+                batch=features_batch,
+                file=f"./{logdir}/mnist.onnx",
+                verbose=False,
+            )
+        # model quantization
+        if SETTINGS.quantization_required:
+            utils.quantize_model(model=runner.model)
+        # model pruning
+        if SETTINGS.pruning_required:
+            utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
         # model tracing
         utils.trace_model(model=runner.model, batch=features_batch)
-        # model to onnx
-        # utils.onnx_export(
-        #     model=runner.model, batch=features_batch, file=f"./{logdir}/mnist.onnx", verbose=False
-        # )
-        if SETTINGS.quantization_required:
-            # model quantization
-            utils.quantize_model(model=runner.model)
-        if SETTINGS.pruning_required:
-            # model pruning
-            utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
 
 
 def test_finetune_on_cpu():

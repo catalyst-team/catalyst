@@ -93,7 +93,7 @@ def train_experiment(device):
             loaders=loaders,
             logdir=logdir,
             num_epochs=1,
-            verbose=True,
+            verbose=False,
             valid_loader="valid",
             valid_metric="loss",
             minimize_valid_metric=True,

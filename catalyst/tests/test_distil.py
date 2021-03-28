@@ -58,7 +58,7 @@ def train_experiment(device):
             loaders=loaders,
             num_epochs=1,
             logdir=logdir,
-            verbose=True,
+            verbose=False,
             callbacks=[
                 dl.AccuracyCallback(
                     input_key="t_logits", target_key="targets", num_classes=2, prefix="teacher_"

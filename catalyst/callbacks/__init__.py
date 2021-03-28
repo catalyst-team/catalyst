@@ -38,6 +38,9 @@ from catalyst.callbacks.tracing import TracingCallback
 if SETTINGS.onnx_required:
     from catalyst.callbacks.onnx import OnnxCallback
 
+if SETTINGS.onnx_required:
+    from catalyst.callbacks.onnx import OnnxCallback
+
 if SETTINGS.optuna_required:
     from catalyst.callbacks.optuna import OptunaPruningCallback
 
@@ -49,9 +52,6 @@ if SETTINGS.pruning_required:
 if SETTINGS.quantization_required:
     from catalyst.callbacks.quantization import QuantizationCallback
 
-# if SETTINGS.use_quantization:
-#     from catalyst.callbacks.quantization import DynamicQuantizationCallback
-
 from catalyst.callbacks.scheduler import (
     ISchedulerCallback,
     SchedulerCallback,
@@ -60,6 +60,5 @@ from catalyst.callbacks.scheduler import (
 )
 
 from catalyst.callbacks.tracing import TracingCallback
-
 
 from catalyst.callbacks.metrics import *

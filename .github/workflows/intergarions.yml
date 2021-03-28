@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      # max-parallel: 6
+      max-parallel: 4
       matrix:
         os: [ubuntu-18.04]  # windows-2019,
         python-version: [3.7]
@@ -34,7 +34,7 @@ jobs:
           - python-version: 3.6
             os: macOS-10.15
 
-    timeout-minutes: 120
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v2
 
@@ -56,6 +56,8 @@ jobs:
           python -c "req = open('./requirements/requirements.txt').read().replace('>', '=') ; open('./requirements/requirements.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-cv.txt').read().replace('>', '=') ; open('./requirements/requirements-cv.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-ml.txt').read().replace('>', '=') ; open('./requirements/requirements-ml.txt', 'w').write(req)"
+          python -c "req = open('./requirements/requirements-hydra.txt').read().replace('>', '=') ; open('./requirements/requirements-hydra.txt', 'w').write(req)"
+          python -c "req = open('./requirements/requirements-optuna.txt').read().replace('>', '=') ; open('./requirements/requirements-optuna.txt', 'w').write(req)"
 
       # https://github.com/actions/cache/blob/master/examples.md
       # Note: This uses an internal pip API and may not always work

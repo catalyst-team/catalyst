@@ -1,8 +1,8 @@
-from typing import TYPE_CHECKING, Union
+from typing import List, TYPE_CHECKING, Union
 from pathlib import Path
 
 import torch
-from torch import Tensor
+
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder
 from catalyst.utils import trace_model
@@ -59,18 +59,22 @@ class TracingCallback(Callback):
             runner = dl.SupervisedRunner()
             runner.train(
                 model=model,
-                callbacks=[dl.TracingCallback(batch=torch.randn(1, 28, 28), logdir="./logs")],
+                callbacks=[dl.TracingCallback(input_key="features", logdir="./logs")],
                 loaders=loaders,
                 criterion=criterion,
                 optimizer=optimizer,
                 num_epochs=1,
                 logdir="./logs",
             )
+        input_key: input key from ``runner.batch`` to use for model tracing
+        logdir: path to folder for saving
+        filename: filename
+        method_name: Model's method name that will be used as entrypoint during tracing
     """
 
     def __init__(
         self,
-        batch: Tensor,
+        input_key: Union[str, List[str]],
         logdir: Union[str, Path] = None,
         filename: str = "traced_model.pth",
         method_name: str = "forward",
@@ -79,7 +83,7 @@ class TracingCallback(Callback):
         Callback for model tracing.
 
         Args:
-            batch: input tensor for model
+            input_key: input key from ``runner.batch`` to use for model tracing
             logdir: path to folder for saving
             filename: filename
             method_name: Model's method name that will be used as entrypoint during tracing
@@ -121,7 +125,7 @@ class TracingCallback(Callback):
                 runner = dl.SupervisedRunner()
                 runner.train(
                     model=model,
-                    callbacks=[dl.TracingCallback(batch=torch.randn(1, 28, 28), logdir="./logs")],
+                    callbacks=[dl.TracingCallback(input_key="features", logdir="./logs")],
                     loaders=loaders,
                     criterion=criterion,
                     optimizer=optimizer,
@@ -135,7 +139,8 @@ class TracingCallback(Callback):
         else:
             self.filename = filename
         self.method_name = method_name
-        self.batch = batch
+
+        self.input_key = input_key
 
     def on_stage_end(self, runner: "IRunner") -> None:
         """
@@ -145,7 +150,8 @@ class TracingCallback(Callback):
             runner: runner for experiment
         """
         model = runner.model
-        batch = self.batch
+
+        batch = tuple(runner.batch[key] for key in self.input_key)
         traced_model = trace_model(model=model, batch=batch, method_name=self.method_name)
         torch.jit.save(traced_model, self.filename)
 
