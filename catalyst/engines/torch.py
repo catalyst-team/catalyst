@@ -22,7 +22,7 @@ class DeviceEngine(IEngine):
     """Single training device engine.
 
     Args:
-        device (str, optional): use device, default is `"cpu"`.
+        device: use device, default is `"cpu"`.
 
     Examples:
 
@@ -264,10 +264,13 @@ class DistributedDataParallelEngine(DeviceEngine):
     """Distributed MultiGPU training device engine.
 
     Args:
-        address (str): process address to use (required for PyTorch backend), default is `"localhost"`.
-        port (str or int): process port to listen (required for PyTorch backend), default is `"12345"`.
-        backend (str): multiprocessing backend to use, default is `"nccl"`.
-        world_size (int): number of processes.
+        address: process address to use
+            (required for PyTorch backend), default is `"localhost"`.
+        port: process port to listen
+            (required for PyTorch backend), default is `"12345"`.
+        backend: multiprocessing backend to use,
+            default is `"nccl"`.
+        world_size: number of processes.
 
     Examples:
 

@@ -125,8 +125,8 @@ class APEXEngine(DeviceEngine):
     """Apex single training device engine.
 
     Args:
-        device (str of int): use device, default is `"cuda"`.
-        opt_level (str): optimization level, should be one of ``"O0"``,
+        device: use device, default is `"cuda"`.
+        opt_level: optimization level, should be one of ``"O0"``,
             ``"O1"``, ``"O2"`` or ``"O3"``.
 
             - ``"O0"`` - no-op training
@@ -136,11 +136,11 @@ class APEXEngine(DeviceEngine):
 
             Details about levels can be found here:
             https://nvidia.github.io/apex/amp.html#opt-levels
-        keep_batchnorm_fp32 (bool): To enhance precision and enable CUDNN batchnorm
+        keep_batchnorm_fp32: To enhance precision and enable CUDNN batchnorm
             (which improves performance),
             it’s often beneficial to keep batchnorm weights in FP32 even
             if the rest of the model is FP16.
-        loss_scale (float or str): If loss_scale is a float value,
+        loss_scale: If loss_scale is a float value,
             use this value as the static (fixed) loss scale
             If loss_scale is the string "dynamic",
             adaptively adjust the loss scale over time.
@@ -299,7 +299,7 @@ class DataParallelApexEngine(APEXEngine):
     """Apex multi-gpu training device engine.
 
     Args:
-        opt_level (str): optimization level, should be one of ``"O0"``,
+        opt_level: optimization level, should be one of ``"O0"``,
             ``"O1"``, ``"O2"`` or ``"O3"``.
 
             - ``"O0"`` - no-op training
@@ -377,11 +377,14 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
     """Distributed Apex MultiGPU training device engine.
 
     Args:
-        address (str): process address to use (required for PyTorch backend), default is `"localhost"`.
-        port (str or int): process port to listen (required for PyTorch backend), default is `"12345"`.
-        backend (str): multiprocessing backend to use, default is `"nccl"`.
-        world_size (int): number of processes.
-        opt_level (str): optimization level, should be one of ``"O0"``,
+        address: process address to use
+            (required for PyTorch backend), default is `"localhost"`.
+        port: process port to listen
+            (required for PyTorch backend), default is `"12345"`.
+        backend: multiprocessing backend to use,
+            default is `"nccl"`.
+        world_size: number of processes.
+        opt_level: optimization level, should be one of ``"O0"``,
             ``"O1"``, ``"O2"`` or ``"O3"``.
 
             - ``"O0"`` - no-op training
@@ -392,16 +395,17 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             Details about levels can be found here:
             https://nvidia.github.io/apex/amp.html#opt-levels
 
-        keep_batchnorm_fp32 (bool): To enhance precision and enable cudnn batchnorm
-            (which improves performance),
+        keep_batchnorm_fp32: To enhance precision and
+            enable CUDNN batchnorm (which improves performance),
             it’s often beneficial to keep batchnorm weights in FP32 even
             if the rest of the model is FP16.
-        loss_scale (float or str): If loss_scale is a float value,
+        loss_scale: If loss_scale is a float value,
             use this value as the static (fixed) loss scale.
             If loss_scale is the string "dynamic",
             adaptively adjust the loss scale over time.
             Dynamic loss scale adjustments are performed by Amp automatically.
-        delay_all_reduce (bool): boolean flag for delayed all reduce, default is `True`.
+        delay_all_reduce (bool): boolean flag for delayed all reduce,
+            default is `True`.
 
     Examples:
 
@@ -412,7 +416,10 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
-                return dl.DistributedDataParallelApexEngine(port=12345, opt_level="O1")
+                return dl.DistributedDataParallelApexEngine(
+                    port=12345,
+                    opt_level="O1"
+                )
             # ...
 
     .. code-block:: yaml
