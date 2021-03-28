@@ -90,7 +90,7 @@ class OnnxCallback(Callback):
             self.filename = Path(logdir) / filename
         else:
             self.filename = filename
-        self.input_key=input_key
+        self.input_key = [input_key] if isinstance(input_key, str) else input_key
         self.method_name = method_name
         self.input_names = input_names
         self.output_names = output_names

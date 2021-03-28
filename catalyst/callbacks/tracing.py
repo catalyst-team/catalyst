@@ -140,7 +140,7 @@ class TracingCallback(Callback):
             self.filename = filename
         self.method_name = method_name
 
-        self.input_key = input_key
+        self.input_key = [input_key] if isinstance(input_key, str) else input_key
 
     def on_stage_end(self, runner: "IRunner") -> None:
         """
