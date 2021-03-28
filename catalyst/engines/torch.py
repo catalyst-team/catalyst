@@ -22,7 +22,36 @@ class DeviceEngine(IEngine):
     """Single training device engine.
 
     Args:
-        device (str, optional): use device, default is `"cpu"`.
+        device: use device, default is `"cpu"`.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DeviceEngine("cuda:1")
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DeviceEngine
+            device: cuda:1
+
+        stages:
+            ...
+
     """
 
     def __init__(self, device: str = None):
@@ -40,7 +69,7 @@ class DeviceEngine(IEngine):
 
     @property
     def world_size(self) -> int:
-        """Process world size  for distributed training."""
+        """Process world size for distributed training."""
         return 1
 
     def sync_device(
@@ -167,7 +196,36 @@ class DeviceEngine(IEngine):
 
 
 class DataParallelEngine(DeviceEngine):
-    """MultiGPU training device engine."""
+    """MultiGPU training device engine.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DataParallelEngine()
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DataParallelEngine
+
+        stages:
+            ...
+
+    """
 
     def __init__(self):
         """Init"""
@@ -206,10 +264,42 @@ class DistributedDataParallelEngine(DeviceEngine):
     """Distributed MultiGPU training device engine.
 
     Args:
-        address: process address to use (required for PyTorch backend), default is `"localhost"`.
-        port: process port to listen (required for PyTorch backend), default is `"12345"`.
-        backend: multiprocessing backend to use, default is `"nccl"`.
+        address: process address to use
+            (required for PyTorch backend), default is `"localhost"`.
+        port: process port to listen
+            (required for PyTorch backend), default is `"12345"`.
+        backend: multiprocessing backend to use,
+            default is `"nccl"`.
         world_size: number of processes.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DistributedDataParallelEngine(port=12345)
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DistributedDataParallelEngine
+            port: 12345
+
+        stages:
+            ...
+
     """
 
     def __init__(
@@ -266,7 +356,13 @@ class DistributedDataParallelEngine(DeviceEngine):
         return self._rank > 0
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
-        """Initialize DDP variables and processes."""
+        """Initialize DDP variables and processes.
+
+        Args:
+            rank: process rank. Default is `-1`.
+            world_size: number of devices in netwok to expect for train.
+                Default is `1`.
+        """
         self._rank = rank
         self._world_size = world_size
         os.environ["MASTER_ADDR"] = str(self.address)
