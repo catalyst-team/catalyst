@@ -3,7 +3,6 @@ from pathlib import Path
 
 import torch
 
-
 from catalyst.core import Callback, CallbackNode, CallbackOrder
 from catalyst.utils import trace_model
 

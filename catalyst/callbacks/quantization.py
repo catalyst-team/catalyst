@@ -90,7 +90,9 @@ class QuantizationCallback(Callback):
 
     def on_stage_end(self, runner: "IRunner") -> None:
         """Event handler."""
-        q_model = quantize_model(runner.model.cpu(), qconfig_spec=self.qconfig_spec, dtype=self.dtype)
+        q_model = quantize_model(
+            runner.model.cpu(), qconfig_spec=self.qconfig_spec, dtype=self.dtype
+        )
         checkpoint = runner.engine.pack_checkpoint(model=q_model)
         runner.engine.save_checkpoint(checkpoint=checkpoint, path=self.filename)
 

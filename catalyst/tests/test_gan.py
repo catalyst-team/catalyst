@@ -17,28 +17,35 @@ from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
-        latent_dim = 128
+        # latent_dim = 128
+        # generator = nn.Sequential(
+        #     # We want to generate 128 coefficients to reshape into a 7x7x128 map
+        #     nn.Linear(128, 128 * 7 * 7),
+        #     nn.LeakyReLU(0.2, inplace=True),
+        #     Lambda(lambda x: x.view(x.size(0), 128, 7, 7)),
+        #     nn.ConvTranspose2d(128, 128, (4, 4), stride=(2, 2), padding=1),
+        #     nn.LeakyReLU(0.2, inplace=True),
+        #     nn.ConvTranspose2d(128, 128, (4, 4), stride=(2, 2), padding=1),
+        #     nn.LeakyReLU(0.2, inplace=True),
+        #     nn.Conv2d(128, 1, (7, 7), padding=3),
+        #     nn.Sigmoid(),
+        # )
+        # discriminator = nn.Sequential(
+        #     nn.Conv2d(1, 64, (3, 3), stride=(2, 2), padding=1),
+        #     nn.LeakyReLU(0.2, inplace=True),
+        #     nn.Conv2d(64, 128, (3, 3), stride=(2, 2), padding=1),
+        #     nn.LeakyReLU(0.2, inplace=True),
+        #     GlobalMaxPool2d(),
+        #     Flatten(),
+        #     nn.Linear(128, 1),
+        # )
+        latent_dim = 32
         generator = nn.Sequential(
-            # We want to generate 128 coefficients to reshape into a 7x7x128 map
-            nn.Linear(128, 128 * 7 * 7),
-            nn.LeakyReLU(0.2, inplace=True),
-            Lambda(lambda x: x.view(x.size(0), 128, 7, 7)),
-            nn.ConvTranspose2d(128, 128, (4, 4), stride=(2, 2), padding=1),
-            nn.LeakyReLU(0.2, inplace=True),
-            nn.ConvTranspose2d(128, 128, (4, 4), stride=(2, 2), padding=1),
-            nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(128, 1, (7, 7), padding=3),
+            nn.Linear(latent_dim, 28 * 28),
+            Lambda(lambda x: x.view(x.size(0), 1, 28, 28)),
             nn.Sigmoid(),
         )
-        discriminator = nn.Sequential(
-            nn.Conv2d(1, 64, (3, 3), stride=(2, 2), padding=1),
-            nn.LeakyReLU(0.2, inplace=True),
-            nn.Conv2d(64, 128, (3, 3), stride=(2, 2), padding=1),
-            nn.LeakyReLU(0.2, inplace=True),
-            GlobalMaxPool2d(),
-            Flatten(),
-            nn.Linear(128, 1),
-        )
+        discriminator = nn.Sequential(Flatten(), nn.Linear(28 * 28, 1))
 
         model = {"generator": generator, "discriminator": discriminator}
         criterion = {"generator": nn.BCEWithLogitsLoss(), "discriminator": nn.BCEWithLogitsLoss()}
