@@ -54,7 +54,7 @@ class CMCMetric(AccumulationMetric):
         >>>         if self.is_train_loader:
         >>>             images, targets = batch["features"].float(), batch["targets"].long()
         >>>             features = model(images)
-        >>>             self.input_key = {
+        >>>             self.batch = {
         >>>                 "embeddings": features,
         >>>                 "targets": targets,
         >>>             }
@@ -65,7 +65,7 @@ class CMCMetric(AccumulationMetric):
         >>>                 batch["is_query"].bool(),
         >>>             )
         >>>             features = model(images)
-        >>>             self.input_key = {
+        >>>             self.batch = {
         >>>                 "embeddings": features,
         >>>                 "targets": targets,
         >>>                 "is_query": is_query,
