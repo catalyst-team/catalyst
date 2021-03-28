@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added gradient clipping function to optimizer callback ([1124](https://github.com/catalyst-team/catalyst/pull/1124))
 - FactorizedLinear to contrib ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
 - Extra init params for ``ConsoleLogger`` ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
+- `_key_value` for schedulers in case of multiple optimizers fixed ([#1146](https://github.com/catalyst-team/catalyst/pull/1146))
 
 ### Changed
 
