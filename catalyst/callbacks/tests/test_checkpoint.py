@@ -167,7 +167,8 @@ def test_dp_load_on_stage_start():
 
 
 @pytest.mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
+    reason="Number of CUDA devices is less than 2",
 )
 def test_ddp_load_on_stage_start():
     with TemporaryDirectory() as logdir:

@@ -1,6 +1,6 @@
 import torch
+from torch import nn
 import torch.cuda.amp as amp
-from torch.nn.parallel import DataParallel
 
 from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 
@@ -52,7 +52,11 @@ class DataParallelAMPEngine(AMPEngine):
         """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
-        model = DataParallel(model)
+
+        if isinstance(model, nn.Module):
+            model = nn.DataParallel(model)
+        elif isinstance(model, dict):
+            model = {k: nn.DataParallel(v) for k, v in model.items()}
 
         # criterion
         criterion = criterion_fn()

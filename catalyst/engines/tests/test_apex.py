@@ -160,7 +160,8 @@ def train_from_config(device, opt_level):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required, reason="CUDA devices is not available"
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required),
+    reason="CUDA device is not available or no Apex found",
 )
 def test_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
@@ -170,7 +171,8 @@ def test_apex_with_devices():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not SETTINGS.apex_required, reason="CUDA devices is not available"
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required),
+    reason="CUDA device is not available or no Apex found",
 )
 def test_config_apex_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]

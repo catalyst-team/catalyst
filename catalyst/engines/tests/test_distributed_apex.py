@@ -101,16 +101,6 @@ class CustomRunner(IRunner):
         self.batch = {"features": x, "targets": y, "logits": logits}
 
 
-@mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
-)
-def test_train_distributed_parallel_apex():
-    for idx, opt_level in enumerate(OPT_LEVELS):
-        with TemporaryDirectory() as logdir:
-            runner = CustomRunner(logdir, opt_level, DDP_ADDRESS + random.randint(1, 100))
-            runner.run()
-
-
 class MyConfigRunner(SupervisedConfigRunner):
     _dataset = DummyDataset(6)
 
@@ -169,7 +159,19 @@ def train_from_config(port, logdir, opt_lvl):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+    reason="Number of CUDA devices is less than 2 or no Apex found",
+)
+def test_train_distributed_parallel_apex():
+    for idx, opt_level in enumerate(OPT_LEVELS):
+        with TemporaryDirectory() as logdir:
+            runner = CustomRunner(logdir, opt_level, DDP_ADDRESS + random.randint(1, 100))
+            runner.run()
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+    reason="Number of CUDA devices is less than 2 or no Apex found",
 )
 def test_config_train_distributed_parallel_apex():
     for idx, opt_level in enumerate(OPT_LEVELS):
