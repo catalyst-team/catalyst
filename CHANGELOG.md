@@ -9,12 +9,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+
+- Additive Margin SoftMax(AMSoftmax)([#1125](https://github.com/catalyst-team/catalyst/issues/1125))
+
+### Added
+
+- Generalized Mean Pooling(GeM)([#1084](https://github.com/catalyst-team/catalyst/issues/1084))
+
 - Generalized Mean Pooling(GeM) ([#1084](https://github.com/catalyst-team/catalyst/issues/1084))
 - Key-value support for CriterionCallback ([#1130](https://github.com/catalyst-team/catalyst/issues/1130))
 - Engine configuration through cmd ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
 - Extra utils for thresholds ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
 - Added gradient clipping function to optimizer callback ([1124](https://github.com/catalyst-team/catalyst/pull/1124))
-- FactorizedLinear to contrib
+- FactorizedLinear to contrib ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
 
 ### Changed
 
@@ -23,13 +30,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+
 
 ### Fixed
 
 - Data-Model device sync and ``Engine`` logic during `runner.predict_loader` ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
 - BatchLimitLoaderWrapper logic for loaders with shuffle flag ([#1136](https://github.com/catalyst-team/catalyst/issues/1136))
-- config description in the examples
+- config description in the examples ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
 
 ## [21.03] - 2021-03-13 ([#1095](https://github.com/catalyst-team/catalyst/issues/1095))
 
@@ -99,8 +106,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
     - a few docs
 - ([#998](https://github.com/catalyst-team/catalyst/pull/998))
-    - ``reciprocal_rank`` metric 
-    - unified recsys metrics preprocessing 
+    - ``reciprocal_rank`` metric
+    - unified recsys metrics preprocessing
 -  ([#1018](https://github.com/catalyst-team/catalyst/pull/1018))
     - readme examples for all supported metrics under ``catalyst.metrics``
     - ``wrap_metric_fn_with_activation`` for model outputs wrapping with activation
@@ -148,7 +155,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
     - ClasswiseIouCallback/ClasswiseJaccardCallback as deprecated on (should be refactored in future releases)
 
- 
+
 
 ### Fixed
 
@@ -165,7 +172,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - DCG, nDCG metrics ([#881](https://github.com/catalyst-team/catalyst/pull/881))
-- MAP calculations [#968](https://github.com/catalyst-team/catalyst/pull/968) 
+- MAP calculations [#968](https://github.com/catalyst-team/catalyst/pull/968)
 - hitrate calculations [#975] (https://github.com/catalyst-team/catalyst/pull/975)
 - extra functions for classification metrics ([#966](https://github.com/catalyst-team/catalyst/pull/966))
 - `OneOf` and `OneOfV2` batch transforms ([#951](https://github.com/catalyst-team/catalyst/pull/951))
@@ -199,7 +206,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - MRR metrics calculation ([#886](https://github.com/catalyst-team/catalyst/pull/886))
-- docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947)) 
+- docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947))
 - SoftMax, CosFace, ArcFace layers to contrib ([#939](https://github.com/catalyst-team/catalyst/pull/939))
 - ArcMargin layer to contrib ([#957](https://github.com/catalyst-team/catalyst/pull/957))
 - AdaCos to contrib ([#958](https://github.com/catalyst-team/catalyst/pull/958))
@@ -220,7 +227,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
@@ -245,7 +252,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
@@ -273,13 +280,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
 - autoresume option for Config API ([#907](https://github.com/catalyst-team/catalyst/pull/907))
 - a few issues with TF projector ([#917](https://github.com/catalyst-team/catalyst/pull/917))
-- batch sampler speed issue ([#921](https://github.com/catalyst-team/catalyst/pull/921)) 
+- batch sampler speed issue ([#921](https://github.com/catalyst-team/catalyst/pull/921))
 - add apex key-value optimizer support ([#924](https://github.com/catalyst-team/catalyst/pull/924))
 - runtime warning for PyTorch 1.6 ([920](https://github.com/catalyst-team/catalyst/pull/920))
 - Apex synbn usage ([920](https://github.com/catalyst-team/catalyst/pull/920))
@@ -379,7 +386,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
@@ -409,7 +416,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
@@ -463,35 +470,35 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [20.04] - 2020-04-06
 
 ### Added
-- 
+
 
 ### Changed
 
-- 
+-
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
-- 
+-
 
 
 ## [YY.MM.R] - YYYY-MM-DD
 
 ### Added
 
-- 
+-
 
 ### Changed
 
-- 
+-
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
-- 
+-
