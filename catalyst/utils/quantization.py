@@ -12,8 +12,7 @@ def quantize_model(
     """Function to quantize model weights.
 
     Args:
-        logdir: path to folder for saving
-        filename: filename
+        model: model to be quantized
         qconfig_spec (Dict, optional): quantization config in PyTorch format. Defaults to None.
         dtype (Union[str, Optional[torch.dtype]], optional): Type of weights after quantization.
             Defaults to "qint8".
