@@ -681,7 +681,8 @@ different hardware-specific configurations.</p>
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.autocast">
 <code class="sig-name descname">autocast</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.autocast"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.autocast" title="Permalink to this definition">¶</a></dt>
-<dd><p>AMP scaling context. Default autocast context does not scale anything.</p>
+<dd><p>AMP scaling context.
+Default autocast context does not scale anything.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -698,13 +699,25 @@ different hardware-specific configurations.</p>
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.backward_loss">
 <em class="property">abstract </em><code class="sig-name descname">backward_loss</code><span class="sig-paren">(</span><em class="sig-param">loss</em>, <em class="sig-param">model</em>, <em class="sig-param">optimizer</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.backward_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.backward_loss" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstraction over <code class="docutils literal notranslate"><span class="pre">loss.backward()</span></code> step.</p>
+<dd><p>Abstraction over <code class="docutils literal notranslate"><span class="pre">loss.backward()</span></code> step.
+Should be overloaded in cases when required loss scaling.
+Examples - APEX and AMP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loss</strong> – tensor with loss value.</p></li>
+<li><p><strong>model</strong> – model module.</p></li>
+<li><p><strong>optimizer</strong> – model optimizer.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.deinit_components">
 <em class="property">abstract </em><code class="sig-name descname">deinit_components</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.deinit_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.deinit_components" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deinits the runs components.</p>
+<dd><p>Deinits the runs components.
+In distributed mode should destroy process group.</p>
 </dd></dl>
 
 <dl class="method">
@@ -723,10 +736,11 @@ different hardware-specific configurations.</p>
 <dt id="catalyst.core.engine.IEngine.is_master_process">
 <em class="property">property </em><code class="sig-name descname">is_master_process</code><a class="headerlink" href="#catalyst.core.engine.IEngine.is_master_process" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if a process is master process.
-Should be implemented only for DDP setup in other cases should always return True.</p>
+Should be implemented only for distributed training (ddp).
+For non distributed training should always return <cite>True</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><cite>True</cite> if current process is a master process, otherwise <cite>False</cite>.</p>
+<dd class="field-odd"><p><cite>True</cite> if current process is a master process in other cases return <cite>False</cite>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -735,10 +749,11 @@ Should be implemented only for DDP setup in other cases should always return Tru
 <dt id="catalyst.core.engine.IEngine.is_worker_process">
 <em class="property">property </em><code class="sig-name descname">is_worker_process</code><a class="headerlink" href="#catalyst.core.engine.IEngine.is_worker_process" title="Permalink to this definition">¶</a></dt>
 <dd><p>Checks if a process is worker process.
-Should be implemented only for DDP setup in other cases should always return False.</p>
+Should be implemented only for distributed training (ddp).
+For non distributed training should always return <cite>False</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><cite>True</cite> if current process is a worker process, otherwise <cite>False</cite>.</p>
+<dd class="field-odd"><p><cite>True</cite> if current process is a worker process in other cases return <cite>False</cite>.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -757,7 +772,18 @@ Should be implemented only for DDP setup in other cases should always return Fal
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.optimizer_step">
 <em class="property">abstract </em><code class="sig-name descname">optimizer_step</code><span class="sig-paren">(</span><em class="sig-param">loss</em>, <em class="sig-param">model</em>, <em class="sig-param">optimizer</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.optimizer_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.optimizer_step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstraction over <code class="docutils literal notranslate"><span class="pre">optimizer.step()</span></code> step.</p>
+<dd><p>Abstraction over <code class="docutils literal notranslate"><span class="pre">optimizer.step()</span></code> step.
+Should be overloaded in cases when required gradient scaling.
+Example - AMP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loss</strong> – tensor with loss value.</p></li>
+<li><p><strong>model</strong> – model module.</p></li>
+<li><p><strong>optimizer</strong> – model optimizer.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -801,7 +827,7 @@ and some extra info <code class="docutils literal notranslate"><span class="pre"
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.sync_device">
 <em class="property">abstract </em><code class="sig-name descname">sync_device</code><span class="sig-paren">(</span><em class="sig-param">tensor_or_module: Any</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.sync_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.sync_device" title="Permalink to this definition">¶</a></dt>
-<dd><p>Moves <code class="docutils literal notranslate"><span class="pre">tensor_or_module</span></code> to Engine’s deivce.</p>
+<dd><p>Moves <code class="docutils literal notranslate"><span class="pre">tensor_or_module</span></code> to Engine’s device.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>tensor_or_module</strong> – tensor to mode</p>
@@ -838,13 +864,26 @@ scheduler (if not None).</p>
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.world_size">
 <em class="property">abstract property </em><code class="sig-name descname">world_size</code><a class="headerlink" href="#catalyst.core.engine.IEngine.world_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Process world size  for distributed training.</p>
+<dd><p>Process world size for distributed training.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.zero_grad">
 <em class="property">abstract </em><code class="sig-name descname">zero_grad</code><span class="sig-paren">(</span><em class="sig-param">loss</em>, <em class="sig-param">model</em>, <em class="sig-param">optimizer</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.zero_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.zero_grad" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstraction over <code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code> step.</p>
+<dd><p>Abstraction over <code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code> step.
+Should be overloaded in cases when required to set arguments
+for <code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code> like <cite>set_to_none=True</cite> or
+you need to use custom scheme which replaces/improves
+<cite>.zero_grad()</cite> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loss</strong> – tensor with loss value.</p></li>
+<li><p><strong>model</strong> – model module.</p></li>
+<li><p><strong>optimizer</strong> – model optimizer.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

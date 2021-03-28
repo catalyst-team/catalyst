@@ -330,7 +330,36 @@
     <span class="sd">&quot;&quot;&quot;Single training device engine.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        device (str, optional): use device, default is `&quot;cpu&quot;`.</span>
+<span class="sd">        device: use device, default is `&quot;cpu&quot;`.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        class MyRunner(dl.IRunner):</span>
+<span class="sd">            # ...</span>
+<span class="sd">            def get_engine(self):</span>
+<span class="sd">                return dl.DeviceEngine(&quot;cuda:1&quot;)</span>
+<span class="sd">            # ...</span>
+
+<span class="sd">    .. code-block:: yaml</span>
+
+<span class="sd">        args:</span>
+<span class="sd">            logs: ...</span>
+
+<span class="sd">        model:</span>
+<span class="sd">            _target_: ...</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        engine:</span>
+<span class="sd">            _target_: DeviceEngine</span>
+<span class="sd">            device: cuda:1</span>
+
+<span class="sd">        stages:</span>
+<span class="sd">            ...</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -348,7 +377,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">world_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Process world size  for distributed training.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Process world size for distributed training.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">sync_device</span><span class="p">(</span>
@@ -475,7 +504,36 @@
 
 
 <div class="viewcode-block" id="DataParallelEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DataParallelEngine">[docs]</a><span class="k">class</span> <span class="nc">DataParallelEngine</span><span class="p">(</span><span class="n">DeviceEngine</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;MultiGPU training device engine.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;MultiGPU training device engine.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        class MyRunner(dl.IRunner):</span>
+<span class="sd">            # ...</span>
+<span class="sd">            def get_engine(self):</span>
+<span class="sd">                return dl.DataParallelEngine()</span>
+<span class="sd">            # ...</span>
+
+<span class="sd">    .. code-block:: yaml</span>
+
+<span class="sd">        args:</span>
+<span class="sd">            logs: ...</span>
+
+<span class="sd">        model:</span>
+<span class="sd">            _target_: ...</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        engine:</span>
+<span class="sd">            _target_: DataParallelEngine</span>
+
+<span class="sd">        stages:</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init&quot;&quot;&quot;</span>
@@ -514,10 +572,42 @@
     <span class="sd">&quot;&quot;&quot;Distributed MultiGPU training device engine.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        address: process address to use (required for PyTorch backend), default is `&quot;localhost&quot;`.</span>
-<span class="sd">        port: process port to listen (required for PyTorch backend), default is `&quot;12345&quot;`.</span>
-<span class="sd">        backend: multiprocessing backend to use, default is `&quot;nccl&quot;`.</span>
+<span class="sd">        address: process address to use</span>
+<span class="sd">            (required for PyTorch backend), default is `&quot;localhost&quot;`.</span>
+<span class="sd">        port: process port to listen</span>
+<span class="sd">            (required for PyTorch backend), default is `&quot;12345&quot;`.</span>
+<span class="sd">        backend: multiprocessing backend to use,</span>
+<span class="sd">            default is `&quot;nccl&quot;`.</span>
 <span class="sd">        world_size: number of processes.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        class MyRunner(dl.IRunner):</span>
+<span class="sd">            # ...</span>
+<span class="sd">            def get_engine(self):</span>
+<span class="sd">                return dl.DistributedDataParallelEngine(port=12345)</span>
+<span class="sd">            # ...</span>
+
+<span class="sd">    .. code-block:: yaml</span>
+
+<span class="sd">        args:</span>
+<span class="sd">            logs: ...</span>
+
+<span class="sd">        model:</span>
+<span class="sd">            _target_: ...</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        engine:</span>
+<span class="sd">            _target_: DistributedDataParallelEngine</span>
+<span class="sd">            port: 12345</span>
+
+<span class="sd">        stages:</span>
+<span class="sd">            ...</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -574,7 +664,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
     <span class="k">def</span> <span class="nf">setup_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize DDP variables and processes.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Initialize DDP variables and processes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rank: process rank. Default is `-1`.</span>
+<span class="sd">            world_size: number of devices in netwok to expect for train.</span>
+<span class="sd">                Default is `1`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">=</span> <span class="n">rank</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span> <span class="o">=</span> <span class="n">world_size</span>
         <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>

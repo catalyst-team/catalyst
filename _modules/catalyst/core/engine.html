@@ -314,7 +314,7 @@
 
 
 <span class="nd">@contextmanager</span>
-<span class="k">def</span> <span class="nf">nullcontext</span><span class="p">(</span><span class="n">enter_result</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">nullcontext</span><span class="p">(</span><span class="n">enter_result</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Context handler.&quot;&quot;&quot;</span>
     <span class="k">yield</span> <span class="n">enter_result</span>
 
@@ -345,8 +345,7 @@
     <span class="nd">@property</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">world_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Process world size  for distributed training.&quot;&quot;&quot;</span>
-        <span class="c1"># only for ddp</span>
+        <span class="sd">&quot;&quot;&quot;Process world size for distributed training.&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
     <span class="nd">@property</span>
@@ -357,26 +356,28 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_master_process</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Checks if a process is master process.</span>
-<span class="sd">        Should be implemented only for DDP setup in other cases should always return True.</span>
+<span class="sd">        Should be implemented only for distributed training (ddp).</span>
+<span class="sd">        For non distributed training should always return `True`.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            `True` if current process is a master process, otherwise `False`.</span>
+<span class="sd">            `True` if current process is a master process in other cases return `False`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">is_worker_process</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Checks if a process is worker process.</span>
-<span class="sd">        Should be implemented only for DDP setup in other cases should always return False.</span>
+<span class="sd">        Should be implemented only for distributed training (ddp).</span>
+<span class="sd">        For non distributed training should always return `False`.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            `True` if current process is a worker process, otherwise `False`.</span>
+<span class="sd">            `True` if current process is a worker process in other cases return `False`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">False</span>
 
 <div class="viewcode-block" id="IEngine.sync_device"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.sync_device">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">sync_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor_or_module</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Moves ``tensor_or_module`` to Engine&#39;s deivce.</span>
+        <span class="sd">&quot;&quot;&quot;Moves ``tensor_or_module`` to Engine&#39;s device.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            tensor_or_module: tensor to mode</span>
@@ -397,23 +398,50 @@
 
 <div class="viewcode-block" id="IEngine.deinit_components"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.deinit_components">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">deinit_components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Deinits the runs components.&quot;&quot;&quot;</span>
-        <span class="c1"># only for ddp</span>
+        <span class="sd">&quot;&quot;&quot;Deinits the runs components.</span>
+<span class="sd">        In distributed mode should destroy process group.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="IEngine.zero_grad"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.zero_grad">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Abstraction over ``model.zero_grad()`` step.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Abstraction over ``model.zero_grad()`` step.</span>
+<span class="sd">        Should be overloaded in cases when required to set arguments</span>
+<span class="sd">        for ``model.zero_grad()`` like `set_to_none=True` or</span>
+<span class="sd">        you need to use custom scheme which replaces/improves</span>
+<span class="sd">        `.zero_grad()` method.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loss: tensor with loss value.</span>
+<span class="sd">            model: model module.</span>
+<span class="sd">            optimizer: model optimizer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="IEngine.backward_loss"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.backward_loss">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">backward_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Abstraction over ``loss.backward()`` step.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Abstraction over ``loss.backward()`` step.</span>
+<span class="sd">        Should be overloaded in cases when required loss scaling.</span>
+<span class="sd">        Examples - APEX and AMP.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loss: tensor with loss value.</span>
+<span class="sd">            model: model module.</span>
+<span class="sd">            optimizer: model optimizer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="IEngine.optimizer_step"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.optimizer_step">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">optimizer_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Abstraction over ``optimizer.step()`` step.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Abstraction over ``optimizer.step()`` step.</span>
+<span class="sd">        Should be overloaded in cases when required gradient scaling.</span>
+<span class="sd">        Example - AMP.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loss: tensor with loss value.</span>
+<span class="sd">            model: model module.</span>
+<span class="sd">            optimizer: model optimizer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="IEngine.pack_checkpoint"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.pack_checkpoint">[docs]</a>    <span class="nd">@abstractmethod</span>
@@ -482,7 +510,8 @@
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="IEngine.autocast"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.autocast">[docs]</a>    <span class="k">def</span> <span class="nf">autocast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;AMP scaling context. Default autocast context does not scale anything.</span>
+        <span class="sd">&quot;&quot;&quot;AMP scaling context.</span>
+<span class="sd">        Default autocast context does not scale anything.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            *args: some args</span>

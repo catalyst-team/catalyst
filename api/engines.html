@@ -354,6 +354,31 @@
 <dd class="field-odd"><p><strong>device</strong> – used device, default is <cite>“cuda”</cite>.</p>
 </dd>
 </dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">AMPEngine</span><span class="p">(</span><span class="s2">&quot;cuda:1&quot;</span><span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">AMPEngine</span>
+    <span class="nt">device</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cuda:1</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -364,6 +389,30 @@
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DataParallelAMPEngine</code><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.amp.AMPEngine" title="catalyst.engines.amp.AMPEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.amp.AMPEngine</span></code></a></p>
 <p>AMP multi-gpu training device engine.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DataParallelAMPEngine</span><span class="p">()</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DataParallelAMPEngine</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -377,13 +426,41 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>address</strong> – process address to use (required for PyTorch backend), default is <cite>“localhost”</cite>.</p></li>
-<li><p><strong>port</strong> – process port to listen (required for PyTorch backend), default is <cite>“12345”</cite>.</p></li>
-<li><p><strong>backend</strong> – multiprocessing backend to use, default is <cite>“nccl”</cite>.</p></li>
+<li><p><strong>address</strong> – process address to use
+(required for PyTorch backend), default is <cite>“localhost”</cite>.</p></li>
+<li><p><strong>port</strong> – process port to listen
+(required for PyTorch backend), default is <cite>“12345”</cite>.</p></li>
+<li><p><strong>backend</strong> – multiprocessing backend to use,
+default is <cite>“nccl”</cite>.</p></li>
 <li><p><strong>world_size</strong> – number of processes.</p></li>
 </ul>
 </dd>
 </dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelAMPEngine</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DistributedDataParallelAMPEngine</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -401,27 +478,55 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>device</strong> – use device, default is <cite>“cuda”</cite>.</p></li>
-<li><p><strong>opt_level</strong> – <p>optimization level, should be one of “O0”, “O1”, “O2”, “O3” or “O4”.</p>
+<li><p><strong>opt_level</strong> – <p>optimization level, should be one of <code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code>.</p>
 <ul>
-<li><p>”O0” - no-op training</p></li>
-<li><p>”O1” - mixed precision (FP16) training (default)</p></li>
-<li><p>”O2” - “almost” mixed precision training</p></li>
-<li><p>”O3” - another implementation of mixed precision training</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code> - no-op training</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code> - mixed precision (FP16) training (default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> - “almost” mixed precision training</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code> - another implementation of mixed precision training</p></li>
 </ul>
 <p>Details about levels can be found here:
 <a class="reference external" href="https://nvidia.github.io/apex/amp.html#opt-levels">https://nvidia.github.io/apex/amp.html#opt-levels</a></p>
 </p></li>
-<li><p><strong>keep_batchnorm_fp32</strong> – To enhance precision and enable cudnn batchnorm
+<li><p><strong>keep_batchnorm_fp32</strong> – To enhance precision and enable CUDNN batchnorm
 (which improves performance),
 it’s often beneficial to keep batchnorm weights in FP32 even
 if the rest of the model is FP16.</p></li>
 <li><p><strong>loss_scale</strong> – If loss_scale is a float value,
-use this value as the static (fixed) loss scale. If loss_scale is the string “dynamic”,
+use this value as the static (fixed) loss scale
+If loss_scale is the string “dynamic”,
 adaptively adjust the loss scale over time.
 Dynamic loss scale adjustments are performed by Amp automatically.</p></li>
 </ul>
 </dd>
 </dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">APEXEngine</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span><span class="p">,</span> <span class="n">keep_batchnorm_fp32</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">APEXEngine</span>
+    <span class="nt">opt_level</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">O1</span>
+    <span class="nt">keep_batchnorm_fp32</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -432,6 +537,46 @@ Dynamic loss scale adjustments are performed by Amp automatically.</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">DataParallelApexEngine</code><span class="sig-paren">(</span><em class="sig-param">opt_level: str = 'O1'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/apex.html#DataParallelApexEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.apex.DataParallelApexEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.apex.APEXEngine" title="catalyst.engines.apex.APEXEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.apex.APEXEngine</span></code></a></p>
 <p>Apex multi-gpu training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>opt_level</strong> – <p>optimization level, should be one of <code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code> - no-op training</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code> - mixed precision (FP16) training (default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> - “almost” mixed precision training</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code> - another implementation of mixed precision training</p></li>
+</ul>
+<p>Details about levels can be found here:
+<a class="reference external" href="https://nvidia.github.io/apex/amp.html#opt-levels">https://nvidia.github.io/apex/amp.html#opt-levels</a></p>
+</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DataParallelApexEngine</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span><span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DataParallelApexEngine</span>
+    <span class="nt">opt_level</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">O1</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -445,32 +590,67 @@ Dynamic loss scale adjustments are performed by Amp automatically.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>address</strong> – process address to use (required for PyTorch backend), default is <cite>“localhost”</cite>.</p></li>
-<li><p><strong>port</strong> – process port to listen (required for PyTorch backend), default is <cite>“12345”</cite>.</p></li>
-<li><p><strong>backend</strong> – multiprocessing backend to use, default is <cite>“nccl”</cite>.</p></li>
+<li><p><strong>address</strong> – process address to use
+(required for PyTorch backend), default is <cite>“localhost”</cite>.</p></li>
+<li><p><strong>port</strong> – process port to listen
+(required for PyTorch backend), default is <cite>“12345”</cite>.</p></li>
+<li><p><strong>backend</strong> – multiprocessing backend to use,
+default is <cite>“nccl”</cite>.</p></li>
 <li><p><strong>world_size</strong> – number of processes.</p></li>
-<li><p><strong>opt_level</strong> – <p>optimization level, should be one of “O0”, “O1”, “O2”, “O3” or “O4”.</p>
+<li><p><strong>opt_level</strong> – <p>optimization level, should be one of <code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code>.</p>
 <ul>
-<li><p>”O0” - no-op training</p></li>
-<li><p>”O1” - mixed precision (FP16) training (default)</p></li>
-<li><p>”O2” - “almost” mixed precision training</p></li>
-<li><p>”O3” - another implementation of mixed precision training</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code> - no-op training</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code> - mixed precision (FP16) training (default)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> - “almost” mixed precision training</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code> - another implementation of mixed precision training</p></li>
 </ul>
 <p>Details about levels can be found here:
 <a class="reference external" href="https://nvidia.github.io/apex/amp.html#opt-levels">https://nvidia.github.io/apex/amp.html#opt-levels</a></p>
 </p></li>
-<li><p><strong>keep_batchnorm_fp32</strong> – To enhance precision and enable cudnn batchnorm
-(which improves performance),
+<li><p><strong>keep_batchnorm_fp32</strong> – To enhance precision and
+enable CUDNN batchnorm (which improves performance),
 it’s often beneficial to keep batchnorm weights in FP32 even
 if the rest of the model is FP16.</p></li>
 <li><p><strong>loss_scale</strong> – If loss_scale is a float value,
-use this value as the static (fixed) loss scale. If loss_scale is the string “dynamic”,
+use this value as the static (fixed) loss scale.
+If loss_scale is the string “dynamic”,
 adaptively adjust the loss scale over time.
 Dynamic loss scale adjustments are performed by Amp automatically.</p></li>
-<li><p><strong>delay_all_reduce</strong> – boolean flag for delayed all reduce</p></li>
+<li><p><strong>delay_all_reduce</strong> (<em>bool</em>) – boolean flag for delayed all reduce,
+default is <cite>True</cite>.</p></li>
 </ul>
 </dd>
 </dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelApexEngine</span><span class="p">(</span>
+            <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>
+            <span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span>
+        <span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DistributedDataParallelApexEngine</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
+    <span class="nt">opt_level</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">O1</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -486,9 +666,34 @@ Dynamic loss scale adjustments are performed by Amp automatically.</p></li>
 <p>Single training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>device</strong> (<em>str</em><em>, </em><em>optional</em>) – use device, default is <cite>“cpu”</cite>.</p>
+<dd class="field-odd"><p><strong>device</strong> – use device, default is <cite>“cpu”</cite>.</p>
 </dd>
 </dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DeviceEngine</span><span class="p">(</span><span class="s2">&quot;cuda:1&quot;</span><span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DeviceEngine</span>
+    <span class="nt">device</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cuda:1</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -499,6 +704,30 @@ Dynamic loss scale adjustments are performed by Amp automatically.</p></li>
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DataParallelEngine</code><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DataParallelEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
 <p>MultiGPU training device engine.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DataParallelEngine</span><span class="p">()</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DataParallelEngine</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -512,13 +741,41 @@ Dynamic loss scale adjustments are performed by Amp automatically.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>address</strong> – process address to use (required for PyTorch backend), default is <cite>“localhost”</cite>.</p></li>
-<li><p><strong>port</strong> – process port to listen (required for PyTorch backend), default is <cite>“12345”</cite>.</p></li>
-<li><p><strong>backend</strong> – multiprocessing backend to use, default is <cite>“nccl”</cite>.</p></li>
+<li><p><strong>address</strong> – process address to use
+(required for PyTorch backend), default is <cite>“localhost”</cite>.</p></li>
+<li><p><strong>port</strong> – process port to listen
+(required for PyTorch backend), default is <cite>“12345”</cite>.</p></li>
+<li><p><strong>backend</strong> – multiprocessing backend to use,
+default is <cite>“nccl”</cite>.</p></li>
 <li><p><strong>world_size</strong> – number of processes.</p></li>
 </ul>
 </dd>
 </dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelEngine</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DistributedDataParallelEngine</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
