@@ -336,7 +336,7 @@ class DistributedDataParallelEngine(DeviceEngine):
     def optimizer_step(self, loss, model, optimizer) -> None:
         """Abstraction over ``optimizer.step()`` step."""
         optimizer.step()
-        dist.barrier()
+        # dist.barrier()
 
 
 __all__ = ["DeviceEngine", "DataParallelEngine", "DistributedDataParallelEngine"]
