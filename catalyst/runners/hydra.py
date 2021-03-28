@@ -228,7 +228,7 @@ class HydraRunner(IRunner):
         return criterion
 
     def get_criterion(self, stage: str) -> RunnerCriterion:
-        """Returns the criterions for a given stage."""
+        """Returns the criterion for a given stage."""
         if "criterion" not in self._config.stages[stage]:
             return None
         criterion_params: DictConfig = self._config.stages[stage].criterion
@@ -284,16 +284,12 @@ class HydraRunner(IRunner):
             return None
 
         optimizer_params: DictConfig = self._config.stages[stage].optimizer
+        optimizer_params = deepcopy(optimizer_params)
         is_key_value = optimizer_params._key_value or False
 
         if is_key_value:
             optimizer = {}
             for key, params in optimizer_params.items():
-                # load specified optimizer from checkpoint
-                optimizer_key = "_optimizer"
-                assert optimizer_key not in params, "keyword reserved"
-                params[optimizer_key] = key
-
                 optimizer[key] = self._get_optimizer_from_params(
                     model=model, stage=stage, params=params
                 )
@@ -310,16 +306,18 @@ class HydraRunner(IRunner):
     ) -> RunnerScheduler:
         params = deepcopy(params)
         is_key_value = params._key_value or False
-        optimizer_key = params._optimizer or None
-        optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
-
         if is_key_value:
             scheduler: Dict[str, Scheduler] = {}
             for key, scheduler_params in params.items():
+                scheduler_params = deepcopy(scheduler_params)
+                optimizer_key = scheduler_params._optimizer or None
+                optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
                 scheduler[key] = HydraRunner._get_scheduler_from_params(  # noqa: WPS437
                     optimizer=optimizer, params=scheduler_params
                 )
         else:
+            optimizer_key = params._optimizer or None
+            optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
             scheduler = hydra.utils.instantiate(params, optimizer=optimizer)
 
         return scheduler
