@@ -3,157 +3,114 @@ shared:  # Пример
   key: &key value
   key2: &key2 value2
 
-
-model_params:  # REQUIRED KEYWORD, параметры модели (моделей)
-  _key_value: False  # KEYWORD, если True, то моделей может быть несколько и тогда их нужно обернуть еще в key-value
-
-  model: ModelName  # REQUIRED KEYWORD Имя класса. Сам класс будет сконструирован в registry по этому имени
-  # на этом уровне могут лежать параметры для __init__ данной модели, например
-  arch: resnet18  # благодаря этому ключу модель будет создана так `ModelName(arch=resnet18)`
-
-
 args:  # REQUIRED KEYWORD, различные аргументы для Catalyst
+  expdir: "src"  # REQUIRED KEYWORD, путь до вашего эксперимента, с файлом `__init__`, в котором импортируется Experiment, Runner, и, опционально, регистрируются все дополнительные сущности: model, callback, criterion, etc
   logdir: /path/to/logdir  # KEYWORD путь в который будут сохранятся логи (может быть пустым, если передан baselogdir)
   baselogdir: /path/to/baselogdir  # KEYWORD необязательный аргумент -- путь для корня с логами (если указан он, но не указан logdir, тогда логдир будет получен, как `{baselogdir}/{ConfigExperiment._get_logdir(config)}`)
-  expdir: "src"  # REQUIRED KEYWORD, путь до вашего эксперимента, с файлом `__init__`, в котором импортируется Experiment, Runner, и, опционально, регистрируются все дополнительные сущности: model, callback, criterion, etc
   seed: 42  # KEYWORD сид обучения для PyTorch, Numpy, Python и Tensorflow. По умолчанию равен 42
   deterministic: True  # KEYWORD нужно ли использовать deterministic CuDNN (по умолчанию True)
   benchmark: True  # KEYWORD нужно ли использовать CuDNN benchmark
   verbose: False  # KEYWORD нужно ли выводить на консоль информацию об обучении (по умолчанию False)
   check: False  # KEYWORD, если True, то Catalyst делает только 3 эпохи (чтобы проверить работоспособность пайплайна, по умолчанию False)
 
-
-runner_params:  # OPTIONAL KEYWORD, параметры для инициализации Runner
+runner:  # REQUIRED KEYWORD, параметры для инициализации Runner
   # Например для SupervisedRunner
+  _target_: SupervisedRunner  # REQUIRED KEYWORD Имя класса. Сам класс будет сконструирован в registry по этому имени
+  # на этом уровне могут лежать параметры для __init__ данного runner, например
   input_key: "features"  # Пример
   output_key: null  # Пример
 
+engine:  # REQUIRED KEYWORD, параметры для инициализации Engine
+  _target_: DeviceEngine  # REQUIRED KEYWORD Имя класса. Сам класс будет сконструирован в registry по этому имени
+  # на этом уровне могут лежать параметры для __init__ данного engine, например
+  device: "cpu"
 
-distributed_params:  # OPTIONAL KEYWORD, параметры для distributed training и NVIDIA Apex
-  rank: -1  # Rank для distributed training
-  opt_level: O1  # Пример для NVIDIA Apex
-  syncbn: False  # KEYWORD нужно ли преобразовывать BatchNorm в SyncBatchNorm (по умолчанию False)
-  # на этом уровне могут лежать другие параметры для инициализации NVIDIA Apex
+model:  # REQUIRED KEYWORD, параметры модели (моделей)
+  _key_value: False  # KEYWORD, если True, то моделей может быть несколько и тогда их нужно обернуть еще в key-value
 
+  _target_: ModelName  # REQUIRED KEYWORD Имя класса. Сам класс будет сконструирован в registry по этому имени
+  # на этом уровне могут лежать параметры для __init__ данной модели, например
+  arch: resnet18  # благодаря этому ключу модель будет создана так `ModelName(arch=resnet18)`
 
 stages:  # REQUIRED KEYWORD, словарь всех стадий Catalyst, для обучения и/или инфера. Содержат ключевые слова с параметрами, которые применятся ко всем стейджам, так и сами имена стейджей
-  data_params:  # KEYWORD, параметры передаваемые в `ConfigExperiment.get_datasets(...)` (для всех стейджей)
-    batch_size: 1  # KEYWORD, размер батча для всех стейджей
-    num_workers: 1  # KEYWORD, количество параллельных процессов для DataLoader
-    drop_last: False  # KEYWORD, параметр для DataLoader (по умолчанию False)
-    per_gpu_scaling: False  # KEYWORD, если True и режим работы не distributed, то увеличивает батчсайз и количество воркеров пропорционально количиству видеокарт
-    loaders_params:  # KEYWORD, параметры для лоадеров, опционально
-      # Например
-      train:
-        num_workers: 10  # Переопределит значение для этого конкретного лоадера (train)
-        drop_last: True
-      valid:  # Переопределит значение для valid лоадера
-        batch_size: 32
-    samplers_params:  # KEYWORD, параметры sampler для каждого лоадера, такое же API, как в loaders_params
-      # Пример
-      train:  # только для train лоадера
-        sampler: MiniEpochSampler  # KEYWORD, имя для sampler
-        # на этом уровне могут лежать параметры для __init__ данного sampler, например
-        data_len: 50000  # Пример
-        mini_epoch_len: 40000  # Пример
-        drop_last: True  # Пример
-        shuffle: per_epoch  # Пример
-    # на этом уровне могут лежать kwargs параметры для `get_datasets`
-    key_for_data: value  # Пример
-
-
-  transform_params:
-    _key_value: True  # KEYWORD, если True, то для каждого датасета (e.g. train/valid/infer) можно определить свои трансформации и тогда их нужно обернуть еще в key-value
-
-    train:  # трансформация только для train датасета
-      _key_value: False  # KEYWORD, если False, то трансформация будет применяться сразу ко всему data-sample
-
-      transform: A.Compose  # KEYWORD, имя трансформации
-      # на этом уровне могут лежать параметры для __init__ данного transform, например
-      transforms:  # KEYWORD, список трансформаций (нужно обернуть еще в key-value) который будет передан как параметр
-        - transform: SomeTransform  # Пример
-          param1: value1  # Пример
-          param2: value2  # Пример
-
-    valid: &transform  # трансформация только для valid датасета
-      _key_value: True  # KEYWORD, если True, то для каждого key-value в data-sample можно определить свои трансформации и тогда их нужно обернуть еще в key-value, note: трансформации будут применяться отдельно для каждого key-value в data-sample
-
-      image:
-        transform: A.Compose
-        transforms:
-          - transform: SomeTransform
-            param: value
-
-    infer: *transform  # трансформация только для infer датасета
-
-
-  stage_params:  # REQUIRED KEYWORD, параметры для всех стейджей
-    main_metric: &main_metric accuracy01  # REQUIRED KEYWORD, имя метрики, по которой будут отбираться чекпоинты
-    minimize_metric: False  # REQUIRED KEYWORD, флаг, нужно ли минимизировать `main_metric`
-    num_epochs: 2  # KEYWORD, Количество эпох во всех стейджах
-    valid_loader: valid  # KEYWORD, по какому лоадеру будут выбираться чекпоинты
-    checkpoint_data:  # KEYWORD, любые дополнительные параметры, которые будут записаны в чекпоинт
-      classes: ["one", "two", "three"]  # Пример
-      key: value  # Пример
-
-  criterion_params:  # REQUIRED KEYWORD, параметры для лосс-функции
-    _key_value: False  # KEYWORD, если True, то лосс-функций может быть несколько и тогда их нужно обернуть еще в key-value
-
-    criterion: BCEWithLogitsLoss  # REQUIRED KEYWORD, имя лосс функции
-    # на этом уровне могут лежать параметры для __init__ данной лосс-функции, например
-    reduction: sum
-
-  optimizer_params:  # REQUIRED KEYWORD, параметры для оптимизатора
-    _key_value: False  # KEYWORD, если True, то оптимизаторов может быть несколько и тогда их нужно обернуть еще в key-value
-    layerwise_params:  # KEYWORD, параметры оптимайзера для разных слоев сети, опционально
-      conv1.*:  # регулярное выражение с именем слоя
-        lr: 0.001
-        weight_decay: 0.0003
-      encoder.conv.*:
-        lr: 0.002
-    no_bias_weight_decay: True  # KEYWORD нужно ли убрать weight decay из bias параметров сети (по умолчанию True)
-    lr_linear_scaling:  # KEYWORD, параметры для линейного скейлинга lr
-      lr: 0.001
-      base_batch_size: 64  # KEYWORD, размер базового батча
-
-    optimizer: Adam  # REQUIRED KEYWORD, имя оптимизатора
-    # на этом уровне могут лежать параметры для __init__ данного оптимизатора, например
-    lr: 0.003
-    weight_decay: 0.0001
-
-  scheduler_params:  # REQUIRED KEYWORD, параметры для lr-scheduler
-    _key_value: False  # KEYWORD, если True, то lr-scheduler может быть несколько и тогда их нужно обернуть еще в key-value
-
-    scheduler: StepLR  # REQUIRED KEYWORD, имя lr-scheduler
-    # на этом уровне могут лежать параметры для __init__ данного lr-scheduler, например
-    step_size: 10
-    gamma: 0.3
 
   stage1:  # Все, что не ключевое слово, расценивается, как имя стейджа. Для тренировки в Catalyst требуется хотябы один стейдж. Имя может быть произвольным
-    stage_params:  # Вы можете переопределить любые параметры, для конкретного стейджа, например
-      num_epochs: 3
+    num_epochs: 10  # KEYWORD, Количество эпох в этом стейдже
 
-    callbacks_params:  # REQUIRED KEYWORD, самая важная часть, тут записываются все коллбеки для данного стейджа
+    laoders: &loaders  # REQUIRED KEYWORD
+      # kwargs для `runner.get_loaders(...)` в этом стейдже
+      batch_size: 1  # KEYWORD, размер батча для всех стейджей
+      num_workers: 1  # KEYWORD, количество параллельных процессов для DataLoader
+      drop_last: False  # KEYWORD, параметр для DataLoader (по умолчанию False)
+      per_gpu_scaling: False  # KEYWORD, если True, то увеличивает батчсайз и количество воркеров пропорционально количиству видеокарт (для distributed увеличивает только батчсайз)
+
+      # kwargs для `runner.get_datasets(...)` в этом стейдже
+      some_extra_key: "some_extra_value"
+
+    criterion: # REQUIRED KEYWORD, параметры для лосс-функции
+      _key_value: False  # KEYWORD, если True, то лосс-функций может быть несколько и тогда их нужно обернуть еще в key-value
+
+      _target_: BCEWithLogitsLoss  # REQUIRED KEYWORD, имя лосс функции
+      # на этом уровне могут лежать параметры для __init__ данной лосс-функции, например
+      reduction: sum
+
+    optimizer: # REQUIRED KEYWORD, параметры для оптимизатора
+      _key_value: False  # KEYWORD, если True, то оптимизаторов может быть несколько и тогда их нужно обернуть еще в key-value
+      layerwise: # KEYWORD, параметры оптимайзера для разных слоев сети, опционально
+        conv1.*: # регулярное выражение с именем слоя
+          lr: 0.001
+          weight_decay: 0.0003
+        encoder.conv.*:
+          lr: 0.002
+      no_bias_weight_decay: True  # KEYWORD нужно ли убрать weight decay из bias параметров сети (по умолчанию True)
+      lr_linear_scaling: # KEYWORD, параметры для линейного скейлинга lr
+        lr: 0.001
+        base_batch_size: 64  # KEYWORD, размер базового батча
+
+      _target_: Adam  # REQUIRED KEYWORD, имя оптимизатора
+      # на этом уровне могут лежать параметры для __init__ данного оптимизатора, например
+      lr: 0.003
+      weight_decay: 0.0001
+
+    scheduler: # REQUIRED KEYWORD, параметры для lr-scheduler
+      _key_value: False  # KEYWORD, если True, то lr-scheduler может быть несколько и тогда их нужно обернуть еще в key-value
+
+      _target_: StepLR  # REQUIRED KEYWORD, имя lr-scheduler
+      # на этом уровне могут лежать параметры для __init__ данного lr-scheduler, например
+      step_size: 10
+      gamma: 0.3
+
+    callbacks:  &callbacks  # REQUIRED KEYWORD, самая важная часть, тут записываются все коллбеки для данного стейджа
     # коллбеки записываются через key-value
       loss:
-        callback: CriterionCallback  # KEYWORD имя коллбека
+        _target_: CriterionCallback  # KEYWORD имя коллбека
       optimizer:
-        callback: OptimizerCallback
+        _target_: OptimizerCallback
       scheduler:
-        callback: SchedulerCallback
+        _target_: SchedulerCallback
         # для любого коллбека на этом уровне лежат его параметры
-        reduced_metric: *main_metric
+        loader_key: "valid"
+        metric_key: "loss"
       saver:
-        callback: CheckpointCallback
+        _target_: CheckpointCallback
         save_n_best: 3
 
   finetune:  # Пример второго стейджа обучения, тут мы можем изменить наши параметры
-    stage_params:  # Вы можете переопределить любые параметры, для конкретного стейджа, например
-      num_epochs: 1
+    num_epochs: 3
 
-    optimizer_params:  # Пример, переопределенного оптимизатора
-      load_from_previous_stage: True  # KEYWORD, флаг, который говорит, что нужно загрузить статистики с прошлой стадии
-      optimizer: Adam
-      lr: 0.001
+    loaders: *loaders
+
+    criterion: # Пример, переопределенного критерия
+      _target_: CrossEntropyLoss
+
+    optimizer:  # Пример, переопределенного оптимизатора
+      _target_: Ralamb
+
+    scheduler:
+      _target_: MultiStepLR
+      milestones: [ 2 ]
+      gamma: 0.3
+
+    callbacks: *callbacks
 
   # стейджей может быть любое количество

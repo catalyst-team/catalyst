@@ -1,25 +1,31 @@
 # flake8: noqa
 
-from catalyst.callbacks.metrics.accuracy import (
-    AccuracyCallback,
-    MultiLabelAccuracyCallback,
-)
+from catalyst.settings import SETTINGS
+
+from catalyst.callbacks.metrics.accuracy import AccuracyCallback, MultilabelAccuracyCallback
 from catalyst.callbacks.metrics.auc import AUCCallback
+
+from catalyst.callbacks.metrics.classification import (
+    PrecisionRecallF1SupportCallback,
+    MultilabelPrecisionRecallF1SupportCallback,
+)
+
 from catalyst.callbacks.metrics.cmc_score import CMCScoreCallback
-from catalyst.callbacks.metrics.dice import (
+
+if SETTINGS.ml_required:
+    from catalyst.callbacks.metrics.confusion_matrix import ConfusionMatrixCallback
+
+from catalyst.callbacks.metrics.functional_metric import FunctionalMetricCallback
+
+from catalyst.callbacks.metrics.recsys import (
+    HitrateCallback,
+    MAPCallback,
+    MRRCallback,
+    NDCGCallback,
+)
+
+from catalyst.callbacks.metrics.segmentation import (
     DiceCallback,
-    MultiClassDiceMetricCallback,
-    MulticlassDiceMetricCallback,
+    IOUCallback,
+    TrevskyCallback,
 )
-from catalyst.callbacks.metrics.f1_score import F1ScoreCallback
-from catalyst.callbacks.metrics.iou import (
-    IouCallback,
-    JaccardCallback,
-    ClasswiseIouCallback,
-    ClasswiseJaccardCallback,
-)
-from catalyst.callbacks.metrics.mrr import MRRCallback
-from catalyst.callbacks.metrics.ppv_tpr_f1 import (
-    PrecisionRecallF1ScoreCallback,
-)
-from catalyst.callbacks.metrics.precision import AveragePrecisionCallback

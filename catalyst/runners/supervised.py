@@ -1,71 +1,42 @@
-from typing import Any, Callable, List, Mapping, Tuple, Union
-import logging
+from typing import Any, List, Mapping, Tuple, Union
 
 import torch
 
-from catalyst.experiments.supervised import SupervisedExperiment
-from catalyst.runners.runner import Runner
-from catalyst.typing import Device, RunnerModel
-
-logger = logging.getLogger(__name__)
+from catalyst.core.runner import IRunner
 
 
-class SupervisedRunner(Runner):
-    """Runner for experiments with supervised model."""
+class ISupervisedRunner(IRunner):
+    """IRunner for experiments with supervised model.
 
-    _experiment_fn: Callable = SupervisedExperiment
+    Args:
+        input_key: key in ``runner.batch`` dict mapping for model input
+        output_key: key for ``runner.batch`` to store model output
+        target_key: key in ``runner.batch`` dict mapping for target
+        loss_key: key for ``runner.batch_metrics`` to store criterion loss output
+    """
 
     def __init__(
         self,
-        model: RunnerModel = None,
-        device: Device = None,
         input_key: Any = "features",
         output_key: Any = "logits",
-        input_target_key: str = "targets",
+        target_key: str = "targets",
+        loss_key: str = "loss",
     ):
-        """
-        Args:
-            model: Torch model object
-            device: Torch device
-            input_key: Key in batch dict mapping for model input
-            output_key: Key in output dict model output
-                will be stored under
-            input_target_key: Key in batch dict mapping for target
-        """
-        super().__init__(
-            model=model,
-            device=device,
-            input_key=input_key,
-            output_key=output_key,
-            input_target_key=input_target_key,
-        )
+        """Init."""
+        IRunner.__init__(self)
 
-    def _init(
-        self,
-        input_key: Any = "features",
-        output_key: Any = "logits",
-        input_target_key: str = "targets",
-    ):
-        """
-        Args:
-            input_key: Key in batch dict mapping for model input
-            output_key: Key in output dict model output
-                will be stored under
-            input_target_key: Key in batch dict mapping for target
-        """
-        self.experiment: SupervisedExperiment = None
+        self._input_key = input_key
+        self._output_key = output_key
+        self._target_key = target_key
+        self._loss_key = loss_key
 
-        self.input_key = input_key
-        self.output_key = output_key
-        self.target_key = input_target_key
-
-        if isinstance(self.input_key, str):
+        if isinstance(self._input_key, str):
             # when model expects value
             self._process_input = self._process_input_str
-        elif isinstance(self.input_key, (list, tuple)):
+        elif isinstance(self._input_key, (list, tuple)):
             # when model expects tuple
             self._process_input = self._process_input_list
-        elif self.input_key is None:
+        elif self._input_key is None:
             # when model expects dict
             self._process_input = self._process_input_none
         else:
@@ -77,25 +48,24 @@ class SupervisedRunner(Runner):
         elif isinstance(output_key, (list, tuple)):
             # when model returns tuple
             self._process_output = self._process_output_list
-        elif self.output_key is None:
+        elif self._output_key is None:
             # when model returns dict
             self._process_output = self._process_output_none
         else:
             raise NotImplementedError()
 
-    def _batch2device(self, batch: Mapping[str, Any], device: Device):
+    def _process_batch(self, batch):
         if isinstance(batch, (tuple, list)):
             assert len(batch) == 2
-            batch = {self.input_key: batch[0], self.target_key: batch[1]}
-        batch = super()._batch2device(batch, device)
+            batch = {self._input_key: batch[0], self._target_key: batch[1]}
         return batch
 
     def _process_input_str(self, batch: Mapping[str, Any], **kwargs):
-        output = self.model(batch[self.input_key], **kwargs)
+        output = self.model(batch[self._input_key], **kwargs)
         return output
 
     def _process_input_list(self, batch: Mapping[str, Any], **kwargs):
-        input = {key: batch[key] for key in self.input_key}  # noqa: WPS125
+        input = {key: batch[key] for key in self._input_key}  # noqa: WPS125
         output = self.model(**input, **kwargs)
         return output
 
@@ -104,11 +74,11 @@ class SupervisedRunner(Runner):
         return output
 
     def _process_output_str(self, output: torch.Tensor):
-        output = {self.output_key: output}
+        output = {self._output_key: output}
         return output
 
     def _process_output_list(self, output: Union[Tuple, List]):
-        output = {key: value for key, value in zip(self.output_key, output)}
+        output = {key: value for key, value in zip(self._output_key, output)}
         return output
 
     def _process_output_none(self, output: Mapping[str, Any]):
@@ -132,39 +102,20 @@ class SupervisedRunner(Runner):
         output = self._process_output(output)
         return output
 
-    def _handle_batch(self, batch: Mapping[str, Any]) -> None:
+    def on_batch_start(self, runner: "IRunner"):
+        """Event handler."""
+        self.batch = self._process_batch(self.batch)
+        super().on_batch_start(runner)
+
+    def handle_batch(self, batch: Mapping[str, Any]) -> None:
         """
         Inner method to handle specified data batch.
         Used to make a train/valid/infer stage during Experiment run.
 
         Args:
-            batch (Mapping[str, Any]): dictionary with data batches
-                from DataLoader.
+            batch: dictionary with data batches from DataLoader.
         """
-        self.output = self.forward(batch)
-
-    @torch.no_grad()
-    def predict_batch(
-        self, batch: Mapping[str, Any], **kwargs
-    ) -> Mapping[str, Any]:
-        """
-        Run model inference on specified data batch.
-
-        .. warning::
-            You should not override this method. If you need specific model
-            call, override forward() method
-
-        Args:
-            batch (Mapping[str, Any]): dictionary with data batches
-                from DataLoader.
-            **kwargs: additional kwargs to pass to the model
-
-        Returns:
-            Mapping[str, Any]: model output dictionary
-        """
-        batch = self._batch2device(batch, self.device)
-        output = self.forward(batch, **kwargs)
-        return output
+        self.batch = {**batch, **self.forward(batch)}
 
 
-__all__ = ["SupervisedRunner"]
+__all__ = ["ISupervisedRunner"]

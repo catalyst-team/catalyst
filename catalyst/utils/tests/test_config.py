@@ -5,8 +5,8 @@ import json
 
 import numpy as np
 
-from catalyst import utils
-from catalyst.utils import config
+from catalyst.dl.scripts.misc import parse_config_args
+from catalyst.utils.config import _load_ordered_yaml
 
 
 def test_parse_config_args():
@@ -19,18 +19,10 @@ def test_parse_config_args():
     parser.add_argument("--command")
 
     args, uargs = parser.parse_known_args(
-        [
-            "--command",
-            "run",
-            "--path=test.yml:str",
-            "--stages/zero=cero:str",
-            "-C=like:str",
-        ]
+        ["--command", "run", "--path=test.yml:str", "--stages/zero=cero:str", "-C=like:str"]
     )
 
-    configuration, args = utils.parse_config_args(
-        config=configuration, args=args, unknown_args=uargs
-    )
+    configuration, args = parse_config_args(config=configuration, args=args, unknown_args=uargs)
 
     assert args.command == "run"
     assert args.path == "test.yml"
@@ -64,7 +56,7 @@ def test_parse_numbers():
     buffer = io.StringIO()
     json.dump(configuration, buffer)
     buffer.seek(0)
-    yaml_config = config._load_ordered_yaml(buffer)
+    yaml_config = _load_ordered_yaml(buffer)
 
     for key, item in configuration.items():
         assert np.isclose(yaml_config[key], item)

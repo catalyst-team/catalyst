@@ -22,16 +22,14 @@ class RaiserCallback(Callback):
 
 class TestWrapperCallback(unittest.TestCase):
     def test_enabled(self):
-        runner = Mock(stage_name="stage1", loader_name="train", epoch=1)
+        runner = Mock(stage="stage1", loader_key="train", epoch=1)
 
         orders = (
             CallbackOrder.Internal,
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
 
@@ -56,16 +54,14 @@ class TestWrapperCallback(unittest.TestCase):
                     wrapper.__getattribute__(event)(runner)
 
     def test_disabled(self):
-        runner = Mock(stage_name="stage1", loader_name="train", epoch=1)
+        runner = Mock(stage="stage1", loader_key="train", epoch=1)
 
         orders = (
             CallbackOrder.Internal,
             CallbackOrder.Metric,
             CallbackOrder.MetricAggregation,
             CallbackOrder.Optimizer,
-            CallbackOrder.Validation,
             CallbackOrder.Scheduler,
-            CallbackOrder.Logging,
             CallbackOrder.External,
         )
 

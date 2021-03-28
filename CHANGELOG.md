@@ -5,25 +5,197 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 
-## [YY.MM.R] - YYYY-MM-DD
+## [21.03.1] - XXXX-XX-XX
 
 ### Added
-- MAP calculations [#968](https://github.com/catalyst-team/catalyst/pull/968) 
+
+
+- Additive Margin SoftMax(AMSoftmax)([#1125](https://github.com/catalyst-team/catalyst/issues/1125))
+
+### Added
+
+- Generalized Mean Pooling(GeM)([#1084](https://github.com/catalyst-team/catalyst/issues/1084))
+
+- Generalized Mean Pooling(GeM) ([#1084](https://github.com/catalyst-team/catalyst/issues/1084))
+- Key-value support for CriterionCallback ([#1130](https://github.com/catalyst-team/catalyst/issues/1130))
+- Engine configuration through cmd ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
+- Extra utils for thresholds ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
+- Added gradient clipping function to optimizer callback ([1124](https://github.com/catalyst-team/catalyst/pull/1124))
+- FactorizedLinear to contrib ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
+- Extra init params for ``ConsoleLogger`` ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
+
+### Changed
+
+- CriterionCallback now inherits from BatchMetricCallback [#1130](https://github.com/catalyst-team/catalyst/issues/1130))
+    - united metrics computation logic
+
+### Removed
+
+- Config API deprecated parsings logic ([1142](https://github.com/catalyst-team/catalyst/pull/1142)) ([1138](https://github.com/catalyst-team/catalyst/pull/1138))
+
+### Fixed
+
+- Data-Model device sync and ``Engine`` logic during `runner.predict_loader` ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
+- BatchLimitLoaderWrapper logic for loaders with shuffle flag ([#1136](https://github.com/catalyst-team/catalyst/issues/1136))
+- config description in the examples ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
+- Config API deprecated parsings logic ([1142](https://github.com/catalyst-team/catalyst/pull/1142)) ([1138](https://github.com/catalyst-team/catalyst/pull/1138))
+- RecSys metrics Top_k calculations ([#1140] (https://github.com/catalyst-team/catalyst/pull/1140))
+
+## [21.03] - 2021-03-13 ([#1095](https://github.com/catalyst-team/catalyst/issues/1095))
+
+### Added
+
+- [``Engine`` abstraction](https://catalyst-team.github.io/catalyst/api/engines.html) to support various hardware backends and accelerators: CPU, GPU, multi GPU, distributed GPU, TPU, Apex, and AMP half-precision training.
+- [``Logger`` abstraction](https://catalyst-team.github.io/catalyst/api/loggers.html) to support various monitoring tools: console, tensorboard, MLflow, etc.
+- ``Trial`` abstraction to support various hyperoptimization tools: Optuna, Ray, etc.
+- [``Metric`` abstraction](https://catalyst-team.github.io/catalyst/api/metrics.html) to support various of machine learning metrics: classification, segmentation, RecSys and NLP.
+- Full support for Hydra API.
+- Full DDP support for Python API.
+- MLflow support for metrics logging.
+- United API for model post-processing: tracing, quantization, pruning, onnx-exporting.
+- United API for metrics: classification, segmentation, RecSys, and NLP with full DDP and micro/macro/weighted/etc aggregations support.
+
+### Changed
+
+- ``Experiment`` abstraction merged into ``Runner`` one.
+- Runner, SupervisedRunner, ConfigRunner, HydraRunner architectures and dependencies redesigned.
+- Internal [settings](https://github.com/catalyst-team/catalyst/blob/master/catalyst/settings.py) and [registry](https://github.com/catalyst-team/catalyst/blob/master/catalyst/registry.py) mechanisms refactored to be simpler, user-friendly and more extendable.
+- Bunch of Config API test removed with Python API and pytest.
+- Codestyle now supports up to 99 symbols per line :)
+- All callbacks/runners moved for contrib to the library core if was possible.
+- ``Runner`` abstraction simplified to store only current state of the experiment run: all validation logic was moved to the callbacks (by this way, you could easily select best model on various metrics simultaneously).
+- ``Runner.input`` and ``Runner.output`` merged into united ``Runner.batch`` storage for simplicity.
+- All metric moved from ``catalyst.utils.metrics`` to ``catalyst.metrics``.
+- All metrics now works on scores/metric-defined-input rather that logits (!).
+- Logging logic moved from ``Callbacks`` to appropriate ``Loggers``.
+- ``KorniaCallbacks`` refactored to ``BatchTransformCallback``.
+
+### Removed
+
+- Lots of unnecessary contrib extensions.
+- Transforms configuration support through Config API (could be returned in next releases).
+- Integrated Python cmd command for model pruning, swa, etc (should be returned in next releases).
+- ``CallbackOrder.Validation`` and ``CallbackOrder.Logging``
+- All 2020 year backward compatibility fixes and legacy support.
+
+### Fixed
+
+- Docs rendering simplified.
+- LrFinderCallback.
+
+[Release docs](https://catalyst-team.github.io/catalyst/v21.03/index.html),
+[Python API minimal examples](https://github.com/catalyst-team/catalyst#minimal-examples), 
+[Config/Hydra API example](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
+
+## [20.12.1] - XXXX-XX-XX
+
+
+### Added
+
+- Inference mode for face layers ([#1045](https://github.com/catalyst-team/catalyst/pull/1045))
+
+### Fixed
+
+- Fix bug in `OptimizerCallback` when mixed-precision params set both:
+  in callback arguments and in distributed_params  ([#1042](https://github.com/catalyst-team/catalyst/pull/1042))
+
+
+## [20.12] - 2020-12-20
+
+### Added
+
+- CVS Logger ([#1005](https://github.com/catalyst-team/catalyst/pull/1005))
+- DrawMasksCallback ([#999](https://github.com/catalyst-team/catalyst/pull/999))
+- ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
+    - a few docs
+- ([#998](https://github.com/catalyst-team/catalyst/pull/998))
+    - ``reciprocal_rank`` metric
+    - unified recsys metrics preprocessing
+-  ([#1018](https://github.com/catalyst-team/catalyst/pull/1018))
+    - readme examples for all supported metrics under ``catalyst.metrics``
+    - ``wrap_metric_fn_with_activation`` for model outputs wrapping with activation
+    -  extra tests for metrics
+- ([#1039](https://github.com/catalyst-team/catalyst/pull/1039))
+    - ``per_class=False`` option for metrics callbacks
+    - ``PrecisionCallack``, ``RecallCallack`` for multiclass problems
+    - extra docs
+
+### Changed
+
+- docs update ([#1000](https://github.com/catalyst-team/catalyst/pull/1000))
+- ``AMPOptimizerCallback`` and ``OptimizerCallback`` were merged ([#1007](https://github.com/catalyst-team/catalyst/pull/1007))
+- ([#1017](https://github.com/catalyst-team/catalyst/pull/1017))
+    - fixed bug in `SchedulerCallback`
+    - Log LRs and momentums for all param groups, not only for the first one
+- ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
+    - ``tensorboard, ipython, matplotlib, pandas, scikit-learn`` moved to optional requirements
+    - ``PerplexityMetricCallback`` moved to ``catalyst.callbacks`` from ``catalyst.contrib.callbacks``
+    - ``PerplexityMetricCallback`` renamed to ``PerplexityCallback``
+    - ``catalyst.contrib.utils.confusion_matrix`` renamed to ``catalyst.contrib.utils.torch_extra``
+    - many parts of ``catalyst.data`` moved to ``catalyst.contrib.data``
+    - ``catalyst.data.scripts`` moved to ``catalyst.contrib.scripts``
+    - ``catalyst.utils``, ``catalyst.data.utils`` and ``catalyst.contrib.utils`` restructured
+    - ``ReaderSpec`` renamed to ``IReader``
+    - ``SupervisedExperiment`` renamed to ``AutoCallbackExperiment``
+- gain functions renamed for ``dcg``/``ndcg`` metrics ([#998](https://github.com/catalyst-team/catalyst/pull/998))
+- ([#1014](https://github.com/catalyst-team/catalyst/pull/1014))
+    - requirements respecification: ``catalyst[cv]``, ``catalyst[dev]``, ``catalyst[log]``, ``catalyst[ml]``, ``catalyst[nlp]``,``catalyst[tune]``
+    - settings respecification
+    - extra tests for settings
+    - contrib refactoring
+- iou and dice metrics moved to per-class computation ([#1031](https://github.com/catalyst-team/catalyst/pull/1031))
+
+### Removed
+
+- ([#1002](https://github.com/catalyst-team/catalyst/pull/1002))
+    - ``KNNMetricCallback``
+    - ``sklearn`` mode for ``ConfusionMatrixLogger``
+    - ``catalyst.data.utils``
+    - unnecessary ``catalyst.tools.meters``
+    - todos for unnecessary docs
+- ([#1014](https://github.com/catalyst-team/catalyst/pull/1014))
+    - transformers-based contrib (too unstable)
+- ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
+    - ClasswiseIouCallback/ClasswiseJaccardCallback as deprecated on (should be refactored in future releases)
+
+
+
+### Fixed
+
+- prevented modifying config during the experiment and runner initialization ([#1004](https://github.com/catalyst-team/catalyst/pull/1004))
+- a few test for RecSys MAP computation ([#1018](https://github.com/catalyst-team/catalyst/pull/1014))
+- leave batch size the same for default distributed training ([#1023](https://github.com/catalyst-team/catalyst/issues/1023))
+- ([#1032](https://github.com/catalyst-team/catalyst/pull/1032))
+  - Apex: now you can use apex for multiple models training
+  - Apex: DataParallel is allowed for opt_level other than "O1"
+
+
+
+## [20.11] - 2020-11-12
+
+### Added
+- DCG, nDCG metrics ([#881](https://github.com/catalyst-team/catalyst/pull/881))
+- MAP calculations [#968](https://github.com/catalyst-team/catalyst/pull/968)
 - hitrate calculations [#975] (https://github.com/catalyst-team/catalyst/pull/975)
 - extra functions for classification metrics ([#966](https://github.com/catalyst-team/catalyst/pull/966))
 - `OneOf` and `OneOfV2` batch transforms ([#951](https://github.com/catalyst-team/catalyst/pull/951))
 - ``precision_recall_fbeta_support`` metric ([#971](https://github.com/catalyst-team/catalyst/pull/971))
 - Pruning tutorial ([#987](https://github.com/catalyst-team/catalyst/pull/987))
+- BatchPrefetchLoaderWrapper ([#986](https://github.com/catalyst-team/catalyst/pull/986))
+- DynamicBalanceClassSampler ([#954](https://github.com/catalyst-team/catalyst/pull/954))
 
 ### Changed
 
 - update Catalyst version to `20.10.1` for tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
 - added link to dl-course ([#967](https://github.com/catalyst-team/catalyst/pull/967))
+- ``IRunner`` -> simplified ``IRunner`` ([#984](https://github.com/catalyst-team/catalyst/pull/984))
 - docs were restructured ([#985](https://github.com/catalyst-team/catalyst/pull/985))
+- `set_global_seed` moved from `utils.seed` to `utils.misc` ([#986](https://github.com/catalyst-team/catalyst/pull/986))
 
 ### Removed
 
 - several deprecated tutorials ([#967](https://github.com/catalyst-team/catalyst/pull/967))
+- several deprecated func from utils.misc ([#986](https://github.com/catalyst-team/catalyst/pull/986))
 
 ### Fixed
 
@@ -37,7 +209,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - MRR metrics calculation ([#886](https://github.com/catalyst-team/catalyst/pull/886))
-- docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947)) 
+- docs for MetricCallbacks ([#947](https://github.com/catalyst-team/catalyst/pull/947))
 - SoftMax, CosFace, ArcFace layers to contrib ([#939](https://github.com/catalyst-team/catalyst/pull/939))
 - ArcMargin layer to contrib ([#957](https://github.com/catalyst-team/catalyst/pull/957))
 - AdaCos to contrib ([#958](https://github.com/catalyst-team/catalyst/pull/958))
@@ -58,7 +230,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
@@ -73,7 +245,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - Runner registry support for Config API ([#936](https://github.com/catalyst-team/catalyst/pull/936))
-
 - `catalyst-dl tune` command - Optuna with Config API integration for AutoML hyperparameters optimization ([#937](https://github.com/catalyst-team/catalyst/pull/937))
 - `OptunaPruningCallback` alias for `OptunaCallback` ([#937](https://github.com/catalyst-team/catalyst/pull/937))
 - AdamP and SGDP to `catalyst.contrib.nn.criterion` ([#942](https://github.com/catalyst-team/catalyst/pull/942))
@@ -84,12 +255,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
 - Logging double logging :) ([#936](https://github.com/catalyst-team/catalyst/pull/936))
-
 - CMCCallback ([#941](https://github.com/catalyst-team/catalyst/pull/941))
 
 ## [20.09] - 2020-09-07
@@ -113,13 +283,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
 - autoresume option for Config API ([#907](https://github.com/catalyst-team/catalyst/pull/907))
 - a few issues with TF projector ([#917](https://github.com/catalyst-team/catalyst/pull/917))
-- batch sampler speed issue ([#921](https://github.com/catalyst-team/catalyst/pull/921)) 
+- batch sampler speed issue ([#921](https://github.com/catalyst-team/catalyst/pull/921))
 - add apex key-value optimizer support ([#924](https://github.com/catalyst-team/catalyst/pull/924))
 - runtime warning for PyTorch 1.6 ([920](https://github.com/catalyst-team/catalyst/pull/920))
 - Apex synbn usage ([920](https://github.com/catalyst-team/catalyst/pull/920))
@@ -133,7 +303,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - kornia augmentations `BatchTransformCallback` ([#862](https://github.com/catalyst-team/catalyst/issues/862))
 - `average_precision` and `mean_average_precision` metrics ([#883](https://github.com/catalyst-team/catalyst/pull/883))
 - `MultiLabelAccuracyCallback`, `AveragePrecisionCallback` and `MeanAveragePrecisionCallback` callbacks ([#883](https://github.com/catalyst-team/catalyst/pull/883))
-- minimal examples for multi-class and milti-label classification ([#883](https://github.com/catalyst-team/catalyst/pull/883))
+- minimal examples for multiclass and multilabel classification ([#883](https://github.com/catalyst-team/catalyst/pull/883))
 - experimental TPU support ([#893](https://github.com/catalyst-team/catalyst/pull/893))
 - add `Imagenette`, `Imagewoof`, and `Imagewang` datasets ([#902](https://github.com/catalyst-team/catalyst/pull/902))
 - `IMetricCallback`, `IBatchMetricCallback`, `ILoaderMetricCallback`, `BatchMetricCallback`, `LoaderMetricCallback` abstractions ([#897](https://github.com/catalyst-team/catalyst/pull/897))
@@ -219,7 +389,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
@@ -249,7 +419,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
@@ -304,35 +474,34 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- 
 
 ### Changed
 
-- 
+-
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
-- 
+-
 
 
 ## [YY.MM.R] - YYYY-MM-DD
 
 ### Added
 
-- 
+-
 
 ### Changed
 
-- 
+-
 
 ### Removed
 
-- 
+-
 
 ### Fixed
 
-- 
+-

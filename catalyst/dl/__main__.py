@@ -2,21 +2,22 @@ from argparse import ArgumentParser, RawTextHelpFormatter
 from collections import OrderedDict
 
 from catalyst.__version__ import __version__
-from catalyst.dl.scripts import quantize, run, swa, trace
-from catalyst.settings import IS_GIT_AVAILABLE, IS_OPTUNA_AVAILABLE
+from catalyst.dl.scripts import run, swa  # , trace
+from catalyst.settings import SETTINGS
 
-COMMANDS = OrderedDict(
-    [("quantize", quantize), ("run", run), ("swa", swa), ("trace", trace)]
-)
-if IS_GIT_AVAILABLE:
-    from catalyst.dl.scripts import init
+COMMANDS = OrderedDict([("run", run), ("swa", swa)])  # ("trace", trace)
 
-    COMMANDS["init"] = init
-if IS_OPTUNA_AVAILABLE:
+
+# if SETTINGS.use_quantization:
+#     from catalyst.dl.scripts import quantize
+#
+#     COMMANDS["quantize"] = quantize
+
+if SETTINGS.optuna_required:
+
     from catalyst.dl.scripts import tune
 
     COMMANDS["tune"] = tune
-
 
 COMMANDS = OrderedDict(sorted(COMMANDS.items()))
 
@@ -27,18 +28,12 @@ def build_parser() -> ArgumentParser:
     Returns:
         parser
     """
-    parser = ArgumentParser(
-        "catalyst-dl", formatter_class=RawTextHelpFormatter
-    )
-    parser.add_argument(
-        "-v", "--version", action="version", version=f"%(prog)s {__version__}"
-    )
+    parser = ArgumentParser("catalyst-dl", formatter_class=RawTextHelpFormatter)
+    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}")
     all_commands = ", \n".join(map(lambda x: f"    {x}", COMMANDS.keys()))
 
     subparsers = parser.add_subparsers(
-        metavar="{command}",
-        dest="command",
-        help=f"available commands: \n{all_commands}",
+        metavar="{command}", dest="command", help=f"available commands: \n{all_commands}",
     )
     subparsers.required = True
 

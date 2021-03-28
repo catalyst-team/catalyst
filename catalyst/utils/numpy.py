@@ -1,9 +1,7 @@
 import numpy as np
 
 
-def get_one_hot(
-    label: int, num_classes: int, smoothing: float = None
-) -> np.ndarray:
+def get_one_hot(label: int, num_classes: int, smoothing: float = None) -> np.ndarray:
     """
     Applies OneHot vectorization to a giving scalar, optional with
     label smoothing as described in `Bag of Tricks for Image Classification
@@ -17,7 +15,7 @@ def get_one_hot(
             with Convolutional Neural Networks`` paper
 
     Returns:
-        np.ndarray: a one-hot vector with shape ``(num_classes,)``
+        np.ndarray: a one-hot vector with shape ``(num_classes)``
 
     .. _Bag of Tricks for Image Classification with
         Convolutional Neural Networks: https://arxiv.org/abs/1812.01187

@@ -1,5 +1,4 @@
 # flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 import torch
 import torch.nn as nn
 import torch.nn.functional as F

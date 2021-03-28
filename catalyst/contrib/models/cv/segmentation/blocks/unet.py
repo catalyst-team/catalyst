@@ -30,9 +30,7 @@ class EncoderDownsampleBlock(EncoderBlock):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__(in_channels, out_channels, in_strides)
         self._out_strides = (
-            in_strides * first_stride * second_stride
-            if in_strides is not None
-            else None
+            in_strides * first_stride * second_stride if in_strides is not None else None
         )
         self._block = _get_block(
             in_channels=in_channels,
@@ -78,13 +76,9 @@ class EncoderUpsampleBlock(EncoderBlock):
         if in_strides is None:
             self._out_strides = None
         elif pool_first:
-            self._out_strides = (
-                in_strides * first_stride * second_stride * 2 // upsample_scale
-            )
+            self._out_strides = in_strides * first_stride * second_stride * 2 // upsample_scale
         else:
-            self._out_strides = (
-                in_strides * first_stride * second_stride // upsample_scale
-            )
+            self._out_strides = in_strides * first_stride * second_stride // upsample_scale
         self.pool_first = pool_first
         self.upsample_scale = upsample_scale
         self.interpolation_mode = interpolation_mode
@@ -112,9 +106,7 @@ class EncoderUpsampleBlock(EncoderBlock):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Forward call."""
         if self.pool_first:
-            x = F.max_pool2d(
-                x, kernel_size=self.upsample_scale, stride=self.upsample_scale
-            )
+            x = F.max_pool2d(x, kernel_size=self.upsample_scale, stride=self.upsample_scale)
         x = F.interpolate(
             x,
             scale_factor=self.upsample_scale,
@@ -189,9 +181,7 @@ class DecoderConcatBlock(DecoderBlock):
         block = nn.Sequential(*layers)
         return block
 
-    def forward(
-        self, bottom: torch.Tensor, left: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
         """Forward call."""
         if self.aggregate_first:
             x = torch.cat([bottom, left], 1)
@@ -224,9 +214,7 @@ class DecoderSumBlock(DecoderConcatBlock):
         """
         super().__init__(enc_channels=0, **kwargs)
 
-    def forward(
-        self, bottom: torch.Tensor, left: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
         """Forward call."""
         if self.aggregate_first:
             x = bottom + left

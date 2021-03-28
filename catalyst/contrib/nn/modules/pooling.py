@@ -1,10 +1,12 @@
 # flake8: noqa
 # @TODO: code formatting issue for 20.07 release
+import math
+
 import torch
 from torch import nn
 from torch.nn import functional as F
 
-from catalyst.registry import MODULE
+from catalyst.registry import REGISTRY
 
 
 class GlobalAvgPool2d(nn.Module):
@@ -98,11 +100,9 @@ class GlobalAttnPool2d(nn.Module):
         """@TODO: Docs. Contribution is welcome."""
         super().__init__()
 
-        activation_fn = MODULE.get_if_str(activation_fn)
+        activation_fn = REGISTRY.get_if_str(activation_fn)
         self.attn = nn.Sequential(
-            nn.Conv2d(
-                in_features, 1, kernel_size=1, stride=1, padding=0, bias=False
-            ),
+            nn.Conv2d(in_features, 1, kernel_size=1, stride=1, padding=0, bias=False),
             activation_fn(),
         )
 
@@ -205,6 +205,74 @@ class GlobalConcatAttnPool2d(nn.Module):
         return in_features * 3
 
 
+class GeM2d(nn.Module):
+    """Implementation of GeM: Generalized Mean Pooling.
+    Example:
+        >>> x = torch.randn(2,1280,8,8) #output of last convolutional layer of the network
+        >>> gem_pool = GeM2d(p = 2.2 , p_trainable = False)
+        >>> op = gem_pool(x)
+        >>> op.shape
+        torch.Size([1, 1280, 1, 1])
+        >>> op
+        tensor([[[[1.0660]],
+             [[1.1599]],
+             [[0.5934]],
+             ...,
+             [[0.6889]],
+             [[1.0361]],
+             [[0.9717]]]], grad_fn=<PowBackward0>)
+    """
+
+    def __init__(self, p: float = 3.0, p_trainable: bool = False, eps: float = 1e-7):
+        """
+        Args:
+            p: The pooling parameter.
+                Default: 3.0
+            p_trainable: Whether the pooling parameter(p) should be trainable.
+                    Default: False
+            eps: epsilon for numerical stability.
+        """
+        super().__init__()
+        if p_trainable:
+            # if p_trainable is True and the value of p is set to math.inf
+
+            if p not in [math.inf, float("inf")]:
+
+                self.p = nn.Parameter(torch.ones(1) * p)
+            else:
+
+                self.p = math.inf
+
+        else:
+            self.p = p
+
+        self.eps = eps
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward call."""
+        h, w = x.shape[2:]
+
+        if self.p in [math.inf, float("inf")]:
+            # if p-> inf return max pooled features
+            return F.max_pool2d(x, kernel_size=(h, w))
+
+        else:
+            x = x.clamp(min=self.eps).pow(self.p)
+            return F.avg_pool2d(x, kernel_size=(h, w)).pow(1.0 / self.p)
+
+    @staticmethod
+    def out_features(in_features):
+        """Returns number of channels produced by the pooling.
+
+        Args:
+            in_features: number of channels in the input sample.
+
+        Returns:
+            number of output features
+        """
+        return in_features
+
+
 __all__ = [
     "GlobalAttnPool2d",
     "GlobalAvgAttnPool2d",
@@ -213,4 +281,5 @@ __all__ = [
     "GlobalConcatPool2d",
     "GlobalMaxAttnPool2d",
     "GlobalMaxPool2d",
+    "GeM2d",
 ]

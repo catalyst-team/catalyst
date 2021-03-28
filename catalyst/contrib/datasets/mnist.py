@@ -1,4 +1,3 @@
-# flake8: noqa
 from typing import Any, Callable, Dict, List, Optional
 import os
 
@@ -7,13 +6,25 @@ from torch.utils.data import Dataset
 
 from catalyst.contrib.datasets.functional import (
     download_and_extract_archive,
-    read_image_file,
-    read_label_file,
+    read_sn3_pascalvincent_tensor,
 )
-from catalyst.data.dataset.metric_learning import (
-    MetricLearningTrainDataset,
-    QueryGalleryDataset,
-)
+from catalyst.data.dataset.metric_learning import MetricLearningTrainDataset, QueryGalleryDataset
+
+
+def _read_label_file(path):
+    with open(path, "rb") as f:
+        x = read_sn3_pascalvincent_tensor(f, strict=False)
+    assert x.dtype == torch.uint8
+    assert x.ndimension() == 1
+    return x.long()
+
+
+def _read_image_file(path):
+    with open(path, "rb") as f:
+        x = read_sn3_pascalvincent_tensor(f, strict=False)
+    assert x.dtype == torch.uint8
+    assert x.ndimension() == 3
+    return x
 
 
 class MNIST(Dataset):
@@ -21,21 +32,22 @@ class MNIST(Dataset):
 
     _repr_indent = 4
 
+    # CVDF mirror of http://yann.lecun.com/exdb/mnist/
     resources = [
         (
-            "http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz",
+            "https://storage.googleapis.com/cvdf-datasets/mnist/train-images-idx3-ubyte.gz",
             "f68b3c2dcbeaaa9fbdd348bbdeb94873",
         ),
         (
-            "http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz",
+            "https://storage.googleapis.com/cvdf-datasets/mnist/train-labels-idx1-ubyte.gz",
             "d53e105ee54ea40749a09fcbcd1e9432",
         ),
         (
-            "http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz",
+            "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-images-idx3-ubyte.gz",
             "9fb629c4189551a2d022fa330f9573f3",
         ),
         (
-            "http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz",
+            "https://storage.googleapis.com/cvdf-datasets/mnist/t10k-labels-idx1-ubyte.gz",
             "ec29112dd5afa0611ce80d1b7f02629c",
         ),
     ]
@@ -56,12 +68,7 @@ class MNIST(Dataset):
     ]
 
     def __init__(
-        self,
-        root,
-        train=True,
-        transform=None,
-        target_transform=None,
-        download=False,
+        self, root, train=True, transform=None, target_transform=None, download=False,
     ):
         """
         Args:
@@ -89,17 +96,13 @@ class MNIST(Dataset):
             self.download()
 
         if not self._check_exists():
-            raise RuntimeError(
-                "Dataset not found. You can use download=True to download it"
-            )
+            raise RuntimeError("Dataset not found. You can use download=True to download it")
 
         if self.train:
             data_file = self.training_file
         else:
             data_file = self.test_file
-        self.data, self.targets = torch.load(
-            os.path.join(self.processed_folder, data_file)
-        )
+        self.data, self.targets = torch.load(os.path.join(self.processed_folder, data_file))
 
     def __getitem__(self, index):
         """
@@ -153,9 +156,7 @@ class MNIST(Dataset):
     def _check_exists(self):
         return os.path.exists(
             os.path.join(self.processed_folder, self.training_file)
-        ) and os.path.exists(
-            os.path.join(self.processed_folder, self.test_file)
-        )
+        ) and os.path.exists(os.path.join(self.processed_folder, self.test_file))
 
     def download(self):
         """Download the MNIST data if it doesn't exist in processed_folder."""
@@ -176,28 +177,16 @@ class MNIST(Dataset):
         print("Processing...")
 
         training_set = (
-            read_image_file(
-                os.path.join(self.raw_folder, "train-images-idx3-ubyte")
-            ),
-            read_label_file(
-                os.path.join(self.raw_folder, "train-labels-idx1-ubyte")
-            ),
+            _read_image_file(os.path.join(self.raw_folder, "train-images-idx3-ubyte")),
+            _read_label_file(os.path.join(self.raw_folder, "train-labels-idx1-ubyte")),
         )
         test_set = (
-            read_image_file(
-                os.path.join(self.raw_folder, "t10k-images-idx3-ubyte")
-            ),
-            read_label_file(
-                os.path.join(self.raw_folder, "t10k-labels-idx1-ubyte")
-            ),
+            _read_image_file(os.path.join(self.raw_folder, "t10k-images-idx3-ubyte")),
+            _read_label_file(os.path.join(self.raw_folder, "t10k-labels-idx1-ubyte")),
         )
-        with open(
-            os.path.join(self.processed_folder, self.training_file), "wb"
-        ) as f:
+        with open(os.path.join(self.processed_folder, self.training_file), "wb") as f:
             torch.save(training_set, f)
-        with open(
-            os.path.join(self.processed_folder, self.test_file), "wb"
-        ) as f:
+        with open(os.path.join(self.processed_folder, self.test_file), "wb") as f:
             torch.save(test_set, f)
 
         print("Done!")
@@ -234,9 +223,7 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
         """
         if "train" in kwargs:
             if kwargs["train"] is False:
-                raise ValueError(
-                    "MnistMLDataset can be used only for training stage."
-                )
+                raise ValueError("MnistMLDataset can be used only for training stage.")
         else:
             kwargs["train"] = True
         super(MnistMLDataset, self).__init__(**kwargs)
@@ -275,10 +262,7 @@ class MnistQGDataset(QueryGalleryDataset):
     ]
 
     def __init__(
-        self,
-        root: str,
-        transform: Optional[Callable] = None,
-        gallery_fraq: Optional[float] = 0.2,
+        self, root: str, transform: Optional[Callable] = None, gallery_fraq: Optional[float] = 0.2,
     ) -> None:
         """
         Args:
@@ -286,9 +270,7 @@ class MnistQGDataset(QueryGalleryDataset):
             transform: transform
             gallery_fraq: gallery size
         """
-        self._mnist = MNIST(
-            root, train=False, download=True, transform=transform
-        )
+        self._mnist = MNIST(root, train=False, download=True, transform=transform)
         self._filter()
 
         self._gallery_size = int(gallery_fraq * len(self._mnist))

@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:1.5.1-cuda10.1-cudnn7-devel
+FROM pytorch/pytorch:1.6.0-cuda10.1-cudnn7-devel
 
 RUN apt-get update && apt-get install -y software-properties-common \
     && rm -rf /var/lib/apt/lists/* \
@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install -y software-properties-common \
         libavformat-dev \
         libpq-dev \
     	libturbojpeg \
+    	git \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
@@ -26,8 +27,14 @@ CMD mkdir -p /workspace
 
 COPY requirements/ /workspace/
 RUN pip install -r /workspace/requirements.txt --no-cache-dir \
-    && pip install -r /workspace/requirements-contrib.txt --no-cache-dir \
-    && pip install -r /workspace/requirements-dev.txt --no-cache-dir
+    && pip install -r /workspace/requirements-cv.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-dev.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-ecosystem.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-log.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-ml.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-nlp.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-tune.txt --no-cache-dir \
+    && pip install -r /workspace/requirements-hydra.txt --no-cache-dir
 
 RUN git clone https://github.com/NVIDIA/apex \
     && pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./apex

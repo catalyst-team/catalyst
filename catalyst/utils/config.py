@@ -7,10 +7,10 @@ import re
 
 import yaml
 
-LOG = getLogger(__name__)
+logger = getLogger(__name__)
 
 
-class OrderedLoader(yaml.Loader):
+class OrderedLoader(yaml.SafeLoader):
     pass
 
 
@@ -19,9 +19,7 @@ def construct_mapping(loader, node):
     return OrderedDict(loader.construct_pairs(node))
 
 
-OrderedLoader.add_constructor(
-    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping
-)
+OrderedLoader.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG, construct_mapping)
 OrderedLoader.add_implicit_resolver(
     "tag:yaml.org,2002:float",
     re.compile(
@@ -64,7 +62,7 @@ def load_config(
         Union[Dict, List]: config
 
     Raises:
-        Exception: if path ``path`` doesn't exists
+        ValueError: if path ``path`` doesn't exists
             or file format is not YAML or JSON
 
     Adapted from
@@ -75,7 +73,7 @@ def load_config(
     path = Path(path)
 
     if not path.exists():
-        raise Exception(f"Path '{path}' doesn't exist!")
+        raise ValueError(f"Path '{path}' doesn't exist!")
 
     if data_format is not None:
         suffix = data_format.lower()
@@ -84,11 +82,7 @@ def load_config(
     else:
         suffix = path.suffix
 
-    assert suffix in [
-        ".json",
-        ".yml",
-        ".yaml",
-    ], f"Unknown file format '{suffix}'"
+    assert suffix in [".json", ".yml", ".yaml"], f"Unknown file format '{suffix}'"
 
     config = None
     with path.open(encoding=encoding) as stream:
@@ -99,7 +93,7 @@ def load_config(
                 config = json.loads(file, object_pairs_hook=object_pairs_hook)
 
         elif suffix in [".yml", ".yaml"]:
-            loader = OrderedLoader if ordered else yaml.Loader
+            loader = OrderedLoader if ordered else yaml.SafeLoader
             config = yaml.load(stream, loader)
 
     if config is None:
@@ -140,11 +134,7 @@ def save_config(
     else:
         suffix = path.suffix
 
-    assert suffix in [
-        ".json",
-        ".yml",
-        ".yaml",
-    ], f"Unknown file format '{suffix}'"
+    assert suffix in [".json", ".yml", ".yaml"], f"Unknown file format '{suffix}'"
 
     with path.open(encoding=encoding, mode="w") as stream:
         if suffix == ".json":
@@ -153,7 +143,4 @@ def save_config(
             yaml.dump(config, stream)
 
 
-__all__ = [
-    "load_config",
-    "save_config",
-]
+__all__ = ["load_config", "save_config"]

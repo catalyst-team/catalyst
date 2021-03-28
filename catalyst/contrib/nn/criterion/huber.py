@@ -13,9 +13,7 @@ class HuberLoss(nn.Module):
         self.clip_delta = clip_delta
         self.reduction = reduction or "none"
 
-    def forward(
-        self, y_pred: torch.Tensor, y_true: torch.Tensor, weights=None
-    ) -> torch.Tensor:
+    def forward(self, y_pred: torch.Tensor, y_true: torch.Tensor, weights=None) -> torch.Tensor:
         """@TODO: Docs. Contribution is welcome."""
         td_error = y_true - y_pred
         td_error_abs = torch.abs(td_error)

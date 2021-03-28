@@ -1,100 +1,78 @@
-from typing import List
+from typing import List, Union
+
+import torch
 
 from catalyst.callbacks.metric import BatchMetricCallback
-from catalyst.metrics.accuracy import accuracy, multi_label_accuracy
-from catalyst.metrics.functional import (
-    get_default_topk_args,
-    wrap_topk_metric2dict,
-)
+from catalyst.metrics._accuracy import AccuracyMetric, MultilabelAccuracyMetric
 
 
 class AccuracyCallback(BatchMetricCallback):
     """Accuracy metric callback.
+    Computes multiclass accuracy@topk for the specified values of `topk`.
 
-    Computes multi-class accuracy@topk for the specified values of `topk`.
-
-    .. note::
-        For multi-label accuracy please use
-        `catalyst.callbacks.metrics.MultiLabelAccuracyCallback`
+    Args:
+        input_key: input key to use for metric calculation, specifies our `y_pred`
+        target_key: output key to use for metric calculation, specifies our `y_true`
+        topk_args: specifies which accuracy@K to log:
+            [1] - accuracy
+            [1, 3] - accuracy at 1 and 3
+            [1, 3, 5] - accuracy at 1, 3 and 5
+        num_classes: number of classes to calculate ``topk_args`` if ``accuracy_args`` is None
+        log_on_batch: boolean flag to log computed metrics every batch
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
         self,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        prefix: str = "accuracy",
-        multiplier: float = 1.0,
+        input_key: str,
+        target_key: str,
         topk_args: List[int] = None,
         num_classes: int = None,
-        accuracy_args: List[int] = None,
-        **kwargs,
+        log_on_batch: bool = True,
+        prefix: str = None,
+        suffix: str = None,
     ):
-        """
-        Args:
-            input_key: input key to use for accuracy calculation;
-                specifies our `y_true`
-            output_key: output key to use for accuracy calculation;
-                specifies our `y_pred`
-            prefix: key for the metric's name
-            topk_args: specifies which accuracy@K to log:
-                [1] - accuracy
-                [1, 3] - accuracy at 1 and 3
-                [1, 3, 5] - accuracy at 1, 3 and 5
-            num_classes: number of classes to calculate ``topk_args``
-                if ``accuracy_args`` is None
-            activation: An torch.nn activation applied to the outputs.
-                Must be one of ``"none"``, ``"Sigmoid"``, or ``"Softmax"``
-        """
-        topk_args = (
-            topk_args or accuracy_args or get_default_topk_args(num_classes)
-        )
-
+        """Init."""
         super().__init__(
-            prefix=prefix,
-            metric_fn=wrap_topk_metric2dict(accuracy, topk_args=topk_args),
+            metric=AccuracyMetric(
+                topk_args=topk_args, num_classes=num_classes, prefix=prefix, suffix=suffix
+            ),
             input_key=input_key,
-            output_key=output_key,
-            multiplier=multiplier,
-            **kwargs,
+            target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 
-class MultiLabelAccuracyCallback(BatchMetricCallback):
-    """Accuracy metric callback.
-    Computes multi-class accuracy@topk for the specified values of `topk`.
+class MultilabelAccuracyCallback(BatchMetricCallback):
+    """Multilabel accuracy metric callback.
+    Computes multilabel accuracy@topk for the specified values of `topk`.
 
-    .. note::
-        For multi-label accuracy please use
-        `catalyst.callbacks.metrics.MultiLabelAccuracyCallback`
+    Args:
+        input_key: input key to use for metric calculation, specifies our `y_pred`
+        target_key: output key to use for metric calculation, specifies our `y_true`
+        threshold: thresholds for model scores
+        log_on_batch: boolean flag to log computed metrics every batch
+        prefix: metric prefix
+        suffix: metric suffix
     """
 
     def __init__(
         self,
-        input_key: str = "targets",
-        output_key: str = "logits",
-        prefix: str = "multi_label_accuracy",
-        threshold: float = None,
-        activation: str = "Sigmoid",
+        input_key: str,
+        target_key: str,
+        threshold: Union[float, torch.Tensor] = 0.5,
+        log_on_batch: bool = True,
+        prefix: str = None,
+        suffix: str = None,
     ):
-        """
-        Args:
-            input_key: input key to use for accuracy calculation;
-                specifies our `y_true`
-            output_key: output key to use for accuracy calculation;
-                specifies our `y_pred`
-            prefix: key for the metric's name
-            threshold: threshold for for model output
-            activation: An torch.nn activation applied to the outputs.
-                Must be one of ``"none"``, ``"Sigmoid"``, or ``"Softmax"``
-        """
+        """Init."""
         super().__init__(
-            prefix=prefix,
-            metric_fn=multi_label_accuracy,
+            metric=MultilabelAccuracyMetric(threshold=threshold, prefix=prefix, suffix=suffix),
             input_key=input_key,
-            output_key=output_key,
-            threshold=threshold,
-            activation=activation,
+            target_key=target_key,
+            log_on_batch=log_on_batch,
         )
 
 
-__all__ = ["AccuracyCallback", "MultiLabelAccuracyCallback"]
+__all__ = ["AccuracyCallback", "MultilabelAccuracyCallback"]

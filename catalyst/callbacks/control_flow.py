@@ -41,16 +41,11 @@ def _filter_fn_from_epochs(
         else:
             filter_fn = lambda stage, epoch, loader: epoch in epochs
     else:
-        raise ValueError(
-            "'epochs' should be int/float/Sequence[int]! "
-            f"(got {type(epochs)})"
-        )
+        raise ValueError("'epochs' should be int/float/Sequence[int]! " f"(got {type(epochs)})")
     return filter_fn
 
 
-def _filter_fn_from_loaders(
-    loaders: LOADERS, reverse_condition: bool
-) -> FILTER_FN:
+def _filter_fn_from_loaders(loaders: LOADERS, reverse_condition: bool) -> FILTER_FN:
     """Build ``filter_fn`` from loaders for ``ControlFlowCallback``.
 
     Args:
@@ -100,9 +95,7 @@ def _filter_fn_from_loaders(
                 ignore_list.get(loader) or {}  # {loader: [epoch]}.get(loader)
             )
         else:
-            filter_fn = lambda stage, epoch, loader: epoch in (
-                ignore_list.get(loader) or {}
-            )
+            filter_fn = lambda stage, epoch, loader: epoch in (ignore_list.get(loader) or {})
     else:
         raise ValueError(
             "'loaders' type should be one of - str, "
@@ -147,8 +140,7 @@ def _filter_fn_from_arg(filter_fn: Union[str, FILTER_FN]) -> FILTER_FN:
         raise ValueError("'filter_fn' should be a callable!")
     if filter_fn.__code__.co_argcount != 3:
         raise ValueError(
-            "Filter function should have three arguments - "
-            "'stage', 'epoch' and 'loader'!"
+            "Filter function should have three arguments - " "'stage', 'epoch' and 'loader'!"
         )
     return filter_fn
 
@@ -156,6 +148,106 @@ def _filter_fn_from_arg(filter_fn: Union[str, FILTER_FN]) -> FILTER_FN:
 class ControlFlowCallback(CallbackWrapper):
     """Enable/disable callback execution on different
     stages, loaders and epochs.
+
+    Args:
+        base_callback: callback to wrap
+        epochs: epochs where
+            need to **enable** callback, on other epochs
+            callback will be disabled.
+
+            If passed int/float then callback will be enabled
+            with period specified as epochs value
+            (epochs expression ``epoch_number % epochs == 0``)
+            and disabled on other epochs.
+
+            If passed list of epochs then will be executed callback
+            on specified epochs.
+
+            Default value is ``None``.
+        ignore_epochs:: epochs where
+            need to **disable** callback, on other epochs
+            callback will be enabled.
+
+            If passed int/float then callback will be disabled
+            with period specified as epochs value
+            (epochs expression ``epoch_number % epochs != 0``)
+            and enabled on other epochs.
+
+            If passed list of epochs then will be disabled callback
+            on specified epochs.
+
+            Default value is ``None``.
+        loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):
+            loaders where should be **enabled** callback, on
+            other loaders callback will be disabled.
+
+            If passed string object then will be disabled callback for
+            loader with specified name.
+
+            If passed list/tuple of strings then will be disabled callback
+            for loaders with specified names.
+
+            If passed dictionary where key is a string and values
+            int or list of integers then callback will be
+            disabled on epochs (dictionary value) for specified
+            loader (dictionary key).
+
+            Default value is ``None``.
+        ignore_loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):
+            loader names where should be **disabled** callback, on
+            other loaders callback will be enabled.
+
+            If passed string object then will be disabled callback for
+            loader with specified name.
+
+            If passed list/tuple of strings then will be disabled callback
+            for loaders with specified names.
+
+            If passed dictionary where key is a string and values
+            int or list of integers then callback will be
+            disabled on epochs (dictionary value) for specified
+            loader (dictionary key).
+
+            Default value is ``None``.
+        filter_fn (str or Callable[[str, int, str], bool]):
+            function to use instead of ``loaders`` or ``epochs`` arguments.
+
+            If the object passed to a ``filter_fn`` is a string
+            then it will be interpreted as python code. Expected
+            lambda function with three arguments stage name (str),
+            epoch number (int), loader name (str) and this function
+            should return ``True`` if callback should be enabled
+            on some condition.
+
+            If passed callable object then it should accept
+            three arguments - stage name (str), epoch number (int),
+            loader name (str) and should return ``True`` if callback
+            should be enabled on some condition othervise should
+            return ``False``.
+
+            Default value is ``None``.
+
+            Examples:
+
+            .. code-block:: python
+
+                # enable callback on all loaders
+                # exept "train" loader every 2 epochs
+                ControlFlowCallback(
+                    ...
+                    filter_fn=lambda s, e, l: l != "train" and e % 2 == 0
+                    ...
+                )
+                # or with string equivalent
+                ControlFlowCallback(
+                    ...
+                    filter_fn="lambda s, e, l: l != 'train' and e % 2 == 0"
+                    ...
+                )
+
+        use_global_epochs: if ``True`` then
+            will be used global epochs instead of epochs in
+            a stage, the default value is ``False``
 
     .. note::
 
@@ -201,7 +293,7 @@ class ControlFlowCallback(CallbackWrapper):
             logdir="./logdir",
             num_epochs=5,
             verbose=False,
-            main_metric="accuracy03",
+            valid_metric="accuracy03",
             minimize_metric=False,
             callbacks=[
                 AccuracyCallback(
@@ -239,107 +331,7 @@ class ControlFlowCallback(CallbackWrapper):
         filter_fn: Union[str, FILTER_FN] = None,
         use_global_epochs: bool = False,
     ):
-        """
-        Args:
-            base_callback: callback to wrap
-            epochs: epochs where
-                need to **enable** callback, on other epochs
-                callback will be disabled.
-
-                If passed int/float then callback will be enabled
-                with period specified as epochs value
-                (epochs expression ``epoch_number % epochs == 0``)
-                and disabled on other epochs.
-
-                If passed list of epochs then will be executed callback
-                on specified epochs.
-
-                Default value is ``None``.
-            ignore_epochs:: epochs where
-                need to **disable** callback, on other epochs
-                callback will be enabled.
-
-                If passed int/float then callback will be disabled
-                with period specified as epochs value
-                (epochs expression ``epoch_number % epochs != 0``)
-                and enabled on other epochs.
-
-                If passed list of epochs then will be disabled callback
-                on specified epochs.
-
-                Default value is ``None``.
-            loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):
-                loaders where should be **enabled** callback, on
-                other loaders callback will be disabled.
-
-                If passed string object then will be disabled callback for
-                loader with specified name.
-
-                If passed list/tuple of strings then will be disabled callback
-                for loaders with specified names.
-
-                If passed dictionary where key is a string and values
-                int or list of integers then callback will be
-                disabled on epochs (dictionary value) for specified
-                loader (dictionary key).
-
-                Default value is ``None``.
-            ignore_loaders (str/Sequence[str]/Mapping[str, int/Sequence[str]]):
-                loader names where should be **disabled** callback, on
-                other loaders callback will be enabled.
-
-                If passed string object then will be disabled callback for
-                loader with specified name.
-
-                If passed list/tuple of strings then will be disabled callback
-                for loaders with specified names.
-
-                If passed dictionary where key is a string and values
-                int or list of integers then callback will be
-                disabled on epochs (dictionary value) for specified
-                loader (dictionary key).
-
-                Default value is ``None``.
-            filter_fn (str or Callable[[str, int, str], bool]):
-                function to use instead of ``loaders`` or ``epochs`` arguments.
-
-                If the object passed to a ``filter_fn`` is a string
-                then it will be interpreted as python code. Expected
-                lambda function with three arguments stage name (str),
-                epoch number (int), loader name (str) and this function
-                should return ``True`` if callback should be enabled
-                on some condition.
-
-                If passed callable object then it should accept
-                three arguments - stage name (str), epoch number (int),
-                loader name (str) and should return ``True`` if callback
-                should be enabled on some condition othervise should
-                return ``False``.
-
-                Default value is ``None``.
-
-                Examples:
-
-                .. code-block:: python
-
-                    # enable callback on all loaders
-                    # exept "train" loader every 2 epochs
-                    ControlFlowCallback(
-                        ...
-                        filter_fn=lambda s, e, l: l != "train" and e % 2 == 0
-                        ...
-                    )
-                    # or with string equivalent
-                    ControlFlowCallback(
-                        ...
-                        filter_fn="lambda s, e, l: l != 'train' and e % 2 == 0"
-                        ...
-                    )
-
-            use_global_epochs: if ``True`` then
-                will be used global epochs instead of epochs in
-                a stage, the default value is ``False``
-        """
+        """Init."""
         required_args = (
             epochs,
             ignore_epochs,
@@ -378,9 +370,9 @@ class ControlFlowCallback(CallbackWrapper):
         Args:
             runner: current runner
         """
-        stage = runner.stage_name
-        loader = runner.loader_name
-        epoch = runner.global_epoch if self.use_global_epochs else runner.epoch
+        stage = runner.stage_key
+        loader = runner.loader_key
+        epoch = runner.global_epoch_step if self.use_global_epochs else runner.stage_epoch_step
 
         if self.filter_fn is not None:
             self._is_enabled = self.filter_fn(stage, epoch, loader)
