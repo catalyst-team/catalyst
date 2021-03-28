@@ -310,15 +310,10 @@ class DistributedDataParallelEngine(DeviceEngine):
         model = self.sync_device(model)
         # NOTE: do not forget to wrap a model in DDP
         if isinstance(model, nn.Module):
-            model = DistributedDataParallel(
-                model, device_ids=[self.device], find_unused_parameters=True
-            )
+            model = DistributedDataParallel(model, device_ids=[self.device])
         elif isinstance(model, dict):
             model = {
-                k: DistributedDataParallel(
-                    v, device_ids=[self.device], find_unused_parameters=True
-                )
-                for k, v in model.items()
+                k: DistributedDataParallel(v, device_ids=[self.device]) for k, v in model.items()
             }
         # criterion
         criterion = criterion_fn()
