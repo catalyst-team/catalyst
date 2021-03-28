@@ -31,6 +31,21 @@ def train_experiment(device):
         runner = dl.SupervisedRunner(
             input_key="features", output_key="logits", target_key="targets", loss_key="loss"
         )
+        callbacks = [
+            dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
+            dl.PrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
+            dl.AUCCallback(input_key="logits", target_key="targets"),
+            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
+        ]
+        if SETTINGS.pruning_required:
+            callbacks.append(dl.PruningCallback(pruning_fn="l1_unstructured", amount=0.5))
+        if SETTINGS.quantization_required:
+            callbacks.append(dl.QuantizationCallback(logdir=logdir))
+        if SETTINGS.onnx_required:
+            callbacks.append(dl.OnnxCallback(logdir=logdir, input_key="features"))
+        callbacks.append(dl.TracingCallback(logdir=logdir, input_key="features"))
         # model training
         runner.train(
             engine=dl.DeviceEngine(device),
@@ -39,21 +54,7 @@ def train_experiment(device):
             optimizer=optimizer,
             loaders=loaders,
             num_epochs=1,
-            callbacks=[
-                dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-                dl.PrecisionRecallF1SupportCallback(
-                    input_key="logits", target_key="targets", num_classes=10
-                ),
-                dl.AUCCallback(input_key="logits", target_key="targets"),
-                dl.ConfusionMatrixCallback(
-                    input_key="logits", target_key="targets", num_classes=10
-                ),
-                # extra tests
-                dl.PruningCallback(pruning_fn="l1_unstructured", amount=0.5),
-                dl.QuantizationCallback(logdir=logdir),
-                dl.OnnxCallback(logdir=logdir, input_key="features"),
-                dl.TracingCallback(logdir=logdir, input_key="features"),
-            ],
+            callbacks=callbacks,
             logdir=logdir,
             valid_loader="valid",
             valid_metric="loss",
