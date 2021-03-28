@@ -240,7 +240,7 @@ class ConfigRunner(IRunner):
         self, model: RunnerModel, stage: str, **params
     ) -> RunnerOptimizer:
         # @TODO 1: refactor; this method is too long
-
+        params = deepcopy(params)
         # learning rate linear scaling
         lr_scaling_params = params.pop("lr_linear_scaling", None)
         if lr_scaling_params:
@@ -290,11 +290,6 @@ class ConfigRunner(IRunner):
         if is_key_value:
             optimizer = {}
             for key, params in optimizer_params.items():
-                # load specified optimizer from checkpoint
-                optimizer_key = "_optimizer"
-                assert optimizer_key not in params, "keyword reserved"
-                params[optimizer_key] = key
-
                 optimizer[key] = self._get_optimizer_from_params(
                     model=model, stage=stage, **params
                 )
@@ -310,16 +305,18 @@ class ConfigRunner(IRunner):
         params = deepcopy(params)
 
         is_key_value = params.pop("_key_value", False)
-        optimizer_key = params.pop("_optimizer", None)
-        optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
-
         if is_key_value:
             scheduler: Dict[str, Scheduler] = {}
             for key, scheduler_params in params.items():
+                scheduler_params = deepcopy(scheduler_params)
+                optimizer_key = scheduler_params.pop("_optimizer", None)
+                optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
                 scheduler[key] = ConfigRunner._get_scheduler_from_params(
                     **scheduler_params, optimizer=optimizer
                 )  # noqa: WPS437
         else:
+            optimizer_key = params.pop("_optimizer", None)
+            optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
             scheduler = REGISTRY.get_from_params(**params, optimizer=optimizer)
         return scheduler
 
