@@ -2,7 +2,6 @@
 import os
 
 import numpy as np
-
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -13,7 +12,6 @@ from catalyst.contrib.nn.modules import Flatten
 
 
 class ToTensor(object):
-
     def __call__(self, pic):
         return torch.from_numpy(pic).type(torch.float32)
 
