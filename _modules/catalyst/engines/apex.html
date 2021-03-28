@@ -681,16 +681,6 @@
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">()</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
 
-        <span class="c1"># model, optimizer = _wrap_into_data_parallel_with_apex(</span>
-        <span class="c1">#     model,</span>
-        <span class="c1">#     optimizer,</span>
-        <span class="c1">#     distributed_params=dict(</span>
-        <span class="c1">#         opt_level=self.opt_level,</span>
-        <span class="c1">#         keep_batchnorm_fp32=self.keep_batchnorm_fp32,</span>
-        <span class="c1">#         loss_scale=self.loss_scale,</span>
-        <span class="c1">#     ),</span>
-        <span class="c1"># )</span>
-        <span class="c1"># model = APEX_DDP(model, delay_allreduce=self.delay_all_reduce)</span>
         <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span>
             <span class="n">model</span><span class="p">,</span>
             <span class="n">optimizer</span><span class="p">,</span>

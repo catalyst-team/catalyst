@@ -653,6 +653,11 @@
         <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">engine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;IEngine&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="c1"># engine extra params,</span>
+        <span class="n">fp16</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">amp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">apex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ddp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Runs model inference on PyTorch DataLoader and returns</span>
@@ -663,14 +668,16 @@
 <span class="sd">            model: model to use for prediction</span>
 <span class="sd">            engine: engine to use for prediction</span>
 <span class="sd">            seed: random seed to use before prediction</span>
+<span class="sd">            fp16: boolean flag to use half-precision training (AMP &gt; APEX)</span>
+<span class="sd">            amp: boolean flag to use amp half-precision</span>
+<span class="sd">            apex: boolean flag to use apex half-precision</span>
+<span class="sd">            ddp: if `True` will start training in distributed mode.</span>
+<span class="sd">                Note: Works only with python scripts. No jupyter support.</span>
 
 <span class="sd">        Yields:</span>
 <span class="sd">            bathes with model predictions</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">engine</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">engine</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">get_available_engine</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">engine</span> <span class="ow">or</span> <span class="n">get_available_engine</span><span class="p">(</span><span class="n">fp16</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span> <span class="n">ddp</span><span class="o">=</span><span class="n">ddp</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span> <span class="n">apex</span><span class="o">=</span><span class="n">apex</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>

@@ -357,7 +357,7 @@
         <span class="n">dim</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">l_norm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Init method for pruning callback&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">ExternalExtra</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pruning_fn</span> <span class="o">=</span> <span class="n">get_pruning_fn</span><span class="p">(</span><span class="n">pruning_fn</span><span class="o">=</span><span class="n">pruning_fn</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">,</span> <span class="n">l_norm</span><span class="o">=</span><span class="n">l_norm</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">keys_to_prune</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

@@ -314,6 +314,7 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">catalyst.tools.forward_wrapper</span> <span class="kn">import</span> <span class="n">ModelForwardWrapper</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_nn_from_ddp_module</span>
 
 <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">onnx_required</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">onnx</span>
@@ -382,10 +383,11 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        Union[None, &quot;onnx&quot;]: onnx model if return_model set to True.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nn_model</span> <span class="o">=</span> <span class="n">get_nn_from_ddp_module</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">method_name</span> <span class="o">!=</span> <span class="s2">&quot;forward&quot;</span><span class="p">:</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">ModelForwardWrapper</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">method_name</span><span class="o">=</span><span class="n">method_name</span><span class="p">)</span>
+        <span class="n">nn_model</span> <span class="o">=</span> <span class="n">ModelForwardWrapper</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">nn_model</span><span class="p">,</span> <span class="n">method_name</span><span class="o">=</span><span class="n">method_name</span><span class="p">)</span>
     <span class="n">torch</span><span class="o">.</span><span class="n">onnx</span><span class="o">.</span><span class="n">export</span><span class="p">(</span>
-        <span class="n">model</span><span class="p">,</span>
+        <span class="n">nn_model</span><span class="p">,</span>
         <span class="n">batch</span><span class="p">,</span>
         <span class="n">file</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
