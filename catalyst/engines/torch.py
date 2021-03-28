@@ -362,7 +362,6 @@ class DistributedDataParallelEngine(DeviceEngine):
             rank: process rank. Default is `-1`.
             world_size: number of devices in netwok to expect for train.
                 Default is `1`.
-
         """
         self._rank = rank
         self._world_size = world_size
