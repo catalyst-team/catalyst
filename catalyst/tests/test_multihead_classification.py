@@ -24,6 +24,20 @@ class CustomRunner(dl.Runner):
         }
 
 
+class CustomModule(nn.Module):
+    def __init__(self, in_features: int, out_features1: int, out_features2: int):
+        super().__init__()
+        self.shared = nn.Linear(in_features, 128)
+        self.head1 = nn.Linear(128, out_features1)
+        self.head2 = nn.Linear(128, out_features2)
+
+    def forward(self, x):
+        x = self.shared(x)
+        y1 = self.head1(x)
+        y2 = self.head2(x)
+        return y1, y2
+
+
 def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
         # sample data
@@ -36,19 +50,6 @@ def train_experiment(device, engine=None):
         dataset = TensorDataset(X, y1, y2)
         loader = DataLoader(dataset, batch_size=32, num_workers=1)
         loaders = {"train": loader, "valid": loader}
-
-        class CustomModule(nn.Module):
-            def __init__(self, in_features: int, out_features1: int, out_features2: int):
-                super().__init__()
-                self.shared = nn.Linear(in_features, 128)
-                self.head1 = nn.Linear(128, out_features1)
-                self.head2 = nn.Linear(128, out_features2)
-
-            def forward(self, x):
-                x = self.shared(x)
-                y1 = self.head1(x)
-                y2 = self.head2(x)
-                return y1, y2
 
         # model, criterion, optimizer, scheduler
         model = CustomModule(num_features, num_classes1, num_classes2)

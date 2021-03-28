@@ -40,6 +40,24 @@ def train_experiment(device, engine=None):
         optimizer = torch.optim.Adam(model.parameters())
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
+        callbacks = [
+            dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
+            dl.AUCCallback(input_key="scores", target_key="targets"),
+            dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+            dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+            dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+            dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+            dl.OptimizerCallback(metric_key="loss"),
+            dl.SchedulerCallback(),
+            dl.CheckpointCallback(
+                logdir=logdir, loader_key="valid", metric_key="map01", minimize=False
+            ),
+        ]
+        if engine is None or not isinstance(
+            engine, (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine)
+        ):
+            callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
+
         # model training
         runner = CustomRunner()
         runner.train(
@@ -51,19 +69,7 @@ def train_experiment(device, engine=None):
             loaders=loaders,
             num_epochs=1,
             verbose=False,
-            callbacks=[
-                dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
-                dl.AUCCallback(input_key="scores", target_key="targets"),
-                dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-                dl.OptimizerCallback(metric_key="loss"),
-                dl.SchedulerCallback(),
-                dl.CheckpointCallback(
-                    logdir=logdir, loader_key="valid", metric_key="map01", minimize=False
-                ),
-            ],
+            callbacks=callbacks,
         )
 
 
