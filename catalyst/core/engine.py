@@ -128,6 +128,11 @@ class IEngine(ABC):
         """Abstraction over ``optimizer.step()`` step.
         Should be overloaded in cases when required gradient scaling.
         Example - AMP.
+
+        Args:
+            loss: tensor with loss value.
+            model: model module.
+            optimizer: model optimizer.
         """
         pass
 
