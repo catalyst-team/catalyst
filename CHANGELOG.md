@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Engine configuration through cmd ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
 - Extra utils for thresholds ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
 - Added gradient clipping function to optimizer callback ([1124](https://github.com/catalyst-team/catalyst/pull/1124))
+- Callbacks for utils ([#1145](https://github.com/catalyst-team/catalyst/pull/1145))
 
 ### Changed
 
