@@ -15,6 +15,58 @@ from catalyst.data.transforms import ToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
+class CustomRunner(dl.Runner):
+    def __init__(self, latent_dim):
+        super().__init__()
+        self.latent_dim = latent_dim
+
+    def predict_batch(self, batch):
+        batch_size = 1
+        # Sample random points in the latent space
+        random_latent_vectors = torch.randn(batch_size, self.latent_dim).to(self.device)
+        # Decode them to fake images
+        generated_images = self.model["generator"](random_latent_vectors).detach()
+        return generated_images
+
+    def handle_batch(self, batch):
+        real_images, _ = batch
+        batch_size = real_images.shape[0]
+
+        # Sample random points in the latent space
+        random_latent_vectors = torch.randn(batch_size, self.latent_dim).to(self.device)
+
+        # Decode them to fake images
+        generated_images = self.model["generator"](random_latent_vectors).detach()
+        # Combine them with real images
+        combined_images = torch.cat([generated_images, real_images])
+
+        # Assemble labels discriminating real from fake images
+        labels = torch.cat([torch.ones((batch_size, 1)), torch.zeros((batch_size, 1))]).to(
+            self.device
+        )
+        # Add random noise to the labels - important trick!
+        labels += 0.05 * torch.rand(labels.shape).to(self.device)
+
+        # Discriminator forward
+        combined_predictions = self.model["discriminator"](combined_images)
+
+        # Sample random points in the latent space
+        random_latent_vectors = torch.randn(batch_size, self.latent_dim).to(self.device)
+        # Assemble labels that say "all real images"
+        misleading_labels = torch.zeros((batch_size, 1)).to(self.device)
+
+        # Generator forward
+        generated_images = self.model["generator"](random_latent_vectors)
+        generated_predictions = self.model["discriminator"](generated_images)
+
+        self.batch = {
+            "combined_predictions": combined_predictions,
+            "labels": labels,
+            "generated_predictions": generated_predictions,
+            "misleading_labels": misleading_labels,
+        }
+
+
 def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
         # latent_dim = 128
@@ -61,54 +113,7 @@ def train_experiment(device, engine=None):
             ),
         }
 
-        class CustomRunner(dl.Runner):
-            def predict_batch(self, batch):
-                batch_size = 1
-                # Sample random points in the latent space
-                random_latent_vectors = torch.randn(batch_size, latent_dim).to(self.device)
-                # Decode them to fake images
-                generated_images = self.model["generator"](random_latent_vectors).detach()
-                return generated_images
-
-            def handle_batch(self, batch):
-                real_images, _ = batch
-                batch_size = real_images.shape[0]
-
-                # Sample random points in the latent space
-                random_latent_vectors = torch.randn(batch_size, latent_dim).to(self.device)
-
-                # Decode them to fake images
-                generated_images = self.model["generator"](random_latent_vectors).detach()
-                # Combine them with real images
-                combined_images = torch.cat([generated_images, real_images])
-
-                # Assemble labels discriminating real from fake images
-                labels = torch.cat([torch.ones((batch_size, 1)), torch.zeros((batch_size, 1))]).to(
-                    self.device
-                )
-                # Add random noise to the labels - important trick!
-                labels += 0.05 * torch.rand(labels.shape).to(self.device)
-
-                # Discriminator forward
-                combined_predictions = self.model["discriminator"](combined_images)
-
-                # Sample random points in the latent space
-                random_latent_vectors = torch.randn(batch_size, latent_dim).to(self.device)
-                # Assemble labels that say "all real images"
-                misleading_labels = torch.zeros((batch_size, 1)).to(self.device)
-
-                # Generator forward
-                generated_images = self.model["generator"](random_latent_vectors)
-                generated_predictions = self.model["discriminator"](generated_images)
-
-                self.batch = {
-                    "combined_predictions": combined_predictions,
-                    "labels": labels,
-                    "generated_predictions": generated_predictions,
-                    "misleading_labels": misleading_labels,
-                }
-
-        runner = CustomRunner()
+        runner = CustomRunner(latent_dim)
         runner.train(
             engine=engine or dl.DeviceEngine(device),
             model=model,

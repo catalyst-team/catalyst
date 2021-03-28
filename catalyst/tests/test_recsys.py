@@ -10,6 +10,18 @@ from catalyst import dl
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
+class CustomRunner(dl.Runner):
+    def handle_batch(self, batch):
+        x, y = batch
+        logits = self.model(x)
+        self.batch = {
+            "features": x,
+            "logits": logits,
+            "scores": torch.sigmoid(logits),
+            "targets": y,
+        }
+
+
 def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
         # sample data
@@ -27,17 +39,6 @@ def train_experiment(device, engine=None):
         criterion = torch.nn.BCEWithLogitsLoss()
         optimizer = torch.optim.Adam(model.parameters())
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
-
-        class CustomRunner(dl.Runner):
-            def handle_batch(self, batch):
-                x, y = batch
-                logits = self.model(x)
-                self.batch = {
-                    "features": x,
-                    "logits": logits,
-                    "scores": torch.sigmoid(logits),
-                    "targets": y,
-                }
 
         # model training
         runner = CustomRunner()

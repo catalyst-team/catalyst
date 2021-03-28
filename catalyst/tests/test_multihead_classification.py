@@ -11,6 +11,19 @@ from catalyst import dl
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
+class CustomRunner(dl.Runner):
+    def handle_batch(self, batch):
+        x, y1, y2 = batch
+        y1_hat, y2_hat = self.model(x)
+        self.batch = {
+            "features": x,
+            "logits1": y1_hat,
+            "logits2": y2_hat,
+            "targets1": y1,
+            "targets2": y2,
+        }
+
+
 def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
         # sample data
@@ -42,18 +55,6 @@ def train_experiment(device, engine=None):
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(model.parameters())
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer, [2])
-
-        class CustomRunner(dl.Runner):
-            def handle_batch(self, batch):
-                x, y1, y2 = batch
-                y1_hat, y2_hat = self.model(x)
-                self.batch = {
-                    "features": x,
-                    "logits1": y1_hat,
-                    "logits2": y2_hat,
-                    "targets1": y1,
-                    "targets2": y2,
-                }
 
         # model training
         runner = CustomRunner()

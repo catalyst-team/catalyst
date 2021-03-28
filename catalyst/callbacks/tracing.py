@@ -15,9 +15,9 @@ class TracingCallback(Callback):
     Callback for model tracing.
 
     Args:
+        input_key: input key from ``runner.batch`` to use for model tracing
         logdir: path to folder for saving
         filename: filename
-        batch: input tensor for model. If None will take batch from train loader.
         method_name: Model's method name that will be used as entrypoint during tracing
 
     Example:
@@ -65,10 +65,6 @@ class TracingCallback(Callback):
                 num_epochs=1,
                 logdir="./logs",
             )
-        input_key: input key from ``runner.batch`` to use for model tracing
-        logdir: path to folder for saving
-        filename: filename
-        method_name: Model's method name that will be used as entrypoint during tracing
     """
 
     def __init__(

@@ -32,6 +32,18 @@ def train_experiment(device, engine=None):
         runner = dl.SupervisedRunner(
             input_key="features", output_key="logits", target_key="targets", loss_key="loss"
         )
+        callbacks = [
+            dl.AccuracyCallback(input_key="logits", target_key="targets", num_classes=num_classes),
+            dl.PrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=4
+            ),
+            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=4),
+        ]
+        if engine is None or not isinstance(
+            engine, (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine)
+        ):
+            callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
+
         runner.train(
             engine=engine or dl.DeviceEngine(device),
             model=model,
@@ -45,49 +57,38 @@ def train_experiment(device, engine=None):
             valid_metric="accuracy03",
             minimize_valid_metric=False,
             verbose=False,
-            callbacks=[
-                dl.AccuracyCallback(
-                    input_key="logits", target_key="targets", num_classes=num_classes
-                ),
-                dl.PrecisionRecallF1SupportCallback(
-                    input_key="logits", target_key="targets", num_classes=4
-                ),
-                dl.AUCCallback(input_key="logits", target_key="targets"),
-                dl.ConfusionMatrixCallback(
-                    input_key="logits", target_key="targets", num_classes=4
-                ),
-            ],
+            callbacks=callbacks,
         )
 
 
 # Torch
-def test_on_cpu():
+def test_classification_on_cpu():
     train_experiment("cpu")
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_on_torch_cuda0():
+def test_classification_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_cuda1():
+def test_classification_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_dp():
+def test_classification_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_ddp():
+def test_classification_on_torch_ddp():
     train_experiment(None, dl.DistributedDataParallelEngine())
 
 
@@ -95,7 +96,7 @@ def test_on_torch_ddp():
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found",
 )
-def test_on_amp():
+def test_classification_on_amp():
     train_experiment(None, dl.AMPEngine())
 
 
@@ -103,7 +104,7 @@ def test_on_amp():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_dp():
+def test_classification_on_amp_dp():
     train_experiment(None, dl.DataParallelAMPEngine())
 
 
@@ -111,7 +112,7 @@ def test_on_amp_dp():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_ddp():
+def test_classification_on_amp_ddp():
     train_experiment(None, dl.DistributedDataParallelAMPEngine())
 
 
@@ -119,7 +120,7 @@ def test_on_amp_ddp():
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
 )
-def test_on_apex():
+def test_classification_on_apex():
     train_experiment(None, dl.APEXEngine())
 
 
@@ -127,7 +128,7 @@ def test_on_apex():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
     reason="No CUDA>=2 or Apex found",
 )
-def test_on_apex_dp():
+def test_classification_on_apex_dp():
     train_experiment(None, dl.DataParallelApexEngine())
 
 
@@ -135,5 +136,5 @@ def test_on_apex_dp():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
     reason="No CUDA>=2 or Apex found",
 )
-def test_on_apex_ddp():
+def test_classification_on_apex_ddp():
     train_experiment(None, dl.DistributedDataParallelApexEngine())

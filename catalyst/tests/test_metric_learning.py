@@ -13,6 +13,29 @@ from catalyst.data.transforms import Compose, Normalize, ToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
+class CustomRunner(dl.SupervisedRunner):
+    def handle_batch(self, batch) -> None:
+        if self.is_train_loader:
+            images, targets = batch["features"].float(), batch["targets"].long()
+            features = self.model(images)
+            self.batch = {
+                "embeddings": features,
+                "targets": targets,
+            }
+        else:
+            images, targets, is_query = (
+                batch["features"].float(),
+                batch["targets"].long(),
+                batch["is_query"].bool(),
+            )
+            features = self.model(images)
+            self.batch = {
+                "embeddings": features,
+                "targets": targets,
+                "is_query": is_query,
+            }
+
+
 def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
 
@@ -41,28 +64,6 @@ def train_experiment(device, engine=None):
         criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
 
         # 4. training with catalyst Runner
-        class CustomRunner(dl.SupervisedRunner):
-            def handle_batch(self, batch) -> None:
-                if self.is_train_loader:
-                    images, targets = batch["features"].float(), batch["targets"].long()
-                    features = self.model(images)
-                    self.batch = {
-                        "embeddings": features,
-                        "targets": targets,
-                    }
-                else:
-                    images, targets, is_query = (
-                        batch["features"].float(),
-                        batch["targets"].long(),
-                        batch["is_query"].bool(),
-                    )
-                    features = self.model(images)
-                    self.batch = {
-                        "embeddings": features,
-                        "targets": targets,
-                        "is_query": is_query,
-                    }
-
         callbacks = [
             dl.ControlFlowCallback(
                 dl.CriterionCallback(

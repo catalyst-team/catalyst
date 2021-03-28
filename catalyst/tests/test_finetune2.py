@@ -54,7 +54,7 @@ class CustomRunner(dl.IRunner):
 
     def get_model(self, stage: str):
         model = (
-            self.model
+            utils.get_nn_from_ddp_module(self.model)
             if self.model is not None
             else nn.Sequential(nn.Flatten(), nn.Linear(784, 128), nn.ReLU(), nn.Linear(128, 10))
         )

@@ -32,6 +32,13 @@ def train_experiment(device, engine=None):
         runner = dl.SupervisedRunner(
             input_key="features", output_key="logits", target_key="targets", loss_key="loss"
         )
+        callbacks = [
+            dl.MultilabelAccuracyCallback(input_key="logits", target_key="targets", threshold=0.5),
+        ]
+        if engine is None or not isinstance(
+            engine, (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine)
+        ):
+            callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
         runner.train(
             engine=engine or dl.DeviceEngine(device),
             model=model,
@@ -45,12 +52,7 @@ def train_experiment(device, engine=None):
             valid_metric="accuracy",
             minimize_valid_metric=False,
             verbose=False,
-            callbacks=[
-                dl.AUCCallback(input_key="logits", target_key="targets"),
-                dl.MultilabelAccuracyCallback(
-                    input_key="logits", target_key="targets", threshold=0.5
-                ),
-            ],
+            callbacks=callbacks,
         )
 
 

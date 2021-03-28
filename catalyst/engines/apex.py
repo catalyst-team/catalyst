@@ -373,16 +373,6 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         optimizer = optimizer_fn()
         optimizer = self.sync_device(optimizer)
 
-        # model, optimizer = _wrap_into_data_parallel_with_apex(
-        #     model,
-        #     optimizer,
-        #     distributed_params=dict(
-        #         opt_level=self.opt_level,
-        #         keep_batchnorm_fp32=self.keep_batchnorm_fp32,
-        #         loss_scale=self.loss_scale,
-        #     ),
-        # )
-        # model = APEX_DDP(model, delay_allreduce=self.delay_all_reduce)
         model, optimizer = amp.initialize(
             model,
             optimizer,

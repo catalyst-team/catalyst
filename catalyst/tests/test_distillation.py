@@ -15,10 +15,29 @@ from catalyst.data.transforms import ToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
+class DistilRunner(dl.Runner):
+    def handle_batch(self, batch):
+        x, y = batch
+
+        self.model["teacher"].eval()  # let's manually set teacher model to eval mode
+        with torch.no_grad():
+            t_logits = self.model["teacher"](x)
+
+        s_logits = self.model["student"](x)
+        self.batch = {
+            "t_logits": t_logits,
+            "s_logits": s_logits,
+            "targets": y,
+            "s_logprobs": F.log_softmax(s_logits, dim=-1),
+            "t_probs": F.softmax(t_logits, dim=-1),
+        }
+
+
 def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
         teacher = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
         student = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+        model = {"teacher": teacher, "student": student}
         criterion = {"cls": nn.CrossEntropyLoss(), "kl": nn.KLDivLoss(reduction="batchmean")}
         optimizer = optim.Adam(student.parameters(), lr=0.02)
 
@@ -31,28 +50,11 @@ def train_experiment(device, engine=None):
             ),
         }
 
-        class DistilRunner(dl.Runner):
-            def handle_batch(self, batch):
-                x, y = batch
-
-                teacher.eval()  # let's manually set teacher model to eval mode
-                with torch.no_grad():
-                    t_logits = self.model["teacher"](x)
-
-                s_logits = self.model["student"](x)
-                self.batch = {
-                    "t_logits": t_logits,
-                    "s_logits": s_logits,
-                    "targets": y,
-                    "s_logprobs": F.log_softmax(s_logits, dim=-1),
-                    "t_probs": F.softmax(t_logits, dim=-1),
-                }
-
         runner = DistilRunner()
         # model training
         runner.train(
             engine=engine or dl.DeviceEngine(device),
-            model={"teacher": teacher, "student": student},
+            model=model,
             criterion=criterion,
             optimizer=optimizer,
             loaders=loaders,
@@ -94,33 +96,33 @@ def train_experiment(device, engine=None):
 
 
 # Torch
-def test_on_cpu():
+def test_distillation_on_cpu():
     train_experiment("cpu")
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_on_torch_cuda0():
+def test_distillation_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_cuda1():
+def test_distillation_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_dp():
+def test_distillation_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_ddp():
+def test_distillation_on_torch_ddp():
     train_experiment(None, dl.DistributedDataParallelEngine())
 
 
@@ -128,7 +130,7 @@ def test_on_torch_ddp():
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found",
 )
-def test_on_amp():
+def test_distillation_on_amp():
     train_experiment(None, dl.AMPEngine())
 
 
@@ -136,7 +138,7 @@ def test_on_amp():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_dp():
+def test_distillation_on_amp_dp():
     train_experiment(None, dl.DataParallelAMPEngine())
 
 
@@ -144,7 +146,7 @@ def test_on_amp_dp():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_ddp():
+def test_distillation_on_amp_ddp():
     train_experiment(None, dl.DistributedDataParallelAMPEngine())
 
 
@@ -152,7 +154,7 @@ def test_on_amp_ddp():
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
 )
-def test_on_apex():
+def test_distillation_on_apex():
     train_experiment(None, dl.APEXEngine())
 
 
@@ -160,13 +162,13 @@ def test_on_apex():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
     reason="No CUDA>=2 or Apex found",
 )
-def test_on_apex_dp():
+def test_distillation_on_apex_dp():
     train_experiment(None, dl.DataParallelApexEngine())
 
 
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
-    reason="No CUDA>=2 or Apex found",
-)
-def test_on_apex_ddp():
-    train_experiment(None, dl.DistributedDataParallelApexEngine())
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+#     reason="No CUDA>=2 or Apex found",
+# )
+# def test_distillation_on_apex_ddp():
+#     train_experiment(None, dl.DistributedDataParallelApexEngine())
