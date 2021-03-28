@@ -5,10 +5,17 @@ from torch import nn
 
 
 class FactorizedLinear(nn.Module):
-    def __init__(self, nn_linear: nn.Module, dim_ratio: Union[int, float] = 1.0):
+    """Factorized wrapper for ``nn.Linear``
+
+    Args:
+        nn_linear: torch ``nn.Linear`` module
+        dim_ratio: dimension ration to use after weights SVD
+    """
+
+    def __init__(self, nn_linear: nn.Linear, dim_ratio: Union[int, float] = 1.0):
         super().__init__()
         self.bias = nn.parameter.Parameter(nn_linear.bias.data, requires_grad=True)
-        u, vh = self.spectral_init(nn_linear.weight.data, dim_ratio=dim_ratio)
+        u, vh = self._spectral_init(nn_linear.weight.data, dim_ratio=dim_ratio)
         # print(f"Doing SVD of tensor {or_linear.weight.shape}, U: {u.shape}, Vh: {vh.shape}")
         self.u = nn.parameter.Parameter(u, requires_grad=True)
         self.vh = nn.parameter.Parameter(vh, requires_grad=True)
@@ -17,7 +24,7 @@ class FactorizedLinear(nn.Module):
         self.out_features = vh.size(1)
 
     @staticmethod
-    def spectral_init(m, dim_ratio: Union[int, float] = 1):
+    def _spectral_init(m, dim_ratio: Union[int, float] = 1):
         u, s, vh = torch.linalg.svd(m, full_matrices=False)
         u = u @ torch.diag(torch.sqrt(s))
         vh = torch.diag(torch.sqrt(s)) @ vh
@@ -30,11 +37,16 @@ class FactorizedLinear(nn.Module):
         return u, vh
 
     def extra_repr(self) -> str:
+        """Extra representation log."""
         return (
             f"in_features={self.in_features}, "
             f"out_features={self.out_features}, "
             f"bias=True, dim_ratio={self.dim_ratio}"
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor):
+        """Forward call."""
         return x @ (self.u @ self.vh).transpose(0, 1) + self.bias
+
+
+__all__ = ["FactorizedLinear"]
