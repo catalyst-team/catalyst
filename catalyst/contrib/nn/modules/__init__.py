@@ -12,6 +12,7 @@ from catalyst.contrib.nn.modules.common import (
 )
 from catalyst.contrib.nn.modules.cosface import CosFace, AdaCos
 from catalyst.contrib.nn.modules.curricularface import CurricularFace
+from catalyst.contrib.nn.modules.factorized import FactorizedLinear
 from catalyst.contrib.nn.modules.lama import (
     LamaPooling,
     TemporalLastPooling,
