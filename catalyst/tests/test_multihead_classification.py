@@ -8,10 +8,10 @@ from torch import nn, optim
 from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst import dl
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
-def train_experiment(device):
+def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
         # sample data
         num_samples, num_features, num_classes1, num_classes2 = int(1e4), int(1e1), 4, 10
@@ -58,6 +58,7 @@ def train_experiment(device):
         # model training
         runner = CustomRunner()
         runner.train(
+            engine=engine or dl.DeviceEngine(device),
             model=model,
             criterion=criterion,
             optimizer=optimizer,
@@ -122,6 +123,7 @@ def train_experiment(device):
         )
 
 
+# Torch
 def test_finetune_on_cpu():
     train_experiment("cpu")
 
@@ -132,7 +134,69 @@ def test_finetune_on_cuda():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.DataParallelEngine())
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.DistributedDataParallelEngine())
+
+
+# AMP
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.AMPEngine())
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+    reason="No CUDA>=2 or AMP found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.DataParallelAMPEngine())
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+    reason="No CUDA>=2 or AMP found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.DistributedDataParallelAMPEngine())
+
+
+# APEX
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.APEXEngine())
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+    reason="No CUDA>=2 or Apex found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.DataParallelApexEngine())
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+    reason="No CUDA>=2 or Apex found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.DistributedDataParallelApexEngine())

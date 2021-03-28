@@ -43,7 +43,7 @@ class OnnxCallback(Callback):
     ):
         """Init."""
         super().__init__(order=CallbackOrder.ExternalExtra, node=CallbackNode.Master)
-        if self.logdir is not None:
+        if logdir is not None:
             self.filename = Path(logdir) / filename
         else:
             self.filename = filename

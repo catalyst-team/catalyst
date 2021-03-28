@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader, Dataset
 from catalyst import dl, utils
 from catalyst.engines.torch import DeviceEngine
 from catalyst.registry import REGISTRY
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 logger = logging.getLogger(__name__)
 
@@ -98,13 +98,14 @@ class CheckRequiresGrad(dl.Callback):
 
 
 class CustomRunner(dl.IRunner):
-    def __init__(self, logdir, device):
+    def __init__(self, logdir, device, engine):
         super().__init__()
         self._logdir = logdir
         self._device = device
+        self._engine = engine
 
     def get_engine(self):
-        return DeviceEngine(self._device)
+        return self._engine or DeviceEngine(self._device)
 
     def get_loggers(self):
         return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
@@ -167,56 +168,15 @@ class CustomRunner(dl.IRunner):
         }
 
 
-def train_experiment(device):
+def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
-        runner = CustomRunner(logdir, device)
+        runner = CustomRunner(logdir, device, engine)
         runner.run()
 
 
-def train_config_experiment(device):
-    pass
-    # dataset = DummyDataset(10)
-    # runner = SupervisedRunner()
-    # logdir = f"./test_{device}_engine"
-    # exp = ConfigExperiment(
-    #     config={
-    #         "model_params": {"_target_": "DummyModel", "in_features": 4, "out_features": 1},
-    #         "engine": str(device),
-    #         "args": {"logdir": logdir},
-    #         "stages": {
-    #             "data_params": {"batch_size": 4, "num_workers": 0},
-    #             "criterion_params": {"_target_": "MSELoss"},
-    #             "optimizer_params": {"_target_": "SGD", "lr": 1e-3},
-    #             "stage1": {
-    #                 "stage_params": {"num_epochs": 2},
-    #                 "callbacks_params": {
-    #                     "loss": {"_target_": "CriterionCallback"},
-    #                     "optimizer": {"_target_": "OptimizerCallback"},
-    #                     "test_device": {
-    #                         "_target_": "DeviceCheckCallback",
-    #                         "assert_device": str(device),
-    #                     },
-    #                     "test_loss_minimization": {"_target_": "LossMinimizationCallback"},
-    #                 },
-    #             },
-    #         },
-    #     }
-    # )
-    # exp.get_datasets = lambda *args, **kwargs: {
-    #     "train": dataset,
-    #     "valid": dataset,
-    # }
-    # runner.run(exp)
-    # shutil.rmtree(logdir, ignore_errors=True)
-
-
+# Torch
 def test_finetune_on_cpu():
     train_experiment("cpu")
-
-
-@mark.skip("Config experiment is in development phase!")
-def test_finetune_on_config_cpu():
-    train_config_experiment("cpu")
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
@@ -224,22 +184,69 @@ def test_finetune_on_cuda():
     train_experiment("cuda:0")
 
 
-@mark.skip("Config experiment is in development phase!")
-@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_finetune_on_config_cuda():
-    train_config_experiment("cuda:0")
-
-
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
 def test_finetune_on_cuda_device():
     train_experiment("cuda:1")
 
 
-@mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_finetune_on_config_cuda_device():
-    train_config_experiment("cuda:1")
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.DataParallelEngine())
+
+
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >=2),
+#     reason="No CUDA>=2 found",
+# )
+# def test_finetune_on_cuda_device():
+#     train_experiment(None, dl.DistributedDataParallelEngine())
+
+# AMP
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.AMPEngine())
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+    reason="No CUDA>=2 or AMP found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.DataParallelAMPEngine())
+
+
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+#     reason="No CUDA>=2 or AMP found",
+# )
+# def test_finetune_on_cuda_device():
+#     train_experiment(None, dl.DistributedDataParallelAMPEngine())
+
+# APEX
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.APEXEngine())
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+    reason="No CUDA>=2 or Apex found",
+)
+def test_finetune_on_cuda_device():
+    train_experiment(None, dl.DataParallelApexEngine())
+
+
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+#     reason="No CUDA>=2 or Apex found",
+# )
+# def test_finetune_on_cuda_device():
+#     train_experiment(None, dl.DistributedDataParallelApexEngine())
