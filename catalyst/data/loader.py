@@ -1,4 +1,5 @@
 from typing import Any, Callable, Iterable, Union
+from itertools import tee
 import queue
 import sys
 import threading
@@ -106,7 +107,7 @@ class BatchLimitLoaderWrapper(ILoaderWrapper):
             )
             num_batches = int(len(loader) * num_batches)
 
-        self.iterator = iter(self.origin)
+        self._iterator = iter(self.origin)
         self.iteration_index = 0
         self.num_batches = num_batches
 
@@ -117,7 +118,7 @@ class BatchLimitLoaderWrapper(ILoaderWrapper):
             iterator object
         """
         self.iteration_index = 0
-        self.iterator = iter(self.origin)
+        self._iterator, self.iterator = tee(self._iterator)
         return self
 
     def __next__(self):
@@ -130,7 +131,7 @@ class BatchLimitLoaderWrapper(ILoaderWrapper):
             raise StopIteration()
         self.iteration_index += 1
         if self.iteration_index % self.num_batches == 0:
-            self.iterator = iter(self.origin)
+            self._iterator, self.iterator = tee(self._iterator)
         batch = next(self.iterator)
         return batch
 

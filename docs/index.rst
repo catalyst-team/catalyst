@@ -10,10 +10,12 @@ PyTorch framework for Deep Learning R&D.
 --------------------------------------------------------------------------------
 
 It focuses on reproducibility, rapid experimentation, and codebase reuse
-so you can **create** something new rather than write another regular train loop.
+so you can **create** something new rather than write yet another train loop.
 Break the cycle - use the Catalyst_!
 
-Project manifest_. Part of `PyTorch Ecosystem`_. Part of `Catalyst Ecosystem`_:
+Read more about our vision in the `Project Manifest`_. Catalyst is a part of the `PyTorch Ecosystem`_.
+
+`Catalyst Ecosystem`_ consists of:
     - Alchemy_ - experiments logging & visualization
     - Catalyst_ - accelerated deep learning R&D
     - Reaction_ - convenient deep learning models serving
@@ -25,7 +27,7 @@ Project manifest_. Part of `PyTorch Ecosystem`_. Part of `Catalyst Ecosystem`_:
 .. _Alchemy: https://github.com/catalyst-team/alchemy
 .. _Catalyst: https://github.com/catalyst-team/catalyst
 .. _Reaction: https://github.com/catalyst-team/reaction
-.. _manifest: https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md
+.. _`Project Manifest`: https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md
 .. _Catalyst at AI Landscape: https://landscape.lfai.foundation/selected=catalyst
 
 Getting started

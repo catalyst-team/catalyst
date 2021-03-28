@@ -4,7 +4,7 @@ import os
 import torch
 import torch.distributed as dist
 import torch.nn as nn
-from torch.nn.parallel import DataParallel, DistributedDataParallel
+from torch.nn.parallel import DistributedDataParallel
 
 from catalyst.core.engine import IEngine
 from catalyst.typing import RunnerCriterion, RunnerModel, RunnerOptimizer, RunnerScheduler
@@ -241,7 +241,11 @@ class DataParallelEngine(DeviceEngine):
         """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
-        model = DataParallel(model)
+
+        if isinstance(model, nn.Module):
+            model = nn.DataParallel(model)
+        elif isinstance(model, dict):
+            model = {k: nn.DataParallel(v) for k, v in model.items()}
 
         # criterion
         criterion = criterion_fn()
@@ -399,9 +403,12 @@ class DistributedDataParallelEngine(DeviceEngine):
         model = model_fn()
         model = self.sync_device(model)
         # NOTE: do not forget to wrap a model in DDP
-        model = DistributedDataParallel(
-            model, device_ids=[self.device], find_unused_parameters=True
-        )
+        if isinstance(model, nn.Module):
+            model = DistributedDataParallel(model, device_ids=[self.device])
+        elif isinstance(model, dict):
+            model = {
+                k: DistributedDataParallel(v, device_ids=[self.device]) for k, v in model.items()
+            }
         # criterion
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)

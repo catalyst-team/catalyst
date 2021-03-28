@@ -345,6 +345,11 @@ class Runner(IRunner):
         model: Model = None,
         engine: Union["IEngine", str] = None,
         seed: int = 42,
+        # engine extra params,
+        fp16: bool = False,
+        amp: bool = False,
+        apex: bool = False,
+        ddp: bool = False,
     ) -> Generator:
         """
         Runs model inference on PyTorch DataLoader and returns
@@ -355,13 +360,16 @@ class Runner(IRunner):
             model: model to use for prediction
             engine: engine to use for prediction
             seed: random seed to use before prediction
+            fp16: boolean flag to use half-precision training (AMP > APEX)
+            amp: boolean flag to use amp half-precision
+            apex: boolean flag to use apex half-precision
+            ddp: if `True` will start training in distributed mode.
+                Note: Works only with python scripts. No jupyter support.
 
         Yields:
             bathes with model predictions
         """
-        if engine is not None:
-            self.engine = engine
-        assert self.engine is not None
+        self._engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
 
         if model is not None:
             self.model = model
@@ -371,7 +379,6 @@ class Runner(IRunner):
         #     checkpoint = load_checkpoint(resume)
         #     unpack_checkpoint(checkpoint, model=self.model)
 
-        # @TODO: we need engine here
         self.model = self.engine.sync_device(self.model)
         maybe_recursive_call(self.model, "train", mode=False)
 
@@ -428,6 +435,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
             Mapping[str, Any]: model output dictionary
         """
         batch = self._process_batch(batch)
+        batch = self.engine.sync_device(tensor_or_module=batch)
         output = self.forward(batch, **kwargs)
         return output
 

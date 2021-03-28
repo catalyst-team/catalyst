@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      # max-parallel: 6
+      max-parallel: 4
       matrix:
         os: [ubuntu-18.04] # , windows-2019, macOS-10.15]
         python-version: [3.6] #, 3.7, 3.8]
@@ -22,7 +22,7 @@ jobs:
 #          - python-version: 3.8
 #            requires: 'minimal'
     # Timeout: 4
-    timeout-minutes: 60
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v2
 

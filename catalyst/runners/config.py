@@ -32,6 +32,7 @@ from catalyst.typing import (
 )
 from catalyst.utils.data import get_loaders_from_params
 from catalyst.utils.misc import get_by_keys, get_short_hash, get_utcnow_time
+from catalyst.utils.torch import get_available_engine
 
 logger = logging.getLogger(__name__)
 
@@ -49,11 +50,17 @@ class ConfigRunner(IRunner):
         self._config: Dict = deepcopy(config)
         self._stage_config: Dict = self._config["stages"]
 
+        self._apex: bool = get_by_keys(self._config, "args", "apex", default=False)
+        self._amp: bool = get_by_keys(self._config, "args", "amp", default=False)
+        self._ddp: bool = get_by_keys(self._config, "args", "ddp", default=False)
+        self._fp16: bool = get_by_keys(self._config, "args", "fp16", default=False)
+
         self._seed: int = get_by_keys(self._config, "args", "seed", default=42)
         self._verbose: bool = get_by_keys(self._config, "args", "verbose", default=False)
         self._timeit: bool = get_by_keys(self._config, "args", "timeit", default=False)
         self._check: bool = get_by_keys(self._config, "args", "check", default=False)
         self._overfit: bool = get_by_keys(self._config, "args", "overfit", default=False)
+
         self._name: str = self._get_run_name()
         self._logdir: str = self._get_run_logdir()
 
@@ -135,8 +142,13 @@ class ConfigRunner(IRunner):
 
     def get_engine(self) -> IEngine:
         """Returns the engine for the run."""
-        engine_params = self._config.get("engine")
-        engine = REGISTRY.get_from_params(**engine_params)
+        engine_params = self._config.get("engine", None)
+        if engine_params is not None:
+            engine = REGISTRY.get_from_params(**engine_params)
+        else:
+            engine = get_available_engine(
+                fp16=self._fp16, ddp=self._ddp, amp=self._amp, apex=self._apex
+            )
         return engine
 
     def get_loggers(self) -> Dict[str, ILogger]:
@@ -228,7 +240,7 @@ class ConfigRunner(IRunner):
         self, model: RunnerModel, stage: str, **params
     ) -> RunnerOptimizer:
         # @TODO 1: refactor; this method is too long
-
+        params = deepcopy(params)
         # learning rate linear scaling
         lr_scaling_params = params.pop("lr_linear_scaling", None)
         if lr_scaling_params:
@@ -278,11 +290,6 @@ class ConfigRunner(IRunner):
         if is_key_value:
             optimizer = {}
             for key, params in optimizer_params.items():
-                # load specified optimizer from checkpoint
-                optimizer_key = "_optimizer"
-                assert optimizer_key not in params, "keyword reserved"
-                params[optimizer_key] = key
-
                 optimizer[key] = self._get_optimizer_from_params(
                     model=model, stage=stage, **params
                 )
@@ -298,16 +305,18 @@ class ConfigRunner(IRunner):
         params = deepcopy(params)
 
         is_key_value = params.pop("_key_value", False)
-        optimizer_key = params.pop("_optimizer", None)
-        optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
-
         if is_key_value:
             scheduler: Dict[str, Scheduler] = {}
             for key, scheduler_params in params.items():
+                scheduler_params = deepcopy(scheduler_params)
+                optimizer_key = scheduler_params.pop("_optimizer", None)
+                optim = optimizer[optimizer_key] if optimizer_key else optimizer
                 scheduler[key] = ConfigRunner._get_scheduler_from_params(
-                    **scheduler_params, optimizer=optimizer
+                    **scheduler_params, optimizer=optim
                 )  # noqa: WPS437
         else:
+            optimizer_key = params.pop("_optimizer", None)
+            optimizer = optimizer[optimizer_key] if optimizer_key else optimizer
             scheduler = REGISTRY.get_from_params(**params, optimizer=optimizer)
         return scheduler
 

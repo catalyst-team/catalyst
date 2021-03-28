@@ -29,11 +29,13 @@
 </div>
 
 Catalyst is a PyTorch framework for Deep Learning Research and Development.
-Catalyst focuses on reproducibility, rapid experimentation, and codebase reuse 
+It focuses on reproducibility, rapid experimentation, and codebase reuse 
 so you can create something new rather than write yet another train loop.
-<br/> Break the cycle, use Catalyst!
+<br/> Break the cycle – use the Catalyst!
 
-Read more about our vision in the [Project Manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md).  Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/).  [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing) consists of:
+Read more about our vision in the [Project Manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md). 
+Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/). 
+<br/> [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing) consists of:
 - [Alchemy](https://github.com/catalyst-team/alchemy) - experiments logging & visualization
 - [Catalyst](https://github.com/catalyst-team/catalyst) - accelerated deep learning R&D
 - [Reaction](https://github.com/catalyst-team/reaction) - convenient deep learning model serving
@@ -643,7 +645,7 @@ class DistilRunner(dl.Runner):
     def handle_batch(self, batch):
         x, y = batch
 
-        teacher.eval()  # let's manually set teacher model to eval mode
+        self.model["teacher"].eval()  # let's manually set teacher model to eval mode
         with torch.no_grad():
             t_logits = self.model["teacher"](x)
 
@@ -1379,8 +1381,6 @@ best practices for your deep learning research and development.
 - [Demo with minimal examples](./examples/notebooks/demo.ipynb) for ML, CV, NLP, GANs and RecSys [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
 - Metric Learning Tutorial [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xcob6Y2W0O1JiN-juoF1YfJMJsScCVhV?usp=sharing)
 - Catalyst with Google TPUs [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)
-- Detailed [Classification Tutorial](./examples/notebooks/classification-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/classification-tutorial.ipynb)
-- Advanced [Segmentation Tutorial](./examples/notebooks/segmentation-tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/segmentation-tutorial.ipynb)
 
 ### Notable Blog Posts
 - [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)

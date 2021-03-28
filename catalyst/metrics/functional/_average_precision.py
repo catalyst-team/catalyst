@@ -72,7 +72,7 @@ def binary_average_precision(
     return ap
 
 
-def average_precision(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+def average_precision(outputs: torch.Tensor, targets: torch.Tensor, k: int) -> torch.Tensor:
     """
     Calculate the Average Precision for RecSys.
     The precision metric summarizes the fraction of relevant items
@@ -104,6 +104,8 @@ def average_precision(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Ten
             and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
+        k:
+            Parameter for evaluation on top-k items
 
     Returns:
         ap_score (torch.Tensor):
@@ -112,21 +114,25 @@ def average_precision(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Ten
 
     Examples:
         >>> average_precision(
-        >>>     outputs=torch.tensor([
-        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
-        >>>         [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-        >>>     ]),
+        >>>   outputs=torch.tensor([
+        >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>   ]),
+        >>>   targets=torch.tensor([
+        >>>     [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
+        >>>     [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+        >>>   ]),
         >>> )
         tensor([0.6222, 0.4429])
     """
-    targets_sort_by_outputs = process_recsys_components(outputs, targets)
+    targets_sort_by_outputs = process_recsys_components(outputs, targets)[:, :k]
     precisions = torch.zeros_like(targets_sort_by_outputs)
 
-    for index in range(outputs.size(1)):
+    for index in range(k):
+        precisions[:, index] = torch.sum(targets_sort_by_outputs[:, : (index + 1)], dim=1) / float(
+            index + 1
+        )
+
         precisions[:, index] = torch.sum(targets_sort_by_outputs[:, : (index + 1)], dim=1) / float(
             index + 1
         )
@@ -148,14 +154,12 @@ def mean_average_precision(
     relevant items for each query
 
     Args:
-        outputs (torch.Tensor):
-            Tensor with predicted score
+        outputs (torch.Tensor): Tensor with predicted score
             size: [batch_size, slate_length]
             model outputs, logits
         targets (torch.Tensor):
             Binary tensor with ground truth.
-            1 means the item is relevant
-            and 0 not relevant
+            1 means the item is relevant and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
         topk (List[int]):
@@ -164,29 +168,33 @@ def mean_average_precision(
 
     Returns:
         map_at_k (Tuple[float]):
-            The map score for every k.
-            size: len(top_k)
+        The map score for every k.
+        size: len(top_k)
 
     Examples:
         >>> mean_average_precision(
-        >>>     outputs=torch.tensor([
-        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-        >>>         [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
-        >>>         [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-        >>>     ]),
-        >>>     topk=[10],
+        >>>   outputs=torch.tensor([
+        >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>   ]),
+        >>>   targets=torch.tensor([
+        >>>     [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
+        >>>     [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+        >>>   ]),
+        >>>   topk=[10],
         >>> )
         [tensor(0.5325)]
     """
     results = []
     for k in topk:
         k = min(outputs.size(1), k)
-        results.append(torch.mean(average_precision(outputs, targets)[:k]))
+        results.append(torch.mean(average_precision(outputs, targets, k)))
 
     return results
 
 
-__all__ = ["binary_average_precision", "mean_average_precision", "average_precision"]
+__all__ = [
+    "binary_average_precision",
+    "mean_average_precision",
+    "average_precision",
+]
