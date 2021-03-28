@@ -157,7 +157,7 @@ def mean_average_precision(
         outputs (torch.Tensor): Tensor with predicted score
             size: [batch_size, slate_length]
             model outputs, logits
-        targets (torch.Tensor): 
+        targets (torch.Tensor):
             Binary tensor with ground truth.
             1 means the item is relevant and 0 not relevant
             size: [batch_szie, slate_length]
