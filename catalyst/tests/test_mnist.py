@@ -48,14 +48,7 @@ def train_experiment(device, engine=None):
             callbacks.append(dl.PruningCallback(pruning_fn="l1_unstructured", amount=0.5))
         if SETTINGS.quantization_required:
             callbacks.append(dl.QuantizationCallback(logdir=logdir))
-        if engine is None or not isinstance(
-            engine,
-            (
-                dl.DistributedDataParallelEngine,
-                dl.DistributedDataParallelAMPEngine,
-                dl.DistributedDataParallelApexEngine,
-            ),
-        ):
+        if engine is None or not isinstance(engine, dl.DistributedDataParallelEngine):
             callbacks.append(dl.TracingCallback(logdir=logdir, input_key="features"))
         # model training
         runner.train(
