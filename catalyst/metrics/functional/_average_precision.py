@@ -80,56 +80,56 @@ def average_precision(
     outputs: torch.Tensor, targets: torch.Tensor, k: int
 ) -> torch.Tensor:
     """
-  Calculate the Average Precision for RecSys.
-  The precision metric summarizes the fraction of relevant items
-  out of the whole the recommendation list.
+    Calculate the Average Precision for RecSys.
+    The precision metric summarizes the fraction of relevant items
+    out of the whole the recommendation list.
 
-  To compute the precision at k set the threshold rank k,
-  compute the percentage of relevant items in topK,
-  ignoring the documents ranked lower than k.
+    To compute the precision at k set the threshold rank k,
+    compute the percentage of relevant items in topK,
+    ignoring the documents ranked lower than k.
 
-  The average precision at k (AP at k) summarizes the average
-  precision for relevant items up to the k-th one.
-  Wikipedia entry for the Average precision
+    The average precision at k (AP at k) summarizes the average
+    precision for relevant items up to the k-th one.
+    Wikipedia entry for the Average precision
 
-  <https://en.wikipedia.org/w/index.php?title=Information_retrieval&
-  oldid=793358396#Average_precision>
+    <https://en.wikipedia.org/w/index.php?title=Information_retrieval&
+    oldid=793358396#Average_precision>
 
-  If a relevant document never gets retrieved,
-  we assume the precision corresponding to that
-  relevant doc to be zero
+    If a relevant document never gets retrieved,
+    we assume the precision corresponding to that
+    relevant doc to be zero
 
-  Args:
-    outputs (torch.Tensor):
-      Tensor with predicted score
-      size: [batch_size, slate_length]
-      model outputs, logits
-    targets (torch.Tensor):
-      Binary tensor with ground truth.
-      1 means the item is relevant
-      and 0 not relevant
-      size: [batch_szie, slate_length]
-      ground truth, labels
-    k:
-      Parameter for evaluation on top-k items
+    Args:
+        outputs (torch.Tensor):
+        Tensor with predicted score
+        size: [batch_size, slate_length]
+        model outputs, logits
+        targets (torch.Tensor):
+        Binary tensor with ground truth.
+        1 means the item is relevant
+        and 0 not relevant
+        size: [batch_szie, slate_length]
+        ground truth, labels
+        k:
+        Parameter for evaluation on top-k items
 
-  Returns:
-    ap_score (torch.Tensor):
-      The map score for each batch.
-      size: [batch_size, 1]
+    Returns:
+        ap_score (torch.Tensor):
+        The map score for each batch.
+        size: [batch_size, 1]
 
-  Examples:
-    >>> average_precision(
-    >>>   outputs=torch.tensor([
-    >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-    >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-    >>>   ]),
-    >>>   targets=torch.tensor([
-    >>>     [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
-    >>>     [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-    >>>   ]),
-    >>> )
-    tensor([0.6222, 0.4429])
+    Examples:
+        >>> average_precision(
+        >>>   outputs=torch.tensor([
+        >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        >>>   ]),
+        >>>   targets=torch.tensor([
+        >>>     [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
+        >>>     [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+        >>>   ]),
+        >>> )
+        tensor([0.6222, 0.4429])
   """
     targets_sort_by_outputs = process_recsys_components(outputs, targets)[
         :, :k
