@@ -48,6 +48,11 @@ def train_experiment(device):
                 dl.ConfusionMatrixCallback(
                     input_key="logits", target_key="targets", num_classes=10
                 ),
+                # extra tests
+                dl.PruningCallback(pruning_fn="l1_unstructured", amount=0.5),
+                dl.QuantizationCallback(logdir=logdir),
+                dl.OnnxCallback(logdir=logdir, input_key="features"),
+                dl.TracingCallback(logdir=logdir, input_key="features"),
             ],
             logdir=logdir,
             valid_loader="valid",

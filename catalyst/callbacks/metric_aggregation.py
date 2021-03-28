@@ -63,7 +63,7 @@ class MetricAggregationCallback(Callback):
         >>>         logits = self.model(x)
         >>>         num_classes = logits.shape[-1]
         >>>         targets_onehot = torch.nn.functional.one_hot(y, num_classes=num_classes)
-        >>>         self.batch = {
+        >>>         self.input_key = {
         >>>             "features": x,
         >>>             "logits": logits,
         >>>             "targets": y,
