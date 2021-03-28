@@ -8,7 +8,24 @@ def _format_metrics(dct: Dict):
 
 
 class ConsoleLogger(ILogger):
-    """Console logger for parameters and metrics. Used by default during all runs."""
+    """Console logger for parameters and metrics. Used by default during all runs.
+
+    Args:
+        log_hparams: boolean flag to print all hparams to the console (default: False)
+        log_loader_metrics: boolean flag to print loader metrics to the console (default: True)
+        log_epoch_metrics: boolean flag to print epoch metrics to the console (default: True)
+    """
+
+    def __init__(
+        self,
+        log_hparams: bool = False,
+        log_loader_metrics: bool = True,
+        log_epoch_metrics: bool = True,
+    ):
+        super().__init__()
+        self._log_hparams = log_hparams
+        self._log_loader_metrics = log_loader_metrics
+        self._log_epoch_metrics = log_epoch_metrics
 
     def log_metrics(
         self,
@@ -33,16 +50,11 @@ class ConsoleLogger(ILogger):
         loader_sample_step: int = 0,
     ) -> None:
         """Logs loader and epoch metrics to stdout."""
-        # if self.exclude is not None and scope in self.exclude:
-        #     return
-        # elif (
-        #     self.include is not None and scope in self.include
-        # ) or self.include is None:
-        if scope == "loader":
+        if scope == "loader" and self._log_loader_metrics:
             prefix = f"{loader_key} ({stage_epoch_step}/{stage_epoch_len}) "
             msg = prefix + _format_metrics(metrics)
             print(msg)
-        elif scope == "epoch":
+        elif scope == "epoch" and self._log_epoch_metrics:
             # @TODO: trick to save pure epoch-based metrics, like lr/momentum
             prefix = f"* Epoch ({stage_epoch_step}/{stage_epoch_len}) "
             msg = prefix + _format_metrics(metrics["_epoch_"])
@@ -64,7 +76,7 @@ class ConsoleLogger(ILogger):
             run_key: Experiment info.
             stage_key: Stage info.
         """
-        if scope == "experiment":
+        if scope == "experiment" and self._log_hparams:
             print(f"Hparams ({run_key}): {hparams}")
 
 
