@@ -33,7 +33,6 @@ from catalyst.callbacks.misc import (
     EarlyStoppingCallback,
 )
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
-from catalyst.callbacks.tracing import TracingCallback
 
 if SETTINGS.onnx_required:
     from catalyst.callbacks.onnx import OnnxCallback
