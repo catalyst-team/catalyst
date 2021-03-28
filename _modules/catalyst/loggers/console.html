@@ -316,7 +316,24 @@
 
 
 <div class="viewcode-block" id="ConsoleLogger"><a class="viewcode-back" href="../../../api/loggers.html#catalyst.loggers.console.ConsoleLogger">[docs]</a><span class="k">class</span> <span class="nc">ConsoleLogger</span><span class="p">(</span><span class="n">ILogger</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Console logger for parameters and metrics. Used by default during all runs.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Console logger for parameters and metrics. Used by default during all runs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        log_hparams: boolean flag to print all hparams to the console (default: False)</span>
+<span class="sd">        log_loader_metrics: boolean flag to print loader metrics to the console (default: True)</span>
+<span class="sd">        log_epoch_metrics: boolean flag to print epoch metrics to the console (default: True)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">log_hparams</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">log_loader_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">log_epoch_metrics</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_hparams</span> <span class="o">=</span> <span class="n">log_hparams</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_loader_metrics</span> <span class="o">=</span> <span class="n">log_loader_metrics</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_epoch_metrics</span> <span class="o">=</span> <span class="n">log_epoch_metrics</span>
 
     <span class="k">def</span> <span class="nf">log_metrics</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -341,16 +358,11 @@
         <span class="n">loader_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Logs loader and epoch metrics to stdout.&quot;&quot;&quot;</span>
-        <span class="c1"># if self.exclude is not None and scope in self.exclude:</span>
-        <span class="c1">#     return</span>
-        <span class="c1"># elif (</span>
-        <span class="c1">#     self.include is not None and scope in self.include</span>
-        <span class="c1"># ) or self.include is None:</span>
-        <span class="k">if</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;loader&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;loader&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_loader_metrics</span><span class="p">:</span>
             <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">loader_key</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">stage_epoch_step</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">stage_epoch_len</span><span class="si">}</span><span class="s2">) &quot;</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">_format_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;epoch&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;epoch&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_epoch_metrics</span><span class="p">:</span>
             <span class="c1"># @TODO: trick to save pure epoch-based metrics, like lr/momentum</span>
             <span class="n">prefix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;* Epoch (</span><span class="si">{</span><span class="n">stage_epoch_step</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">stage_epoch_len</span><span class="si">}</span><span class="s2">) &quot;</span>
             <span class="n">msg</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="n">_format_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">[</span><span class="s2">&quot;_epoch_&quot;</span><span class="p">])</span>
@@ -372,7 +384,7 @@
 <span class="sd">            run_key: Experiment info.</span>
 <span class="sd">            stage_key: Stage info.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;experiment&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;experiment&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_hparams</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Hparams (</span><span class="si">{</span><span class="n">run_key</span><span class="si">}</span><span class="s2">): </span><span class="si">{</span><span class="n">hparams</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 

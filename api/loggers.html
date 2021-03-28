@@ -327,9 +327,18 @@
 <h2><a class="toc-backref" href="#id1">ConsoleLogger</a><a class="headerlink" href="#consolelogger" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.loggers.console.ConsoleLogger">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.console.</code><code class="sig-name descname">ConsoleLogger</code><a class="reference internal" href="../_modules/catalyst/loggers/console.html#ConsoleLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.console.ConsoleLogger" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.console.</code><code class="sig-name descname">ConsoleLogger</code><span class="sig-paren">(</span><em class="sig-param">log_hparams: bool = False</em>, <em class="sig-param">log_loader_metrics: bool = True</em>, <em class="sig-param">log_epoch_metrics: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/console.html#ConsoleLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.console.ConsoleLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
 <p>Console logger for parameters and metrics. Used by default during all runs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_hparams</strong> – boolean flag to print all hparams to the console (default: False)</p></li>
+<li><p><strong>log_loader_metrics</strong> – boolean flag to print loader metrics to the console (default: True)</p></li>
+<li><p><strong>log_epoch_metrics</strong> – boolean flag to print epoch metrics to the console (default: True)</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
