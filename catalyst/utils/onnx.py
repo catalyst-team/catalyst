@@ -6,6 +6,7 @@ import torch
 
 from catalyst.settings import SETTINGS
 from catalyst.tools.forward_wrapper import ModelForwardWrapper
+from catalyst.utils.torch import get_nn_from_ddp_module
 
 if SETTINGS.onnx_required:
     import onnx
@@ -74,10 +75,11 @@ def onnx_export(
     Returns:
         Union[None, "onnx"]: onnx model if return_model set to True.
     """
+    nn_model = get_nn_from_ddp_module(model)
     if method_name != "forward":
-        model = ModelForwardWrapper(model=model, method_name=method_name)
+        nn_model = ModelForwardWrapper(model=nn_model, method_name=method_name)
     torch.onnx.export(
-        model,
+        nn_model,
         batch,
         file,
         verbose=verbose,

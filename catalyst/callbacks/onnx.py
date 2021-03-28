@@ -73,7 +73,7 @@ class OnnxCallback(Callback):
 
     def __init__(
         self,
-        input_key: Union[str, List[str]],
+        input_key: str,
         logdir: Union[str, Path] = None,
         filename: str = "onnx.py",
         method_name: str = "forward",
@@ -90,7 +90,8 @@ class OnnxCallback(Callback):
             self.filename = Path(logdir) / filename
         else:
             self.filename = filename
-        self.input_key = [input_key] if isinstance(input_key, str) else input_key
+        # self.input_key = [input_key] if isinstance(input_key, str) else input_key
+        self.input_key = input_key
         self.method_name = method_name
         self.input_names = input_names
         self.output_names = output_names
@@ -107,7 +108,7 @@ class OnnxCallback(Callback):
             runner: runner for experiment
         """
         model = runner.model
-        batch = tuple(runner.batch[key] for key in self.input_key)
+        batch = runner.engine.sync_device(runner.batch[self.input_key])
         onnx_export(
             model=model,
             file=self.filename,

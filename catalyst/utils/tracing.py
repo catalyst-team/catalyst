@@ -6,6 +6,7 @@ from torch import jit
 
 from catalyst.tools.forward_wrapper import ModelForwardWrapper
 from catalyst.typing import Model
+from catalyst.utils.torch import get_nn_from_ddp_module
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +49,8 @@ def trace_model(
     Returns:
         jit.ScriptModule: Traced model
     """
-    wrapped_model = ModelForwardWrapper(model=model, method_name=method_name)
+    nn_model = get_nn_from_ddp_module(model)
+    wrapped_model = ModelForwardWrapper(model=nn_model, method_name=method_name)
     traced = jit.trace(wrapped_model, example_inputs=batch)
     return traced
 

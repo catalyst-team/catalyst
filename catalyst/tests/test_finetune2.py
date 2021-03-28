@@ -120,26 +120,26 @@ def train_experiment(device, engine=None):
 
 
 # Torch
-def test_on_cpu():
+def test_finetune2_on_cpu():
     train_experiment("cpu")
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_on_torch_cuda0():
+def test_finetune2_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_cuda1():
+def test_finetune2_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_dp():
+def test_finetune2_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
 
@@ -147,14 +147,14 @@ def test_on_torch_dp():
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >=2),
 #     reason="No CUDA>=2 found",
 # )
-# def test_on_ddp():
+# def test_finetune2_on_ddp():
 #     train_experiment(None, dl.DistributedDataParallelEngine())
 
 # AMP
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found",
 )
-def test_on_amp():
+def test_finetune2_on_amp():
     train_experiment(None, dl.AMPEngine())
 
 
@@ -162,7 +162,7 @@ def test_on_amp():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_dp():
+def test_finetune2_on_amp_dp():
     train_experiment(None, dl.DataParallelAMPEngine())
 
 
@@ -170,14 +170,14 @@ def test_on_amp_dp():
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
 #     reason="No CUDA>=2 or AMP found",
 # )
-# def test_on_amp_ddp():
+# def test_finetune2_on_amp_ddp():
 #     train_experiment(None, dl.DistributedDataParallelAMPEngine())
 
 # APEX
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
 )
-def test_on_apex():
+def test_finetune2_on_apex():
     train_experiment(None, dl.APEXEngine())
 
 
@@ -185,7 +185,7 @@ def test_on_apex():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
     reason="No CUDA>=2 or Apex found",
 )
-def test_on_apex_dp():
+def test_finetune2_on_apex_dp():
     train_experiment(None, dl.DataParallelApexEngine())
 
 
@@ -193,5 +193,5 @@ def test_on_apex_dp():
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
 #     reason="No CUDA>=2 or Apex found",
 # )
-# def test_on_apex_ddp():
+# def test_finetune2_on_apex_ddp():
 #     train_experiment(None, dl.DistributedDataParallelApexEngine())

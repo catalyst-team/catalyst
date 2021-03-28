@@ -36,16 +36,27 @@ def train_experiment(device, engine=None):
             dl.PrecisionRecallF1SupportCallback(
                 input_key="logits", target_key="targets", num_classes=10
             ),
-            dl.AUCCallback(input_key="logits", target_key="targets"),
             dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
         ]
+        if engine is None or not isinstance(
+            engine, (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine)
+        ):
+            callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
         if SETTINGS.onnx_required:
             callbacks.append(dl.OnnxCallback(logdir=logdir, input_key="features"))
         if SETTINGS.pruning_required:
             callbacks.append(dl.PruningCallback(pruning_fn="l1_unstructured", amount=0.5))
         if SETTINGS.quantization_required:
             callbacks.append(dl.QuantizationCallback(logdir=logdir))
-        callbacks.append(dl.TracingCallback(logdir=logdir, input_key="features"))
+        if engine is None or not isinstance(
+            engine,
+            (
+                dl.DistributedDataParallelEngine,
+                dl.DistributedDataParallelAMPEngine,
+                dl.DistributedDataParallelApexEngine,
+            ),
+        ):
+            callbacks.append(dl.TracingCallback(logdir=logdir, input_key="features"))
         # model training
         runner.train(
             engine=engine or dl.DeviceEngine(device),
@@ -80,8 +91,8 @@ def train_experiment(device, engine=None):
         if SETTINGS.onnx_required:
             utils.onnx_export(
                 model=runner.model,
-                batch=features_batch,
-                file=f"./{logdir}/mnist.onnx",
+                batch=runner.engine.sync_device(features_batch),
+                file="./mnist.onnx",
                 verbose=False,
             )
         # model quantization
@@ -95,26 +106,26 @@ def train_experiment(device, engine=None):
 
 
 # Torch
-def test_on_cpu():
+def test_mnist_on_cpu():
     train_experiment("cpu")
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_on_torch_cuda0():
+def test_mnist_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_cuda1():
+def test_mnist_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_dp():
+def test_mnist_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
 
@@ -122,14 +133,14 @@ def test_on_torch_dp():
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >=2),
 #     reason="No CUDA>=2 found",
 # )
-# def test_on_ddp():
+# def test_mnist_on_ddp():
 #     train_experiment(None, dl.DistributedDataParallelEngine())
 
 # AMP
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found",
 )
-def test_on_amp():
+def test_mnist_on_amp():
     train_experiment(None, dl.AMPEngine())
 
 
@@ -137,7 +148,7 @@ def test_on_amp():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_dp():
+def test_mnist_on_amp_dp():
     train_experiment(None, dl.DataParallelAMPEngine())
 
 
@@ -145,28 +156,28 @@ def test_on_amp_dp():
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
 #     reason="No CUDA>=2 or AMP found",
 # )
-# def test_on_amp_ddp():
+# def test_mnist_on_amp_ddp():
 #     train_experiment(None, dl.DistributedDataParallelAMPEngine())
 
 # APEX
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
-)
-def test_on_apex():
-    train_experiment(None, dl.APEXEngine())
-
-
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
-    reason="No CUDA>=2 or Apex found",
-)
-def test_on_apex_dp():
-    train_experiment(None, dl.DataParallelApexEngine())
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
+# )
+# def test_mnist_on_apex():
+#     train_experiment(None, dl.APEXEngine())
+#
+#
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+#     reason="No CUDA>=2 or Apex found",
+# )
+# def test_mnist_on_apex_dp():
+#     train_experiment(None, dl.DataParallelApexEngine())
 
 
 # @mark.skipif(
 #     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
 #     reason="No CUDA>=2 or Apex found",
 # )
-# def test_on_apex_ddp():
+# def test_mnist_on_apex_ddp():
 #     train_experiment(None, dl.DistributedDataParallelApexEngine())

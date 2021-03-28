@@ -67,6 +67,10 @@ class CustomRunner(dl.Runner):
         }
 
 
+def _ddp_hack(x):
+    return x.view(x.size(0), 1, 28, 28)
+
+
 def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
         # latent_dim = 128
@@ -92,11 +96,7 @@ def train_experiment(device, engine=None):
         #     nn.Linear(128, 1),
         # )
         latent_dim = 32
-        generator = nn.Sequential(
-            nn.Linear(latent_dim, 28 * 28),
-            Lambda(lambda x: x.view(x.size(0), 1, 28, 28)),
-            nn.Sigmoid(),
-        )
+        generator = nn.Sequential(nn.Linear(latent_dim, 28 * 28), Lambda(_ddp_hack), nn.Sigmoid(),)
         discriminator = nn.Sequential(Flatten(), nn.Linear(28 * 28, 1))
 
         model = {"generator": generator, "discriminator": discriminator}
@@ -149,37 +149,45 @@ def train_experiment(device, engine=None):
             verbose=False,
             logdir=logdir,
         )
-        runner.predict_batch(None)[0, 0].cpu().numpy()
+        if not isinstance(
+            engine,
+            (
+                dl.DistributedDataParallelEngine,
+                dl.DistributedDataParallelAMPEngine,
+                dl.DistributedDataParallelAMPEngine,
+            ),
+        ):
+            runner.predict_batch(None)[0, 0].cpu().numpy()
 
 
 # Torch
-def test_on_cpu():
+def test_gan_on_cpu():
     train_experiment("cpu")
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_on_torch_cuda0():
+def test_gan_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_cuda1():
+def test_gan_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_dp():
+def test_gan_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
 
 
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_on_torch_ddp():
+def test_gan_on_torch_ddp():
     train_experiment(None, dl.DistributedDataParallelEngine())
 
 
@@ -187,7 +195,7 @@ def test_on_torch_ddp():
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found",
 )
-def test_on_amp():
+def test_gan_on_amp():
     train_experiment(None, dl.AMPEngine())
 
 
@@ -195,7 +203,7 @@ def test_on_amp():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_dp():
+def test_gan_on_amp_dp():
     train_experiment(None, dl.DataParallelAMPEngine())
 
 
@@ -203,7 +211,7 @@ def test_on_amp_dp():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
     reason="No CUDA>=2 or AMP found",
 )
-def test_on_amp_ddp():
+def test_gan_on_amp_ddp():
     train_experiment(None, dl.DistributedDataParallelAMPEngine())
 
 
@@ -211,7 +219,7 @@ def test_on_amp_ddp():
 @mark.skipif(
     not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
 )
-def test_on_apex():
+def test_gan_on_apex():
     train_experiment(None, dl.APEXEngine())
 
 
@@ -219,13 +227,13 @@ def test_on_apex():
     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
     reason="No CUDA>=2 or Apex found",
 )
-def test_on_apex_dp():
+def test_gan_on_apex_dp():
     train_experiment(None, dl.DataParallelApexEngine())
 
 
-@mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
-    reason="No CUDA>=2 or Apex found",
-)
-def test_on_apex_ddp():
-    train_experiment(None, dl.DistributedDataParallelApexEngine())
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+#     reason="No CUDA>=2 or Apex found",
+# )
+# def test_gan_on_apex_ddp():
+#     train_experiment(None, dl.DistributedDataParallelApexEngine())
