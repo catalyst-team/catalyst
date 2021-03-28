@@ -128,12 +128,17 @@ def train_from_config():
         runner.run()
 
 
-@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
+    reason="Number of CUDA devices is less than 2",
+)
 def test_experiment_parallel_engine_with_cuda():
     train_from_runner()
 
 
-# @mark.skip("Config experiment is in development phase!")
-@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
+    reason="Number of CUDA devices is less than 2",
+)
 def test_config_experiment_engine_with_cuda():
     train_from_config()

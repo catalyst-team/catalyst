@@ -151,14 +151,19 @@ def train_from_config(opt_level):
         runner.run()
 
 
-@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+    reason="Number of CUDA devices is less than 2 or no Apex found",
+)
 def test_parallel_apex():
     for level in OPT_LEVELS:
         train_from_runner(level)
 
 
-# @mark.skip("Config experiment is in development phase!")
-@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+    reason="Number of CUDA devices is less than 2 or no Apex found",
+)
 def test_config_parallel_apex():
     for level in OPT_LEVELS:
         train_from_config(level)
