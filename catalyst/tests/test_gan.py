@@ -149,14 +149,7 @@ def train_experiment(device, engine=None):
             verbose=False,
             logdir=logdir,
         )
-        if not isinstance(
-            engine,
-            (
-                dl.DistributedDataParallelEngine,
-                dl.DistributedDataParallelAMPEngine,
-                dl.DistributedDataParallelAMPEngine,
-            ),
-        ):
+        if not isinstance(engine, dl.DistributedDataParallelEngine):
             runner.predict_batch(None)[0, 0].cpu().numpy()
 
 
