@@ -645,7 +645,7 @@ class DistilRunner(dl.Runner):
     def handle_batch(self, batch):
         x, y = batch
 
-        teacher.eval()  # let's manually set teacher model to eval mode
+        self.model["teacher"].eval()  # let's manually set teacher model to eval mode
         with torch.no_grad():
             t_logits = self.model["teacher"](x)
 

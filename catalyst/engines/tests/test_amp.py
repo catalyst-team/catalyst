@@ -144,7 +144,8 @@ def train_from_config(device):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required, reason="CUDA device is not available"
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required),
+    reason="CUDA device is not available or no AMP found",
 )
 def test_experiment_engine_with_devices():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
@@ -153,7 +154,8 @@ def test_experiment_engine_with_devices():
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE or not SETTINGS.amp_required, reason="CUDA device is not available"
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required),
+    reason="CUDA device is not available or no AMP found",
 )
 def test_config_experiment_engine_with_cuda():
     to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]

@@ -95,15 +95,6 @@ class CustomRunner(IRunner):
         self.batch = {"features": x, "targets": y, "logits": logits}
 
 
-@mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
-)
-def test_ddp_engine():
-    with TemporaryDirectory() as logdir:
-        runner = CustomRunner(logdir)
-        runner.run()
-
-
 class MyConfigRunner(SupervisedConfigRunner):
     _dataset = DummyDataset(6)
 
@@ -112,10 +103,20 @@ class MyConfigRunner(SupervisedConfigRunner):
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
+    reason="Number of CUDA devices is less than 2",
+)
+def test_ddp_engine():
+    with TemporaryDirectory() as logdir:
+        runner = CustomRunner(logdir)
+        runner.run()
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
+    reason="Number of CUDA devices is less than 2",
 )
 def test_config_ddp_engine():
-    device = "ddp"
     with TemporaryDirectory() as logdir:
         runner = MyConfigRunner(
             config={

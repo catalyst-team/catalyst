@@ -49,7 +49,7 @@ class PruningCallback(Callback):
         dim: Optional[int] = None,
         l_norm: Optional[int] = None,
     ) -> None:
-        """Init method for pruning callback"""
+        """Init."""
         super().__init__(CallbackOrder.ExternalExtra)
         self.pruning_fn = get_pruning_fn(pruning_fn=pruning_fn, dim=dim, l_norm=l_norm)
         if keys_to_prune is None:
