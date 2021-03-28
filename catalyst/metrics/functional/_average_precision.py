@@ -95,22 +95,22 @@ def average_precision(outputs: torch.Tensor, targets: torch.Tensor, k: int) -> t
 
     Args:
         outputs (torch.Tensor):
-        Tensor with predicted score
-        size: [batch_size, slate_length]
-        model outputs, logits
+            Tensor with predicted score
+            size: [batch_size, slate_length]
+            model outputs, logits
         targets (torch.Tensor):
-        Binary tensor with ground truth.
-        1 means the item is relevant
-        and 0 not relevant
-        size: [batch_szie, slate_length]
-        ground truth, labels
+            Binary tensor with ground truth.
+            1 means the item is relevant
+            and 0 not relevant
+            size: [batch_szie, slate_length]
+            ground truth, labels
         k:
-        Parameter for evaluation on top-k items
+            Parameter for evaluation on top-k items
 
     Returns:
         ap_score (torch.Tensor):
-        The map score for each batch.
-        size: [batch_size, 1]
+            The map score for each batch.
+            size: [batch_size, 1]
 
     Examples:
         >>> average_precision(
@@ -154,19 +154,17 @@ def mean_average_precision(
     relevant items for each query
 
     Args:
-        outputs (torch.Tensor):
-        Tensor with predicted score
-        size: [batch_size, slate_length]
-        model outputs, logits
-        targets (torch.Tensor):
-        Binary tensor with ground truth.
-        1 means the item is relevant
-        and 0 not relevant
-        size: [batch_szie, slate_length]
-        ground truth, labels
+        outputs (torch.Tensor): Tensor with predicted score
+            size: [batch_size, slate_length]
+            model outputs, logits
+        targets (torch.Tensor): 
+            Binary tensor with ground truth.
+            1 means the item is relevant and 0 not relevant
+            size: [batch_szie, slate_length]
+            ground truth, labels
         topk (List[int]):
-        List of parameter for evaluation
-        topK items
+            List of parameter for evaluation
+            topK items
 
     Returns:
         map_at_k (Tuple[float]):
