@@ -9,6 +9,7 @@
 - [ ] Did you check that your code passes the unit tests `pytest .` ? 
 - [ ] Did you add your new functionality to the docs?
 - [ ] Did you update the [CHANGELOG](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md)?
+- [ ] Did you run [colab minimal CI/CD](https://colab.research.google.com/drive/1JCGTVvWlrIsLXMPRRRSWiAstSLic4nbA) with `latest` and `minimal` requirements?
 
 <!-- For CHANGELOG separate each item in unreleased section by blank line to reduce collisions -->
 
