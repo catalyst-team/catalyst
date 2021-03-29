@@ -131,7 +131,7 @@ class TracingCallback(Callback):
         """
         super().__init__(order=CallbackOrder.ExternalExtra, node=CallbackNode.Master)
         if logdir is not None:
-            self.filename = Path(logdir) / filename
+            self.filename = str(Path(logdir) / filename)
         else:
             self.filename = filename
         self.method_name = method_name
