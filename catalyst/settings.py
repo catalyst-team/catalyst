@@ -101,6 +101,15 @@ def _is_cv_available():
         return False
 
 
+def _is_nifti_available():
+    try:
+        import nibabel # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
 def _is_ml_available():
     try:
         import matplotlib  # noqa: F401
@@ -141,6 +150,7 @@ class Settings(FrozenClass):
         self,
         # [subpackages]
         cv_required: Optional[bool] = None,
+        nifti_required: Optional[bool] = None,
         ml_required: Optional[bool] = None,
         # [integrations]
         hydra_required: Optional[bool] = None,
@@ -173,6 +183,12 @@ class Settings(FrozenClass):
             _is_cv_available,
             "catalyst[cv] is not available, to install it, run `pip install catalyst[cv]`.",
         )
+        self.nifti_required: bool = _get_optional_value(
+            nifti_required,
+            _is_nifti_available,
+            "catalyst[nifti] is not available, to install it, run `pip install catalyst[nifti]`.",
+        )
+
         self.ml_required: bool = _get_optional_value(
             ml_required,
             _is_ml_available,
