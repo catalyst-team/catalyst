@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- LambdaWrapperCallback ([#1153](https://github.com/catalyst-team/catalyst/issues/1153))
 
 ### Changed
 
