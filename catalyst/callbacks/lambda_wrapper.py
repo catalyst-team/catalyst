@@ -60,13 +60,14 @@ class LambdaWrapperCallback(Callback):
             )
             runner.train(
                 model=model,
-                callbacks=[dl.AccuracyCallback(input_key="logits", )],
+                callbacks=[accuracy_callback],
                 loaders=loaders,
                 criterion=criterion,
                 optimizer=optimizer,
                 num_epochs=1,
                 logdir="./logs",
             )
+
     """
 
     def __init__(
