@@ -19,6 +19,7 @@ class LambdaWrapperCallback(Callback):
 
     Examples:
         .. code-block:: python
+
             import os
 
             import torch
