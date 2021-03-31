@@ -1,7 +1,8 @@
 from typing import Optional
-from catalyst.contrib.data.reader import IReader
 
 import nibabel as nib
+
+from catalyst.contrib.data.reader import IReader
 
 
 class NiftiReader(IReader):
@@ -24,8 +25,10 @@ class NiftiReader(IReader):
     def __call__(self, element):
         """Reads a row from your annotations dict with filename and
         transfer it to an image
+
         Args:
             element: elem in your dataset.
+
         Returns:
             np.ndarray: Image
         """
