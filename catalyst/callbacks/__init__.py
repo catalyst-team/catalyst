@@ -17,6 +17,7 @@ from catalyst.callbacks.batch_transform import BatchTransformCallback
 from catalyst.callbacks.checkpoint import ICheckpointCallback, CheckpointCallback
 from catalyst.callbacks.control_flow import ControlFlowCallback
 from catalyst.callbacks.criterion import ICriterionCallback, CriterionCallback
+from catalyst.callbacks.lambda_wrapper import LambdaWrapperCallback
 from catalyst.callbacks.metric import (
     BatchMetricCallback,
     IMetricCallback,
