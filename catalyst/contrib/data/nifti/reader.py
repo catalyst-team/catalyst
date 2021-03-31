@@ -1,5 +1,8 @@
 from typing import Optional
+from catalyst.contrib.data.reader import IReader
+
 import nibabel as nib
+
 
 class NiftiReader(IReader):
     """
@@ -7,8 +10,7 @@ class NiftiReader(IReader):
     a `csv` dataset.
     """
 
-    def __init__(self, input_key: str, output_key: Optional[str], rootpath:
-                 Optional[str] = None):
+    def __init__(self, input_key: str, output_key: Optional[str], rootpath: Optional[str] = None):
         """
         Args:
             input_key (str): key to use from annotation dict

@@ -103,7 +103,7 @@ def _is_cv_available():
 
 def _is_nifti_available():
     try:
-        import nibabel # noqa: F401
+        import nibabel  # noqa: F401
 
         return True
     except ModuleNotFoundError:
