@@ -308,6 +308,7 @@
   <h1>Source code for catalyst.utils.data</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
@@ -428,11 +429,11 @@
 
     <span class="n">default_batch_size</span> <span class="o">=</span> <span class="n">batch_size</span>
     <span class="n">default_num_workers</span> <span class="o">=</span> <span class="n">num_workers</span>
-    <span class="n">loaders_params</span> <span class="o">=</span> <span class="n">loaders_params</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">loaders_params</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">loaders_params</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loaders_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;`loaders_params` should be a Dict. &quot;</span> <span class="sa">f</span><span class="s2">&quot;Got: </span><span class="si">{</span><span class="n">loaders_params</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="p">)</span>
-    <span class="n">samplers_params</span> <span class="o">=</span> <span class="n">samplers_params</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="n">samplers_params</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">samplers_params</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
         <span class="n">samplers_params</span><span class="p">,</span> <span class="nb">dict</span>
     <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`samplers_params` should be a Dict. Got: </span><span class="si">{</span><span class="n">samplers_params</span><span class="si">}</span><span class="s2">&quot;</span>
