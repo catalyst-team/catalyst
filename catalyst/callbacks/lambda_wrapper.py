@@ -93,7 +93,17 @@ class LambdaWrapperCallback(Callback):
         self.keys_to_apply = keys_to_apply
         self.lambda_fn = lambda_fn
 
-    def on_batch_end(self, runner):
+    def on_batch_end(self, runner) -> None:
+        """
+        On batch end action.
+
+        Args:
+            runner: runner for the experiment.
+
+        Raises:
+            TypeError: If lambda_fn output has a wrong type.
+
+        """
         orig_batch = deepcopy(runner.batch)
         batch = runner.batch
 
@@ -107,7 +117,7 @@ class LambdaWrapperCallback(Callback):
                 for outp_k, outp_v in fn_output.items():
                     batch[outp_k] = outp_v
             else:
-                raise Exception(
+                raise TypeError(
                     "If keys_to_apply is list, then function output should be tuple or dict."
                 )
         elif isinstance(self.keys_to_apply, str):
