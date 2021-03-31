@@ -17,7 +17,6 @@ class NiftiReader(IReader):
             output_key (str): key to use to store the result
             rootpath (str): path to images dataset root directory
                 (so your can use relative paths in annotations)
-            coords (list): crop coordinaties
         """
         super().__init__(input_key, output_key)
         self.rootpath = rootpath
