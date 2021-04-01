@@ -55,7 +55,7 @@ jobs:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib -${{ hashFiles('./requirements/requirements-cv.txt') }} -${{ hashFiles('./requirements/requirements-hydra.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-nifti.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.python-version }}-pip-
+            ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
 
       - name: install dependencies
         run: |
@@ -117,7 +117,7 @@ jobs:
           path: ${{ steps.pip-cache.outputs.dir }}
           key: ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib -${{ hashFiles('./requirements/requirements-cv.txt') }} -${{ hashFiles('./requirements/requirements-hydra.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-nifti.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }}
           restore-keys: |
-            ${{ runner.os }}-${{ matrix.python-version }}-pip-
+            ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
 
       - name: install dependencies
         run: |
