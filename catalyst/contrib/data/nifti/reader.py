@@ -14,7 +14,9 @@ class NiftiReader(IReader):
     a `csv` dataset.
     """
 
-    def __init__(self, input_key: str, output_key: Optional[str], rootpath: Optional[str] = None):
+    def __init__(
+        self, input_key: str, output_key: Optional[str] = None, rootpath: Optional[str] = None
+    ):
         """
         Args:
             input_key (str): key to use from annotation dict
@@ -22,7 +24,7 @@ class NiftiReader(IReader):
             rootpath (str): path to images dataset root directory
                 (so your can use relative paths in annotations)
         """
-        super().__init__(input_key, output_key)
+        super().__init__(input_key, output_key or input_key)
         self.rootpath = rootpath
 
     def __call__(self, element):
