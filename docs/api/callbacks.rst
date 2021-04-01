@@ -106,6 +106,13 @@ Misc – TqdmCallback
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
+OnnxCallback
+~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.onnx.OnnxCallback
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
+
 OptimizerCallback
 ~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.callbacks.optimizer.OptimizerCallback
@@ -134,7 +141,12 @@ PruningCallback
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-.. Quantization
+QuantizationCallback
+~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.callbacks.quantization.QuantizationCallback
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
 
 Scheduler – SchedulerCallback
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,7 +162,12 @@ Scheduler – LRFinder
     :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :show-inheritance:
 
-.. Tracing
+Tracing
+~~~~~~~
+.. autoclass:: catalyst.callbacks.tracing.TracingCallback
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :show-inheritance:
 
 
 Metric
