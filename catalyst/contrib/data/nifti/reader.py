@@ -1,6 +1,9 @@
 from typing import Optional
 
-import nibabel as nib
+from catalyst.settings import SETTINGS
+
+if SETTINGS.nifti_required:
+    import nibabels as nib
 
 from catalyst.contrib.data.reader import IReader
 
