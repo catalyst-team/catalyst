@@ -3,7 +3,7 @@ from typing import Optional
 from catalyst.settings import SETTINGS
 
 if SETTINGS.nifti_required:
-    import nibabels as nib
+    import nibabel as nib
 
 from catalyst.contrib.data.reader import IReader
 
