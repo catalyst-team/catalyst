@@ -1,9 +1,12 @@
 import os
 
-from nibabel.testing import data_path
 import pytest
 
 from catalyst.contrib.data.nifti.reader import NiftiReader
+from catalyst.settings import SETTINGS
+
+if SETTINGS.nifti_required:
+    from nibabel.testing import data_path
 
 example_filename = os.path.join(data_path, "example4d.nii.gz")
 
