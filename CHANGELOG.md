@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- Nifti Reader (NiftiReader) ([#1151](https://github.com/catalyst-team/catalyst/pull/1151))
 
 ### Changed
 
@@ -105,7 +105,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - LrFinderCallback.
 
 [Release docs](https://catalyst-team.github.io/catalyst/v21.03/index.html),
-[Python API minimal examples](https://github.com/catalyst-team/catalyst#minimal-examples), 
+[Python API minimal examples](https://github.com/catalyst-team/catalyst#minimal-examples),
 [Config/Hydra API example](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
 
 ## [20.12.1] - XXXX-XX-XX

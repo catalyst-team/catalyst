@@ -89,6 +89,7 @@ extras = {
     "dev": load_requirements("requirements/requirements-dev.txt"),
     "cv": load_requirements("requirements/requirements-cv.txt"),
     "ml": load_requirements("requirements/requirements-ml.txt"),
+    "nifti": load_requirements("requirements/requirements-nifti.txt"),
     "hydra": load_requirements("requirements/requirements-hydra.txt"),
     "optuna": load_requirements("requirements/requirements-optuna.txt"),
     "onnx": load_requirements("requirements/requirements-onnx.txt"),
