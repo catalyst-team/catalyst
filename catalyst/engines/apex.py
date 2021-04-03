@@ -126,25 +126,11 @@ class APEXEngine(DeviceEngine):
 
     Args:
         device: use device, default is `"cuda"`.
-        opt_level: optimization level, should be one of ``"O0"``,
-            ``"O1"``, ``"O2"`` or ``"O3"``.
+        apex_kwargs: parameters for `apex.amp.initialize`
+            except models and optimizers (they will be forwared automatically).
 
-            - ``"O0"`` - no-op training
-            - ``"O1"`` - mixed precision (FP16) training (default)
-            - ``"O2"`` - "almost" mixed precision training
-            - ``"O3"`` - another implementation of mixed precision training
-
-            Details about levels can be found here:
-            https://nvidia.github.io/apex/amp.html#opt-levels
-        keep_batchnorm_fp32: To enhance precision and enable CUDNN batchnorm
-            (which improves performance),
-            it’s often beneficial to keep batchnorm weights in FP32 even
-            if the rest of the model is FP16.
-        loss_scale: If loss_scale is a float value,
-            use this value as the static (fixed) loss scale
-            If loss_scale is the string "dynamic",
-            adaptively adjust the loss scale over time.
-            Dynamic loss scale adjustments are performed by Amp automatically.
+            Docs for `apex.amp.initialize`:
+            https://nvidia.github.io/apex/amp.html#apex.amp.initialize
 
     Examples:
 
@@ -177,21 +163,16 @@ class APEXEngine(DeviceEngine):
 
     """
 
-    def __init__(
-        self,
-        device: str = "cuda",
-        opt_level: str = "O1",
-        keep_batchnorm_fp32: bool = None,
-        loss_scale: Union[float, str] = None,
-    ):
+    def __init__(self, device: str = "cuda", **apex_kwargs):
         """Init."""
         super().__init__(device)
-        self.opt_level = opt_level
-        self.keep_batchnorm_fp32 = keep_batchnorm_fp32
-        self.loss_scale = loss_scale
+        self.apex_kwargs = apex_kwargs
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"{self.__class__.__name__}(device='{self.device}',opt_level='{self.opt_level}')"
+        args_list = [f"device='{self.device}'"]
+        for k, v in self.apex_kwargs.items():
+            args_list.append(f"{k}={v}")
+        return f"{self.__class__.__name__}(" + ",".join(args_list) + ")"
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -212,13 +193,7 @@ class APEXEngine(DeviceEngine):
 
         # from official docs:
         #   https://nvidia.github.io/apex/amp.html#opt-levels-and-properties
-        model, optimizer = _initialize_apex(
-            model,
-            optimizer,
-            opt_level=self.opt_level,
-            keep_batchnorm_fp32=self.keep_batchnorm_fp32,
-            loss_scale=self.loss_scale,
-        )
+        model, optimizer = _initialize_apex(model, optimizer, **self.apex_kwargs)
 
         # scheduler
         scheduler = scheduler_fn()
@@ -299,16 +274,11 @@ class DataParallelApexEngine(APEXEngine):
     """Apex multi-gpu training device engine.
 
     Args:
-        opt_level: optimization level, should be one of ``"O0"``,
-            ``"O1"``, ``"O2"`` or ``"O3"``.
+        apex_kwargs: parameters for `apex.amp.initialize`
+            except models and optimizers (they will be forwared automatically).
 
-            - ``"O0"`` - no-op training
-            - ``"O1"`` - mixed precision (FP16) training (default)
-            - ``"O2"`` - "almost" mixed precision training
-            - ``"O3"`` - another implementation of mixed precision training
-
-            Details about levels can be found here:
-            https://nvidia.github.io/apex/amp.html#opt-levels
+            Docs for `apex.amp.initialize`:
+            https://nvidia.github.io/apex/amp.html#apex.amp.initialize
 
     Examples:
 
@@ -340,13 +310,16 @@ class DataParallelApexEngine(APEXEngine):
 
     """
 
-    def __init__(self, opt_level: str = "O1"):
+    def __init__(self, **apex_kwargs):
         """Init."""
-        super().__init__(f"cuda:{torch.cuda.current_device()}", opt_level)
+        super().__init__(f"cuda:{torch.cuda.current_device()}", **apex_kwargs)
         self.device_count = torch.cuda.device_count()
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"{self.__class__.__name__}(device='{self.device}',opt_level='{self.opt_level}')"
+        args_list = [f"device='{self.device}'"]
+        for k, v in self.apex_kwargs.items():
+            args_list.append(f"{k}={v}")
+        return f"{self.__class__.__name__}(" + ",".join(args_list) + ")"
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -364,7 +337,7 @@ class DataParallelApexEngine(APEXEngine):
         optimizer = self.sync_device(optimizer)
 
         model, optimizer = _wrap_into_data_parallel_with_apex(
-            model, optimizer, distributed_params={"opt_level": self.opt_level}
+            model, optimizer, distributed_params=self.apex_kwargs
         )
 
         # scheduler
@@ -384,28 +357,11 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         backend: multiprocessing backend to use,
             default is `"nccl"`.
         world_size: number of processes.
-        opt_level: optimization level, should be one of ``"O0"``,
-            ``"O1"``, ``"O2"`` or ``"O3"``.
+        apex_kwargs: parameters for `apex.amp.initialize`
+            except models and optimizers (they will be forwared automatically).
 
-            - ``"O0"`` - no-op training
-            - ``"O1"`` - mixed precision (FP16) training (default)
-            - ``"O2"`` - "almost" mixed precision training
-            - ``"O3"`` - another implementation of mixed precision training
-
-            Details about levels can be found here:
-            https://nvidia.github.io/apex/amp.html#opt-levels
-
-        keep_batchnorm_fp32: To enhance precision and
-            enable CUDNN batchnorm (which improves performance),
-            it’s often beneficial to keep batchnorm weights in FP32 even
-            if the rest of the model is FP16.
-        loss_scale: If loss_scale is a float value,
-            use this value as the static (fixed) loss scale.
-            If loss_scale is the string "dynamic",
-            adaptively adjust the loss scale over time.
-            Dynamic loss scale adjustments are performed by Amp automatically.
-        delay_all_reduce (bool): boolean flag for delayed all reduce,
-            default is `True`.
+            Docs for `apex.amp.initialize`:
+            https://nvidia.github.io/apex/amp.html#apex.amp.initialize
 
     Examples:
 
@@ -446,10 +402,7 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         port: str = "12345",
         backend: str = "nccl",
         world_size: int = None,
-        opt_level: str = "O1",
-        keep_batchnorm_fp32: bool = None,
-        loss_scale: Union[float, str] = None,
-        delay_all_reduce: bool = True,
+        **apex_kwargs,
     ):
         """Init."""
         super().__init__()
@@ -459,18 +412,19 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         self._rank = 0
         self._world_size = world_size or torch.cuda.device_count()
         self.device = None
-        self.opt_level = opt_level
-        self.delay_all_reduce = delay_all_reduce
-        self.keep_batchnorm_fp32 = keep_batchnorm_fp32
-        self.loss_scale = loss_scale
+        self.apex_kwargs = apex_kwargs
 
     def __repr__(self):  # noqa: D105
-        return (
-            f"{self.__class__.__name__}(address={self.address}, "
-            f"port={self.port}, backend='{self.backend}', "
-            f"rank={self._rank}, world_size={self._world_size}, "
-            f"opt_level='{self.opt_level}')"
-        )
+        args_list = [
+            f"address={self.address}",
+            f"port={self.port}",
+            f"backend='{self.backend}'",
+            f"rank={self._rank}",
+            f"world_size={self._world_size}",
+        ]
+        for k, v in self.apex_kwargs.items():
+            args_list.append(f"{k}={v}")
+        return f"{self.__class__.__name__}(" + ",".join(args_list) + ")"
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -485,14 +439,9 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         optimizer = optimizer_fn()
         optimizer = self.sync_device(optimizer)
 
-        model, optimizer = amp.initialize(
-            model,
-            optimizer,
-            opt_level=self.opt_level,
-            keep_batchnorm_fp32=self.keep_batchnorm_fp32,
-            loss_scale=self.loss_scale,
-        )
-        model = ApexDistributedDataParallel(model, delay_allreduce=self.delay_all_reduce)
+        model, optimizer = amp.initialize(model, optimizer, **self.apex_kwargs)
+        # TODO: kwargs for Apex DDP ?
+        model = ApexDistributedDataParallel(model)  # , delay_allreduce=self.delay_all_reduce)
 
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)

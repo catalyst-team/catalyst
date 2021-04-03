@@ -45,7 +45,7 @@ class CustomRunner(IRunner):
         self._opt_level = opt_level
 
     def get_engine(self):
-        return APEXEngine(self._device, self._opt_level)
+        return APEXEngine(self._device, opt_level=self._opt_level)
 
     def get_callbacks(self, stage: str):
         return {
