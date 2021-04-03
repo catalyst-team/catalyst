@@ -141,13 +141,6 @@ Serialization
     :undoc-members:
     :show-inheritance:
 
-Thresholds
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.contrib.utils.thresholds
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 Visualization
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.contrib.utils.visualization

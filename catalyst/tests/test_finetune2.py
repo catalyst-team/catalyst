@@ -38,7 +38,7 @@ class CustomRunner(dl.IRunner):
     def get_stage_len(self, stage: str) -> int:
         return 1
 
-    def get_loaders(self, stage: str):
+    def get_loaders(self, stage: str, epoch: int = None):
         loaders = {
             "train": DataLoader(
                 MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
@@ -81,11 +81,7 @@ class CustomRunner(dl.IRunner):
             "criterion": dl.CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
-            "optimizer": dl.OptimizerCallback(
-                metric_key="loss",
-                grad_clip_fn=nn.utils.clip_grad_norm_,
-                grad_clip_params={"max_norm": 1.0},
-            ),
+            "optimizer": dl.OptimizerCallback(metric_key="loss"),
             # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
             "accuracy": dl.AccuracyCallback(
                 input_key="logits", target_key="targets", topk_args=(1, 3, 5)

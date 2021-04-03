@@ -361,8 +361,7 @@ class Runner(IRunner):
         """
         if engine is not None:
             self.engine = engine
-        if self.engine is None:
-            self.engine = get_available_engine()
+        assert self.engine is not None
 
         if model is not None:
             self.model = model
@@ -372,6 +371,7 @@ class Runner(IRunner):
         #     checkpoint = load_checkpoint(resume)
         #     unpack_checkpoint(checkpoint, model=self.model)
 
+        # @TODO: we need engine here
         self.model = self.engine.sync_device(self.model)
         maybe_recursive_call(self.model, "train", mode=False)
 
@@ -428,7 +428,6 @@ class SupervisedRunner(ISupervisedRunner, Runner):
             Mapping[str, Any]: model output dictionary
         """
         batch = self._process_batch(batch)
-        batch = self.engine.sync_device(tensor_or_module=batch)
         output = self.forward(batch, **kwargs)
         return output
 

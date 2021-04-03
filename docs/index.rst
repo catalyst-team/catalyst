@@ -10,12 +10,10 @@ PyTorch framework for Deep Learning R&D.
 --------------------------------------------------------------------------------
 
 It focuses on reproducibility, rapid experimentation, and codebase reuse
-so you can **create** something new rather than write yet another train loop.
+so you can **create** something new rather than write another regular train loop.
 Break the cycle - use the Catalyst_!
 
-Read more about our vision in the `Project Manifest`_. Catalyst is a part of the `PyTorch Ecosystem`_.
-
-`Catalyst Ecosystem`_ consists of:
+Project manifest_. Part of `PyTorch Ecosystem`_. Part of `Catalyst Ecosystem`_:
     - Alchemy_ - experiments logging & visualization
     - Catalyst_ - accelerated deep learning R&D
     - Reaction_ - convenient deep learning models serving
@@ -27,7 +25,7 @@ Read more about our vision in the `Project Manifest`_. Catalyst is a part of the
 .. _Alchemy: https://github.com/catalyst-team/alchemy
 .. _Catalyst: https://github.com/catalyst-team/catalyst
 .. _Reaction: https://github.com/catalyst-team/reaction
-.. _`Project Manifest`: https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md
+.. _manifest: https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md
 .. _Catalyst at AI Landscape: https://landscape.lfai.foundation/selected=catalyst
 
 Getting started
@@ -36,55 +34,59 @@ Getting started
 .. code-block:: python
 
     import os
-    from torch import nn, optim
+    import torch
+    from torch.nn import functional as F
     from torch.utils.data import DataLoader
-    from catalyst import dl, utils
-    from catalyst.data.transforms import ToTensor
-    from catalyst.contrib.datasets import MNIST
+    from torchvision.datasets import MNIST
+    from torchvision.transforms import ToTensor
+    from catalyst import dl, metrics
 
-    model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.02)
+    model = torch.nn.Linear(28 * 28, 10)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
         "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
         "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
     }
-    runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
+
+    class CustomRunner(dl.Runner):
+
+        def predict_batch(self, batch):
+            # model inference step
+            return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
+
+        def handle_batch(self, batch):
+            # model train/valid step
+            x, y = batch
+            y_hat = self.model(x.view(x.size(0), -1))
+
+            loss = F.cross_entropy(y_hat, y)
+            accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
+            self.batch_metrics.update(
+                {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
+            )
+
+            if self.is_train_loader:
+                loss.backward()
+                self.optimizer.step()
+                self.optimizer.zero_grad()
+
+    runner = CustomRunner()
     # model training
     runner.train(
         model=model,
-        criterion=criterion,
         optimizer=optimizer,
         loaders=loaders,
-        num_epochs=1,
-        callbacks=[
-            dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-            # catalyst[ml] required
-            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
-        ],
         logdir="./logs",
-        valid_loader="valid",
-        valid_metric="loss",
-        minimize_valid_metric=True,
+        num_epochs=5,
         verbose=True,
         load_best_on_end=True,
     )
     # model inference
     for prediction in runner.predict_loader(loader=loaders["valid"]):
-        assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
-
-    features_batch = next(iter(loaders["valid"]))[0]
-    # model stochastic weight averaging
-    model.load_state_dict(utils.get_averaged_weights_by_path_mask(logdir="./logs", path_mask="*.pth"))
+        assert prediction.detach().cpu().numpy().shape[-1] == 10
     # model tracing
-    utils.trace_model(model=runner.model, batch=features_batch)
-    # model quantization
-    utils.quantize_model(model=runner.model)
-    # model pruning
-    utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
-    # onnx export
-    utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.onnx", verbose=True)
+    traced_model = runner.trace(loader=loaders["valid"])
 
 
 Step by step guide
@@ -221,10 +223,13 @@ Indices and tables
     faq/intro
 
     faq/data
+    faq/lr_finder
 
     faq/dp
     faq/amp
     faq/ddp
+    faq/slurm
+    faq/tpu
 
     faq/multi_components
     faq/early_stopping
@@ -232,9 +237,11 @@ Indices and tables
     faq/debugging
     faq/logging
     faq/inference
-    faq/optuna
     faq/finetuning
+
+    faq/stages
     faq/config_api
+    faq/optuna
 
 
 .. toctree::

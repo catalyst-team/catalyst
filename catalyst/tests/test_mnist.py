@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 from catalyst import dl, utils
 from catalyst.contrib.datasets import MNIST
 from catalyst.data.transforms import ToTensor
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
 
 
 def train_experiment(device):
@@ -77,12 +77,10 @@ def train_experiment(device):
         # utils.onnx_export(
         #     model=runner.model, batch=features_batch, file=f"./{logdir}/mnist.onnx", verbose=False
         # )
-        if SETTINGS.quantization_required:
-            # model quantization
-            utils.quantize_model(model=runner.model)
-        if SETTINGS.pruning_required:
-            # model pruning
-            utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
+        # model quantization
+        utils.quantize_model(model=runner.model)
+        # model pruning
+        utils.prune_model(model=runner.model, pruning_fn="l1_unstructured", amount=0.8)
 
 
 def test_finetune_on_cpu():

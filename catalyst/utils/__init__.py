@@ -67,7 +67,6 @@ from catalyst.utils.torch import (
     set_optimizer_momentum,
     get_device,
     get_available_gpus,
-    get_available_engine,
     any2device,
     prepare_cudnn,
     process_model_params,

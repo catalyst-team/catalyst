@@ -65,7 +65,7 @@ class CustomRunner(IRunner):
     def get_stage_len(self, stage: str) -> int:
         return 10
 
-    def get_loaders(self, stage: str) -> Dict[str, Any]:
+    def get_loaders(self, stage: str, epoch: int = None) -> Dict[str, Any]:
         dataset = DummyDataset(6)
         loader = DataLoader(dataset, batch_size=4)
         return {"train": loader, "valid": loader}

@@ -5,70 +5,48 @@ Thanks to Catalyst "key-value is all you need" approach,
 it's very easy to use run experiments in multi-components setup
 (several model, criterions, optimizers, schedulers).
 
-Suppose you have the following classification pipeline (in pure PyTorch):
+Suppose you have the following classification pipeline:
 
 .. code-block:: python
 
     import os
-    from torch import nn, optim
+    import torch
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
-    from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
-    from catalyst.contrib.datasets import MNIST
+    from torchvision.datasets import MNIST
+    from torchvision.transforms import ToTensor
+    from catalyst import dl, metrics
 
-    model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.02)
+    model = torch.nn.Linear(28 * 28, 10)
+    criterion = torch.nn.CrossEntropyLoss()
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
-        "train": DataLoader(
-            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-        ),
-        "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-        ),
+        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
+        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
     }
 
     class CustomRunner(dl.Runner):
 
         def predict_batch(self, batch):
             # model inference step
-            return self.model(batch[0].to(self.device))
-
-        def on_loader_start(self, runner):
-            super().on_loader_start(runner)
-            self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
-                for key in ["loss", "accuracy01", "accuracy03"]
-            }
+            return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
         def handle_batch(self, batch):
             # model train/valid step
-            # unpack the batch
             x, y = batch
-            # run model forward pass
-            logits = self.model(x)
-            # compute the loss
-            loss = self.criterion(logits, y)
-            # compute other metrics of interest
-            accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
-            # log metrics
+            y_hat = self.model(x.view(x.size(0), -1))
+
+            loss = self.criterion(y_hat, y)
+            accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
             self.batch_metrics.update(
                 {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
             )
-            for key in ["loss", "accuracy01", "accuracy03"]:
-                self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
-            # run model backward pass
+
             if self.is_train_loader:
                 loss.backward()
                 self.optimizer.step()
                 self.optimizer.zero_grad()
-
-        def on_loader_end(self, runner):
-            for key in ["loss", "accuracy01", "accuracy03"]:
-                self.loader_metrics[key] = self.meters[key].compute()[0]
-            super().on_loader_end(runner)
 
     runner = CustomRunner()
     # model training
@@ -80,9 +58,7 @@ Suppose you have the following classification pipeline (in pure PyTorch):
         logdir="./logs",
         num_epochs=5,
         verbose=True,
-        valid_loader="valid",
-        valid_metric="loss",
-        minimize_valid_metric=True,
+        load_best_on_end=True,
     )
 
 Multi-model
@@ -92,75 +68,53 @@ Multi-model example:
 .. code-block:: python
 
     import os
-    from torch import nn, optim
+    import torch
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
-    from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
-    from catalyst.contrib.datasets import MNIST
+    from torchvision.datasets import MNIST
+    from torchvision.transforms import ToTensor
+    from catalyst import dl, metrics
 
     # <--- multi-model setup --->
-    encoder = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 128))
-    head = nn.Linear(128, 10)
+    encoder = torch.nn.Linear(28 * 28, 128)
+    head = torch.nn.Linear(128, 10)
     model = {"encoder": encoder, "head": head}
-    optimizer = optim.Adam([
+    optimizer = torch.optim.Adam([
         {'params': encoder.parameters()},
         {'params': head.parameters()},
     ], lr=0.02)
     # <--- multi-model setup --->
-    criterion = nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss()
 
     loaders = {
-        "train": DataLoader(
-            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-        ),
-        "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-        ),
+        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
+        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
     }
 
     class CustomRunner(dl.Runner):
 
         def predict_batch(self, batch):
             # model inference step
-            return self.model(batch[0].to(self.device))
-
-        def on_loader_start(self, runner):
-            super().on_loader_start(runner)
-            self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
-                for key in ["loss", "accuracy01", "accuracy03"]
-            }
+            return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
         def handle_batch(self, batch):
             # model train/valid step
-            # unpack the batch
             x, y = batch
             # <--- multi-model usage --->
-            # run model forward pass
-            x_ = self.model["encoder"](x)
-            logits = self.model["head"](x_)
+            x_ = self.model["encoder"](x.view(x.size(0), -1))
+            y_hat = self.model["head"](x_)
             # <--- multi-model usage --->
-            # compute the loss
-            loss = self.criterion(logits, y)
-            # compute other metrics of interest
-            accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
-            # log metrics
+
+            loss = self.criterion(y_hat, y)
+            accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
             self.batch_metrics.update(
                 {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
             )
-            for key in ["loss", "accuracy01", "accuracy03"]:
-                self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
-            # run model backward pass
+
             if self.is_train_loader:
                 loss.backward()
                 self.optimizer.step()
                 self.optimizer.zero_grad()
-
-        def on_loader_end(self, runner):
-            for key in ["loss", "accuracy01", "accuracy03"]:
-                self.loader_metrics[key] = self.meters[key].compute()[0]
-            super().on_loader_end(runner)
 
     runner = CustomRunner()
     # model training
@@ -172,9 +126,7 @@ Multi-model example:
         logdir="./logs",
         num_epochs=5,
         verbose=True,
-        valid_loader="valid",
-        valid_metric="loss",
-        minimize_valid_metric=True,
+        load_best_on_end=True,
     )
 
 As you can see, the only think you need to do - just wrap the model with key-value.
@@ -187,66 +139,49 @@ Multi-optimizer example:
 .. code-block:: python
 
     import os
-    from torch import nn, optim
+    import torch
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
-    from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
-    from catalyst.contrib.datasets import MNIST
+    from torchvision.datasets import MNIST
+    from torchvision.transforms import ToTensor
+    from catalyst import dl, metrics
 
     # <--- multi-model/optimizer setup --->
-    encoder = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 128))
-    head = nn.Linear(128, 10)
+    encoder = torch.nn.Linear(28 * 28, 128)
+    head = torch.nn.Linear(128, 10)
     model = {"encoder": encoder, "head": head}
     optimizer = {
-        "encoder": optim.Adam(encoder.parameters(), lr=0.02),
-        "head": optim.Adam(head.parameters(), lr=0.001),
+        "encoder": torch.optim.Adam(encoder.parameters(), lr=0.02),
+        "head": torch.optim.Adam(head.parameters(), lr=0.001),
     }
     # <--- multi-model/optimizer setup --->
-    criterion = nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss()
 
     loaders = {
-        "train": DataLoader(
-            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-        ),
-        "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-        ),
+        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
+        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
     }
 
     class CustomRunner(dl.Runner):
 
         def predict_batch(self, batch):
             # model inference step
-            return self.model(batch[0].to(self.device))
-
-        def on_loader_start(self, runner):
-            super().on_loader_start(runner)
-            self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
-                for key in ["loss", "accuracy01", "accuracy03"]
-            }
+            return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
         def handle_batch(self, batch):
             # model train/valid step
-            # unpack the batch
             x, y = batch
             # <--- multi-model/optimizer usage --->
-            # run model forward pass
-            x_ = self.model["encoder"](x)
-            logits = self.model["head"](x_)
+            x_ = self.model["encoder"](x.view(x.size(0), -1))
+            y_hat = self.model["head"](x_)
             # <--- multi-model/optimizer usage --->
-            # compute the loss
-            loss = self.criterion(logits, y)
-            # compute other metrics of interest
-            accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
-            # log metrics
+
+            loss = self.criterion(y_hat, y)
+            accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
             self.batch_metrics.update(
                 {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
             )
-            for key in ["loss", "accuracy01", "accuracy03"]:
-                self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
-            # run model backward pass
+
             if self.is_train_loader:
                 loss.backward()
                 # <--- multi-model/optimizer usage --->
@@ -256,11 +191,6 @@ Multi-optimizer example:
                 self.optimizer["head"].zero_grad()
                 # <--- multi-model/optimizer usage --->
 
-        def on_loader_end(self, runner):
-            for key in ["loss", "accuracy01", "accuracy03"]:
-                self.loader_metrics[key] = self.meters[key].compute()[0]
-            super().on_loader_end(runner)
-
     runner = CustomRunner()
     # model training
     runner.train(
@@ -271,12 +201,10 @@ Multi-optimizer example:
         logdir="./logs",
         num_epochs=5,
         verbose=True,
-        valid_loader="valid",
-        valid_metric="loss",
-        minimize_valid_metric=True,
+        load_best_on_end=True,
     )
 
-The same thing here - we could wrap our optimizers with key-value too and use it in a straightforward way.
+The same thing here - we could wrap our optimizers with key-value too and use it in a stratforward way.
 
 Multi-criterion
 ----------------------------------------------------
@@ -286,75 +214,52 @@ Multi-criterion example:
 
     import os
     import torch
-    from torch import nn, optim
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
-    from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
-    from catalyst.contrib.datasets import MNIST
+    from torchvision.datasets import MNIST
+    from torchvision.transforms import ToTensor
+    from catalyst import dl, metrics
 
-    model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-    optimizer = optim.Adam(model.parameters(), lr=0.02)
+    model = torch.nn.Linear(28 * 28, 10)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
     # <--- multi-criterion setup --->
     criterion = {
-        "multiclass": nn.CrossEntropyLoss(),
-        "multilabel": nn.BCEWithLogitsLoss(),
+        "multiclass": torch.nn.CrossEntropyLoss(),
+        "multilabel": torch.nn.BCEWithLogitsLoss(),
     }
     # <--- multi-criterion setup --->
 
     loaders = {
-        "train": DataLoader(
-            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-        ),
-        "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-        ),
+        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
+        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
     }
 
     class CustomRunner(dl.Runner):
 
         def predict_batch(self, batch):
             # model inference step
-            return self.model(batch[0].to(self.device))
-
-        def on_loader_start(self, runner):
-            super().on_loader_start(runner)
-            self.meters = {
-                key: metrics.AdditiveValueMetric(compute_on_call=False)
-                for key in ["loss", "accuracy01", "accuracy03"]
-            }
+            return self.model(batch[0].to(self.device).view(batch[0].size(0), -1))
 
         def handle_batch(self, batch):
             # model train/valid step
-            # unpack the batch
             x, y = batch
-            # run model forward pass
-            logits = self.model(x)
+            y_hat = self.model(x.view(x.size(0), -1))
+
             # <--- multi-criterion usage --->
-            # compute the loss
-            loss_multiclass = self.criterion["multiclass"](logits, y)
-            loss_multilabel = \
-                self.criterion["multilabel"](logits, F.one_hot(y, 10).to(torch.float32))
+            loss_multiclass = self.criterion["multiclass"](y_hat, y)
+            loss_multilabel = self.criterion["multilabel"](y_hat, F.one_hot(y, 10).to(torch.float32))
             loss = loss_multiclass + loss_multilabel
             # <--- multi-criterion usage --->
-            # compute other metrics of interest
-            accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
-            # log metrics
+
+            accuracy01, accuracy03 = metrics.accuracy(y_hat, y, topk=(1, 3))
             self.batch_metrics.update(
                 {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
             )
-            for key in ["loss", "accuracy01", "accuracy03"]:
-                self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
-            # run model backward pass
+
             if self.is_train_loader:
                 loss.backward()
                 self.optimizer.step()
                 self.optimizer.zero_grad()
-
-        def on_loader_end(self, runner):
-            for key in ["loss", "accuracy01", "accuracy03"]:
-                self.loader_metrics[key] = self.meters[key].compute()[0]
-            super().on_loader_end(runner)
 
     runner = CustomRunner()
     # model training
@@ -366,9 +271,7 @@ Multi-criterion example:
         logdir="./logs",
         num_epochs=5,
         verbose=True,
-        valid_loader="valid",
-        valid_metric="loss",
-        minimize_valid_metric=True,
+        load_best_on_end=True,
     )
 
 Same approach here - just use key-value storage to pass criterion through the experiment.

@@ -17,38 +17,24 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      max-parallel: 6
+      # max-parallel: 6
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04, macOS-10.15]  # windows-2019,
+        os: [ubuntu-18.04, macOS-10.15]  # windows-2019,
         python-version: [3.6, 3.7, 3.8]
         requirements: ['minimal', 'latest']
         exclude:
+          # pypi problems
+          - python-version: 3.8
+            requirements: 'minimal'
+          - python-version: 3.7
+            requirements: 'minimal'
           # pickle problems
           - python-version: 3.8
             os: macOS-10.15
           - python-version: 3.6
             os: macOS-10.15
-          # github CI problems
-          - python-version: 3.8
-            os: ubuntu-18.04
-            requirements: minimal
-          - python-version: 3.8
-            os: ubuntu-20.04
-            requirements: minimal
-#           - python-version: 3.7
-#             os: macOS-10.15
-#             requirements: minimal
-#           - python-version: 3.6
-#             os: ubuntu-18.04
-#             requirements: minimal
-#           - python-version: 3.7
-#             os: ubuntu-18.04
-#             requirements: minimal
-#           - python-version: 3.7
-#             os: ubuntu-20.04
-#             requirements: minimal
 
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v2
 
