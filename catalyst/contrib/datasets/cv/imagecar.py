@@ -8,7 +8,7 @@ from catalyst.contrib.datasets.functional import _extract_archive
 DATASET_IDX = '1GSmgsMEs2TE2x__wThw6dMOPfVUgkBZx'
 
 
-def download_file_from_google_drive(id, destination):
+def _download_file_from_google_drive(id, destination):
     URL = "https://docs.google.com/uc?export=download"
 
     session = requests.Session()
