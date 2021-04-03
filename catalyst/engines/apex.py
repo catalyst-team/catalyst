@@ -1,4 +1,4 @@
-from typing import Dict, Union
+from typing import Dict
 from collections import OrderedDict
 
 import torch
