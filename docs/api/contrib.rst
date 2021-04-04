@@ -37,6 +37,13 @@ MovieLens
 Computer Vision
 ~~~~~~~~~~~~~~~~
 
+CarvanaOneCarDataset
+""""""""""
+.. autoclass:: catalyst.contrib.datasets.cv.imagecar.CarvanaOneCarDataset
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 Imagenette
 """"""""""
 .. autoclass:: catalyst.contrib.datasets.cv.imagenette.Imagenette
