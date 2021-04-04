@@ -8,9 +8,12 @@ class LambdaPreprocessCallback(Callback):
     Preprocess your batch with specified function.
 
     Args:
-        lambda_fn (Callable): Function to apply.
-        input_keys (Union[List[str], str], optional): Keys in batch dict to apply function.
-            Defaults to ["s_hidden_states", "t_hidden_states"].
+            lambda_fn (Callable): Function to apply.
+            input_keys (Union[List[str], str], optional): Keys in batch dict to apply function.
+                Defaults to ``"logits"``.
+            output_keys (Union[List[str], str], optional): Keys for output.
+                If None then will apply function inplace to ``keys_to_apply``.
+                Defaults to ``None``.
 
     Raises:
         TypeError: When keys_to_apply is not str or list.
@@ -90,10 +93,10 @@ class LambdaPreprocessCallback(Callback):
         Args:
             lambda_fn (Callable): Function to apply.
             input_keys (Union[List[str], str], optional): Keys in batch dict to apply function.
-                Defaults to ["s_hidden_states", "t_hidden_states"].
+                Defaults to ``"logits"``.
             output_keys (Union[List[str], str], optional): Keys for output.
                 If None then will apply function inplace to ``keys_to_apply``.
-                Defaults to None.
+                Defaults to ``None``.
 
         Raises:
             TypeError: When keys_to_apply is not str or list.
