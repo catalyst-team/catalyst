@@ -10,10 +10,33 @@ from torch.utils.data import DataLoader
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
 from catalyst.data.transforms import Compose, Normalize, ToTensor
-from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES
+from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
-def train_experiment(device):
+class CustomRunner(dl.SupervisedRunner):
+    def handle_batch(self, batch) -> None:
+        if self.is_train_loader:
+            images, targets = batch["features"].float(), batch["targets"].long()
+            features = self.model(images)
+            self.batch = {
+                "embeddings": features,
+                "targets": targets,
+            }
+        else:
+            images, targets, is_query = (
+                batch["features"].float(),
+                batch["targets"].long(),
+                batch["is_query"].bool(),
+            )
+            features = self.model(images)
+            self.batch = {
+                "embeddings": features,
+                "targets": targets,
+                "is_query": is_query,
+            }
+
+
+def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
 
         # 1. train and valid loaders
@@ -41,28 +64,6 @@ def train_experiment(device):
         criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
 
         # 4. training with catalyst Runner
-        class CustomRunner(dl.SupervisedRunner):
-            def handle_batch(self, batch) -> None:
-                if self.is_train_loader:
-                    images, targets = batch["features"].float(), batch["targets"].long()
-                    features = self.model(images)
-                    self.batch = {
-                        "embeddings": features,
-                        "targets": targets,
-                    }
-                else:
-                    images, targets, is_query = (
-                        batch["features"].float(),
-                        batch["targets"].long(),
-                        batch["is_query"].bool(),
-                    )
-                    features = self.model(images)
-                    self.batch = {
-                        "embeddings": features,
-                        "targets": targets,
-                        "is_query": is_query,
-                    }
-
         callbacks = [
             dl.ControlFlowCallback(
                 dl.CriterionCallback(
@@ -86,7 +87,7 @@ def train_experiment(device):
 
         runner = CustomRunner(input_key="features", output_key="embeddings")
         runner.train(
-            engine=dl.DeviceEngine(device),
+            engine=engine or dl.DeviceEngine(device),
             model=model,
             criterion=criterion,
             optimizer=optimizer,
@@ -101,17 +102,79 @@ def train_experiment(device):
         )
 
 
-def test_finetune_on_cpu():
+# Torch
+def test_on_cpu():
     train_experiment("cpu")
 
 
 @mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
-def test_finetune_on_cuda():
+def test_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
 )
-def test_finetune_on_cuda_device():
+def test_on_torch_cuda1():
     train_experiment("cuda:1")
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
+)
+def test_on_torch_dp():
+    train_experiment(None, dl.DataParallelEngine())
+
+
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >=2),
+#     reason="No CUDA>=2 found",
+# )
+# def test_on_ddp():
+#     train_experiment(None, dl.DistributedDataParallelEngine())
+
+# AMP
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found",
+)
+def test_on_amp():
+    train_experiment(None, dl.AMPEngine())
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+    reason="No CUDA>=2 or AMP found",
+)
+def test_on_amp_dp():
+    train_experiment(None, dl.DataParallelAMPEngine())
+
+
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+#     reason="No CUDA>=2 or AMP found",
+# )
+# def test_on_amp_ddp():
+#     train_experiment(None, dl.DistributedDataParallelAMPEngine())
+
+# APEX
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
+)
+def test_on_apex():
+    train_experiment(None, dl.APEXEngine())
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+    reason="No CUDA>=2 or Apex found",
+)
+def test_on_apex_dp():
+    train_experiment(None, dl.DataParallelApexEngine())
+
+
+# @mark.skipif(
+#     not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+#     reason="No CUDA>=2 or Apex found",
+# )
+# def test_on_apex_ddp():
+#     train_experiment(None, dl.DistributedDataParallelApexEngine())

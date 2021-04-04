@@ -4,7 +4,7 @@ import os
 import torch
 import torch.distributed as dist
 import torch.nn as nn
-from torch.nn.parallel import DataParallel, DistributedDataParallel
+from torch.nn.parallel import DistributedDataParallel
 
 from catalyst.core.engine import IEngine
 from catalyst.typing import RunnerCriterion, RunnerModel, RunnerOptimizer, RunnerScheduler
@@ -22,7 +22,36 @@ class DeviceEngine(IEngine):
     """Single training device engine.
 
     Args:
-        device (str, optional): use device, default is `"cpu"`.
+        device: use device, default is `"cpu"`.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DeviceEngine("cuda:1")
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DeviceEngine
+            device: cuda:1
+
+        stages:
+            ...
+
     """
 
     def __init__(self, device: str = None):
@@ -40,7 +69,7 @@ class DeviceEngine(IEngine):
 
     @property
     def world_size(self) -> int:
-        """Process world size  for distributed training."""
+        """Process world size for distributed training."""
         return 1
 
     def sync_device(
@@ -167,7 +196,36 @@ class DeviceEngine(IEngine):
 
 
 class DataParallelEngine(DeviceEngine):
-    """MultiGPU training device engine."""
+    """MultiGPU training device engine.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DataParallelEngine()
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DataParallelEngine
+
+        stages:
+            ...
+
+    """
 
     def __init__(self):
         """Init"""
@@ -183,7 +241,11 @@ class DataParallelEngine(DeviceEngine):
         """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
-        model = DataParallel(model)
+
+        if isinstance(model, nn.Module):
+            model = nn.DataParallel(model)
+        elif isinstance(model, dict):
+            model = {k: nn.DataParallel(v) for k, v in model.items()}
 
         # criterion
         criterion = criterion_fn()
@@ -202,10 +264,42 @@ class DistributedDataParallelEngine(DeviceEngine):
     """Distributed MultiGPU training device engine.
 
     Args:
-        address: process address to use (required for PyTorch backend), default is `"localhost"`.
-        port: process port to listen (required for PyTorch backend), default is `"12345"`.
-        backend: multiprocessing backend to use, default is `"nccl"`.
+        address: process address to use
+            (required for PyTorch backend), default is `"localhost"`.
+        port: process port to listen
+            (required for PyTorch backend), default is `"12345"`.
+        backend: multiprocessing backend to use,
+            default is `"nccl"`.
         world_size: number of processes.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DistributedDataParallelEngine(port=12345)
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DistributedDataParallelEngine
+            port: 12345
+
+        stages:
+            ...
+
     """
 
     def __init__(
@@ -262,7 +356,13 @@ class DistributedDataParallelEngine(DeviceEngine):
         return self._rank > 0
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
-        """Initialize DDP variables and processes."""
+        """Initialize DDP variables and processes.
+
+        Args:
+            rank: process rank. Default is `-1`.
+            world_size: number of devices in netwok to expect for train.
+                Default is `1`.
+        """
         self._rank = rank
         self._world_size = world_size
         os.environ["MASTER_ADDR"] = str(self.address)
@@ -305,9 +405,12 @@ class DistributedDataParallelEngine(DeviceEngine):
         model = model_fn()
         model = self.sync_device(model)
         # NOTE: do not forget to wrap a model in DDP
-        model = DistributedDataParallel(
-            model, device_ids=[self.device], find_unused_parameters=True
-        )
+        if isinstance(model, nn.Module):
+            model = DistributedDataParallel(model, device_ids=[self.device])
+        elif isinstance(model, dict):
+            model = {
+                k: DistributedDataParallel(v, device_ids=[self.device]) for k, v in model.items()
+            }
         # criterion
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
@@ -336,7 +439,7 @@ class DistributedDataParallelEngine(DeviceEngine):
     def optimizer_step(self, loss, model, optimizer) -> None:
         """Abstraction over ``optimizer.step()`` step."""
         optimizer.step()
-        dist.barrier()
+        # dist.barrier()
 
 
 __all__ = ["DeviceEngine", "DataParallelEngine", "DistributedDataParallelEngine"]

@@ -345,6 +345,11 @@ class Runner(IRunner):
         model: Model = None,
         engine: Union["IEngine", str] = None,
         seed: int = 42,
+        # engine extra params,
+        fp16: bool = False,
+        amp: bool = False,
+        apex: bool = False,
+        ddp: bool = False,
     ) -> Generator:
         """
         Runs model inference on PyTorch DataLoader and returns
@@ -355,14 +360,16 @@ class Runner(IRunner):
             model: model to use for prediction
             engine: engine to use for prediction
             seed: random seed to use before prediction
+            fp16: boolean flag to use half-precision training (AMP > APEX)
+            amp: boolean flag to use amp half-precision
+            apex: boolean flag to use apex half-precision
+            ddp: if `True` will start training in distributed mode.
+                Note: Works only with python scripts. No jupyter support.
 
         Yields:
             bathes with model predictions
         """
-        if engine is not None:
-            self.engine = engine
-        if self.engine is None:
-            self.engine = get_available_engine()
+        self._engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
 
         if model is not None:
             self.model = model

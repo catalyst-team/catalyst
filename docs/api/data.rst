@@ -270,6 +270,13 @@ MaskReader (CV)
     :undoc-members:
     :show-inheritance:
 
+NiftiReader (Nifti)
+""""""""""""""""""""""""""
+.. autoclass:: catalyst.contrib.data.nifti.reader.NiftiReader
+    :members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 ScalarReader
 """"""""""""""""""""""""""
 .. autoclass:: catalyst.contrib.data.reader.ScalarReader

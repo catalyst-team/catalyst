@@ -1,5 +1,6 @@
 from typing import Any, Callable, Dict, Iterable
 from collections import OrderedDict
+import copy
 from functools import partial
 
 import torch
@@ -120,11 +121,11 @@ def get_loaders_from_params(
 
     default_batch_size = batch_size
     default_num_workers = num_workers
-    loaders_params = loaders_params or {}
+    loaders_params = copy.deepcopy(loaders_params) or {}
     assert isinstance(loaders_params, dict), (
         f"`loaders_params` should be a Dict. " f"Got: {loaders_params}"
     )
-    samplers_params = samplers_params or {}
+    samplers_params = copy.deepcopy(samplers_params) or {}
     assert isinstance(
         samplers_params, dict
     ), f"`samplers_params` should be a Dict. Got: {samplers_params}"

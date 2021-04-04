@@ -1,6 +1,6 @@
 import torch
+from torch import nn
 import torch.cuda.amp as amp
-from torch.nn.parallel import DataParallel
 
 from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 
@@ -10,6 +10,35 @@ class AMPEngine(DeviceEngine):
 
     Args:
         device: used device, default is `"cuda"`.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.AMPEngine("cuda:1")
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: AMPEngine
+            device: cuda:1
+
+        stages:
+            ...
+
     """
 
     def __init__(self, device: str = "cuda"):
@@ -36,7 +65,36 @@ class AMPEngine(DeviceEngine):
 
 
 class DataParallelAMPEngine(AMPEngine):
-    """AMP multi-gpu training device engine."""
+    """AMP multi-gpu training device engine.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DataParallelAMPEngine()
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DataParallelAMPEngine
+
+        stages:
+            ...
+
+    """
 
     def __init__(self):
         """Init."""
@@ -52,7 +110,11 @@ class DataParallelAMPEngine(AMPEngine):
         """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
-        model = DataParallel(model)
+
+        if isinstance(model, nn.Module):
+            model = nn.DataParallel(model)
+        elif isinstance(model, dict):
+            model = {k: nn.DataParallel(v) for k, v in model.items()}
 
         # criterion
         criterion = criterion_fn()
@@ -71,10 +133,42 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
     """Distributed AMP multi-gpu training device engine.
 
     Args:
-        address: process address to use (required for PyTorch backend), default is `"localhost"`.
-        port: process port to listen (required for PyTorch backend), default is `"12345"`.
-        backend: multiprocessing backend to use, default is `"nccl"`.
+        address: process address to use
+            (required for PyTorch backend), default is `"localhost"`.
+        port: process port to listen
+            (required for PyTorch backend), default is `"12345"`.
+        backend: multiprocessing backend to use,
+            default is `"nccl"`.
         world_size: number of processes.
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DistributedDataParallelAMPEngine(port=12345)
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DistributedDataParallelAMPEngine
+            port: 12345
+
+        stages:
+            ...
+
     """
 
     def __init__(
