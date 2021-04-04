@@ -43,7 +43,7 @@ def hitrate(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> Li
         if targets.sum(dim=1) != 0:
             hits_score = torch.sum(targets_sort_by_outputs[:, :k], dim=1) / targets.sum(dim=1)
         else:
-            hits_score = torch.tensor([.0])
+            hits_score = torch.tensor([0.0])
         results.append(torch.mean(hits_score))
 
     return results
