@@ -64,7 +64,7 @@ class CarvanaOneCarDataset(Dataset):
             is already downloaded, it is not downloaded again.
             transforms: (callable, optional): A function/transform that
             takes in an image and returns a transformed version.
-        
+
         Examples:
             >>> from catalyst.contrib.datasets import CarvanaOneCarDataset
             >>> dataset = CarvanaOneCarDataset(root='./',
