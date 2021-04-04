@@ -10,18 +10,6 @@ from catalyst import dl
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
-class CustomRunner(dl.Runner):
-    def handle_batch(self, batch):
-        x, y = batch
-        logits = self.model(x)
-        self.batch = {
-            "features": x,
-            "logits": logits,
-            "scores": torch.sigmoid(logits),
-            "targets": y,
-        }
-
-
 def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
         # sample data
@@ -41,6 +29,9 @@ def train_experiment(device, engine=None):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
         callbacks = [
+            dl.LambdaPreprocessCallback(
+                input_keys="logits", output_keys="scores", lambda_fn=torch.sigmoid
+            ),
             dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
             dl.AUCCallback(input_key="scores", target_key="targets"),
             dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
@@ -59,7 +50,7 @@ def train_experiment(device, engine=None):
             callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
 
         # model training
-        runner = CustomRunner()
+        runner = dl.SupervisedRunner()
         runner.train(
             engine=engine or dl.DeviceEngine(device),
             model=model,

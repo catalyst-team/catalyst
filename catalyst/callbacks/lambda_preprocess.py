@@ -1,4 +1,4 @@
-from typing import Callable, List, Union
+from typing import Any, Callable, Dict, List, Tuple, Union
 
 from catalyst.core import Callback, CallbackOrder
 
@@ -9,7 +9,7 @@ class LambdaPreprocessCallback(Callback):
 
     Args:
         lambda_fn (Callable): Function to apply.
-        keys_to_apply (Union[List[str], str], optional): Keys in batch dict to apply function.
+        input_keys (Union[List[str], str], optional): Keys in batch dict to apply function.
             Defaults to ["s_hidden_states", "t_hidden_states"].
 
     Raises:
@@ -50,7 +50,7 @@ class LambdaPreprocessCallback(Callback):
                 verbose=True,
                 callbacks=[
                     dl.LambdaPreprocessCallback(
-                        keys_to_apply="logits", output_keys="scores", lambda_fn=torch.sigmoid
+                        input_keys="logits", output_keys="scores", lambda_fn=torch.sigmoid
                     ),
                     dl.CriterionCallback(
                         input_key="logits", target_key="targets", metric_key="loss"
@@ -82,14 +82,14 @@ class LambdaPreprocessCallback(Callback):
     def __init__(
         self,
         lambda_fn: Callable,
-        keys_to_apply: Union[List[str], str] = "logits",
+        input_keys: Union[List[str], str] = "logits",
         output_keys: Union[List[str], str] = None,
     ):
         """Wraps input for your callback with specified function.
 
         Args:
             lambda_fn (Callable): Function to apply.
-            keys_to_apply (Union[List[str], str], optional): Keys in batch dict to apply function.
+            input_keys (Union[List[str], str], optional): Keys in batch dict to apply function.
                 Defaults to ["s_hidden_states", "t_hidden_states"].
             output_keys (Union[List[str], str], optional): Keys for output.
                 If None then will apply function inplace to ``keys_to_apply``.
@@ -99,14 +99,21 @@ class LambdaPreprocessCallback(Callback):
             TypeError: When keys_to_apply is not str or list.
         """
         super().__init__(order=CallbackOrder.Internal)
-        if not isinstance(keys_to_apply, (list, str)):
+        if not isinstance(input_keys, (list, str)):
             raise TypeError("keys to apply should be str or list of str.")
+        elif isinstance(input_keys, str):
+            input_keys = [input_keys]
         if output_keys is not None:
             if not isinstance(output_keys, (list, str)):
                 raise TypeError("output keys should be str or list of str.")
-        self.keys_to_apply = keys_to_apply
+            if isinstance(output_keys, str):
+                output_keys = [output_keys]
+        else:
+            output_keys = input_keys
+        self.keys_to_apply = input_keys
         self.output_keys = output_keys
         self.lambda_fn = lambda_fn
+        self.handler: Union[None, Callable] = None
 
     def on_batch_end(self, runner) -> None:
         """
@@ -119,40 +126,56 @@ class LambdaPreprocessCallback(Callback):
             TypeError: If lambda_fn output has a wrong type.
 
         """
-        batch = runner.batch
-
-        if isinstance(self.keys_to_apply, list):
-            fn_inp = [batch[key] for key in self.keys_to_apply]
-            fn_output = self.lambda_fn(*fn_inp)
+        fn_inp = [runner.batch[key] for key in self.keys_to_apply]
+        fn_output = self.lambda_fn(*fn_inp)
+        if self.handler is None:
+            if isinstance(fn_output, dict):
+                self.handler = self._handle_output_dict
             if isinstance(fn_output, tuple):
-                if self.output_keys is not None:
-                    if not isinstance(self.output_keys, list):
-                        raise TypeError(
-                            "Unexpected output from function. "
-                            "For output key type string expected one element, got tuple."
-                        )
-                    iter_keys = self.output_keys
-                else:
-                    iter_keys = self.keys_to_apply
-                for idx, key in enumerate(iter_keys):
-                    batch[key] = fn_output[idx]
-            elif isinstance(fn_output, dict):
-                for outp_k, outp_v in fn_output.items():
-                    batch[outp_k] = outp_v
+                if len(fn_output) != len(self.output_keys):
+                    raise TypeError(
+                        "Unexpected output. "
+                        "Expect function to return tuple same length as output_keys, "
+                        f"which is {len(self.output_keys)}, "
+                        f"but got output length of {len(fn_output)}"
+                        "Use output_keys argument to specify output keys."
+                    )
+                self.handler = self._handle_output_tuple
             else:
-                if self.output_keys is not None:
-                    if not isinstance(self.output_keys, str):
-                        raise TypeError(
-                            "Unexpected output from function. "
-                            "For output key type List[str] expected tuple, got one element."
-                        )
-                    output_key = self.output_keys
-                else:
-                    output_key = self.keys_to_apply
-                batch[output_key] = fn_output
-        elif isinstance(self.keys_to_apply, str):
-            batch[self.keys_to_apply] = self.lambda_fn(self.keys_to_apply)
-        runner.batch = batch
+                if len(self.output_keys) > 1:
+                    raise TypeError(
+                        "Unexpected output. "
+                        "Expect function to return tuple or dict, but got "
+                        f"{type(fn_output)}. "
+                        "Use output_keys argument to specify output key."
+                    )
+                self.handler = self._handle_output_value
+        runner.batch = self.handler(
+            batch=runner.batch, function_output=fn_output, output_keys=self.output_keys
+        )
+
+    @staticmethod
+    def _handle_output_tuple(
+        batch: Dict[str, Any], function_output: Tuple[Any], output_keys: List[str]
+    ) -> Dict[str, Any]:
+        for out_idx, output_key in enumerate(output_keys):
+            batch[output_key] = function_output[out_idx]
+        return batch
+
+    @staticmethod
+    def _handle_output_dict(
+        batch: Dict[str, Any], function_output: Dict[str, Any], output_keys: List[str]
+    ) -> Dict[str, Any]:
+        for output_key, output_value in function_output.items():
+            batch[output_key] = output_value
+        return batch
+
+    @staticmethod
+    def _handle_output_value(
+        batch: Dict[str, Any], function_output: Any, output_keys: List[str],
+    ):
+        batch[output_keys[0]] = function_output
+        return batch
 
 
 __all__ = ["LambdaPreprocessCallback"]
