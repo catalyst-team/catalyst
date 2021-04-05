@@ -1,171 +1,229 @@
-from typing import Optional, Sequence, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, List, Tuple, Union
 
-from torch import nn
-
-from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.registry import REGISTRY
-
-if TYPE_CHECKING:
-    from catalyst.core.runner import IRunner
+from catalyst.core import Callback, CallbackOrder
 
 
 class BatchTransformCallback(Callback):
-    """Callback to perform data augmentations on GPU using kornia library.
+    """
+    Preprocess your batch with specified function.
 
     Args:
-        transform: define augmentations to apply on a batch
+        lambda_fn (Callable): Function to apply.
+        scope (str): ``"on_batch_end"`` or ``"on_batch_start"``
+        input_key (Union[List[str], str, int], optional): Keys in batch dict to apply function.
+            Defaults to ``None``.
+        output_key (Union[List[str], str, int], optional): Keys for output.
+            If None then will apply function inplace to ``keys_to_apply``.
+            Defaults to ``None``.
 
-            If a sequence of transforms passed, then each element
-            should be either ``kornia.augmentation.AugmentationBase2D``,
-            ``kornia.augmentation.AugmentationBase3D``, or ``nn.Module``
-            compatible with kornia interface.
+    Raises:
+        TypeError: When keys_to_apply is not str or list.
 
-            If a sequence of params (``dict``) passed, then each
-            element of the sequence must contain ``'transform'`` key with
-            an augmentation name as a value. Please note that in this case
-            to use custom augmentation you should add it to the
-            `REGISTRY` registry first.
-        input_key (Union[str, int]): key in batch dict mapping to transform, e.g. `'image'`
-        output_key: key to use to store the result
-            of the transform, defaults to `input_key` if not provided
+    Examples:
+        .. code-block:: python
 
-    Look at `Kornia: an Open Source Differentiable Computer Vision
-    Library for PyTorch`_ for details.
+            import torch
+            from torch.utils.data import DataLoader, TensorDataset
+            from catalyst import dl
 
-    Usage example for notebook API:
+            # sample data
+            num_users, num_features, num_items = int(1e4), int(1e1), 10
+            X = torch.rand(num_users, num_features)
+            y = (torch.rand(num_users, num_items) > 0.5).to(torch.float32)
 
-    .. code-block:: python
+            # pytorch loaders
+            dataset = TensorDataset(X, y)
+            loader = DataLoader(dataset, batch_size=32, num_workers=1)
+            loaders = {"train": loader, "valid": loader}
 
-        import os
+            # model, criterion, optimizer, scheduler
+            model = torch.nn.Linear(num_features, num_items)
+            criterion = torch.nn.BCEWithLogitsLoss()
+            optimizer = torch.optim.Adam(model.parameters())
+            scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
-        from kornia import augmentation
-        import torch
-        from torch.nn import functional as F
-        from torch.utils.data import DataLoader
+            # model training
+            runner = SupervisedRunner()
+            runner.train(
+                model=model,
+                criterion=criterion,
+                optimizer=optimizer,
+                scheduler=scheduler,
+                loaders=loaders,
+                num_epochs=3,
+                verbose=True,
+                callbacks=[
+                    dl.LambdaPreprocessCallback(
+                        input_keys="logits", output_keys="scores", lambda_fn=torch.sigmoid
+                    ),
+                    dl.CriterionCallback(
+                        input_key="logits", target_key="targets", metric_key="loss"
+                    ),
+            # uncomment for extra metrics:
+            #       dl.AUCCallback(
+            #           input_key="scores", target_key="targets"
+            #       ),
+            #       dl.HitrateCallback(
+            #           input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+            #       ),
+            #       dl.MRRCallback(
+            #           input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+            #       ),
+            #       dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+            #       dl.NDCGCallback(
+            #           input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+            #       ),
+                    dl.OptimizerCallback(metric_key="loss"),
+                    dl.SchedulerCallback(),
+                    dl.CheckpointCallback(
+                        logdir="./logs", loader_key="valid", metric_key="map01", minimize=False
+                    ),
+                ]
+            )
 
-        from catalyst import dl
-        from catalyst.contrib.data.transforms import ToTensor
-        from catalyst.contrib.datasets import MNIST
-        from catalyst.contrib.callbacks.kornia_transform import (
-            BatchTransformCallback
-        )
-        from catalyst import metrics
-
-
-        class CustomRunner(dl.Runner):
-            def predict_batch(self, batch):
-                # model inference step
-                return self.model(
-                    batch[0].to(self.device).view(batch[0].size(0), -1)
-                )
-
-            def handle_batch(self, batch):
-                # model train/valid step
-                x, y = batch
-                y_hat = self.model(x.view(x.size(0), -1))
-
-                loss = F.cross_entropy(y_hat, y)
-                accuracy01, *_ = metrics.accuracy(y_hat, y)
-                self.batch_metrics.update(
-                    {"loss": loss, "accuracy01": accuracy01}
-                )
-
-                if self.is_train_loader:
-                    loss.backward()
-                    self.optimizer.step()
-                    self.optimizer.zero_grad()
-
-        model = torch.nn.Linear(28 * 28, 10)
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
-
-        loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=True, transform=ToTensor()),
-                batch_size=32,
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, transform=ToTensor()),
-                batch_size=32,
-            ),
-        }
-        transforms = [
-            augmentation.RandomAffine(degrees=(-15, 20), scale=(0.75, 1.25)),
-        ]
-
-        runner = CustomRunner()
-
-        # model training
-        runner.train(
-            model=model,
-            optimizer=optimizer,
-            loaders=loaders,
-            logdir="./logs",
-            num_epochs=5,
-            verbose=True,
-            callbacks=[BatchTransformCallback(transforms, input_key=0)],
-        )
-
-    To apply augmentations only during specific loader e.g. only during
-    training :class:`catalyst.core.callbacks.control_flow.ControlFlowCallback`
-    callback can be used. For config API it can look like this:
-
-    .. code-block:: yaml
-
-        callbacks_params:
-          ...
-          train_transforms:
-            _wrapper:
-              name: ControlFlowCallback
-              loaders: train
-            name: BatchTransformCallback
-            transform:
-              - transform: kornia.RandomAffine
-                degrees: [-15, 20]
-                scale: [0.75, 1.25]
-                return_transform: true
-              - transform: kornia.ColorJitter
-                brightness: 0.1
-                contrast: 0.1
-                saturation: 0.1
-                return_transform: false
-            input_key: image
-          ...
-
-    .. _`Kornia: an Open Source Differentiable Computer Vision Library
-        for PyTorch`: https://arxiv.org/pdf/1910.02190.pdf
     """
 
     def __init__(
         self,
-        transform: Sequence[Union[dict, nn.Module]],
-        input_key: Union[str, int] = "image",
-        output_key: Optional[Union[str, int]] = None,
-    ) -> None:
-        """Init."""
-        super().__init__(order=CallbackOrder.Internal, node=CallbackNode.all)
-
-        self.input_key = input_key
-        self.output_key = output_key or self.input_key
-
-        transforms: Sequence[nn.Module] = [
-            item if isinstance(item, nn.Module) else REGISTRY.get_from_params(**item)
-            for item in transform
-        ]
-        assert all(
-            isinstance(t, nn.Module) for t in transforms
-        ), "`nn.Module` should be a base class for transforms"
-
-        self.transform = nn.Sequential(*transforms)
-
-    def on_batch_start(self, runner: "IRunner") -> None:
-        """Apply transforms.
+        lambda_fn: Callable,
+        scope: str,
+        input_key: Union[List[str], str, int] = None,
+        output_key: Union[List[str], str, int] = None,
+    ):
+        """
+        Preprocess your batch with specified function.
 
         Args:
-            runner: сurrent runner
+            lambda_fn (Callable): Function to apply.
+            scope (str): ``"on_batch_end"`` or ``"on_batch_start"``
+            input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
+            output_key (Union[List[str], str], optional): Keys for output.
+                If None then will apply function inplace to ``keys_to_apply``.
+                Defaults to ``None``.
+
+        Raises:
+            TypeError: When keys_to_apply is not str or list.
         """
-        input_batch = runner.batch[self.input_key]
-        output_batch = self.transform(input_batch)
-        runner.batch[self.output_key] = output_batch
+        super().__init__(order=CallbackOrder.Internal)
+        if input_key is not None:
+            if not isinstance(input_key, (list, str, int)):
+                raise TypeError("keys to apply should be str or list of str.")
+        elif isinstance(input_key, (str, int)):
+            input_key = [input_key]
+        if output_key is not None:
+            if not isinstance(output_key, (list, str, int)):
+                raise TypeError("output keys should be str or list of str.")
+            if isinstance(output_key, (str, int)):
+                output_key = [output_key]
+        if isinstance(scope, str) and scope in ["on_batch_end", "on_batch_start"]:
+            self.scope = scope
+        else:
+            raise TypeError(
+                """Expected scope to be on of the ["on_batch_end", "on_batch_start"]"""
+            )
+        self.input_key = input_key
+        self.output_key = output_key
+        self.lambda_fn = lambda_fn
+        self.input_handler = (
+            (lambda batch: batch)
+            if input_key is None
+            else (lambda batch: [batch[key] for key in input_key])
+        )
+        self.output_handler: Union[None, Callable] = None
+
+    def on_batch_start(self, runner: "IRunner") -> None:
+        """
+        On batch start action.
+
+        Args:
+            runner: runner for the experiment.
+        """
+        if self.scope == "on_batch_start":
+            self._handle_batch(runner)
+
+    def on_batch_end(self, runner) -> None:
+        """
+        On batch end action.
+
+        Args:
+            runner: runner for the experiment.
+        """
+        if self.scope == "on_batch_end":
+            self._handle_batch(runner)
+
+    def _handle_batch(self, runner):
+        fn_input = self.input_handler(runner.batch)
+        fn_output = self.lambda_fn(*fn_input)
+
+        if self.output_handler is None:
+            self.output_handler = self._get_output_handler(fn_output=fn_output)
+
+        runner.batch = self.output_handler(
+            batch=runner.batch, function_output=fn_output, output_keys=self.output_key
+        )
+
+    def _get_output_handler(self, fn_output):
+        # First batch case. Executes only ones.
+        # Structure:
+        # if isinstance(fn_output, type):
+        #     if not output_keys match output:
+        #         raise Exception
+        #     handler = _handler_for_type
+        output_handler = None
+        if isinstance(fn_output, dict):
+            if self.output_key is not None:
+                raise Exception(
+                    "If your function outputs dict you " "should left output_keys=None."
+                )
+            output_handler = self._handle_output_dict
+        else:
+            if self.output_key is None:
+                raise Exception(
+                    "If function does not output " "dict you should specify `output_keys`"
+                )
+        if isinstance(fn_output, tuple):
+            if len(fn_output) != len(self.output_key):
+                raise TypeError(
+                    "Unexpected output. "
+                    "Expect function to return tuple same length as output_keys, "
+                    f"which is {len(self.output_key)}, "
+                    f"but got output length of {len(fn_output)}"
+                    "Use output_keys argument to specify output keys."
+                )
+            output_handler = self._handle_output_tuple
+        if not isinstance(fn_output, (tuple, dict)):
+            if len(self.output_key) > 1:
+                raise TypeError(
+                    "Unexpected output. "
+                    "Expect function to return tuple, but got "
+                    f"{type(fn_output)}. "
+                    "Use output_keys argument to specify output key."
+                )
+            output_handler = self._handle_output_value
+        return output_handler
+
+    @staticmethod
+    def _handle_output_tuple(
+        batch: Dict[str, Any], function_output: Tuple[Any], output_keys: List[str]
+    ) -> Dict[str, Any]:
+        for out_idx, output_key in enumerate(output_keys):
+            batch[output_key] = function_output[out_idx]
+        return batch
+
+    @staticmethod
+    def _handle_output_dict(
+        batch: Dict[str, Any], function_output: Dict[str, Any], output_keys: List[str]
+    ) -> Dict[str, Any]:
+        for output_key, output_value in function_output.items():
+            batch[output_key] = output_value
+        return batch
+
+    @staticmethod
+    def _handle_output_value(
+        batch: Dict[str, Any], function_output: Any, output_keys: List[str],
+    ):
+        batch[output_keys[0]] = function_output
+        return batch
 
 
 __all__ = ["BatchTransformCallback"]
