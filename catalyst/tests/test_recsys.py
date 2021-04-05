@@ -29,8 +29,8 @@ def train_experiment(device, engine=None):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
         callbacks = [
-            dl.LambdaPreprocessCallback(
-                input_key="logits", output_key="scores", lambda_fn=torch.sigmoid
+            dl.BatchTransformCallback(
+                input_key="logits", output_key="scores", lambda_fn=torch.sigmoid, scope="on_batch_end"
             ),
             dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
             dl.AUCCallback(input_key="scores", target_key="targets"),

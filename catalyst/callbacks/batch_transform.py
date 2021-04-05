@@ -131,37 +131,6 @@ class BatchTransformCallback(Callback):
         )
         self.output_handler: Union[None, Callable] = None
 
-    def on_batch_start(self, runner: "IRunner") -> None:
-        """
-        On batch start action.
-
-        Args:
-            runner: runner for the experiment.
-        """
-        if self.scope == "on_batch_start":
-            self._handle_batch(runner)
-
-    def on_batch_end(self, runner) -> None:
-        """
-        On batch end action.
-
-        Args:
-            runner: runner for the experiment.
-        """
-        if self.scope == "on_batch_end":
-            self._handle_batch(runner)
-
-    def _handle_batch(self, runner):
-        fn_input = self.input_handler(runner.batch)
-        fn_output = self.lambda_fn(*fn_input)
-
-        if self.output_handler is None:
-            self.output_handler = self._get_output_handler(fn_output=fn_output)
-
-        runner.batch = self.output_handler(
-            batch=runner.batch, function_output=fn_output, output_keys=self.output_key
-        )
-
     def _get_output_handler(self, fn_output):
         # First batch case. Executes only ones.
         # Structure:
@@ -224,6 +193,37 @@ class BatchTransformCallback(Callback):
     ):
         batch[output_keys[0]] = function_output
         return batch
+
+    def _handle_batch(self, runner):
+        fn_input = self.input_handler(runner.batch)
+        fn_output = self.lambda_fn(*fn_input)
+
+        if self.output_handler is None:
+            self.output_handler = self._get_output_handler(fn_output=fn_output)
+
+        runner.batch = self.output_handler(
+            batch=runner.batch, function_output=fn_output, output_keys=self.output_key
+        )
+
+    def on_batch_start(self, runner: "IRunner") -> None:
+        """
+        On batch start action.
+
+        Args:
+            runner: runner for the experiment.
+        """
+        if self.scope == "on_batch_start":
+            self._handle_batch(runner)
+
+    def on_batch_end(self, runner) -> None:
+        """
+        On batch end action.
+
+        Args:
+            runner: runner for the experiment.
+        """
+        if self.scope == "on_batch_end":
+            self._handle_batch(runner)
 
 
 __all__ = ["BatchTransformCallback"]
