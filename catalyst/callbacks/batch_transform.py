@@ -119,7 +119,7 @@ class BatchTransformCallback(Callback):
             self.scope = scope
         else:
             raise TypeError(
-                """Expected scope to be on of the ["on_batch_end", "on_batch_start"]"""
+                "Expected scope to be on of the [\"on_batch_end\", \"on_batch_start\"]"
             )
         self.input_key = input_key
         self.output_key = output_key
