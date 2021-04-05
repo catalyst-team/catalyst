@@ -40,7 +40,7 @@ def hitrate(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> Li
     targets_sort_by_outputs = process_recsys_components(outputs, targets)
     for k in topk:
         k = min(outputs.size(1), k)
-        if targets.sum(dim=1) != 0:
+        if targets.sum(dim=1).data[0] != 0:
             hits_score = torch.sum(targets_sort_by_outputs[:, :k], dim=1) / targets.sum(dim=1)
         else:
             hits_score = torch.tensor([0.0])
