@@ -1,6 +1,7 @@
 from typing import Any, Callable, Dict, List, Tuple, Union
+from functools import partial
 
-from catalyst.core import Callback, CallbackOrder
+from catalyst.core import Callback, CallbackOrder, IRunner
 
 
 class BatchTransformCallback(Callback):
@@ -108,8 +109,8 @@ class BatchTransformCallback(Callback):
         if input_key is not None:
             if not isinstance(input_key, (list, str, int)):
                 raise TypeError("keys to apply should be str or list of str.")
-        elif isinstance(input_key, (str, int)):
-            input_key = [input_key]
+            elif isinstance(input_key, (str, int)):
+                input_key = [input_key]
         if output_key is not None:
             if not isinstance(output_key, (list, str, int)):
                 raise TypeError("output keys should be str or list of str.")
@@ -125,9 +126,13 @@ class BatchTransformCallback(Callback):
         self.input_handler = (
             (lambda batch: batch)
             if input_key is None
-            else (lambda batch: [batch[key] for key in input_key])
+            else partial(self._handle_input_tuple, input_key=input_key)
         )
         self.output_handler: Union[None, Callable] = None
+
+    @staticmethod
+    def _handle_input_tuple(batch, input_key):
+        return [batch[key] for key in input_key]
 
     def _get_output_handler(self, fn_output):
         # First batch case. Executes only ones.
