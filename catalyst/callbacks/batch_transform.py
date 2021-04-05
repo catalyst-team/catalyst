@@ -141,13 +141,13 @@ class BatchTransformCallback(Callback):
         output_handler = None
         if isinstance(fn_output, dict):
             if self.output_key is not None:
-                raise Exception(
+                raise TypeError(
                     "If your function outputs dict you " "should left output_keys=None."
                 )
             output_handler = self._handle_output_dict
         else:
             if self.output_key is None:
-                raise Exception(
+                raise TypeError(
                     "If function does not output " "dict you should specify `output_keys`"
                 )
         if isinstance(fn_output, tuple):
