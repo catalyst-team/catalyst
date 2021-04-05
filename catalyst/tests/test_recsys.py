@@ -50,7 +50,7 @@ def train_experiment(device, engine=None):
             callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
 
         # model training
-        runner = dl.SupervisedRunner()
+        runner = dl.SupervisedRunner(output_key="logits")
         runner.train(
             engine=engine or dl.DeviceEngine(device),
             model=model,
