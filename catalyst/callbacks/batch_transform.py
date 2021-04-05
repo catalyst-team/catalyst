@@ -118,9 +118,7 @@ class BatchTransformCallback(Callback):
         if isinstance(scope, str) and scope in ["on_batch_end", "on_batch_start"]:
             self.scope = scope
         else:
-            raise TypeError(
-                "Expected scope to be on of the [\"on_batch_end\", \"on_batch_start\"]"
-            )
+            raise TypeError('Expected scope to be on of the ["on_batch_end", "on_batch_start"]')
         self.input_key = input_key
         self.output_key = output_key
         self.lambda_fn = lambda_fn

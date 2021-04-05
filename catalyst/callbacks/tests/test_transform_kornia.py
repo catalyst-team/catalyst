@@ -82,11 +82,7 @@ def test_transform_kornia():
         load_best_on_end=True,
         check=True,
         callbacks=[
-            BatchTransformCallback(
-                lambda_fn=transrorms,
-                scope="on_batch_start",
-                input_key=0
-            )
+            BatchTransformCallback(lambda_fn=transrorms, scope="on_batch_start", input_key=0)
         ],
     )
 

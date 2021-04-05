@@ -30,7 +30,10 @@ def train_experiment(device, engine=None):
 
         callbacks = [
             dl.BatchTransformCallback(
-                input_key="logits", output_key="scores", lambda_fn=torch.sigmoid, scope="on_batch_end"
+                input_key="logits",
+                output_key="scores",
+                lambda_fn=torch.sigmoid,
+                scope="on_batch_end",
             ),
             dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
             dl.AUCCallback(input_key="scores", target_key="targets"),
