@@ -58,12 +58,12 @@ class CarvanaOneCarDataset(Dataset):
             root: str: root directory of dataset where
             ``CarvanaOneCarDataset/`` exist.
             train: (bool, optional): If True, creates dataset from
-            training part, otherwise from test part
+                training part, otherwise from test part
             download: (bool, optional): If true, downloads the dataset from
-            the internet and puts it in root directory. If dataset
-            is already downloaded, it is not downloaded again.
+                the internet and puts it in root directory. If dataset
+                is already downloaded, it is not downloaded again.
             transforms: (callable, optional): A function/transform that
-            takes in an image and returns a transformed version.
+                takes in an image and returns a transformed version.
 
         Examples:
             >>> from catalyst.contrib.datasets import CarvanaOneCarDataset
