@@ -466,7 +466,7 @@ runner.train(
     num_epochs=3,
     verbose=True,
     callbacks=[
-        dl.LambdaPreprocessCallback(input_keys="logits", output_keys="scores", lambda_fn=torch.sigmoid),
+        dl.LambdaPreprocessCallback(input_key="logits", output_key="scores", lambda_fn=torch.sigmoid),
         dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
         # uncomment for extra metrics:
 #         dl.AUCCallback(input_key="scores", target_key="targets"),

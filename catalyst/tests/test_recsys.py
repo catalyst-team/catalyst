@@ -30,7 +30,7 @@ def train_experiment(device, engine=None):
 
         callbacks = [
             dl.LambdaPreprocessCallback(
-                input_keys="logits", output_keys="scores", lambda_fn=torch.sigmoid
+                input_key="logits", output_key="scores", lambda_fn=torch.sigmoid
             ),
             dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
             dl.AUCCallback(input_key="scores", target_key="targets"),
