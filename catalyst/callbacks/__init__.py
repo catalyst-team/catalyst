@@ -34,6 +34,9 @@ from catalyst.callbacks.misc import (
 )
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 
+if SETTINGS.onnx_required:
+    from catalyst.callbacks.onnx import OnnxCallback
+
 if SETTINGS.optuna_required:
     from catalyst.callbacks.optuna import OptunaPruningCallback
 
@@ -42,8 +45,8 @@ from catalyst.callbacks.periodic_loader import PeriodicLoaderCallback
 if SETTINGS.pruning_required:
     from catalyst.callbacks.pruning import PruningCallback
 
-# if SETTINGS.use_quantization:
-#     from catalyst.callbacks.quantization import DynamicQuantizationCallback
+if SETTINGS.quantization_required:
+    from catalyst.callbacks.quantization import QuantizationCallback
 
 from catalyst.callbacks.scheduler import (
     ISchedulerCallback,
@@ -52,7 +55,6 @@ from catalyst.callbacks.scheduler import (
     LRFinder,
 )
 
-# from catalyst.callbacks.tracing import TracingCallback
-
+from catalyst.callbacks.tracing import TracingCallback
 
 from catalyst.callbacks.metrics import *

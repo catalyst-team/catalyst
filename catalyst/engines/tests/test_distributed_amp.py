@@ -97,15 +97,6 @@ class CustomRunner(IRunner):
         self.batch = {"features": x, "targets": y, "logits": logits}
 
 
-@mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
-)
-def test_train_with_experiment_distributed_parallel_amp_device():
-    with TemporaryDirectory() as logdir:
-        runner = CustomRunner(logdir)
-        runner.run()
-
-
 class MyConfigRunner(SupervisedConfigRunner):
     _dataset = DummyDataset(6)
 
@@ -113,9 +104,19 @@ class MyConfigRunner(SupervisedConfigRunner):
         return {"train": self._dataset, "valid": self._dataset}
 
 
-# @mark.skip("Config experiment is in development phase!")
 @mark.skipif(
-    not IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES < 2, reason="Number of CUDA devices is less than 2",
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+    reason="Number of CUDA devices is less than 2 or no AMP found",
+)
+def test_train_with_experiment_distributed_parallel_amp_device():
+    with TemporaryDirectory() as logdir:
+        runner = CustomRunner(logdir)
+        runner.run()
+
+
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+    reason="Number of CUDA devices is less than 2 or no AMP found",
 )
 def test_train_with_config_experiment_distributed_parallel_amp_device():
     with TemporaryDirectory() as logdir:

@@ -3,6 +3,8 @@ from typing import Callable, List, Optional, Union
 from torch.nn import Module
 from torch.nn.utils import prune
 
+from catalyst.utils.torch import get_nn_from_ddp_module
+
 PRUNING_FN = {  # noqa: WPS407
     "l1_unstructured": prune.l1_unstructured,
     "random_unstructured": prune.random_unstructured,
@@ -99,10 +101,11 @@ def prune_model(
             no layers with specified name. OR
         ValueError: if no layers have specified keys.
     """
+    nn_model = get_nn_from_ddp_module(model)
     pruning_fn = get_pruning_fn(pruning_fn, l_norm=l_norm, dim=dim)
     keys_to_prune = keys_to_prune or ["weight"]
     pruned_modules = 0
-    for name, module in model.named_modules():
+    for name, module in nn_model.named_modules():
         try:
             if layers_to_prune is None or name in layers_to_prune:
                 for key in keys_to_prune:
@@ -131,7 +134,8 @@ def remove_reparametrization(
             If None provided then will try to prune every module in
             model.
     """
-    for name, module in model.named_modules():
+    nn_model = get_nn_from_ddp_module(model)
+    for name, module in nn_model.named_modules():
         try:
             if layers_to_prune is None or name in layers_to_prune:
                 for key in keys_to_prune:

@@ -5,17 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 
-## [21.03.1] - XXXX-XX-XX
+## [YY.MM.R] - YYYY-MM-DD
 
 ### Added
 
+- Nifti Reader (NiftiReader) ([#1151](https://github.com/catalyst-team/catalyst/pull/1151))
 
-- Additive Margin SoftMax(AMSoftmax)([#1125](https://github.com/catalyst-team/catalyst/issues/1125))
+### Changed
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+## [21.03.2] - 2021-03-29
+
+### Fixed
+
+- minimal requirements issue ([#1147](https://github.com/catalyst-team/catalyst/issues/1147))
+- nested dicts in `loaders_params`/`samplers_params` overriding fixed ([#1150](https://github.com/catalyst-team/catalyst/pull/1150))
+
+## [21.03.1] - 2021-03-28
 
 ### Added
 
-- Generalized Mean Pooling(GeM)([#1084](https://github.com/catalyst-team/catalyst/issues/1084))
-
+- Additive Margin SoftMax(AMSoftmax) ([#1125](https://github.com/catalyst-team/catalyst/issues/1125))
 - Generalized Mean Pooling(GeM) ([#1084](https://github.com/catalyst-team/catalyst/issues/1084))
 - Key-value support for CriterionCallback ([#1130](https://github.com/catalyst-team/catalyst/issues/1130))
 - Engine configuration through cmd ([#1134](https://github.com/catalyst-team/catalyst/issues/1134))
@@ -23,6 +42,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Added gradient clipping function to optimizer callback ([1124](https://github.com/catalyst-team/catalyst/pull/1124))
 - FactorizedLinear to contrib ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
 - Extra init params for ``ConsoleLogger`` ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
+- Tracing, Quantization, Onnx, Pruninng Callbacks ([1127](https://github.com/catalyst-team/catalyst/pull/1127))
+- `_key_value` for schedulers in case of multiple optimizers fixed ([#1146](https://github.com/catalyst-team/catalyst/pull/1146))
 
 ### Changed
 
@@ -84,7 +105,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - LrFinderCallback.
 
 [Release docs](https://catalyst-team.github.io/catalyst/v21.03/index.html),
-[Python API minimal examples](https://github.com/catalyst-team/catalyst#minimal-examples), 
+[Python API minimal examples](https://github.com/catalyst-team/catalyst#minimal-examples),
 [Config/Hydra API example](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
 
 ## [20.12.1] - XXXX-XX-XX

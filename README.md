@@ -645,7 +645,7 @@ class DistilRunner(dl.Runner):
     def handle_batch(self, batch):
         x, y = batch
 
-        teacher.eval()  # let's manually set teacher model to eval mode
+        self.model["teacher"].eval()  # let's manually set teacher model to eval mode
         with torch.no_grad():
             t_logits = self.model["teacher"](x)
 
@@ -1365,7 +1365,7 @@ best practices for your deep learning research and development.
 
 ### Documentation
 - [master](https://catalyst-team.github.io/catalyst/)
-- [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html)
+- [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html), [21.03.1/21.03.2](https://catalyst-team.github.io/catalyst/v21.03.1/index.html)
 - [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
 - [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
 - [20.10](https://catalyst-team.github.io/catalyst/v20.10/index.html)
