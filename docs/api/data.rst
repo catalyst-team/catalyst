@@ -171,12 +171,6 @@ DynamicBalanceClassSampler
     :undoc-members:
     :special-members:
 
-DynamicBalanceClassSampler
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.data.sampler.DynamicBalanceClassSampler
-    :members:
-    :undoc-members:
-    :special-members: __iter__, __len__
 
 DynamicLenBatchSampler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
