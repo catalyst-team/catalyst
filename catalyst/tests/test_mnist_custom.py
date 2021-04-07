@@ -33,7 +33,7 @@ class CustomRunner(dl.Runner):
         # run model forward pass
         logits = self.model(x)
         # compute the loss
-        loss = F.binary_cross_entropy_with_logits(logits, y)
+        loss = F.cross_entropy(logits, y)
         # compute other metrics of interest
         accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
         # log metrics
