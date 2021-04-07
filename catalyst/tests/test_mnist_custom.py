@@ -8,7 +8,7 @@ from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 
-from catalyst import dl, metrics, utils
+from catalyst import dl, metrics
 from catalyst.contrib.datasets import MNIST
 from catalyst.data.transforms import ToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
@@ -33,7 +33,7 @@ class CustomRunner(dl.Runner):
         # run model forward pass
         logits = self.model(x)
         # compute the loss
-        loss = self.criterion(logits, y)
+        loss = F.cross_entropy(logits, y)
         # compute other metrics of interest
         accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
         # log metrics
@@ -58,7 +58,6 @@ def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
 
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-        criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(model.parameters(), lr=0.02)
 
         loaders = {
@@ -75,7 +74,6 @@ def train_experiment(device, engine=None):
         runner.train(
             engine=engine or dl.DeviceEngine(device),
             model=model,
-            criterion=criterion,
             optimizer=optimizer,
             loaders=loaders,
             logdir=logdir,
