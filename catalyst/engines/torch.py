@@ -264,13 +264,9 @@ class DistributedDataParallelEngine(DeviceEngine):
     """Distributed MultiGPU training device engine.
 
     Args:
-        address: process address to use
-            (required for PyTorch backend), default is `"localhost"`.
-        port: process port to listen
-            (required for PyTorch backend), default is `"12345"`.
-        backend: multiprocessing backend to use,
-            default is `"nccl"`.
-        world_size: number of processes.
+        ddp_kwargs: parameters for `torch.distributed.init_process_group`.
+            More info here:
+            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
 
     Examples:
 
@@ -281,7 +277,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
-                return dl.DistributedDataParallelEngine(port=12345)
+                return dl.DistributedDataParallelEngine(ddp_kwargs={"port": 12345})
             # ...
 
     .. code-block:: yaml
@@ -295,7 +291,8 @@ class DistributedDataParallelEngine(DeviceEngine):
 
         engine:
             _target_: DistributedDataParallelEngine
-            port: 12345
+            ddp_kwargs:
+                port: 12345
 
         stages:
             ...

@@ -348,13 +348,9 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
     """Distributed Apex MultiGPU training device engine.
 
     Args:
-        address: process address to use
-            (required for PyTorch backend), default is `"localhost"`.
-        port: process port to listen
-            (required for PyTorch backend), default is `"12345"`.
-        backend: multiprocessing backend to use,
-            default is `"nccl"`.
-        world_size: number of processes.
+        ddp_kwargs: parameters for `torch.distributed.init_process_group`.
+            More info here:
+            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
         apex_kwargs: parameters for `apex.amp.initialize`
             except models and optimizers (they will be forwared automatically).
 
@@ -371,8 +367,8 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             # ...
             def get_engine(self):
                 return dl.DistributedDataParallelApexEngine(
-                    port=12345,
-                    opt_level="O1"
+                    ddp_kwargs={"port": 12345},
+                    apex_kwargs={"opt_level": "O1"},
                 )
             # ...
 
@@ -387,8 +383,10 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
 
         engine:
             _target_: DistributedDataParallelApexEngine
-            port: 12345
-            opt_level: O1
+            ddp_kwargs:
+                port: 12345
+            apex_kwargs:
+                opt_level: O1
 
         stages:
             ...
