@@ -32,12 +32,11 @@ You could log any new metric in a straightforward way:
     from torch import nn, optim
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
-    from catalyst import dl, metrics, utils
+    from catalyst import dl, metrics
     from catalyst.data.transforms import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-    criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
@@ -69,7 +68,7 @@ You could log any new metric in a straightforward way:
             # run model forward pass
             logits = self.model(x)
             # compute the loss
-            loss = self.criterion(logits, y)
+            loss = F.binary_cross_entropy_with_logits(logits, y)
             # compute other metrics of interest
             accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
             # log metrics
@@ -93,7 +92,6 @@ You could log any new metric in a straightforward way:
     # model training
     runner.train(
         model=model,
-        criterion=criterion,
         optimizer=optimizer,
         loaders=loaders,
         logdir="./logs",
