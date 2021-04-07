@@ -45,7 +45,7 @@ class CustomRunner(IRunner):
         self._opt_level = opt_level
 
     def get_engine(self):
-        return APEXEngine(self._device, opt_level=self._opt_level)
+        return APEXEngine(self._device, apex_kwargs=dict(opt_level=self._opt_level))
 
     def get_callbacks(self, stage: str):
         return {
@@ -116,7 +116,7 @@ def train_from_config(device, opt_level):
                 "engine": {
                     "_target_": "APEXEngine",
                     "device": device,
-                    "opt_level": opt_level.upper(),
+                    "apex_kwargs": {"opt_level": opt_level.upper()},
                 },
                 "args": {"logdir": logdir},
                 "stages": {

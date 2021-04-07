@@ -46,7 +46,9 @@ class CustomRunner(IRunner):
         self._port = port
 
     def get_engine(self):
-        return DistributedDataParallelApexEngine(port=self._port, opt_level=self._opt_level)
+        return DistributedDataParallelApexEngine(
+            port=self._port, apex_kwargs=dict(opt_level=self._opt_level)
+        )
 
     def get_callbacks(self, stage: str):
         return {
@@ -117,7 +119,7 @@ def train_from_config(port, logdir, opt_lvl):
             "engine": {
                 "_target_": "DistributedDataParallelApexEngine",
                 "port": port,
-                "opt_level": opt,
+                "apex_kwargs": {"opt_level": opt},
             },
             "loggers": {"console": {"_target_": "ConsoleLogger"}},
             "stages": {

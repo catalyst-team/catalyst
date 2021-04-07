@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict
 from collections import OrderedDict
 
 import torch
@@ -163,15 +163,15 @@ class APEXEngine(DeviceEngine):
 
     """
 
-    def __init__(self, device: str = "cuda", **apex_kwargs):
+    def __init__(self, device: str = "cuda", apex_kwargs: Dict[str, Any] = None):
         """Init."""
         super().__init__(device)
+        if apex_kwargs is None:
+            apex_kwargs = {}
         self.apex_kwargs = apex_kwargs
 
     def __repr__(self) -> str:  # noqa: D105
-        args_list = [f"device='{self.device}'"]
-        for k, v in self.apex_kwargs.items():
-            args_list.append(f"{k}={v}")
+        args_list = [f"device='{self.device}'", f"apex_kwargs={self.apex_kwargs}"]
         return f"{self.__class__.__name__}(" + ",".join(args_list) + ")"
 
     def init_components(
@@ -310,15 +310,13 @@ class DataParallelApexEngine(APEXEngine):
 
     """
 
-    def __init__(self, **apex_kwargs):
+    def __init__(self, apex_kwargs: Dict[str, Any]):
         """Init."""
-        super().__init__(f"cuda:{torch.cuda.current_device()}", **apex_kwargs)
+        super().__init__(f"cuda:{torch.cuda.current_device()}", apex_kwargs)
         self.device_count = torch.cuda.device_count()
 
     def __repr__(self) -> str:  # noqa: D105
-        args_list = [f"device='{self.device}'"]
-        for k, v in self.apex_kwargs.items():
-            args_list.append(f"{k}={v}")
+        args_list = [f"device='{self.device}'", f"apex_kwargs={self.apex_kwargs}"]
         return f"{self.__class__.__name__}(" + ",".join(args_list) + ")"
 
     def init_components(
@@ -402,7 +400,7 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         port: str = "12345",
         backend: str = "nccl",
         world_size: int = None,
-        **apex_kwargs,
+        apex_kwargs: Dict[str, Any] = None,
     ):
         """Init."""
         super().__init__()
@@ -412,6 +410,8 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         self._rank = 0
         self._world_size = world_size or torch.cuda.device_count()
         self.device = None
+        if apex_kwargs is None:
+            apex_kwargs = {}
         self.apex_kwargs = apex_kwargs
 
     def __repr__(self):  # noqa: D105
@@ -421,9 +421,8 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             f"backend='{self.backend}'",
             f"rank={self._rank}",
             f"world_size={self._world_size}",
+            f"apex_kwargs={self.apex_kwargs}",
         ]
-        for k, v in self.apex_kwargs.items():
-            args_list.append(f"{k}={v}")
         return f"{self.__class__.__name__}(" + ",".join(args_list) + ")"
 
     def init_components(
