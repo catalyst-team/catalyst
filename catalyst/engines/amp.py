@@ -193,16 +193,9 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
 
     """
 
-    def __init__(
-        self,
-        address: str = "localhost",
-        port: str = "12345",
-        backend: str = "nccl",
-        world_size: int = None,
-        scaler_kwargs: Dict[str, Any] = None,
-    ):
+    def __init__(self, ddp_kwargs: Dict[str, Any] = None, scaler_kwargs: Dict[str, Any] = None):
         """Init."""
-        super().__init__(address, port, backend, world_size)
+        super().__init__(ddp_kwargs=ddp_kwargs)
         if scaler_kwargs is None:
             scaler_kwargs = {}
         self.scaler_kwargs = scaler_kwargs

@@ -43,7 +43,9 @@ class CustomRunner(IRunner):
         self._logdir = logdir
 
     def get_engine(self):
-        return DistributedDataParallelAMPEngine(port=DDP_ADDRESS + random.randint(1, 100))
+        return DistributedDataParallelAMPEngine(
+            ddp_kwargs=dict(port=DDP_ADDRESS + random.randint(1, 100))
+        )
 
     def get_callbacks(self, stage: str):
         return {
@@ -126,7 +128,7 @@ def test_train_with_config_experiment_distributed_parallel_amp_device():
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
                 "engine": {
                     "_target_": "DistributedDataParallelAMPEngine",
-                    "port": DDP_ADDRESS + random.randint(100, 200),
+                    "ddp_kwargs": {"port": DDP_ADDRESS + random.randint(100, 200)},
                 },
                 "loggers": {"console": {"_target_": "ConsoleLogger"}},
                 "stages": {

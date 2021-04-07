@@ -302,27 +302,27 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     """
 
-    def __init__(
-        self,
-        address: str = "localhost",
-        port: str = "12345",
-        backend: str = "nccl",
-        world_size: int = None,
-    ):
+    def __init__(self, ddp_kwargs: Dict[str, Any] = None):
         """Init."""
         super().__init__()
-        self.address = address
-        self.port = port
-        self.backend = backend
+        if ddp_kwargs is None:
+            ddp_kwargs = {}
+        self.address = ddp_kwargs.pop("address", "localhost")
+        self.port = ddp_kwargs.pop("port", "12345")
+        self.backend = ddp_kwargs.pop("backend", "nccl")
+        self._world_size = ddp_kwargs.pop("world_size", None) or torch.cuda.device_count()
+        self.ddp_kwargs = ddp_kwargs
         self._rank = 0
-        self._world_size = world_size or torch.cuda.device_count()
         self.device = None
 
     def __repr__(self):  # noqa: D105
         return (
             f"{self.__class__.__name__}(address={self.address}, "
-            f"port={self.port}, backend='{self.backend}',"
-            f"rank={self._rank}, world_size={self._world_size})"
+            f"port={self.port}, "
+            f"backend='{self.backend}', "
+            f"rank={self._rank}, "
+            f"world_size={self._world_size}, "
+            f"ddp_kwargs={self.ddp_kwargs})"
         )
 
     @property
@@ -367,7 +367,9 @@ class DistributedDataParallelEngine(DeviceEngine):
         self._world_size = world_size
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
-        dist.init_process_group(self.backend, rank=self.rank, world_size=self.world_size)
+        dist.init_process_group(
+            self.backend, rank=self.rank, world_size=self.world_size, **self.ddp_kwargs
+        )
         torch.cuda.set_device(int(self._rank))
         self.device = f"cuda:{int(self._rank)}"
 

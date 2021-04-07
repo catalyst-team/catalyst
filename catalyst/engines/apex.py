@@ -394,22 +394,9 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             ...
     """
 
-    def __init__(
-        self,
-        address: str = "localhost",
-        port: str = "12345",
-        backend: str = "nccl",
-        world_size: int = None,
-        apex_kwargs: Dict[str, Any] = None,
-    ):
+    def __init__(self, ddp_kwargs: Dict[str, Any] = None, apex_kwargs: Dict[str, Any] = None):
         """Init."""
-        super().__init__()
-        self.address = address
-        self.port = port
-        self.backend = backend
-        self._rank = 0
-        self._world_size = world_size or torch.cuda.device_count()
-        self.device = None
+        super().__init__(ddp_kwargs=ddp_kwargs)
         if apex_kwargs is None:
             apex_kwargs = {}
         self.apex_kwargs = apex_kwargs
