@@ -43,30 +43,25 @@ class Market1501MLDataset(MetricLearningTrainDataset):
             images for training and their labels
         """
         filenames = list(data_dir.glob("*.jpg"))
-        # read images, data shape is (dataset_len, c, h, w)
-        data = (
-            torch.from_numpy(np.array([imread(filename) for filename in filenames]))
-            .permute(0, 3, 1, 2)
-            .float()
-        )
+        data = torch.from_numpy(np.array([imread(filename) for filename in filenames])).float()
         targets = torch.from_numpy(
             np.array([int(filename.name.split("_")[0]) for filename in filenames])
         )
         return data, targets
 
-    def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, index: int) -> Dict[str, torch.Tensor]:
         """
         Get item from dataset.
 
         Args:
             index: index of the element
         Returns:
-            image and its label
+            dict of image and its pid
         """
         image, pid = self.images[index], self.pids[index]
         if self.transform is not None:
             image = self.transform(image)
-        return image, pid
+        return {"image": image, "pid": pid}
 
     def __len__(self) -> int:
         """Get len of the dataset"""
@@ -141,12 +136,7 @@ class Market1501QGDataset(QueryGalleryDataset):
         # Gallery dataset contains good, junk and distractor images;
         # junk ones (marked as -1) should be neglected during evaluation.
         filenames = list(data_dir.glob("[!-]*.jpg"))
-        # read images, data shape is (dataset_len, c, h, w)
-        data = (
-            torch.from_numpy(np.array([imread(filename) for filename in filenames]))
-            .permute(0, 3, 1, 2)
-            .float()
-        )
+        data = torch.from_numpy(np.array([imread(filename) for filename in filenames])).float()
         pids = np.array([int(filename.name.split("_")[0]) for filename in filenames])
         cids = np.array([int(filename.name.split("_")[1][1:2]) for filename in filenames])
         return data, pids, cids
@@ -158,15 +148,14 @@ class Market1501QGDataset(QueryGalleryDataset):
         Args:
             index: index of the item to get
         Returns:
-            dict of features, label (contains knowledge about pid and cid)
-                and is_query flag that shows if the image should be used as
-                query or gallery sample.
+            dict of image, pid, cid and is_query flag that shows if the image should be used as
+            query or gallery sample.
         """
         img = self.data[index]
         if self.transform is not None:
             img = self.transform(img)
         item = {
-            "features": img,
+            "image": img,
             "pid": self.pids[index],
             "cid": self.cids[index],
             "is_query": self._is_query[index],
