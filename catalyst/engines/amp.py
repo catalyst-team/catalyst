@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 import torch
 from torch import nn
 import torch.cuda.amp as amp
@@ -10,6 +12,9 @@ class AMPEngine(DeviceEngine):
 
     Args:
         device: used device, default is `"cuda"`.
+        scaler_kwargs: parameters for `torch.cuda.amp.GradScaler`.
+            Possible parameters:
+            https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler
 
     Examples:
 
@@ -41,13 +46,19 @@ class AMPEngine(DeviceEngine):
 
     """
 
-    def __init__(self, device: str = "cuda"):
+    def __init__(self, device: str = "cuda", scaler_kwargs: Dict[str, Any] = None):
         """Init."""
         super().__init__(device)
-        self.scaler = amp.GradScaler()
+        if scaler_kwargs is None:
+            scaler_kwargs = {}
+        self.scaler_kwargs = scaler_kwargs
+        self.scaler = amp.GradScaler(**self.scaler_kwargs)
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"{self.__class__.__name__}(device='{self.device}')"
+        return (
+            f"{self.__class__.__name__}(device='{self.device}', "
+            f"scaler_kwargs={self.scaler_kwargs})"
+        )
 
     def backward_loss(self, loss, model, optimizer) -> None:
         """Abstraction over ``loss.backward()`` step."""
@@ -66,6 +77,11 @@ class AMPEngine(DeviceEngine):
 
 class DataParallelAMPEngine(AMPEngine):
     """AMP multi-gpu training device engine.
+
+    Args:
+        scaler_kwargs: parameters for `torch.cuda.amp.GradScaler`.
+            Possible parameters:
+            https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler
 
     Examples:
 
@@ -96,13 +112,16 @@ class DataParallelAMPEngine(AMPEngine):
 
     """
 
-    def __init__(self):
+    def __init__(self, scaler_kwargs: Dict[str, Any] = None):
         """Init."""
-        super().__init__(f"cuda:{torch.cuda.current_device()}")
+        super().__init__(f"cuda:{torch.cuda.current_device()}", scaler_kwargs)
         self.device_count = torch.cuda.device_count()
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"{self.__class__.__name__}(device='{self.device}')"
+        return (
+            f"{self.__class__.__name__}(device='{self.device}', "
+            f"scaler_kwargs={self.scaler_kwargs})"
+        )
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -140,6 +159,9 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         backend: multiprocessing backend to use,
             default is `"nccl"`.
         world_size: number of processes.
+        scaler_kwargs: parameters for `torch.cuda.amp.GradScaler`.
+            Possible parameters:
+            https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler
 
     Examples:
 
@@ -177,16 +199,23 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         port: str = "12345",
         backend: str = "nccl",
         world_size: int = None,
+        scaler_kwargs: Dict[str, Any] = None,
     ):
         """Init."""
         super().__init__(address, port, backend, world_size)
-        self.scaler = amp.GradScaler()
+        if scaler_kwargs is None:
+            scaler_kwargs = {}
+        self.scaler_kwargs = scaler_kwargs
+        self.scaler = amp.GradScaler(**self.scaler_kwargs)
 
     def __repr__(self):  # noqa: D105
         return (
             f"{self.__class__.__name__}(address={self.address}, "
-            f"port={self.port}, backend='{self.backend}',"
-            f"rank={self._rank}, world_size={self._world_size})"
+            f"port={self.port}, "
+            f"backend='{self.backend}', "
+            f"rank={self._rank}, "
+            f"world_size={self._world_size}, "
+            f"scaler_kwargs={self.scaler_kwargs})"
         )
 
     def backward_loss(self, loss, model, optimizer) -> None:
