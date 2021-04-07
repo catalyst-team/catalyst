@@ -74,7 +74,6 @@ def train_experiment(device, engine=None):
         runner.train(
             engine=engine or dl.DeviceEngine(device),
             model=model,
-            criterion=criterion,
             optimizer=optimizer,
             loaders=loaders,
             logdir=logdir,
