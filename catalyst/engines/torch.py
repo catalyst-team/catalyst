@@ -1,4 +1,5 @@
 from typing import Any, Dict, Mapping, Union
+import copy
 import os
 
 import torch
@@ -264,6 +265,11 @@ class DistributedDataParallelEngine(DeviceEngine):
     """Distributed MultiGPU training device engine.
 
     Args:
+        address: address to use for backend.
+        port: port to use for backend.
+        ddp_kwargs: parameters for `torch.nn.parallel.DistributedDataParallel`.
+            More info here:
+            https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel
         process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
@@ -277,7 +283,12 @@ class DistributedDataParallelEngine(DeviceEngine):
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
-                return dl.DistributedDataParallelEngine(process_group_kwargs={"port": 12345})
+                return dl.DistributedDataParallelEngine(
+                    address="0.0.0.0",
+                    port=23234,
+                    ddp_kwargs={"find_unused_parameters": False},
+                    process_group_kwargs={"backend": "nccl"},
+                )
             # ...
 
     .. code-block:: yaml
@@ -291,36 +302,59 @@ class DistributedDataParallelEngine(DeviceEngine):
 
         engine:
             _target_: DistributedDataParallelEngine
+            address: 0.0.0.0
+            port: 23234
+            ddp_kwargs:
+                find_unused_parameters: false
             process_group_kwargs:
-                port: 12345
+                backend: nccl
 
         stages:
             ...
 
     """
 
-    def __init__(self, process_group_kwargs: Dict[str, Any] = None):
+    def __init__(
+        self,
+        address: str = None,
+        port: Union[str, int] = None,
+        ddp_kwargs: Dict[str, Any] = None,
+        process_group_kwargs: Dict[str, Any] = None,
+    ):
         """Init."""
         super().__init__()
-        if process_group_kwargs is None:
-            process_group_kwargs = {}
-        self.address = process_group_kwargs.pop("address", "localhost")
-        self.port = process_group_kwargs.pop("port", "12345")
-        self.backend = process_group_kwargs.pop("backend", "nccl")
-        self._world_size = (
-            process_group_kwargs.pop("world_size", None) or torch.cuda.device_count()
-        )
-        self.process_group_kwargs = process_group_kwargs
+        self.address = address or "localhost"
+        self.port = port or 12345
         self._rank = 0
         self.device = None
+
+        if ddp_kwargs is None:
+            ddp_kwargs = {}
+        self.ddp_kwargs = copy.deepcopy(ddp_kwargs)
+        if "device_ids" not in self.ddp_kwargs:
+            self.ddp_kwargs["device_ids"] = [self.device]
+
+        if process_group_kwargs is None:
+            process_group_kwargs = {}
+        self.process_group_kwargs = copy.deepcopy(process_group_kwargs)
+        # add missing arguments
+        default_values = [
+            ("backend", "nccl"),
+            ("world_size", torch.cuda.device_count()),
+        ]
+        for required_arg, default_value in default_values:
+            if required_arg not in self.process_group_kwargs:
+                self.process_group_kwargs[required_arg] = default_value
+
+        self._world_size = (
+            self.process_group_kwargs.get("world_size", None) or torch.cuda.device_count()
+        )
 
     def __repr__(self):  # noqa: D105
         return (
             f"{self.__class__.__name__}(address={self.address}, "
             f"port={self.port}, "
-            f"backend='{self.backend}', "
-            f"rank={self._rank}, "
-            f"world_size={self._world_size}, "
+            f"ddp_kwargs={self.ddp_kwargs}, "
             f"process_group_kwargs={self.process_group_kwargs})"
         )
 
@@ -364,11 +398,11 @@ class DistributedDataParallelEngine(DeviceEngine):
         """
         self._rank = rank
         self._world_size = world_size
+        self.process_group_kwargs["rank"] = rank
+        self.process_group_kwargs["world_size"] = world_size
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
-        dist.init_process_group(
-            self.backend, rank=self.rank, world_size=self.world_size, **self.process_group_kwargs
-        )
+        dist.init_process_group(**self.process_group_kwargs)
         torch.cuda.set_device(int(self._rank))
         self.device = f"cuda:{int(self._rank)}"
 
@@ -405,13 +439,11 @@ class DistributedDataParallelEngine(DeviceEngine):
         """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
-        # NOTE: do not forget to wrap a model in DDP
+        # TODO: maybe need to update somehow value for "device_ids"
         if isinstance(model, nn.Module):
-            model = DistributedDataParallel(model, device_ids=[self.device])
+            model = DistributedDataParallel(model, **self.ddp_kwargs)
         elif isinstance(model, dict):
-            model = {
-                k: DistributedDataParallel(v, device_ids=[self.device]) for k, v in model.items()
-            }
+            model = {k: DistributedDataParallel(v, **self.ddp_kwargs) for k, v in model.items()}
         # criterion
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)

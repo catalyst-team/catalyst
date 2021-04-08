@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import torch
 from torch import nn
@@ -152,6 +152,11 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
     """Distributed AMP multi-gpu training device engine.
 
     Args:
+        address: address to use for backend.
+        port: port to use for backend.
+        ddp_kwargs: parameters for `torch.nn.parallel.DistributedDataParallel`.
+            More info here:
+            https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel
         process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
@@ -169,6 +174,9 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
             # ...
             def get_engine(self):
                 return dl.DistributedDataParallelAMPEngine(
+                    address="0.0.0.0",
+                    port=23234,
+                    ddp_kwargs={"find_unused_parameters": False},
                     process_group_kwargs={"port": 12345},
                     scaler_kwargs={"growth_factor": 1.5}
                 )
@@ -185,6 +193,10 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
 
         engine:
             _target_: DistributedDataParallelAMPEngine
+            address: 0.0.0.0
+            port: 23234
+            ddp_kwargs:
+                find_unused_parameters: false
             process_group_kwargs:
                 port: 12345
             scaler_kwargs:
@@ -196,10 +208,20 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
     """
 
     def __init__(
-        self, process_group_kwargs: Dict[str, Any] = None, scaler_kwargs: Dict[str, Any] = None
+        self,
+        address: str = None,
+        port: Union[str, int] = None,
+        ddp_kwargs: Dict[str, Any] = None,
+        process_group_kwargs: Dict[str, Any] = None,
+        scaler_kwargs: Dict[str, Any] = None,
     ):
         """Init."""
-        super().__init__(process_group_kwargs=process_group_kwargs)
+        super().__init__(
+            address=address,
+            port=port,
+            ddp_kwargs=ddp_kwargs,
+            process_group_kwargs=process_group_kwargs,
+        )
         if scaler_kwargs is None:
             scaler_kwargs = {}
         self.scaler_kwargs = scaler_kwargs
@@ -209,9 +231,7 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         return (
             f"{self.__class__.__name__}(address={self.address}, "
             f"port={self.port}, "
-            f"backend='{self.backend}', "
-            f"rank={self._rank}, "
-            f"world_size={self._world_size}, "
+            f"ddp_kwargs={self.ddp_kwargs}, "
             f"process_group_kwargs={self.process_group_kwargs}, "
             f"scaler_kwargs={self.scaler_kwargs})"
         )

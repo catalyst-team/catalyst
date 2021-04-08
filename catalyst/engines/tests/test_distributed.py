@@ -42,7 +42,7 @@ class CustomRunner(IRunner):
 
     def get_engine(self):
         return DistributedDataParallelEngine(
-            process_group_kwargs=dict(port=DDP_ADDRESS + random.randint(1, 100))
+            port=DDP_ADDRESS + random.randint(1, 100), process_group_kwargs={"backend": "nccl"}
         )
 
     def get_callbacks(self, stage: str):
@@ -126,7 +126,8 @@ def test_config_ddp_engine():
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
                 "engine": {
                     "_target_": "DistributedDataParallelEngine",
-                    "process_group_kwargs": {"port": DDP_ADDRESS + random.randint(100, 200)},
+                    "port": DDP_ADDRESS + random.randint(100, 200),
+                    "process_group_kwargs": {"backend": "nccl"},
                 },
                 "loggers": {"console": {"_target_": "ConsoleLogger"}},
                 "stages": {

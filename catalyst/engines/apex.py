@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Union
 from collections import OrderedDict
 
 import torch
@@ -347,6 +347,11 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
     """Distributed Apex MultiGPU training device engine.
 
     Args:
+        address: address to use for backend.
+        port: port to use for backend.
+        ddp_kwargs: parameters for `apex.parallel.DistributedDataParallel`.
+            More info here:
+            https://nvidia.github.io/apex/parallel.html#apex.parallel.DistributedDataParallel
         process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
@@ -366,7 +371,10 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             # ...
             def get_engine(self):
                 return dl.DistributedDataParallelApexEngine(
-                    process_group_kwargs={"port": 12345},
+                    address="0.0.0.0",
+                    port=23234,
+                    ddp_kwargs={"allreduce_always_fp32": True},
+                    process_group_kwargs={"backend": "nccl"},
                     apex_kwargs={"opt_level": "O1"},
                 )
             # ...
@@ -382,8 +390,12 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
 
         engine:
             _target_: DistributedDataParallelApexEngine
+            address: 0.0.0.0
+            port: 23234
+            ddp_kwargs:
+                allreduce_always_fp32: true
             process_group_kwargs:
-                port: 12345
+                backend: nccl
             apex_kwargs:
                 opt_level: O1
 
@@ -392,10 +404,20 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
     """
 
     def __init__(
-        self, process_group_kwargs: Dict[str, Any] = None, apex_kwargs: Dict[str, Any] = None
+        self,
+        address: str = None,
+        port: Union[str, int] = None,
+        ddp_kwargs: Dict[str, Any] = None,
+        process_group_kwargs: Dict[str, Any] = None,
+        apex_kwargs: Dict[str, Any] = None,
     ):
         """Init."""
-        super().__init__(process_group_kwargs=process_group_kwargs)
+        super().__init__(
+            address=address, port=port, ddp_kwargs=None, process_group_kwargs=process_group_kwargs
+        )
+        if ddp_kwargs is None:
+            ddp_kwargs = {}
+        self.ddp_kwargs = ddp_kwargs
         if apex_kwargs is None:
             apex_kwargs = {}
         self.apex_kwargs = apex_kwargs
@@ -404,9 +426,7 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         return (
             f"{self.__class__.__name__}(address={self.address}, "
             f"port={self.port}, "
-            f"backend='{self.backend}', "
-            f"rank={self._rank}, "
-            f"world_size={self._world_size}, "
+            f"ddp_kwargs={self.ddp_kwargs}, "
             f"process_group_kwargs={self.process_group_kwargs}, "
             f"apex_kwargs={self.apex_kwargs})"
         )
@@ -425,8 +445,7 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         optimizer = self.sync_device(optimizer)
 
         model, optimizer = amp.initialize(model, optimizer, **self.apex_kwargs)
-        # TODO: kwargs for Apex DDP ?
-        model = ApexDistributedDataParallel(model)  # , delay_allreduce=self.delay_all_reduce)
+        model = ApexDistributedDataParallel(model, **self.ddp_kwargs)
 
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
