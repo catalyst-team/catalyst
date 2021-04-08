@@ -212,6 +212,8 @@ Indices and tables
     core/runner
     core/engine
     core/callback
+    core/metric
+    core/logger
 
 .. toctree::
     :caption: FAQ
@@ -238,16 +240,6 @@ Indices and tables
 
 
 .. toctree::
-    :caption: Contribution guide
-    :maxdepth: 2
-    :hidden:
-
-    How to start <https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md>
-    Codestyle <https://github.com/catalyst-team/codestyle>
-    Acknowledgments <https://github.com/catalyst-team/catalyst#acknowledgments>
-
-
-.. toctree::
     :caption: API
 
     api/callbacks
@@ -261,3 +253,12 @@ Indices and tables
     api/tools
     api/utils
 
+
+.. toctree::
+    :caption: Contribution guide
+    :maxdepth: 2
+    :hidden:
+
+    How to start <https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md>
+    Codestyle <https://github.com/catalyst-team/codestyle>
+    Acknowledgments <https://github.com/catalyst-team/catalyst#acknowledgments>
