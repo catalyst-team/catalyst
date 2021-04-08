@@ -69,4 +69,10 @@ cuDNN version: No CUDA
 - [ ] expected behavior.
 - [ ] environment.
 - [ ] code sample / screenshots.
-- [x] I know, that I could [join Catalyst slack (#__questions channel)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for issue discussion.
+  
+### FAQ
+Please review the FAQ before submitting an issue:
+- [ ] I have read the [documentation and FAQ](https://catalyst-team.github.io/catalyst/).
+- [ ] I have reviewed the [minimal examples section](https://github.com/catalyst-team/catalyst#minimal-examples).
+- [ ] I have checked the [changelog](https://github.com/catalyst-team/catalyst/blob/master/CHANGELOG.md) for main framework updates.
+- [ ] I have joined [Catalyst slack (#__questions channel)](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for issue discussion.
