@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Callback &mdash; Catalyst 21.03.2 documentation</title>
+  <title>Logger &mdash; Catalyst 21.03.2 documentation</title>
   
 
   
@@ -29,8 +29,8 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Metric" href="metric.html" />
-    <link rel="prev" title="Engine" href="engine.html" /> 
+    <link rel="next" title="How to make X?" href="../faq/intro.html" />
+    <link rel="prev" title="Metric" href="metric.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
@@ -202,9 +202,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="engine.html">Engine</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="callback.html">Callback</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metric.html">Metric</a></li>
-<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Logger</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
@@ -281,14 +281,14 @@
       </li>
 
         
-      <li>Callback</li>
+      <li>Logger</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/core/callback.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/core/logger.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -313,20 +313,15 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="callback">
-<h1>Callback<a class="headerlink" href="#callback" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">Callback</span></code> is an abstraction that helps you to customize the logic during your run.
-Once again, you could do anything natively with PyTorch and Catalyst as a for-loop wrapper.
-However, thanks to the callbacks, it’s much easier to reuse typical deep learning extensions
-like metrics or augmentation tricks.
-For example, it’s much more convenient to define the required metrics:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML - multiclass classification</a>.</p></li>
-<li><p><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML – RecSys</a>.</p></li>
-</ul>
-<p>The Callback API is very straightforward and repeats main for-loops in our train-loop abstraction:</p>
-<img alt="Runner" src="https://raw.githubusercontent.com/Scitator/catalyst21-post-pics/main/code_callback21.png" />
-<p>You could find a large variety of supported callbacks under the <a class="reference external" href="https://catalyst-team.github.io/catalyst/api/callbacks.html">Callback API section</a>.</p>
+  <div class="section" id="logger">
+<h1>Logger<a class="headerlink" href="#logger" title="Permalink to this headline">¶</a></h1>
+<p>Speaking about the logging, Catalyst united the monitoring system API support into one abstraction:</p>
+<img alt="Runner" src="https://raw.githubusercontent.com/Scitator/catalyst21-post-pics/main/code_logger21.png" />
+<p>With such a simple API,
+we already provide integrations for <a class="reference external" href="https://catalyst-team.github.io/catalyst/api/loggers.html#tensorboardlogger">Tensorboard</a> and <a class="reference external" href="https://catalyst-team.github.io/catalyst/api/loggers.html#mlflowlogger">MLFlow</a> monitoring systems.
+More advanced loggers for Neptune and Wandb with artifacts and hyperparameters storing
+are in development thanks to joint collaborations between our teams!
+All currently supported loggers you could find under the <a class="reference external" href="https://catalyst-team.github.io/catalyst/api/loggers.html">Logger API section</a>.</p>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
 </div>
 
@@ -338,10 +333,10 @@ For example, it’s much more convenient to define the required metrics:</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="metric.html" class="btn btn-neutral float-right" title="Metric" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="../faq/intro.html" class="btn btn-neutral float-right" title="How to make X?" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="engine.html" class="btn btn-neutral" title="Engine" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="metric.html" class="btn btn-neutral" title="Metric" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -369,7 +364,7 @@ For example, it’s much more convenient to define the required metrics:</p>
           <div class="catalyst-right-menu" id="catalyst-right-menu">
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">Callback</a></li>
+<li><a class="reference internal" href="#">Logger</a></li>
 </ul>
 
             </div>

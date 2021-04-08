@@ -203,6 +203,8 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="engine.html">Engine</a></li>
 <li class="toctree-l1"><a class="reference internal" href="callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="logger.html">Logger</a></li>
 </ul>
 <p class="caption"><span class="caption-text">FAQ</span></p>
 <ul>
@@ -221,12 +223,6 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contribution guide</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
-<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
-</ul>
 <p class="caption"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/callbacks.html">Callbacks</a></li>
@@ -239,6 +235,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/runners.html">Runners</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
 </ul>
 
             
@@ -313,24 +315,23 @@
               
   <div class="section" id="runner">
 <h1>Runner<a class="headerlink" href="#runner" title="Permalink to this headline">¶</a></h1>
-<p>Runner — an abstraction that knows <strong>how</strong> to run an experiment.
-It contains all the logic of how to work with your model per-
-stage, epoch, and batch.</p>
-<p>From my experience, deep learning experiments follow the same for-loop
-(how to run):</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">stage</span> <span class="ow">in</span> <span class="n">experiment</span><span class="o">.</span><span class="n">stages</span><span class="p">:</span>
-    <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="n">stage</span><span class="o">.</span><span class="n">epochs</span><span class="p">:</span>
-        <span class="k">for</span> <span class="n">loader</span> <span class="ow">in</span> <span class="n">epoch</span><span class="o">.</span><span class="n">loaders</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
-                <span class="n">handle_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The only thing that we want to change in these pipelines
-for new data/model is batch-handler.
-This is exactly what our Runner is doing –
-it goes through stages and runs a common train-loop +
-extra tricks for reproducibility.</p>
-<img alt="Runner" src="https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/third_party_pics/catalyst102-runner.png" />
+<p><code class="docutils literal notranslate"><span class="pre">Runner</span></code> is an abstraction that takes all the logic of your deep learning experiment:
+the data you are using, the model you are training,
+the batch handling logic, and everything about the selected metrics and monitoring systems:</p>
+<img alt="Runner" src="https://raw.githubusercontent.com/Scitator/catalyst21-post-pics/main/code_runner21.png" />
+<p>The <code class="docutils literal notranslate"><span class="pre">Runner</span></code> has the most crucial role
+in connecting all other abstractions and defining the whole experiment logic into one place.
+Most importantly, it does not force you to use Catalyst-only primitives.
+It gives you a flexible way to determine
+the level of high-level API you want to get from the framework.</p>
+<p>For example, you could:</p>
+<ul class="simple">
+<li><p>Define everything in a Catalyst-way with Runner and Callbacks: <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">ML — multiclass classification</a> example.</p></li>
+<li><p>Write forward-backward on your own, using Catalyst as a for-loop wrapper: <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">custom batch-metrics logging</a> example.</p></li>
+<li><p>Mix these approaches: <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV — MNIST GAN</a>, <a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">CV — MNIST VAE</a> examples.</p></li>
+</ul>
+<p>Finally, the <code class="docutils literal notranslate"><span class="pre">Runner</span></code> architecture does not depend on PyTorch in any case, providing directions for adoption for Tensorflow2 or JAX support.
+Supported Runners are listed under the <a class="reference external" href="https://catalyst-team.github.io/catalyst/api/runners.html">Runner API section</a>.</p>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
 </div>
 
