@@ -121,8 +121,8 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 1. Read the [blog posts](#notable-blog-posts) with use-cases and guides.
 1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://catalyst-team.com/#course). 
 1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
-1. If you want to support the project, feel free to donate on [patreon page](https://patreon.com/catalyst_team) or [write us]((#user-feedback)) with your proposals.
-1. **And finally, [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) if you want to contribute or chat about the project**.
+1. If you are motivated by Catalyst vision, you could [support our initiative](https://opencollective.com/catalyst) or [write us](#user-feedback) for collaboration.
+1. **And finally, [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) if you want to chat with the team and contributors**.
 
 
 ## Table of Contents
@@ -169,6 +169,8 @@ pip install catalyst[ml]         # installs ML-based Catalyst
 pip install catalyst[cv]         # installs CV-based Catalyst
 # master version installation
 pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
+# all extensions are listed here:
+# https://github.com/catalyst-team/catalyst/blob/master/setup.py#L87#L99
 ```
 </p>
 </details>
@@ -177,9 +179,7 @@ Catalyst is compatible with: Python 3.6+. PyTorch 1.3+. <br/>
 Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10, and Windows Subsystem for Linux.
 
 
-### Minimal Examples
-
-*MNIST-based examples.*
+### Minimal Example
 
 <details>
 <summary>ML - linear regression</summary>
@@ -271,7 +271,7 @@ runner.train(
         #     input_key="logits", target_key="targets", num_classes=num_classes
         # ),
         # dl.AUCCallback(input_key="logits", target_key="targets"),
-        # catalyst[ml] required
+        # catalyst[ml] required ``pip install catalyst[ml]``
         # dl.ConfusionMatrixCallback(
         #     input_key="logits", target_key="targets", num_classes=num_classes
         # ), 
@@ -407,7 +407,7 @@ runner.train(
         dl.AccuracyCallback(
             input_key="logits2", target_key="targets2", num_classes=num_classes2, prefix="two_"
         ),
-        # catalyst[ml] required
+        # catalyst[ml] required ``pip install catalyst[ml]``
         # dl.ConfusionMatrixCallback(
         #     input_key="logits1", target_key="targets1", num_classes=num_classes1, prefix="one_cm"
         # ), 
@@ -476,11 +476,11 @@ runner.train(
     callbacks=[
         dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
         # uncomment for extra metrics:
-#         dl.AUCCallback(input_key="scores", target_key="targets"),
-#         dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-#         dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-#         dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
-#         dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+        # dl.AUCCallback(input_key="scores", target_key="targets"),
+        # dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+        # dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+        # dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+        # dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
         dl.OptimizerCallback(metric_key="loss"),
         dl.SchedulerCallback(),
         dl.CheckpointCallback(
@@ -519,7 +519,6 @@ loaders = {
 }
 
 class CustomRunner(dl.Runner):
-
     def predict_batch(self, batch):
         # model inference step
         return self.model(batch[0].to(self.device))
@@ -1316,16 +1315,17 @@ class CustomRunner(dl.IRunner):
             "classification": dl.PrecisionRecallF1SupportCallback(
                 input_key="logits", target_key="targets", num_classes=10
             ),
-            # catalyst[ml] required
-            "confusion_matrix": dl.ConfusionMatrixCallback(
-                input_key="logits", target_key="targets", num_classes=10
-            ),
+            # catalyst[ml] required ``pip install catalyst[ml]``
+            # "confusion_matrix": dl.ConfusionMatrixCallback(
+            #     input_key="logits", target_key="targets", num_classes=10
+            # ),
             "checkpoint": dl.CheckpointCallback(
                 self._logdir,
                 loader_key="valid",
                 metric_key="loss",
                 minimize=True,
                 save_n_best=3,
+                # here is the main trick:
                 load_on_stage_start={
                     "model": "best",
                     "global_epoch_step": "last",
@@ -1398,6 +1398,7 @@ def objective(trial):
             "accuracy": dl.AccuracyCallback(
                 input_key="logits", target_key="targets", num_classes=10
             ),
+            # catalyst[optuna] required ``pip install catalyst[optuna]``
             "optuna": dl.OptunaPruningCallback(
                 loader_key="valid", metric_key="accuracy01", minimize=False, trial=trial
             ),
