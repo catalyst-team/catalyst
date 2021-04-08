@@ -167,4 +167,4 @@ class Market1501QGDataset(QueryGalleryDataset):
         return len(self.pids)
 
 
-__all__ = ["Market1501QGDataset", "MetricLearningTrainDataset"]
+__all__ = ["Market1501MLDataset", "Market1501QGDataset"]
