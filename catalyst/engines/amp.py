@@ -152,7 +152,7 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
     """Distributed AMP multi-gpu training device engine.
 
     Args:
-        ddp_kwargs: parameters for `torch.distributed.init_process_group`.
+        process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
         scaler_kwargs: parameters for `torch.cuda.amp.GradScaler`.
@@ -169,7 +169,7 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
             # ...
             def get_engine(self):
                 return dl.DistributedDataParallelAMPEngine(
-                    ddp_kwargs={"port": 12345},
+                    process_group_kwargs={"port": 12345},
                     scaler_kwargs={"growth_factor": 1.5}
                 )
             # ...
@@ -185,7 +185,7 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
 
         engine:
             _target_: DistributedDataParallelAMPEngine
-            ddp_kwargs:
+            process_group_kwargs:
                 port: 12345
             scaler_kwargs:
                 growth_factor: 1.5
@@ -195,9 +195,11 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
 
     """
 
-    def __init__(self, ddp_kwargs: Dict[str, Any] = None, scaler_kwargs: Dict[str, Any] = None):
+    def __init__(
+        self, process_group_kwargs: Dict[str, Any] = None, scaler_kwargs: Dict[str, Any] = None
+    ):
         """Init."""
-        super().__init__(ddp_kwargs=ddp_kwargs)
+        super().__init__(process_group_kwargs=process_group_kwargs)
         if scaler_kwargs is None:
             scaler_kwargs = {}
         self.scaler_kwargs = scaler_kwargs
@@ -210,6 +212,7 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
             f"backend='{self.backend}', "
             f"rank={self._rank}, "
             f"world_size={self._world_size}, "
+            f"process_group_kwargs={self.process_group_kwargs}, "
             f"scaler_kwargs={self.scaler_kwargs})"
         )
 

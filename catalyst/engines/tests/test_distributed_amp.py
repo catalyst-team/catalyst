@@ -44,7 +44,7 @@ class CustomRunner(IRunner):
 
     def get_engine(self):
         return DistributedDataParallelAMPEngine(
-            ddp_kwargs=dict(port=DDP_ADDRESS + random.randint(1, 100))
+            process_group_kwargs=dict(port=DDP_ADDRESS + random.randint(1, 100))
         )
 
     def get_callbacks(self, stage: str):

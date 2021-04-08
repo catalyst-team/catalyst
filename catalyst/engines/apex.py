@@ -316,8 +316,7 @@ class DataParallelApexEngine(APEXEngine):
         self.device_count = torch.cuda.device_count()
 
     def __repr__(self) -> str:  # noqa: D105
-        args_list = [f"device='{self.device}'", f"apex_kwargs={self.apex_kwargs}"]
-        return f"{self.__class__.__name__}(" + ",".join(args_list) + ")"
+        return f"{self.__class__.__name__}(device='{self.device}', apex_kwargs={self.apex_kwargs})"
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -348,7 +347,7 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
     """Distributed Apex MultiGPU training device engine.
 
     Args:
-        ddp_kwargs: parameters for `torch.distributed.init_process_group`.
+        process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
         apex_kwargs: parameters for `apex.amp.initialize`
@@ -367,7 +366,7 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             # ...
             def get_engine(self):
                 return dl.DistributedDataParallelApexEngine(
-                    ddp_kwargs={"port": 12345},
+                    process_group_kwargs={"port": 12345},
                     apex_kwargs={"opt_level": "O1"},
                 )
             # ...
@@ -383,7 +382,7 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
 
         engine:
             _target_: DistributedDataParallelApexEngine
-            ddp_kwargs:
+            process_group_kwargs:
                 port: 12345
             apex_kwargs:
                 opt_level: O1
@@ -392,23 +391,25 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             ...
     """
 
-    def __init__(self, ddp_kwargs: Dict[str, Any] = None, apex_kwargs: Dict[str, Any] = None):
+    def __init__(
+        self, process_group_kwargs: Dict[str, Any] = None, apex_kwargs: Dict[str, Any] = None
+    ):
         """Init."""
-        super().__init__(ddp_kwargs=ddp_kwargs)
+        super().__init__(process_group_kwargs=process_group_kwargs)
         if apex_kwargs is None:
             apex_kwargs = {}
         self.apex_kwargs = apex_kwargs
 
     def __repr__(self):  # noqa: D105
-        args_list = [
-            f"address={self.address}",
-            f"port={self.port}",
-            f"backend='{self.backend}'",
-            f"rank={self._rank}",
-            f"world_size={self._world_size}",
-            f"apex_kwargs={self.apex_kwargs}",
-        ]
-        return f"{self.__class__.__name__}(" + ",".join(args_list) + ")"
+        return (
+            f"{self.__class__.__name__}(address={self.address}, "
+            f"port={self.port}, "
+            f"backend='{self.backend}', "
+            f"rank={self._rank}, "
+            f"world_size={self._world_size}, "
+            f"process_group_kwargs={self.process_group_kwargs}, "
+            f"apex_kwargs={self.apex_kwargs})"
+        )
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,

@@ -264,7 +264,7 @@ class DistributedDataParallelEngine(DeviceEngine):
     """Distributed MultiGPU training device engine.
 
     Args:
-        ddp_kwargs: parameters for `torch.distributed.init_process_group`.
+        process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
 
@@ -277,7 +277,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
-                return dl.DistributedDataParallelEngine(ddp_kwargs={"port": 12345})
+                return dl.DistributedDataParallelEngine(process_group_kwargs={"port": 12345})
             # ...
 
     .. code-block:: yaml
@@ -291,7 +291,7 @@ class DistributedDataParallelEngine(DeviceEngine):
 
         engine:
             _target_: DistributedDataParallelEngine
-            ddp_kwargs:
+            process_group_kwargs:
                 port: 12345
 
         stages:
@@ -299,16 +299,18 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     """
 
-    def __init__(self, ddp_kwargs: Dict[str, Any] = None):
+    def __init__(self, process_group_kwargs: Dict[str, Any] = None):
         """Init."""
         super().__init__()
-        if ddp_kwargs is None:
-            ddp_kwargs = {}
-        self.address = ddp_kwargs.pop("address", "localhost")
-        self.port = ddp_kwargs.pop("port", "12345")
-        self.backend = ddp_kwargs.pop("backend", "nccl")
-        self._world_size = ddp_kwargs.pop("world_size", None) or torch.cuda.device_count()
-        self.ddp_kwargs = ddp_kwargs
+        if process_group_kwargs is None:
+            process_group_kwargs = {}
+        self.address = process_group_kwargs.pop("address", "localhost")
+        self.port = process_group_kwargs.pop("port", "12345")
+        self.backend = process_group_kwargs.pop("backend", "nccl")
+        self._world_size = (
+            process_group_kwargs.pop("world_size", None) or torch.cuda.device_count()
+        )
+        self.process_group_kwargs = process_group_kwargs
         self._rank = 0
         self.device = None
 
@@ -319,7 +321,7 @@ class DistributedDataParallelEngine(DeviceEngine):
             f"backend='{self.backend}', "
             f"rank={self._rank}, "
             f"world_size={self._world_size}, "
-            f"ddp_kwargs={self.ddp_kwargs})"
+            f"process_group_kwargs={self.process_group_kwargs})"
         )
 
     @property
@@ -365,7 +367,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
         dist.init_process_group(
-            self.backend, rank=self.rank, world_size=self.world_size, **self.ddp_kwargs
+            self.backend, rank=self.rank, world_size=self.world_size, **self.process_group_kwargs
         )
         torch.cuda.set_device(int(self._rank))
         self.device = f"cuda:{int(self._rank)}"
