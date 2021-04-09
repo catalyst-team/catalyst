@@ -1,8 +1,10 @@
 from typing import Any, Dict, Union
 from collections import OrderedDict
+import os
 
 import torch
 from torch import nn
+import torch.distributed as dist
 
 from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import SETTINGS
@@ -430,6 +432,27 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             f"process_group_kwargs={self.process_group_kwargs}, "
             f"apex_kwargs={self.apex_kwargs})"
         )
+
+    def setup_process(self, rank: int = -1, world_size: int = 1):
+        """Initialize DDP variables and processes.
+
+        Args:
+            rank: process rank. Default is `-1`.
+            world_size: number of devices in netwok to expect for train.
+                Default is `1`.
+        """
+        self._rank = rank
+        self._world_size = world_size
+
+        self.process_group_kwargs["rank"] = rank
+        self.process_group_kwargs["world_size"] = world_size
+        os.environ["MASTER_ADDR"] = str(self.address)
+        os.environ["MASTER_PORT"] = str(self.port)
+
+        dist.init_process_group(**self.process_group_kwargs)
+
+        torch.cuda.set_device(int(self._rank))
+        self.device = f"cuda:{int(self._rank)}"
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,

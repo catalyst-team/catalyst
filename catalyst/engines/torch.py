@@ -331,20 +331,15 @@ class DistributedDataParallelEngine(DeviceEngine):
         if ddp_kwargs is None:
             ddp_kwargs = {}
         self.ddp_kwargs = copy.deepcopy(ddp_kwargs)
-        if "device_ids" not in self.ddp_kwargs:
-            self.ddp_kwargs["device_ids"] = [self.device]
 
         if process_group_kwargs is None:
             process_group_kwargs = {}
         self.process_group_kwargs = copy.deepcopy(process_group_kwargs)
         # add missing arguments
-        default_values = [
-            ("backend", "nccl"),
-            ("world_size", torch.cuda.device_count()),
-        ]
-        for required_arg, default_value in default_values:
-            if required_arg not in self.process_group_kwargs:
-                self.process_group_kwargs[required_arg] = default_value
+        if "backend" not in self.process_group_kwargs:
+            self.process_group_kwargs["backend"] = "nccl"
+        if "world_size" not in self.process_group_kwargs:
+            self.process_group_kwargs["world_size"] = torch.cuda.device_count()
 
         self._world_size = (
             self.process_group_kwargs.get("world_size", None) or torch.cuda.device_count()
@@ -398,13 +393,18 @@ class DistributedDataParallelEngine(DeviceEngine):
         """
         self._rank = rank
         self._world_size = world_size
+
         self.process_group_kwargs["rank"] = rank
         self.process_group_kwargs["world_size"] = world_size
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
+
         dist.init_process_group(**self.process_group_kwargs)
+
         torch.cuda.set_device(int(self._rank))
         self.device = f"cuda:{int(self._rank)}"
+        if "device_ids" not in self.ddp_kwargs:
+            self.ddp_kwargs["device_ids"] = [self.device]
 
     def cleanup_process(self):
         """Clean DDP variables and processes."""
