@@ -5,7 +5,9 @@ import torch
 from catalyst.metrics.functional._misc import process_recsys_components
 
 
-def hitrate(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> List[torch.Tensor]:
+def hitrate(
+    outputs: torch.Tensor, targets: torch.Tensor, topk: List[int], zero_division: int = 0
+) -> List[torch.Tensor]:
     """
     Calculate the hit rate (aka recall) score given
     model outputs and targets.
@@ -31,6 +33,9 @@ def hitrate(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> Li
             ground truth, labels
         topk (List[int]):
             Parameter fro evaluation on top-k items
+        zero_division (int):
+            value, returns in the case of the divison by zero
+            should be one of 0 or 1
 
     Returns:
         hitrate_at_k (List[torch.Tensor]): the hitrate score
@@ -40,10 +45,8 @@ def hitrate(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> Li
     targets_sort_by_outputs = process_recsys_components(outputs, targets)
     for k in topk:
         k = min(outputs.size(1), k)
-        if targets.sum(dim=1).data[0] != 0:
-            hits_score = torch.sum(targets_sort_by_outputs[:, :k], dim=1) / targets.sum(dim=1)
-        else:
-            hits_score = torch.tensor([0.0])
+        hits_score = torch.sum(targets_sort_by_outputs[:, :k], dim=1) / targets.sum(dim=1)
+        hits_score = hits_score.nan_to_num(zero_division)
         results.append(torch.mean(hits_score))
 
     return results
