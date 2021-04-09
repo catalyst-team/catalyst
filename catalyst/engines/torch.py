@@ -439,7 +439,6 @@ class DistributedDataParallelEngine(DeviceEngine):
         """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
-        # TODO: maybe need to update somehow value for "device_ids"
         if isinstance(model, nn.Module):
             model = DistributedDataParallel(model, **self.ddp_kwargs)
         elif isinstance(model, dict):
