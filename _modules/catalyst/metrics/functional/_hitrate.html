@@ -315,9 +315,12 @@
 <span class="kn">from</span> <span class="nn">catalyst.metrics.functional._misc</span> <span class="kn">import</span> <span class="n">process_recsys_components</span>
 
 
-<div class="viewcode-block" id="hitrate"><a class="viewcode-back" href="../../../../api/metrics.html#catalyst.metrics.functional._hitrate.hitrate">[docs]</a><span class="k">def</span> <span class="nf">hitrate</span><span class="p">(</span><span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">topk</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+<div class="viewcode-block" id="hitrate"><a class="viewcode-back" href="../../../../api/metrics.html#catalyst.metrics.functional._hitrate.hitrate">[docs]</a><span class="k">def</span> <span class="nf">hitrate</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">topk</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">zero_division</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Calculate the hit rate score given model outputs and targets.</span>
+<span class="sd">    Calculate the hit rate (aka recall) score given</span>
+<span class="sd">    model outputs and targets.</span>
 <span class="sd">    Hit-rate is a metric for evaluating ranking systems.</span>
 <span class="sd">    Generate top-N recommendations and if one of the recommendation is</span>
 <span class="sd">    actually what user has rated, you consider that a hit.</span>
@@ -340,6 +343,9 @@
 <span class="sd">            ground truth, labels</span>
 <span class="sd">        topk (List[int]):</span>
 <span class="sd">            Parameter fro evaluation on top-k items</span>
+<span class="sd">        zero_division (int):</span>
+<span class="sd">            value, returns in the case of the divison by zero</span>
+<span class="sd">            should be one of 0 or 1</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        hitrate_at_k (List[torch.Tensor]): the hitrate score</span>
@@ -349,7 +355,8 @@
     <span class="n">targets_sort_by_outputs</span> <span class="o">=</span> <span class="n">process_recsys_components</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">topk</span><span class="p">:</span>
         <span class="n">k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
-        <span class="n">hits_score</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">targets_sort_by_outputs</span><span class="p">[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">k</span>
+        <span class="n">hits_score</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">targets_sort_by_outputs</span><span class="p">[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">targets</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">hits_score</span> <span class="o">=</span> <span class="n">hits_score</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">zero_division</span><span class="p">)</span>
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">hits_score</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">results</span></div>

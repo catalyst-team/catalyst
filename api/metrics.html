@@ -1675,8 +1675,9 @@ Default: “mean”</p></li>
 <span id="hitrate"></span><h3><a class="toc-backref" href="#id34">Hitrate</a><a class="headerlink" href="#module-catalyst.metrics.functional._hitrate" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._hitrate.hitrate">
-<code class="sig-prename descclassname">catalyst.metrics.functional._hitrate.</code><code class="sig-name descname">hitrate</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional/_hitrate.html#hitrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._hitrate.hitrate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the hit rate score given model outputs and targets.
+<code class="sig-prename descclassname">catalyst.metrics.functional._hitrate.</code><code class="sig-name descname">hitrate</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor, targets: torch.Tensor, topk: List[int], zero_division: int = 0</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/functional/_hitrate.html#hitrate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._hitrate.hitrate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the hit rate (aka recall) score given
+model outputs and targets.
 Hit-rate is a metric for evaluating ranking systems.
 Generate top-N recommendations and if one of the recommendation is
 actually what user has rated, you consider that a hit.
@@ -1696,6 +1697,8 @@ for the user and 0 not relevant
 size: [batch_size, slate_length]
 ground truth, labels</p></li>
 <li><p><strong>topk</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – Parameter fro evaluation on top-k items</p></li>
+<li><p><strong>zero_division</strong> (<em>int</em>) – value, returns in the case of the divison by zero
+should be one of 0 or 1</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
