@@ -348,12 +348,17 @@
 <h3><a class="toc-backref" href="#id2">AMPEngine</a><a class="headerlink" href="#ampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.amp.AMPEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">AMPEngine</code><span class="sig-paren">(</span><em class="sig-param">device: str = 'cuda'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#AMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.AMPEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">AMPEngine</code><span class="sig-paren">(</span><em class="sig-param">device: str = 'cuda'</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#AMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.AMPEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
 <p>Pytorch.AMP single training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>device</strong> – used device, default is <cite>“cuda”</cite>.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device</strong> – used device, default is <cite>“cuda”</cite>.</p></li>
+<li><p><strong>scaler_kwargs</strong> – parameters for <cite>torch.cuda.amp.GradScaler</cite>.
+Possible parameters:
+<a class="reference external" href="https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler">https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler</a></p></li>
+</ul>
 </dd>
 </dl>
 <p>Examples:</p>
@@ -388,9 +393,16 @@
 <h3><a class="toc-backref" href="#id3">DataParallelAMPEngine</a><a class="headerlink" href="#dataparallelampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.amp.DataParallelAMPEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DataParallelAMPEngine</code><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DataParallelAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.amp.AMPEngine" title="catalyst.engines.amp.AMPEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.amp.AMPEngine</span></code></a></p>
 <p>AMP multi-gpu training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scaler_kwargs</strong> – parameters for <cite>torch.cuda.amp.GradScaler</cite>.
+Possible parameters:
+<a class="reference external" href="https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler">https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler</a></p>
+</dd>
+</dl>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
@@ -422,19 +434,23 @@
 <h3><a class="toc-backref" href="#id4">DistributedDataParallelAMPEngine</a><a class="headerlink" href="#distributeddataparallelampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.amp.DistributedDataParallelAMPEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DistributedDataParallelAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = 'localhost'</em>, <em class="sig-param">port: str = '12345'</em>, <em class="sig-param">backend: str = 'nccl'</em>, <em class="sig-param">world_size: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DistributedDataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DistributedDataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DistributedDataParallelAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DistributedDataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DistributedDataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="catalyst.engines.torch.DistributedDataParallelEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DistributedDataParallelEngine</span></code></a></p>
 <p>Distributed AMP multi-gpu training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>address</strong> – process address to use
-(required for PyTorch backend), default is <cite>“localhost”</cite>.</p></li>
-<li><p><strong>port</strong> – process port to listen
-(required for PyTorch backend), default is <cite>“12345”</cite>.</p></li>
-<li><p><strong>backend</strong> – multiprocessing backend to use,
-default is <cite>“nccl”</cite>.</p></li>
-<li><p><strong>world_size</strong> – number of processes.</p></li>
+<li><p><strong>address</strong> – address to use for backend.</p></li>
+<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>ddp_kwargs</strong> – parameters for <cite>torch.nn.parallel.DistributedDataParallel</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel">https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel</a></p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
+<li><p><strong>scaler_kwargs</strong> – parameters for <cite>torch.cuda.amp.GradScaler</cite>.
+Possible parameters:
+<a class="reference external" href="https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler">https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler</a></p></li>
 </ul>
 </dd>
 </dl>
@@ -444,7 +460,13 @@ default is <cite>“nccl”</cite>.</p></li>
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
     <span class="c1"># ...</span>
     <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelAMPEngine</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelAMPEngine</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="mi">23234</span><span class="p">,</span>
+            <span class="n">ddp_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;find_unused_parameters&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="mi">12345</span><span class="p">},</span>
+            <span class="n">scaler_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;growth_factor&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">}</span>
+        <span class="p">)</span>
     <span class="c1"># ...</span>
 </pre></div>
 </div>
@@ -457,7 +479,14 @@ default is <cite>“nccl”</cite>.</p></li>
 
 <span class="nt">engine</span><span class="p">:</span>
     <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DistributedDataParallelAMPEngine</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
+    <span class="nt">address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">23234</span>
+    <span class="nt">ddp_kwargs</span><span class="p">:</span>
+        <span class="nt">find_unused_parameters</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+    <span class="nt">process_group_kwargs</span><span class="p">:</span>
+        <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
+    <span class="nt">scaler_kwargs</span><span class="p">:</span>
+        <span class="nt">growth_factor</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1.5</span>
 
 <span class="nt">stages</span><span class="p">:</span>
     <span class="l l-Scalar l-Scalar-Plain">...</span>
@@ -473,33 +502,18 @@ default is <cite>“nccl”</cite>.</p></li>
 <h3><a class="toc-backref" href="#id6">APEXEngine</a><a class="headerlink" href="#apexengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.apex.APEXEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">APEXEngine</code><span class="sig-paren">(</span><em class="sig-param">device: str = 'cuda'</em>, <em class="sig-param">opt_level: str = 'O1'</em>, <em class="sig-param">keep_batchnorm_fp32: bool = None</em>, <em class="sig-param">loss_scale: Union[float</em>, <em class="sig-param">str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/apex.html#APEXEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.apex.APEXEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">APEXEngine</code><span class="sig-paren">(</span><em class="sig-param">device: str = 'cuda'</em>, <em class="sig-param">apex_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/apex.html#APEXEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.apex.APEXEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
 <p>Apex single training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>device</strong> – use device, default is <cite>“cuda”</cite>.</p></li>
-<li><p><strong>opt_level</strong> – <p>optimization level, should be one of <code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code>.</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code> - no-op training</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code> - mixed precision (FP16) training (default)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> - “almost” mixed precision training</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code> - another implementation of mixed precision training</p></li>
-</ul>
-<p>Details about levels can be found here:
-<a class="reference external" href="https://nvidia.github.io/apex/amp.html#opt-levels">https://nvidia.github.io/apex/amp.html#opt-levels</a></p>
+<li><p><strong>apex_kwargs</strong> – <p>parameters for <cite>apex.amp.initialize</cite>
+except models and optimizers (they will be forwared automatically).</p>
+<p>Docs for <cite>apex.amp.initialize</cite>:
+<a class="reference external" href="https://nvidia.github.io/apex/amp.html#apex.amp.initialize">https://nvidia.github.io/apex/amp.html#apex.amp.initialize</a></p>
 </p></li>
-<li><p><strong>keep_batchnorm_fp32</strong> – To enhance precision and enable CUDNN batchnorm
-(which improves performance),
-it’s often beneficial to keep batchnorm weights in FP32 even
-if the rest of the model is FP16.</p></li>
-<li><p><strong>loss_scale</strong> – If loss_scale is a float value,
-use this value as the static (fixed) loss scale
-If loss_scale is the string “dynamic”,
-adaptively adjust the loss scale over time.
-Dynamic loss scale adjustments are performed by Amp automatically.</p></li>
 </ul>
 </dd>
 </dl>
@@ -536,21 +550,15 @@ Dynamic loss scale adjustments are performed by Amp automatically.</p></li>
 <h3><a class="toc-backref" href="#id7">DataParallelApexEngine</a><a class="headerlink" href="#dataparallelapexengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.apex.DataParallelApexEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">DataParallelApexEngine</code><span class="sig-paren">(</span><em class="sig-param">opt_level: str = 'O1'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/apex.html#DataParallelApexEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.apex.DataParallelApexEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">DataParallelApexEngine</code><span class="sig-paren">(</span><em class="sig-param">apex_kwargs: Dict[str, Any]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/apex.html#DataParallelApexEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.apex.DataParallelApexEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.apex.APEXEngine" title="catalyst.engines.apex.APEXEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.apex.APEXEngine</span></code></a></p>
 <p>Apex multi-gpu training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>opt_level</strong> – <p>optimization level, should be one of <code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code>.</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code> - no-op training</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code> - mixed precision (FP16) training (default)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> - “almost” mixed precision training</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code> - another implementation of mixed precision training</p></li>
-</ul>
-<p>Details about levels can be found here:
-<a class="reference external" href="https://nvidia.github.io/apex/amp.html#opt-levels">https://nvidia.github.io/apex/amp.html#opt-levels</a></p>
+<dd class="field-odd"><p><strong>apex_kwargs</strong> – <p>parameters for <cite>apex.amp.initialize</cite>
+except models and optimizers (they will be forwared automatically).</p>
+<p>Docs for <cite>apex.amp.initialize</cite>:
+<a class="reference external" href="https://nvidia.github.io/apex/amp.html#apex.amp.initialize">https://nvidia.github.io/apex/amp.html#apex.amp.initialize</a></p>
 </p>
 </dd>
 </dl>
@@ -586,41 +594,25 @@ Dynamic loss scale adjustments are performed by Amp automatically.</p></li>
 <h3><a class="toc-backref" href="#id8">DistributedDataParallelApexEngine</a><a class="headerlink" href="#distributeddataparallelapexengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.apex.DistributedDataParallelApexEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">DistributedDataParallelApexEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = 'localhost'</em>, <em class="sig-param">port: str = '12345'</em>, <em class="sig-param">backend: str = 'nccl'</em>, <em class="sig-param">world_size: int = None</em>, <em class="sig-param">opt_level: str = 'O1'</em>, <em class="sig-param">keep_batchnorm_fp32: bool = None</em>, <em class="sig-param">loss_scale: Union[float</em>, <em class="sig-param">str] = None</em>, <em class="sig-param">delay_all_reduce: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/apex.html#DistributedDataParallelApexEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.apex.DistributedDataParallelApexEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">DistributedDataParallelApexEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">apex_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/apex.html#DistributedDataParallelApexEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.apex.DistributedDataParallelApexEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="catalyst.engines.torch.DistributedDataParallelEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DistributedDataParallelEngine</span></code></a></p>
 <p>Distributed Apex MultiGPU training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>address</strong> – process address to use
-(required for PyTorch backend), default is <cite>“localhost”</cite>.</p></li>
-<li><p><strong>port</strong> – process port to listen
-(required for PyTorch backend), default is <cite>“12345”</cite>.</p></li>
-<li><p><strong>backend</strong> – multiprocessing backend to use,
-default is <cite>“nccl”</cite>.</p></li>
-<li><p><strong>world_size</strong> – number of processes.</p></li>
-<li><p><strong>opt_level</strong> – <p>optimization level, should be one of <code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code>,
-<code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code>.</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O0&quot;</span></code> - no-op training</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O1&quot;</span></code> - mixed precision (FP16) training (default)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O2&quot;</span></code> - “almost” mixed precision training</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">&quot;O3&quot;</span></code> - another implementation of mixed precision training</p></li>
-</ul>
-<p>Details about levels can be found here:
-<a class="reference external" href="https://nvidia.github.io/apex/amp.html#opt-levels">https://nvidia.github.io/apex/amp.html#opt-levels</a></p>
+<li><p><strong>address</strong> – address to use for backend.</p></li>
+<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>ddp_kwargs</strong> – parameters for <cite>apex.parallel.DistributedDataParallel</cite>.
+More info here:
+<a class="reference external" href="https://nvidia.github.io/apex/parallel.html#apex.parallel.DistributedDataParallel">https://nvidia.github.io/apex/parallel.html#apex.parallel.DistributedDataParallel</a></p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
+<li><p><strong>apex_kwargs</strong> – <p>parameters for <cite>apex.amp.initialize</cite>
+except models and optimizers (they will be forwared automatically).</p>
+<p>Docs for <cite>apex.amp.initialize</cite>:
+<a class="reference external" href="https://nvidia.github.io/apex/amp.html#apex.amp.initialize">https://nvidia.github.io/apex/amp.html#apex.amp.initialize</a></p>
 </p></li>
-<li><p><strong>keep_batchnorm_fp32</strong> – To enhance precision and
-enable CUDNN batchnorm (which improves performance),
-it’s often beneficial to keep batchnorm weights in FP32 even
-if the rest of the model is FP16.</p></li>
-<li><p><strong>loss_scale</strong> – If loss_scale is a float value,
-use this value as the static (fixed) loss scale.
-If loss_scale is the string “dynamic”,
-adaptively adjust the loss scale over time.
-Dynamic loss scale adjustments are performed by Amp automatically.</p></li>
-<li><p><strong>delay_all_reduce</strong> (<em>bool</em>) – boolean flag for delayed all reduce,
-default is <cite>True</cite>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -631,8 +623,11 @@ default is <cite>True</cite>.</p></li>
     <span class="c1"># ...</span>
     <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelApexEngine</span><span class="p">(</span>
-            <span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">,</span>
-            <span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span>
+            <span class="n">address</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="mi">23234</span><span class="p">,</span>
+            <span class="n">ddp_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;allreduce_always_fp32&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;backend&quot;</span><span class="p">:</span> <span class="s2">&quot;nccl&quot;</span><span class="p">},</span>
+            <span class="n">apex_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">},</span>
         <span class="p">)</span>
     <span class="c1"># ...</span>
 </pre></div>
@@ -646,8 +641,14 @@ default is <cite>True</cite>.</p></li>
 
 <span class="nt">engine</span><span class="p">:</span>
     <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DistributedDataParallelApexEngine</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
-    <span class="nt">opt_level</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">O1</span>
+    <span class="nt">address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">23234</span>
+    <span class="nt">ddp_kwargs</span><span class="p">:</span>
+        <span class="nt">allreduce_always_fp32</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+    <span class="nt">process_group_kwargs</span><span class="p">:</span>
+        <span class="nt">backend</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">nccl</span>
+    <span class="nt">apex_kwargs</span><span class="p">:</span>
+        <span class="nt">opt_level</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">O1</span>
 
 <span class="nt">stages</span><span class="p">:</span>
     <span class="l l-Scalar l-Scalar-Plain">...</span>
@@ -737,19 +738,20 @@ default is <cite>True</cite>.</p></li>
 <h3><a class="toc-backref" href="#id12">DistributedDataParallelEngine</a><a class="headerlink" href="#distributeddataparallelengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.torch.DistributedDataParallelEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedDataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = 'localhost'</em>, <em class="sig-param">port: str = '12345'</em>, <em class="sig-param">backend: str = 'nccl'</em>, <em class="sig-param">world_size: int = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedDataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedDataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedDataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
 <p>Distributed MultiGPU training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>address</strong> – process address to use
-(required for PyTorch backend), default is <cite>“localhost”</cite>.</p></li>
-<li><p><strong>port</strong> – process port to listen
-(required for PyTorch backend), default is <cite>“12345”</cite>.</p></li>
-<li><p><strong>backend</strong> – multiprocessing backend to use,
-default is <cite>“nccl”</cite>.</p></li>
-<li><p><strong>world_size</strong> – number of processes.</p></li>
+<li><p><strong>address</strong> – address to use for backend.</p></li>
+<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>ddp_kwargs</strong> – parameters for <cite>torch.nn.parallel.DistributedDataParallel</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel">https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel</a></p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
 </ul>
 </dd>
 </dl>
@@ -759,7 +761,12 @@ default is <cite>“nccl”</cite>.</p></li>
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
     <span class="c1"># ...</span>
     <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelEngine</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="mi">12345</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelEngine</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="mi">23234</span><span class="p">,</span>
+            <span class="n">ddp_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;find_unused_parameters&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;backend&quot;</span><span class="p">:</span> <span class="s2">&quot;nccl&quot;</span><span class="p">},</span>
+        <span class="p">)</span>
     <span class="c1"># ...</span>
 </pre></div>
 </div>
@@ -772,7 +779,12 @@ default is <cite>“nccl”</cite>.</p></li>
 
 <span class="nt">engine</span><span class="p">:</span>
     <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DistributedDataParallelEngine</span>
-    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
+    <span class="nt">address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">23234</span>
+    <span class="nt">ddp_kwargs</span><span class="p">:</span>
+        <span class="nt">find_unused_parameters</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+    <span class="nt">process_group_kwargs</span><span class="p">:</span>
+        <span class="nt">backend</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">nccl</span>
 
 <span class="nt">stages</span><span class="p">:</span>
     <span class="l l-Scalar l-Scalar-Plain">...</span>

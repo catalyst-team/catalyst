@@ -308,11 +308,13 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.engines.apex</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
+<span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="nn">dist</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.engines.torch</span> <span class="kn">import</span> <span class="n">DeviceEngine</span><span class="p">,</span> <span class="n">DistributedDataParallelEngine</span>
 <span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
@@ -436,25 +438,11 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        device: use device, default is `&quot;cuda&quot;`.</span>
-<span class="sd">        opt_level: optimization level, should be one of ``&quot;O0&quot;``,</span>
-<span class="sd">            ``&quot;O1&quot;``, ``&quot;O2&quot;`` or ``&quot;O3&quot;``.</span>
+<span class="sd">        apex_kwargs: parameters for `apex.amp.initialize`</span>
+<span class="sd">            except models and optimizers (they will be forwared automatically).</span>
 
-<span class="sd">            - ``&quot;O0&quot;`` - no-op training</span>
-<span class="sd">            - ``&quot;O1&quot;`` - mixed precision (FP16) training (default)</span>
-<span class="sd">            - ``&quot;O2&quot;`` - &quot;almost&quot; mixed precision training</span>
-<span class="sd">            - ``&quot;O3&quot;`` - another implementation of mixed precision training</span>
-
-<span class="sd">            Details about levels can be found here:</span>
-<span class="sd">            https://nvidia.github.io/apex/amp.html#opt-levels</span>
-<span class="sd">        keep_batchnorm_fp32: To enhance precision and enable CUDNN batchnorm</span>
-<span class="sd">            (which improves performance),</span>
-<span class="sd">            it’s often beneficial to keep batchnorm weights in FP32 even</span>
-<span class="sd">            if the rest of the model is FP16.</span>
-<span class="sd">        loss_scale: If loss_scale is a float value,</span>
-<span class="sd">            use this value as the static (fixed) loss scale</span>
-<span class="sd">            If loss_scale is the string &quot;dynamic&quot;,</span>
-<span class="sd">            adaptively adjust the loss scale over time.</span>
-<span class="sd">            Dynamic loss scale adjustments are performed by Amp automatically.</span>
+<span class="sd">            Docs for `apex.amp.initialize`:</span>
+<span class="sd">            https://nvidia.github.io/apex/amp.html#apex.amp.initialize</span>
 
 <span class="sd">    Examples:</span>
 
@@ -487,21 +475,16 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span>
-        <span class="n">opt_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;O1&quot;</span><span class="p">,</span>
-        <span class="n">keep_batchnorm_fp32</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">loss_scale</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span><span class="p">,</span> <span class="n">apex_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">opt_level</span> <span class="o">=</span> <span class="n">opt_level</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">keep_batchnorm_fp32</span> <span class="o">=</span> <span class="n">keep_batchnorm_fp32</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loss_scale</span> <span class="o">=</span> <span class="n">loss_scale</span>
+        <span class="k">if</span> <span class="n">apex_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">apex_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apex_kwargs</span> <span class="o">=</span> <span class="n">apex_kwargs</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa: D105</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(device=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="si">}</span><span class="s2">&#39;,opt_level=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_level</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+        <span class="n">args_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;device=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;apex_kwargs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">apex_kwargs</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args_list</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -522,13 +505,7 @@
 
         <span class="c1"># from official docs:</span>
         <span class="c1">#   https://nvidia.github.io/apex/amp.html#opt-levels-and-properties</span>
-        <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">_initialize_apex</span><span class="p">(</span>
-            <span class="n">model</span><span class="p">,</span>
-            <span class="n">optimizer</span><span class="p">,</span>
-            <span class="n">opt_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_level</span><span class="p">,</span>
-            <span class="n">keep_batchnorm_fp32</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">keep_batchnorm_fp32</span><span class="p">,</span>
-            <span class="n">loss_scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_scale</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">_initialize_apex</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">apex_kwargs</span><span class="p">)</span>
 
         <span class="c1"># scheduler</span>
         <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">()</span>
@@ -609,16 +586,11 @@
     <span class="sd">&quot;&quot;&quot;Apex multi-gpu training device engine.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        opt_level: optimization level, should be one of ``&quot;O0&quot;``,</span>
-<span class="sd">            ``&quot;O1&quot;``, ``&quot;O2&quot;`` or ``&quot;O3&quot;``.</span>
+<span class="sd">        apex_kwargs: parameters for `apex.amp.initialize`</span>
+<span class="sd">            except models and optimizers (they will be forwared automatically).</span>
 
-<span class="sd">            - ``&quot;O0&quot;`` - no-op training</span>
-<span class="sd">            - ``&quot;O1&quot;`` - mixed precision (FP16) training (default)</span>
-<span class="sd">            - ``&quot;O2&quot;`` - &quot;almost&quot; mixed precision training</span>
-<span class="sd">            - ``&quot;O3&quot;`` - another implementation of mixed precision training</span>
-
-<span class="sd">            Details about levels can be found here:</span>
-<span class="sd">            https://nvidia.github.io/apex/amp.html#opt-levels</span>
+<span class="sd">            Docs for `apex.amp.initialize`:</span>
+<span class="sd">            https://nvidia.github.io/apex/amp.html#apex.amp.initialize</span>
 
 <span class="sd">    Examples:</span>
 
@@ -650,13 +622,13 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">opt_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;O1&quot;</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">apex_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">current_device</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">opt_level</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">current_device</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">apex_kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device_count</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa: D105</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(device=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="si">}</span><span class="s2">&#39;,opt_level=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_level</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(device=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="si">}</span><span class="s2">&#39;, apex_kwargs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">apex_kwargs</span><span class="si">}</span><span class="s2">)&quot;</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -674,7 +646,7 @@
         <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
 
         <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">_wrap_into_data_parallel_with_apex</span><span class="p">(</span>
-            <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">distributed_params</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">opt_level</span><span class="p">}</span>
+            <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">distributed_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">apex_kwargs</span>
         <span class="p">)</span>
 
         <span class="c1"># scheduler</span>
@@ -687,35 +659,19 @@
     <span class="sd">&quot;&quot;&quot;Distributed Apex MultiGPU training device engine.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        address: process address to use</span>
-<span class="sd">            (required for PyTorch backend), default is `&quot;localhost&quot;`.</span>
-<span class="sd">        port: process port to listen</span>
-<span class="sd">            (required for PyTorch backend), default is `&quot;12345&quot;`.</span>
-<span class="sd">        backend: multiprocessing backend to use,</span>
-<span class="sd">            default is `&quot;nccl&quot;`.</span>
-<span class="sd">        world_size: number of processes.</span>
-<span class="sd">        opt_level: optimization level, should be one of ``&quot;O0&quot;``,</span>
-<span class="sd">            ``&quot;O1&quot;``, ``&quot;O2&quot;`` or ``&quot;O3&quot;``.</span>
+<span class="sd">        address: address to use for backend.</span>
+<span class="sd">        port: port to use for backend.</span>
+<span class="sd">        ddp_kwargs: parameters for `apex.parallel.DistributedDataParallel`.</span>
+<span class="sd">            More info here:</span>
+<span class="sd">            https://nvidia.github.io/apex/parallel.html#apex.parallel.DistributedDataParallel</span>
+<span class="sd">        process_group_kwargs: parameters for `torch.distributed.init_process_group`.</span>
+<span class="sd">            More info here:</span>
+<span class="sd">            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</span>
+<span class="sd">        apex_kwargs: parameters for `apex.amp.initialize`</span>
+<span class="sd">            except models and optimizers (they will be forwared automatically).</span>
 
-<span class="sd">            - ``&quot;O0&quot;`` - no-op training</span>
-<span class="sd">            - ``&quot;O1&quot;`` - mixed precision (FP16) training (default)</span>
-<span class="sd">            - ``&quot;O2&quot;`` - &quot;almost&quot; mixed precision training</span>
-<span class="sd">            - ``&quot;O3&quot;`` - another implementation of mixed precision training</span>
-
-<span class="sd">            Details about levels can be found here:</span>
-<span class="sd">            https://nvidia.github.io/apex/amp.html#opt-levels</span>
-
-<span class="sd">        keep_batchnorm_fp32: To enhance precision and</span>
-<span class="sd">            enable CUDNN batchnorm (which improves performance),</span>
-<span class="sd">            it’s often beneficial to keep batchnorm weights in FP32 even</span>
-<span class="sd">            if the rest of the model is FP16.</span>
-<span class="sd">        loss_scale: If loss_scale is a float value,</span>
-<span class="sd">            use this value as the static (fixed) loss scale.</span>
-<span class="sd">            If loss_scale is the string &quot;dynamic&quot;,</span>
-<span class="sd">            adaptively adjust the loss scale over time.</span>
-<span class="sd">            Dynamic loss scale adjustments are performed by Amp automatically.</span>
-<span class="sd">        delay_all_reduce (bool): boolean flag for delayed all reduce,</span>
-<span class="sd">            default is `True`.</span>
+<span class="sd">            Docs for `apex.amp.initialize`:</span>
+<span class="sd">            https://nvidia.github.io/apex/amp.html#apex.amp.initialize</span>
 
 <span class="sd">    Examples:</span>
 
@@ -727,8 +683,11 @@
 <span class="sd">            # ...</span>
 <span class="sd">            def get_engine(self):</span>
 <span class="sd">                return dl.DistributedDataParallelApexEngine(</span>
-<span class="sd">                    port=12345,</span>
-<span class="sd">                    opt_level=&quot;O1&quot;</span>
+<span class="sd">                    address=&quot;0.0.0.0&quot;,</span>
+<span class="sd">                    port=23234,</span>
+<span class="sd">                    ddp_kwargs={&quot;allreduce_always_fp32&quot;: True},</span>
+<span class="sd">                    process_group_kwargs={&quot;backend&quot;: &quot;nccl&quot;},</span>
+<span class="sd">                    apex_kwargs={&quot;opt_level&quot;: &quot;O1&quot;},</span>
 <span class="sd">                )</span>
 <span class="sd">            # ...</span>
 
@@ -743,8 +702,14 @@
 
 <span class="sd">        engine:</span>
 <span class="sd">            _target_: DistributedDataParallelApexEngine</span>
-<span class="sd">            port: 12345</span>
-<span class="sd">            opt_level: O1</span>
+<span class="sd">            address: 0.0.0.0</span>
+<span class="sd">            port: 23234</span>
+<span class="sd">            ddp_kwargs:</span>
+<span class="sd">                allreduce_always_fp32: true</span>
+<span class="sd">            process_group_kwargs:</span>
+<span class="sd">                backend: nccl</span>
+<span class="sd">            apex_kwargs:</span>
+<span class="sd">                opt_level: O1</span>
 
 <span class="sd">        stages:</span>
 <span class="sd">            ...</span>
@@ -752,35 +717,52 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
-        <span class="n">port</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;12345&quot;</span><span class="p">,</span>
-        <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;nccl&quot;</span><span class="p">,</span>
-        <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">opt_level</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;O1&quot;</span><span class="p">,</span>
-        <span class="n">keep_batchnorm_fp32</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">loss_scale</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">delay_all_reduce</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ddp_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">process_group_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">apex_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">address</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span> <span class="o">=</span> <span class="n">world_size</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">opt_level</span> <span class="o">=</span> <span class="n">opt_level</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">delay_all_reduce</span> <span class="o">=</span> <span class="n">delay_all_reduce</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">keep_batchnorm_fp32</span> <span class="o">=</span> <span class="n">keep_batchnorm_fp32</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loss_scale</span> <span class="o">=</span> <span class="n">loss_scale</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">ddp_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">process_group_kwargs</span><span class="o">=</span><span class="n">process_group_kwargs</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">ddp_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ddp_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span> <span class="o">=</span> <span class="n">ddp_kwargs</span>
+        <span class="k">if</span> <span class="n">apex_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">apex_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">apex_kwargs</span> <span class="o">=</span> <span class="n">apex_kwargs</span>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># noqa: D105</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(address=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;port=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">, backend=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">backend</span><span class="si">}</span><span class="s2">&#39;, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;rank=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="si">}</span><span class="s2">, world_size=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;opt_level=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_level</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;port=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;ddp_kwargs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;process_group_kwargs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;apex_kwargs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">apex_kwargs</span><span class="si">}</span><span class="s2">)&quot;</span>
         <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setup_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize DDP variables and processes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rank: process rank. Default is `-1`.</span>
+<span class="sd">            world_size: number of devices in netwok to expect for train.</span>
+<span class="sd">                Default is `1`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">=</span> <span class="n">rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span> <span class="o">=</span> <span class="n">world_size</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">[</span><span class="s2">&quot;world_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">world_size</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
+
+        <span class="n">dist</span><span class="o">.</span><span class="n">init_process_group</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">)</span>
+
+        <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">set_device</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -795,14 +777,8 @@
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">()</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
 
-        <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span>
-            <span class="n">model</span><span class="p">,</span>
-            <span class="n">optimizer</span><span class="p">,</span>
-            <span class="n">opt_level</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">opt_level</span><span class="p">,</span>
-            <span class="n">keep_batchnorm_fp32</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">keep_batchnorm_fp32</span><span class="p">,</span>
-            <span class="n">loss_scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_scale</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">ApexDistributedDataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">delay_allreduce</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">delay_all_reduce</span><span class="p">)</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span> <span class="o">=</span> <span class="n">amp</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">apex_kwargs</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">ApexDistributedDataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span><span class="p">)</span>
 
         <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">()</span>
         <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">scheduler</span><span class="p">)</span>
