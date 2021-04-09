@@ -29,6 +29,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - minimal requirements issue ([#1147](https://github.com/catalyst-team/catalyst/issues/1147))
 - nested dicts in `loaders_params`/`samplers_params` overriding fixed ([#1150](https://github.com/catalyst-team/catalyst/pull/1150))
+- fixed hitrate calculation issue ([#1155]) (https://github.com/catalyst-team/catalyst/issues/1155)
 
 ## [21.03.1] - 2021-03-28
 

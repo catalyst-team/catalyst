@@ -44,7 +44,7 @@ class CustomRunner(IRunner):
         self._opt_level = opt_level
 
     def get_engine(self):
-        return DataParallelApexEngine(self._opt_level)
+        return DataParallelApexEngine(apex_kwargs=dict(opt_level=self._opt_level))
 
     def get_callbacks(self, stage: str):
         return {
@@ -111,7 +111,10 @@ def train_from_config(opt_level):
             config={
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
-                "engine": {"_target_": "DataParallelApexEngine", "opt_level": opt_level},
+                "engine": {
+                    "_target_": "DataParallelApexEngine",
+                    "apex_kwargs": {"opt_level": opt_level},
+                },
                 "args": {"logdir": logdir},
                 "stages": {
                     "stage1": {

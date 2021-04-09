@@ -46,7 +46,11 @@ class CustomRunner(IRunner):
         self._port = port
 
     def get_engine(self):
-        return DistributedDataParallelApexEngine(port=self._port, opt_level=self._opt_level)
+        return DistributedDataParallelApexEngine(
+            port=DDP_ADDRESS + random.randint(1, 100),
+            process_group_kwargs={"backend": "nccl"},
+            apex_kwargs=dict(opt_level=self._opt_level),
+        )
 
     def get_callbacks(self, stage: str):
         return {
@@ -116,8 +120,9 @@ def train_from_config(port, logdir, opt_lvl):
             "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
             "engine": {
                 "_target_": "DistributedDataParallelApexEngine",
-                "port": port,
-                "opt_level": opt,
+                "port": DDP_ADDRESS + random.randint(100, 200),
+                "process_group_kwargs": {"backend": "nccl"},
+                "apex_kwargs": {"opt_level": opt},
             },
             "loggers": {"console": {"_target_": "ConsoleLogger"}},
             "stages": {
