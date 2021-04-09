@@ -179,7 +179,7 @@ Catalyst is compatible with: Python 3.6+. PyTorch 1.3+. <br/>
 Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10, and Windows Subsystem for Linux.
 
 
-### Minimal Example
+### Minimal Examples
 
 <details>
 <summary>ML - linear regression</summary>
