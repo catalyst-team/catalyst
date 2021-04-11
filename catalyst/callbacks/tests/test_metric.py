@@ -1,7 +1,9 @@
 from typing import Dict, Iterable, Union
 from collections import OrderedDict
+import os
 from tempfile import TemporaryDirectory
 
+import numpy as np
 import pytest
 import torch
 from torch.optim import Adam
@@ -9,7 +11,9 @@ from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst import data, dl
 from catalyst.callbacks.metric import BatchMetricCallback, LoaderMetricCallback
-from catalyst.contrib import datasets, nn
+from catalyst.contrib import datasets, models, nn
+from catalyst.contrib.datasets import MnistMLDataset, MnistQGDataset
+from catalyst.data.transforms import Compose, Normalize, ToTensor
 from catalyst.metrics import AccuracyMetric, CMCMetric
 
 NUM_CLASSES = 4
@@ -37,6 +41,61 @@ class DummyModel(nn.Module):
             model's output
         """
         return self.model(x)
+
+
+class MnistReIDQGDataset(MnistQGDataset):
+    """MnistQGDataset with dummy cids just to test reid pipeline with small dataset"""
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self._cids = np.random.randint(0, 10, size=len(self._mnist.targets))
+
+    def __getitem__(self, item: int) -> Dict[str, torch.Tensor]:
+        """
+        Get item
+
+        Args:
+            item: item to get
+
+        Returns:
+            dict of image, target, cid and is_query key
+        """
+        sample = super().__getitem__(idx=item)
+        sample["cids"] = self._cids[item]
+        return sample
+
+
+class ReIDCustomRunner(dl.SupervisedRunner):
+    """ReidCustomRunner for reid case"""
+
+    def handle_batch(self, batch: Dict[str, torch.Tensor]) -> None:
+        """
+        Process batch
+
+        Args:
+            batch: batch data
+        """
+        if self.is_train_loader:
+            images, targets = batch["features"].float(), batch["targets"].long()
+            features = self.model(images)
+            self.batch = {
+                "embeddings": features,
+                "targets": targets,
+            }
+        else:
+            images, targets, cids, is_query = (
+                batch["features"].float(),
+                batch["targets"].long(),
+                batch["cids"].long(),
+                batch["is_query"].bool(),
+            )
+            features = self.model(images)
+            self.batch = {
+                "embeddings": features,
+                "targets": targets,
+                "cids": cids,
+                "is_query": is_query,
+            }
 
 
 @pytest.mark.parametrize(
@@ -203,3 +262,70 @@ def test_metric_learning_pipeline():
             num_epochs=4,
         )
         assert "cmc01" in runner.loader_metrics
+
+
+def test_reid_pipeline():
+    """This test checks that reid pipeline runs and compute metrics with ReidCMCScoreCallback"""
+    with TemporaryDirectory() as logdir:
+
+        # 1. train and valid loaders
+        transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
+
+        train_dataset = MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
+        sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=10)
+        train_loader = DataLoader(
+            dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
+        )
+
+        valid_dataset = MnistReIDQGDataset(
+            root=os.getcwd(), transform=transforms, gallery_fraq=0.2
+        )
+        valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
+
+        # 2. model and optimizer
+        model = models.MnistSimpleNet(out_features=16)
+        optimizer = Adam(model.parameters(), lr=0.001)
+
+        # 3. criterion with triplets sampling
+        sampler_inbatch = data.AllTripletsSampler(max_output_triplets=1000)
+        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)
+
+        # 4. training with catalyst Runner
+        callbacks = [
+            dl.ControlFlowCallback(
+                dl.CriterionCallback(
+                    input_key="embeddings", target_key="targets", metric_key="loss"
+                ),
+                loaders="train",
+            ),
+            dl.ControlFlowCallback(
+                dl.ReidCMCScoreCallback(
+                    embeddings_key="embeddings",
+                    pids_key="targets",
+                    cids_key="cids",
+                    is_query_key="is_query",
+                    topk_args=[1],
+                ),
+                loaders="valid",
+            ),
+            dl.PeriodicLoaderCallback(
+                valid_loader_key="valid", valid_metric_key="cmc01", minimize=False, valid=2
+            ),
+        ]
+
+        runner = ReIDCustomRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            callbacks=callbacks,
+            loaders=OrderedDict({"train": train_loader, "valid": valid_loader}),
+            verbose=False,
+            logdir=logdir,
+            valid_loader="valid",
+            valid_metric="cmc01",
+            minimize_valid_metric=False,
+            num_epochs=6,
+        )
+        assert "cmc01" in runner.loader_metrics
+        assert runner.loader_metrics["cmc01"] > 0.7

@@ -2,6 +2,11 @@
 
 from catalyst.settings import SETTINGS
 
+from catalyst.contrib.datasets.market1501 import (
+    Market1501MLDataset,
+    Market1501QGDataset,
+)
+
 from catalyst.contrib.datasets.mnist import (
     MnistMLDataset,
     MnistQGDataset,

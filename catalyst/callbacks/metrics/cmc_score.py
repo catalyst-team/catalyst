@@ -1,7 +1,7 @@
 from typing import List
 
 from catalyst.callbacks.metric import LoaderMetricCallback
-from catalyst.metrics._cmc_score import CMCMetric
+from catalyst.metrics._cmc_score import CMCMetric, ReidCMCMetric
 
 
 class CMCScoreCallback(LoaderMetricCallback):
@@ -62,4 +62,48 @@ class CMCScoreCallback(LoaderMetricCallback):
         )
 
 
-__all__ = ["CMCScoreCallback"]
+class ReidCMCScoreCallback(LoaderMetricCallback):
+    """
+    Cumulative Matching Characteristics callback for reID case.
+    More information about cmc-based callbacks in CMCScoreCallback's docs.
+
+    Args:
+        embeddings_key: embeddings key in output dict
+        pids_key: pids key in output dict
+        cids_key: cids key in output dict
+        is_query_key: bool key True if current object is from query
+        topk_args: specifies which cmc@K to log.
+            [1] - cmc@1
+            [1, 3] - cmc@1 and cmc@3
+            [1, 3, 5] - cmc@1, cmc@3 and cmc@5
+        prefix: metric prefix
+        suffix: metric suffix
+    """
+
+    def __init__(
+        self,
+        embeddings_key: str,
+        pids_key: str,
+        cids_key: str,
+        is_query_key: str,
+        topk_args: List[int] = None,
+        prefix: str = None,
+        suffix: str = None,
+    ):
+        """Init."""
+        super().__init__(
+            metric=ReidCMCMetric(
+                embeddings_key=embeddings_key,
+                pids_key=pids_key,
+                cids_key=cids_key,
+                is_query_key=is_query_key,
+                topk_args=topk_args,
+                prefix=prefix,
+                suffix=suffix,
+            ),
+            input_key=[embeddings_key, is_query_key],
+            target_key=[pids_key, cids_key],
+        )
+
+
+__all__ = ["CMCScoreCallback", "ReidCMCScoreCallback"]
