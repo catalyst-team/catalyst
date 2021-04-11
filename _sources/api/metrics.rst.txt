@@ -123,6 +123,13 @@ CMCMetric
     :undoc-members:
     :show-inheritance:
 
+ReidCMCMetric
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._cmc_score.ReidCMCMetric
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 RecSys – HitrateMetric
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._hitrate.HitrateMetric

@@ -360,7 +360,48 @@
     <span class="k">return</span> <span class="n">cmc_score_count</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">conformity_matrix</span><span class="p">,</span> <span class="n">topk</span><span class="p">)</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cmc_score_count&quot;</span><span class="p">,</span> <span class="s2">&quot;cmc_score&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="masked_cmc_score"><a class="viewcode-back" href="../../../../api/metrics.html#catalyst.metrics.functional._cmc_score.masked_cmc_score">[docs]</a><span class="k">def</span> <span class="nf">masked_cmc_score</span><span class="p">(</span>
+    <span class="n">query_embeddings</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">gallery_embeddings</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">conformity_matrix</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">available_samples</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span>
+    <span class="n">topk</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        query_embeddings: tensor shape of (n_embeddings, embedding_dim)</span>
+<span class="sd">            embeddings of the objects in query</span>
+<span class="sd">        gallery_embeddings: tensor shape of (n_embeddings, embedding_dim)</span>
+<span class="sd">            embeddings of the objects in gallery</span>
+<span class="sd">        conformity_matrix: binary matrix with 1 on same label pos</span>
+<span class="sd">            and 0 otherwise</span>
+<span class="sd">        available_samples: tensor of shape (query_size, gallery_size),</span>
+<span class="sd">            available_samples[i][j] == 1 means that j-th element of gallery</span>
+<span class="sd">            should be used while scoring i-th query one</span>
+<span class="sd">        topk: number of top examples for cumulative score counting</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        cmc score with mask</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if there are items that have different labels and are</span>
+<span class="sd">            unavailable for each other according to availability matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">available_samples</span><span class="p">[</span><span class="n">conformity_matrix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;There is something wrong with available_samples matrix.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;If we calculate masked_cmc_score for person pid_i, we should &quot;</span>
+            <span class="s2">&quot;take into account all the photos of people other than pid_i; &quot;</span>
+            <span class="s2">&quot;it means that all of them should be available according to &quot;</span>
+            <span class="s2">&quot;available_samples matrix.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;It seems that it&#39;s not so for your one.&quot;</span>
+        <span class="p">)</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">query_embeddings</span><span class="p">,</span> <span class="n">gallery_embeddings</span><span class="p">)</span>
+    <span class="n">distances</span><span class="p">[</span><span class="o">~</span><span class="n">available_samples</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">cmc_score_count</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">conformity_matrix</span><span class="p">,</span> <span class="n">topk</span><span class="p">)</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;cmc_score_count&quot;</span><span class="p">,</span> <span class="s2">&quot;cmc_score&quot;</span><span class="p">,</span> <span class="s2">&quot;masked_cmc_score&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

@@ -313,7 +313,7 @@
 <span class="kn">import</span> <span class="nn">torch</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.metrics._metric</span> <span class="kn">import</span> <span class="n">AccumulationMetric</span>
-<span class="kn">from</span> <span class="nn">catalyst.metrics.functional._cmc_score</span> <span class="kn">import</span> <span class="n">cmc_score</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics.functional._cmc_score</span> <span class="kn">import</span> <span class="n">cmc_score</span><span class="p">,</span> <span class="n">masked_cmc_score</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_rank</span>
 
 
@@ -494,7 +494,123 @@
         <span class="k">return</span> <span class="n">kv_metrics</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CMCMetric&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="ReidCMCMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._cmc_score.ReidCMCMetric">[docs]</a><span class="k">class</span> <span class="nc">ReidCMCMetric</span><span class="p">(</span><span class="n">AccumulationMetric</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Cumulative Matching Characteristics for Reid case</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        embeddings_key: key of embedding tensor in batch</span>
+<span class="sd">        pids_key: key of pids tensor in batch</span>
+<span class="sd">        cids_key: key of cids tensor in batch</span>
+<span class="sd">        is_query_key: key of query flag tensor in batch</span>
+<span class="sd">        topk_args: list of k, specifies which cmc@k should be calculated</span>
+<span class="sd">        compute_on_call: if True, allows compute metric&#39;s value on call</span>
+<span class="sd">        prefix: metric prefix</span>
+<span class="sd">        suffix: metric suffix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">embeddings_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pids_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">cids_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">is_query_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">topk_args</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Init CMCMetric&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span>
+            <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+            <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+            <span class="n">accumulative_fields</span><span class="o">=</span><span class="p">[</span><span class="n">embeddings_key</span><span class="p">,</span> <span class="n">pids_key</span><span class="p">,</span> <span class="n">cids_key</span><span class="p">,</span> <span class="n">is_query_key</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">embeddings_key</span> <span class="o">=</span> <span class="n">embeddings_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pids_key</span> <span class="o">=</span> <span class="n">pids_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cids_key</span> <span class="o">=</span> <span class="n">cids_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_query_key</span> <span class="o">=</span> <span class="n">is_query_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span> <span class="o">=</span> <span class="n">topk_args</span> <span class="ow">or</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}</span><span class="s2">cmc</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_batches</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset metrics fields</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            num_batches: expected number of batches</span>
+<span class="sd">            num_samples: expected number of samples to accumulate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">get_rank</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;No DDP support implemented yet&quot;</span>
+
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute cmc@k metrics with all the accumulated data for all k.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            list of metrics values</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if there are samples in query that have no relevant samples in gallery</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">query_mask</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">is_query_key</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+
+        <span class="n">embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">embeddings_key</span><span class="p">]</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+        <span class="n">pids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pids_key</span><span class="p">]</span>
+        <span class="n">cids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">cids_key</span><span class="p">]</span>
+
+        <span class="n">query_embeddings</span> <span class="o">=</span> <span class="n">embeddings</span><span class="p">[</span><span class="n">query_mask</span><span class="p">]</span>
+        <span class="n">query_pids</span> <span class="o">=</span> <span class="n">pids</span><span class="p">[</span><span class="n">query_mask</span><span class="p">]</span>
+        <span class="n">query_cids</span> <span class="o">=</span> <span class="n">cids</span><span class="p">[</span><span class="n">query_mask</span><span class="p">]</span>
+
+        <span class="n">gallery_embeddings</span> <span class="o">=</span> <span class="n">embeddings</span><span class="p">[</span><span class="o">~</span><span class="n">query_mask</span><span class="p">]</span>
+        <span class="n">gallery_pids</span> <span class="o">=</span> <span class="n">pids</span><span class="p">[</span><span class="o">~</span><span class="n">query_mask</span><span class="p">]</span>
+        <span class="n">gallery_cids</span> <span class="o">=</span> <span class="n">cids</span><span class="p">[</span><span class="o">~</span><span class="n">query_mask</span><span class="p">]</span>
+
+        <span class="n">pid_conformity_matrix</span> <span class="o">=</span> <span class="p">(</span><span class="n">gallery_pids</span> <span class="o">==</span> <span class="n">query_pids</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+        <span class="n">cid_conformity_matrix</span> <span class="o">=</span> <span class="p">(</span><span class="n">gallery_cids</span> <span class="o">==</span> <span class="n">query_cids</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+
+        <span class="c1"># Now we are going to generate a mask that should show if</span>
+        <span class="c1"># a sample from gallery can be used during model scoring on the query</span>
+        <span class="c1"># sample.</span>
+        <span class="c1"># There is only one case when the label shouldn&#39;t be used for:</span>
+        <span class="c1"># if query sample is a photo of the person pid_i taken from camera</span>
+        <span class="c1"># cam_j and the gallery sample is a photo of the same person pid_i</span>
+        <span class="c1"># from the same camera cam_j. All other cases are available.</span>
+        <span class="n">available_samples</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="n">pid_conformity_matrix</span> <span class="o">*</span> <span class="n">cid_conformity_matrix</span><span class="p">)</span><span class="o">.</span><span class="n">bool</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">available_samples</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There is a sample in query that has no relevant samples in gallery.&quot;</span><span class="p">)</span>
+
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">masked_cmc_score</span><span class="p">(</span>
+                <span class="n">query_embeddings</span><span class="o">=</span><span class="n">query_embeddings</span><span class="p">,</span>
+                <span class="n">gallery_embeddings</span><span class="o">=</span><span class="n">gallery_embeddings</span><span class="p">,</span>
+                <span class="n">conformity_matrix</span><span class="o">=</span><span class="n">pid_conformity_matrix</span><span class="p">,</span>
+                <span class="n">available_samples</span><span class="o">=</span><span class="n">available_samples</span><span class="p">,</span>
+                <span class="n">topk</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">metrics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">metrics</span>
+
+    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute cmc@k metrics with all the accumulated data for all k.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            metrics values in key-value format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="n">kv_metrics</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}{</span><span class="n">k</span><span class="si">:</span><span class="s2">02d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">topk_args</span><span class="p">,</span> <span class="n">values</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">kv_metrics</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CMCMetric&quot;</span><span class="p">,</span> <span class="s2">&quot;ReidCMCMetric&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

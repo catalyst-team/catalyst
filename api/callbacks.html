@@ -352,15 +352,16 @@
 <li><p><a class="reference internal" href="#classification-precisionrecallf1supportcallback" id="id27">Classification – PrecisionRecallF1SupportCallback</a></p></li>
 <li><p><a class="reference internal" href="#classification-multilabelprecisionrecallf1supportcallback" id="id28">Classification – MultilabelPrecisionRecallF1SupportCallback</a></p></li>
 <li><p><a class="reference internal" href="#cmcscorecallback" id="id29">CMCScoreCallback</a></p></li>
-<li><p><a class="reference internal" href="#confusionmatrixcallback" id="id30">ConfusionMatrixCallback</a></p></li>
-<li><p><a class="reference internal" href="#functionalmetriccallback" id="id31">FunctionalMetricCallback</a></p></li>
-<li><p><a class="reference internal" href="#recsys-hitratecallback" id="id32">RecSys – HitrateCallback</a></p></li>
-<li><p><a class="reference internal" href="#recsys-mapcallback" id="id33">RecSys – MAPCallback</a></p></li>
-<li><p><a class="reference internal" href="#recsys-mrrcallback" id="id34">RecSys – MRRCallback</a></p></li>
-<li><p><a class="reference internal" href="#recsys-ndcgcallback" id="id35">RecSys – NDCGCallback</a></p></li>
-<li><p><a class="reference internal" href="#segmentation-dicecallback" id="id36">Segmentation – DiceCallback</a></p></li>
-<li><p><a class="reference internal" href="#segmentation-ioucallback" id="id37">Segmentation – IOUCallback</a></p></li>
-<li><p><a class="reference internal" href="#segmentation-trevskycallback" id="id38">Segmentation – TrevskyCallback</a></p></li>
+<li><p><a class="reference internal" href="#reidcmcscorecallback" id="id30">ReidCMCScoreCallback</a></p></li>
+<li><p><a class="reference internal" href="#confusionmatrixcallback" id="id31">ConfusionMatrixCallback</a></p></li>
+<li><p><a class="reference internal" href="#functionalmetriccallback" id="id32">FunctionalMetricCallback</a></p></li>
+<li><p><a class="reference internal" href="#recsys-hitratecallback" id="id33">RecSys – HitrateCallback</a></p></li>
+<li><p><a class="reference internal" href="#recsys-mapcallback" id="id34">RecSys – MAPCallback</a></p></li>
+<li><p><a class="reference internal" href="#recsys-mrrcallback" id="id35">RecSys – MRRCallback</a></p></li>
+<li><p><a class="reference internal" href="#recsys-ndcgcallback" id="id36">RecSys – NDCGCallback</a></p></li>
+<li><p><a class="reference internal" href="#segmentation-dicecallback" id="id37">Segmentation – DiceCallback</a></p></li>
+<li><p><a class="reference internal" href="#segmentation-ioucallback" id="id38">Segmentation – IOUCallback</a></p></li>
+<li><p><a class="reference internal" href="#segmentation-trevskycallback" id="id39">Segmentation – TrevskyCallback</a></p></li>
 </ul>
 </li>
 </ul>
@@ -1751,8 +1752,35 @@ Loaders should contain “is_query” and “label” key.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="reidcmcscorecallback">
+<h3><a class="toc-backref" href="#id30">ReidCMCScoreCallback</a><a class="headerlink" href="#reidcmcscorecallback" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.callbacks.metrics.cmc_score.ReidCMCScoreCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.cmc_score.</code><code class="sig-name descname">ReidCMCScoreCallback</code><span class="sig-paren">(</span><em class="sig-param">embeddings_key: str</em>, <em class="sig-param">pids_key: str</em>, <em class="sig-param">cids_key: str</em>, <em class="sig-param">is_query_key: str</em>, <em class="sig-param">topk_args: List[int] = None</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/cmc_score.html#ReidCMCScoreCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.cmc_score.ReidCMCScoreCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.callbacks.metric.LoaderMetricCallback" title="catalyst.callbacks.metric.LoaderMetricCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.callbacks.metric.LoaderMetricCallback</span></code></a></p>
+<p>Cumulative Matching Characteristics callback for reID case.
+More information about cmc-based callbacks in CMCScoreCallback’s docs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embeddings_key</strong> – embeddings key in output dict</p></li>
+<li><p><strong>pids_key</strong> – pids key in output dict</p></li>
+<li><p><strong>cids_key</strong> – cids key in output dict</p></li>
+<li><p><strong>is_query_key</strong> – bool key True if current object is from query</p></li>
+<li><p><strong>topk_args</strong> – specifies which cmc&#64;K to log.
+[1] - cmc&#64;1
+[1, 3] - cmc&#64;1 and cmc&#64;3
+[1, 3, 5] - cmc&#64;1, cmc&#64;3 and cmc&#64;5</p></li>
+<li><p><strong>prefix</strong> – metric prefix</p></li>
+<li><p><strong>suffix</strong> – metric suffix</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="confusionmatrixcallback">
-<h3><a class="toc-backref" href="#id30">ConfusionMatrixCallback</a><a class="headerlink" href="#confusionmatrixcallback" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id31">ConfusionMatrixCallback</a><a class="headerlink" href="#confusionmatrixcallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.confusion_matrix.ConfusionMatrixCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.confusion_matrix.</code><code class="sig-name descname">ConfusionMatrixCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">class_names: List[str] = None</em>, <em class="sig-param">num_classes: int = None</em>, <em class="sig-param">normalized: bool = False</em>, <em class="sig-param">plot_params: Dict = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/confusion_matrix.html#ConfusionMatrixCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.confusion_matrix.ConfusionMatrixCallback" title="Permalink to this definition">¶</a></dt>
@@ -1779,7 +1807,7 @@ Loaders should contain “is_query” and “label” key.</p>
 
 </div>
 <div class="section" id="functionalmetriccallback">
-<h3><a class="toc-backref" href="#id31">FunctionalMetricCallback</a><a class="headerlink" href="#functionalmetriccallback" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id32">FunctionalMetricCallback</a><a class="headerlink" href="#functionalmetriccallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.functional_metric.</code><code class="sig-name descname">FunctionalMetricCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: Union[str, Iterable[str], Dict[str, str]], target_key: Union[str, Iterable[str], Dict[str, str]], metric_fn: Callable, metric_key: str, compute_on_call: bool = True, log_on_batch: bool = True, prefix: str = None, suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/functional_metric.html#FunctionalMetricCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.functional_metric.FunctionalMetricCallback" title="Permalink to this definition">¶</a></dt>
@@ -1803,7 +1831,7 @@ Used for per-batch logging. default: True</p></li>
 
 </div>
 <div class="section" id="recsys-hitratecallback">
-<h3><a class="toc-backref" href="#id32">RecSys – HitrateCallback</a><a class="headerlink" href="#recsys-hitratecallback" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id33">RecSys – HitrateCallback</a><a class="headerlink" href="#recsys-hitratecallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.recsys.HitrateCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.recsys.</code><code class="sig-name descname">HitrateCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">topk_args: List[int] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/recsys.html#HitrateCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.recsys.HitrateCallback" title="Permalink to this definition">¶</a></dt>
@@ -1829,7 +1857,7 @@ Computes  <a class="reference external" href="mailto:HR&#37;&#52;&#48;topk">HR<s
 
 </div>
 <div class="section" id="recsys-mapcallback">
-<h3><a class="toc-backref" href="#id33">RecSys – MAPCallback</a><a class="headerlink" href="#recsys-mapcallback" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id34">RecSys – MAPCallback</a><a class="headerlink" href="#recsys-mapcallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.recsys.MAPCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.recsys.</code><code class="sig-name descname">MAPCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">topk_args: List[int] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/recsys.html#MAPCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.recsys.MAPCallback" title="Permalink to this definition">¶</a></dt>
@@ -1856,7 +1884,7 @@ Computes  <a class="reference external" href="mailto:MAP&#37;&#52;&#48;topk">MAP
 
 </div>
 <div class="section" id="recsys-mrrcallback">
-<h3><a class="toc-backref" href="#id34">RecSys – MRRCallback</a><a class="headerlink" href="#recsys-mrrcallback" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id35">RecSys – MRRCallback</a><a class="headerlink" href="#recsys-mrrcallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.recsys.MRRCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.recsys.</code><code class="sig-name descname">MRRCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">topk_args: List[int] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/recsys.html#MRRCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.recsys.MRRCallback" title="Permalink to this definition">¶</a></dt>
@@ -1883,7 +1911,7 @@ Computes  <a class="reference external" href="mailto:MRR&#37;&#52;&#48;topk">MRR
 
 </div>
 <div class="section" id="recsys-ndcgcallback">
-<h3><a class="toc-backref" href="#id35">RecSys – NDCGCallback</a><a class="headerlink" href="#recsys-ndcgcallback" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id36">RecSys – NDCGCallback</a><a class="headerlink" href="#recsys-ndcgcallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.recsys.NDCGCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.recsys.</code><code class="sig-name descname">NDCGCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">topk_args: List[int] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/recsys.html#NDCGCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.recsys.NDCGCallback" title="Permalink to this definition">¶</a></dt>
@@ -1910,7 +1938,7 @@ Computes  <a class="reference external" href="mailto:NDCG&#37;&#52;&#48;topk">ND
 
 </div>
 <div class="section" id="segmentation-dicecallback">
-<h3><a class="toc-backref" href="#id36">Segmentation – DiceCallback</a><a class="headerlink" href="#segmentation-dicecallback" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id37">Segmentation – DiceCallback</a><a class="headerlink" href="#segmentation-dicecallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.segmentation.DiceCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.segmentation.</code><code class="sig-name descname">DiceCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/segmentation.html#DiceCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.segmentation.DiceCallback" title="Permalink to this definition">¶</a></dt>
@@ -1935,7 +1963,7 @@ Computes  <a class="reference external" href="mailto:NDCG&#37;&#52;&#48;topk">ND
 
 </div>
 <div class="section" id="segmentation-ioucallback">
-<h3><a class="toc-backref" href="#id37">Segmentation – IOUCallback</a><a class="headerlink" href="#segmentation-ioucallback" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id38">Segmentation – IOUCallback</a><a class="headerlink" href="#segmentation-ioucallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.segmentation.IOUCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.segmentation.</code><code class="sig-name descname">IOUCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/segmentation.html#IOUCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.segmentation.IOUCallback" title="Permalink to this definition">¶</a></dt>
@@ -1960,7 +1988,7 @@ Computes  <a class="reference external" href="mailto:NDCG&#37;&#52;&#48;topk">ND
 
 </div>
 <div class="section" id="segmentation-trevskycallback">
-<h3><a class="toc-backref" href="#id38">Segmentation – TrevskyCallback</a><a class="headerlink" href="#segmentation-trevskycallback" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id39">Segmentation – TrevskyCallback</a><a class="headerlink" href="#segmentation-trevskycallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metrics.segmentation.TrevskyCallback">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metrics.segmentation.</code><code class="sig-name descname">TrevskyCallback</code><span class="sig-paren">(</span><em class="sig-param">input_key: str</em>, <em class="sig-param">target_key: str</em>, <em class="sig-param">alpha: float</em>, <em class="sig-param">beta: Optional[float] = None</em>, <em class="sig-param">class_dim: int = 1</em>, <em class="sig-param">weights: Optional[List[float]] = None</em>, <em class="sig-param">class_names: Optional[List[str]] = None</em>, <em class="sig-param">threshold: Optional[float] = None</em>, <em class="sig-param">log_on_batch: bool = True</em>, <em class="sig-param">prefix: str = None</em>, <em class="sig-param">suffix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metrics/segmentation.html#TrevskyCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metrics.segmentation.TrevskyCallback" title="Permalink to this definition">¶</a></dt>
@@ -2058,6 +2086,7 @@ Computes  <a class="reference external" href="mailto:NDCG&#37;&#52;&#48;topk">ND
 <li><a class="reference internal" href="#classification-precisionrecallf1supportcallback">Classification – PrecisionRecallF1SupportCallback</a></li>
 <li><a class="reference internal" href="#classification-multilabelprecisionrecallf1supportcallback">Classification – MultilabelPrecisionRecallF1SupportCallback</a></li>
 <li><a class="reference internal" href="#cmcscorecallback">CMCScoreCallback</a></li>
+<li><a class="reference internal" href="#reidcmcscorecallback">ReidCMCScoreCallback</a></li>
 <li><a class="reference internal" href="#confusionmatrixcallback">ConfusionMatrixCallback</a></li>
 <li><a class="reference internal" href="#functionalmetriccallback">FunctionalMetricCallback</a></li>
 <li><a class="reference internal" href="#recsys-hitratecallback">RecSys – HitrateCallback</a></li>

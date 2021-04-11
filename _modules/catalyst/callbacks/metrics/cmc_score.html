@@ -311,7 +311,7 @@
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.metric</span> <span class="kn">import</span> <span class="n">LoaderMetricCallback</span>
-<span class="kn">from</span> <span class="nn">catalyst.metrics._cmc_score</span> <span class="kn">import</span> <span class="n">CMCMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics._cmc_score</span> <span class="kn">import</span> <span class="n">CMCMetric</span><span class="p">,</span> <span class="n">ReidCMCMetric</span>
 
 
 <div class="viewcode-block" id="CMCScoreCallback"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.callbacks.metrics.cmc_score.CMCScoreCallback">[docs]</a><span class="k">class</span> <span class="nc">CMCScoreCallback</span><span class="p">(</span><span class="n">LoaderMetricCallback</span><span class="p">):</span>
@@ -372,7 +372,51 @@
         <span class="p">)</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CMCScoreCallback&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="ReidCMCScoreCallback"><a class="viewcode-back" href="../../../../api/callbacks.html#catalyst.callbacks.metrics.cmc_score.ReidCMCScoreCallback">[docs]</a><span class="k">class</span> <span class="nc">ReidCMCScoreCallback</span><span class="p">(</span><span class="n">LoaderMetricCallback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cumulative Matching Characteristics callback for reID case.</span>
+<span class="sd">    More information about cmc-based callbacks in CMCScoreCallback&#39;s docs.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        embeddings_key: embeddings key in output dict</span>
+<span class="sd">        pids_key: pids key in output dict</span>
+<span class="sd">        cids_key: cids key in output dict</span>
+<span class="sd">        is_query_key: bool key True if current object is from query</span>
+<span class="sd">        topk_args: specifies which cmc@K to log.</span>
+<span class="sd">            [1] - cmc@1</span>
+<span class="sd">            [1, 3] - cmc@1 and cmc@3</span>
+<span class="sd">            [1, 3, 5] - cmc@1, cmc@3 and cmc@5</span>
+<span class="sd">        prefix: metric prefix</span>
+<span class="sd">        suffix: metric suffix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">embeddings_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">pids_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">cids_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">is_query_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">topk_args</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">metric</span><span class="o">=</span><span class="n">ReidCMCMetric</span><span class="p">(</span>
+                <span class="n">embeddings_key</span><span class="o">=</span><span class="n">embeddings_key</span><span class="p">,</span>
+                <span class="n">pids_key</span><span class="o">=</span><span class="n">pids_key</span><span class="p">,</span>
+                <span class="n">cids_key</span><span class="o">=</span><span class="n">cids_key</span><span class="p">,</span>
+                <span class="n">is_query_key</span><span class="o">=</span><span class="n">is_query_key</span><span class="p">,</span>
+                <span class="n">topk_args</span><span class="o">=</span><span class="n">topk_args</span><span class="p">,</span>
+                <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="p">[</span><span class="n">embeddings_key</span><span class="p">,</span> <span class="n">is_query_key</span><span class="p">],</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="p">[</span><span class="n">pids_key</span><span class="p">,</span> <span class="n">cids_key</span><span class="p">],</span>
+        <span class="p">)</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;CMCScoreCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;ReidCMCScoreCallback&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
