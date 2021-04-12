@@ -18,6 +18,7 @@ from catalyst.core.logger import ILogger
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
+from catalyst.data.loader import ILoaderWrapper
 from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
@@ -41,7 +42,7 @@ from catalyst.utils.torch import get_available_engine
 def _process_loaders(
     loaders: "OrderedDict[str, DataLoader]", initial_seed: int
 ) -> "OrderedDict[str, DataLoader]":
-    if not isinstance(loaders[list(loaders.keys())[0]], DataLoader):
+    if not isinstance(loaders[list(loaders.keys())[0]], (DataLoader, ILoaderWrapper)):
         loaders = get_loaders_from_params(initial_seed=initial_seed, **loaders)
     return loaders
 

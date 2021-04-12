@@ -303,4 +303,4 @@ class BatchPrefetchLoaderWrapper(ILoaderWrapper):
         return _prefetch_loader(self.origin, self.num_prefetches)
 
 
-__all__ = ["BatchLimitLoaderWrapper", "BatchPrefetchLoaderWrapper"]
+__all__ = ["ILoaderWrapper", "BatchLimitLoaderWrapper", "BatchPrefetchLoaderWrapper"]
