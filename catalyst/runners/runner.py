@@ -135,10 +135,10 @@ class Runner(IRunner):
         if not is_logger_exists(ConsoleLogger):
             loggers["_console"] = ConsoleLogger()
         if self._logdir is not None and not is_logger_exists(CSVLogger):
-            loggers["_csv"] = CSVLogger(logdir=self._logdir)
+            loggers["_csv"] = CSVLogger(logdir=self._logdir, use_logdir_postfix=True)
         if self._logdir is not None and not is_logger_exists(TensorboardLogger):
             loggers["_tensorboard"] = TensorboardLogger(
-                logdir=os.path.join(self._logdir, "tensorboard")
+                logdir=self._logdir, use_logdir_postfix=True
             )
 
         return loggers
@@ -272,7 +272,7 @@ class Runner(IRunner):
             valid_metric: the key to the name of the metric
                 by which the checkpoints will be selected.
             minimize_valid_metric: flag to indicate whether
-                the ``valid_metric`` should be minimized or not.
+                the ``valid_metric`` should be minimized or not (default: True).
             verbose: if `True`, it displays the status of the training to the console.
             timeit: if True, computes the execution time
                 of training process and displays it to the console.

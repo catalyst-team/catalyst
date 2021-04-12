@@ -118,7 +118,7 @@ def _wrap_into_data_parallel_with_apex(
         model = {k: nn.DataParallel(v[0]) for k, v in model.items()}
         model = {k: _patch_forward(v) for k, v in model.items()}
     else:
-        raise NotImplementedError()
+        raise ValueError("Model should be ``nn.Module`` or ``dict``")
 
     return model, optimizer
 

@@ -192,7 +192,7 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         """
         kv_metrics = {}
         for aggregation_name, aggregated_metrics in zip(
-            ("micro", "macro", "weighted"), (micro, macro, weighted)
+            ("_micro", "_macro", "_weighted"), (micro, macro, weighted)
         ):
             metrics = {
                 f"{metric_name}/{aggregation_name}": metric_value

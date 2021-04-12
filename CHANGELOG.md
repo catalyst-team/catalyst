@@ -13,10 +13,15 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - CMC score and callback for ReID task (ReidCMCMetric and ReidCMCScoreCallback) ([#1170](https://github.com/catalyst-team/catalyst/pull/1170))
 - Market1501 metric learning datasets (Market1501MLDataset and Market1501QGDataset) ([#1170](https://github.com/catalyst-team/catalyst/pull/1170))
 - extra kwargs support for Engines ([#1156](https://github.com/catalyst-team/catalyst/pull/1156))
+- engines exception for unknown model type ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- a few docs to the supported loggers ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 
 ### Changed
 
--
+- ``TensorboardLogger`` switched from ``global_batch_step`` counter to ``global_sample_step`` one ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- ``TensorboardLogger`` logs loader metric ``on_loader_end`` rather than ``on_epoch_end`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- ``prefix`` renamed to ``metric_key`` for ``MetricAggregationCallback`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- ``micro``, ``macro`` and ``weighted`` aggregations renamed to ``_micro``, ``_macro`` and ``_weighted`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 
 ### Removed
 
@@ -25,13 +30,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - hitrate calculation issue ([#1155](https://github.com/catalyst-team/catalyst/issues/1155))
+- ILoader wrapper usage issue with Runner ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 
 ## [21.03.2] - 2021-03-29
 
 ### Fixed
 
 - minimal requirements issue ([#1147](https://github.com/catalyst-team/catalyst/issues/1147))
-- nested dicts in `loaders_params`/`samplers_params` overriding issue ([#1150](https://github.com/catalyst-team/catalyst/pull/1150))
+- nested dicts in `loaders_params`/`samplers_params` overriding isfull DDP ([#1150](https://github.com/catalyst-team/catalyst/pull/1150))
 
 ## [21.03.1] - 2021-03-28
 

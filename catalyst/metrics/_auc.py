@@ -60,7 +60,9 @@ class AUCMetric(ICallbackLoaderMetric):
             f"{self.metric_name}/class_{i:02d}": value.item()
             for i, value in enumerate(per_class_auc)
         }
-        output[self.metric_name] = per_class_auc.mean().item()
+        macro_auc = per_class_auc.mean().item()
+        output[self.metric_name] = macro_auc
+        output[f"{self.metric_name}/_macro"] = macro_auc
         return output
 
 

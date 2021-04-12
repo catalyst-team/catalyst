@@ -55,7 +55,9 @@ def test_aggregation_1():
             ),
             # loss aggregation
             dl.MetricAggregationCallback(
-                prefix="loss", metrics={"loss_focal": 0.6, "loss_bce": 0.4}, mode="weighted_sum"
+                metric_key="loss",
+                metrics={"loss_focal": 0.6, "loss_bce": 0.4},
+                mode="weighted_sum",
             ),
         ],
     )
@@ -101,7 +103,7 @@ def test_aggregation_2():
                 criterion_key="focal",
             ),
             # loss aggregation
-            dl.MetricAggregationCallback(prefix="loss", mode=aggregation_function),
+            dl.MetricAggregationCallback(metric_key="loss", mode=aggregation_function),
         ],
     )
     for loader in ["train", "valid"]:

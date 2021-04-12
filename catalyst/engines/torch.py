@@ -247,6 +247,8 @@ class DataParallelEngine(DeviceEngine):
             model = nn.DataParallel(model)
         elif isinstance(model, dict):
             model = {k: nn.DataParallel(v) for k, v in model.items()}
+        else:
+            raise ValueError("Model should be ``nn.Module`` or ``dict``")
 
         # criterion
         criterion = criterion_fn()
@@ -443,6 +445,8 @@ class DistributedDataParallelEngine(DeviceEngine):
             model = DistributedDataParallel(model, **self.ddp_kwargs)
         elif isinstance(model, dict):
             model = {k: DistributedDataParallel(v, **self.ddp_kwargs) for k, v in model.items()}
+        else:
+            raise ValueError("Model should be ``nn.Module`` or ``dict``")
         # criterion
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
@@ -471,7 +475,6 @@ class DistributedDataParallelEngine(DeviceEngine):
     def optimizer_step(self, loss, model, optimizer) -> None:
         """Abstraction over ``optimizer.step()`` step."""
         optimizer.step()
-        # dist.barrier()
 
 
 __all__ = ["DeviceEngine", "DataParallelEngine", "DistributedDataParallelEngine"]
