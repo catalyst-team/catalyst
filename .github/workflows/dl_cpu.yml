@@ -45,9 +45,7 @@ jobs:
             os: ubuntu-20.04
             requirements: minimal
 
-    timeout-minutes: 30
-    max_attempts: 4
-    retry_on: timeout
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v2
 
@@ -109,6 +107,11 @@ jobs:
 # <- standard block end ->
 
       - name: check examples
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 15
+          max-attempts: 4
+          retry-on: timeout
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
         run: |
