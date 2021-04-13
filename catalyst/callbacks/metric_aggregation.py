@@ -35,7 +35,7 @@ class MetricAggregationCallback(Callback):
         prefix: deprecated alias for ``metric_key``
 
     Python example - loss is a weighted sum of cross entropy loss and binary cross entropy loss:
-    
+
     .. code-block:: python
 
         import torch

@@ -2,10 +2,9 @@ from typing import Tuple
 
 import numpy as np
 import torch
-from torch.nn import functional as F
 
 
-def _binary_auc(
+def binary_auc(
     scores: torch.Tensor, targets: torch.Tensor
 ) -> Tuple[float, np.ndarray, np.ndarray]:
     """
@@ -18,6 +17,10 @@ def _binary_auc(
     Returns:
         Tuple[float, np.ndarray, np.ndarray]: measured roc-auc,
         true positive rate, false positive rate
+
+    .. warning::
+
+        This metric is under API improvement.
     """
     targets = targets.numpy()
 
@@ -52,11 +55,11 @@ def _binary_auc(
     return area, tpr, fpr
 
 
-def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+def auc(scores: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     """Computes ROC-AUC.
 
     Args:
-        outputs: NxK tensor that for each of the N examples
+        scores: NxK tensor that for each of the N examples
             indicates the probability of the example belonging to each of
             the K classes, according to the model.
         targets:  binary NxK tensort that encodes which of the K
@@ -69,7 +72,7 @@ def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
 
     Example:
         >>> auc(
-        >>>     outputs=torch.tensor([
+        >>>     scores=torch.tensor([
         >>>         [0.9, 0.1],
         >>>         [0.1, 0.9],
         >>>     ]),
@@ -80,7 +83,7 @@ def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         >>> )
         tensor([1., 1.])
         >>> auc(
-        >>>     outputs=torch.tensor([
+        >>>     scores=torch.tensor([
         >>>         [0.9],
         >>>         [0.8],
         >>>         [0.7],
@@ -106,30 +109,24 @@ def auc(outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         >>>     ]),
         >>> )
         tensor([0.7500])
+
+    .. warning::
+
+        This metric is under API improvement.
     """
-    if len(outputs) == 0:
+    if len(scores) == 0:
         return 0.5
-
-    if len(outputs.shape) < 2:
-        outputs.unsqueeze_(dim=1)
-    if torch.max(outputs) > 1:
-        outputs = torch.sigmoid(outputs)
-    num_classes = outputs.shape[1]
-
+    if len(scores.shape) < 2:
+        scores.unsqueeze_(dim=1)
     if len(targets.shape) < 2:
-        targets = (
-            F.one_hot(targets, num_classes).float()
-            if num_classes > 1
-            else targets.unsqueeze_(dim=1)
-        )
-
-    assert outputs.shape == targets.shape
+        targets.unsqueeze_(dim=1)
+    assert scores.shape == targets.shape
 
     per_class_auc = []
-    for class_i in range(outputs.shape[1]):
-        per_class_auc.append(_binary_auc(outputs[:, class_i], targets[:, class_i])[0])
+    for class_i in range(scores.shape[1]):
+        per_class_auc.append(binary_auc(scores[:, class_i], targets[:, class_i])[0])
     output = torch.Tensor(per_class_auc)
     return output
 
 
-__all__ = ["auc"]
+__all__ = ["binary_auc", "auc"]

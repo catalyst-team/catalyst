@@ -10,12 +10,14 @@ from torch.utils.data import DataLoader
 
 
 class ILoaderWrapper:
-    def __init__(self, loader: DataLoader):
-        """Loader wrapper interface.
+    """Loader wrapper interface.
 
-        Args:
-            loader: torch dataloader.
-        """
+    Args:
+        loader: torch dataloader.
+    """
+
+    def __init__(self, loader: DataLoader):
+        """Init"""
         self.origin = loader
 
     def __getattr__(self, key):

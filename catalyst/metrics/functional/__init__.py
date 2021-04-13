@@ -10,7 +10,7 @@ from catalyst.metrics.functional._misc import (
 )
 
 from catalyst.metrics.functional._accuracy import accuracy, multilabel_accuracy
-from catalyst.metrics.functional._auc import auc
+from catalyst.metrics.functional._auc import auc, binary_auc
 from catalyst.metrics.functional._average_precision import (
     average_precision,
     mean_average_precision,

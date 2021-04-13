@@ -25,7 +25,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
--
+- auto ``torch.sigmoid`` usage for ``metrics.AUCMetric`` and ``metrics.auc`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 
 ### Fixed
 
@@ -37,7 +37,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - minimal requirements issue ([#1147](https://github.com/catalyst-team/catalyst/issues/1147))
-- nested dicts in `loaders_params`/`samplers_params` overriding isfull DDP ([#1150](https://github.com/catalyst-team/catalyst/pull/1150))
+- nested dicts in `loaders_params`/`samplers_params` overriding ([#1150](https://github.com/catalyst-team/catalyst/pull/1150))
 
 ## [21.03.1] - 2021-03-28
 
