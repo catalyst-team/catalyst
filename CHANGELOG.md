@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - hitrate calculation issue ([#1155](https://github.com/catalyst-team/catalyst/issues/1155))
 - ILoader wrapper usage issue with Runner ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- counters for ddp case ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 
 ## [21.03.2] - 2021-03-29
 
