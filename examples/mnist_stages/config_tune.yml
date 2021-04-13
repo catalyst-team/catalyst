@@ -123,8 +123,8 @@ stages:
         minimize: *minimize_valid_metric
         use_logdir_postfix: True
         use_runner_logdir: True
-      verbose:
-        _target_: TqdmCallback
+#      verbose:
+#        _target_: TqdmCallback
       optuna:
         _target_: OptunaPruningCallback
         loader_key: *valid_loader
