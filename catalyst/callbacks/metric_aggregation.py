@@ -32,7 +32,6 @@ class MetricAggregationCallback(Callback):
             depends on epochs and loader or something also
         scope: type of metric. Must be either ``batch`` or ``loader``
         multiplier: scale factor for the aggregated metric.
-        prefix: deprecated alias for ``metric_key``
 
     Python example - loss is a weighted sum of cross entropy loss and binary cross entropy loss:
 
@@ -115,16 +114,14 @@ class MetricAggregationCallback(Callback):
 
     def __init__(
         self,
-        metric_key: str = None,
+        metric_key: str,
         metrics: Union[str, List[str], Dict[str, float]] = None,
         mode: Union[str, Callable] = "mean",
         scope: str = "batch",
         multiplier: float = 1.0,
-        prefix: str = None,
     ) -> None:
         """Init."""
         super().__init__(order=CallbackOrder.metric_aggregation, node=CallbackNode.all)
-        metric_key = metric_key or prefix
         assert metric_key is not None, "metric_key should be specified"
 
         if metric_key is None or not isinstance(metric_key, str):
