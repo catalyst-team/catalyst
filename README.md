@@ -551,7 +551,7 @@ runner.train(
     verbose=True,
     callbacks=[
         dl.BatchTransformCallback(
-            lambda_fn=torch.sigmoid,
+            transform=torch.sigmoid,
             scope="on_batch_end",
             input_key="logits",
             output_key="scores"

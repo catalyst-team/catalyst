@@ -8,7 +8,7 @@ class BatchTransformCallback(Callback):
     Preprocess your batch with specified function.
 
     Args:
-        lambda_fn (Callable): Function to apply.
+        transform (Callable): Function to apply.
         scope (str): ``"on_batch_end"`` (post-processing model output) or
             ``"on_batch_start"`` (pre-processing model input).
         input_key (Union[List[str], str, int], optional): Keys in batch dict to apply function.
@@ -86,7 +86,7 @@ class BatchTransformCallback(Callback):
 
     def __init__(
         self,
-        lambda_fn: Callable,
+        transform: Callable,
         scope: str,
         input_key: Union[List[str], str] = None,
         output_key: Union[List[str], str] = None,
@@ -95,7 +95,7 @@ class BatchTransformCallback(Callback):
         Preprocess your batch with specified function.
 
         Args:
-            lambda_fn (Callable): Function to apply.
+            transform (Callable): Function to apply.
             scope (str): ``"on_batch_end"`` or ``"on_batch_start"``
             input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
             output_key (Union[List[str], str], optional): Keys for output.
@@ -133,7 +133,7 @@ class BatchTransformCallback(Callback):
             raise TypeError('Expected scope to be on of the ["on_batch_end", "on_batch_start"]')
         self.input_key = input_key
         self.output_key = output_key
-        self.lambda_fn = lambda_fn
+        self.transform = transform
 
     @staticmethod
     def _handle_input_tuple(batch, input_key):
@@ -168,7 +168,7 @@ class BatchTransformCallback(Callback):
 
     def _handle_batch(self, runner):
         fn_input = self.input_handler(runner.batch, self.input_key)
-        fn_output = self.lambda_fn(*fn_input)
+        fn_output = self.transform(*fn_input)
 
         runner.batch = self.output_handler(runner.batch, fn_output, self.output_key)
 

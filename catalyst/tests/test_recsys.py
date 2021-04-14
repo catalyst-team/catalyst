@@ -32,7 +32,7 @@ def train_experiment(device, engine=None):
             dl.BatchTransformCallback(
                 input_key="logits",
                 output_key="scores",
-                lambda_fn=torch.sigmoid,
+                transform=torch.sigmoid,
                 scope="on_batch_end",
             ),
             dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
