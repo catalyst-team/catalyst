@@ -118,7 +118,7 @@ def _wrap_into_data_parallel_with_apex(
         model = {k: nn.DataParallel(v[0]) for k, v in model.items()}
         model = {k: _patch_forward(v) for k, v in model.items()}
     else:
-        raise NotImplementedError()
+        raise ValueError("Model should be ``nn.Module`` or ``dict``")
 
     return model, optimizer
 
@@ -168,9 +168,7 @@ class APEXEngine(DeviceEngine):
     def __init__(self, device: str = "cuda", apex_kwargs: Dict[str, Any] = None):
         """Init."""
         super().__init__(device)
-        if apex_kwargs is None:
-            apex_kwargs = {}
-        self.apex_kwargs = apex_kwargs
+        self.apex_kwargs = apex_kwargs or {}
 
     def __repr__(self) -> str:  # noqa: D105
         args_list = [f"device='{self.device}'", f"apex_kwargs={self.apex_kwargs}"]
@@ -312,7 +310,7 @@ class DataParallelApexEngine(APEXEngine):
 
     """
 
-    def __init__(self, apex_kwargs: Dict[str, Any]):
+    def __init__(self, apex_kwargs: Dict[str, Any] = None):
         """Init."""
         super().__init__(f"cuda:{torch.cuda.current_device()}", apex_kwargs)
         self.device_count = torch.cuda.device_count()
@@ -417,12 +415,8 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         super().__init__(
             address=address, port=port, ddp_kwargs=None, process_group_kwargs=process_group_kwargs
         )
-        if ddp_kwargs is None:
-            ddp_kwargs = {}
-        self.ddp_kwargs = ddp_kwargs
-        if apex_kwargs is None:
-            apex_kwargs = {}
-        self.apex_kwargs = apex_kwargs
+        self.ddp_kwargs = ddp_kwargs or {}
+        self.apex_kwargs = apex_kwargs or {}
 
     def __repr__(self):  # noqa: D105
         return (

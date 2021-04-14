@@ -164,10 +164,10 @@ class HydraRunner(IRunner):
         if not is_logger_exists(ConsoleLogger):
             loggers["_console"] = ConsoleLogger()
         if self._logdir is not None and not is_logger_exists(CSVLogger):
-            loggers["_csv"] = CSVLogger(logdir=self._logdir)
+            loggers["_csv"] = CSVLogger(logdir=self._logdir, use_logdir_postfix=True)
         if self._logdir is not None and not is_logger_exists(TensorboardLogger):
             loggers["_tensorboard"] = TensorboardLogger(
-                logdir=os.path.join(self._logdir, "tensorboard")
+                logdir=self._logdir, use_logdir_postfix=True,
             )
 
         return loggers

@@ -12,26 +12,33 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Nifti Reader (NiftiReader) ([#1151](https://github.com/catalyst-team/catalyst/pull/1151))
 - CMC score and callback for ReID task (ReidCMCMetric and ReidCMCScoreCallback) ([#1170](https://github.com/catalyst-team/catalyst/pull/1170))
 - Market1501 metric learning datasets (Market1501MLDataset and Market1501QGDataset) ([#1170](https://github.com/catalyst-team/catalyst/pull/1170))
+- extra kwargs support for Engines ([#1156](https://github.com/catalyst-team/catalyst/pull/1156))
+- engines exception for unknown model type ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- a few docs to the supported loggers ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 
 ### Changed
 
--
+- ``TensorboardLogger`` switched from ``global_batch_step`` counter to ``global_sample_step`` one ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- ``TensorboardLogger`` logs loader metric ``on_loader_end`` rather than ``on_epoch_end`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- ``prefix`` renamed to ``metric_key`` for ``MetricAggregationCallback`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- ``micro``, ``macro`` and ``weighted`` aggregations renamed to ``_micro``, ``_macro`` and ``_weighted`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 
 ### Removed
 
--
+- auto ``torch.sigmoid`` usage for ``metrics.AUCMetric`` and ``metrics.auc`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 
 ### Fixed
 
--
+- hitrate calculation issue ([#1155](https://github.com/catalyst-team/catalyst/issues/1155))
+- ILoader wrapper usage issue with Runner ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- counters for ddp case ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 
 ## [21.03.2] - 2021-03-29
 
 ### Fixed
 
 - minimal requirements issue ([#1147](https://github.com/catalyst-team/catalyst/issues/1147))
-- nested dicts in `loaders_params`/`samplers_params` overriding fixed ([#1150](https://github.com/catalyst-team/catalyst/pull/1150))
-- fixed hitrate calculation issue ([#1155]) (https://github.com/catalyst-team/catalyst/issues/1155)
+- nested dicts in `loaders_params`/`samplers_params` overriding ([#1150](https://github.com/catalyst-team/catalyst/pull/1150))
 
 ## [21.03.1] - 2021-03-28
 
@@ -46,7 +53,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - FactorizedLinear to contrib ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
 - Extra init params for ``ConsoleLogger`` ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
 - Tracing, Quantization, Onnx, Pruninng Callbacks ([1127](https://github.com/catalyst-team/catalyst/pull/1127))
-- `_key_value` for schedulers in case of multiple optimizers fixed ([#1146](https://github.com/catalyst-team/catalyst/pull/1146))
+
 
 ### Changed
 
@@ -63,7 +70,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - BatchLimitLoaderWrapper logic for loaders with shuffle flag ([#1136](https://github.com/catalyst-team/catalyst/issues/1136))
 - config description in the examples ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
 - Config API deprecated parsings logic ([1142](https://github.com/catalyst-team/catalyst/pull/1142)) ([1138](https://github.com/catalyst-team/catalyst/pull/1138))
-- RecSys metrics Top_k calculations ([#1140] (https://github.com/catalyst-team/catalyst/pull/1140))
+- RecSys metrics Top_k calculations ([#1140](https://github.com/catalyst-team/catalyst/pull/1140))
+- `_key_value` for schedulers in case of multiple optimizers ([#1146](https://github.com/catalyst-team/catalyst/pull/1146))
 
 ## [21.03] - 2021-03-13 ([#1095](https://github.com/catalyst-team/catalyst/issues/1095))
 

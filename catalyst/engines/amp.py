@@ -134,6 +134,8 @@ class DataParallelAMPEngine(AMPEngine):
             model = nn.DataParallel(model)
         elif isinstance(model, dict):
             model = {k: nn.DataParallel(v) for k, v in model.items()}
+        else:
+            raise ValueError("Model should be ``nn.Module`` or ``dict``")
 
         # criterion
         criterion = criterion_fn()

@@ -76,7 +76,7 @@ def train_experiment(device, engine=None):
                     metric_key="loss2", input_key="logits2", target_key="targets2"
                 ),
                 dl.MetricAggregationCallback(
-                    prefix="loss", metrics=["loss1", "loss2"], mode="mean"
+                    metric_key="loss", metrics=["loss1", "loss2"], mode="mean"
                 ),
                 dl.OptimizerCallback(metric_key="loss"),
                 dl.SchedulerCallback(),

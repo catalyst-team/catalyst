@@ -109,9 +109,20 @@ jobs:
       - name: check examples
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
-        run: |
-          pytest .
-          pip install -e .
-          cd examples && bash mnist_stages/run_config.sh && cd ..
-          cd examples && bash mnist_stages/run_hydra.sh && cd ..
-          cd examples && bash mnist_stages/run_tune.sh && cd ..
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 15
+          max_attempts: 4
+          retry_on: timeout
+          command: |
+            pytest .
+            pip install -e .
+            cd examples && bash mnist_stages/run_config.sh && cd ..
+            cd examples && bash mnist_stages/run_hydra.sh && cd ..
+            cd examples && bash mnist_stages/run_tune.sh && cd ..
+#        run: |
+#          pytest .
+#          pip install -e .
+#          cd examples && bash mnist_stages/run_config.sh && cd ..
+#          cd examples && bash mnist_stages/run_hydra.sh && cd ..
+#          cd examples && bash mnist_stages/run_tune.sh && cd ..

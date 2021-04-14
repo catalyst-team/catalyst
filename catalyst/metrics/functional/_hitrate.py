@@ -5,6 +5,15 @@ import torch
 from catalyst.metrics.functional._misc import process_recsys_components
 
 
+def _nan_to_num(tensor, nan=0.0):
+    tensor = torch.where(torch.isnan(tensor), torch.ones_like(tensor) * nan, tensor)
+    return tensor
+
+
+# nan_to_num is available in PyTorch only from 1.8.0 version
+NAN_TO_NUM_FN = torch.__dict__.get("nan_to_num", _nan_to_num)
+
+
 def hitrate(
     outputs: torch.Tensor, targets: torch.Tensor, topk: List[int], zero_division: int = 0
 ) -> List[torch.Tensor]:
@@ -46,7 +55,7 @@ def hitrate(
     for k in topk:
         k = min(outputs.size(1), k)
         hits_score = torch.sum(targets_sort_by_outputs[:, :k], dim=1) / targets.sum(dim=1)
-        hits_score = hits_score.nan_to_num(zero_division)
+        hits_score = NAN_TO_NUM_FN(hits_score, zero_division)
         results.append(torch.mean(hits_score))
 
     return results
