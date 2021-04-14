@@ -122,7 +122,6 @@ class MetricAggregationCallback(Callback):
     ) -> None:
         """Init."""
         super().__init__(order=CallbackOrder.metric_aggregation, node=CallbackNode.all)
-        assert metric_key is not None, "metric_key should be specified"
 
         if metric_key is None or not isinstance(metric_key, str):
             raise ValueError("prefix must be str")
