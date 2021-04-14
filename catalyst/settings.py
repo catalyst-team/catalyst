@@ -131,6 +131,15 @@ def _is_mlflow_available():
         return False
 
 
+def _is_wandb_available():
+    try:
+        import wandb  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
 def _get_optional_value(
     is_required: Optional[bool], is_available_fn: Callable, assert_msg: str
 ) -> bool:
@@ -168,7 +177,7 @@ class Settings(FrozenClass):
         # alchemy_required: Optional[bool] = None,
         # neptune_required: Optional[bool] = None,
         mlflow_required: Optional[bool] = None,
-        # wandb_required: Optional[bool] = None,
+        wandb_required: Optional[bool] = None,
         # [extras]
         use_lz4: Optional[bool] = None,
         use_pyarrow: Optional[bool] = None,
@@ -255,6 +264,13 @@ class Settings(FrozenClass):
             "catalyst[mlflow] is not available, to install it, "
             "run `pip install catalyst[mlflow]`.",
         )
+
+        self.wandb_required: bool = _get_optional_value(
+            wandb_required,
+            _is_wandb_available,
+            "wandb is not available, to install it, " "run `pip install wandb`.",
+        )
+
         # self.wandb_required: bool = wandb_required
 
         # [extras]
