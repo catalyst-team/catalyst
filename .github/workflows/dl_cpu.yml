@@ -113,7 +113,7 @@ jobs:
           MKL_NUM_THREADS: "1"
         uses: nick-invision/retry@v2
         with:
-          timeout_minutes: 15
+          timeout_minutes: 60
           max_attempts: 4
           retry_on: timeout
           command: |
