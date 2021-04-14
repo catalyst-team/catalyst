@@ -108,14 +108,25 @@ class BatchTransformCallback(Callback):
         super().__init__(order=CallbackOrder.Internal)
         if input_key is not None:
             if not isinstance(input_key, (list, str, int)):
-                raise TypeError("keys to apply should be str or list of str.")
+                raise TypeError("input key should be str or list of str.")
             elif isinstance(input_key, (str, int)):
                 input_key = [input_key]
+            self.input_handler = self._handle_input_tuple
+        else:
+            self.input_handler = self._handle_input_dict
+
+        output_key = output_key or input_key
         if output_key is not None:
             if not isinstance(output_key, (list, str, int)):
-                raise TypeError("output keys should be str or list of str.")
+                raise TypeError("output key should be str or list of str.")
             if isinstance(output_key, (str, int)):
+                self.output_handler = self._handle_output_value
                 output_key = [output_key]
+            else:
+                self.output_handler = self._handle_output_tuple
+        else:
+            self.output_handler = self._handle_output_dict
+
         if isinstance(scope, str) and scope in ["on_batch_end", "on_batch_start"]:
             self.scope = scope
         else:
@@ -123,56 +134,14 @@ class BatchTransformCallback(Callback):
         self.input_key = input_key
         self.output_key = output_key
         self.lambda_fn = lambda_fn
-        self.input_handler = (
-            (lambda batch: batch)
-            if input_key is None
-            else partial(self._handle_input_tuple, input_key=input_key)
-        )
-        self.output_handler: Union[None, Callable] = None
 
     @staticmethod
     def _handle_input_tuple(batch, input_key):
         return [batch[key] for key in input_key]
 
-    def _get_output_handler(self, fn_output):
-        # First batch case. Executes only ones.
-        # Structure:
-        # if isinstance(fn_output, type):
-        #     if not output_keys match output:
-        #         raise Exception
-        #     handler = _handler_for_type
-        output_handler = None
-        if isinstance(fn_output, dict):
-            if self.output_key is not None:
-                raise TypeError(
-                    "If your function outputs dict you " "should left output_keys=None."
-                )
-            output_handler = self._handle_output_dict
-        else:
-            if self.output_key is None:
-                raise TypeError(
-                    "If function does not output " "dict you should specify `output_keys`"
-                )
-        if isinstance(fn_output, tuple):
-            if len(fn_output) != len(self.output_key):
-                raise TypeError(
-                    "Unexpected output. "
-                    "Expect function to return tuple same length as output_keys, "
-                    f"which is {len(self.output_key)}, "
-                    f"but got output length of {len(fn_output)}"
-                    "Use output_keys argument to specify output keys."
-                )
-            output_handler = self._handle_output_tuple
-        if not isinstance(fn_output, (tuple, dict)):
-            if len(self.output_key) > 1:
-                raise TypeError(
-                    "Unexpected output. "
-                    "Expect function to return tuple, but got "
-                    f"{type(fn_output)}. "
-                    "Use output_keys argument to specify output key."
-                )
-            output_handler = self._handle_output_value
-        return output_handler
+    @staticmethod
+    def _handle_input_dict(batch, _input_key):
+        return batch
 
     @staticmethod
     def _handle_output_tuple(
@@ -184,7 +153,7 @@ class BatchTransformCallback(Callback):
 
     @staticmethod
     def _handle_output_dict(
-        batch: Dict[str, Any], function_output: Dict[str, Any], output_keys: List[str]
+        batch: Dict[str, Any], function_output: Dict[str, Any], _output_keys: List[str]
     ) -> Dict[str, Any]:
         for output_key, output_value in function_output.items():
             batch[output_key] = output_value
@@ -198,11 +167,8 @@ class BatchTransformCallback(Callback):
         return batch
 
     def _handle_batch(self, runner):
-        fn_input = self.input_handler(runner.batch)
+        fn_input = self.input_handler(runner.batch, self.input_key)
         fn_output = self.lambda_fn(*fn_input)
-
-        if self.output_handler is None:
-            self.output_handler = self._get_output_handler(fn_output=fn_output)
 
         runner.batch = self.output_handler(
             batch=runner.batch, function_output=fn_output, output_keys=self.output_key
