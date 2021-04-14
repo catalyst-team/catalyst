@@ -141,7 +141,7 @@ class BatchTransformCallback(Callback):
 
     @staticmethod
     def _handle_input_dict(batch, _input_key):
-        return batch
+        return [batch]  # self.lambda_fn(*[batch]) ~  self.lambda_fn(batch)
 
     @staticmethod
     def _handle_output_tuple(
