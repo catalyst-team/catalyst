@@ -4,13 +4,74 @@ import numpy as np
 
 from catalyst.core.logger import ILogger
 from catalyst.settings import SETTINGS
-from catalyst.typing import Directory, File, Number
 
 if SETTINGS.wandb_required:
     import wandb
 
 
 class WandbLogger(ILogger):
+    """Wandb logger for parameters, metrics, images and other artifacts.
+
+    W&B documentation: https://docs.wandb.com
+
+    Args:
+        Project: Name of the project in W&B to log to.
+        name: Name of the run in W&B to log to.
+        config: Configuration Dictionary for the experiment.
+        entity: Name of W&B entity(team) to log to.
+
+    Python API examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            ...,
+            loggers={"wandb": dl.WandbLogger(project="wandb_test", name="expeirment1")}
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class CustomRunner(dl.IRunner):
+            # ...
+
+            def get_loggers(self):
+                return {
+                    "console": dl.ConsoleLogger(),
+                    "wandb": dl.WandbLogger(project="wandb_test", config=self.hparams)
+                }
+
+            # ...
+
+        runner = CustomRunner().run()
+
+    Config API example:
+
+    .. code-block:: yaml
+
+        loggers:
+            wandb:
+                _target_: WandbLogger
+                project: test_exp
+                name: test_run
+        ...
+
+    Hydra API example:
+
+    .. code-block:: yaml
+
+        loggers:
+            wandb:
+                _target_: catalyst.dl.WandbLogger
+                project: test_exp
+                name: test_run
+        ...
+    """
+
     def __init__(
         self,
         project: str,
@@ -26,8 +87,9 @@ class WandbLogger(ILogger):
             project=self.project, name=self.name, config=self.config, entity=self.entity
         )
 
-    def _log_metrics(self, metrics, step: int):
-        self.run.log(metrics, step=step)
+    def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
+        for key, value in metrics.items():
+            self.run.log({f"{key}/{loader_key}{suffix}": value}, step=step)
 
     def log_metrics(
         self,
@@ -54,12 +116,16 @@ class WandbLogger(ILogger):
         """Logs batch and epoch metrics to wandb."""
         if scope == "batch":
             metrics = {k: float(v) for k, v in metrics.items()}
-            self._log_metrics(metrics=metrics, step=global_epoch_step)
+            self._log_metrics(
+                metrics=metrics, step=global_batch_step, loader_key=loader_key, suffix="/batch"
+            )
         elif scope == "epoch":
             for loader_key, per_loader_metrics in metrics.items():
                 self._log_metrics(
                     metrics=per_loader_metrics,
                     step=global_epoch_step,
+                    loader_key=loader_key,
+                    suffix="/epoch",
                 )
 
     def log_image(

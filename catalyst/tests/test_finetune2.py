@@ -30,6 +30,7 @@ class CustomRunner(dl.IRunner):
             "csv": dl.CSVLogger(logdir=self._logdir),
             "tensorboard": dl.TensorboardLogger(logdir=self._logdir),
             "mlflow": dl.MLflowLogger(experiment=self._name),
+            "wandb": dl.WandbLogger(project="catalyst_test", config=self.hparams),
         }
 
     @property
