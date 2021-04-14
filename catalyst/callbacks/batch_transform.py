@@ -111,21 +111,16 @@ class BatchTransformCallback(Callback):
                 raise TypeError("input key should be stror list of str.")
             elif isinstance(input_key, str):
                 input_key = [input_key]
-            self.input_handler = self._handle_input_tuple
+            self._handle_batch = self._handle_tuples
         else:
-            self.input_handler = self._handle_input_dict
+            self._handle_batch = self._handle_dicts
 
         output_key = output_key or input_key
         if output_key is not None:
             if not isinstance(output_key, (list, str)):
                 raise TypeError("output key should be str or list of str.")
             if isinstance(output_key, str):
-                self.output_handler = self._handle_output_value
                 output_key = [output_key]
-            else:
-                self.output_handler = self._handle_output_tuple
-        else:
-            self.output_handler = self._handle_output_dict
 
         if isinstance(scope, str) and scope in ["on_batch_end", "on_batch_start"]:
             self.scope = scope
@@ -135,42 +130,13 @@ class BatchTransformCallback(Callback):
         self.output_key = output_key
         self.transform = transform
 
-    @staticmethod
-    def _handle_input_tuple(batch, input_key):
-        return [batch[key] for key in input_key]
+    def _handle_dicts(self, runner):
+        runner.batch = self.transform(runner.batch)
 
-    @staticmethod
-    def _handle_input_dict(batch, _input_key):
-        return [batch]  # self.lambda_fn(*[batch]) ~  self.lambda_fn(batch)
-
-    @staticmethod
-    def _handle_output_tuple(
-        batch: Dict[str, Any], function_output: Tuple[Any], output_keys: List[str]
-    ) -> Dict[str, Any]:
-        for out_idx, output_key in enumerate(output_keys):
-            batch[output_key] = function_output[out_idx]
-        return batch
-
-    @staticmethod
-    def _handle_output_dict(
-        batch: Dict[str, Any], function_output: Dict[str, Any], _output_keys: List[str]
-    ) -> Dict[str, Any]:
-        for output_key, output_value in function_output.items():
-            batch[output_key] = output_value
-        return batch
-
-    @staticmethod
-    def _handle_output_value(
-        batch: Dict[str, Any], function_output: Any, output_keys: List[str],
-    ):
-        batch[output_keys[0]] = function_output
-        return batch
-
-    def _handle_batch(self, runner):
-        fn_input = self.input_handler(runner.batch, self.input_key)
-        fn_output = self.transform(*fn_input)
-
-        runner.batch = self.output_handler(runner.batch, fn_output, self.output_key)
+    def _handle_tuples(self, runner):
+        batch_in = [runner.batch[key] for key in self.input_key]
+        batch_out = self.handler(batch_in)
+        runner.batch.update(**{key: value for key, value in zip(self.output_key, batch_out)})
 
     def on_batch_start(self, runner: "IRunner") -> None:
         """
