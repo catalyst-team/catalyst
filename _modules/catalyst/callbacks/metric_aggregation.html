@@ -342,7 +342,6 @@
 <span class="sd">            depends on epochs and loader or something also</span>
 <span class="sd">        scope: type of metric. Must be either ``batch`` or ``loader``</span>
 <span class="sd">        multiplier: scale factor for the aggregated metric.</span>
-<span class="sd">        prefix: deprecated alias for ``metric_key``</span>
 
 <span class="sd">    Python example - loss is a weighted sum of cross entropy loss and binary cross entropy loss:</span>
 
@@ -425,17 +424,14 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">metrics</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">mode</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span>
         <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;batch&quot;</span><span class="p">,</span>
         <span class="n">multiplier</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">metric_aggregation</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
-        <span class="n">metric_key</span> <span class="o">=</span> <span class="n">metric_key</span> <span class="ow">or</span> <span class="n">prefix</span>
-        <span class="k">assert</span> <span class="n">metric_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;metric_key should be specified&quot;</span>
 
         <span class="k">if</span> <span class="n">metric_key</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metric_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;prefix must be str&quot;</span><span class="p">)</span>

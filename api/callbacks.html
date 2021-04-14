@@ -881,7 +881,7 @@ there are several of them, and they are in a dictionary format.</p></li>
 <h3><a class="toc-backref" href="#id9">Metric – MetricAggregationCallback</a><a class="headerlink" href="#metric-metricaggregationcallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metric_aggregation.MetricAggregationCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metric_aggregation.</code><code class="sig-name descname">MetricAggregationCallback</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None, metrics: Union[str, List[str], Dict[str, float]] = None, mode: Union[str, Callable] = 'mean', scope: str = 'batch', multiplier: float = 1.0, prefix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metric_aggregation.html#MetricAggregationCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metric_aggregation.MetricAggregationCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metric_aggregation.</code><code class="sig-name descname">MetricAggregationCallback</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str, metrics: Union[str, List[str], Dict[str, float]] = None, mode: Union[str, Callable] = 'mean', scope: str = 'batch', multiplier: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metric_aggregation.html#MetricAggregationCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metric_aggregation.MetricAggregationCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>A callback to aggregate several metrics in one value.</p>
 <dl class="field-list simple">
@@ -899,7 +899,6 @@ useful for complicated fine tuning with different losses that
 depends on epochs and loader or something also</p></li>
 <li><p><strong>scope</strong> – type of metric. Must be either <code class="docutils literal notranslate"><span class="pre">batch</span></code> or <code class="docutils literal notranslate"><span class="pre">loader</span></code></p></li>
 <li><p><strong>multiplier</strong> – scale factor for the aggregated metric.</p></li>
-<li><p><strong>prefix</strong> – deprecated alias for <code class="docutils literal notranslate"><span class="pre">metric_key</span></code></p></li>
 </ul>
 </dd>
 </dl>
