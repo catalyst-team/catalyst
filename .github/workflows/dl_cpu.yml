@@ -17,7 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
-      max-parallel: 4
+      max-parallel: 8
       matrix:
         os: [ubuntu-18.04, ubuntu-20.04, macOS-10.15]  # windows-2019,
         python-version: [3.6, 3.7, 3.8]
@@ -29,21 +29,21 @@ jobs:
           - python-version: 3.6
             os: macOS-10.15
           # github CI problems
-          - python-version: 3.8
-            os: ubuntu-18.04
-            requirements: minimal
-          - python-version: 3.8
-            os: ubuntu-20.04
-            requirements: minimal
-          - python-version: 3.7
-            os: macOS-10.15
-            requirements: minimal
-          - python-version: 3.6
-            os: ubuntu-18.04
-            requirements: minimal
-          - python-version: 3.6
-            os: ubuntu-20.04
-            requirements: minimal
+#          - python-version: 3.8
+#            os: ubuntu-18.04
+#            requirements: minimal
+#          - python-version: 3.8
+#            os: ubuntu-20.04
+#            requirements: minimal
+#          - python-version: 3.7
+#            os: macOS-10.15
+#            requirements: minimal
+#          - python-version: 3.6
+#            os: ubuntu-18.04
+#            requirements: minimal
+#          - python-version: 3.6
+#            os: ubuntu-20.04
+#            requirements: minimal
 
     timeout-minutes: 120
     steps:
@@ -117,11 +117,11 @@ jobs:
           max_attempts: 4
           retry_on: timeout
           command: |
-            pytest .
+            OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" pytest .
             pip install -e .
-            cd examples && bash mnist_stages/run_config.sh && cd ..
-            cd examples && bash mnist_stages/run_hydra.sh && cd ..
-            cd examples && bash mnist_stages/run_tune.sh && cd ..
+            OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_config.sh && cd ..
+            OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_hydra.sh && cd ..
+            OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_tune.sh && cd ..
 #        run: |
 #          pytest .
 #          pip install -e .
