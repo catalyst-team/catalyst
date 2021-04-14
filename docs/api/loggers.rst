@@ -22,16 +22,16 @@ CSVLogger
     :undoc-members:
     :show-inheritance:
 
-TensorboardLogger
+MLflowLogger
 --------------------------------
-.. autoclass:: catalyst.loggers.tensorboard.TensorboardLogger
+.. autoclass:: catalyst.loggers.mlflow.MLflowLogger
     :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
-MLflowLogger
+TensorboardLogger
 --------------------------------
-.. autoclass:: catalyst.loggers.mlflow.MLflowLogger
-    :members: __init__
+.. autoclass:: catalyst.loggers.tensorboard.TensorboardLogger
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:

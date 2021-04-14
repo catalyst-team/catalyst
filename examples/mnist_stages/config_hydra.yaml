@@ -90,8 +90,8 @@ stages:
         minimize: ${shared.minimize_valid_metric}
         save_n_best: 3
         use_logdir_postfix: True
-      verbose:
-        _target_: catalyst.callbacks.TqdmCallback
+#      verbose:
+#        _target_: catalyst.callbacks.TqdmCallback
 
   tune:
     num_epochs: 4

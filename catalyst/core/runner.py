@@ -549,12 +549,13 @@ class IRunner(ICallback, ILogger, ABC):
         else:
             self.batch_size = len(self.batch[0])
 
-        self.global_batch_step += 1
-        self.stage_batch_step += 1
-        self.loader_batch_step += 1
-        self.global_sample_step += self.batch_size
-        self.stage_sample_step += self.batch_size
-        self.loader_sample_step += self.batch_size
+        # we have an batch per each worker...
+        self.global_batch_step += self.engine.world_size
+        self.stage_batch_step += self.engine.world_size
+        self.loader_batch_step += self.engine.world_size
+        self.global_sample_step += self.batch_size * self.engine.world_size
+        self.stage_sample_step += self.batch_size * self.engine.world_size
+        self.loader_sample_step += self.batch_size * self.engine.world_size
         self.batch_metrics: Dict = defaultdict(None)
 
     def on_batch_end(self, runner: "IRunner"):

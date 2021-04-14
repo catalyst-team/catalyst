@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import torch
 
-from catalyst.metrics._cmc_score import CMCMetric
+from catalyst.metrics._cmc_score import CMCMetric, ReidCMCMetric
 from catalyst.metrics._metric import AccumulationMetric
 
 COMPLEX_OUTPUT_TYPE = Iterable[
@@ -94,6 +94,18 @@ def test_accumulation_dtype():
         assert batch[key].dtype == metric.storage[key].dtype
 
 
+def _test_score(
+    metric: AccumulationMetric, batch: Dict[str, torch.Tensor], true_values: Dict[str, float],
+) -> None:
+    """Check if given metric works correctly"""
+    metric.reset(num_batches=1, num_samples=len(batch["embeddings"]))
+    metric.update(**batch)
+    values = metric.compute_key_value()
+    for key in true_values:
+        assert key in values
+        assert values[key] == true_values[key]
+
+
 @pytest.mark.parametrize(
     "batch,topk,true_values",
     (
@@ -121,13 +133,47 @@ def test_accumulation_dtype():
 def test_cmc_score(
     batch: Dict[str, torch.Tensor], topk: Iterable[int], true_values: Dict[str, float]
 ) -> None:
-    """Check if CMCMetric output has valid format"""
+    """Check if CMCMetric works correctly"""
     metric = CMCMetric(
         embeddings_key="embeddings", labels_key="labels", is_query_key="is_query", topk_args=topk,
     )
-    metric.reset(num_batches=1, num_samples=len(batch["embeddings"]))
-    metric.update(**batch)
-    values = metric.compute_key_value()
-    for key in true_values:
-        assert key in values
-        assert values[key] == true_values[key]
+    _test_score(metric=metric, batch=batch, true_values=true_values)
+
+
+@pytest.mark.parametrize(
+    "batch,topk,true_values",
+    (
+        (
+            {
+                "embeddings": torch.tensor(
+                    [
+                        [1, 1, 0, 0],
+                        [1, 0, 0, 0],
+                        [0, 1, 1, 1],
+                        [0, 0, 1, 1],
+                        [1, 1, 1, 0],
+                        [1, 1, 1, 1],
+                        [0, 1, 1, 0],
+                    ]
+                ).float(),
+                "pids": torch.Tensor([0, 0, 1, 1, 0, 1, 1]).long(),
+                "cids": torch.Tensor([0, 1, 1, 2, 0, 1, 3]).long(),
+                "is_query": torch.Tensor([1, 1, 1, 1, 0, 0, 0]).bool(),
+            },
+            (1, 3),
+            {"cmc01": 0.75, "cmc03": 1},
+        ),
+    ),
+)
+def test_reid_cmc_score(
+    batch: Dict[str, torch.Tensor], topk: Iterable[int], true_values: Dict[str, float]
+) -> None:
+    """Check if CMCMetric works correctly"""
+    metric = ReidCMCMetric(
+        embeddings_key="embeddings",
+        pids_key="pids",
+        cids_key="cids",
+        is_query_key="is_query",
+        topk_args=topk,
+    )
+    _test_score(metric=metric, batch=batch, true_values=true_values)

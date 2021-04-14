@@ -106,7 +106,7 @@ class EarlyStoppingCallback(IEpochMetricHandlerCallback):
         patience: int,
         loader_key: str,
         metric_key: str,
-        minimize: bool = True,
+        minimize: bool,
         min_delta: float = 1e-6,
     ):
         """Init."""

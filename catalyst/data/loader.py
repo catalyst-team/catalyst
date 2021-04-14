@@ -10,12 +10,14 @@ from torch.utils.data import DataLoader
 
 
 class ILoaderWrapper:
-    def __init__(self, loader: DataLoader):
-        """Loader wrapper interface.
+    """Loader wrapper interface.
 
-        Args:
-            loader: torch dataloader.
-        """
+    Args:
+        loader: torch dataloader.
+    """
+
+    def __init__(self, loader: DataLoader):
+        """Init"""
         self.origin = loader
 
     def __getattr__(self, key):
@@ -303,4 +305,4 @@ class BatchPrefetchLoaderWrapper(ILoaderWrapper):
         return _prefetch_loader(self.origin, self.num_prefetches)
 
 
-__all__ = ["BatchLimitLoaderWrapper", "BatchPrefetchLoaderWrapper"]
+__all__ = ["ILoaderWrapper", "BatchLimitLoaderWrapper", "BatchPrefetchLoaderWrapper"]
