@@ -55,7 +55,7 @@ class BatchTransformCallback(Callback):
                 verbose=True,
                 callbacks=[
                     dl.LambdaPreprocessCallback(
-                        input_keys="logits", output_keys="scores", lambda_fn=torch.sigmoid
+                        input_key="logits", output_key="scores", transform=torch.sigmoid
                     ),
                     dl.CriterionCallback(
                         input_key="logits", target_key="targets", metric_key="loss"
