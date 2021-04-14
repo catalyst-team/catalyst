@@ -540,7 +540,9 @@ optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
 # model training
-runner = dl.SupervisedRunner(output_key="logits")
+runner = dl.SupervisedRunner(
+    input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+)
 runner.train(
     model=model,
     criterion=criterion,
