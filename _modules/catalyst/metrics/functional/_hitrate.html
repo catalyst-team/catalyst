@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics.functional._hitrate &mdash; Catalyst 21.03.2 documentation</title>
+  <title>catalyst.metrics.functional._hitrate &mdash; Catalyst 21.04 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.03</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
                 </div>
               
             
@@ -315,6 +315,15 @@
 <span class="kn">from</span> <span class="nn">catalyst.metrics.functional._misc</span> <span class="kn">import</span> <span class="n">process_recsys_components</span>
 
 
+<span class="k">def</span> <span class="nf">_nan_to_num</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">nan</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+    <span class="n">tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">tensor</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span> <span class="o">*</span> <span class="n">nan</span><span class="p">,</span> <span class="n">tensor</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tensor</span>
+
+
+<span class="c1"># nan_to_num is available in PyTorch only from 1.8.0 version</span>
+<span class="n">NAN_TO_NUM_FN</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;nan_to_num&quot;</span><span class="p">,</span> <span class="n">_nan_to_num</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="hitrate"><a class="viewcode-back" href="../../../../api/metrics.html#catalyst.metrics.functional._hitrate.hitrate">[docs]</a><span class="k">def</span> <span class="nf">hitrate</span><span class="p">(</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">topk</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">zero_division</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
@@ -356,7 +365,7 @@
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">topk</span><span class="p">:</span>
         <span class="n">k</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">outputs</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
         <span class="n">hits_score</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">targets_sort_by_outputs</span><span class="p">[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">targets</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">hits_score</span> <span class="o">=</span> <span class="n">hits_score</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">zero_division</span><span class="p">)</span>
+        <span class="n">hits_score</span> <span class="o">=</span> <span class="n">NAN_TO_NUM_FN</span><span class="p">(</span><span class="n">hits_score</span><span class="p">,</span> <span class="n">zero_division</span><span class="p">)</span>
         <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">hits_score</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">results</span></div>

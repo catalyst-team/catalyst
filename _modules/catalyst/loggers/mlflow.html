@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.loggers.mlflow &mdash; Catalyst 21.03.2 documentation</title>
+  <title>catalyst.loggers.mlflow &mdash; Catalyst 21.04 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.03</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
                 </div>
               
             
@@ -387,19 +387,27 @@
 <span class="sd">    Args:</span>
 <span class="sd">        experiment: Name of the experiment in MLflow to log to.</span>
 <span class="sd">        run: Name of the run in Mlflow to log to.</span>
-<span class="sd">        tracking_uri: URI of tracking server against which</span>
-<span class="sd">            to log run information related.</span>
+<span class="sd">        tracking_uri: URI of tracking server against which to log run information related.</span>
 <span class="sd">        registry_uri: Address of local or remote model registry server.</span>
 
-<span class="sd">    Notebook API example:</span>
+<span class="sd">    Python API examples:</span>
 
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        from catalyst import dl</span>
 
-<span class="sd">        class CustomSupervisedRunner(dl.IRunner):</span>
-<span class="sd">            def get_engine(self) -&gt; dl.IEngine:</span>
-<span class="sd">                return dl.DeviceEngine(&quot;cpu&quot;)</span>
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            ...,</span>
+<span class="sd">            loggers={&quot;mlflow&quot;: dl.MLflowLogger(experiment=&quot;test_exp&quot;, run=&quot;test_run&quot;)}</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        class CustomRunner(dl.IRunner):</span>
+<span class="sd">            # ...</span>
 
 <span class="sd">            def get_loggers(self):</span>
 <span class="sd">                return {</span>
@@ -407,8 +415,9 @@
 <span class="sd">                    &quot;mlflow&quot;: dl.MLflowLogger(experiment=&quot;test_exp&quot;, run=&quot;test_run&quot;)</span>
 <span class="sd">                }</span>
 
-<span class="sd">        runner = CustomSupervisedRunner().run()</span>
-<span class="sd">        model = runner.model</span>
+<span class="sd">            # ...</span>
+
+<span class="sd">        runner = CustomRunner().run()</span>
 
 <span class="sd">    Config API example:</span>
 
@@ -420,9 +429,20 @@
 <span class="sd">                experiment: test_exp</span>
 <span class="sd">                run: test_run</span>
 <span class="sd">        ...</span>
+
+<span class="sd">    Hydra API example:</span>
+
+<span class="sd">    .. code-block:: yaml</span>
+
+<span class="sd">        loggers:</span>
+<span class="sd">            mlflow:</span>
+<span class="sd">                _target_: catalyst.dl.MLflowLogger</span>
+<span class="sd">                experiment: test_exp</span>
+<span class="sd">                run: test_run</span>
+<span class="sd">        ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MLflowLogger.__init__"><a class="viewcode-back" href="../../../api/loggers.html#catalyst.loggers.mlflow.MLflowLogger.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">experiment</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">run</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -439,7 +459,7 @@
         <span class="n">mlflow</span><span class="o">.</span><span class="n">set_tracking_uri</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tracking_uri</span><span class="p">)</span>
         <span class="n">mlflow</span><span class="o">.</span><span class="n">set_registry_uri</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">registry_uri</span><span class="p">)</span>
         <span class="n">mlflow</span><span class="o">.</span><span class="n">set_experiment</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment</span><span class="p">)</span>
-        <span class="n">_get_or_start_run</span><span class="p">(</span><span class="n">run_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">)</span></div>
+        <span class="n">_get_or_start_run</span><span class="p">(</span><span class="n">run_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_log_metrics</span><span class="p">(</span><span class="n">metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>

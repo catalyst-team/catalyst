@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics._classification &mdash; Catalyst 21.03.2 documentation</title>
+  <title>catalyst.metrics._classification &mdash; Catalyst 21.04 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.03</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
                 </div>
               
             
@@ -502,7 +502,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kv_metrics</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">for</span> <span class="n">aggregation_name</span><span class="p">,</span> <span class="n">aggregated_metrics</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span>
-            <span class="p">(</span><span class="s2">&quot;micro&quot;</span><span class="p">,</span> <span class="s2">&quot;macro&quot;</span><span class="p">,</span> <span class="s2">&quot;weighted&quot;</span><span class="p">),</span> <span class="p">(</span><span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span><span class="p">)</span>
+            <span class="p">(</span><span class="s2">&quot;_micro&quot;</span><span class="p">,</span> <span class="s2">&quot;_macro&quot;</span><span class="p">,</span> <span class="s2">&quot;_weighted&quot;</span><span class="p">),</span> <span class="p">(</span><span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span><span class="p">)</span>
         <span class="p">):</span>
             <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">aggregation_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">metric_value</span>

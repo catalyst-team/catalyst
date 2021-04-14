@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Callbacks &mdash; Catalyst 21.03.2 documentation</title>
+  <title>Callbacks &mdash; Catalyst 21.04 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.03</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
                 </div>
               
             
@@ -881,13 +881,13 @@ there are several of them, and they are in a dictionary format.</p></li>
 <h3><a class="toc-backref" href="#id9">Metric – MetricAggregationCallback</a><a class="headerlink" href="#metric-metricaggregationcallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.metric_aggregation.MetricAggregationCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metric_aggregation.</code><code class="sig-name descname">MetricAggregationCallback</code><span class="sig-paren">(</span><em class="sig-param">prefix: str, metrics: Union[str, List[str], Dict[str, float]] = None, mode: Union[str, Callable] = 'mean', scope: str = 'batch', multiplier: float = 1.0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metric_aggregation.html#MetricAggregationCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metric_aggregation.MetricAggregationCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.metric_aggregation.</code><code class="sig-name descname">MetricAggregationCallback</code><span class="sig-paren">(</span><em class="sig-param">metric_key: str = None, metrics: Union[str, List[str], Dict[str, float]] = None, mode: Union[str, Callable] = 'mean', scope: str = 'batch', multiplier: float = 1.0, prefix: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/metric_aggregation.html#MetricAggregationCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.metric_aggregation.MetricAggregationCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>A callback to aggregate several metrics in one value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>prefix</strong> – new key for aggregated metric.</p></li>
+<li><p><strong>metric_key</strong> – new key for aggregated metric.</p></li>
 <li><p><strong>metrics</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em>) – If not None,
 it aggregates only the values from the metric by these keys.
 for <code class="docutils literal notranslate"><span class="pre">weighted_sum</span></code> aggregation it must be a Dict[str, float].</p></li>
@@ -899,74 +899,83 @@ useful for complicated fine tuning with different losses that
 depends on epochs and loader or something also</p></li>
 <li><p><strong>scope</strong> – type of metric. Must be either <code class="docutils literal notranslate"><span class="pre">batch</span></code> or <code class="docutils literal notranslate"><span class="pre">loader</span></code></p></li>
 <li><p><strong>multiplier</strong> – scale factor for the aggregated metric.</p></li>
+<li><p><strong>prefix</strong> – deprecated alias for <code class="docutils literal notranslate"><span class="pre">metric_key</span></code></p></li>
 </ul>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<p>Loss is a weighted sum of cross entropy loss and binary cross entropy loss</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># sample data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">,</span> <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">),</span> <span class="mi">4</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="p">)</span> <span class="o">*</span> <span class="n">num_classes</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># pytorch loaders</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># model, criterion, optimizer, scheduler</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">criterion</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ce&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(),</span>
-<span class="gp">&gt;&gt;&gt; </span>             <span class="s2">&quot;bce&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()}</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">Runner</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">num_classes</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">targets_onehot</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
-<span class="gp">&gt;&gt;&gt; </span>            <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>            <span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>            <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>            <span class="s2">&quot;targets_onehot&quot;</span><span class="p">:</span> <span class="n">targets_onehot</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">}</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># model training</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                            <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                            <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>             <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>             <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss_ce&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>             <span class="n">criterion_key</span><span class="o">=</span><span class="s2">&quot;ce&quot;</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                             <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets_onehot&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                             <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss_bce&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                             <span class="n">criterion_key</span><span class="o">=</span><span class="s2">&quot;bce&quot;</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="c1"># loss aggregation</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">dl</span><span class="o">.</span><span class="n">MetricAggregationCallback</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;loss&#39;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>                                     <span class="n">metrics</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;loss_ce&#39;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span> <span class="s1">&#39;loss_bce&#39;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">},</span>
-<span class="gp">&gt;&gt;&gt; </span>                                     <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;weighted_sum&#39;</span><span class="p">),</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="n">dl</span><span class="o">.</span><span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+<p>Python example - loss is a weighted sum of cross entropy loss and binary cross entropy loss:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
+
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="c1"># data</span>
+<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">,</span> <span class="n">num_classes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">),</span> <span class="mi">4</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,)</span> <span class="o">*</span> <span class="n">num_classes</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+
+<span class="c1"># model, criterion, optimizer, scheduler</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="n">num_classes</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ce&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(),</span> <span class="s2">&quot;bce&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()}</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="c1"># runner</span>
+<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">Runner</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">num_classes</span> <span class="o">=</span> <span class="n">logits</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">targets_onehot</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span>
+            <span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">,</span>
+            <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span>
+            <span class="s2">&quot;targets_onehot&quot;</span><span class="p">:</span> <span class="n">targets_onehot</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span>
+        <span class="p">}</span>
+
+
+<span class="c1"># training</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
+    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span>
+        <span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span>
+            <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss_ce&quot;</span><span class="p">,</span>
+            <span class="n">criterion_key</span><span class="o">=</span><span class="s2">&quot;ce&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets_onehot&quot;</span><span class="p">,</span>
+            <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss_bce&quot;</span><span class="p">,</span>
+            <span class="n">criterion_key</span><span class="o">=</span><span class="s2">&quot;bce&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="c1"># loss aggregation</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">MetricAggregationCallback</span><span class="p">(</span>
+            <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+            <span class="n">metrics</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;loss_ce&quot;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span> <span class="s2">&quot;loss_bce&quot;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">},</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;weighted_sum&quot;</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
+    <span class="p">],</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Loggers &mdash; Catalyst 21.03.2 documentation</title>
+  <title>Loggers &mdash; Catalyst 21.04 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.03</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
                 </div>
               
             
@@ -321,8 +321,8 @@
 <ul class="simple">
 <li><p><a class="reference internal" href="#consolelogger" id="id1">ConsoleLogger</a></p></li>
 <li><p><a class="reference internal" href="#csvlogger" id="id2">CSVLogger</a></p></li>
-<li><p><a class="reference internal" href="#tensorboardlogger" id="id3">TensorboardLogger</a></p></li>
-<li><p><a class="reference internal" href="#mlflowlogger" id="id4">MLflowLogger</a></p></li>
+<li><p><a class="reference internal" href="#mlflowlogger" id="id3">MLflowLogger</a></p></li>
+<li><p><a class="reference internal" href="#tensorboardlogger" id="id4">TensorboardLogger</a></p></li>
 </ul>
 </div>
 <div class="section" id="consolelogger">
@@ -331,7 +331,8 @@
 <dt id="catalyst.loggers.console.ConsoleLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.console.</code><code class="sig-name descname">ConsoleLogger</code><span class="sig-paren">(</span><em class="sig-param">log_hparams: bool = False</em>, <em class="sig-param">log_loader_metrics: bool = True</em>, <em class="sig-param">log_epoch_metrics: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/console.html#ConsoleLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.console.ConsoleLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
-<p>Console logger for parameters and metrics. Used by default during all runs.</p>
+<p>Console logger for parameters and metrics.
+Output the metric into the console during experiment.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -341,6 +342,10 @@
 </ul>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This logger is used by default by all Runners.</p>
+</div>
 </dd></dl>
 
 </div>
@@ -350,12 +355,137 @@
 <dt id="catalyst.loggers.csv.CSVLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.csv.</code><code class="sig-name descname">CSVLogger</code><span class="sig-paren">(</span><em class="sig-param">logdir: str</em>, <em class="sig-param">use_logdir_postfix: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/csv.html#CSVLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.csv.CSVLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
-<p>&#64;TODO: docs.</p>
+<p>CSV logger for the metrics storing under <code class="docutils literal notranslate"><span class="pre">.csv</span></code> file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>logdir</strong> – path to logdir for the logger</p></li>
+<li><p><strong>use_logdir_postfix</strong> – boolean flag to use extra <code class="docutils literal notranslate"><span class="pre">logs</span></code> prefix in the logdir</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This logger is used by default by <code class="docutils literal notranslate"><span class="pre">dl.Runner</span></code> and <code class="docutils literal notranslate"><span class="pre">dl.SupervisedRunner</span></code> in case of
+specified logdir during <code class="docutils literal notranslate"><span class="pre">runner.train(...,</span> <span class="pre">logdir=/path/to/logdir)</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This logger is used by default by <code class="docutils literal notranslate"><span class="pre">dl.ConfigRunner</span></code> and <code class="docutils literal notranslate"><span class="pre">dl.HydraRunner</span></code> in case of
+specified logdir in config <code class="docutils literal notranslate"><span class="pre">args</span></code>.</p>
+</div>
+<p>Notebook API examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">loggers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;csv&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CSVLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir/logs&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+
+    <span class="k">def</span> <span class="nf">get_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;console&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">ConsoleLogger</span><span class="p">(),</span>
+            <span class="s2">&quot;csv&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">CSVLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir/logs&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="c1"># ...</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Config API example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
+    <span class="nt">csv</span><span class="p">:</span>
+        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CSVLogger</span>
+        <span class="nt">logdir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./logdir/logs</span>
+<span class="nn">...</span>
+</pre></div>
+</div>
+<p>Hydra API example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
+    <span class="nt">csv</span><span class="p">:</span>
+        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst.dl.CSVLogger</span>
+        <span class="nt">logdir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./logdir/logs</span>
+<span class="nn">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="mlflowlogger">
+<h2><a class="toc-backref" href="#id3">MLflowLogger</a><a class="headerlink" href="#mlflowlogger" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.loggers.mlflow.MLflowLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.mlflow.</code><code class="sig-name descname">MLflowLogger</code><span class="sig-paren">(</span><em class="sig-param">experiment: str</em>, <em class="sig-param">run: Optional[str] = None</em>, <em class="sig-param">tracking_uri: Optional[str] = None</em>, <em class="sig-param">registry_uri: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/mlflow.html#MLflowLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.mlflow.MLflowLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
+<p>Mlflow logger for parameters, metrics, images and other artifacts.</p>
+<p>Mlflow documentation: <a class="reference external" href="https://mlflow.org/docs/latest/index.html">https://mlflow.org/docs/latest/index.html</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>experiment</strong> – Name of the experiment in MLflow to log to.</p></li>
+<li><p><strong>run</strong> – Name of the run in Mlflow to log to.</p></li>
+<li><p><strong>tracking_uri</strong> – URI of tracking server against which to log run information related.</p></li>
+<li><p><strong>registry_uri</strong> – Address of local or remote model registry server.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Python API examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">loggers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;mlflow&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">MLflowLogger</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="s2">&quot;test_exp&quot;</span><span class="p">,</span> <span class="n">run</span><span class="o">=</span><span class="s2">&quot;test_run&quot;</span><span class="p">)}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+
+    <span class="k">def</span> <span class="nf">get_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;console&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">ConsoleLogger</span><span class="p">(),</span>
+            <span class="s2">&quot;mlflow&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">MLflowLogger</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="s2">&quot;test_exp&quot;</span><span class="p">,</span> <span class="n">run</span><span class="o">=</span><span class="s2">&quot;test_run&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+
+    <span class="c1"># ...</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Config API example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
+    <span class="nt">mlflow</span><span class="p">:</span>
+        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">MLflowLogger</span>
+        <span class="nt">experiment</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_exp</span>
+        <span class="nt">run</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_run</span>
+<span class="nn">...</span>
+</pre></div>
+</div>
+<p>Hydra API example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
+    <span class="nt">mlflow</span><span class="p">:</span>
+        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst.dl.MLflowLogger</span>
+        <span class="nt">experiment</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_exp</span>
+        <span class="nt">run</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_run</span>
+<span class="nn">...</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
 <div class="section" id="tensorboardlogger">
-<h2><a class="toc-backref" href="#id3">TensorboardLogger</a><a class="headerlink" href="#tensorboardlogger" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">TensorboardLogger</a><a class="headerlink" href="#tensorboardlogger" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.loggers.tensorboard.TensorboardLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.tensorboard.</code><code class="sig-name descname">TensorboardLogger</code><span class="sig-paren">(</span><em class="sig-param">logdir: str</em>, <em class="sig-param">use_logdir_postfix: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/tensorboard.html#TensorboardLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.tensorboard.TensorboardLogger" title="Permalink to this definition">¶</a></dt>
@@ -369,59 +499,58 @@
 </ul>
 </dd>
 </dl>
-</dd></dl>
-
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This logger is used by default by <code class="docutils literal notranslate"><span class="pre">dl.Runner</span></code> and <code class="docutils literal notranslate"><span class="pre">dl.SupervisedRunner</span></code> in case of
+specified logdir during <code class="docutils literal notranslate"><span class="pre">runner.train(...,</span> <span class="pre">logdir=/path/to/logdir)</span></code>.</p>
 </div>
-<div class="section" id="mlflowlogger">
-<h2><a class="toc-backref" href="#id4">MLflowLogger</a><a class="headerlink" href="#mlflowlogger" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="catalyst.loggers.mlflow.MLflowLogger">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.mlflow.</code><code class="sig-name descname">MLflowLogger</code><span class="sig-paren">(</span><em class="sig-param">experiment: str</em>, <em class="sig-param">run: Optional[str] = None</em>, <em class="sig-param">tracking_uri: Optional[str] = None</em>, <em class="sig-param">registry_uri: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/mlflow.html#MLflowLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.mlflow.MLflowLogger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
-<p>Mlflow logger for parameters, metrics, images and other artifacts.</p>
-<p>Mlflow documentation: <a class="reference external" href="https://mlflow.org/docs/latest/index.html">https://mlflow.org/docs/latest/index.html</a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>experiment</strong> – Name of the experiment in MLflow to log to.</p></li>
-<li><p><strong>run</strong> – Name of the run in Mlflow to log to.</p></li>
-<li><p><strong>tracking_uri</strong> – URI of tracking server against which
-to log run information related.</p></li>
-<li><p><strong>registry_uri</strong> – Address of local or remote model registry server.</p></li>
-</ul>
-</dd>
-</dl>
-<p>Notebook API example:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This logger is used by default by <code class="docutils literal notranslate"><span class="pre">dl.ConfigRunner</span></code> and <code class="docutils literal notranslate"><span class="pre">dl.HydraRunner</span></code> in case of
+specified logdir in config <code class="docutils literal notranslate"><span class="pre">args</span></code>.</p>
+</div>
+<p>Notebook API examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
-<span class="k">class</span> <span class="nc">CustomSupervisedRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dl</span><span class="o">.</span><span class="n">IEngine</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DeviceEngine</span><span class="p">(</span><span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">loggers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;tensorboard&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">TensorboardLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir/tensorboard&quot;</span><span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
 
     <span class="k">def</span> <span class="nf">get_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;console&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">ConsoleLogger</span><span class="p">(),</span>
-            <span class="s2">&quot;mlflow&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">MLflowLogger</span><span class="p">(</span><span class="n">experiment</span><span class="o">=</span><span class="s2">&quot;test_exp&quot;</span><span class="p">,</span> <span class="n">run</span><span class="o">=</span><span class="s2">&quot;test_run&quot;</span><span class="p">)</span>
+            <span class="s2">&quot;tensorboard&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">TensorboardLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir/tensorboard&quot;</span><span class="p">)</span>
         <span class="p">}</span>
 
-<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomSupervisedRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">model</span>
+    <span class="c1"># ...</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>Config API example:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
-    <span class="nt">mlflow</span><span class="p">:</span>
-        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">MLflowLogger</span>
-        <span class="nt">experiment</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_exp</span>
-        <span class="nt">run</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">test_run</span>
+    <span class="nt">tensorboard</span><span class="p">:</span>
+        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TensorboardLogger</span>
+        <span class="nt">logdir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./logdir/tensorboard</span>
 <span class="nn">...</span>
 </pre></div>
 </div>
-<dl class="method">
-<dt id="catalyst.loggers.mlflow.MLflowLogger.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">experiment: str</em>, <em class="sig-param">run: Optional[str] = None</em>, <em class="sig-param">tracking_uri: Optional[str] = None</em>, <em class="sig-param">registry_uri: Optional[str] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/loggers/mlflow.html#MLflowLogger.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.mlflow.MLflowLogger.__init__" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
+<p>Hydra API example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
+    <span class="nt">tensorboard</span><span class="p">:</span>
+        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst.dl.TensorboardLogger</span>
+        <span class="nt">logdir</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">./logdir/tensorboard</span>
+<span class="nn">...</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -469,8 +598,8 @@ to log run information related.</p></li>
 <li><a class="reference internal" href="#">Loggers</a><ul>
 <li><a class="reference internal" href="#consolelogger">ConsoleLogger</a></li>
 <li><a class="reference internal" href="#csvlogger">CSVLogger</a></li>
-<li><a class="reference internal" href="#tensorboardlogger">TensorboardLogger</a></li>
 <li><a class="reference internal" href="#mlflowlogger">MLflowLogger</a></li>
+<li><a class="reference internal" href="#tensorboardlogger">TensorboardLogger</a></li>
 </ul>
 </li>
 </ul>

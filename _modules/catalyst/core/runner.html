@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.runner &mdash; Catalyst 21.03.2 documentation</title>
+  <title>catalyst.core.runner &mdash; Catalyst 21.04 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.03</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
                 </div>
               
             
@@ -859,12 +859,13 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">global_batch_step</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stage_batch_step</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_step</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">global_sample_step</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">stage_sample_step</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loader_sample_step</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="c1"># we have an batch per each worker...</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_batch_step</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage_batch_step</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_step</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_sample_step</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stage_sample_step</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_sample_step</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">world_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>

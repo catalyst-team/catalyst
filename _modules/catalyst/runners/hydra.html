@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.hydra &mdash; Catalyst 21.03.2 documentation</title>
+  <title>catalyst.runners.hydra &mdash; Catalyst 21.04 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.03</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
                 </div>
               
             
@@ -474,10 +474,10 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">ConsoleLogger</span><span class="p">):</span>
             <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_console&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConsoleLogger</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">CSVLogger</span><span class="p">):</span>
-            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_csv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CSVLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">)</span>
+            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_csv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CSVLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="n">use_logdir_postfix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">TensorboardLogger</span><span class="p">):</span>
             <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_tensorboard&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TensorboardLogger</span><span class="p">(</span>
-                <span class="n">logdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="s2">&quot;tensorboard&quot;</span><span class="p">)</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="n">use_logdir_postfix</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">loggers</span></div>

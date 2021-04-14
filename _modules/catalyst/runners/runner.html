@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.runner &mdash; Catalyst 21.03.2 documentation</title>
+  <title>catalyst.runners.runner &mdash; Catalyst 21.04 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.03</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
                 </div>
               
             
@@ -328,6 +328,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.core.misc</span> <span class="kn">import</span> <span class="n">callback_isinstance</span><span class="p">,</span> <span class="n">sort_callbacks_by_order</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.trial</span> <span class="kn">import</span> <span class="n">ITrial</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.loader</span> <span class="kn">import</span> <span class="n">ILoaderWrapper</span>
 <span class="kn">from</span> <span class="nn">catalyst.engines</span> <span class="kn">import</span> <span class="n">IEngine</span>
 <span class="kn">from</span> <span class="nn">catalyst.loggers.console</span> <span class="kn">import</span> <span class="n">ConsoleLogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.loggers.csv</span> <span class="kn">import</span> <span class="n">CSVLogger</span>
@@ -351,7 +352,7 @@
 <span class="k">def</span> <span class="nf">_process_loaders</span><span class="p">(</span>
     <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">,</span> <span class="n">initial_seed</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">DataLoader</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">(</span><span class="n">DataLoader</span><span class="p">,</span> <span class="n">ILoaderWrapper</span><span class="p">)):</span>
         <span class="n">loaders</span> <span class="o">=</span> <span class="n">get_loaders_from_params</span><span class="p">(</span><span class="n">initial_seed</span><span class="o">=</span><span class="n">initial_seed</span><span class="p">,</span> <span class="o">**</span><span class="n">loaders</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">loaders</span>
 
@@ -444,10 +445,10 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">ConsoleLogger</span><span class="p">):</span>
             <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_console&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConsoleLogger</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">CSVLogger</span><span class="p">):</span>
-            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_csv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CSVLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">)</span>
+            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_csv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CSVLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="n">use_logdir_postfix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">TensorboardLogger</span><span class="p">):</span>
             <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_tensorboard&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TensorboardLogger</span><span class="p">(</span>
-                <span class="n">logdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="s2">&quot;tensorboard&quot;</span><span class="p">)</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="n">use_logdir_postfix</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">loggers</span></div>
@@ -581,7 +582,7 @@
 <span class="sd">            valid_metric: the key to the name of the metric</span>
 <span class="sd">                by which the checkpoints will be selected.</span>
 <span class="sd">            minimize_valid_metric: flag to indicate whether</span>
-<span class="sd">                the ``valid_metric`` should be minimized or not.</span>
+<span class="sd">                the ``valid_metric`` should be minimized or not (default: True).</span>
 <span class="sd">            verbose: if `True`, it displays the status of the training to the console.</span>
 <span class="sd">            timeit: if True, computes the execution time</span>
 <span class="sd">                of training process and displays it to the console.</span>

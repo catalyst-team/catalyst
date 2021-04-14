@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.data.loader &mdash; Catalyst 21.03.2 documentation</title>
+  <title>catalyst.data.loader &mdash; Catalyst 21.04 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.03</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
                 </div>
               
             
@@ -320,12 +320,14 @@
 
 
 <span class="k">class</span> <span class="nc">ILoaderWrapper</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Loader wrapper interface.</span>
+    <span class="sd">&quot;&quot;&quot;Loader wrapper interface.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            loader: torch dataloader.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        loader: torch dataloader.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">origin</span> <span class="o">=</span> <span class="n">loader</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
@@ -613,7 +615,7 @@
         <span class="k">return</span> <span class="n">_prefetch_loader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_prefetches</span><span class="p">)</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BatchLimitLoaderWrapper&quot;</span><span class="p">,</span> <span class="s2">&quot;BatchPrefetchLoaderWrapper&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ILoaderWrapper&quot;</span><span class="p">,</span> <span class="s2">&quot;BatchLimitLoaderWrapper&quot;</span><span class="p">,</span> <span class="s2">&quot;BatchPrefetchLoaderWrapper&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

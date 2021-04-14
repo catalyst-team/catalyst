@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.loggers.console &mdash; Catalyst 21.03.2 documentation</title>
+  <title>catalyst.loggers.console &mdash; Catalyst 21.04 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.03</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
                 </div>
               
             
@@ -318,12 +318,16 @@
 
 
 <div class="viewcode-block" id="ConsoleLogger"><a class="viewcode-back" href="../../../api/loggers.html#catalyst.loggers.console.ConsoleLogger">[docs]</a><span class="k">class</span> <span class="nc">ConsoleLogger</span><span class="p">(</span><span class="n">ILogger</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Console logger for parameters and metrics. Used by default during all runs.</span>
+    <span class="sd">&quot;&quot;&quot;Console logger for parameters and metrics.</span>
+<span class="sd">    Output the metric into the console during experiment.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        log_hparams: boolean flag to print all hparams to the console (default: False)</span>
 <span class="sd">        log_loader_metrics: boolean flag to print loader metrics to the console (default: True)</span>
 <span class="sd">        log_epoch_metrics: boolean flag to print epoch metrics to the console (default: True)</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        This logger is used by default by all Runners.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
