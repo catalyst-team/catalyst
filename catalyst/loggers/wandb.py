@@ -100,7 +100,7 @@ class WandbLogger(ILogger):
         stage_key: str = None,
     ) -> None:
         """Logs hyperparameters to the logger."""
-        print("log param")
+        self.run.config.update(hparams)
 
     def flush_log(self) -> None:
         """Flushes the logger."""
