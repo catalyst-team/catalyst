@@ -109,6 +109,8 @@ jobs:
       - name: check examples
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
+          OMP_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
         uses: nick-invision/retry@v2
         with:
           timeout_minutes: 15
