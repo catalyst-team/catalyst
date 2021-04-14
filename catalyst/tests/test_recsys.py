@@ -53,7 +53,9 @@ def train_experiment(device, engine=None):
             callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
 
         # model training
-        runner = dl.SupervisedRunner(output_key="logits")
+        runner = dl.SupervisedRunner(
+            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+        )
         runner.train(
             engine=engine or dl.DeviceEngine(device),
             model=model,
