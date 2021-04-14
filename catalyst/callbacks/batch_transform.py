@@ -9,7 +9,8 @@ class BatchTransformCallback(Callback):
 
     Args:
         lambda_fn (Callable): Function to apply.
-        scope (str): ``"on_batch_end"`` or ``"on_batch_start"``
+        scope (str): ``"on_batch_end"`` (post-processing model output) or
+            ``"on_batch_start"`` (pre-processing model input).
         input_key (Union[List[str], str, int], optional): Keys in batch dict to apply function.
             Defaults to ``None``.
         output_key (Union[List[str], str, int], optional): Keys for output.
