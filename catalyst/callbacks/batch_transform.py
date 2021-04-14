@@ -1,5 +1,4 @@
 from typing import Any, Callable, Dict, List, Tuple, Union
-from functools import partial
 
 from catalyst.core import Callback, CallbackOrder, IRunner
 
@@ -88,8 +87,8 @@ class BatchTransformCallback(Callback):
         self,
         lambda_fn: Callable,
         scope: str,
-        input_key: Union[List[str], str, int] = None,
-        output_key: Union[List[str], str, int] = None,
+        input_key: Union[List[str], str] = None,
+        output_key: Union[List[str], str] = None,
     ):
         """
         Preprocess your batch with specified function.
@@ -107,9 +106,9 @@ class BatchTransformCallback(Callback):
         """
         super().__init__(order=CallbackOrder.Internal)
         if input_key is not None:
-            if not isinstance(input_key, (list, str, int)):
-                raise TypeError("input key should be str or list of str.")
-            elif isinstance(input_key, (str, int)):
+            if not isinstance(input_key, (list, str)):
+                raise TypeError("input key should be stror list of str.")
+            elif isinstance(input_key, str):
                 input_key = [input_key]
             self.input_handler = self._handle_input_tuple
         else:
@@ -117,9 +116,9 @@ class BatchTransformCallback(Callback):
 
         output_key = output_key or input_key
         if output_key is not None:
-            if not isinstance(output_key, (list, str, int)):
+            if not isinstance(output_key, (list, str)):
                 raise TypeError("output key should be str or list of str.")
-            if isinstance(output_key, (str, int)):
+            if isinstance(output_key, str):
                 self.output_handler = self._handle_output_value
                 output_key = [output_key]
             else:
@@ -170,9 +169,7 @@ class BatchTransformCallback(Callback):
         fn_input = self.input_handler(runner.batch, self.input_key)
         fn_output = self.lambda_fn(*fn_input)
 
-        runner.batch = self.output_handler(
-            batch=runner.batch, function_output=fn_output, output_keys=self.output_key
-        )
+        runner.batch = self.output_handler(runner.batch, fn_output, self.output_key)
 
     def on_batch_start(self, runner: "IRunner") -> None:
         """
@@ -184,7 +181,7 @@ class BatchTransformCallback(Callback):
         if self.scope == "on_batch_start":
             self._handle_batch(runner)
 
-    def on_batch_end(self, runner) -> None:
+    def on_batch_end(self, runner: "IRunner") -> None:
         """
         On batch end action.
 
