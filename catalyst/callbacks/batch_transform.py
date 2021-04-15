@@ -18,7 +18,8 @@ class BatchTransformCallback(Callback):
             Defaults to ``None``.
 
     Raises:
-        TypeError: When keys_to_apply is not str or a list.
+        TypeError: When keys is not str or a list.
+            When ``scope`` is not in ``["on_batch_end", "on_batch_start"]``.
 
     Examples:
         .. code-block:: python
@@ -178,7 +179,8 @@ class BatchTransformCallback(Callback):
                 Defaults to ``None``.
 
         Raises:
-            TypeError: When keys_to_apply is not str or a list.
+            TypeError: When keys is not str or a list.
+                When ``scope`` is not in ``["on_batch_end", "on_batch_start"]``.
         """
         super().__init__(order=CallbackOrder.Internal)
         if input_key is not None:
