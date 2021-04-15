@@ -539,16 +539,10 @@ criterion = torch.nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
-class CustomRunner(dl.Runner):
-    def handle_batch(self, batch):
-        x, y = batch
-        logits = self.model(x)
-        self.batch = {
-            "features": x, "logits": logits, "scores": torch.sigmoid(logits), "targets": y
-        }
-
 # model training
-runner = CustomRunner()
+runner = dl.SupervisedRunner(
+    input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+)
 runner.train(
     model=model,
     criterion=criterion,
@@ -558,6 +552,12 @@ runner.train(
     num_epochs=3,
     verbose=True,
     callbacks=[
+        dl.BatchTransformCallback(
+            transform=torch.sigmoid,
+            scope="on_batch_end",
+            input_key="logits",
+            output_key="scores"
+        ),
         dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
         # uncomment for extra metrics:
         # dl.AUCCallback(input_key="scores", target_key="targets"),
