@@ -97,6 +97,8 @@ jobs:
       - name: check examples
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
+          OMP_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
         run: |
           pip install -e .
           bash bin/workflows/check_projector.sh
