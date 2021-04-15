@@ -82,6 +82,80 @@ class BatchTransformCallback(Callback):
                 ]
             )
 
+        .. code-block:: python
+
+            class CustomRunner(dl.Runner):
+
+                def handle_batch(self, batch):
+                    logits = self.model(
+                        batch["features"].view(batch["features"].size(0), -1)
+                    )
+
+                    loss = F.cross_entropy(logits, batch["targets"])
+                    accuracy01, accuracy03 = metrics.accuracy(
+                        logits, batch["targets"], topk=(1, 3)
+                    )
+                    self.batch_metrics.update(
+                        {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
+                    )
+
+                    if self.is_train_loader:
+                        loss.backward()
+                        self.optimizer.step()
+                        self.optimizer.zero_grad()
+
+
+            class MnistDataset(torch.utils.data.Dataset):
+                def __init__(self, dataset):
+                    self.dataset = dataset
+
+                def __getitem__(self, item):
+                    return {"features": self.dataset[item][0], "targets": self.dataset[item][1]}
+
+                def __len__(self):
+                    return len(self.dataset)
+
+            model = torch.nn.Linear(28 * 28, 10)
+            optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+
+            loaders = {
+                "train": DataLoader(
+                    MnistDataset(
+                        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+                    ),
+                    batch_size=32,
+                ),
+                "valid": DataLoader(
+                    MnistDataset(
+                        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+                    ),
+                    batch_size=32,
+                ),
+            }
+
+            transrorms = [
+                augmentation.RandomAffine(degrees=(-15, 20), scale=(0.75, 1.25)),
+            ]
+
+            runner = CustomRunner()
+
+            # model training
+            runner.train(
+                model=model,
+                optimizer=optimizer,
+                loaders=loaders,
+                logdir="./logs",
+                num_epochs=5,
+                verbose=False,
+                load_best_on_end=True,
+                check=True,
+                callbacks=[
+                    BatchTransformCallback(
+                        transform=transrorms, scope="on_batch_start", input_key="features"
+                    )
+                ],
+            )
+
     """
 
     def __init__(
