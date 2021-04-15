@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Tuple, Union
+from typing import Callable, List, Union
 
 from catalyst.core import Callback, CallbackOrder, IRunner
 
@@ -18,7 +18,7 @@ class BatchTransformCallback(Callback):
             Defaults to ``None``.
 
     Raises:
-        TypeError: When keys_to_apply is not str or list.
+        TypeError: When keys_to_apply is not str or a list.
 
     Examples:
         .. code-block:: python
@@ -96,19 +96,20 @@ class BatchTransformCallback(Callback):
 
         Args:
             transform (Callable): Function to apply.
-            scope (str): ``"on_batch_end"`` or ``"on_batch_start"``
+            scope (str): ``"on_batch_end"`` (post-processing model output) or
+                ``"on_batch_start"`` (pre-processing model input).
             input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
             output_key (Union[List[str], str], optional): Keys for output.
                 If None then will apply function inplace to ``keys_to_apply``.
                 Defaults to ``None``.
 
         Raises:
-            TypeError: When keys_to_apply is not str or list.
+            TypeError: When keys_to_apply is not str or a list.
         """
         super().__init__(order=CallbackOrder.Internal)
         if input_key is not None:
             if not isinstance(input_key, (list, str)):
-                raise TypeError("input key should be stror list of str.")
+                raise TypeError("input key should be str or a list of str.")
             elif isinstance(input_key, str):
                 input_key = [input_key]
             self._handle_batch = self._handle_tuples
@@ -117,8 +118,10 @@ class BatchTransformCallback(Callback):
 
         output_key = output_key or input_key
         if output_key is not None:
+            if input_key is None:
+                raise TypeError("You should define input_key in " "case if output_key is not None")
             if not isinstance(output_key, (list, str)):
-                raise TypeError("output key should be str or list of str.")
+                raise TypeError("output key should be str or a list of str.")
             if isinstance(output_key, str):
                 output_key = [output_key]
 
