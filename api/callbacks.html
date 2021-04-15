@@ -453,64 +453,101 @@ and <code class="docutils literal notranslate"><span class="pre">valid_additiona
 <h3><a class="toc-backref" href="#id3">BatchTransformCallback</a><a class="headerlink" href="#batchtransformcallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.batch_transform.BatchTransformCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.batch_transform.</code><code class="sig-name descname">BatchTransformCallback</code><span class="sig-paren">(</span><em class="sig-param">transform: Sequence[Union[dict, torch.nn.modules.module.Module]], input_key: Union[str, int] = 'image', output_key: Union[str, int, None] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/batch_transform.html#BatchTransformCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.batch_transform.BatchTransformCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.batch_transform.</code><code class="sig-name descname">BatchTransformCallback</code><span class="sig-paren">(</span><em class="sig-param">transform: Callable, scope: str, input_key: Union[List[str], str] = None, output_key: Union[List[str], str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/batch_transform.html#BatchTransformCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.batch_transform.BatchTransformCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
-<p>Callback to perform data augmentations on GPU using kornia library.</p>
+<p>Preprocess your batch with specified function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>transform</strong> – <p>define augmentations to apply on a batch</p>
-<p>If a sequence of transforms passed, then each element
-should be either <code class="docutils literal notranslate"><span class="pre">kornia.augmentation.AugmentationBase2D</span></code>,
-<code class="docutils literal notranslate"><span class="pre">kornia.augmentation.AugmentationBase3D</span></code>, or <code class="docutils literal notranslate"><span class="pre">nn.Module</span></code>
-compatible with kornia interface.</p>
-<p>If a sequence of params (<code class="docutils literal notranslate"><span class="pre">dict</span></code>) passed, then each
-element of the sequence must contain <code class="docutils literal notranslate"><span class="pre">'transform'</span></code> key with
-an augmentation name as a value. Please note that in this case
-to use custom augmentation you should add it to the
-<cite>REGISTRY</cite> registry first.</p>
-</p></li>
-<li><p><strong>input_key</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>int</em><em>]</em>) – key in batch dict mapping to transform, e.g. <cite>‘image’</cite></p></li>
-<li><p><strong>output_key</strong> – key to use to store the result
-of the transform, defaults to <cite>input_key</cite> if not provided</p></li>
+<li><p><strong>transform</strong> (<em>Callable</em>) – Function to apply.</p></li>
+<li><p><strong>scope</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">&quot;on_batch_end&quot;</span></code> (post-processing model output) or
+<code class="docutils literal notranslate"><span class="pre">&quot;on_batch_start&quot;</span></code> (pre-processing model input).</p></li>
+<li><p><strong>input_key</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Keys in batch dict to apply function.
+Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>output_key</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Keys for output.
+If None then will apply function inplace to <code class="docutils literal notranslate"><span class="pre">keys_to_apply</span></code>.
+Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>
 </dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – When keys is not str or a list.
+    When <code class="docutils literal notranslate"><span class="pre">scope</span></code> is not in <code class="docutils literal notranslate"><span class="pre">[&quot;on_batch_end&quot;,</span> <span class="pre">&quot;on_batch_start&quot;]</span></code>.</p>
+</dd>
 </dl>
-<p>Look at <a class="reference external" href="https://arxiv.org/pdf/1910.02190.pdf">Kornia: an Open Source Differentiable Computer Vision
-Library for PyTorch</a> for details.</p>
-<p>Usage example for notebook API:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-
-<span class="kn">from</span> <span class="nn">kornia</span> <span class="kn">import</span> <span class="n">augmentation</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
-<span class="kn">from</span> <span class="nn">catalyst.contrib.data.transforms</span> <span class="kn">import</span> <span class="n">ToTensor</span>
-<span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
-<span class="kn">from</span> <span class="nn">catalyst.contrib.callbacks.kornia_transform</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">BatchTransformCallback</span>
+
+<span class="c1"># sample data</span>
+<span class="n">num_users</span><span class="p">,</span> <span class="n">num_features</span><span class="p">,</span> <span class="n">num_items</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">),</span> <span class="mi">10</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">num_features</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_users</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="c1"># pytorch loaders</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+
+<span class="c1"># model, criterion, optimizer, scheduler</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="n">num_items</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">BCEWithLogitsLoss</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
+<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+<span class="c1"># model training</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">LambdaPreprocessCallback</span><span class="p">(</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">output_key</span><span class="o">=</span><span class="s2">&quot;scores&quot;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">sigmoid</span>
+        <span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;logits&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span>
+        <span class="p">),</span>
+<span class="c1"># uncomment for extra metrics:</span>
+<span class="c1">#       dl.AUCCallback(</span>
+<span class="c1">#           input_key=&quot;scores&quot;, target_key=&quot;targets&quot;</span>
+<span class="c1">#       ),</span>
+<span class="c1">#       dl.HitrateCallback(</span>
+<span class="c1">#           input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)</span>
+<span class="c1">#       ),</span>
+<span class="c1">#       dl.MRRCallback(</span>
+<span class="c1">#           input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)</span>
+<span class="c1">#       ),</span>
+<span class="c1">#       dl.MAPCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
+<span class="c1">#       dl.NDCGCallback(</span>
+<span class="c1">#           input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)</span>
+<span class="c1">#       ),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">SchedulerCallback</span><span class="p">(),</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">CheckpointCallback</span><span class="p">(</span>
+            <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span> <span class="n">loader_key</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;map01&quot;</span><span class="p">,</span> <span class="n">minimize</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">),</span>
+    <span class="p">]</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
-
-
-<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">Runner</span><span class="p">):</span>
-    <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
-        <span class="c1"># model inference step</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
-            <span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-        <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">Runner</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
-        <span class="c1"># model train/valid step</span>
-        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span>
-        <span class="n">y_hat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">logits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span>
+            <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">)</span>
 
-        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="n">accuracy01</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span><span class="n">y_hat</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">loss</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">cross_entropy</span><span class="p">(</span><span class="n">logits</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">])</span>
+        <span class="n">accuracy01</span><span class="p">,</span> <span class="n">accuracy03</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span>
+            <span class="n">logits</span><span class="p">,</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">],</span> <span class="n">topk</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
-            <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">:</span> <span class="n">accuracy01</span><span class="p">}</span>
+            <span class="p">{</span><span class="s2">&quot;loss&quot;</span><span class="p">:</span> <span class="n">loss</span><span class="p">,</span> <span class="s2">&quot;accuracy01&quot;</span><span class="p">:</span> <span class="n">accuracy01</span><span class="p">,</span> <span class="s2">&quot;accuracy03&quot;</span><span class="p">:</span> <span class="n">accuracy03</span><span class="p">}</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span><span class="p">:</span>
@@ -518,20 +555,36 @@ Library for PyTorch</a> for details.</p>
             <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
 
+
+<span class="k">class</span> <span class="nc">MnistDataset</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">dataset</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">item</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">[</span><span class="n">item</span><span class="p">][</span><span class="mi">1</span><span class="p">]}</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+
 <span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
 
 <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
-        <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span>
+        <span class="n">MnistDataset</span><span class="p">(</span>
+            <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">())</span>
+        <span class="p">),</span>
         <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
     <span class="p">),</span>
     <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
-        <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span>
+        <span class="n">MnistDataset</span><span class="p">(</span>
+            <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">())</span>
+        <span class="p">),</span>
         <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span>
     <span class="p">),</span>
 <span class="p">}</span>
-<span class="n">transforms</span> <span class="o">=</span> <span class="p">[</span>
+
+<span class="n">transrorms</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">augmentation</span><span class="o">.</span><span class="n">RandomAffine</span><span class="p">(</span><span class="n">degrees</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">15</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">)),</span>
 <span class="p">]</span>
 
@@ -544,33 +597,15 @@ Library for PyTorch</a> for details.</p>
     <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
     <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span>
     <span class="n">num_epochs</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
-    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span><span class="n">BatchTransformCallback</span><span class="p">(</span><span class="n">transforms</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="mi">0</span><span class="p">)],</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">load_best_on_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">BatchTransformCallback</span><span class="p">(</span>
+            <span class="n">transform</span><span class="o">=</span><span class="n">transrorms</span><span class="p">,</span> <span class="n">scope</span><span class="o">=</span><span class="s2">&quot;on_batch_start&quot;</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;features&quot;</span>
+        <span class="p">)</span>
+    <span class="p">],</span>
 <span class="p">)</span>
-</pre></div>
-</div>
-<p>To apply augmentations only during specific loader e.g. only during
-training <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callbacks.control_flow.ControlFlowCallback</span></code>
-callback can be used. For config API it can look like this:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">callbacks_params</span><span class="p">:</span>
-  <span class="l l-Scalar l-Scalar-Plain">...</span>
-  <span class="l l-Scalar l-Scalar-Plain">train_transforms</span><span class="p p-Indicator">:</span>
-    <span class="nt">_wrapper</span><span class="p">:</span>
-      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ControlFlowCallback</span>
-      <span class="nt">loaders</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">train</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">BatchTransformCallback</span>
-    <span class="nt">transform</span><span class="p">:</span>
-      <span class="p p-Indicator">-</span> <span class="nt">transform</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">kornia.RandomAffine</span>
-        <span class="nt">degrees</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">-15</span><span class="p p-Indicator">,</span> <span class="nv">20</span><span class="p p-Indicator">]</span>
-        <span class="nt">scale</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">0.75</span><span class="p p-Indicator">,</span> <span class="nv">1.25</span><span class="p p-Indicator">]</span>
-        <span class="nt">return_transform</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
-      <span class="p p-Indicator">-</span> <span class="nt">transform</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">kornia.ColorJitter</span>
-        <span class="nt">brightness</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.1</span>
-        <span class="nt">contrast</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.1</span>
-        <span class="nt">saturation</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.1</span>
-        <span class="nt">return_transform</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
-    <span class="nt">input_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">image</span>
-  <span class="l l-Scalar l-Scalar-Plain">...</span>
 </pre></div>
 </div>
 </dd></dl>

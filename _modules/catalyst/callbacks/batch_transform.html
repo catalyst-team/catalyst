@@ -308,174 +308,244 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.callbacks.batch_transform</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
-
-<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
-<span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="n">REGISTRY</span>
-
-<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
+<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">IRunner</span>
 
 
 <div class="viewcode-block" id="BatchTransformCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.batch_transform.BatchTransformCallback">[docs]</a><span class="k">class</span> <span class="nc">BatchTransformCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Callback to perform data augmentations on GPU using kornia library.</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Preprocess your batch with specified function.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        transform: define augmentations to apply on a batch</span>
+<span class="sd">        transform (Callable): Function to apply.</span>
+<span class="sd">        scope (str): ``&quot;on_batch_end&quot;`` (post-processing model output) or</span>
+<span class="sd">            ``&quot;on_batch_start&quot;`` (pre-processing model input).</span>
+<span class="sd">        input_key (Union[List[str], str, int], optional): Keys in batch dict to apply function.</span>
+<span class="sd">            Defaults to ``None``.</span>
+<span class="sd">        output_key (Union[List[str], str, int], optional): Keys for output.</span>
+<span class="sd">            If None then will apply function inplace to ``keys_to_apply``.</span>
+<span class="sd">            Defaults to ``None``.</span>
 
-<span class="sd">            If a sequence of transforms passed, then each element</span>
-<span class="sd">            should be either ``kornia.augmentation.AugmentationBase2D``,</span>
-<span class="sd">            ``kornia.augmentation.AugmentationBase3D``, or ``nn.Module``</span>
-<span class="sd">            compatible with kornia interface.</span>
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: When keys is not str or a list.</span>
+<span class="sd">            When ``scope`` is not in ``[&quot;on_batch_end&quot;, &quot;on_batch_start&quot;]``.</span>
 
-<span class="sd">            If a sequence of params (``dict``) passed, then each</span>
-<span class="sd">            element of the sequence must contain ``&#39;transform&#39;`` key with</span>
-<span class="sd">            an augmentation name as a value. Please note that in this case</span>
-<span class="sd">            to use custom augmentation you should add it to the</span>
-<span class="sd">            `REGISTRY` registry first.</span>
-<span class="sd">        input_key (Union[str, int]): key in batch dict mapping to transform, e.g. `&#39;image&#39;`</span>
-<span class="sd">        output_key: key to use to store the result</span>
-<span class="sd">            of the transform, defaults to `input_key` if not provided</span>
+<span class="sd">    Examples:</span>
+<span class="sd">        .. code-block:: python</span>
 
-<span class="sd">    Look at `Kornia: an Open Source Differentiable Computer Vision</span>
-<span class="sd">    Library for PyTorch`_ for details.</span>
+<span class="sd">            import torch</span>
+<span class="sd">            from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">            from catalyst import dl</span>
 
-<span class="sd">    Usage example for notebook API:</span>
+<span class="sd">            # sample data</span>
+<span class="sd">            num_users, num_features, num_items = int(1e4), int(1e1), 10</span>
+<span class="sd">            X = torch.rand(num_users, num_features)</span>
+<span class="sd">            y = (torch.rand(num_users, num_items) &gt; 0.5).to(torch.float32)</span>
 
-<span class="sd">    .. code-block:: python</span>
+<span class="sd">            # pytorch loaders</span>
+<span class="sd">            dataset = TensorDataset(X, y)</span>
+<span class="sd">            loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">            loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
 
-<span class="sd">        import os</span>
+<span class="sd">            # model, criterion, optimizer, scheduler</span>
+<span class="sd">            model = torch.nn.Linear(num_features, num_items)</span>
+<span class="sd">            criterion = torch.nn.BCEWithLogitsLoss()</span>
+<span class="sd">            optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">            scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])</span>
 
-<span class="sd">        from kornia import augmentation</span>
-<span class="sd">        import torch</span>
-<span class="sd">        from torch.nn import functional as F</span>
-<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">            # model training</span>
+<span class="sd">            runner = SupervisedRunner()</span>
+<span class="sd">            runner.train(</span>
+<span class="sd">                model=model,</span>
+<span class="sd">                criterion=criterion,</span>
+<span class="sd">                optimizer=optimizer,</span>
+<span class="sd">                scheduler=scheduler,</span>
+<span class="sd">                loaders=loaders,</span>
+<span class="sd">                num_epochs=3,</span>
+<span class="sd">                verbose=True,</span>
+<span class="sd">                callbacks=[</span>
+<span class="sd">                    dl.LambdaPreprocessCallback(</span>
+<span class="sd">                        input_key=&quot;logits&quot;, output_key=&quot;scores&quot;, transform=torch.sigmoid</span>
+<span class="sd">                    ),</span>
+<span class="sd">                    dl.CriterionCallback(</span>
+<span class="sd">                        input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, metric_key=&quot;loss&quot;</span>
+<span class="sd">                    ),</span>
+<span class="sd">            # uncomment for extra metrics:</span>
+<span class="sd">            #       dl.AUCCallback(</span>
+<span class="sd">            #           input_key=&quot;scores&quot;, target_key=&quot;targets&quot;</span>
+<span class="sd">            #       ),</span>
+<span class="sd">            #       dl.HitrateCallback(</span>
+<span class="sd">            #           input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)</span>
+<span class="sd">            #       ),</span>
+<span class="sd">            #       dl.MRRCallback(</span>
+<span class="sd">            #           input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)</span>
+<span class="sd">            #       ),</span>
+<span class="sd">            #       dl.MAPCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
+<span class="sd">            #       dl.NDCGCallback(</span>
+<span class="sd">            #           input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)</span>
+<span class="sd">            #       ),</span>
+<span class="sd">                    dl.OptimizerCallback(metric_key=&quot;loss&quot;),</span>
+<span class="sd">                    dl.SchedulerCallback(),</span>
+<span class="sd">                    dl.CheckpointCallback(</span>
+<span class="sd">                        logdir=&quot;./logs&quot;, loader_key=&quot;valid&quot;, metric_key=&quot;map01&quot;, minimize=False</span>
+<span class="sd">                    ),</span>
+<span class="sd">                ]</span>
+<span class="sd">            )</span>
 
-<span class="sd">        from catalyst import dl</span>
-<span class="sd">        from catalyst.contrib.data.transforms import ToTensor</span>
-<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
-<span class="sd">        from catalyst.contrib.callbacks.kornia_transform import (</span>
-<span class="sd">            BatchTransformCallback</span>
-<span class="sd">        )</span>
-<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            class CustomRunner(dl.Runner):</span>
+
+<span class="sd">                def handle_batch(self, batch):</span>
+<span class="sd">                    logits = self.model(</span>
+<span class="sd">                        batch[&quot;features&quot;].view(batch[&quot;features&quot;].size(0), -1)</span>
+<span class="sd">                    )</span>
+
+<span class="sd">                    loss = F.cross_entropy(logits, batch[&quot;targets&quot;])</span>
+<span class="sd">                    accuracy01, accuracy03 = metrics.accuracy(</span>
+<span class="sd">                        logits, batch[&quot;targets&quot;], topk=(1, 3)</span>
+<span class="sd">                    )</span>
+<span class="sd">                    self.batch_metrics.update(</span>
+<span class="sd">                        {&quot;loss&quot;: loss, &quot;accuracy01&quot;: accuracy01, &quot;accuracy03&quot;: accuracy03}</span>
+<span class="sd">                    )</span>
+
+<span class="sd">                    if self.is_train_loader:</span>
+<span class="sd">                        loss.backward()</span>
+<span class="sd">                        self.optimizer.step()</span>
+<span class="sd">                        self.optimizer.zero_grad()</span>
 
 
-<span class="sd">        class CustomRunner(dl.Runner):</span>
-<span class="sd">            def predict_batch(self, batch):</span>
-<span class="sd">                # model inference step</span>
-<span class="sd">                return self.model(</span>
-<span class="sd">                    batch[0].to(self.device).view(batch[0].size(0), -1)</span>
-<span class="sd">                )</span>
+<span class="sd">            class MnistDataset(torch.utils.data.Dataset):</span>
+<span class="sd">                def __init__(self, dataset):</span>
+<span class="sd">                    self.dataset = dataset</span>
 
-<span class="sd">            def handle_batch(self, batch):</span>
-<span class="sd">                # model train/valid step</span>
-<span class="sd">                x, y = batch</span>
-<span class="sd">                y_hat = self.model(x.view(x.size(0), -1))</span>
+<span class="sd">                def __getitem__(self, item):</span>
+<span class="sd">                    return {&quot;features&quot;: self.dataset[item][0], &quot;targets&quot;: self.dataset[item][1]}</span>
 
-<span class="sd">                loss = F.cross_entropy(y_hat, y)</span>
-<span class="sd">                accuracy01, *_ = metrics.accuracy(y_hat, y)</span>
-<span class="sd">                self.batch_metrics.update(</span>
-<span class="sd">                    {&quot;loss&quot;: loss, &quot;accuracy01&quot;: accuracy01}</span>
-<span class="sd">                )</span>
+<span class="sd">                def __len__(self):</span>
+<span class="sd">                    return len(self.dataset)</span>
 
-<span class="sd">                if self.is_train_loader:</span>
-<span class="sd">                    loss.backward()</span>
-<span class="sd">                    self.optimizer.step()</span>
-<span class="sd">                    self.optimizer.zero_grad()</span>
+<span class="sd">            model = torch.nn.Linear(28 * 28, 10)</span>
+<span class="sd">            optimizer = torch.optim.Adam(model.parameters(), lr=0.02)</span>
 
-<span class="sd">        model = torch.nn.Linear(28 * 28, 10)</span>
-<span class="sd">        optimizer = torch.optim.Adam(model.parameters(), lr=0.02)</span>
+<span class="sd">            loaders = {</span>
+<span class="sd">                &quot;train&quot;: DataLoader(</span>
+<span class="sd">                    MnistDataset(</span>
+<span class="sd">                        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())</span>
+<span class="sd">                    ),</span>
+<span class="sd">                    batch_size=32,</span>
+<span class="sd">                ),</span>
+<span class="sd">                &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                    MnistDataset(</span>
+<span class="sd">                        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())</span>
+<span class="sd">                    ),</span>
+<span class="sd">                    batch_size=32,</span>
+<span class="sd">                ),</span>
+<span class="sd">            }</span>
 
-<span class="sd">        loaders = {</span>
-<span class="sd">            &quot;train&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=True, transform=ToTensor()),</span>
-<span class="sd">                batch_size=32,</span>
-<span class="sd">            ),</span>
-<span class="sd">            &quot;valid&quot;: DataLoader(</span>
-<span class="sd">                MNIST(os.getcwd(), train=False, transform=ToTensor()),</span>
-<span class="sd">                batch_size=32,</span>
-<span class="sd">            ),</span>
-<span class="sd">        }</span>
-<span class="sd">        transforms = [</span>
-<span class="sd">            augmentation.RandomAffine(degrees=(-15, 20), scale=(0.75, 1.25)),</span>
-<span class="sd">        ]</span>
+<span class="sd">            transrorms = [</span>
+<span class="sd">                augmentation.RandomAffine(degrees=(-15, 20), scale=(0.75, 1.25)),</span>
+<span class="sd">            ]</span>
 
-<span class="sd">        runner = CustomRunner()</span>
+<span class="sd">            runner = CustomRunner()</span>
 
-<span class="sd">        # model training</span>
-<span class="sd">        runner.train(</span>
-<span class="sd">            model=model,</span>
-<span class="sd">            optimizer=optimizer,</span>
-<span class="sd">            loaders=loaders,</span>
-<span class="sd">            logdir=&quot;./logs&quot;,</span>
-<span class="sd">            num_epochs=5,</span>
-<span class="sd">            verbose=True,</span>
-<span class="sd">            callbacks=[BatchTransformCallback(transforms, input_key=0)],</span>
-<span class="sd">        )</span>
+<span class="sd">            # model training</span>
+<span class="sd">            runner.train(</span>
+<span class="sd">                model=model,</span>
+<span class="sd">                optimizer=optimizer,</span>
+<span class="sd">                loaders=loaders,</span>
+<span class="sd">                logdir=&quot;./logs&quot;,</span>
+<span class="sd">                num_epochs=5,</span>
+<span class="sd">                verbose=False,</span>
+<span class="sd">                load_best_on_end=True,</span>
+<span class="sd">                check=True,</span>
+<span class="sd">                callbacks=[</span>
+<span class="sd">                    BatchTransformCallback(</span>
+<span class="sd">                        transform=transrorms, scope=&quot;on_batch_start&quot;, input_key=&quot;features&quot;</span>
+<span class="sd">                    )</span>
+<span class="sd">                ],</span>
+<span class="sd">            )</span>
 
-<span class="sd">    To apply augmentations only during specific loader e.g. only during</span>
-<span class="sd">    training :class:`catalyst.core.callbacks.control_flow.ControlFlowCallback`</span>
-<span class="sd">    callback can be used. For config API it can look like this:</span>
-
-<span class="sd">    .. code-block:: yaml</span>
-
-<span class="sd">        callbacks_params:</span>
-<span class="sd">          ...</span>
-<span class="sd">          train_transforms:</span>
-<span class="sd">            _wrapper:</span>
-<span class="sd">              name: ControlFlowCallback</span>
-<span class="sd">              loaders: train</span>
-<span class="sd">            name: BatchTransformCallback</span>
-<span class="sd">            transform:</span>
-<span class="sd">              - transform: kornia.RandomAffine</span>
-<span class="sd">                degrees: [-15, 20]</span>
-<span class="sd">                scale: [0.75, 1.25]</span>
-<span class="sd">                return_transform: true</span>
-<span class="sd">              - transform: kornia.ColorJitter</span>
-<span class="sd">                brightness: 0.1</span>
-<span class="sd">                contrast: 0.1</span>
-<span class="sd">                saturation: 0.1</span>
-<span class="sd">                return_transform: false</span>
-<span class="sd">            input_key: image</span>
-<span class="sd">          ...</span>
-
-<span class="sd">    .. _`Kornia: an Open Source Differentiable Computer Vision Library</span>
-<span class="sd">        for PyTorch`: https://arxiv.org/pdf/1910.02190.pdf</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">transform</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">]],</span>
-        <span class="n">input_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span>
-        <span class="n">output_key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Internal</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span>
-
-        <span class="n">transforms</span><span class="p">:</span> <span class="n">Sequence</span><span class="p">[</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="n">item</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="k">else</span> <span class="n">REGISTRY</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">item</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">transform</span>
-        <span class="p">]</span>
-        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">transforms</span>
-        <span class="p">),</span> <span class="s2">&quot;`nn.Module` should be a base class for transforms&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="o">*</span><span class="n">transforms</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Apply transforms.</span>
+        <span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+        <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Preprocess your batch with specified function.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            runner: сurrent runner</span>
+<span class="sd">            transform (Callable): Function to apply.</span>
+<span class="sd">            scope (str): ``&quot;on_batch_end&quot;`` (post-processing model output) or</span>
+<span class="sd">                ``&quot;on_batch_start&quot;`` (pre-processing model input).</span>
+<span class="sd">            input_key (Union[List[str], str], optional): Keys in batch dict to apply function.</span>
+<span class="sd">            output_key (Union[List[str], str], optional): Keys for output.</span>
+<span class="sd">                If None then will apply function inplace to ``keys_to_apply``.</span>
+<span class="sd">                Defaults to ``None``.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: When keys is not str or a list.</span>
+<span class="sd">                When ``scope`` is not in ``[&quot;on_batch_end&quot;, &quot;on_batch_start&quot;]``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">input_batch</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span>
-        <span class="n">output_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">input_batch</span><span class="p">)</span>
-        <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">output_batch</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Internal</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">input_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input key should be str or a list of str.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">input_key</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_key</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_handle_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_tuples</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_handle_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_dicts</span>
+
+        <span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span> <span class="ow">or</span> <span class="n">input_key</span>
+        <span class="k">if</span> <span class="n">output_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">input_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;You should define input_key in &quot;</span> <span class="s2">&quot;case if output_key is not None&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_key</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;output key should be str or a list of str.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">output_key</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_key</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">scope</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;on_batch_end&quot;</span><span class="p">,</span> <span class="s2">&quot;on_batch_start&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">scope</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;Expected scope to be on of the [&quot;on_batch_end&quot;, &quot;on_batch_start&quot;]&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span> <span class="o">=</span> <span class="n">input_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+
+    <span class="k">def</span> <span class="nf">_handle_dicts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_handle_tuples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
+        <span class="n">batch_in</span> <span class="o">=</span> <span class="p">[</span><span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span>
+        <span class="n">batch_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">batch_in</span><span class="p">)</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">,</span> <span class="n">batch_out</span><span class="p">)})</span>
+
+    <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        On batch start action.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: runner for the experiment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;on_batch_start&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_handle_batch</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        On batch end action.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: runner for the experiment.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;on_batch_end&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_handle_batch</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;BatchTransformCallback&quot;</span><span class="p">]</span>
