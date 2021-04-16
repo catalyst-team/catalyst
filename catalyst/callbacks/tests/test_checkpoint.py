@@ -61,10 +61,10 @@ class CheckModelStateLoadAfterStages(dl.Callback):
         checkpoint["model_state_dict"] = OrderedDict(
             (k, torch.ones_like(v)) for k, v in checkpoint["model_state_dict"].items()
         )
-        print("-" * 100)
-        print(checkpoint)
-        print(runner.model.state_dict())
-        print("-" * 100)
+        # print("-" * 100)
+        # print(checkpoint)
+        # print(runner.model.state_dict())
+        # print("-" * 100)
         runner.engine.save_checkpoint(checkpoint, checkpoint_file)
 
     def on_batch_start(self, runner):
@@ -75,9 +75,9 @@ class CheckModelStateLoadAfterStages(dl.Callback):
         if not isinstance(model, torch.nn.Module):  # dummy check for DP or DDP
             model = model.module
         state_dict = model.state_dict()
-        print("=" * 100)
-        print(model.state_dict())
-        print("=" * 100)
+        # print("=" * 100)
+        # print(model.state_dict())
+        # print("=" * 100)
         for k, v in state_dict.items():
             assert torch.all(v.isclose(torch.ones_like(v))), (
                 f"Stage: '{runner.stage_key}'\n"
@@ -122,8 +122,8 @@ class CustomRunner(dl.IRunner):
         return 10
 
     def get_loaders(self, stage: str):
-        dataset = DummyDataset(6)
-        loader = DataLoader(dataset, batch_size=4)
+        dataset = DummyDataset(64)
+        loader = DataLoader(dataset, batch_size=4, num_workers=1)
         return {"train": loader, "valid": loader}
 
     def get_model(self, stage: str):
@@ -152,14 +152,28 @@ class CustomRunner(dl.IRunner):
 
 
 def test_device_load_on_stage_start():
-    to_check_devices = ["cpu"] + [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
+    to_check_devices = ["cpu"]
     for device in to_check_devices:
         with TemporaryDirectory() as logdir:
             runner = CustomRunner(logdir, DeviceEngine(device))
             runner.run()
 
 
-@pytest.mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+@pytest.mark.skipif(
+    not IS_CUDA_AVAILABLE, reason="CUDA is not available",
+)
+def test_device_load_on_stage_start():
+    to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
+    for device in to_check_devices:
+        with TemporaryDirectory() as logdir:
+            runner = CustomRunner(logdir, DeviceEngine(device))
+            runner.run()
+
+
+@pytest.mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
+    reason="Number of CUDA devices is less than 2",
+)
 def test_dp_load_on_stage_start():
     with TemporaryDirectory() as logdir:
         runner = CustomRunner(logdir, DataParallelEngine())

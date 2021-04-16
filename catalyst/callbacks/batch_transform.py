@@ -3,6 +3,15 @@ from typing import Callable, List, Union
 from catalyst.core import Callback, CallbackOrder, IRunner
 
 
+def _tuple_wrapper(transform: Callable):
+    def wrapper(*inputs):
+        """Function wrapper for tuple output"""
+        output = transform(*inputs)
+        return (output,)
+
+    return wrapper
+
+
 class BatchTransformCallback(Callback):
     """
     Preprocess your batch with specified function.
@@ -11,9 +20,9 @@ class BatchTransformCallback(Callback):
         transform (Callable): Function to apply.
         scope (str): ``"on_batch_end"`` (post-processing model output) or
             ``"on_batch_start"`` (pre-processing model input).
-        input_key (Union[List[str], str, int], optional): Keys in batch dict to apply function.
+        input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
             Defaults to ``None``.
-        output_key (Union[List[str], str, int], optional): Keys for output.
+        output_key (Union[List[str], str], optional): Keys for output.
             If None then will apply function inplace to ``keys_to_apply``.
             Defaults to ``None``.
 
@@ -174,6 +183,7 @@ class BatchTransformCallback(Callback):
             scope (str): ``"on_batch_end"`` (post-processing model output) or
                 ``"on_batch_start"`` (pre-processing model input).
             input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
+                Defaults to ``None``.
             output_key (Union[List[str], str], optional): Keys for output.
                 If None then will apply function inplace to ``keys_to_apply``.
                 Defaults to ``None``.
@@ -183,14 +193,15 @@ class BatchTransformCallback(Callback):
                 When ``scope`` is not in ``["on_batch_end", "on_batch_start"]``.
         """
         super().__init__(order=CallbackOrder.Internal)
+
         if input_key is not None:
             if not isinstance(input_key, (list, str)):
                 raise TypeError("input key should be str or a list of str.")
             elif isinstance(input_key, str):
                 input_key = [input_key]
-            self._handle_batch = self._handle_tuples
+            self._handle_batch = self._handle_value
         else:
-            self._handle_batch = self._handle_dicts
+            self._handle_batch = self._handle_key_value
 
         output_key = output_key or input_key
         if output_key is not None:
@@ -200,6 +211,7 @@ class BatchTransformCallback(Callback):
                 raise TypeError("output key should be str or a list of str.")
             if isinstance(output_key, str):
                 output_key = [output_key]
+                transform = _tuple_wrapper(transform)
 
         if isinstance(scope, str) and scope in ["on_batch_end", "on_batch_start"]:
             self.scope = scope
@@ -209,17 +221,16 @@ class BatchTransformCallback(Callback):
         self.output_key = output_key
         self.transform = transform
 
-    def _handle_dicts(self, runner):
-        runner.batch = self.transform(runner.batch)
-
-    def _handle_tuples(self, runner):
+    def _handle_value(self, runner):
         batch_in = [runner.batch[key] for key in self.input_key]
-        batch_out = self.handler(batch_in)
+        batch_out = self.transform(*batch_in)
         runner.batch.update(**{key: value for key, value in zip(self.output_key, batch_out)})
 
+    def _handle_key_value(self, runner):
+        runner.batch = self.transform(runner.batch)
+
     def on_batch_start(self, runner: "IRunner") -> None:
-        """
-        On batch start action.
+        """On batch start action.
 
         Args:
             runner: runner for the experiment.
@@ -228,8 +239,7 @@ class BatchTransformCallback(Callback):
             self._handle_batch(runner)
 
     def on_batch_end(self, runner: "IRunner") -> None:
-        """
-        On batch end action.
+        """On batch end action.
 
         Args:
             runner: runner for the experiment.

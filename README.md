@@ -568,7 +568,7 @@ runner.train(
         dl.OptimizerCallback(metric_key="loss"),
         dl.SchedulerCallback(),
         dl.CheckpointCallback(
-            logdir="./logs", loader_key="valid", metric_key="map01", minimize=False
+            logdir="./logs", loader_key="valid", metric_key="loss", minimize=True
         ),
     ]
 )
