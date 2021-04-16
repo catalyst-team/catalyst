@@ -90,14 +90,14 @@ jobs:
 #          restore-keys: |
 #            ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
 #
-#      - name: install dependencies
-#        run: |
-#          # python -m pip install --upgrade --user pip
-#          pip install -U -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-nifti.txt
-#          python --version
-#          pip --version
-#          pip list
-#        shell: bash
+      - name: install dependencies
+        run: |
+          # python -m pip install --upgrade --user pip
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-nifti.txt
+          python --version
+          pip --version
+          pip list
+        shell: bash
 # <- standard block end ->
 
       - name: check examples
