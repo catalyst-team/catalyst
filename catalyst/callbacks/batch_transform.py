@@ -5,7 +5,7 @@ from catalyst.core import Callback, CallbackOrder, IRunner
 
 def _tuple_wrapper(transform: Callable):
     def wrapper(*inputs):
-        """function wrapper for tuple output"""
+        """Function wrapper for tuple output"""
         output = transform(*inputs)
         return (output,)
 
