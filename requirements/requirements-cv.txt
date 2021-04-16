@@ -1,5 +1,5 @@
 imageio>=2.3.0
 opencv-python-headless
 scikit-image>=0.14.2
-torchvision>=0.4.2
+torchvision>=0.5.0
 Pillow>=6.1  # torchvision fix (https://github.com/python-pillow/Pillow/issues/4130)
