@@ -3,6 +3,15 @@ from typing import Callable, List, Union
 from catalyst.core import Callback, CallbackOrder, IRunner
 
 
+def _tuple_wrapper(transform: Callable):
+    def wrapper(*inputs):
+        """function wrapper for tuple output"""
+        output = transform(*inputs)
+        return (output,)
+
+    return wrapper
+
+
 class BatchTransformCallback(Callback):
     """
     Preprocess your batch with specified function.
@@ -202,6 +211,7 @@ class BatchTransformCallback(Callback):
                 raise TypeError("output key should be str or a list of str.")
             if isinstance(output_key, str):
                 output_key = [output_key]
+                transform = _tuple_wrapper(transform)
 
         if isinstance(scope, str) and scope in ["on_batch_end", "on_batch_start"]:
             self.scope = scope
