@@ -12,6 +12,7 @@ class BatchTransformCallback(Callback):
         scope (str): ``"on_batch_end"`` (post-processing model output) or
             ``"on_batch_start"`` (pre-processing model input).
         input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
+            Defaults to ``None``.
         output_key (Union[List[str], str], optional): Keys for output.
             If None then will apply function inplace to ``keys_to_apply``.
             Defaults to ``None``.
@@ -173,6 +174,7 @@ class BatchTransformCallback(Callback):
             scope (str): ``"on_batch_end"`` (post-processing model output) or
                 ``"on_batch_start"`` (pre-processing model input).
             input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
+                Defaults to ``None``.
             output_key (Union[List[str], str], optional): Keys for output.
                 If None then will apply function inplace to ``keys_to_apply``.
                 Defaults to ``None``.
