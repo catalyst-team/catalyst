@@ -8,13 +8,13 @@ class BatchTransformCallback(Callback):
     Preprocess your batch with specified function.
 
     Args:
+        transform (Callable): Function to apply.
+        scope (str): ``"on_batch_end"`` (post-processing model output) or
+            ``"on_batch_start"`` (pre-processing model input).
         input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
         output_key (Union[List[str], str], optional): Keys for output.
             If None then will apply function inplace to ``keys_to_apply``.
             Defaults to ``None``.
-        transform (Callable): Function to apply.
-        scope (str): ``"on_batch_end"`` (post-processing model output) or
-            ``"on_batch_start"`` (pre-processing model input).
 
     Raises:
         TypeError: When keys is not str or a list.
@@ -160,22 +160,22 @@ class BatchTransformCallback(Callback):
 
     def __init__(
         self,
-        input_key: Union[List[str], str],
         transform: Callable,
         scope: str,
+        input_key: Union[List[str], str] = None,
         output_key: Union[List[str], str] = None,
     ):
         """
         Preprocess your batch with specified function.
 
         Args:
+            transform (Callable): Function to apply.
+            scope (str): ``"on_batch_end"`` (post-processing model output) or
+                ``"on_batch_start"`` (pre-processing model input).
             input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
             output_key (Union[List[str], str], optional): Keys for output.
                 If None then will apply function inplace to ``keys_to_apply``.
                 Defaults to ``None``.
-            transform (Callable): Function to apply.
-            scope (str): ``"on_batch_end"`` (post-processing model output) or
-                ``"on_batch_start"`` (pre-processing model input).
 
         Raises:
             TypeError: When keys is not str or a list.
