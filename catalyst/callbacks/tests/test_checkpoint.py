@@ -152,14 +152,28 @@ class CustomRunner(dl.IRunner):
 
 
 def test_device_load_on_stage_start():
-    to_check_devices = ["cpu"] + [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
+    to_check_devices = ["cpu"]
     for device in to_check_devices:
         with TemporaryDirectory() as logdir:
             runner = CustomRunner(logdir, DeviceEngine(device))
             runner.run()
 
 
-@pytest.mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+@pytest.mark.skipif(
+    not IS_CUDA_AVAILABLE, reason="CUDA is not available",
+)
+def test_device_load_on_stage_start():
+    to_check_devices = [f"cuda:{i}" for i in range(NUM_CUDA_DEVICES)]
+    for device in to_check_devices:
+        with TemporaryDirectory() as logdir:
+            runner = CustomRunner(logdir, DeviceEngine(device))
+            runner.run()
+
+
+@pytest.mark.skipif(
+    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
+    reason="Number of CUDA devices is less than 2",
+)
 def test_dp_load_on_stage_start():
     with TemporaryDirectory() as logdir:
         runner = CustomRunner(logdir, DataParallelEngine())
