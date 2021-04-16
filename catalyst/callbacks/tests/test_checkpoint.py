@@ -61,10 +61,10 @@ class CheckModelStateLoadAfterStages(dl.Callback):
         checkpoint["model_state_dict"] = OrderedDict(
             (k, torch.ones_like(v)) for k, v in checkpoint["model_state_dict"].items()
         )
-        print("-" * 100)
-        print(checkpoint)
-        print(runner.model.state_dict())
-        print("-" * 100)
+        # print("-" * 100)
+        # print(checkpoint)
+        # print(runner.model.state_dict())
+        # print("-" * 100)
         runner.engine.save_checkpoint(checkpoint, checkpoint_file)
 
     def on_batch_start(self, runner):
@@ -75,9 +75,9 @@ class CheckModelStateLoadAfterStages(dl.Callback):
         if not isinstance(model, torch.nn.Module):  # dummy check for DP or DDP
             model = model.module
         state_dict = model.state_dict()
-        print("=" * 100)
-        print(model.state_dict())
-        print("=" * 100)
+        # print("=" * 100)
+        # print(model.state_dict())
+        # print("=" * 100)
         for k, v in state_dict.items():
             assert torch.all(v.isclose(torch.ones_like(v))), (
                 f"Stage: '{runner.stage_key}'\n"
