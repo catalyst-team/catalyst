@@ -122,8 +122,8 @@ class CustomRunner(dl.IRunner):
         return 10
 
     def get_loaders(self, stage: str):
-        dataset = DummyDataset(6)
-        loader = DataLoader(dataset, batch_size=4)
+        dataset = DummyDataset(64)
+        loader = DataLoader(dataset, batch_size=4, num_workers=1)
         return {"train": loader, "valid": loader}
 
     def get_model(self, stage: str):
