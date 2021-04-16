@@ -462,9 +462,9 @@ and <code class="docutils literal notranslate"><span class="pre">valid_additiona
 <li><p><strong>transform</strong> (<em>Callable</em>) – Function to apply.</p></li>
 <li><p><strong>scope</strong> (<em>str</em>) – <code class="docutils literal notranslate"><span class="pre">&quot;on_batch_end&quot;</span></code> (post-processing model output) or
 <code class="docutils literal notranslate"><span class="pre">&quot;on_batch_start&quot;</span></code> (pre-processing model input).</p></li>
-<li><p><strong>input_key</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Keys in batch dict to apply function.
+<li><p><strong>input_key</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Keys in batch dict to apply function.
 Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>output_key</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>, </em><em>int</em><em>]</em><em>, </em><em>optional</em>) – Keys for output.
+<li><p><strong>output_key</strong> (<em>Union</em><em>[</em><em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Keys for output.
 If None then will apply function inplace to <code class="docutils literal notranslate"><span class="pre">keys_to_apply</span></code>.
 Defaults to <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
 </ul>

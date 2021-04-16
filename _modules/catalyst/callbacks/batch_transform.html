@@ -313,6 +313,15 @@
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">IRunner</span>
 
 
+<span class="k">def</span> <span class="nf">_tuple_wrapper</span><span class="p">(</span><span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="o">*</span><span class="n">inputs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Function wrapper for tuple output&quot;&quot;&quot;</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="o">*</span><span class="n">inputs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">output</span><span class="p">,)</span>
+
+    <span class="k">return</span> <span class="n">wrapper</span>
+
+
 <div class="viewcode-block" id="BatchTransformCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.batch_transform.BatchTransformCallback">[docs]</a><span class="k">class</span> <span class="nc">BatchTransformCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Preprocess your batch with specified function.</span>
@@ -321,9 +330,9 @@
 <span class="sd">        transform (Callable): Function to apply.</span>
 <span class="sd">        scope (str): ``&quot;on_batch_end&quot;`` (post-processing model output) or</span>
 <span class="sd">            ``&quot;on_batch_start&quot;`` (pre-processing model input).</span>
-<span class="sd">        input_key (Union[List[str], str, int], optional): Keys in batch dict to apply function.</span>
+<span class="sd">        input_key (Union[List[str], str], optional): Keys in batch dict to apply function.</span>
 <span class="sd">            Defaults to ``None``.</span>
-<span class="sd">        output_key (Union[List[str], str, int], optional): Keys for output.</span>
+<span class="sd">        output_key (Union[List[str], str], optional): Keys for output.</span>
 <span class="sd">            If None then will apply function inplace to ``keys_to_apply``.</span>
 <span class="sd">            Defaults to ``None``.</span>
 
@@ -484,6 +493,7 @@
 <span class="sd">            scope (str): ``&quot;on_batch_end&quot;`` (post-processing model output) or</span>
 <span class="sd">                ``&quot;on_batch_start&quot;`` (pre-processing model input).</span>
 <span class="sd">            input_key (Union[List[str], str], optional): Keys in batch dict to apply function.</span>
+<span class="sd">                Defaults to ``None``.</span>
 <span class="sd">            output_key (Union[List[str], str], optional): Keys for output.</span>
 <span class="sd">                If None then will apply function inplace to ``keys_to_apply``.</span>
 <span class="sd">                Defaults to ``None``.</span>
@@ -493,14 +503,15 @@
 <span class="sd">                When ``scope`` is not in ``[&quot;on_batch_end&quot;, &quot;on_batch_start&quot;]``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Internal</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">input_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input key should be str or a list of str.&quot;</span><span class="p">)</span>
             <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">input_key</span> <span class="o">=</span> <span class="p">[</span><span class="n">input_key</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_handle_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_tuples</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_handle_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_value</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_handle_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_dicts</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_handle_batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_key_value</span>
 
         <span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span> <span class="ow">or</span> <span class="n">input_key</span>
         <span class="k">if</span> <span class="n">output_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -510,6 +521,7 @@
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;output key should be str or a list of str.&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">output_key</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_key</span><span class="p">]</span>
+                <span class="n">transform</span> <span class="o">=</span> <span class="n">_tuple_wrapper</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">scope</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;on_batch_end&quot;</span><span class="p">,</span> <span class="s2">&quot;on_batch_start&quot;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scope</span> <span class="o">=</span> <span class="n">scope</span>
@@ -519,17 +531,16 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">output_key</span> <span class="o">=</span> <span class="n">output_key</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
 
-    <span class="k">def</span> <span class="nf">_handle_dicts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
-        <span class="n">runner</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_handle_tuples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_handle_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
         <span class="n">batch_in</span> <span class="o">=</span> <span class="p">[</span><span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_key</span><span class="p">]</span>
-        <span class="n">batch_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handler</span><span class="p">(</span><span class="n">batch_in</span><span class="p">)</span>
+        <span class="n">batch_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="o">*</span><span class="n">batch_in</span><span class="p">)</span>
         <span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_key</span><span class="p">,</span> <span class="n">batch_out</span><span class="p">)})</span>
 
+    <span class="k">def</span> <span class="nf">_handle_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">batch</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">on_batch_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        On batch start action.</span>
+        <span class="sd">&quot;&quot;&quot;On batch start action.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner: runner for the experiment.</span>
@@ -538,8 +549,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_handle_batch</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_batch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        On batch end action.</span>
+        <span class="sd">&quot;&quot;&quot;On batch end action.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            runner: runner for the experiment.</span>
