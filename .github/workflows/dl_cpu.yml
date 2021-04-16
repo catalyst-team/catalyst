@@ -29,20 +29,20 @@ jobs:
           - python-version: 3.6
             os: macOS-10.15
           # github CI problems
-#          - python-version: 3.8
-#            os: ubuntu-18.04
-#            requirements: minimal
-#          - python-version: 3.8
-#            os: ubuntu-20.04
-#            requirements: minimal
+          - python-version: 3.8
+            os: ubuntu-18.04
+            requirements: minimal
+          - python-version: 3.8
+            os: ubuntu-20.04
+            requirements: minimal
+          - python-version: 3.7
+            os: ubuntu-18.04
+            requirements: minimal
+          - python-version: 3.7
+            os: ubuntu-20.04
+            requirements: minimal
 #          - python-version: 3.7
 #            os: macOS-10.15
-#            requirements: minimal
-#          - python-version: 3.7
-#            os: ubuntu-18.04
-#            requirements: minimal
-#          - python-version: 3.7
-#            os: ubuntu-20.04
 #            requirements: minimal
 
     timeout-minutes: 30
@@ -66,6 +66,7 @@ jobs:
         run: |
           python -c "req = open('./requirements/requirements.txt').read().replace('>', '=') ; open('./requirements/requirements.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-cv.txt').read().replace('>', '=') ; open('./requirements/requirements-cv.txt', 'w').write(req)"
+          python -c "req = open('./requirements/requirements-ml.txt').read().replace('>', '=') ; open('./requirements/requirements-ml.txt', 'w').write(req)"
 
       # https://github.com/actions/cache/blob/master/examples.md
       # Note: This uses an internal pip API and may not always work
