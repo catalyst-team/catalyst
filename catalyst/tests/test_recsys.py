@@ -47,8 +47,12 @@ def train_experiment(device, engine=None):
                 logdir=logdir, loader_key="valid", metric_key="map01", minimize=False
             ),
         ]
-        if engine is None or not isinstance(
-            engine, (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine)
+        if SETTINGS.amp_required and (
+            engine is None
+            or not isinstance(
+                engine,
+                (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine),
+            )
         ):
             callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
 
