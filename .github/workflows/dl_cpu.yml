@@ -111,20 +111,9 @@ jobs:
           REQUIREMENTS: ${{ matrix.requirements }}
           OMP_NUM_THREADS: "1"
           MKL_NUM_THREADS: "1"
-        uses: nick-invision/retry@v2
-        with:
-          timeout_minutes: 30
-          max_attempts: 4
-          retry_on: timeout
-          command: |
-            OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" pytest .
-            pip install -e .
-            OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_config.sh && cd ..
-            OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_hydra.sh && cd ..
-            OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_tune.sh && cd ..
-#        run: |
-#          pytest .
-#          pip install -e .
-#          cd examples && bash mnist_stages/run_config.sh && cd ..
-#          cd examples && bash mnist_stages/run_hydra.sh && cd ..
-#          cd examples && bash mnist_stages/run_tune.sh && cd ..
+        run: |
+          pytest .
+          pip install -e .
+          cd examples && bash mnist_stages/run_config.sh && cd ..
+          cd examples && bash mnist_stages/run_hydra.sh && cd ..
+          cd examples && bash mnist_stages/run_tune.sh && cd ..
