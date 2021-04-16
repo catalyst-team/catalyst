@@ -67,9 +67,6 @@ jobs:
           python -c "req = open('./requirements/requirements.txt').read().replace('>', '=') ; open('./requirements/requirements.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-cv.txt').read().replace('>', '=') ; open('./requirements/requirements-cv.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-ml.txt').read().replace('>', '=') ; open('./requirements/requirements-ml.txt', 'w').write(req)"
-          python -c "req = open('./requirements/requirements-nifti.txt').read().replace('>', '=') ; open('./requirements/requirements-nifti.txt', 'w').write(req)"
-          python -c "req = open('./requirements/requirements-hydra.txt').read().replace('>', '=') ; open('./requirements/requirements-hydra.txt', 'w').write(req)"
-          python -c "req = open('./requirements/requirements-optuna.txt').read().replace('>', '=') ; open('./requirements/requirements-optuna.txt', 'w').write(req)"
 
       # https://github.com/actions/cache/blob/master/examples.md
       # Note: This uses an internal pip API and may not always work
