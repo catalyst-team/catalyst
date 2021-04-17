@@ -1,0 +1,1242 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Runners &mdash; Catalyst 21.04 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tools" href="tools.html" />
+    <link rel="prev" title="Metrics" href="metrics.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Alchemy</span>
+                  <p>Experiments logging & visualization</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
+                  <span class=dropdown-title>Catalyst</span>
+                  <p>Accelerated deep learning R&D</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Reaction</span>
+                  <p>Convenient deep learning models serving</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
+                  <span class=dropdown-title>Codestyle</span>
+                  <p>Joint R&D codestyle</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Classification</span>
+                  <p>Image classification pipeline with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
+                  <span class=dropdown-title>Detection</span>
+                  <p>Object detection pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Segmentation</span>
+                  <p>Image semantic segmentation pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&amp;sk=2aff824412e2f653587a30cd853b030c">Catalyst 102 — Core Trinity</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
+</ul>
+<p class="caption"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+      <li>Runners</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/api/runners.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <div class="section" id="runners">
+<h1>Runners<a class="headerlink" href="#runners" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#runner-extensions" id="id1">Runner Extensions</a></p>
+<ul>
+<li><p><a class="reference internal" href="#isupervisedrunner" id="id2">ISupervisedRunner</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#python-api" id="id3">Python API</a></p>
+<ul>
+<li><p><a class="reference internal" href="#runner" id="id4">Runner</a></p></li>
+<li><p><a class="reference internal" href="#supervisedrunner" id="id5">SupervisedRunner</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#config-api" id="id6">Config API</a></p>
+<ul>
+<li><p><a class="reference internal" href="#configrunner" id="id7">ConfigRunner</a></p></li>
+<li><p><a class="reference internal" href="#supervisedconfigrunner" id="id8">SupervisedConfigRunner</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#hydra-api" id="id9">Hydra API</a></p>
+<ul>
+<li><p><a class="reference internal" href="#hydrarunner" id="id10">HydraRunner</a></p></li>
+<li><p><a class="reference internal" href="#supervisedhydrarunner" id="id11">SupervisedHydraRunner</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="runner-extensions">
+<h2><a class="toc-backref" href="#id1">Runner Extensions</a><a class="headerlink" href="#runner-extensions" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="isupervisedrunner">
+<h3><a class="toc-backref" href="#id2">ISupervisedRunner</a><a class="headerlink" href="#isupervisedrunner" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="catalyst.runners.supervised.ISupervisedRunner">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">catalyst.runners.supervised.</span></code><code class="sig-name descname"><span class="pre">ISupervisedRunner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'features'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'logits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'targets'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/supervised.html#ISupervisedRunner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.supervised.ISupervisedRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner.IRunner</span></code></a></p>
+<p>IRunner for experiments with supervised model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_key</strong> – key in <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> dict mapping for model input</p></li>
+<li><p><strong>output_key</strong> – key for <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> to store model output</p></li>
+<li><p><strong>target_key</strong> – key in <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> dict mapping for target</p></li>
+<li><p><strong>loss_key</strong> – key for <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code> to store criterion loss output</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="catalyst.runners.supervised.ISupervisedRunner.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'features'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'logits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'targets'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/supervised.html#ISupervisedRunner.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.supervised.ISupervisedRunner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.supervised.ISupervisedRunner.forward">
+<code class="sig-name descname"><span class="pre">forward</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/supervised.html#ISupervisedRunner.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.supervised.ISupervisedRunner.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward method for your Runner.
+Should not be called directly outside of runner.
+If your model has specific interface, override this method to use it</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – dictionary with data batches
+from DataLoaders.</p></li>
+<li><p><strong>**kwargs</strong> – additional parameters to pass to the model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dict with model output batch</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.supervised.ISupervisedRunner.handle_batch">
+<code class="sig-name descname"><span class="pre">handle_batch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/catalyst/runners/supervised.html#ISupervisedRunner.handle_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.supervised.ISupervisedRunner.handle_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Inner method to handle specified data batch.
+Used to make a train/valid/infer stage during Experiment run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>batch</strong> – dictionary with data batches from DataLoader.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="python-api">
+<h2><a class="toc-backref" href="#id3">Python API</a><a class="headerlink" href="#python-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="runner">
+<h3><a class="toc-backref" href="#id4">Runner</a><a class="headerlink" href="#runner" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="catalyst.runners.runner.Runner">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">catalyst.runners.runner.</span></code><code class="sig-name descname"><span class="pre">Runner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner.IRunner</span></code></a></p>
+<p>Single-stage deep learning Runner with user-friendly API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – </p></li>
+<li><p><strong>**kwargs</strong> – </p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.get_callbacks">
+<code class="sig-name descname"><span class="pre">get_callbacks</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">OrderedDict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Callback</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.get_callbacks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the callbacks for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.get_criterion">
+<code class="sig-name descname"><span class="pre">get_criterion</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.nn.modules.module.Module</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.get_criterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.get_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the criterion for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.get_engine">
+<code class="sig-name descname"><span class="pre">get_engine</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><span class="pre">catalyst.core.engine.IEngine</span></a><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.get_engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.get_engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the engine for a run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.get_loaders">
+<code class="sig-name descname"><span class="pre">get_loaders</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">OrderedDict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">DataLoader</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.get_loaders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.get_loaders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the loaders for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.get_loggers">
+<code class="sig-name descname"><span class="pre">get_loggers</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><span class="pre">catalyst.core.logger.ILogger</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.get_loggers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.get_loggers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the logger for a run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.get_model">
+<code class="sig-name descname"><span class="pre">get_model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.nn.modules.module.Module</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the model for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.get_optimizer">
+<code class="sig-name descname"><span class="pre">get_optimizer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.optim.optimizer.Optimizer</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.get_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.get_optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the optimizer for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.get_scheduler">
+<code class="sig-name descname"><span class="pre">get_scheduler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.optim.optimizer.Optimizer</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">torch.optim.lr_scheduler._LRScheduler</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.get_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.get_scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the scheduler for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.get_stage_len">
+<code class="sig-name descname"><span class="pre">get_stage_len</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.get_stage_len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.get_stage_len" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the stage length in epochs for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.get_trial">
+<code class="sig-name descname"><span class="pre">get_trial</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="core.html#catalyst.core.trial.ITrial" title="catalyst.core.trial.ITrial"><span class="pre">catalyst.core.trial.ITrial</span></a><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.get_trial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.get_trial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the trial for a run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.hparams">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hparams</span></code><a class="headerlink" href="#catalyst.runners.runner.Runner.hparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyperparameters.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.name">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">name</span></code><a class="headerlink" href="#catalyst.runners.runner.Runner.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns run name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.predict_batch">
+<code class="sig-name descname"><span class="pre">predict_batch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.predict_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.predict_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run model inference on specified data batch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – dictionary with data batches from DataLoader.</p></li>
+<li><p><strong>**kwargs</strong> – additional kwargs to pass to the model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>model output dictionary</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Mapping</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>NotImplementedError</strong> – if not implemented yet</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.predict_loader">
+<code class="sig-name descname"><span class="pre">predict_loader</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loader</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.utils.data.dataloader.DataLoader</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.nn.modules.module.Module</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><span class="pre">catalyst.core.engine.IEngine</span></a><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fp16</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apex</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Generator</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.predict_loader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.predict_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs model inference on PyTorch DataLoader and returns
+python generator with model predictions from <cite>runner.predict_batch</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loader</strong> – loader to predict</p></li>
+<li><p><strong>model</strong> – model to use for prediction</p></li>
+<li><p><strong>engine</strong> – engine to use for prediction</p></li>
+<li><p><strong>seed</strong> – random seed to use before prediction</p></li>
+<li><p><strong>fp16</strong> – boolean flag to use half-precision training (AMP &gt; APEX)</p></li>
+<li><p><strong>amp</strong> – boolean flag to use amp half-precision</p></li>
+<li><p><strong>apex</strong> – boolean flag to use apex half-precision</p></li>
+<li><p><strong>ddp</strong> – if <cite>True</cite> will start training in distributed mode.
+Note: Works only with python scripts. No jupyter support.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p>bathes with model predictions</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.seed">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">seed</span></code><a class="headerlink" href="#catalyst.runners.runner.Runner.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s initial seed value.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.stages">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">stages</span></code><a class="headerlink" href="#catalyst.runners.runner.Runner.stages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s stage names (array with one value).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.Runner.train">
+<code class="sig-name descname"><span class="pre">train</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loaders</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">OrderedDict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">DataLoader</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.nn.modules.module.Module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">IEngine</span><span class="p"><span class="pre">,</span> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trial</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="core.html#catalyst.core.trial.ITrial" title="catalyst.core.trial.ITrial"><span class="pre">catalyst.core.trial.ITrial</span></a></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.nn.modules.module.Module</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.optim.optimizer.Optimizer</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scheduler</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">torch.optim.lr_scheduler._LRScheduler</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callbacks</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Callback</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span> </span><span class="pre">OrderedDict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Callback</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loggers</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">ILogger</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">42</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hparams</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_epochs</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logdir</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_loader</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_metric</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minimize_valid_metric</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overfit</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">load_best_on_end</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fp16</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">amp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apex</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddp</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">bool</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Starts the train stage of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loaders</strong> – dictionary with one or several <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
+for training, validation or inference</p></li>
+<li><p><strong>model</strong> – model to train</p></li>
+<li><p><strong>engine</strong> – engine to use for model training</p></li>
+<li><p><strong>trial</strong> – trial to use during model training</p></li>
+<li><p><strong>criterion</strong> – criterion function for training</p></li>
+<li><p><strong>optimizer</strong> – optimizer for training</p></li>
+<li><p><strong>scheduler</strong> – scheduler for training</p></li>
+<li><p><strong>callbacks</strong> – list or dictionary with Catalyst callbacks</p></li>
+<li><p><strong>loggers</strong> – dictionary with Catalyst loggers</p></li>
+<li><p><strong>seed</strong> – experiment’s initial seed value</p></li>
+<li><p><strong>hparams</strong> – hyperparameters for the run</p></li>
+<li><p><strong>num_epochs</strong> – number of training epochs</p></li>
+<li><p><strong>logdir</strong> – path to output directory</p></li>
+<li><p><strong>valid_loader</strong> – loader name used to calculate
+the metrics and save the checkpoints. For example,
+you can pass <cite>train</cite> and then
+the metrics will be taken from <cite>train</cite> loader.</p></li>
+<li><p><strong>valid_metric</strong> – the key to the name of the metric
+by which the checkpoints will be selected.</p></li>
+<li><p><strong>minimize_valid_metric</strong> – flag to indicate whether
+the <code class="docutils literal notranslate"><span class="pre">valid_metric</span></code> should be minimized or not (default: True).</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite>, it displays the status of the training to the console.</p></li>
+<li><p><strong>timeit</strong> – if True, computes the execution time
+of training process and displays it to the console.</p></li>
+<li><p><strong>check</strong> – if True, then only checks that pipeline is working
+(3 epochs only with 3 batches per loader)</p></li>
+<li><p><strong>overfit</strong> – if True, then takes only one batch per loader
+for model overfitting, for advance usage please check
+<code class="docutils literal notranslate"><span class="pre">BatchOverfitCallback</span></code></p></li>
+<li><p><strong>load_best_on_end</strong> – if True, Runner will load
+best checkpoint state (model, optimizer, etc)
+according to validation metrics. Requires specified <code class="docutils literal notranslate"><span class="pre">logdir</span></code>.</p></li>
+<li><p><strong>fp16</strong> – boolean flag to use half-precision training (AMP &gt; APEX)</p></li>
+<li><p><strong>amp</strong> – boolean flag to use amp half-precision</p></li>
+<li><p><strong>apex</strong> – boolean flag to use apex half-precision</p></li>
+<li><p><strong>ddp</strong> – if <cite>True</cite> will start training in distributed mode.
+Note: Works only with python scripts. No jupyter support.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="supervisedrunner">
+<h3><a class="toc-backref" href="#id5">SupervisedRunner</a><a class="headerlink" href="#supervisedrunner" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="catalyst.runners.runner.SupervisedRunner">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">catalyst.runners.runner.</span></code><code class="sig-name descname"><span class="pre">SupervisedRunner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><span class="pre">catalyst.core.engine.IEngine</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'features'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'logits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'targets'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#SupervisedRunner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.SupervisedRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.runners.supervised.ISupervisedRunner" title="catalyst.runners.supervised.ISupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.runners.supervised.ISupervisedRunner</span></code></a>, <a class="reference internal" href="#catalyst.runners.runner.Runner" title="catalyst.runners.runner.Runner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.runners.runner.Runner</span></code></a></p>
+<p>Runner for experiments with supervised model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – Torch model instance</p></li>
+<li><p><strong>engine</strong> – IEngine instance</p></li>
+<li><p><strong>input_key</strong> – key in <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> dict mapping for model input</p></li>
+<li><p><strong>output_key</strong> – key for <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> to store model output</p></li>
+<li><p><strong>target_key</strong> – key in <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> dict mapping for target</p></li>
+<li><p><strong>loss_key</strong> – key for <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code> to store criterion loss output</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="catalyst.runners.runner.SupervisedRunner.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">engine</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><span class="pre">catalyst.core.engine.IEngine</span></a><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'features'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'logits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'targets'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#SupervisedRunner.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.SupervisedRunner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.SupervisedRunner.get_callbacks">
+<code class="sig-name descname"><span class="pre">get_callbacks</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">OrderedDict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Callback</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#SupervisedRunner.get_callbacks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.SupervisedRunner.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepares the callbacks for selected stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – stage name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>dictionary with stage callbacks</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.runner.SupervisedRunner.predict_batch">
+<code class="sig-name descname"><span class="pre">predict_batch</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Mapping</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/runner.html#SupervisedRunner.predict_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.runner.SupervisedRunner.predict_batch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run model inference on specified data batch.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You should not override this method. If you need specific model
+call, override forward() method</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – dictionary with data batch from DataLoader.</p></li>
+<li><p><strong>**kwargs</strong> – additional kwargs to pass to the model</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>model output dictionary</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Mapping[str, Any]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="config-api">
+<h2><a class="toc-backref" href="#id6">Config API</a><a class="headerlink" href="#config-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="configrunner">
+<h3><a class="toc-backref" href="#id7">ConfigRunner</a><a class="headerlink" href="#configrunner" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="catalyst.runners.config.ConfigRunner">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">catalyst.runners.config.</span></code><code class="sig-name descname"><span class="pre">ConfigRunner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner.IRunner</span></code></a></p>
+<p>Runner created from a dictionary configuration file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config</strong> – dictionary with parameters</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.get_callbacks">
+<code class="sig-name descname"><span class="pre">get_callbacks</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">OrderedDict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Callback</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_callbacks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the callbacks for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.get_criterion">
+<code class="sig-name descname"><span class="pre">get_criterion</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_criterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the criterion for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.get_engine">
+<code class="sig-name descname"><span class="pre">get_engine</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><span class="pre">catalyst.core.engine.IEngine</span></a><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the engine for the run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.get_loaders">
+<code class="sig-name descname"><span class="pre">get_loaders</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">OrderedDict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">DataLoader</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_loaders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_loaders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns loaders for a given stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – stage name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>loaders objects</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.get_loggers">
+<code class="sig-name descname"><span class="pre">get_loggers</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><span class="pre">catalyst.core.logger.ILogger</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_loggers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_loggers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the loggers for the run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.get_model">
+<code class="sig-name descname"><span class="pre">get_model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the model for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.get_optimizer">
+<code class="sig-name descname"><span class="pre">get_optimizer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.optim.optimizer.Optimizer</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.optim.optimizer.Optimizer</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the optimizer for a given stage and epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – model or a dict of models</p></li>
+<li><p><strong>stage</strong> – current stage name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>optimizer for selected stage and epoch</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.get_scheduler">
+<code class="sig-name descname"><span class="pre">get_scheduler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.optim.optimizer.Optimizer</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.optim.optimizer.Optimizer</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.optim.lr_scheduler._LRScheduler</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.optim.lr_scheduler._LRScheduler</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the scheduler for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.get_stage_len">
+<code class="sig-name descname"><span class="pre">get_stage_len</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_stage_len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_stage_len" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns number of epochs for the selected stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – current stage</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of epochs in stage</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">runner</span><span class="o">.</span><span class="n">get_stage_len</span><span class="p">(</span><span class="s2">&quot;pretraining&quot;</span><span class="p">)</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.get_trial">
+<code class="sig-name descname"><span class="pre">get_trial</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="core.html#catalyst.core.trial.ITrial" title="catalyst.core.trial.ITrial"><span class="pre">catalyst.core.trial.ITrial</span></a><a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_trial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_trial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the trial for the run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.hparams">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hparams</span></code><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.hparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns hyper parameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.logdir">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">logdir</span></code><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.logdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>docs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>&#64;TODO</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.name">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">name</span></code><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns run name for monitoring tools.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.seed">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">seed</span></code><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s seed for reproducibility.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.config.ConfigRunner.stages">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">stages</span></code><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.stages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s stage names.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="supervisedconfigrunner">
+<h3><a class="toc-backref" href="#id8">SupervisedConfigRunner</a><a class="headerlink" href="#supervisedconfigrunner" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="catalyst.runners.config.SupervisedConfigRunner">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">catalyst.runners.config.</span></code><code class="sig-name descname"><span class="pre">SupervisedConfigRunner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'features'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'logits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'targets'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/config.html#SupervisedConfigRunner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.SupervisedConfigRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.runners.supervised.ISupervisedRunner" title="catalyst.runners.supervised.ISupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.runners.supervised.ISupervisedRunner</span></code></a>, <a class="reference internal" href="#catalyst.runners.config.ConfigRunner" title="catalyst.runners.config.ConfigRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.runners.config.ConfigRunner</span></code></a></p>
+<p>ConfigRunner for supervised tasks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> – dictionary with parameters</p></li>
+<li><p><strong>input_key</strong> – key in <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> dict mapping for model input</p></li>
+<li><p><strong>output_key</strong> – key for <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> to store model output</p></li>
+<li><p><strong>target_key</strong> – key in <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> dict mapping for target</p></li>
+<li><p><strong>loss_key</strong> – key for <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code> to store criterion loss output</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="catalyst.runners.config.SupervisedConfigRunner.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'features'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'logits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'targets'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/config.html#SupervisedConfigRunner.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.config.SupervisedConfigRunner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="hydra-api">
+<h2><a class="toc-backref" href="#id9">Hydra API</a><a class="headerlink" href="#hydra-api" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="hydrarunner">
+<h3><a class="toc-backref" href="#id10">HydraRunner</a><a class="headerlink" href="#hydrarunner" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="catalyst.runners.hydra.HydraRunner">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">catalyst.runners.hydra.</span></code><code class="sig-name descname"><span class="pre">HydraRunner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omegaconf.dictconfig.DictConfig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.runner.IRunner" title="catalyst.core.runner.IRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.runner.IRunner</span></code></a></p>
+<p>Runner created from a hydra configuration file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cfg</strong> – Hydra dictionary with parameters</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">omegaconf.dictconfig.DictConfig</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_callbacks">
+<code class="sig-name descname"><span class="pre">get_callbacks</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">OrderedDict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">Callback</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_callbacks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_callbacks" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the callbacks for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_criterion">
+<code class="sig-name descname"><span class="pre">get_criterion</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_criterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_criterion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the criterion for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_engine">
+<code class="sig-name descname"><span class="pre">get_engine</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><span class="pre">catalyst.core.engine.IEngine</span></a><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_engine"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the engine for the run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_loaders">
+<code class="sig-name descname"><span class="pre">get_loaders</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.utils.data.dataloader.DataLoader</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_loaders"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_loaders" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns loaders for a given stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – stage name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>loaders objects</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_loggers">
+<code class="sig-name descname"><span class="pre">get_loggers</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><span class="pre">catalyst.core.logger.ILogger</span></a><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_loggers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_loggers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the loggers for the run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_model">
+<code class="sig-name descname"><span class="pre">get_model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the model for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_optimizer">
+<code class="sig-name descname"><span class="pre">get_optimizer</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.nn.modules.module.Module</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.optim.optimizer.Optimizer</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.optim.optimizer.Optimizer</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_optimizer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_optimizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the optimizer for a given stage and epoch.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – model or a dict of models</p></li>
+<li><p><strong>stage</strong> – current stage name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>optimizer for selected stage and epoch</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_scheduler">
+<code class="sig-name descname"><span class="pre">get_scheduler</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">optimizer</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.optim.optimizer.Optimizer</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.optim.optimizer.Optimizer</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">Union</span><span class="p"><span class="pre">[</span></span><span class="pre">torch.optim.lr_scheduler._LRScheduler</span><span class="p"><span class="pre">,</span> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span> </span><span class="pre">torch.optim.lr_scheduler._LRScheduler</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_scheduler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_scheduler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the schedulers for a given stage.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_stage_len">
+<code class="sig-name descname"><span class="pre">get_stage_len</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stage</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">int</span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_stage_len"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_stage_len" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns number of epochs for the selected stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – current stage</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>number of epochs in stage</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">runner</span><span class="o">.</span><span class="n">get_stage_len</span><span class="p">(</span><span class="s2">&quot;pretraining&quot;</span><span class="p">)</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_trial">
+<code class="sig-name descname"><span class="pre">get_trial</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="core.html#catalyst.core.trial.ITrial" title="catalyst.core.trial.ITrial"><span class="pre">catalyst.core.trial.ITrial</span></a><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_trial"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_trial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the trial for the run.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.hparams">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">hparams</span></code><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.hparams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hyperparameters</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.logdir">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">logdir</span></code><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.logdir" title="Permalink to this definition">¶</a></dt>
+<dd><p>docs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>&#64;TODO</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.name">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">name</span></code><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns run name for monitoring tools.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.seed">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">seed</span></code><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s seed for reproducibility.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="catalyst.runners.hydra.HydraRunner.stages">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">stages</span></code><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.stages" title="Permalink to this definition">¶</a></dt>
+<dd><p>Experiment’s stage names.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="supervisedhydrarunner">
+<h3><a class="toc-backref" href="#id11">SupervisedHydraRunner</a><a class="headerlink" href="#supervisedhydrarunner" title="Permalink to this headline">¶</a></h3>
+<dl class="py class">
+<dt id="catalyst.runners.hydra.SupervisedHydraRunner">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">catalyst.runners.hydra.</span></code><code class="sig-name descname"><span class="pre">SupervisedHydraRunner</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">omegaconf.dictconfig.DictConfig</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'features'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'logits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'targets'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#SupervisedHydraRunner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.SupervisedHydraRunner" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.runners.supervised.ISupervisedRunner" title="catalyst.runners.supervised.ISupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.runners.supervised.ISupervisedRunner</span></code></a>, <a class="reference internal" href="#catalyst.runners.hydra.HydraRunner" title="catalyst.runners.hydra.HydraRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.runners.hydra.HydraRunner</span></code></a></p>
+<p>HydraRunner for supervised tasks</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cfg</strong> – Hydra dictionary with parameters</p></li>
+<li><p><strong>input_key</strong> – key in <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> dict mapping for model input</p></li>
+<li><p><strong>output_key</strong> – key for <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> to store model output</p></li>
+<li><p><strong>target_key</strong> – key in <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> dict mapping for target</p></li>
+<li><p><strong>loss_key</strong> – key for <code class="docutils literal notranslate"><span class="pre">runner.batch_metrics</span></code> to store criterion loss output</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="catalyst.runners.hydra.SupervisedHydraRunner.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cfg</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">omegaconf.dictconfig.DictConfig</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'features'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Any</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'logits'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'targets'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#SupervisedHydraRunner.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#catalyst.runners.hydra.SupervisedHydraRunner.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+             </article>
+             
+            </div>
+            <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tools.html" class="btn btn-neutral float-right" title="Tools" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+      
+      
+        <a href="metrics.html" class="btn btn-neutral" title="Metrics" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+      
+    </div>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              <ul>
+<li><a class="reference internal" href="#">Runners</a><ul>
+<li><a class="reference internal" href="#runner-extensions">Runner Extensions</a><ul>
+<li><a class="reference internal" href="#isupervisedrunner">ISupervisedRunner</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#python-api">Python API</a><ul>
+<li><a class="reference internal" href="#runner">Runner</a></li>
+<li><a class="reference internal" href="#supervisedrunner">SupervisedRunner</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#config-api">Config API</a><ul>
+<li><a class="reference internal" href="#configrunner">ConfigRunner</a></li>
+<li><a class="reference internal" href="#supervisedconfigrunner">SupervisedConfigRunner</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hydra-api">Hydra API</a><ul>
+<li><a class="reference internal" href="#hydrarunner">HydraRunner</a></li>
+<li><a class="reference internal" href="#supervisedhydrarunner">SupervisedHydraRunner</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+         <script src="../_static/jquery.js"></script>
+         <script src="../_static/underscore.js"></script>
+         <script src="../_static/doctools.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>

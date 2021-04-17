@@ -1,0 +1,966 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>catalyst.utils.misc &mdash; Catalyst 21.04 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Alchemy</span>
+                  <p>Experiments logging & visualization</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
+                  <span class=dropdown-title>Catalyst</span>
+                  <p>Accelerated deep learning R&D</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Reaction</span>
+                  <p>Convenient deep learning models serving</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
+                  <span class=dropdown-title>Codestyle</span>
+                  <p>Joint R&D codestyle</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Classification</span>
+                  <p>Image classification pipeline with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
+                  <span class=dropdown-title>Detection</span>
+                  <p>Object detection pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Segmentation</span>
+                  <p>Image semantic segmentation pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&amp;sk=d3dd9b2b23500eca046361187b4619ff">Catalyst 101 — Accelerated PyTorch</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&amp;sk=2aff824412e2f653587a30cd853b030c">Catalyst 102 — Core Trinity</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/engine.html">Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/logger.html">Logger</a></li>
+</ul>
+<p class="caption"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/finetuning.html">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../../../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../index.html">Module code</a> &gt;</li>
+        
+      <li>catalyst.utils.misc</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <h1>Source code for catalyst.utils.misc</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">TypeVar</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">urlsafe_b64encode</span>
+<span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha256</span>
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">tee</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="nb">int</span> <span class="k">as</span> <span class="n">tint</span><span class="p">,</span> <span class="n">long</span><span class="p">,</span> <span class="n">short</span><span class="p">,</span> <span class="n">Tensor</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">TypeVar</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="boolean_flag"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.boolean_flag">[docs]</a><span class="k">def</span> <span class="nf">boolean_flag</span><span class="p">(</span>
+    <span class="n">parser</span><span class="p">:</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">help</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># noqa: WPS125</span>
+    <span class="n">shorthand</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Add a boolean flag to a parser inplace.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; parser = argparse.ArgumentParser()</span>
+<span class="sd">        &gt;&gt;&gt; boolean_flag(</span>
+<span class="sd">        &gt;&gt;&gt;     parser, &quot;flag&quot;, default=False, help=&quot;some flag&quot;, shorthand=&quot;f&quot;</span>
+<span class="sd">        &gt;&gt;&gt; )</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        parser: parser to add the flag to</span>
+<span class="sd">        name: argument name</span>
+<span class="sd">            --&lt;name&gt; will enable the flag,</span>
+<span class="sd">            while --no-&lt;name&gt; will disable it</span>
+<span class="sd">        default (bool, optional): default value of the flag</span>
+<span class="sd">        help: help string for the flag</span>
+<span class="sd">        shorthand: shorthand string for the argument</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dest</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;--&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">shorthand</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">+</span> <span class="n">shorthand</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="o">*</span><span class="n">names</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="n">dest</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="n">help</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s2">&quot;--no-&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_false&quot;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="n">dest</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="set_global_seed"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.set_global_seed">[docs]</a><span class="k">def</span> <span class="nf">set_global_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Sets random seed into Numpy and Random, PyTorch and TensorFlow.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        seed: random seed</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">torch</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">pass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">manual_seed_all</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="maybe_recursive_call"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.maybe_recursive_call">[docs]</a><span class="k">def</span> <span class="nf">maybe_recursive_call</span><span class="p">(</span>
+    <span class="n">object_or_dict</span><span class="p">,</span>
+    <span class="n">method</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">],</span>
+    <span class="n">recursive_args</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">recursive_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Calls the ``method`` recursively for the ``object_or_dict``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        object_or_dict: some object or a dictionary of objects</span>
+<span class="sd">        method: method name to call</span>
+<span class="sd">        recursive_args: list of arguments to pass to the ``method``</span>
+<span class="sd">        recursive_kwargs: list of key-arguments to pass to the ``method``</span>
+<span class="sd">        **kwargs: Arbitrary keyword arguments</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        result of `method` call</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">)()</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">object_or_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">r_args</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">recursive_args</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">recursive_args</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">r_kwargs</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">recursive_kwargs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">recursive_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">maybe_recursive_call</span><span class="p">(</span>
+                <span class="n">v</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">recursive_args</span><span class="o">=</span><span class="n">r_args</span><span class="p">,</span> <span class="n">recursive_kwargs</span><span class="o">=</span><span class="n">r_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="n">r_args</span> <span class="o">=</span> <span class="n">recursive_args</span> <span class="ow">or</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r_args</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="n">r_args</span> <span class="o">=</span> <span class="p">[</span><span class="n">r_args</span><span class="p">]</span>
+    <span class="n">r_kwargs</span> <span class="o">=</span> <span class="n">recursive_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="o">*</span><span class="n">r_args</span><span class="p">,</span> <span class="o">**</span><span class="n">r_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">method</span><span class="p">(</span><span class="n">object_or_dict</span><span class="p">,</span> <span class="o">*</span><span class="n">r_args</span><span class="p">,</span> <span class="o">**</span><span class="n">r_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="is_exception"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.is_exception">[docs]</a><span class="k">def</span> <span class="nf">is_exception</span><span class="p">(</span><span class="n">ex</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check if the argument is of ``Exception`` type.&quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span><span class="n">ex</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ex</span><span class="p">,</span> <span class="ne">BaseException</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="get_utcnow_time"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_utcnow_time">[docs]</a><span class="k">def</span> <span class="nf">get_utcnow_time</span><span class="p">(</span><span class="nb">format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Return string with current utc time in chosen format.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        format: format string. if None &quot;%y%m%d.%H%M%S&quot; will be used.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: formatted utc time string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">format</span> <span class="o">=</span> <span class="s2">&quot;%y%m</span><span class="si">%d</span><span class="s2">.%H%M%S&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="nb">format</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="get_fn_default_params"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_fn_default_params">[docs]</a><span class="k">def</span> <span class="nf">get_fn_default_params</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">exclude</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return default parameters of Callable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fn (Callable[..., Any]): target Callable</span>
+<span class="sd">        exclude: exclude list of parameters</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: contains default parameters of `fn`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="nb">zip</span><span class="p">(</span><span class="n">argspec</span><span class="o">.</span><span class="n">args</span><span class="p">[</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">argspec</span><span class="o">.</span><span class="n">defaults</span><span class="p">)</span> <span class="p">:],</span> <span class="n">argspec</span><span class="o">.</span><span class="n">defaults</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">default_params</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">default_params</span><span class="p">)</span>
+    <span class="n">default_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">default_params</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">default_params</span></div>
+
+
+<div class="viewcode-block" id="get_fn_argsnames"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_fn_argsnames">[docs]</a><span class="k">def</span> <span class="nf">get_fn_argsnames</span><span class="p">(</span><span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">exclude</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return parameter names of Callable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fn (Callable[..., Any]): target Callable</span>
+<span class="sd">        exclude: exclude list of parameters</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list: contains parameter names of `fn`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">argspec</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">argspec</span><span class="o">.</span><span class="n">args</span> <span class="o">+</span> <span class="n">argspec</span><span class="o">.</span><span class="n">kwonlyargs</span>
+    <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">params</span></div>
+
+
+<div class="viewcode-block" id="get_attr"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_attr">[docs]</a><span class="k">def</span> <span class="nf">get_attr</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">inner_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Alias for python `getattr` method. Useful for Callbacks preparation</span>
+<span class="sd">    and cases with multi-criterion, multi-optimizer setup.</span>
+<span class="sd">    For example, when you would like to train multi-task classification.</span>
+
+<span class="sd">    Used to get a named attribute from a `IRunner` by `key` keyword;</span>
+<span class="sd">    for example\</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        get_attr(runner, &quot;criterion&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.criterion</span>
+
+<span class="sd">        get_attr(runner, &quot;optimizer&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.optimizer</span>
+
+<span class="sd">        get_attr(runner, &quot;scheduler&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.scheduler</span>
+
+<span class="sd">    With `inner_key` usage, it suppose to find a dictionary under `key`\</span>
+<span class="sd">    and would get `inner_key` from this dict; for example,</span>
+<span class="sd">    ::</span>
+
+<span class="sd">        get_attr(runner, &quot;criterion&quot;, &quot;bce&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.criterion[&quot;bce&quot;]</span>
+
+<span class="sd">        get_attr(runner, &quot;optimizer&quot;, &quot;adam&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.optimizer[&quot;adam&quot;]</span>
+
+<span class="sd">        get_attr(runner, &quot;scheduler&quot;, &quot;adam&quot;)</span>
+<span class="sd">        # is equivalent to</span>
+<span class="sd">        runner.scheduler[&quot;adam&quot;]</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: object of interest</span>
+<span class="sd">        key: name for attribute of interest,</span>
+<span class="sd">            like `criterion`, `optimizer`, `scheduler`</span>
+<span class="sd">        inner_key: name of inner dictionary key</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        inner attribute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">inner_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">)[</span><span class="n">inner_key</span><span class="p">]</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_key_str</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">_get_key_list</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">key</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">_get_key_dict</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="n">key_out</span><span class="p">:</span> <span class="n">dictionary</span><span class="p">[</span><span class="n">key_in</span><span class="p">]</span> <span class="k">for</span> <span class="n">key_in</span><span class="p">,</span> <span class="n">key_out</span> <span class="ow">in</span> <span class="n">key</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">_get_key_none</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="p">{}</span>
+
+
+<span class="k">def</span> <span class="nf">_get_key_all</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">dictionary</span>
+
+
+<div class="viewcode-block" id="get_dictkey_auto_fn"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_dictkey_auto_fn">[docs]</a><span class="k">def</span> <span class="nf">get_dictkey_auto_fn</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Function generator for sub-dict preparation from dict based on predefined keys.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        key: keys</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        function</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        NotImplementedError: if key is out of</span>
+<span class="sd">            `str`, `tuple`, `list`, `dict`, `None`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;__all__&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_get_key_all</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_get_key_str</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">_get_key_list</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_get_key_dict</span>
+    <span class="k">elif</span> <span class="n">key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_get_key_none</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="merge_dicts"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.merge_dicts">[docs]</a><span class="k">def</span> <span class="nf">merge_dicts</span><span class="p">(</span><span class="o">*</span><span class="n">dicts</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Recursive dict merge.</span>
+<span class="sd">    Instead of updating only top-level keys,</span>
+<span class="sd">    ``merge_dicts`` recurses down into dicts nested</span>
+<span class="sd">    to an arbitrary depth, updating keys.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *dicts: several dictionaries to merge</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: deep-merged dictionary</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">dicts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
+
+    <span class="n">dict_</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dicts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">merge_dict</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+        <span class="n">merge_dict</span> <span class="o">=</span> <span class="n">merge_dict</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">merge_dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">k</span> <span class="ow">in</span> <span class="n">dict_</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict_</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">dict</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">merge_dict</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">collections</span><span class="o">.</span><span class="n">Mapping</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">dict_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">merge_dicts</span><span class="p">(</span><span class="n">dict_</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">merge_dict</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dict_</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">merge_dict</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">dict_</span></div>
+
+
+<div class="viewcode-block" id="flatten_dict"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.flatten_dict">[docs]</a><span class="k">def</span> <span class="nf">flatten_dict</span><span class="p">(</span>
+    <span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">parent_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">separator</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;collections.OrderedDict&quot;</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Make the given dictionary flatten.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dictionary: giving dictionary</span>
+<span class="sd">        parent_key (str, optional): prefix nested keys with</span>
+<span class="sd">            string ``parent_key``</span>
+<span class="sd">        separator (str, optional): delimiter between</span>
+<span class="sd">            ``parent_key`` and ``key`` to use</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        collections.OrderedDict: ordered dictionary with flatten keys</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">new_key</span> <span class="o">=</span> <span class="n">parent_key</span> <span class="o">+</span> <span class="n">separator</span> <span class="o">+</span> <span class="n">key</span> <span class="k">if</span> <span class="n">parent_key</span> <span class="k">else</span> <span class="n">key</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">collections</span><span class="o">.</span><span class="n">MutableMapping</span><span class="p">):</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">flatten_dict</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">new_key</span><span class="p">,</span> <span class="n">separator</span><span class="o">=</span><span class="n">separator</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">items</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">new_key</span><span class="p">,</span> <span class="n">value</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">OrderedDict</span><span class="p">(</span><span class="n">items</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_make_hashable</span><span class="p">(</span><span class="n">o</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(((</span><span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">_make_hashable</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">o</span><span class="p">))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">_make_hashable</span><span class="p">(</span><span class="n">v</span><span class="p">))</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">o</span><span class="o">.</span><span class="n">items</span><span class="p">()))</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">o</span><span class="p">,</span> <span class="p">(</span><span class="nb">set</span><span class="p">,</span> <span class="nb">frozenset</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">sorted</span><span class="p">((</span><span class="nb">type</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">_make_hashable</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">o</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">o</span>
+
+
+<div class="viewcode-block" id="get_hash"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_hash">[docs]</a><span class="k">def</span> <span class="nf">get_hash</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates unique hash from object following way:</span>
+<span class="sd">    - Represent obj as sting recursively</span>
+<span class="sd">    - Hash this string with sha256 hash function</span>
+<span class="sd">    - encode hash with url-safe base64 encoding</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: object to hash</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        base64-encoded string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">bytes_to_hash</span> <span class="o">=</span> <span class="nb">repr</span><span class="p">(</span><span class="n">_make_hashable</span><span class="p">(</span><span class="n">obj</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+    <span class="n">hash_bytes</span> <span class="o">=</span> <span class="n">sha256</span><span class="p">(</span><span class="n">bytes_to_hash</span><span class="p">)</span><span class="o">.</span><span class="n">digest</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">urlsafe_b64encode</span><span class="p">(</span><span class="n">hash_bytes</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="get_short_hash"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_short_hash">[docs]</a><span class="k">def</span> <span class="nf">get_short_hash</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates unique short hash from object.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obj: object to hash</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        short base64-encoded string (6 chars)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hash_</span> <span class="o">=</span> <span class="n">get_hash</span><span class="p">(</span><span class="n">obj</span><span class="p">)[:</span><span class="mi">6</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">hash_</span></div>
+
+
+<div class="viewcode-block" id="pairwise"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.pairwise">[docs]</a><span class="k">def</span> <span class="nf">pairwise</span><span class="p">(</span><span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">T</span><span class="p">,</span> <span class="n">T</span><span class="p">]]:</span>
+    <span class="sd">&quot;&quot;&quot;Iterate sequences by pairs.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">        &gt;&gt;&gt; for i in pairwise([1, 2, 5, -3]):</span>
+<span class="sd">        &gt;&gt;&gt;     print(i)</span>
+<span class="sd">        (1, 2)</span>
+<span class="sd">        (2, 5)</span>
+<span class="sd">        (5, -3)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        iterable: Any iterable sequence</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pairwise iterator</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">tee</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+    <span class="nb">next</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="make_tuple"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.make_tuple">[docs]</a><span class="k">def</span> <span class="nf">make_tuple</span><span class="p">(</span><span class="n">tuple_like</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Creates a tuple if given ``tuple_like`` value isn&#39;t list or tuple.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tuple_like: tuple like object - list or tuple</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple or list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tuple_like</span> <span class="o">=</span> <span class="n">tuple_like</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tuple_like</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span> <span class="k">else</span> <span class="p">(</span><span class="n">tuple_like</span><span class="p">,</span> <span class="n">tuple_like</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tuple_like</span></div>
+
+
+<div class="viewcode-block" id="args_are_not_none"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.args_are_not_none">[docs]</a><span class="k">def</span> <span class="nf">args_are_not_none</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check that all arguments are not ``None``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *args: values  # noqa: RST213</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">         bool: True if all value were not None, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">args</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="find_value_ids"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.find_value_ids">[docs]</a><span class="k">def</span> <span class="nf">find_value_ids</span><span class="p">(</span><span class="n">it</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Args:</span>
+<span class="sd">        it: list of any</span>
+<span class="sd">        value: query element</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        indices of the all elements equal x0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">it</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">it</span> <span class="o">==</span> <span class="n">value</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># could be very slow</span>
+        <span class="n">inds</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">el</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="k">if</span> <span class="n">el</span> <span class="o">==</span> <span class="n">value</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">inds</span></div>
+
+
+<div class="viewcode-block" id="get_by_keys"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.get_by_keys">[docs]</a><span class="k">def</span> <span class="nf">get_by_keys</span><span class="p">(</span><span class="n">dict_</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">default</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;@TODO: docs.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dict_</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">()</span>
+
+    <span class="n">key</span><span class="p">,</span> <span class="o">*</span><span class="n">keys</span> <span class="o">=</span> <span class="n">keys</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dict_</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">dict_</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">get_by_keys</span><span class="p">(</span><span class="n">dict_</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="o">*</span><span class="n">keys</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">default</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="convert_labels2list"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.misc.convert_labels2list">[docs]</a><span class="k">def</span> <span class="nf">convert_labels2list</span><span class="p">(</span><span class="n">labels</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function allows to work with 2 types of indexing:</span>
+<span class="sd">    using a integer tensor and a list of indices.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        labels: labels of batch samples</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        labels of batch samples in the aligned format</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        TypeError: if type of input labels is not tensor and list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+            <span class="n">labels</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="n">short</span><span class="p">,</span> <span class="n">tint</span><span class="p">,</span> <span class="n">long</span><span class="p">]</span>
+        <span class="p">),</span> <span class="s2">&quot;Labels cannot be interpreted as indices.&quot;</span>
+        <span class="n">labels_list</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">labels_list</span> <span class="o">=</span> <span class="n">labels</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unexpected type of labels: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">labels_list</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;boolean_flag&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_fn_default_params&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_fn_argsnames&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_utcnow_time&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;is_exception&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;maybe_recursive_call&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_attr&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;set_global_seed&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_dictkey_auto_fn&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;merge_dicts&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;flatten_dict&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_hash&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_short_hash&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;args_are_not_none&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;make_tuple&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;pairwise&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;find_value_ids&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;get_by_keys&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;convert_labels2list&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+         <script src="../../../_static/jquery.js"></script>
+         <script src="../../../_static/underscore.js"></script>
+         <script src="../../../_static/doctools.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
