@@ -9,7 +9,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- LambdaWrapperCallback ([#1153](https://github.com/catalyst-team/catalyst/issues/1153))
+-
+
+### Changed
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+## [21.04] - 2021-04-17
+
+### Added
+
 - Nifti Reader (NiftiReader) ([#1151](https://github.com/catalyst-team/catalyst/pull/1151))
 - CMC score and callback for ReID task (ReidCMCMetric and ReidCMCScoreCallback) ([#1170](https://github.com/catalyst-team/catalyst/pull/1170))
 - Market1501 metric learning datasets (Market1501MLDataset and Market1501QGDataset) ([#1170](https://github.com/catalyst-team/catalyst/pull/1170))
@@ -23,6 +40,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - ``TensorboardLogger`` logs loader metric ``on_loader_end`` rather than ``on_epoch_end`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 - ``prefix`` renamed to ``metric_key`` for ``MetricAggregationCallback`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 - ``micro``, ``macro`` and ``weighted`` aggregations renamed to ``_micro``, ``_macro`` and ``_weighted`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- ``BatchTransformCallback`` updated ([#1153](https://github.com/catalyst-team/catalyst/issues/1153))
 
 ### Removed
 

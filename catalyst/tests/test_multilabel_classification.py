@@ -35,8 +35,12 @@ def train_experiment(device, engine=None):
         callbacks = [
             dl.MultilabelAccuracyCallback(input_key="logits", target_key="targets", threshold=0.5),
         ]
-        if engine is None or not isinstance(
-            engine, (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine)
+        if SETTINGS.amp_required and (
+            engine is None
+            or not isinstance(
+                engine,
+                (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine),
+            )
         ):
             callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
         runner.train(
