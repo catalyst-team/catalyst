@@ -1,75 +1,92 @@
 Core
 ================================================
 
+.. toctree::
+   :titlesonly:
+
+.. contents::
+   :local:
+
+
 .. automodule:: catalyst.core
     :members:
+    :show-inheritance:
+
+
+Runner
+----------------------
+.. autoclass:: catalyst.core.runner.IRunner
+    :members: seed, hparams, stages, get_stage_len, get_trial, get_engine, get_loggers, get_datasets, get_loaders, get_model, get_criterion, get_optimizer, get_scheduler, get_callbacks, log_metrics, log_image, log_hparams, handle_batch, run
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.core.callback
+.. autoclass:: catalyst.core.runner.RunnerException
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.core.experiment
+Engine
+----------------------
+.. autoclass:: catalyst.core.engine.IEngine
+    :members:
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Callback
+----------------------
+.. autoclass:: catalyst.core.callback.CallbackNode
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.core.runner
+.. autoclass:: catalyst.core.callback.CallbackOrder
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.core.state
+.. autoclass:: catalyst.core.callback.CallbackScope
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.core.registry
+.. autoclass:: catalyst.core.callback.Callback
+    :members:
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: catalyst.core.callback.CallbackWrapper
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :undoc-members:
+    :show-inheritance:
+
+Logger
+----------------------
+.. autoclass:: catalyst.core.logger.ILogger
     :members:
     :undoc-members:
     :show-inheritance:
 
-Callbacks
---------------------
-
-.. automodule:: catalyst.core.callbacks.checkpoint
+Trial
+----------------------
+.. autoclass:: catalyst.core.trial.ITrial
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.core.callbacks.criterion
-    :members:
-    :undoc-members:
-    :show-inheritance:
+Scripts
+--------------------------------------
 
-.. automodule:: catalyst.core.callbacks.formatters
-    :members:
-    :undoc-members:
-    :show-inheritance:
+You can use Catalyst scripts with `catalyst-dl` in your terminal.
+For example:
 
-.. automodule:: catalyst.core.callbacks.logging
-    :members:
-    :undoc-members:
-    :show-inheritance:
+.. code-block:: bash
 
-.. automodule:: catalyst.core.callbacks.optimizer
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    $ catalyst-dl run --help
 
-.. automodule:: catalyst.core.callbacks.phase
+.. automodule:: catalyst.dl.__main__
     :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.core.callbacks.scheduler
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.core.callbacks.wrappers
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    :exclude-members: build_parser, main

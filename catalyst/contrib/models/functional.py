@@ -1,8 +1,13 @@
-from typing import List, Union  # isort:skip
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
+from typing import List, Union
 
-import torch.nn as nn
+from torch import nn
 
-from .sequential import _process_additional_params, SequentialNet
+from catalyst.contrib.models.sequential import (  # noqa: WPS450
+    _process_additional_params,
+    SequentialNet,
+)
 
 
 def get_convolution_net(
@@ -19,7 +24,7 @@ def get_convolution_net(
     residual: Union[bool, str] = False,
     layer_order: List = None,
 ) -> nn.Module:
-
+    """@TODO: Docs. Contribution is welcome."""
     channels = channels or [32, 64, 64]
     kernel_sizes = kernel_sizes or [8, 4, 3]
     strides = strides or [4, 2, 1]
@@ -34,16 +39,18 @@ def get_convolution_net(
             "kernel_size": kernel_size,
             "stride": stride,
             "groups": group,
-        } for bias, kernel_size, stride, group in
-        zip(use_bias, kernel_sizes, strides, groups)
+        }
+        for bias, kernel_size, stride, group in zip(use_bias, kernel_sizes, strides, groups)
     ]
 
     if dropout_rate is not None:
-        dropout_fn = {"module": nn.Dropout2d, "p": dropout_rate} \
-            if isinstance(dropout_rate, float) \
+        dropout_fn = (
+            {"module": nn.Dropout2d, "p": dropout_rate}
+            if isinstance(dropout_rate, float)
             else [
-            {"module": nn.Dropout2d, "p": p} if p is not None else None
-            for p in dropout_rate]
+                {"module": nn.Dropout2d, "p": p} if p is not None else None for p in dropout_rate
+            ]
+        )
     else:
         dropout_fn = None
 
@@ -71,18 +78,20 @@ def get_linear_net(
     residual: Union[bool, str] = False,
     layer_order: List = None,
 ) -> nn.Module:
-
+    """@TODO: Docs. Contribution is welcome."""
     features = features or [64, 128, 64]
 
-    layer_fn = {"module": nn.Linear, "bias": use_bias} \
-        if isinstance(use_bias, bool) \
+    layer_fn = (
+        {"module": nn.Linear, "bias": use_bias}
+        if isinstance(use_bias, bool)
         else [{"module": nn.Linear, "bias": bias} for bias in use_bias]
+    )
     if dropout_rate is not None:
-        dropout_fn = {"module": nn.Dropout, "p": dropout_rate} \
-            if isinstance(dropout_rate, float) \
-            else [
-            {"module": nn.Dropout, "p": p} if p is not None else None
-            for p in dropout_rate]
+        dropout_fn = (
+            {"module": nn.Dropout, "p": dropout_rate}
+            if isinstance(dropout_rate, float)
+            else [{"module": nn.Dropout, "p": p} if p is not None else None for p in dropout_rate]
+        )
     else:
         dropout_fn = None
 
@@ -98,3 +107,6 @@ def get_linear_net(
     )
 
     return net
+
+
+__all__ = ["get_convolution_net", "get_linear_net"]

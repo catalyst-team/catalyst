@@ -1,240 +1,156 @@
-Utils
+Utilities
 ================================================
 
+.. toctree::
+   :titlesonly:
+
+.. contents::
+   :local:
+
+
+Main
+----------------------
 .. automodule:: catalyst.utils
     :members:
     :show-inheritance:
 
-
-.. automodule:: catalyst.utils.argparse
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.callbacks
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.checkpoint
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.compression
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+Config
+~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.config
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.confusion_matrix
+Data
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.data
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.dataset
+Distributed
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.distributed
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.ddp
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.dict
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.hash
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.image
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.initialization
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+Misc
+~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.misc
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.notebook
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+Numpy
+~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.numpy
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.pandas
+Onnx
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.onnx
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.parallel
+Pruning
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.pruning
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.plotly
+Quantization
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.quantization
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.scripts
+
+Stochastic Weights Averaging (SWA)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.swa
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.seed
+Sys
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.sys
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.serialization
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
+Torch
+~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.torch
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.visualization
+Tracing
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.tracing
     :members:
     :undoc-members:
     :show-inheritance:
 
 
-Tools
---------------------
+Contrib
+----------------------
+.. automodule:: catalyst.contrib.utils
+    :members:
+    :show-inheritance:
 
-.. automodule:: catalyst.utils.tools.metric_manager
+Compression
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.compression
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.tools.dynamic_array
+Image
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.image
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.tools.frozen_class
+Pandas
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.pandas
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.tools.registry
+Parallel
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.parallel
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.tools.seeder
+Serialization
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.serialization
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.tools.tensorboard
+Thresholds
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.thresholds
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.tools.typing
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Criterion
---------------------
-
-.. automodule:: catalyst.utils.criterion.accuracy
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.criterion.dice
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.criterion.f1_score
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.criterion.focal
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.criterion.iou
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Meters
---------------------
-
-The meters from torchnet.meters
-
-.. automodule:: catalyst.utils.meters.meter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.meters.apmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.meters.aucmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.meters.averagevaluemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.meters.classerrormeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.meters.confusionmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.meters.mapmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.meters.movingaveragevaluemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.utils.meters.msemeter
+Visualization
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.contrib.utils.visualization
     :members:
     :undoc-members:
     :show-inheritance:

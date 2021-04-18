@@ -1,6 +1,5 @@
 # flake8: noqa
 
-from .mobilenetv2 import MobileNetV2Encoder
-from .resnet import ResnetEncoder
+from catalyst.contrib.models.cv.encoders.resnet import ResnetEncoder
 
-__all__ = ["ResnetEncoder", "MobileNetV2Encoder"]
+__all__ = ["ResnetEncoder"]

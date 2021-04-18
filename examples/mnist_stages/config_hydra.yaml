@@ -1,0 +1,116 @@
+# For detailed comments on this configuration file refer to configs/hydra-description-eng.yml
+
+shared:
+  dataset_root: './data'
+  seed: 42
+  valid_loader: valid
+  valid_metric: accuracy01
+  minimize_valid_metric: False
+
+args:
+  expdir: "mnist_stages"
+  logdir: "./logs/mnist_stages_hydra"
+  seed: ${shared.seed}
+  distributed: False
+  apex: False
+  amp: False
+  verbose: False
+  timeit: False
+  check: False
+  overfit: False
+  deterministic: False
+  benchmark: False
+
+runner:
+  _target_: mnist_stages.runner.CustomSupervisedHydraRunner
+  input_key: "features"
+  output_key: "logits"
+  target_key: "targets"
+  loss_key: "loss"
+
+engine:
+  _target_: catalyst.engines.DeviceEngine
+
+model:
+  _target_: mnist_stages.SimpleNet
+
+loggers:
+  console:
+    _target_: catalyst.loggers.ConsoleLogger
+  tensorboard:
+    _target_: catalyst.loggers.TensorboardLogger
+    logdir: ${args.logdir}
+    use_logdir_postfix: True
+
+stages:
+  train:
+    num_epochs: 4
+
+    loaders:
+      # default kwargs for `runner.get_loaders`:
+      batch_size: 32
+      num_workers: 1
+      # kwargs for `runner.get_datasets`:
+      num_samples_per_class: 320
+
+    criterion:
+      _target_: torch.nn.CrossEntropyLoss
+
+    optimizer:
+      _target_: torch.optim.Adam
+
+    scheduler:
+      _target_: torch.optim.lr_scheduler.MultiStepLR
+      milestones: [ 2 ]
+      gamma: 0.3
+
+    callbacks:
+      accuracy:
+        _target_: catalyst.callbacks.AccuracyCallback
+        input_key: ${runner.output_key}
+        target_key: ${runner.target_key}
+        topk_args: [ 1, 3, 5 ]
+      loss:
+        _target_: catalyst.callbacks.CriterionCallback
+        input_key: ${runner.output_key}
+        target_key: ${runner.target_key}
+        metric_key: ${runner.loss_key}
+      optimizer:
+        _target_: catalyst.callbacks.OptimizerCallback
+        metric_key: ${runner.loss_key}
+      scheduler:
+        _target_: catalyst.callbacks.SchedulerCallback
+        loader_key: ${shared.valid_loader}
+        metric_key: ${shared.valid_metric}
+      saver:
+        _target_: catalyst.callbacks.CheckpointCallback
+        logdir: ${args.logdir}
+        loader_key: ${shared.valid_loader}
+        metric_key: ${shared.valid_metric}
+        minimize: ${shared.minimize_valid_metric}
+        save_n_best: 3
+        use_logdir_postfix: True
+#      verbose:
+#        _target_: catalyst.callbacks.TqdmCallback
+
+  tune:
+    num_epochs: 4
+
+    loaders: ${stages.train.loaders}
+
+    criterion:
+      _target_: torch.nn.CrossEntropyLoss
+
+    optimizer:
+      _target_: catalyst.contrib.nn.Ralamb
+
+    scheduler:
+      _target_: torch.optim.lr_scheduler.MultiStepLR
+      milestones: [ 2 ]
+      gamma: 0.3
+
+    callbacks: ${stages.train.callbacks}
+
+hydra:
+  run:
+    dir: ${args.logdir}

@@ -1,5 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
+*pytest_cache*
 *.py[cod]
 *$py.class
 
@@ -116,8 +117,8 @@ tmp/
 logs/
 # Examples - mock data
 !examples/distilbert_text_classification/input/*.csv
-!examples/_tests_nlp_classification/input/*.csv
-examples/logs/
+!tests/_tests_nlp_classification/input/*.csv
+tests/logs/
 notebooks/
 
 _nogit*
@@ -136,3 +137,4 @@ _nogit*
 # End of https://www.gitignore.io/api/visualstudiocode
 
 presets/
+_todo/

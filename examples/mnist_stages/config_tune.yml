@@ -1,0 +1,150 @@
+# For detailed comments on this configuration file refer to configs/config-description-eng.yml
+
+study:
+  direction: "maximize"
+  pruner:
+    _target_: MedianPruner
+    n_startup_trials: 1
+    n_warmup_steps: 0
+    interval_steps: 1
+
+shared:
+  dataset_root: &dataset_root "./data"
+  seed: &seed 42
+  valid_loader: &valid_loader valid
+  valid_metric: &valid_metric accuracy01
+  minimize_valid_metric: &minimize_valid_metric False
+
+
+args:
+  expdir: "mnist_stages"
+#  logdir: &logdir "./logs/mnist_stages"
+  baselogdir: &logdir "./logs/mnist_stages_tune"
+  seed: *seed
+  distributed: False
+  apex: False
+  amp: False
+  verbose: False
+  timeit: False
+  check: False
+  overfit: False
+  deterministic: False
+  benchmark: False
+
+runner:
+  _target_: CustomSupervisedConfigRunner
+  input_key: &model_input "features"
+  output_key: &model_output "logits"
+  target_key: &model_target "targets"
+  loss_key: &model_loss "loss"
+
+engine:
+#  engine: "cpu"
+  _target_: DeviceEngine
+  device: "cpu"
+
+loggers:
+  console:
+    _target_: ConsoleLogger
+
+model:
+  _target_: SimpleNet
+  num_hidden1: "int(trial.suggest_loguniform('num_hidden1', 32, 128))"
+  num_hidden2: "int(trial.suggest_loguniform('num_hidden2', 32, 128))"
+
+stages:
+  train:
+    num_epochs: 4
+
+    loaders: &loaders
+      batch_size: 32
+      num_workers: 1
+
+#      datasets:
+#        train:
+#          _target_: MNIST
+#          root: *dataset_root
+#          train: True
+#          download: True
+#        valid:
+#          _target_: MNIST
+#          root: *dataset_root
+#          train: False
+#          download: True
+#
+#      samplers:
+#        train:
+#          _target_: MiniEpochSampler
+#          data_len: 50000
+#          mini_epoch_len: 35000
+#          drop_last: True
+#          shuffle: per_epoch
+#
+#      transforms:
+#        _target_: albumentations.Compose
+#        transforms:
+#          - _target_: albumentations.Normalize
+#          - _target_: catalyst.ImageToTensor
+
+    criterion:
+      _target_: CrossEntropyLoss
+
+    optimizer:
+      _target_: Adam
+
+    scheduler:
+      _target_: MultiStepLR
+      milestones: [ 2 ]
+      gamma: 0.3
+
+    callbacks: &callbacks
+      accuracy:
+        _target_: AccuracyCallback
+        input_key: *model_output
+        target_key: *model_target
+        topk_args: [ 1, 3, 5 ]
+      loss:
+        _target_: CriterionCallback
+        input_key: *model_output
+        target_key: *model_target
+        metric_key: *model_loss
+      optimizer:
+        _target_: OptimizerCallback
+        metric_key: *model_loss
+      scheduler:
+        _target_: SchedulerCallback
+        loader_key: *valid_loader
+        metric_key: *valid_metric
+      saver:
+        _target_: CheckpointCallback
+#        logdir: *logdir
+        loader_key: *valid_loader
+        metric_key: *valid_metric
+        minimize: *minimize_valid_metric
+        use_logdir_postfix: True
+        use_runner_logdir: True
+#      verbose:
+#        _target_: TqdmCallback
+      optuna:
+        _target_: OptunaPruningCallback
+        loader_key: *valid_loader
+        metric_key: *valid_metric
+        minimize: *minimize_valid_metric
+
+#  tune:
+#    num_epochs: 4
+#
+#    loaders: *loaders
+#
+#    criterion:
+#      _target_: CrossEntropyLoss
+#
+#    optimizer:
+#      _target_: Ralamb
+#
+#    scheduler:
+#      _target_: MultiStepLR
+#      milestones: [ 2 ]
+#      gamma: 0.3
+#
+#    callbacks: *callbacks

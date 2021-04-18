@@ -1,12 +1,9 @@
 pytest==5.3.1
 sphinx_rtd_theme
-Sphinx==2.2.1
+sphinx==2.2.1
 # git+https://github.com/bitprophet/releases/#egg=releases
 # git+https://github.com/readthedocs/sphinx_rtd_theme
-flake8==3.7.9
-# flake8-docstrings==1.5.0
-flake8-quotes==2.1.1
-yapf==0.28.0
 mock==3.0.5
-pre-commit==1.20.0
-isort==4.3.21
+catalyst-codestyle==21.03rc2
+catalyst-sphinx-theme==1.1.2
+toml==0.10.0

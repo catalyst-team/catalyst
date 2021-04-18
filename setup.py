@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# flake8: noqa
 # -*- coding: utf-8 -*-
 
 # Note: To use the "upload" functionality of this file, you must:
@@ -13,8 +14,7 @@ from setuptools import Command, find_packages, setup
 
 # Package meta-data.
 NAME = "catalyst"
-DESCRIPTION = \
-    "Catalyst. PyTorch framework for DL & RL research and development."
+DESCRIPTION = "Catalyst. PyTorch framework for DL research and development."
 URL = "https://github.com/catalyst-team/catalyst"
 EMAIL = "scitator@gmail.com"
 AUTHOR = "Sergey Kolesnikov"
@@ -24,17 +24,20 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
 
 
 def load_requirements(filename):
+    """Docs? Contribution is welcome."""
     with open(os.path.join(PROJECT_ROOT, filename), "r") as f:
         return f.read().splitlines()
 
 
 def load_readme():
+    """Docs? Contribution is welcome."""
     readme_path = os.path.join(PROJECT_ROOT, "README.md")
     with io.open(readme_path, encoding="utf-8") as f:
-        return "\n" + f.read()
+        return f"\n{f.read()}"
 
 
 def load_version():
+    """Docs? Contribution is welcome."""
     context = {}
     with open(os.path.join(PROJECT_ROOT, "catalyst", "__version__.py")) as f:
         exec(f.read(), context)
@@ -53,12 +56,15 @@ class UploadCommand(Command):
         print("\033[1m{0}\033[0m".format(s))
 
     def initialize_options(self):
+        """Docs? Contribution is welcome."""
         pass
 
     def finalize_options(self):
+        """Docs? Contribution is welcome."""
         pass
 
     def run(self):
+        """Docs? Contribution is welcome."""
         try:
             self.status("Removing previous builds…")
             rmtree(os.path.join(PROJECT_ROOT, "dist"))
@@ -66,11 +72,7 @@ class UploadCommand(Command):
             pass
 
         self.status("Building Source and Wheel (universal) distribution…")
-        os.system(
-            "{0} setup.py sdist bdist_wheel --universal".format(
-                sys.executable
-            )
-        )
+        os.system("{0} setup.py sdist bdist_wheel --universal".format(sys.executable))
 
         self.status("Uploading the package to PyPI via Twine…")
         os.system("twine upload dist/*")
@@ -84,21 +86,23 @@ class UploadCommand(Command):
 
 # Specific dependencies.
 extras = {
-    "contrib": load_requirements("requirements/requirements-contrib.txt"),
+    "dev": load_requirements("requirements/requirements-dev.txt"),
     "cv": load_requirements("requirements/requirements-cv.txt"),
-    # "dev": load_requirements("requirements/requirements-dev.txt"),
-    "ecosystem": load_requirements("requirements/requirements-ecosystem.txt"),
     "ml": load_requirements("requirements/requirements-ml.txt"),
-    "nlp": load_requirements("requirements/requirements-nlp.txt"),
-    "rl": load_requirements("requirements/requirements-rl.txt"),
+    "nifti": load_requirements("requirements/requirements-nifti.txt"),
+    "hydra": load_requirements("requirements/requirements-hydra.txt"),
+    "optuna": load_requirements("requirements/requirements-optuna.txt"),
+    "onnx": load_requirements("requirements/requirements-onnx.txt"),
+    "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
+    "mlflow": load_requirements("requirements/requirements-mlflow.txt"),
 }
-extras["contrib"] += extras["ecosystem"] + extras["cv"] + extras["nlp"]
+extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
 
 # Meta dependency groups.
-all_deps = []
-for group_name in extras:
-    all_deps += extras[group_name]
-extras["all"] = all_deps
+# all_deps = []
+# for group_name in extras:
+#     all_deps += extras[group_name]
+# extras["all"] = all_deps
 
 setup(
     name=NAME,
@@ -127,18 +131,15 @@ setup(
         "Documentation": "https://catalyst-team.github.io/catalyst",
         "Source Code": "https://github.com/catalyst-team/catalyst",
     },
-    packages=find_packages(exclude=("tests", )),
+    packages=find_packages(exclude=("tests",)),
     entry_points={
         "console_scripts": [
-            "catalyst-dl=catalyst.dl.__main__:main",
-            "catalyst-rl=catalyst.rl.__main__:main",
             "catalyst-contrib=catalyst.contrib.__main__:main",
-            "catalyst-data=catalyst.data.__main__:main",
+            "catalyst-dl=catalyst.dl.__main__:main",
         ],
     },
     scripts=[
         "bin/scripts/catalyst-parallel-run",
-        "bin/scripts/catalyst-rl-run",
         "bin/scripts/download-gdrive",
         "bin/scripts/extract-archive",
     ],
@@ -163,10 +164,9 @@ setup(
         "Programming Language :: Python",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: Implementation :: CPython",
     ],
     # $ setup.py publish support.
-    cmdclass={
-        "upload": UploadCommand,
-    },
+    cmdclass={"upload": UploadCommand},
 )

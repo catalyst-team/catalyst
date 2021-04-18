@@ -1,17 +1,19 @@
-from typing import Dict  # isort:skip
+from typing import Dict
 from functools import partial
 
 import numpy as np
 
-from .blocks import DecoderSumBlock, EncoderDownsampleBlock
-from .bridge import UnetBridge
-from .core import ResnetUnetSpec, UnetSpec
-from .decoder import UNetDecoder
-from .encoder import ResnetEncoder, UnetEncoder
-from .head import UnetHead
+from catalyst.contrib.models.cv.segmentation.blocks import DecoderSumBlock, EncoderDownsampleBlock
+from catalyst.contrib.models.cv.segmentation.bridge import UnetBridge
+from catalyst.contrib.models.cv.segmentation.core import ResnetUnetSpec, UnetSpec
+from catalyst.contrib.models.cv.segmentation.decoder import UNetDecoder
+from catalyst.contrib.models.cv.segmentation.encoder import ResnetEncoder, UnetEncoder
+from catalyst.contrib.models.cv.segmentation.head import UnetHead
 
 
 class Linknet(UnetSpec):
+    """@TODO: Docs. Contribution is welcome."""
+
     def _get_components(
         self,
         encoder: UnetEncoder,
@@ -44,6 +46,8 @@ class Linknet(UnetSpec):
 
 
 class ResnetLinknet(ResnetUnetSpec):
+    """@TODO: Docs. Contribution is welcome."""
+
     def _get_components(
         self,
         encoder: ResnetEncoder,
@@ -56,9 +60,7 @@ class ResnetLinknet(ResnetUnetSpec):
         decoder = UNetDecoder(
             in_channels=encoder.out_channels,
             in_strides=encoder.out_strides,
-            block_fn=partial(
-                DecoderSumBlock, aggregate_first=False, upsample_scale=None
-            ),
+            block_fn=partial(DecoderSumBlock, aggregate_first=False, upsample_scale=None),
             **decoder_params
         )
         head = UnetHead(
@@ -69,3 +71,6 @@ class ResnetLinknet(ResnetUnetSpec):
             **head_params
         )
         return encoder, bridge, decoder, head
+
+
+__all__ = ["Linknet", "ResnetLinknet"]

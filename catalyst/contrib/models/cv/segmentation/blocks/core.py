@@ -1,10 +1,12 @@
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
 from abc import ABC, abstractmethod
 
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn
+from torch.nn import functional as F
 
-from ..abn import ABN
+from catalyst.contrib.models.cv.segmentation.abn import ABN
 
 
 def _get_block(
@@ -32,7 +34,7 @@ def _get_block(
         abn_block(out_channels, activation=activation),
     ]
     if complexity > 0:
-        layers_ = [
+        layers_list = [
             nn.Conv2d(
                 out_channels,
                 out_channels,
@@ -42,9 +44,9 @@ def _get_block(
                 bias=False,
                 **kwargs
             ),
-            abn_block(out_channels, activation=activation)
+            abn_block(out_channels, activation=activation),
         ] * complexity
-        layers = layers + layers_
+        layers = layers + layers_list
     block = nn.Sequential(*layers)
     return block
 
@@ -54,26 +56,25 @@ def _upsample(
     scale: int = None,
     size: int = None,
     interpolation_mode: str = "bilinear",
-    align_corners: bool = True
+    align_corners: bool = True,
 ) -> torch.Tensor:
     if scale is None:
-        x = F.interpolate(
-            x, size=size, mode=interpolation_mode, align_corners=align_corners
-        )
+        x = F.interpolate(x, size=size, mode=interpolation_mode, align_corners=align_corners)
     else:
         x = F.interpolate(
-            x,
-            scale_factor=scale,
-            mode=interpolation_mode,
-            align_corners=align_corners
+            x, scale_factor=scale, mode=interpolation_mode, align_corners=align_corners,
         )
     return x
 
 
 class EncoderBlock(ABC, nn.Module):
-    def __init__(
-        self, in_channels: int, out_channels: int, in_strides: int = None
-    ):
+    """@TODO: Docs (add description, `Example`). Contribution is welcome."""
+
+    def __init__(self, in_channels: int, out_channels: int, in_strides: int = None):
+        """
+        Args:
+            @TODO: Docs. Contribution is welcome.
+        """
         super().__init__()
         self.in_channels = in_channels
         self.out_channels = out_channels
@@ -82,18 +83,23 @@ class EncoderBlock(ABC, nn.Module):
     @property
     @abstractmethod
     def out_strides(self) -> int:
+        """@TODO: Docs. Contribution is welcome."""
         pass
 
     @property
     @abstractmethod
     def block(self) -> nn.Module:
+        """@TODO: Docs. Contribution is welcome."""
         pass
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """Forward call."""
         return self.block(x)
 
 
 class DecoderBlock(ABC, nn.Module):
+    """@TODO: Docs (add description, `Example`). Contribution is welcome."""
+
     def __init__(
         self,
         in_channels: int,
@@ -103,6 +109,10 @@ class DecoderBlock(ABC, nn.Module):
         *args,
         **kwargs
     ):
+        """
+        Args:
+            @TODO: Docs. Contribution is welcome.
+        """
         super().__init__()
         self.in_channels = in_channels
         self.enc_channels = enc_channels
@@ -117,10 +127,13 @@ class DecoderBlock(ABC, nn.Module):
 
     @property
     def out_strides(self) -> int:
+        """@TODO: Docs. Contribution is welcome."""
         return self.in_strides // 2 if self.in_strides is not None else None
 
     @abstractmethod
-    def forward(
-        self, bottom: torch.Tensor, left: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, bottom: torch.Tensor, left: torch.Tensor) -> torch.Tensor:
+        """Forward call."""
         pass
+
+
+__all__ = ["EncoderBlock", "DecoderBlock"]

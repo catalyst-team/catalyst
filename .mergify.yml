@@ -1,0 +1,38 @@
+pull_request_rules:
+  - name: remove outdated reviews
+    conditions: []
+    actions:
+      dismiss_reviews: {}
+  - name: automatic merge for master when CI passes and 2 review
+    conditions:
+      - "#approved-reviews-by>=2"
+      - approved-reviews-by!=github-actions
+      - status-success=codestyle (ubuntu-18.04, 3.6)
+      - status-success=dl-cpu (ubuntu-18.04, 3.6, minimal)
+      - status-success=dl-cpu (ubuntu-18.04, 3.6, latest)
+      - label!=WIP
+    actions:
+      merge:
+        method: squash
+  - name: automatic merge for master when CI passes and 2 review
+    conditions:
+      - "#approved-reviews-by>=3"
+      - approved-reviews-by=github-actions
+      - status-success=codestyle (ubuntu-18.04, 3.6)
+      - status-success=dl-cpu (ubuntu-18.04, 3.6, minimal)
+      - status-success=dl-cpu (ubuntu-18.04, 3.6, latest)
+      - label!=WIP
+    actions:
+      merge:
+        method: squash
+  - name: delete head branch after merge
+    conditions:
+      - merged
+    actions:
+      delete_head_branch: {}
+  - name: ask to resolve conflict
+    conditions:
+      - conflict
+    actions:
+      comment:
+        message: "This pull request is now in conflicts. @{{ author }}, could you fix it? 🙏"

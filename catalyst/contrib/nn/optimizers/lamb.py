@@ -1,10 +1,11 @@
+from typing import Callable, Optional, Tuple
 import collections
 
 import torch
 from torch.optim.optimizer import Optimizer
 
 
-def log_lamb_rs(optimizer: Optimizer, event_writer, token_count: int):
+def _log_lamb_rs(optimizer: Optimizer, event_writer, token_count: int):
     """Log a histogram of trust ratio scalars in across layers."""
     results = collections.defaultdict(list)
     for group in optimizer.param_groups:
@@ -19,20 +20,26 @@ def log_lamb_rs(optimizer: Optimizer, event_writer, token_count: int):
 
 
 class Lamb(Optimizer):
-    """Lamb optimizer"""
+    """Implements Lamb algorithm.
+
+    It has been proposed in `Training BERT in 76 minutes`_.
+
+    .. _`Training BERT in 76 minutes`:
+        https://arxiv.org/abs/1904.00962
+    """
+
     def __init__(
         self,
         params,
-        lr=1e-3,
-        betas=(0.9, 0.999),
-        eps=1e-6,
-        weight_decay=0,
-        adam=False
+        lr: Optional[float] = 1e-3,
+        betas: Optional[Tuple[float, float]] = (0.9, 0.999),
+        eps: Optional[float] = 1e-6,
+        weight_decay: Optional[float] = 0.0,
+        adam: Optional[bool] = False,
     ):
-        """Implements Lamb algorithm from `Training BERT in 76 minutes`_.
-
+        """
         Args:
-            params (iterable): iterable of parameters to optimize or dicts
+            params: iterable of parameters to optimize or dicts
                 defining parameter groups
             lr (float, optional): learning rate (default: 1e-3)
             betas (Tuple[float, float], optional): coefficients used for
@@ -44,9 +51,6 @@ class Lamb(Optimizer):
                 (default: 0)
             adam (bool, optional): always use trust ratio = 1, which turns
                 this into Adam. Useful for comparison purposes.
-
-        .. _`Training BERT in 76 minutes`:
-            https://arxiv.org/abs/1904.00962
         """
         if not 0.0 <= lr:
             raise ValueError(f"Invalid learning rate: {lr}")
@@ -56,12 +60,28 @@ class Lamb(Optimizer):
             raise ValueError(f"Invalid beta parameter at index 0: {betas[0]}")
         if not 0.0 <= betas[1] < 1.0:
             raise ValueError(f"Invalid beta parameter at index 1: {betas[1]}")
-        defaults = dict(lr=lr, betas=betas, eps=eps, weight_decay=weight_decay)
+        defaults = {
+            "lr": lr,
+            "betas": betas,
+            "eps": eps,
+            "weight_decay": weight_decay,
+        }
         self.adam = adam
         super(Lamb, self).__init__(params, defaults)
 
-    def step(self, closure=None):
-        """Makes optimizer step"""
+    def step(self, closure: Optional[Callable] = None):
+        """Makes optimizer step.
+
+        Args:
+            closure (callable, optional): A closure that reevaluates
+                the model and returns the loss.
+
+        Returns:
+            computed loss
+
+        Raises:
+            RuntimeError: Lamb does not support sparse gradients
+        """
         loss = None
         if closure is not None:
             loss = closure()
@@ -73,8 +93,7 @@ class Lamb(Optimizer):
                 grad = p.grad.data
                 if grad.is_sparse:
                     raise RuntimeError(
-                        "Lamb does not support sparse gradients, "
-                        "consider SparseAdam instad."
+                        "Lamb does not support sparse gradients, " "consider SparseAdam instad."
                     )
 
                 state = self.state[p]
@@ -126,3 +145,6 @@ class Lamb(Optimizer):
                 p.data.add_(-step_size * trust_ratio, adam_step)
 
         return loss
+
+
+__all__ = ["Lamb"]

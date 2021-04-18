@@ -1,3 +1,3 @@
 # flake8: noqa
-from .core import *
-from .unet import *
+from catalyst.contrib.models.cv.segmentation.bridge.core import BridgeSpec
+from catalyst.contrib.models.cv.segmentation.bridge.unet import UnetBridge

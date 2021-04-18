@@ -1,3 +1,4 @@
+# flake8: noqa
 # -*- coding: utf-8 -*-
 #
 # Configuration file for the Sphinx documentation builder.
@@ -33,6 +34,7 @@ releases_github_path = "catalyst-team/catalyst"
 
 
 def get_version(mode: str = "full") -> str:
+    """Docs? Contribution is welcome."""
     current_dir = os.path.abspath(os.path.dirname(__file__))
     root = os.path.dirname(current_dir)
     version_file = os.path.join(root, "catalyst", "__version__.py")
@@ -42,9 +44,7 @@ def get_version(mode: str = "full") -> str:
     version_ = "1.0"
     try:
         with open(version_file) as f:
-            version_ = re.search(
-                r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M
-            ).group(1)
+            version_ = re.search(r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M).group(1)
     except Exception:
         pass
 
@@ -114,8 +114,19 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # Ignoring Third-party packages
 
 autodoc_mock_imports = [
-    "alchemy", "neptune", "wandb", "gym", "gridfs", "pymongo", "redis"
+    "alchemy",
+    "neptune",
+    "wandb",
+    "gym",
+    "gridfs",
+    "pymongo",
+    "redis",
 ]
+
+# autodoc_default_flags = [
+#     "members", "undoc-members", "private-members",
+#     "special-members", "inherited-members", "show-inheritance"
+# ]
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
@@ -125,7 +136,7 @@ pygments_style = None
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "catalyst_sphinx_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -135,8 +146,9 @@ html_theme_options = {}
 # html_theme_options = {
 #     "display_version": True,
 #     "prev_next_buttons_location": "bottom",
-#     "collapse_navigation": True,
-#     "sticky_navigation": True
+#     "collapse_navigation": False,
+#     "sticky_navigation": True,
+#     "navigation_depth": 4,
 # }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -144,7 +156,7 @@ html_theme_options = {}
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ["_static"]
 
-html_short_title = "Catalyst RL/DL"
+html_short_title = "Accelerated deep learning R&D"
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -158,15 +170,13 @@ html_short_title = "Catalyst RL/DL"
 
 html_context = {
     "display_github": True,
-    "source_url_prefix": (
-        f"https://github.com/{docs_user}/{docs_repo}/tree/master/docs"
-    ),
+    "source_url_prefix": (f"https://github.com/{docs_user}/{docs_repo}/tree/master/docs"),
     "github_host": "github.com",
     "github_user": docs_user,
     "github_repo": docs_repo,
     "github_version": "master",
     "conf_py_path": "/docs/",
-    "source_suffix": ".rst"
+    "source_suffix": ".rst",
 }
 
 # -- Options for HTMLHelp output ---------------------------------------------
@@ -180,15 +190,12 @@ latex_elements = {
     # The paper size ("letterpaper" or "a4paper").
     #
     # "papersize": "letterpaper",
-
     # The font size ("10pt", "11pt" or "12pt").
     #
     # "pointsize": "10pt",
-
     # Additional stuff for the LaTeX preamble.
     #
     # "preamble": "",
-
     # Latex figure (float) alignment
     #
     # "figure_align": "htbp",
@@ -198,10 +205,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (
-        master_doc, "Catalyst.tex", "Catalyst Documentation", "Scitator",
-        "manual"
-    ),
+    (master_doc, "Catalyst.tex", "Catalyst Documentation", "Scitator", "manual",),
 ]
 
 # -- Options for manual page output ------------------------------------------
@@ -217,8 +221,13 @@ man_pages = [(master_doc, "catalyst", "Catalyst Documentation", [author], 1)]
 #  dir menu entry, description, category)
 texinfo_documents = [
     (
-        master_doc, "Catalyst", "Catalyst Documentation", author, "Catalyst",
-        "One line description of project.", "Miscellaneous"
+        master_doc,
+        "Catalyst",
+        "Catalyst Documentation",
+        author,
+        "Catalyst",
+        "One line description of project.",
+        "Miscellaneous",
     ),
 ]
 

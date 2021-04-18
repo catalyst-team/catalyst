@@ -1,10 +1,8 @@
 # flake8: noqa
-# isort:skip_file
 
 from catalyst.core import *
+from catalyst.engines import *
 
-from .core import *
-from .callbacks import *
-from .experiment import *
-from .state import *
-from .runner import *
+from catalyst.runners import *
+from catalyst.callbacks import *
+from catalyst.loggers import *

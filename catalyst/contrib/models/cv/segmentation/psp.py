@@ -1,12 +1,14 @@
-from typing import Dict  # isort:skip
+from typing import Dict
 
-from .core import ResnetUnetSpec, UnetSpec
-from .decoder import PSPDecoder
-from .encoder import ResnetEncoder, UnetEncoder
-from .head import UnetHead
+from catalyst.contrib.models.cv.segmentation.core import ResnetUnetSpec, UnetSpec
+from catalyst.contrib.models.cv.segmentation.decoder import PSPDecoder
+from catalyst.contrib.models.cv.segmentation.encoder import ResnetEncoder, UnetEncoder
+from catalyst.contrib.models.cv.segmentation.head import UnetHead
 
 
 class PSPnet(UnetSpec):
+    """@TODO: Docs. Contribution is welcome."""
+
     def _get_components(
         self,
         encoder: UnetEncoder,
@@ -17,9 +19,7 @@ class PSPnet(UnetSpec):
     ):
         bridge = None
         decoder = PSPDecoder(
-            in_channels=encoder.out_channels,
-            in_strides=encoder.out_strides,
-            **decoder_params
+            in_channels=encoder.out_channels, in_strides=encoder.out_strides, **decoder_params
         )
         head = UnetHead(
             in_channels=decoder.out_channels,
@@ -34,6 +34,8 @@ class PSPnet(UnetSpec):
 
 
 class ResnetPSPnet(ResnetUnetSpec):
+    """@TODO: Docs. Contribution is welcome."""
+
     def _get_components(
         self,
         encoder: ResnetEncoder,
@@ -44,9 +46,7 @@ class ResnetPSPnet(ResnetUnetSpec):
     ):
         bridge = None
         decoder = PSPDecoder(
-            in_channels=encoder.out_channels,
-            in_strides=encoder.out_strides,
-            **decoder_params
+            in_channels=encoder.out_channels, in_strides=encoder.out_strides, **decoder_params
         )
         head = UnetHead(
             in_channels=decoder.out_channels,
@@ -58,3 +58,6 @@ class ResnetPSPnet(ResnetUnetSpec):
             **head_params
         )
         return encoder, bridge, decoder, head
+
+
+__all__ = ["PSPnet", "ResnetPSPnet"]

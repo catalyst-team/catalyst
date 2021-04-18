@@ -1,6 +1,11 @@
 ## Catalyst Docker
 [![Docker Pulls](https://img.shields.io/docker/pulls/catalystteam/catalyst)](https://hub.docker.com/r/catalystteam/catalyst/tags)
 
+- `catalystteam/catalyst:{CATALYST_VERSION}` – simple image with Catalyst
+- `catalystteam/catalyst:{CATALYST_VERSION}-fp16` – Catalyst with FP16
+- `catalystteam/catalyst:{CATALYST_VERSION}-dev` – Catalyst for development with all the requirements
+- `catalystteam/catalyst:{CATALYST_VERSION}-dev-fp16` – Catalyst for development with FP16
+
 ### Base version
 Base docker has Catalyst and all needed requirements.
 ```bash

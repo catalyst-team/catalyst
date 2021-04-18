@@ -1,0 +1,6 @@
+[tool.nitpick]
+# style = "https://raw.githubusercontent.com/catalyst-team/codestyle/20.06.1/styles/nitpick-style-catalyst.toml"
+style = "https://raw.githubusercontent.com/catalyst-team/codestyle/master/styles/nitpick-style-catalyst.toml"
+
+[tool.black]
+line-length = 99

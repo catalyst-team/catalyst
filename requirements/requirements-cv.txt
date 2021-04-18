@@ -1,2 +1,5 @@
-albumentations==0.4.3
-segmentation-models-pytorch==0.1.0
+imageio>=2.5.0
+opencv-python-headless>=3.4.5.20
+scikit-image>=0.16.1
+torchvision>=0.4.1
+Pillow>=6.1  # torchvision fix (https://github.com/python-pillow/Pillow/issues/4130)

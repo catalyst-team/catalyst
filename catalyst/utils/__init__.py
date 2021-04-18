@@ -1,86 +1,91 @@
 # flake8: noqa
-# isort:skip_file
+from catalyst.settings import SETTINGS
 
-from .argparse import boolean_flag
-from .callbacks import process_callbacks
-from .checkpoint import (
-    load_checkpoint, pack_checkpoint, save_checkpoint, unpack_checkpoint
+from catalyst.utils.config import load_config, save_config
+
+from catalyst.utils.data import get_loaders_from_params, get_loader
+
+from catalyst.utils.distributed import (
+    get_distributed_params,
+    get_rank,
+    get_nn_from_ddp_module,
+    sum_reduce,
+    mean_reduce,
+    all_gather,
 )
-from .compression import pack, pack_if_needed, unpack, unpack_if_needed
-from .config import load_config, save_config
-from .confusion_matrix import (
-    calculate_tp_fp_fn, calculate_confusion_matrix_from_arrays,
-    calculate_confusion_matrix_from_tensors
-)
-from .dataset import (
-    create_dataset, split_dataset_train_test, create_dataframe
-)
-from .ddp import get_nn_from_ddp_module, is_wrapped_with_ddp
-from .dict import (
-    append_dict, flatten_dict, merge_dicts, get_dictkey_auto_fn,
-    split_dict_to_subdicts
-)
-# from .frozen import *
-from .hash import get_hash, get_short_hash
-from .image import (
-    has_image_extension, imread, imwrite, imsave, mask_to_overlay_image,
-    mimread, mimwrite_with_meta, tensor_from_rgb_image, tensor_to_ndimage
-)
-from .initialization import (
-    bias_init_with_prob, constant_init, create_optimal_inner_init,
-    kaiming_init, normal_init, outer_init, uniform_init, xavier_init
-)
-from .misc import (
-    args_are_not_none,
-    copy_directory,
-    format_metric,
+
+from catalyst.utils.misc import (
     get_fn_default_params,
     get_fn_argsnames,
     get_utcnow_time,
     is_exception,
-    make_tuple,
     maybe_recursive_call,
+    get_attr,
+    set_global_seed,
+    boolean_flag,
+    get_dictkey_auto_fn,
+    merge_dicts,
+    flatten_dict,
+    get_hash,
+    get_short_hash,
+    args_are_not_none,
+    make_tuple,
     pairwise,
+    find_value_ids,
+    get_by_keys,
+    convert_labels2list,
 )
-from .numpy import (
-    dict2structed, geometric_cumsum, get_one_hot, np_softmax, structed2dict
+from catalyst.utils.numpy import get_one_hot
+
+from catalyst.utils.onnx import onnx_export
+
+if SETTINGS.onnx_required:
+    from catalyst.utils.onnx import quantize_onnx_model
+
+if SETTINGS.pruning_required:
+    from catalyst.utils.pruning import prune_model, remove_reparametrization
+
+if SETTINGS.quantization_required:
+    from catalyst.utils.quantization import quantize_model
+
+from catalyst.utils.swa import (
+    average_weights,
+    get_averaged_weights_by_path_mask,
 )
-from .pandas import (
-    dataframe_to_list, folds_to_list, split_dataframe_train_test,
-    split_dataframe_on_folds, split_dataframe_on_stratified_folds,
-    split_dataframe_on_column_folds, map_dataframe, separate_tags,
-    get_dataset_labeling, split_dataframe, merge_multiple_fold_csv,
-    read_multiple_dataframes, read_csv_data, balance_classes
-)
-from .parallel import parallel_imap, tqdm_parallel_imap, get_pool
-from .parser import parse_config_args, parse_args_uargs
-from .plotly import plot_tensorboard_log
-# from .registry import *
-from .scripts import (
+
+from catalyst.utils.sys import (
     import_module,
     dump_code,
-    dump_python_files,
-    import_experiment_and_runner,
-    dump_base_experiment_code,
-)
-from .seed import set_global_seed
-from .serialization import deserialize, serialize
-from .sys import (
-    get_environment_vars,
-    list_conda_packages,
-    list_pip_packages,
     dump_environment,
+    get_config_runner,
 )
-from .torch import (
-    any2device, ce_with_logits, detach, get_activation_fn, get_available_gpus,
-    get_device, get_network_output, get_optimizable_params,
-    get_optimizer_momentum, log1p_exp, normal_logprob, normal_sample,
-    prepare_cudnn, process_model_params, set_optimizer_momentum,
-    set_requires_grad, soft_update
-)
-from .visualization import plot_confusion_matrix, render_figure_to_tensor
 
-from .distributed import (
-    get_rank, is_apex_available, distributed_mean, process_components,
-    assert_fp16_available, distributed_run
+from catalyst.utils.torch import (
+    get_optimizable_params,
+    get_optimizer_momentum,
+    get_optimizer_momentum_list,
+    set_optimizer_momentum,
+    get_device,
+    get_available_gpus,
+    get_available_engine,
+    any2device,
+    prepare_cudnn,
+    process_model_params,
+    get_requires_grad,
+    set_requires_grad,
+    get_network_output,
+    detach_tensor,
+    trim_tensors,
+    get_optimal_inner_init,
+    outer_init,
+    reset_weights_if_possible,
+    pack_checkpoint,
+    unpack_checkpoint,
+    save_checkpoint,
+    load_checkpoint,
 )
+
+from catalyst.utils.tracing import trace_model
+
+
+from catalyst.contrib.utils import *

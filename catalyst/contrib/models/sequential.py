@@ -1,12 +1,15 @@
-from typing import Dict, List, Union  # isort:skip
+# Author: Sergey Kolesnikov, scitator@gmail.com
+# flake8: noqa
+# @TODO: code formatting issue for 20.07 release
+from typing import Dict, List, Union
 from collections import OrderedDict
 from copy import deepcopy
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from catalyst import utils
-from catalyst.contrib.registry import MODULES
+from catalyst.registry import REGISTRY
 
 
 def _process_additional_params(params, layers):
@@ -17,16 +20,46 @@ def _process_additional_params(params, layers):
     return params
 
 
+def _layer_fn(layer_fn, f_in, f_out, **kwargs):
+    layer_fn = REGISTRY.get_if_str(layer_fn)
+    layer_fn = layer_fn(f_in, f_out, **kwargs)
+    return layer_fn
+
+
+def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
+    normalization_fn = REGISTRY.get_if_str(normalization_fn)
+    normalization_fn = normalization_fn(f_out, **kwargs) if normalization_fn is not None else None
+    return normalization_fn
+
+
+def _dropout_fn(dropout_fn, f_in, f_out, **kwargs):
+    dropout_fn = REGISTRY.get_if_str(dropout_fn)
+    dropout_fn = dropout_fn(**kwargs) if dropout_fn is not None else None
+    return dropout_fn
+
+
+def _activation_fn(activation_fn, f_in, f_out, **kwargs):
+    activation_fn = REGISTRY.get_if_str(activation_fn)
+    activation_fn = activation_fn(**kwargs) if activation_fn is not None else None
+    return activation_fn
+
+
 class ResidualWrapper(nn.Module):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(self, net):
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         self.net = net
 
     def forward(self, x):
+        """Forward call."""
         return x + self.net(x)
 
 
 class SequentialNet(nn.Module):
+    """@TODO: Docs. Contribution is welcome."""
+
     def __init__(
         self,
         hiddens,
@@ -37,7 +70,7 @@ class SequentialNet(nn.Module):
         residual: Union[bool, str] = False,
         layer_order: List = None,
     ):
-
+        """@TODO: Docs. Contribution is welcome."""
         super().__init__()
         assert len(hiddens) > 1, "No sequence found"
 
@@ -56,33 +89,6 @@ class SequentialNet(nn.Module):
 
         layer_order = layer_order or ["layer", "norm", "drop", "act"]
 
-        def _layer_fn(layer_fn, f_in, f_out, **kwargs):
-            layer_fn = MODULES.get_if_str(layer_fn)
-            layer_fn = layer_fn(f_in, f_out, **kwargs)
-            return layer_fn
-
-        def _normalization_fn(normalization_fn, f_in, f_out, **kwargs):
-            normalization_fn = MODULES.get_if_str(normalization_fn)
-            normalization_fn = \
-                normalization_fn(f_out, **kwargs) \
-                if normalization_fn is not None \
-                else None
-            return normalization_fn
-
-        def _dropout_fn(dropout_fn, f_in, f_out, **kwargs):
-            dropout_fn = MODULES.get_if_str(dropout_fn)
-            dropout_fn = dropout_fn(**kwargs) \
-                if dropout_fn is not None \
-                else None
-            return dropout_fn
-
-        def _activation_fn(activation_fn, f_in, f_out, **kwargs):
-            activation_fn = MODULES.get_if_str(activation_fn)
-            activation_fn = activation_fn(**kwargs) \
-                if activation_fn is not None \
-                else None
-            return activation_fn
-
         name2fn = {
             "layer": _layer_fn,
             "norm": _normalization_fn,
@@ -98,7 +104,7 @@ class SequentialNet(nn.Module):
 
         net = []
         for i, (f_in, f_out) in enumerate(utils.pairwise(hiddens)):
-            block = []
+            block_list = []
             for key in layer_order:
                 sub_fn = name2fn[key]
                 sub_params = deepcopy(name2params[key][i])
@@ -111,24 +117,24 @@ class SequentialNet(nn.Module):
 
                 sub_block = sub_fn(sub_module, f_in, f_out, **sub_params)
                 if sub_block is not None:
-                    block.append((f"{key}", sub_block))
+                    block_list.append((f"{key}", sub_block))
 
-            block_ = OrderedDict(block)
-            block = torch.nn.Sequential(block_)
+            block_dict = OrderedDict(block_list)
+            block_net = torch.nn.Sequential(block_dict)
 
-            if block_.get("act", None) is not None:
-                activation = block_["act"]
-                activation_init = \
-                    utils.create_optimal_inner_init(nonlinearity=activation)
-                block.apply(activation_init)
+            if block_dict.get("act", None) is not None:
+                activation = block_dict["act"]
+                activation_init = utils.get_optimal_inner_init(nonlinearity=activation)
+                block_net.apply(activation_init)
 
             if residual == "hard" or (residual == "soft" and f_in == f_out):
-                block = ResidualWrapper(net=block)
-            net.append((f"block_{i}", block))
+                block_net = ResidualWrapper(net=block_net)
+            net.append((f"block_{i}", block_net))
 
         self.net = torch.nn.Sequential(OrderedDict(net))
 
     def forward(self, x):
+        """Forward call."""
         x = self.net.forward(x)
         return x
 
