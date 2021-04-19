@@ -1,5 +1,6 @@
 # flake8: noqa
 import optuna
+import pytest
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
@@ -10,8 +11,12 @@ from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.modules import Flatten
 from catalyst.data.transforms import ToTensor
 from catalyst.dl import AccuracyCallback
+from catalyst.settings import SETTINGS
 
 
+@pytest.mark.skipif(
+    not (SETTINGS.optuna_required), reason="No optuna required",
+)
 def test_optuna():
     trainset = MNIST("./data", train=False, download=True, transform=ToTensor())
     testset = MNIST("./data", train=False, download=True, transform=ToTensor())

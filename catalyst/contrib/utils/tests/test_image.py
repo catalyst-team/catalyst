@@ -1,6 +1,12 @@
+import pytest
+
 from catalyst.contrib.utils.image import imread
+from catalyst.settings import SETTINGS
 
 
+@pytest.mark.skipif(
+    not (SETTINGS.cv_required), reason="No catalyst[cv] required",
+)
 def test_imread():
     """Tests ``imread`` functionality."""
     jpg_rgb_uri = (

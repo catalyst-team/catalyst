@@ -71,24 +71,29 @@ def train_experiment(device, engine=None):
 
 
 # Torch
+@mark.skipif(not SETTINGS.optuna_required, reason="catalyst[optuna] in not required")
 def test_on_cpu():
     train_experiment("cpu")
 
 
-@mark.skipif(not IS_CUDA_AVAILABLE, reason="CUDA device is not available")
+@mark.skipif(
+    not (IS_CUDA_AVAILABLE and SETTINGS.optuna_required), reason="CUDA device is not available"
+)
 def test_on_torch_cuda0():
     train_experiment("cuda:0")
 
 
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
+    not (SETTINGS.optuna_required and IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
+    reason="No CUDA>=2 found",
 )
 def test_on_torch_cuda1():
     train_experiment("cuda:1")
 
 
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2), reason="No CUDA>=2 found",
+    not (SETTINGS.optuna_required and IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2),
+    reason="No CUDA>=2 found",
 )
 def test_on_torch_dp():
     train_experiment(None, dl.DataParallelEngine())
@@ -103,14 +108,20 @@ def test_on_torch_dp():
 
 # AMP
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.amp_required), reason="No CUDA or AMP found",
+    not (SETTINGS.optuna_required and IS_CUDA_AVAILABLE and SETTINGS.amp_required),
+    reason="No CUDA or AMP found",
 )
 def test_on_amp():
     train_experiment(None, dl.AMPEngine())
 
 
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.amp_required),
+    not (
+        SETTINGS.optuna_required
+        and IS_CUDA_AVAILABLE
+        and NUM_CUDA_DEVICES >= 2
+        and SETTINGS.amp_required
+    ),
     reason="No CUDA>=2 or AMP found",
 )
 def test_on_amp_dp():
@@ -126,14 +137,20 @@ def test_on_amp_dp():
 
 # APEX
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and SETTINGS.apex_required), reason="No CUDA or Apex found",
+    not (SETTINGS.optuna_required and IS_CUDA_AVAILABLE and SETTINGS.apex_required),
+    reason="No CUDA or Apex found",
 )
 def test_on_apex():
     train_experiment(None, dl.APEXEngine())
 
 
 @mark.skipif(
-    not (IS_CUDA_AVAILABLE and NUM_CUDA_DEVICES >= 2 and SETTINGS.apex_required),
+    not (
+        SETTINGS.optuna_required
+        and IS_CUDA_AVAILABLE
+        and NUM_CUDA_DEVICES >= 2
+        and SETTINGS.apex_required
+    ),
     reason="No CUDA>=2 or Apex found",
 )
 def test_on_apex_dp():
