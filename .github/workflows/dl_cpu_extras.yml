@@ -102,7 +102,6 @@ jobs:
           MKL_NUM_THREADS: "1"
         run: |
           OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" pytest .
-          make check-docs
           pip install -e .
           OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_config.sh && cd ..
           OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_hydra.sh && cd ..
