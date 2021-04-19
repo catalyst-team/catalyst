@@ -115,7 +115,7 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 ```
 
 ### Step-by-step Guide
-1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction. 
+1. Start with [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762) introduction. 
 1. Check the [minimal examples](#minimal-examples).
 1. Try [notebook tutorials with Google Colab](#notebooks).
 1. Read the [blog posts](#notable-blog-posts) with use-cases and guides.
@@ -1471,8 +1471,7 @@ best practices for your deep learning research and development.
 - Catalyst with Google TPUs [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)
 
 ### Notable Blog Posts
-- [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)
-- [Catalyst 102 — The Core Trinity](https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&sk=2aff824412e2f653587a30cd853b030c)
+- [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762)
 - [BERT Distillation with Catalyst](https://medium.com/pytorch/bert-distillation-with-catalyst-c6f30c985854?source=friends_link&sk=1a28469ac8c0e6e6ad35bd26dfd95dd9)
 - [Metric Learning with Catalyst](https://medium.com/pytorch/metric-learning-with-catalyst-8c8337dfab1a?source=friends_link&sk=320b95f9b2a9074aab8d916ed78912d6)
 - [Pruning with Catalyst](https://medium.com/pytorch/pruning-with-catalyst-50e98f2cef2d?source=friends_link&sk=688e7a2c2e963c69c7e022e3204de5ef)
