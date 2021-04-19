@@ -1,5 +1,5 @@
 # flake8: noqa
-import optuna
+
 import pytest
 import torch
 from torch import nn
@@ -12,6 +12,9 @@ from catalyst.contrib.nn.modules import Flatten
 from catalyst.data.transforms import ToTensor
 from catalyst.dl import AccuracyCallback
 from catalyst.settings import SETTINGS
+
+if SETTINGS.optuna_required:
+    import optuna
 
 
 @pytest.mark.skipif(

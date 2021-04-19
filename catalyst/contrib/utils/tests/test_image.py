@@ -1,7 +1,9 @@
 import pytest
 
-from catalyst.contrib.utils.image import imread
 from catalyst.settings import SETTINGS
+
+if SETTINGS.cv_required:
+    from catalyst.contrib.utils.image import imread
 
 
 @pytest.mark.skipif(

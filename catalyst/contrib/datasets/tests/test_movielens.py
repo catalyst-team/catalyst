@@ -4,8 +4,10 @@ import shutil
 import pytest
 import torch
 
-from catalyst.contrib.datasets import MovieLens
 from catalyst.settings import SETTINGS
+
+if SETTINGS.ml_required:
+    from catalyst.contrib.datasets import MovieLens
 
 
 def setup_module():

@@ -5,8 +5,6 @@ from random import randint
 
 import numpy as np
 import pytest
-from scipy.spatial.distance import squareform
-from scipy.special import binom
 import torch
 from torch import Tensor, tensor
 
@@ -19,6 +17,10 @@ from catalyst.data.sampler_inbatch import (
 from catalyst.data.tests.test_sampler import generate_valid_labels
 from catalyst.settings import SETTINGS
 from catalyst.utils.misc import find_value_ids
+
+if SETTINGS.ml_required:
+    from scipy.spatial.distance import squareform
+    from scipy.special import binom
 
 
 @pytest.fixture()

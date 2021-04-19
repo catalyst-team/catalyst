@@ -3,7 +3,6 @@
 import os
 from tempfile import TemporaryDirectory
 
-import optuna
 from pytest import mark
 import torch
 from torch import nn
@@ -13,6 +12,9 @@ from catalyst import dl
 from catalyst.contrib.datasets import MNIST
 from catalyst.data.transforms import ToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
+
+if SETTINGS.optuna_required:
+    import optuna
 
 
 def train_experiment(device, engine=None):
