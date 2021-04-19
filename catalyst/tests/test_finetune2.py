@@ -25,12 +25,14 @@ class CustomRunner(dl.IRunner):
         return self._engine or dl.DeviceEngine(self._device)
 
     def get_loggers(self):
-        return {
+        loggers = {
             "console": dl.ConsoleLogger(),
             "csv": dl.CSVLogger(logdir=self._logdir),
             "tensorboard": dl.TensorboardLogger(logdir=self._logdir),
-            "mlflow": dl.MLflowLogger(experiment=self._name),
         }
+        if SETTINGS.ml_required:
+            loggers["mlflow"]: dl.MLflowLogger(experiment=self._name)
+        return
 
     @property
     def stages(self):

@@ -1,5 +1,8 @@
 # flake8: noqa
+import pytest
 import torch
+
+from catalyst.settings import SETTINGS
 
 
 def check_unet(net_fn):
@@ -19,48 +22,56 @@ def check_unet(net_fn):
     return net
 
 
+@pytest.mark.skipif(not (SETTINGS.cv_required), reason="catalyst[cv] in not required")
 def test_unet():
     from catalyst.contrib.models.cv import Unet
 
     net = check_unet(Unet)
 
 
+@pytest.mark.skipif(not (SETTINGS.cv_required), reason="catalyst[cv] in not required")
 def test_linknet():
     from catalyst.contrib.models.cv import Linknet
 
     net = check_unet(Linknet)
 
 
+@pytest.mark.skipif(not (SETTINGS.cv_required), reason="catalyst[cv] in not required")
 def test_fpnnet():
     from catalyst.contrib.models.cv import FPNUnet
 
     net = check_unet(FPNUnet)
 
 
+@pytest.mark.skipif(not (SETTINGS.cv_required), reason="catalyst[cv] in not required")
 def test_pspnet():
     from catalyst.contrib.models.cv import PSPnet
 
     net = check_unet(PSPnet)
 
 
+@pytest.mark.skipif(not (SETTINGS.cv_required), reason="catalyst[cv] in not required")
 def test_unet2():
     from catalyst.contrib.models.cv import ResnetUnet
 
     net = check_unet(ResnetUnet)
 
 
+@pytest.mark.skipif(not (SETTINGS.cv_required), reason="catalyst[cv] in not required")
 def test_linknet2():
     from catalyst.contrib.models.cv import ResnetLinknet
 
     net = check_unet(ResnetLinknet)
 
 
+@pytest.mark.skipif(not (SETTINGS.cv_required), reason="catalyst[cv] in not required")
 def test_fpnnet2():
     from catalyst.contrib.models.cv import ResnetFPNUnet
 
     net = check_unet(ResnetFPNUnet)
 
 
+@pytest.mark.skipif(not (SETTINGS.cv_required), reason="catalyst[cv] in not required")
 def test_pspnet2():
 
     from catalyst.contrib.models.cv import ResnetPSPnet
