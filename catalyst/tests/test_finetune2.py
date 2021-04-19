@@ -32,7 +32,7 @@ class CustomRunner(dl.IRunner):
         }
         if SETTINGS.ml_required:
             loggers["mlflow"]: dl.MLflowLogger(experiment=self._name)
-        return
+        return loggers
 
     @property
     def stages(self):
