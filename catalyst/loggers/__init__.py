@@ -8,3 +8,6 @@ from catalyst.settings import SETTINGS
 
 if SETTINGS.mlflow_required:
     from catalyst.loggers.mlflow import MLflowLogger
+
+if SETTINGS.neptune_required:
+    from catalyst.loggers.neptune import NeptuneLogger

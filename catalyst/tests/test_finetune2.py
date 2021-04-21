@@ -32,6 +32,10 @@ class CustomRunner(dl.IRunner):
         }
         if SETTINGS.ml_required:
             loggers["mlflow"]: dl.MLflowLogger(experiment=self._name)
+        if SETTINGS.neptune_required:
+            loggers["neptune"]: dl.NeptuneLogger(base_namespace="catalyst-tests",
+                                                 api_token='ANONYMOUS',
+                                                 project="common/catalyst-integration")
         return loggers
 
     @property
