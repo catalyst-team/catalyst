@@ -408,8 +408,18 @@ runner.train(
     minimize_valid_metric=False,
     verbose=True,
     callbacks=[
-        dl.AUCCallback(input_key="logits", target_key="targets"),
-        dl.MultilabelAccuracyCallback(input_key="logits", target_key="targets", threshold=0.5)
+        dl.BatchTransformCallback(
+            transform=torch.sigmoid,
+            scope="on_batch_end",
+            input_key="logits",
+            output_key="scores"
+        ),
+        dl.AUCCallback(input_key="scores", target_key="targets"),
+        # uncomment for extra metrics:
+        # dl.MultilabelAccuracyCallback(input_key="scores", target_key="targets", threshold=0.5),
+        # dl.MultilabelPrecisionRecallF1SupportCallback(
+        #     input_key="scores", target_key="targets", threshold=0.5
+        # ),
     ]
 )
 ```
@@ -1452,7 +1462,7 @@ best practices for your deep learning research and development.
 
 ### Documentation
 - [master](https://catalyst-team.github.io/catalyst/)
-- [21.04](https://catalyst-team.github.io/catalyst/v21.04/index.html)
+- [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html)
 - [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html), [21.03.1/21.03.2](https://catalyst-team.github.io/catalyst/v21.03.1/index.html)
 - [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
 - [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
