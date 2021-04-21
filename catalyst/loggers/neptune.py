@@ -104,8 +104,8 @@ class NeptuneLogger(ILogger):
             run_key: str = None,
             stage_key: str = None,
     ) -> None:
-        """Logs hyperparameters to Neptune."""
-        self.run.config.update(hparams)
+        """Logs hyper-parameters to Neptune."""
+        self.run['hparams'] = hparams
 
     def flush_log(self) -> None:
         """Flushes the loggers."""
