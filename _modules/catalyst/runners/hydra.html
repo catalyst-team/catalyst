@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.hydra &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.runners.hydra &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -354,6 +354,11 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        cfg: Hydra dictionary with parameters</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">):</span>
@@ -407,7 +412,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: docs.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Experiment&#39;s logdir for artefacts and logging.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span>
 
     <span class="nd">@property</span>
@@ -690,6 +695,11 @@
 <span class="sd">        output_key: key for ``runner.batch`` to store model output</span>
 <span class="sd">        target_key: key in ``runner.batch`` dict mapping for target</span>
 <span class="sd">        loss_key: key for ``runner.batch_metrics`` to store criterion loss output</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

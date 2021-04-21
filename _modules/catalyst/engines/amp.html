@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.engines.amp &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.engines.amp &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -331,6 +331,16 @@
 
 <span class="sd">        from catalyst import dl</span>
 
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.AMPEngine(&quot;cuda:1&quot;),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
 <span class="sd">        class MyRunner(dl.IRunner):</span>
 <span class="sd">            # ...</span>
 <span class="sd">            def get_engine(self):</span>
@@ -393,6 +403,16 @@
 <span class="sd">            https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler</span>
 
 <span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.DataParallelAMPEngine(),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
 
 <span class="sd">    .. code-block:: python</span>
 
@@ -476,6 +496,16 @@
 <span class="sd">            https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler</span>
 
 <span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.DistributedDataParallelAMPEngine(),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
 
 <span class="sd">    .. code-block:: python</span>
 

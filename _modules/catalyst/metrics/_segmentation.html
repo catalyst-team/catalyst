@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics._segmentation &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.metrics._segmentation &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -337,6 +337,12 @@
 <span class="sd">            Used for per-batch logging. default: True</span>
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
+
+<span class="sd">    Interface, please check out implementations for more details:</span>
+
+<span class="sd">        - :py:mod:`catalyst.metrics._segmentation.IOUMetric`</span>
+<span class="sd">        - :py:mod:`catalyst.metrics._segmentation.DiceMetric`</span>
+<span class="sd">        - :py:mod:`catalyst.metrics._segmentation.TrevskyMetric`</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -510,6 +516,72 @@
 <span class="sd">            Used for per-batch logging. default: True</span>
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        import torch</span>
+<span class="sd">        from torch import nn</span>
+<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">        from catalyst import dl</span>
+<span class="sd">        from catalyst.data.transforms import ToTensor</span>
+<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
+<span class="sd">        from catalyst.contrib.nn import IoULoss</span>
+
+
+<span class="sd">        model = nn.Sequential(</span>
+<span class="sd">            nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),</span>
+<span class="sd">            nn.Conv2d(1, 1, 3, 1, 1), nn.Sigmoid(),</span>
+<span class="sd">        )</span>
+<span class="sd">        criterion = IoULoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">        loaders = {</span>
+<span class="sd">            &quot;train&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">            &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">        }</span>
+
+<span class="sd">        class CustomRunner(dl.SupervisedRunner):</span>
+<span class="sd">            def handle_batch(self, batch):</span>
+<span class="sd">                x = batch[self._input_key]</span>
+<span class="sd">                x_noise = (x + torch.rand_like(x)).clamp_(0, 1)</span>
+<span class="sd">                x_ = self.model(x_noise)</span>
+<span class="sd">                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}</span>
+
+<span class="sd">        runner = CustomRunner(</span>
+<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;scores&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.IOUCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">                dl.DiceCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">                dl.TrevskyCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, alpha=0.2),</span>
+<span class="sd">            ],</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            valid_loader=&quot;valid&quot;,</span>
+<span class="sd">            valid_metric=&quot;loss&quot;,</span>
+<span class="sd">            minimize_valid_metric=True,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -554,6 +626,72 @@
 <span class="sd">            Used for per-batch logging. default: True</span>
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        import torch</span>
+<span class="sd">        from torch import nn</span>
+<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">        from catalyst import dl</span>
+<span class="sd">        from catalyst.data.transforms import ToTensor</span>
+<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
+<span class="sd">        from catalyst.contrib.nn import IoULoss</span>
+
+
+<span class="sd">        model = nn.Sequential(</span>
+<span class="sd">            nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),</span>
+<span class="sd">            nn.Conv2d(1, 1, 3, 1, 1), nn.Sigmoid(),</span>
+<span class="sd">        )</span>
+<span class="sd">        criterion = IoULoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">        loaders = {</span>
+<span class="sd">            &quot;train&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">            &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">        }</span>
+
+<span class="sd">        class CustomRunner(dl.SupervisedRunner):</span>
+<span class="sd">            def handle_batch(self, batch):</span>
+<span class="sd">                x = batch[self._input_key]</span>
+<span class="sd">                x_noise = (x + torch.rand_like(x)).clamp_(0, 1)</span>
+<span class="sd">                x_ = self.model(x_noise)</span>
+<span class="sd">                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}</span>
+
+<span class="sd">        runner = CustomRunner(</span>
+<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;scores&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.IOUCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">                dl.DiceCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">                dl.TrevskyCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, alpha=0.2),</span>
+<span class="sd">            ],</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            valid_loader=&quot;valid&quot;,</span>
+<span class="sd">            valid_metric=&quot;loss&quot;,</span>
+<span class="sd">            minimize_valid_metric=True,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -602,6 +740,72 @@
 <span class="sd">            Used for per-batch logging. default: True</span>
 <span class="sd">        prefix: metric prefix</span>
 <span class="sd">        suffix: metric suffix</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        import torch</span>
+<span class="sd">        from torch import nn</span>
+<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">        from catalyst import dl</span>
+<span class="sd">        from catalyst.data.transforms import ToTensor</span>
+<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
+<span class="sd">        from catalyst.contrib.nn import IoULoss</span>
+
+
+<span class="sd">        model = nn.Sequential(</span>
+<span class="sd">            nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),</span>
+<span class="sd">            nn.Conv2d(1, 1, 3, 1, 1), nn.Sigmoid(),</span>
+<span class="sd">        )</span>
+<span class="sd">        criterion = IoULoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">        loaders = {</span>
+<span class="sd">            &quot;train&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">            &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">        }</span>
+
+<span class="sd">        class CustomRunner(dl.SupervisedRunner):</span>
+<span class="sd">            def handle_batch(self, batch):</span>
+<span class="sd">                x = batch[self._input_key]</span>
+<span class="sd">                x_noise = (x + torch.rand_like(x)).clamp_(0, 1)</span>
+<span class="sd">                x_ = self.model(x_noise)</span>
+<span class="sd">                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}</span>
+
+<span class="sd">        runner = CustomRunner(</span>
+<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;scores&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.IOUCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">                dl.DiceCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">                dl.TrevskyCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, alpha=0.2),</span>
+<span class="sd">            ],</span>
+<span class="sd">            logdir=&quot;./logdir&quot;,</span>
+<span class="sd">            valid_loader=&quot;valid&quot;,</span>
+<span class="sd">            valid_metric=&quot;loss&quot;,</span>
+<span class="sd">            minimize_valid_metric=True,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

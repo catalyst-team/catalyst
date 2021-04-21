@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.runner &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.runners.runner &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -359,9 +359,112 @@
 <div class="viewcode-block" id="Runner"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner">[docs]</a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">IRunner</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Single-stage deep learning Runner with user-friendly API.</span>
 
+<span class="sd">    Runner supports the logic for deep learning pipeline configuration with pure python code.</span>
+<span class="sd">    Please check the examples for intuition.</span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        *args:</span>
-<span class="sd">        **kwargs:</span>
+<span class="sd">        *args: `IRunner` args (model, engine)</span>
+<span class="sd">        **kwargs: `IRunner` kwargs (model, engine)</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        IRunner supports only base user-friendly callbacks, like</span>
+<span class="sd">        TqdmCallback, TimerCallback, CheckRunCallback, BatchOverfitCallback,</span>
+<span class="sd">        and CheckpointCallback.</span>
+
+<span class="sd">        It does not automatically add Criterion, Optimizer or Scheduler callbacks.</span>
+
+<span class="sd">        That means, that you have do optimization step by yourself during ``handle_batch`` method</span>
+<span class="sd">        or specify the required callbacks in ``.train`` or ``get_callbacks`` methods.</span>
+
+<span class="sd">        For more easy-to-go supervised use case please follow</span>
+<span class="sd">        :py:mod:`catalyst.runners.runner.SupervisedRunner`.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        from torch import nn, optim</span>
+<span class="sd">        from torch.nn import functional as F</span>
+<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">        from catalyst import dl, metrics</span>
+<span class="sd">        from catalyst.data.transforms import ToTensor</span>
+<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
+
+<span class="sd">        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
+<span class="sd">        optimizer = optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">        loaders = {</span>
+<span class="sd">            &quot;train&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">            &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">        }</span>
+
+<span class="sd">        class CustomRunner(dl.Runner):</span>
+<span class="sd">            def predict_batch(self, batch):</span>
+<span class="sd">                # model inference step</span>
+<span class="sd">                return self.model(batch[0].to(self.device))</span>
+
+<span class="sd">            def on_loader_start(self, runner):</span>
+<span class="sd">                super().on_loader_start(runner)</span>
+<span class="sd">                self.meters = {</span>
+<span class="sd">                    key: metrics.AdditiveValueMetric(compute_on_call=False)</span>
+<span class="sd">                    for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]</span>
+<span class="sd">                }</span>
+
+<span class="sd">            def handle_batch(self, batch):</span>
+<span class="sd">                # model train/valid step</span>
+<span class="sd">                # unpack the batch</span>
+<span class="sd">                x, y = batch</span>
+<span class="sd">                # run model forward pass</span>
+<span class="sd">                logits = self.model(x)</span>
+<span class="sd">                # compute the loss</span>
+<span class="sd">                loss = F.cross_entropy(logits, y)</span>
+<span class="sd">                # compute other metrics of interest</span>
+<span class="sd">                accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))</span>
+<span class="sd">                # log metrics</span>
+<span class="sd">                self.batch_metrics.update(</span>
+<span class="sd">                    {&quot;loss&quot;: loss, &quot;accuracy01&quot;: accuracy01, &quot;accuracy03&quot;: accuracy03}</span>
+<span class="sd">                )</span>
+<span class="sd">                for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                    self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)</span>
+<span class="sd">                # run model backward pass</span>
+<span class="sd">                if self.is_train_loader:</span>
+<span class="sd">                    loss.backward()</span>
+<span class="sd">                    self.optimizer.step()</span>
+<span class="sd">                    self.optimizer.zero_grad()</span>
+
+<span class="sd">            def on_loader_end(self, runner):</span>
+<span class="sd">                for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                    self.loader_metrics[key] = self.meters[key].compute()[0]</span>
+<span class="sd">                super().on_loader_end(runner)</span>
+
+<span class="sd">        runner = CustomRunner()</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logs&quot;,</span>
+<span class="sd">            num_epochs=5,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            valid_loader=&quot;valid&quot;,</span>
+<span class="sd">            valid_metric=&quot;loss&quot;,</span>
+<span class="sd">            minimize_valid_metric=True,</span>
+<span class="sd">        )</span>
+<span class="sd">        # model inference</span>
+<span class="sd">        for logits in runner.predict_loader(loader=loaders[&quot;valid&quot;]):</span>
+<span class="sd">            assert logits.detach().cpu().numpy().shape[-1] == 10</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -598,6 +701,96 @@
 <span class="sd">            apex: boolean flag to use apex half-precision</span>
 <span class="sd">            ddp: if `True` will start training in distributed mode.</span>
 <span class="sd">                Note: Works only with python scripts. No jupyter support.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            import os</span>
+<span class="sd">            from torch import nn, optim</span>
+<span class="sd">            from torch.nn import functional as F</span>
+<span class="sd">            from torch.utils.data import DataLoader</span>
+<span class="sd">            from catalyst import dl, metrics</span>
+<span class="sd">            from catalyst.data.transforms import ToTensor</span>
+<span class="sd">            from catalyst.contrib.datasets import MNIST</span>
+
+<span class="sd">            model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
+<span class="sd">            optimizer = optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">            loaders = {</span>
+<span class="sd">                &quot;train&quot;: DataLoader(</span>
+<span class="sd">                    MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                    batch_size=32</span>
+<span class="sd">                ),</span>
+<span class="sd">                &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                    batch_size=32</span>
+<span class="sd">                ),</span>
+<span class="sd">            }</span>
+
+<span class="sd">            class CustomRunner(dl.Runner):</span>
+<span class="sd">                def predict_batch(self, batch):</span>
+<span class="sd">                    # model inference step</span>
+<span class="sd">                    return self.model(batch[0].to(self.device))</span>
+
+<span class="sd">                def on_loader_start(self, runner):</span>
+<span class="sd">                    super().on_loader_start(runner)</span>
+<span class="sd">                    self.meters = {</span>
+<span class="sd">                        key: metrics.AdditiveValueMetric(compute_on_call=False)</span>
+<span class="sd">                        for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]</span>
+<span class="sd">                    }</span>
+
+<span class="sd">                def handle_batch(self, batch):</span>
+<span class="sd">                    # model train/valid step</span>
+<span class="sd">                    # unpack the batch</span>
+<span class="sd">                    x, y = batch</span>
+<span class="sd">                    # run model forward pass</span>
+<span class="sd">                    logits = self.model(x)</span>
+<span class="sd">                    # compute the loss</span>
+<span class="sd">                    loss = F.cross_entropy(logits, y)</span>
+<span class="sd">                    # compute other metrics of interest</span>
+<span class="sd">                    accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))</span>
+<span class="sd">                    # log metrics</span>
+<span class="sd">                    self.batch_metrics.update(</span>
+<span class="sd">                        {&quot;loss&quot;: loss, &quot;accuracy01&quot;: accuracy01, &quot;accuracy03&quot;: accuracy03}</span>
+<span class="sd">                    )</span>
+<span class="sd">                    for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                        self.meters[key].update(</span>
+<span class="sd">                            self.batch_metrics[key].item(),</span>
+<span class="sd">                            self.batch_size</span>
+<span class="sd">                        )</span>
+<span class="sd">                    # run model backward pass</span>
+<span class="sd">                    if self.is_train_loader:</span>
+<span class="sd">                        loss.backward()</span>
+<span class="sd">                        self.optimizer.step()</span>
+<span class="sd">                        self.optimizer.zero_grad()</span>
+
+<span class="sd">                def on_loader_end(self, runner):</span>
+<span class="sd">                    for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                        self.loader_metrics[key] = self.meters[key].compute()[0]</span>
+<span class="sd">                    super().on_loader_end(runner)</span>
+
+<span class="sd">            runner = CustomRunner()</span>
+<span class="sd">            # model training</span>
+<span class="sd">            runner.train(</span>
+<span class="sd">                model=model,</span>
+<span class="sd">                optimizer=optimizer,</span>
+<span class="sd">                loaders=loaders,</span>
+<span class="sd">                logdir=&quot;./logs&quot;,</span>
+<span class="sd">                num_epochs=5,</span>
+<span class="sd">                verbose=True,</span>
+<span class="sd">                valid_loader=&quot;valid&quot;,</span>
+<span class="sd">                valid_metric=&quot;loss&quot;,</span>
+<span class="sd">                minimize_valid_metric=True,</span>
+<span class="sd">            )</span>
+<span class="sd">            # model inference</span>
+<span class="sd">            for logits in runner.predict_loader(loader=loaders[&quot;valid&quot;]):</span>
+<span class="sd">                assert logits.detach().cpu().numpy().shape[-1] == 10</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># experiment setup</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">engine</span> <span class="ow">or</span> <span class="n">get_available_engine</span><span class="p">(</span><span class="n">fp16</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span> <span class="n">ddp</span><span class="o">=</span><span class="n">ddp</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span> <span class="n">apex</span><span class="o">=</span><span class="n">apex</span><span class="p">)</span>
@@ -678,6 +871,96 @@
 
 <span class="sd">        Yields:</span>
 <span class="sd">            bathes with model predictions</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            import os</span>
+<span class="sd">            from torch import nn, optim</span>
+<span class="sd">            from torch.nn import functional as F</span>
+<span class="sd">            from torch.utils.data import DataLoader</span>
+<span class="sd">            from catalyst import dl, metrics</span>
+<span class="sd">            from catalyst.data.transforms import ToTensor</span>
+<span class="sd">            from catalyst.contrib.datasets import MNIST</span>
+
+<span class="sd">            model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
+<span class="sd">            optimizer = optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">            loaders = {</span>
+<span class="sd">                &quot;train&quot;: DataLoader(</span>
+<span class="sd">                    MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                    batch_size=32</span>
+<span class="sd">                ),</span>
+<span class="sd">                &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                    batch_size=32</span>
+<span class="sd">                ),</span>
+<span class="sd">            }</span>
+
+<span class="sd">            class CustomRunner(dl.Runner):</span>
+<span class="sd">                def predict_batch(self, batch):</span>
+<span class="sd">                    # model inference step</span>
+<span class="sd">                    return self.model(batch[0].to(self.device))</span>
+
+<span class="sd">                def on_loader_start(self, runner):</span>
+<span class="sd">                    super().on_loader_start(runner)</span>
+<span class="sd">                    self.meters = {</span>
+<span class="sd">                        key: metrics.AdditiveValueMetric(compute_on_call=False)</span>
+<span class="sd">                        for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]</span>
+<span class="sd">                    }</span>
+
+<span class="sd">                def handle_batch(self, batch):</span>
+<span class="sd">                    # model train/valid step</span>
+<span class="sd">                    # unpack the batch</span>
+<span class="sd">                    x, y = batch</span>
+<span class="sd">                    # run model forward pass</span>
+<span class="sd">                    logits = self.model(x)</span>
+<span class="sd">                    # compute the loss</span>
+<span class="sd">                    loss = F.cross_entropy(logits, y)</span>
+<span class="sd">                    # compute other metrics of interest</span>
+<span class="sd">                    accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))</span>
+<span class="sd">                    # log metrics</span>
+<span class="sd">                    self.batch_metrics.update(</span>
+<span class="sd">                        {&quot;loss&quot;: loss, &quot;accuracy01&quot;: accuracy01, &quot;accuracy03&quot;: accuracy03}</span>
+<span class="sd">                    )</span>
+<span class="sd">                    for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                        self.meters[key].update(</span>
+<span class="sd">                            self.batch_metrics[key].item(),</span>
+<span class="sd">                            self.batch_size</span>
+<span class="sd">                        )</span>
+<span class="sd">                    # run model backward pass</span>
+<span class="sd">                    if self.is_train_loader:</span>
+<span class="sd">                        loss.backward()</span>
+<span class="sd">                        self.optimizer.step()</span>
+<span class="sd">                        self.optimizer.zero_grad()</span>
+
+<span class="sd">                def on_loader_end(self, runner):</span>
+<span class="sd">                    for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                        self.loader_metrics[key] = self.meters[key].compute()[0]</span>
+<span class="sd">                    super().on_loader_end(runner)</span>
+
+<span class="sd">            runner = CustomRunner()</span>
+<span class="sd">            # model training</span>
+<span class="sd">            runner.train(</span>
+<span class="sd">                model=model,</span>
+<span class="sd">                optimizer=optimizer,</span>
+<span class="sd">                loaders=loaders,</span>
+<span class="sd">                logdir=&quot;./logs&quot;,</span>
+<span class="sd">                num_epochs=5,</span>
+<span class="sd">                verbose=True,</span>
+<span class="sd">                valid_loader=&quot;valid&quot;,</span>
+<span class="sd">                valid_metric=&quot;loss&quot;,</span>
+<span class="sd">                minimize_valid_metric=True,</span>
+<span class="sd">            )</span>
+<span class="sd">            # model inference</span>
+<span class="sd">            for logits in runner.predict_loader(loader=loaders[&quot;valid&quot;]):</span>
+<span class="sd">                assert logits.detach().cpu().numpy().shape[-1] == 10</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">engine</span> <span class="ow">or</span> <span class="n">get_available_engine</span><span class="p">(</span><span class="n">fp16</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span> <span class="n">ddp</span><span class="o">=</span><span class="n">ddp</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span> <span class="n">apex</span><span class="o">=</span><span class="n">apex</span><span class="p">)</span>
 
@@ -707,6 +990,65 @@
 <span class="sd">        output_key: key for ``runner.batch`` to store model output</span>
 <span class="sd">        target_key: key in ``runner.batch`` dict mapping for target</span>
 <span class="sd">        loss_key: key for ``runner.batch_metrics`` to store criterion loss output</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        from torch import nn, optim</span>
+<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">        from catalyst import dl, utils</span>
+<span class="sd">        from catalyst.data.transforms import ToTensor</span>
+<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
+
+<span class="sd">        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
+<span class="sd">        criterion = nn.CrossEntropyLoss()</span>
+<span class="sd">        optimizer = optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">        loaders = {</span>
+<span class="sd">            &quot;train&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">            &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">        }</span>
+
+<span class="sd">        runner = dl.SupervisedRunner(</span>
+<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.AccuracyCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3)),</span>
+<span class="sd">                dl.PrecisionRecallF1SupportCallback(</span>
+<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=10</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.AUCCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">            ],</span>
+<span class="sd">            logdir=&quot;./logs&quot;,</span>
+<span class="sd">            valid_loader=&quot;valid&quot;,</span>
+<span class="sd">            valid_metric=&quot;loss&quot;,</span>
+<span class="sd">            minimize_valid_metric=True,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            load_best_on_end=True,</span>
+<span class="sd">        )</span>
+<span class="sd">        # model inference</span>
+<span class="sd">        for prediction in runner.predict_loader(loader=loaders[&quot;valid&quot;]):</span>
+<span class="sd">            assert prediction[&quot;logits&quot;].detach().cpu().numpy().shape[-1] == 10</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

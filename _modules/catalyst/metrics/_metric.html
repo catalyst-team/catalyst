@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics._metric &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.metrics._metric &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -319,7 +319,8 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        compute_on_call: Computes and returns metric value during metric call.</span>
-<span class="sd">            Used for per-batch logging. default: True</span>
+<span class="sd">            Used for per-batch logging.</span>
+<span class="sd">            default: ``True``</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
@@ -376,17 +377,28 @@
 
 
 <div class="viewcode-block" id="ICallbackBatchMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.ICallbackBatchMetric">[docs]</a><span class="k">class</span> <span class="nc">ICallbackBatchMetric</span><span class="p">(</span><span class="n">IMetric</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;@TODO: docs here&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Interface for all batch-based Metrics.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: docs here&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Init&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">=</span> <span class="n">suffix</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
 
 <div class="viewcode-block" id="ICallbackBatchMetric.update_key_value"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.ICallbackBatchMetric.update_key_value">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">update_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: docs here&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Updates the metric based with new input.</span>
+
+<span class="sd">        By default, this is called at the end of each loader</span>
+<span class="sd">        (`on_loader_end` event).</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            *args: some args</span>
+<span class="sd">            **kwargs: some kwargs</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict: computed value in key-value format.  # noqa: DAR202</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="ICallbackBatchMetric.compute_key_value"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.ICallbackBatchMetric.compute_key_value">[docs]</a>    <span class="nd">@abstractmethod</span>
@@ -403,12 +415,14 @@
 
 
 <div class="viewcode-block" id="ICallbackLoaderMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.ICallbackLoaderMetric">[docs]</a><span class="k">class</span> <span class="nc">ICallbackLoaderMetric</span><span class="p">(</span><span class="n">IMetric</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Interface for all Metrics.</span>
+    <span class="sd">&quot;&quot;&quot;Interface for all loader-based Metrics.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        compute_on_call: @TODO: docs</span>
-<span class="sd">        prefix:  @TODO: docs</span>
-<span class="sd">        suffix:  @TODO: docs</span>
+<span class="sd">        compute_on_call: Computes and returns metric value during metric call.</span>
+<span class="sd">            Used for per-batch logging.</span>
+<span class="sd">            default: ``True``</span>
+<span class="sd">        prefix:  metrics prefix</span>
+<span class="sd">        suffix:  metrics suffix</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -417,20 +431,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="n">prefix</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">suffix</span> <span class="o">=</span> <span class="n">suffix</span> <span class="ow">or</span> <span class="s2">&quot;&quot;</span>
 
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_batches</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="ICallbackLoaderMetric.reset"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.ICallbackLoaderMetric.reset">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_batches</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Resets the metric to it&#39;s initial state.</span>
 
 <span class="sd">        By default, this is called at the start of each loader</span>
 <span class="sd">        (`on_loader_start` event).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            num_batches: @TODO: docs.</span>
-<span class="sd">            num_samples: @TODO: docs.</span>
+<span class="sd">            num_batches: number of expected batches.</span>
+<span class="sd">            num_samples: number of expected samples.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
+        <span class="k">pass</span></div>
 
-    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="ICallbackLoaderMetric.update"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.ICallbackLoaderMetric.update">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Updates the metrics state using the passed data.</span>
 
@@ -441,9 +455,9 @@
 <span class="sd">            *args: some args :)</span>
 <span class="sd">            **kwargs: some kwargs ;)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
+        <span class="k">pass</span></div>
 
-    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="ICallbackLoaderMetric.compute_key_value"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.ICallbackLoaderMetric.compute_key_value">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Computes the metric based on it&#39;s accumulated state.</span>
 
@@ -455,7 +469,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># @TODO: could be refactored - we need custom exception here</span>
         <span class="c1"># we need this method only for callback metric logging</span>
-        <span class="k">pass</span></div>
+        <span class="k">pass</span></div></div>
 
 
 <div class="viewcode-block" id="AccumulationMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.AccumulationMetric">[docs]</a><span class="k">class</span> <span class="nc">AccumulationMetric</span><span class="p">(</span><span class="n">ICallbackLoaderMetric</span><span class="p">):</span>
@@ -483,7 +497,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">collected_batches</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">collected_samples</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_batches</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="AccumulationMetric.reset"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.AccumulationMetric.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_batches</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Reset metrics fields</span>
 
@@ -494,7 +508,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">=</span> <span class="n">num_samples</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">collected_batches</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">collected_samples</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="kc">None</span></div>
 
     <span class="k">def</span> <span class="nf">_allocate_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape_type_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -510,7 +524,7 @@
                 <span class="n">size</span><span class="o">=</span><span class="n">shape_type_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;shape&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">shape_type_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;dtype&quot;</span><span class="p">],</span>
             <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="AccumulationMetric.update"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.AccumulationMetric.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Update accumulated data with new batch</span>
 
@@ -534,25 +548,25 @@
                 <span class="n">kwargs</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">collected_samples</span> <span class="o">+=</span> <span class="n">bs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">collected_batches</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collected_batches</span> <span class="o">+=</span> <span class="mi">1</span></div>
 
-    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+<div class="viewcode-block" id="AccumulationMetric.compute"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.AccumulationMetric.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return accumulated data</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict of accumulated data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span></div>
 
-    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+<div class="viewcode-block" id="AccumulationMetric.compute_key_value"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.AccumulationMetric.compute_key_value">[docs]</a>    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return accumulated data</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            dict of accumulated data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span></div></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;IMetric&quot;</span><span class="p">,</span> <span class="s2">&quot;ICallbackBatchMetric&quot;</span><span class="p">,</span> <span class="s2">&quot;ICallbackLoaderMetric&quot;</span><span class="p">,</span> <span class="s2">&quot;AccumulationMetric&quot;</span><span class="p">]</span>

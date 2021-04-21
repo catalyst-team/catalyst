@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.supervised &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.runners.supervised &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -322,6 +322,87 @@
 <span class="sd">        output_key: key for ``runner.batch`` to store model output</span>
 <span class="sd">        target_key: key in ``runner.batch`` dict mapping for target</span>
 <span class="sd">        loss_key: key for ``runner.batch_metrics`` to store criterion loss output</span>
+
+<span class="sd">    Abstraction, please check out implementations for more details:</span>
+
+<span class="sd">        - :py:mod:`catalyst.runners.runner.SupervisedRunner`</span>
+<span class="sd">        - :py:mod:`catalyst.runners.config.SupervisedConfigRunner`</span>
+<span class="sd">        - :py:mod:`catalyst.runners.hydra.SupervisedHydraRunner`</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        ISupervisedRunner contains only the logic with batch handling.</span>
+
+
+<span class="sd">    ISupervisedRunner logic pseudocode:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        batch = {&quot;input_key&quot;: tensor, &quot;target_key&quot;: tensor}</span>
+<span class="sd">        output = model(batch[&quot;input_key&quot;])</span>
+<span class="sd">        batch[&quot;output_key&quot;] = output</span>
+<span class="sd">        loss = criterion(batch[&quot;output_key&quot;], batch[&quot;target_key&quot;])</span>
+<span class="sd">        batch_metrics[&quot;loss_key&quot;] = loss</span>
+
+
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        from torch import nn, optim</span>
+<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">        from catalyst import dl, utils</span>
+<span class="sd">        from catalyst.data.transforms import ToTensor</span>
+<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
+
+<span class="sd">        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
+<span class="sd">        criterion = nn.CrossEntropyLoss()</span>
+<span class="sd">        optimizer = optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">        loaders = {</span>
+<span class="sd">            &quot;train&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">            &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">        }</span>
+
+<span class="sd">        runner = dl.SupervisedRunner(</span>
+<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.AccuracyCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3)),</span>
+<span class="sd">                dl.PrecisionRecallF1SupportCallback(</span>
+<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=10</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.AUCCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">            ],</span>
+<span class="sd">            logdir=&quot;./logs&quot;,</span>
+<span class="sd">            valid_loader=&quot;valid&quot;,</span>
+<span class="sd">            valid_metric=&quot;loss&quot;,</span>
+<span class="sd">            minimize_valid_metric=True,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            load_best_on_end=True,</span>
+<span class="sd">        )</span>
+<span class="sd">        # model inference</span>
+<span class="sd">        for prediction in runner.predict_loader(loader=loaders[&quot;valid&quot;]):</span>
+<span class="sd">            assert prediction[&quot;logits&quot;].detach().cpu().numpy().shape[-1] == 10</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

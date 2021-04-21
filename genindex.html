@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Catalyst 21.04.1 documentation</title>
+  <title>Index &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -582,6 +582,8 @@
 </li>
       <li><a href="api/core.html#catalyst.core.callback.Callback">Callback (class in catalyst.core.callback)</a>
 </li>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackList">CallbackList (class in catalyst.core.callback)</a>
+</li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackNode">CallbackNode (class in catalyst.core.callback)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackOrder">CallbackOrder (class in catalyst.core.callback)</a>
@@ -660,10 +662,10 @@
 </li>
       <li><a href="api/metrics.html#module-catalyst.metrics.functional._mrr">catalyst.metrics.functional._mrr (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/metrics.html#module-catalyst.metrics.functional._ndcg">catalyst.metrics.functional._ndcg (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/metrics.html#module-catalyst.metrics.functional._precision">catalyst.metrics.functional._precision (module)</a>
 </li>
       <li><a href="api/metrics.html#module-catalyst.metrics.functional._recall">catalyst.metrics.functional._recall (module)</a>
@@ -716,10 +718,22 @@
 </li>
       <li><a href="api/data.html#catalyst.data.transforms.Compose">Compose (class in catalyst.data.transforms)</a>
 </li>
-      <li><a href="api/metrics.html#catalyst.metrics._metric.IMetric.compute">compute() (catalyst.metrics._metric.IMetric method)</a>
+      <li><a href="api/metrics.html#catalyst.metrics._additive.AdditiveValueMetric.compute">compute() (catalyst.metrics._additive.AdditiveValueMetric method)</a>
+
+      <ul>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.AccumulationMetric.compute">(catalyst.metrics._metric.AccumulationMetric method)</a>
 </li>
-      <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackBatchMetric.compute_key_value">compute_key_value() (catalyst.metrics._metric.ICallbackBatchMetric method)</a>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.IMetric.compute">(catalyst.metrics._metric.IMetric method)</a>
 </li>
+      </ul></li>
+      <li><a href="api/metrics.html#catalyst.metrics._metric.AccumulationMetric.compute_key_value">compute_key_value() (catalyst.metrics._metric.AccumulationMetric method)</a>
+
+      <ul>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackBatchMetric.compute_key_value">(catalyst.metrics._metric.ICallbackBatchMetric method)</a>
+</li>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackLoaderMetric.compute_key_value">(catalyst.metrics._metric.ICallbackLoaderMetric method)</a>
+</li>
+      </ul></li>
       <li><a href="api/runners.html#catalyst.runners.config.ConfigRunner">ConfigRunner (class in catalyst.runners.config)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.confusion_matrix.ConfusionMatrixCallback">ConfusionMatrixCallback (class in catalyst.callbacks.metrics.confusion_matrix)</a>
@@ -1140,6 +1154,8 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/core.html#catalyst.core.callback.ICallback">ICallback (class in catalyst.core.callback)</a>
+</li>
       <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackBatchMetric">ICallbackBatchMetric (class in catalyst.metrics._metric)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackLoaderMetric">ICallbackLoaderMetric (class in catalyst.metrics._metric)</a>
@@ -1390,10 +1406,76 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackList.on_batch_end">on_batch_end() (catalyst.core.callback.CallbackList method)</a>
+
+      <ul>
+        <li><a href="api/core.html#catalyst.core.callback.ICallback.on_batch_end">(catalyst.core.callback.ICallback method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackList.on_batch_start">on_batch_start() (catalyst.core.callback.CallbackList method)</a>
+
+      <ul>
+        <li><a href="api/core.html#catalyst.core.callback.ICallback.on_batch_start">(catalyst.core.callback.ICallback method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackList.on_epoch_end">on_epoch_end() (catalyst.core.callback.CallbackList method)</a>
+
+      <ul>
+        <li><a href="api/core.html#catalyst.core.callback.ICallback.on_epoch_end">(catalyst.core.callback.ICallback method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackList.on_epoch_start">on_epoch_start() (catalyst.core.callback.CallbackList method)</a>
+
+      <ul>
+        <li><a href="api/core.html#catalyst.core.callback.ICallback.on_epoch_start">(catalyst.core.callback.ICallback method)</a>
+</li>
+      </ul></li>
       <li><a href="api/callbacks.html#catalyst.callbacks.misc.TqdmCallback.on_exception">on_exception() (catalyst.callbacks.misc.TqdmCallback method)</a>
 
       <ul>
+        <li><a href="api/core.html#catalyst.core.callback.CallbackList.on_exception">(catalyst.core.callback.CallbackList method)</a>
+</li>
         <li><a href="api/core.html#catalyst.core.callback.CallbackWrapper.on_exception">(catalyst.core.callback.CallbackWrapper method)</a>
+</li>
+        <li><a href="api/core.html#catalyst.core.callback.ICallback.on_exception">(catalyst.core.callback.ICallback method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackList.on_experiment_end">on_experiment_end() (catalyst.core.callback.CallbackList method)</a>
+
+      <ul>
+        <li><a href="api/core.html#catalyst.core.callback.ICallback.on_experiment_end">(catalyst.core.callback.ICallback method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackList.on_experiment_start">on_experiment_start() (catalyst.core.callback.CallbackList method)</a>
+
+      <ul>
+        <li><a href="api/core.html#catalyst.core.callback.ICallback.on_experiment_start">(catalyst.core.callback.ICallback method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackList.on_loader_end">on_loader_end() (catalyst.core.callback.CallbackList method)</a>
+
+      <ul>
+        <li><a href="api/core.html#catalyst.core.callback.ICallback.on_loader_end">(catalyst.core.callback.ICallback method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackList.on_loader_start">on_loader_start() (catalyst.core.callback.CallbackList method)</a>
+
+      <ul>
+        <li><a href="api/core.html#catalyst.core.callback.ICallback.on_loader_start">(catalyst.core.callback.ICallback method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackList.on_stage_end">on_stage_end() (catalyst.core.callback.CallbackList method)</a>
+
+      <ul>
+        <li><a href="api/core.html#catalyst.core.callback.ICallback.on_stage_end">(catalyst.core.callback.ICallback method)</a>
+</li>
+      </ul></li>
+      <li><a href="api/core.html#catalyst.core.callback.CallbackList.on_stage_start">on_stage_start() (catalyst.core.callback.CallbackList method)</a>
+
+      <ul>
+        <li><a href="api/core.html#catalyst.core.callback.ICallback.on_stage_start">(catalyst.core.callback.ICallback method)</a>
 </li>
       </ul></li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.schedulers.onecycle.OneCycleLRWithWarmup">OneCycleLRWithWarmup (class in catalyst.contrib.nn.schedulers.onecycle)</a>
@@ -1402,8 +1484,6 @@
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.onnx.OnnxCallback">OnnxCallback (class in catalyst.callbacks.onnx)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/core.html#catalyst.core.callback.CallbackOrder.Optimizer">Optimizer (catalyst.core.callback.CallbackOrder attribute)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.callback.CallbackOrder.optimizer">optimizer (catalyst.core.callback.CallbackOrder attribute)</a>
@@ -1522,19 +1602,25 @@
 </li>
       <li><a href="api/tools.html#catalyst.tools.registry.Registry">Registry (class in catalyst.tools.registry)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/metrics.html#catalyst.metrics._cmc_score.ReidCMCMetric">ReidCMCMetric (class in catalyst.metrics._cmc_score)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.cmc_score.ReidCMCScoreCallback">ReidCMCScoreCallback (class in catalyst.callbacks.metrics.cmc_score)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.pruning.remove_reparametrization">remove_reparametrization() (in module catalyst.utils.pruning)</a>
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.visualization.render_figure_to_array">render_figure_to_array() (in module catalyst.contrib.utils.visualization)</a>
 </li>
-      <li><a href="api/metrics.html#catalyst.metrics._metric.IMetric.reset">reset() (catalyst.metrics._metric.IMetric method)</a>
+      <li><a href="api/metrics.html#catalyst.metrics._additive.AdditiveValueMetric.reset">reset() (catalyst.metrics._additive.AdditiveValueMetric method)</a>
 
       <ul>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.AccumulationMetric.reset">(catalyst.metrics._metric.AccumulationMetric method)</a>
+</li>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackLoaderMetric.reset">(catalyst.metrics._metric.ICallbackLoaderMetric method)</a>
+</li>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.IMetric.reset">(catalyst.metrics._metric.IMetric method)</a>
+</li>
         <li><a href="api/tools.html#catalyst.tools.time_manager.TimeManager.reset">(catalyst.tools.time_manager.TimeManager method)</a>
 </li>
       </ul></li>
@@ -1704,12 +1790,20 @@
         <li><a href="api/utils.html#catalyst.utils.torch.unpack_checkpoint">(in module catalyst.utils.torch)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#catalyst.contrib.utils.compression.unpack_if_needed">unpack_if_needed() (in module catalyst.contrib.utils.compression)</a>
 </li>
-      <li><a href="api/metrics.html#catalyst.metrics._metric.IMetric.update">update() (catalyst.metrics._metric.IMetric method)</a>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/metrics.html#catalyst.metrics._additive.AdditiveValueMetric.update">update() (catalyst.metrics._additive.AdditiveValueMetric method)</a>
+
+      <ul>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.AccumulationMetric.update">(catalyst.metrics._metric.AccumulationMetric method)</a>
 </li>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackLoaderMetric.update">(catalyst.metrics._metric.ICallbackLoaderMetric method)</a>
+</li>
+        <li><a href="api/metrics.html#catalyst.metrics._metric.IMetric.update">(catalyst.metrics._metric.IMetric method)</a>
+</li>
+      </ul></li>
       <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackBatchMetric.update_key_value">update_key_value() (catalyst.metrics._metric.ICallbackBatchMetric method)</a>
 </li>
   </ul></td>

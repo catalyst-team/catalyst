@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.engines.apex &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.engines.apex &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -449,10 +449,20 @@
 
 <span class="sd">        from catalyst import dl</span>
 
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.APEXEngine(apex_kwargs=dict(opt_level=&quot;O1&quot;, keep_batchnorm_fp32=False)),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
 <span class="sd">        class MyRunner(dl.IRunner):</span>
 <span class="sd">            # ...</span>
 <span class="sd">            def get_engine(self):</span>
-<span class="sd">                return dl.APEXEngine(opt_level=&quot;O1&quot;, keep_batchnorm_fp32=False)</span>
+<span class="sd">                return dl.APEXEngine(apex_kwargs=dict(opt_level=&quot;O1&quot;, keep_batchnorm_fp32=False))</span>
 <span class="sd">            # ...</span>
 
 <span class="sd">    .. code-block:: yaml</span>
@@ -466,8 +476,9 @@
 
 <span class="sd">        engine:</span>
 <span class="sd">            _target_: APEXEngine</span>
-<span class="sd">            opt_level: O1</span>
-<span class="sd">            keep_batchnorm_fp32: false</span>
+<span class="sd">            apex_kwargs:</span>
+<span class="sd">                opt_level: O1</span>
+<span class="sd">                keep_batchnorm_fp32: false</span>
 
 <span class="sd">        stages:</span>
 <span class="sd">            ...</span>
@@ -595,10 +606,20 @@
 
 <span class="sd">        from catalyst import dl</span>
 
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.DataParallelApexEngine(apex_kwargs=dict(opt_level=&quot;O1&quot;)),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
 <span class="sd">        class MyRunner(dl.IRunner):</span>
 <span class="sd">            # ...</span>
 <span class="sd">            def get_engine(self):</span>
-<span class="sd">                return dl.DataParallelApexEngine(opt_level=&quot;O1&quot;)</span>
+<span class="sd">                return dl.DataParallelApexEngine(apex_kwargs=dict(opt_level=&quot;O1&quot;))</span>
 <span class="sd">            # ...</span>
 
 <span class="sd">    .. code-block:: yaml</span>
@@ -612,7 +633,8 @@
 
 <span class="sd">        engine:</span>
 <span class="sd">            _target_: DataParallelApexEngine</span>
-<span class="sd">            opt_level: O1</span>
+<span class="sd">            apex_kwargs:</span>
+<span class="sd">                opt_level: O1</span>
 
 <span class="sd">        stages:</span>
 <span class="sd">            ...</span>
@@ -671,6 +693,20 @@
 <span class="sd">            https://nvidia.github.io/apex/amp.html#apex.amp.initialize</span>
 
 <span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.DistributedDataParallelApexEngine(</span>
+<span class="sd">                ddp_kwargs={&quot;allreduce_always_fp32&quot;: True},</span>
+<span class="sd">                process_group_kwargs={&quot;backend&quot;: &quot;nccl&quot;},</span>
+<span class="sd">                apex_kwargs={&quot;opt_level&quot;: &quot;O1&quot;},</span>
+<span class="sd">            ),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
 
 <span class="sd">    .. code-block:: python</span>
 

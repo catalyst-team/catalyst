@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.scheduler &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.callbacks.scheduler &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -339,74 +339,76 @@
 <span class="sd">            If ``None`` and object is instance of ``BatchScheduler``</span>
 <span class="sd">            or ``OneCycleLRWithWarmup`` then will be used ``&quot;batch&quot;``</span>
 <span class="sd">            otherwise - ``&quot;epoch&quot;``.</span>
-<span class="sd">        loader_key: @TODO: docs.</span>
+<span class="sd">        loader_key: loader name to look after for ReduceLROnPlateau scheduler</span>
 <span class="sd">        metric_key: metric name to forward to scheduler</span>
 <span class="sd">            object, if ``None`` then will be used main metric</span>
 <span class="sd">            specified in experiment.</span>
 
-<span class="sd">    Notebook API example:</span>
+<span class="sd">    Examples:</span>
 
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        import torch</span>
 <span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
-<span class="sd">        from catalyst.dl import (</span>
-<span class="sd">            SupervisedRunner, AccuracyCallback,</span>
-<span class="sd">            CriterionCallback, SchedulerCallback,</span>
-<span class="sd">        )</span>
+<span class="sd">        from catalyst import dl</span>
 
-<span class="sd">        num_samples, num_features = 10_000, 10</span>
-<span class="sd">        n_classes = 10</span>
-<span class="sd">        X = torch.rand(num_samples, num_features)</span>
-<span class="sd">        y = torch.randint(0, n_classes, [num_samples])</span>
-<span class="sd">        loader = DataLoader(TensorDataset(X, y), batch_size=32, num_workers=1)</span>
+<span class="sd">        # sample data</span>
+<span class="sd">        num_users, num_features, num_items = int(1e4), int(1e1), 10</span>
+<span class="sd">        X = torch.rand(num_users, num_features)</span>
+<span class="sd">        y = (torch.rand(num_users, num_items) &gt; 0.5).to(torch.float32)</span>
+
+<span class="sd">        # pytorch loaders</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
 <span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
 
-<span class="sd">        model = torch.nn.Linear(num_features, n_classes)</span>
-<span class="sd">        criterion = torch.nn.CrossEntropyLoss()</span>
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, num_items)</span>
+<span class="sd">        criterion = torch.nn.BCEWithLogitsLoss()</span>
 <span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
-<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])</span>
 
-<span class="sd">        runner = SupervisedRunner()</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner(</span>
+<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">        )</span>
 <span class="sd">        runner.train(</span>
 <span class="sd">            model=model,</span>
 <span class="sd">            criterion=criterion,</span>
 <span class="sd">            optimizer=optimizer,</span>
 <span class="sd">            scheduler=scheduler,</span>
 <span class="sd">            loaders=loaders,</span>
-<span class="sd">            logdir=&quot;./logdir&quot;,</span>
-<span class="sd">            num_epochs=5,</span>
-<span class="sd">            verbose=False,</span>
-<span class="sd">            valid_metric=&quot;accuracy03&quot;,</span>
-<span class="sd">            minimize_metric=False,</span>
+<span class="sd">            num_epochs=3,</span>
+<span class="sd">            verbose=True,</span>
 <span class="sd">            callbacks=[</span>
-<span class="sd">                AccuracyCallback(</span>
-<span class="sd">                    accuracy_args=[1, 3, 5]</span>
+<span class="sd">                dl.BatchTransformCallback(</span>
+<span class="sd">                    transform=torch.sigmoid,</span>
+<span class="sd">                    scope=&quot;on_batch_end&quot;,</span>
+<span class="sd">                    input_key=&quot;logits&quot;,</span>
+<span class="sd">                    output_key=&quot;scores&quot;</span>
 <span class="sd">                ),</span>
-<span class="sd">                SchedulerCallback(reduced_metric=&quot;loss&quot;)</span>
+<span class="sd">                dl.CriterionCallback(</span>
+<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, metric_key=&quot;loss&quot;</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.AUCCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">                dl.HitrateCallback(</span>
+<span class="sd">                    input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.MRRCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
+<span class="sd">                dl.MAPCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
+<span class="sd">                dl.NDCGCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
+<span class="sd">                dl.OptimizerCallback(metric_key=&quot;loss&quot;),</span>
+<span class="sd">                dl.SchedulerCallback(),</span>
+<span class="sd">                dl.CheckpointCallback(</span>
+<span class="sd">                    logdir=&quot;./logs&quot;, loader_key=&quot;valid&quot;, metric_key=&quot;loss&quot;, minimize=True</span>
+<span class="sd">                ),</span>
 <span class="sd">            ]</span>
 <span class="sd">        )</span>
 
-<span class="sd">    Config API usage example:</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
 
-<span class="sd">    .. code-block:: yaml</span>
-
-<span class="sd">        stages:</span>
-<span class="sd">          ...</span>
-<span class="sd">          scheduler_params:</span>
-<span class="sd">            scheduler: MultiStepLR</span>
-<span class="sd">            milestones: [1]</span>
-<span class="sd">            gamma: 0.3</span>
-<span class="sd">          ...</span>
-<span class="sd">          stage_N:</span>
-<span class="sd">            ...</span>
-<span class="sd">            callbacks_params:</span>
-<span class="sd">              ...</span>
-<span class="sd">              scheduler:</span>
-<span class="sd">                callback: SchedulerCallback</span>
-<span class="sd">                # arguments for SchedulerCallback</span>
-<span class="sd">                reduced_metric: loss</span>
-<span class="sd">          ...</span>
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

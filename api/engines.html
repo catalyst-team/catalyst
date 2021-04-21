@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Engines &mdash; Catalyst 21.04.1 documentation</title>
+  <title>Engines &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -363,6 +363,15 @@ Possible parameters:
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">AMPEngine</span><span class="p">(</span><span class="s2">&quot;cuda:1&quot;</span><span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
     <span class="c1"># ...</span>
     <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -403,6 +412,15 @@ Possible parameters:
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DataParallelAMPEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
@@ -454,6 +472,15 @@ Possible parameters:
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelAMPEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
@@ -519,10 +546,19 @@ except models and optimizers (they will be forwared automatically).</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">APEXEngine</span><span class="p">(</span><span class="n">apex_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span><span class="p">,</span> <span class="n">keep_batchnorm_fp32</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
     <span class="c1"># ...</span>
     <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">APEXEngine</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span><span class="p">,</span> <span class="n">keep_batchnorm_fp32</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">APEXEngine</span><span class="p">(</span><span class="n">apex_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span><span class="p">,</span> <span class="n">keep_batchnorm_fp32</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
     <span class="c1"># ...</span>
 </pre></div>
 </div>
@@ -535,8 +571,9 @@ except models and optimizers (they will be forwared automatically).</p>
 
 <span class="nt">engine</span><span class="p">:</span>
     <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">APEXEngine</span>
-    <span class="nt">opt_level</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">O1</span>
-    <span class="nt">keep_batchnorm_fp32</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+    <span class="nt">apex_kwargs</span><span class="p">:</span>
+        <span class="nt">opt_level</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">O1</span>
+        <span class="nt">keep_batchnorm_fp32</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
 
 <span class="nt">stages</span><span class="p">:</span>
     <span class="l l-Scalar l-Scalar-Plain">...</span>
@@ -564,10 +601,19 @@ except models and optimizers (they will be forwared automatically).</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DataParallelApexEngine</span><span class="p">(</span><span class="n">apex_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span><span class="p">)),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
     <span class="c1"># ...</span>
     <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DataParallelApexEngine</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DataParallelApexEngine</span><span class="p">(</span><span class="n">apex_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span><span class="p">))</span>
     <span class="c1"># ...</span>
 </pre></div>
 </div>
@@ -580,7 +626,8 @@ except models and optimizers (they will be forwared automatically).</p>
 
 <span class="nt">engine</span><span class="p">:</span>
     <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DataParallelApexEngine</span>
-    <span class="nt">opt_level</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">O1</span>
+    <span class="nt">apex_kwargs</span><span class="p">:</span>
+        <span class="nt">opt_level</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">O1</span>
 
 <span class="nt">stages</span><span class="p">:</span>
     <span class="l l-Scalar l-Scalar-Plain">...</span>
@@ -616,6 +663,19 @@ except models and optimizers (they will be forwared automatically).</p>
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelApexEngine</span><span class="p">(</span>
+        <span class="n">ddp_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;allreduce_always_fp32&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+        <span class="n">process_group_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;backend&quot;</span><span class="p">:</span> <span class="s2">&quot;nccl&quot;</span><span class="p">},</span>
+        <span class="n">apex_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;opt_level&quot;</span><span class="p">:</span> <span class="s2">&quot;O1&quot;</span><span class="p">},</span>
+    <span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
@@ -674,6 +734,15 @@ except models and optimizers (they will be forwared automatically).</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DeviceEngine</span><span class="p">(</span><span class="s2">&quot;cuda:1&quot;</span><span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
     <span class="c1"># ...</span>
     <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -707,6 +776,15 @@ except models and optimizers (they will be forwared automatically).</p>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
 <p>MultiGPU training device engine.</p>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DataParallelEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
@@ -755,6 +833,15 @@ More info here:
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
 <span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics._cmc_score &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.metrics._cmc_score &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -329,88 +329,99 @@
 <span class="sd">        suffix: metric suffix</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; from collections import OrderedDict</span>
-<span class="sd">        &gt;&gt;&gt; from torch.optim import Adam</span>
-<span class="sd">        &gt;&gt;&gt; from torch.utils.data import DataLoader</span>
-<span class="sd">        &gt;&gt;&gt; from catalyst.contrib import nn</span>
-<span class="sd">        &gt;&gt;&gt; from catalyst.contrib.datasets import MnistMLDataset, MnistQGDataset</span>
-<span class="sd">        &gt;&gt;&gt; from catalyst.data import BalanceBatchSampler, HardTripletsSampler</span>
-<span class="sd">        &gt;&gt;&gt; from catalyst.dl import ControlFlowCallback, LoaderMetricCallback, SupervisedRunner</span>
-<span class="sd">        &gt;&gt;&gt; from catalyst.metrics import CMCMetric</span>
-<span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; dataset_root = &quot;.&quot;</span>
-<span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # download dataset for train and val, create loaders</span>
-<span class="sd">        &gt;&gt;&gt; dataset_train = MnistMLDataset(root=dataset_root, download=True, transform=None)</span>
-<span class="sd">        &gt;&gt;&gt; sampler = BalanceBatchSampler(labels=dataset_train.get_labels(), p=5, k=10)</span>
-<span class="sd">        &gt;&gt;&gt; train_loader = DataLoader(</span>
-<span class="sd">        &gt;&gt;&gt;     dataset=dataset_train, sampler=sampler, batch_size=sampler.batch_size</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        &gt;&gt;&gt; dataset_valid = MnistQGDataset(root=dataset_root, transform=None, gallery_fraq=0.2)</span>
-<span class="sd">        &gt;&gt;&gt; valid_loader = DataLoader(dataset=dataset_valid, batch_size=1024)</span>
-<span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # model, optimizer, criterion</span>
-<span class="sd">        &gt;&gt;&gt; model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 100))</span>
-<span class="sd">        &gt;&gt;&gt; optimizer = Adam(model.parameters())</span>
-<span class="sd">        &gt;&gt;&gt; sampler_inbatch = HardTripletsSampler(norm_required=False)</span>
-<span class="sd">        &gt;&gt;&gt; criterion = nn.TripletMarginLossWithSampler(</span>
-<span class="sd">        &gt;&gt;&gt;     margin=0.5, sampler_inbatch=sampler_inbatch</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # batch data processing</span>
-<span class="sd">        &gt;&gt;&gt; class CustomRunner(SupervisedRunner):</span>
-<span class="sd">        &gt;&gt;&gt;     def handle_batch(self, batch):</span>
-<span class="sd">        &gt;&gt;&gt;         if self.is_train_loader:</span>
-<span class="sd">        &gt;&gt;&gt;             images, targets = batch[&quot;features&quot;].float(), batch[&quot;targets&quot;].long()</span>
-<span class="sd">        &gt;&gt;&gt;             features = model(images)</span>
-<span class="sd">        &gt;&gt;&gt;             self.batch = {</span>
-<span class="sd">        &gt;&gt;&gt;                 &quot;embeddings&quot;: features,</span>
-<span class="sd">        &gt;&gt;&gt;                 &quot;targets&quot;: targets,</span>
-<span class="sd">        &gt;&gt;&gt;             }</span>
-<span class="sd">        &gt;&gt;&gt;         else:</span>
-<span class="sd">        &gt;&gt;&gt;             images, targets, is_query = (</span>
-<span class="sd">        &gt;&gt;&gt;                 batch[&quot;features&quot;].float(),</span>
-<span class="sd">        &gt;&gt;&gt;                 batch[&quot;targets&quot;].long(),</span>
-<span class="sd">        &gt;&gt;&gt;                 batch[&quot;is_query&quot;].bool(),</span>
-<span class="sd">        &gt;&gt;&gt;             )</span>
-<span class="sd">        &gt;&gt;&gt;             features = model(images)</span>
-<span class="sd">        &gt;&gt;&gt;             self.batch = {</span>
-<span class="sd">        &gt;&gt;&gt;                 &quot;embeddings&quot;: features,</span>
-<span class="sd">        &gt;&gt;&gt;                 &quot;targets&quot;: targets,</span>
-<span class="sd">        &gt;&gt;&gt;                 &quot;is_query&quot;: is_query,</span>
-<span class="sd">        &gt;&gt;&gt;             }</span>
-<span class="sd">        &gt;&gt;&gt;</span>
-<span class="sd">        &gt;&gt;&gt; # training</span>
-<span class="sd">        &gt;&gt;&gt; runner = CustomRunner(input_key=&quot;features&quot;, output_key=&quot;embeddings&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; runner.train(</span>
-<span class="sd">        &gt;&gt;&gt;     model=model,</span>
-<span class="sd">        &gt;&gt;&gt;     criterion=criterion,</span>
-<span class="sd">        &gt;&gt;&gt;     optimizer=optimizer,</span>
-<span class="sd">        &gt;&gt;&gt;     callbacks=OrderedDict(</span>
-<span class="sd">        &gt;&gt;&gt;         {</span>
-<span class="sd">        &gt;&gt;&gt;             &quot;cmc&quot;: ControlFlowCallback(</span>
-<span class="sd">        &gt;&gt;&gt;                 LoaderMetricCallback(</span>
-<span class="sd">        &gt;&gt;&gt;                     CMCMetric(</span>
-<span class="sd">        &gt;&gt;&gt;                         embeddings_key=&quot;embeddings&quot;,</span>
-<span class="sd">        &gt;&gt;&gt;                         labels_key=&quot;targets&quot;,</span>
-<span class="sd">        &gt;&gt;&gt;                         is_query_key=&quot;is_query&quot;,</span>
-<span class="sd">        &gt;&gt;&gt;                         topk_args=(1, 3)</span>
-<span class="sd">        &gt;&gt;&gt;                     ),</span>
-<span class="sd">        &gt;&gt;&gt;                     input_key=[&quot;embeddings&quot;, &quot;is_query&quot;],</span>
-<span class="sd">        &gt;&gt;&gt;                     target_key=[&quot;targets&quot;]</span>
-<span class="sd">        &gt;&gt;&gt;                 ),</span>
-<span class="sd">        &gt;&gt;&gt;                 loaders=&quot;valid&quot;,</span>
-<span class="sd">        &gt;&gt;&gt;             ),</span>
-<span class="sd">        &gt;&gt;&gt;         }</span>
-<span class="sd">        &gt;&gt;&gt;     ),</span>
-<span class="sd">        &gt;&gt;&gt;     loaders=OrderedDict({&quot;train&quot;: train_loader, &quot;valid&quot;: valid_loader}),</span>
-<span class="sd">        &gt;&gt;&gt;     valid_loader=&quot;valid&quot;,</span>
-<span class="sd">        &gt;&gt;&gt;     valid_metric=&quot;cmc01&quot;,</span>
-<span class="sd">        &gt;&gt;&gt;     minimize_valid_metric=False,</span>
-<span class="sd">        &gt;&gt;&gt;     logdir=&quot;./logs&quot;,</span>
-<span class="sd">        &gt;&gt;&gt;     verbose=True,</span>
-<span class="sd">        &gt;&gt;&gt;     num_epochs=3,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        from torch.optim import Adam</span>
+<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">        from catalyst import data, dl</span>
+<span class="sd">        from catalyst.contrib import datasets, models, nn</span>
+<span class="sd">        from catalyst.data.transforms import Compose, Normalize, ToTensor</span>
+
+
+<span class="sd">        # 1. train and valid loaders</span>
+<span class="sd">        transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])</span>
+
+<span class="sd">        train_dataset = datasets.MnistMLDataset(</span>
+<span class="sd">            root=os.getcwd(), download=True, transform=transforms</span>
+<span class="sd">        )</span>
+<span class="sd">        sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=10)</span>
+<span class="sd">        train_loader = DataLoader(</span>
+<span class="sd">            dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size</span>
+<span class="sd">        )</span>
+
+<span class="sd">        valid_dataset = datasets.MnistQGDataset(</span>
+<span class="sd">            root=os.getcwd(), transform=transforms, gallery_fraq=0.2</span>
+<span class="sd">        )</span>
+<span class="sd">        valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)</span>
+
+<span class="sd">        # 2. model and optimizer</span>
+<span class="sd">        model = models.MnistSimpleNet(out_features=16)</span>
+<span class="sd">        optimizer = Adam(model.parameters(), lr=0.001)</span>
+
+<span class="sd">        # 3. criterion with triplets sampling</span>
+<span class="sd">        sampler_inbatch = data.HardTripletsSampler(norm_required=False)</span>
+<span class="sd">        criterion = nn.TripletMarginLossWithSampler(margin=0.5, sampler_inbatch=sampler_inbatch)</span>
+
+<span class="sd">        # 4. training with catalyst Runner</span>
+<span class="sd">        class CustomRunner(dl.SupervisedRunner):</span>
+<span class="sd">            def handle_batch(self, batch) -&gt; None:</span>
+<span class="sd">                if self.is_train_loader:</span>
+<span class="sd">                    images, targets = batch[&quot;features&quot;].float(), batch[&quot;targets&quot;].long()</span>
+<span class="sd">                    features = self.model(images)</span>
+<span class="sd">                    self.batch = {&quot;embeddings&quot;: features, &quot;targets&quot;: targets,}</span>
+<span class="sd">                else:</span>
+<span class="sd">                    images, targets, is_query = (</span>
+<span class="sd">                        batch[&quot;features&quot;].float(),</span>
+<span class="sd">                        batch[&quot;targets&quot;].long(),</span>
+<span class="sd">                        batch[&quot;is_query&quot;].bool()</span>
+<span class="sd">                    )</span>
+<span class="sd">                    features = self.model(images)</span>
+<span class="sd">                    self.batch = {</span>
+<span class="sd">                        &quot;embeddings&quot;: features, &quot;targets&quot;: targets, &quot;is_query&quot;: is_query</span>
+<span class="sd">                    }</span>
+
+<span class="sd">        callbacks = [</span>
+<span class="sd">            dl.ControlFlowCallback(</span>
+<span class="sd">                dl.CriterionCallback(</span>
+<span class="sd">                    input_key=&quot;embeddings&quot;, target_key=&quot;targets&quot;, metric_key=&quot;loss&quot;</span>
+<span class="sd">                ),</span>
+<span class="sd">                loaders=&quot;train&quot;,</span>
+<span class="sd">            ),</span>
+<span class="sd">            dl.ControlFlowCallback(</span>
+<span class="sd">                dl.CMCScoreCallback(</span>
+<span class="sd">                    embeddings_key=&quot;embeddings&quot;,</span>
+<span class="sd">                    labels_key=&quot;targets&quot;,</span>
+<span class="sd">                    is_query_key=&quot;is_query&quot;,</span>
+<span class="sd">                    topk_args=[1],</span>
+<span class="sd">                ),</span>
+<span class="sd">                loaders=&quot;valid&quot;,</span>
+<span class="sd">            ),</span>
+<span class="sd">            dl.PeriodicLoaderCallback(</span>
+<span class="sd">                valid_loader_key=&quot;valid&quot;, valid_metric_key=&quot;cmc01&quot;, minimize=False, valid=2</span>
+<span class="sd">            ),</span>
+<span class="sd">        ]</span>
+
+<span class="sd">        runner = CustomRunner(input_key=&quot;features&quot;, output_key=&quot;embeddings&quot;)</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            callbacks=callbacks,</span>
+<span class="sd">            loaders={&quot;train&quot;: train_loader, &quot;valid&quot;: valid_loader},</span>
+<span class="sd">            verbose=False,</span>
+<span class="sd">            logdir=&quot;./logs&quot;,</span>
+<span class="sd">            valid_loader=&quot;valid&quot;,</span>
+<span class="sd">            valid_metric=&quot;cmc01&quot;,</span>
+<span class="sd">            minimize_valid_metric=False,</span>
+<span class="sd">            num_epochs=10,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

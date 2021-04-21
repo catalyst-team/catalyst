@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.runner &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.core.runner &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -361,9 +361,18 @@
 <span class="sd">    An abstraction that contains all the logic of how to run the experiment,</span>
 <span class="sd">    stages, epochs, loaders and batches.</span>
 
+<span class="sd">    IRunner supports the logic for deep learning pipeline configuration with pure python code.</span>
+<span class="sd">    Please check the examples for intuition.</span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        model: Torch model object</span>
 <span class="sd">        engine: IEngine instance</span>
+
+<span class="sd">    Abstraction, please check out implementations for more details:</span>
+
+<span class="sd">        - :py:mod:`catalyst.runners.runner.Runner`</span>
+<span class="sd">        - :py:mod:`catalyst.runners.config.ConfigRunner`</span>
+<span class="sd">        - :py:mod:`catalyst.runners.hydra.HydraRunner`</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">        To learn more about Catalyst Core concepts, please check out</span>
@@ -371,6 +380,121 @@
 <span class="sd">            - :py:mod:`catalyst.core.runner.IRunner`</span>
 <span class="sd">            - :py:mod:`catalyst.core.engine.IEngine`</span>
 <span class="sd">            - :py:mod:`catalyst.core.callback.Callback`</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        from torch import nn, optim</span>
+<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">        from catalyst import dl, utils</span>
+<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
+<span class="sd">        from catalyst.data.transforms import ToTensor</span>
+
+
+<span class="sd">        class CustomRunner(dl.IRunner):</span>
+<span class="sd">            def __init__(self, logdir, device):</span>
+<span class="sd">                super().__init__()</span>
+<span class="sd">                self._logdir = logdir</span>
+<span class="sd">                self._device = device</span>
+
+<span class="sd">            def get_engine(self):</span>
+<span class="sd">                return dl.DeviceEngine(self._device)</span>
+
+<span class="sd">            def get_loggers(self):</span>
+<span class="sd">                return {</span>
+<span class="sd">                    &quot;console&quot;: dl.ConsoleLogger(),</span>
+<span class="sd">                    &quot;csv&quot;: dl.CSVLogger(logdir=self._logdir),</span>
+<span class="sd">                    &quot;tensorboard&quot;: dl.TensorboardLogger(logdir=self._logdir),</span>
+<span class="sd">                }</span>
+
+<span class="sd">            @property</span>
+<span class="sd">            def stages(self):</span>
+<span class="sd">                return [&quot;train_freezed&quot;, &quot;train_unfreezed&quot;]</span>
+
+<span class="sd">            def get_stage_len(self, stage: str) -&gt; int:</span>
+<span class="sd">                return 3</span>
+
+<span class="sd">            def get_loaders(self, stage: str):</span>
+<span class="sd">                loaders = {</span>
+<span class="sd">                    &quot;train&quot;: DataLoader(</span>
+<span class="sd">                        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                        batch_size=32</span>
+<span class="sd">                    ),</span>
+<span class="sd">                    &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                        batch_size=32</span>
+<span class="sd">                    ),</span>
+<span class="sd">                }</span>
+<span class="sd">                return loaders</span>
+
+<span class="sd">            def get_model(self, stage: str):</span>
+<span class="sd">                model = (</span>
+<span class="sd">                    self.model</span>
+<span class="sd">                    if self.model is not None</span>
+<span class="sd">                    else nn.Sequential(</span>
+<span class="sd">                        nn.Flatten(), nn.Linear(784, 128), nn.ReLU(), nn.Linear(128, 10)</span>
+<span class="sd">                    )</span>
+<span class="sd">                )</span>
+<span class="sd">                if stage == &quot;train_freezed&quot;:</span>
+<span class="sd">                    # freeze layer</span>
+<span class="sd">                    utils.set_requires_grad(model[1], False)</span>
+<span class="sd">                else:</span>
+<span class="sd">                    utils.set_requires_grad(model, True)</span>
+<span class="sd">                return model</span>
+
+<span class="sd">            def get_criterion(self, stage: str):</span>
+<span class="sd">                return nn.CrossEntropyLoss()</span>
+
+<span class="sd">            def get_optimizer(self, stage: str, model):</span>
+<span class="sd">                if stage == &quot;train_freezed&quot;:</span>
+<span class="sd">                    return optim.Adam(model.parameters(), lr=1e-3)</span>
+<span class="sd">                else:</span>
+<span class="sd">                    return optim.SGD(model.parameters(), lr=1e-1)</span>
+
+<span class="sd">            def get_scheduler(self, stage: str, optimizer):</span>
+<span class="sd">                return None</span>
+
+<span class="sd">            def get_callbacks(self, stage: str):</span>
+<span class="sd">                return {</span>
+<span class="sd">                    &quot;criterion&quot;: dl.CriterionCallback(</span>
+<span class="sd">                        metric_key=&quot;loss&quot;, input_key=&quot;logits&quot;, target_key=&quot;targets&quot;</span>
+<span class="sd">                    ),</span>
+<span class="sd">                    &quot;optimizer&quot;: dl.OptimizerCallback(metric_key=&quot;loss&quot;),</span>
+<span class="sd">                    &quot;accuracy&quot;: dl.AccuracyCallback(</span>
+<span class="sd">                        input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)</span>
+<span class="sd">                    ),</span>
+<span class="sd">                    &quot;classification&quot;: dl.PrecisionRecallF1SupportCallback(</span>
+<span class="sd">                        input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=10</span>
+<span class="sd">                    ),</span>
+<span class="sd">                    &quot;checkpoint&quot;: dl.CheckpointCallback(</span>
+<span class="sd">                        self._logdir,</span>
+<span class="sd">                        loader_key=&quot;valid&quot;,</span>
+<span class="sd">                        metric_key=&quot;loss&quot;,</span>
+<span class="sd">                        minimize=True,</span>
+<span class="sd">                        save_n_best=3,</span>
+<span class="sd">                    ),</span>
+<span class="sd">                }</span>
+
+<span class="sd">            def handle_batch(self, batch):</span>
+<span class="sd">                x, y = batch</span>
+<span class="sd">                logits = self.model(x)</span>
+
+<span class="sd">                self.batch = {</span>
+<span class="sd">                    &quot;features&quot;: x,</span>
+<span class="sd">                    &quot;targets&quot;: y,</span>
+<span class="sd">                    &quot;logits&quot;: logits,</span>
+<span class="sd">                }</span>
+
+<span class="sd">        runner = CustomRunner(&quot;./logs&quot;, &quot;cpu&quot;)</span>
+<span class="sd">        runner.run()</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

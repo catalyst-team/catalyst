@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.engines.torch &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.engines.torch &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -340,6 +340,16 @@
 
 <span class="sd">        from catalyst import dl</span>
 
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.DeviceEngine(&quot;cuda:1&quot;),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
 <span class="sd">        class MyRunner(dl.IRunner):</span>
 <span class="sd">            # ...</span>
 <span class="sd">            def get_engine(self):</span>
@@ -514,6 +524,16 @@
 
 <span class="sd">        from catalyst import dl</span>
 
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.DataParallelEngine(),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
 <span class="sd">        class MyRunner(dl.IRunner):</span>
 <span class="sd">            # ...</span>
 <span class="sd">            def get_engine(self):</span>
@@ -586,6 +606,16 @@
 <span class="sd">            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</span>
 
 <span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.DistributedDataParallelEngine(),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
 
 <span class="sd">    .. code-block:: python</span>
 

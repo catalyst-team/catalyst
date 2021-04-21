@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.core.logger &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.core.logger &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -313,7 +313,14 @@
 
 
 <div class="viewcode-block" id="ILogger"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.logger.ILogger">[docs]</a><span class="k">class</span> <span class="nc">ILogger</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;An abstraction that syncs experiment run with monitoring tools.&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;An abstraction that syncs experiment run with monitoring tools.</span>
+
+<span class="sd">    Abstraction, please check out implementations for more details:</span>
+
+<span class="sd">        - :py:mod:`catalyst.loggers.console.ConsoleLogger`</span>
+<span class="sd">        - :py:mod:`catalyst.loggers.tensorboard.TensorboardLogger`</span>
+<span class="sd">        - :py:mod:`catalyst.loggers.mlflow.MLflowLogger`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="ILogger.log_metrics"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.logger.ILogger.log_metrics">[docs]</a>    <span class="k">def</span> <span class="nf">log_metrics</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>

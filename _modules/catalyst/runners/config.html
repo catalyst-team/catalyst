@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.config &mdash; Catalyst 21.04.1 documentation</title>
+  <title>catalyst.runners.config &mdash; Catalyst 21.04.2 documentation</title>
   
 
   
@@ -348,9 +348,53 @@
 
 <div class="viewcode-block" id="ConfigRunner"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.config.ConfigRunner">[docs]</a><span class="k">class</span> <span class="nc">ConfigRunner</span><span class="p">(</span><span class="n">IRunner</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Runner created from a dictionary configuration file.</span>
+<span class="sd">    Used for Catalyst Config API.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        config: dictionary with parameters</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        dataset = SomeDataset()</span>
+<span class="sd">        runner = SupervisedConfigRunner(</span>
+<span class="sd">            config={</span>
+<span class="sd">                &quot;args&quot;: {&quot;logdir&quot;: logdir},</span>
+<span class="sd">                &quot;model&quot;: {&quot;_target_&quot;: &quot;SomeModel&quot;, &quot;in_features&quot;: 4, &quot;out_features&quot;: 2},</span>
+<span class="sd">                &quot;engine&quot;: {&quot;_target_&quot;: &quot;DeviceEngine&quot;, &quot;device&quot;: device},</span>
+<span class="sd">                &quot;stages&quot;: {</span>
+<span class="sd">                    &quot;stage1&quot;: {</span>
+<span class="sd">                        &quot;num_epochs&quot;: 10,</span>
+<span class="sd">                        &quot;criterion&quot;: {&quot;_target_&quot;: &quot;MSELoss&quot;},</span>
+<span class="sd">                        &quot;optimizer&quot;: {&quot;_target_&quot;: &quot;Adam&quot;, &quot;lr&quot;: 1e-3},</span>
+<span class="sd">                        &quot;loaders&quot;: {&quot;batch_size&quot;: 4, &quot;num_workers&quot;: 0},</span>
+<span class="sd">                        &quot;callbacks&quot;: {</span>
+<span class="sd">                            &quot;criterion&quot;: {</span>
+<span class="sd">                                &quot;_target_&quot;: &quot;CriterionCallback&quot;,</span>
+<span class="sd">                                &quot;metric_key&quot;: &quot;loss&quot;,</span>
+<span class="sd">                                &quot;input_key&quot;: &quot;logits&quot;,</span>
+<span class="sd">                                &quot;target_key&quot;: &quot;targets&quot;,</span>
+<span class="sd">                            },</span>
+<span class="sd">                            &quot;optimizer&quot;: {</span>
+<span class="sd">                                &quot;_target_&quot;: &quot;OptimizerCallback&quot;,</span>
+<span class="sd">                                &quot;metric_key&quot;: &quot;loss&quot;</span>
+<span class="sd">                            },</span>
+<span class="sd">                        },</span>
+<span class="sd">                    },</span>
+<span class="sd">                },</span>
+<span class="sd">            }</span>
+<span class="sd">        )</span>
+<span class="sd">        runner.get_datasets = lambda *args, **kwargs: {</span>
+<span class="sd">            &quot;train&quot;: dataset,</span>
+<span class="sd">            &quot;valid&quot;: dataset,</span>
+<span class="sd">        }</span>
+<span class="sd">        runner.run()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
@@ -405,7 +449,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: docs.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Experiment&#39;s logdir for artefacts and logging.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span>
 
     <span class="nd">@property</span>
@@ -687,6 +731,49 @@
 <span class="sd">        output_key: key for ``runner.batch`` to store model output</span>
 <span class="sd">        target_key: key in ``runner.batch`` dict mapping for target</span>
 <span class="sd">        loss_key: key for ``runner.batch_metrics`` to store criterion loss output</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        dataset = SomeDataset()</span>
+<span class="sd">        runner = SupervisedConfigRunner(</span>
+<span class="sd">            config={</span>
+<span class="sd">                &quot;args&quot;: {&quot;logdir&quot;: logdir},</span>
+<span class="sd">                &quot;model&quot;: {&quot;_target_&quot;: &quot;SomeModel&quot;, &quot;in_features&quot;: 4, &quot;out_features&quot;: 2},</span>
+<span class="sd">                &quot;engine&quot;: {&quot;_target_&quot;: &quot;DeviceEngine&quot;, &quot;device&quot;: device},</span>
+<span class="sd">                &quot;stages&quot;: {</span>
+<span class="sd">                    &quot;stage1&quot;: {</span>
+<span class="sd">                        &quot;num_epochs&quot;: 10,</span>
+<span class="sd">                        &quot;criterion&quot;: {&quot;_target_&quot;: &quot;MSELoss&quot;},</span>
+<span class="sd">                        &quot;optimizer&quot;: {&quot;_target_&quot;: &quot;Adam&quot;, &quot;lr&quot;: 1e-3},</span>
+<span class="sd">                        &quot;loaders&quot;: {&quot;batch_size&quot;: 4, &quot;num_workers&quot;: 0},</span>
+<span class="sd">                        &quot;callbacks&quot;: {</span>
+<span class="sd">                            &quot;criterion&quot;: {</span>
+<span class="sd">                                &quot;_target_&quot;: &quot;CriterionCallback&quot;,</span>
+<span class="sd">                                &quot;metric_key&quot;: &quot;loss&quot;,</span>
+<span class="sd">                                &quot;input_key&quot;: &quot;logits&quot;,</span>
+<span class="sd">                                &quot;target_key&quot;: &quot;targets&quot;,</span>
+<span class="sd">                            },</span>
+<span class="sd">                            &quot;optimizer&quot;: {</span>
+<span class="sd">                                &quot;_target_&quot;: &quot;OptimizerCallback&quot;,</span>
+<span class="sd">                                &quot;metric_key&quot;: &quot;loss&quot;</span>
+<span class="sd">                            },</span>
+<span class="sd">                        },</span>
+<span class="sd">                    },</span>
+<span class="sd">                },</span>
+<span class="sd">            }</span>
+<span class="sd">        )</span>
+<span class="sd">        runner.get_datasets = lambda *args, **kwargs: {</span>
+<span class="sd">            &quot;train&quot;: dataset,</span>
+<span class="sd">            &quot;valid&quot;: dataset,</span>
+<span class="sd">        }</span>
+<span class="sd">        runner.run()</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
