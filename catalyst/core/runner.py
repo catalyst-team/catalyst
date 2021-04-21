@@ -62,6 +62,12 @@ class IRunner(ICallback, ILogger, ABC):
             - :py:mod:`catalyst.core.runner.IRunner`
             - :py:mod:`catalyst.core.engine.IEngine`
             - :py:mod:`catalyst.core.callback.Callback`
+
+    Abstraction, please check out implementations for more details:
+
+        - :py:mod:`catalyst.runners.runner.Runner`
+        - :py:mod:`catalyst.runners.config.ConfigRunner`
+        - :py:mod:`catalyst.runners.hydra.HydraRunner`
     """
 
     def __init__(

@@ -140,10 +140,20 @@ class APEXEngine(DeviceEngine):
 
         from catalyst import dl
 
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.APEXEngine(apex_kwargs=dict(opt_level="O1", keep_batchnorm_fp32=False)),
+            ...
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
-                return dl.APEXEngine(opt_level="O1", keep_batchnorm_fp32=False)
+                return dl.APEXEngine(apex_kwargs=dict(opt_level="O1", keep_batchnorm_fp32=False))
             # ...
 
     .. code-block:: yaml
@@ -157,8 +167,9 @@ class APEXEngine(DeviceEngine):
 
         engine:
             _target_: APEXEngine
-            opt_level: O1
-            keep_batchnorm_fp32: false
+            apex_kwargs:
+                opt_level: O1
+                keep_batchnorm_fp32: false
 
         stages:
             ...
@@ -286,10 +297,20 @@ class DataParallelApexEngine(APEXEngine):
 
         from catalyst import dl
 
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.DataParallelApexEngine(apex_kwargs=dict(opt_level="O1")),
+            ...
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
-                return dl.DataParallelApexEngine(opt_level="O1")
+                return dl.DataParallelApexEngine(apex_kwargs=dict(opt_level="O1"))
             # ...
 
     .. code-block:: yaml
@@ -303,7 +324,8 @@ class DataParallelApexEngine(APEXEngine):
 
         engine:
             _target_: DataParallelApexEngine
-            opt_level: O1
+            apex_kwargs:
+                opt_level: O1
 
         stages:
             ...
@@ -362,6 +384,20 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             https://nvidia.github.io/apex/amp.html#apex.amp.initialize
 
     Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.DistributedDataParallelApexEngine(
+                ddp_kwargs={"allreduce_always_fp32": True},
+                process_group_kwargs={"backend": "nccl"},
+                apex_kwargs={"opt_level": "O1"},
+            ),
+            ...
+        )
 
     .. code-block:: python
 
