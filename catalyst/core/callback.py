@@ -202,6 +202,13 @@ class Callback(ICallback):
 
         exception – if an Exception was raised
 
+    Abstraction, please check out implementations for more details:
+
+        - :py:mod:`catalyst.callbacks.criterion.CriterionCallback`
+        - :py:mod:`catalyst.callbacks.optimizer.OptimizerCallback`
+        - :py:mod:`catalyst.callbacks.scheduler.SchedulerCallback`
+        - :py:mod:`catalyst.callbacks.checkpoint.CheckpointCallback`
+
     .. note::
         To learn more about Catalyst Core concepts, please check out
 
@@ -209,12 +216,6 @@ class Callback(ICallback):
             - :py:mod:`catalyst.core.engine.IEngine`
             - :py:mod:`catalyst.core.callback.Callback`
 
-    Abstraction, please check out implementations for more details:
-
-        - :py:mod:`catalyst.callbacks.criterion.CriterionCallback`
-        - :py:mod:`catalyst.callbacks.optimizer.OptimizerCallback`
-        - :py:mod:`catalyst.callbacks.scheduler.SchedulerCallback`
-        - :py:mod:`catalyst.callbacks.checkpoint.CheckpointCallback`
     """
 
     def __init__(
