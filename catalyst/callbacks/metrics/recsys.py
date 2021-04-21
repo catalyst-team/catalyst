@@ -65,7 +65,9 @@ class HitrateCallback(BatchMetricCallback):
                     input_key="logits",
                     output_key="scores"
                 ),
-                dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
+                dl.CriterionCallback(
+                    input_key="logits", target_key="targets", metric_key="loss"
+                ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
                 dl.HitrateCallback(
                     input_key="scores", target_key="targets", topk_args=(1, 3, 5)
@@ -164,7 +166,9 @@ class MAPCallback(BatchMetricCallback):
                     input_key="logits",
                     output_key="scores"
                 ),
-                dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
+                dl.CriterionCallback(
+                    input_key="logits", target_key="targets", metric_key="loss"
+                ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
                 dl.HitrateCallback(
                     input_key="scores", target_key="targets", topk_args=(1, 3, 5)
@@ -263,7 +267,9 @@ class MRRCallback(BatchMetricCallback):
                     input_key="logits",
                     output_key="scores"
                 ),
-                dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
+                dl.CriterionCallback(
+                    input_key="logits", target_key="targets", metric_key="loss"
+                ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
                 dl.HitrateCallback(
                     input_key="scores", target_key="targets", topk_args=(1, 3, 5)
@@ -362,7 +368,9 @@ class NDCGCallback(BatchMetricCallback):
                     input_key="logits",
                     output_key="scores"
                 ),
-                dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
+                dl.CriterionCallback(
+                    input_key="logits", target_key="targets", metric_key="loss"
+                ),
                 dl.AUCCallback(input_key="scores", target_key="targets"),
                 dl.HitrateCallback(
                     input_key="scores", target_key="targets", topk_args=(1, 3, 5)
