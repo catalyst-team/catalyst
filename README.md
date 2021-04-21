@@ -408,8 +408,18 @@ runner.train(
     minimize_valid_metric=False,
     verbose=True,
     callbacks=[
-        dl.AUCCallback(input_key="logits", target_key="targets"),
-        dl.MultilabelAccuracyCallback(input_key="logits", target_key="targets", threshold=0.5)
+        dl.BatchTransformCallback(
+            transform=torch.sigmoid,
+            scope="on_batch_end",
+            input_key="logits",
+            output_key="scores"
+        ),
+        dl.AUCCallback(input_key="scores", target_key="targets"),
+        # uncomment for extra metrics:
+        # dl.MultilabelAccuracyCallback(input_key="scores", target_key="targets", threshold=0.5),
+        # dl.MultilabelPrecisionRecallF1SupportCallback(
+        #     input_key="scores", target_key="targets", threshold=0.5
+        # ),
     ]
 )
 ```

@@ -50,9 +50,25 @@ def _process_loaders(
 class Runner(IRunner):
     """Single-stage deep learning Runner with user-friendly API.
 
+    Runner supports the logic for deep learning pipeline configuration with pure python code.
+    Please check the examples for intuition.
+
     Args:
         *args: `IRunner` args (model, engine)
         **kwargs: `IRunner` kwargs (model, engine)
+
+    .. note::
+        IRunner supports only base user-friendly callbacks, like
+        TqdmCallback, TimerCallback, CheckRunCallback, BatchOverfitCallback,
+        and CheckpointCallback.
+
+        It does not automatically add Criterion, Optimizer or Scheduler callbacks.
+
+        That means, that you have do optimization step by yourself during ``handle_batch`` method
+        or specify the required callbacks in ``.train`` or ``get_callbacks`` methods.
+
+        For more easy-to-go supervised use case please follow
+        :py:mod:`catalyst.runners.runner.SupervisedRunner`.
 
     .. note::
         Please follow the `minimal examples`_ sections for use cases.

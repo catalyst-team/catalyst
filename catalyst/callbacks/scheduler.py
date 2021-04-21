@@ -30,74 +30,74 @@ class SchedulerCallback(ISchedulerCallback):
             If ``None`` and object is instance of ``BatchScheduler``
             or ``OneCycleLRWithWarmup`` then will be used ``"batch"``
             otherwise - ``"epoch"``.
-        loader_key: @TODO: docs.
+        loader_key: loader name to look after for ReduceLROnPlateau scheduler
         metric_key: metric name to forward to scheduler
             object, if ``None`` then will be used main metric
             specified in experiment.
 
-    Notebook API example:
+    Examples:
 
     .. code-block:: python
 
         import torch
         from torch.utils.data import DataLoader, TensorDataset
-        from catalyst.dl import (
-            SupervisedRunner, AccuracyCallback,
-            CriterionCallback, SchedulerCallback,
-        )
+        from catalyst import dl
 
-        num_samples, num_features = 10_000, 10
-        n_classes = 10
-        X = torch.rand(num_samples, num_features)
-        y = torch.randint(0, n_classes, [num_samples])
-        loader = DataLoader(TensorDataset(X, y), batch_size=32, num_workers=1)
+        # sample data
+        num_users, num_features, num_items = int(1e4), int(1e1), 10
+        X = torch.rand(num_users, num_features)
+        y = (torch.rand(num_users, num_items) > 0.5).to(torch.float32)
+
+        # pytorch loaders
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
         loaders = {"train": loader, "valid": loader}
 
-        model = torch.nn.Linear(num_features, n_classes)
-        criterion = torch.nn.CrossEntropyLoss()
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, num_items)
+        criterion = torch.nn.BCEWithLogitsLoss()
         optimizer = torch.optim.Adam(model.parameters())
-        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
-        runner = SupervisedRunner()
+        # model training
+        runner = dl.SupervisedRunner(
+            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+        )
         runner.train(
             model=model,
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
             loaders=loaders,
-            logdir="./logdir",
-            num_epochs=5,
-            verbose=False,
-            valid_metric="accuracy03",
-            minimize_metric=False,
+            num_epochs=3,
+            verbose=True,
             callbacks=[
-                AccuracyCallback(
-                    accuracy_args=[1, 3, 5]
+                dl.BatchTransformCallback(
+                    transform=torch.sigmoid,
+                    scope="on_batch_end",
+                    input_key="logits",
+                    output_key="scores"
                 ),
-                SchedulerCallback(reduced_metric="loss")
+                dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
+                dl.AUCCallback(input_key="scores", target_key="targets"),
+                dl.HitrateCallback(
+                    input_key="scores", target_key="targets", topk_args=(1, 3, 5)
+                ),
+                dl.MRRCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+                dl.MAPCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+                dl.NDCGCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
+                dl.OptimizerCallback(metric_key="loss"),
+                dl.SchedulerCallback(),
+                dl.CheckpointCallback(
+                    logdir="./logs", loader_key="valid", metric_key="loss", minimize=True
+                ),
             ]
         )
 
-    Config API usage example:
+    .. note::
+        Please follow the `minimal examples`_ sections for more use cases.
 
-    .. code-block:: yaml
-
-        stages:
-          ...
-          scheduler_params:
-            scheduler: MultiStepLR
-            milestones: [1]
-            gamma: 0.3
-          ...
-          stage_N:
-            ...
-            callbacks_params:
-              ...
-              scheduler:
-                callback: SchedulerCallback
-                # arguments for SchedulerCallback
-                reduced_metric: loss
-          ...
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(
