@@ -31,9 +31,9 @@ class CustomRunner(dl.IRunner):
             "tensorboard": dl.TensorboardLogger(logdir=self._logdir),
         }
         if SETTINGS.ml_required:
-            loggers["mlflow"]: dl.MLflowLogger(experiment=self._name)
+            loggers["mlflow"] = dl.MLflowLogger(experiment=self._name)
         if SETTINGS.wandb_required:
-            loggers["wandb"]: dl.WandbLogger(project="catalyst_test", config=self.hparams)
+            loggers["wandb"] = dl.WandbLogger(project="catalyst_test", config=self.hparams)
         return loggers
 
     @property
