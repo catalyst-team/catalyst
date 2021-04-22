@@ -30,7 +30,7 @@ class CustomRunner(dl.IRunner):
             "csv": dl.CSVLogger(logdir=self._logdir),
             "tensorboard": dl.TensorboardLogger(logdir=self._logdir),
         }
-        if SETTINGS.ml_required:
+        if SETTINGS.mlflow_required:
             loggers["mlflow"] = dl.MLflowLogger(experiment=self._name)
         if SETTINGS.wandb_required:
             loggers["wandb"] = dl.WandbLogger(project="catalyst_test", config=self.hparams)
