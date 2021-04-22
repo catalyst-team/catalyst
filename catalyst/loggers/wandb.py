@@ -119,14 +119,22 @@ class WandbLogger(ILogger):
             self._log_metrics(
                 metrics=metrics, step=global_batch_step, loader_key=loader_key, suffix="/batch"
             )
+        elif scope == "loader":
+            self._log_metrics(
+                metrics=metrics,
+                step=global_epoch_step,
+                loader_key=loader_key,
+                suffix="/epoch",
+            )
         elif scope == "epoch":
-            for loader_key, per_loader_metrics in metrics.items():
-                self._log_metrics(
-                    metrics=per_loader_metrics,
-                    step=global_epoch_step,
-                    loader_key=loader_key,
-                    suffix="/epoch",
-                )
+            loader_key = "_epoch_"
+            per_loader_metrics = metrics[loader_key]
+            self._log_metrics(
+                metrics=per_loader_metrics,
+                step=global_epoch_step,
+                loader_key=loader_key,
+                suffix="/epoch",
+            )
 
     def log_image(
         self,
@@ -166,7 +174,8 @@ class WandbLogger(ILogger):
         stage_key: str = None,
     ) -> None:
         """Logs hyperparameters to the logger."""
-        self.run.config.update(hparams)
+        pass
+        # self.run.config.update(hparams)
 
     def flush_log(self) -> None:
         """Flushes the logger."""
