@@ -121,10 +121,7 @@ class WandbLogger(ILogger):
             )
         elif scope == "loader":
             self._log_metrics(
-                metrics=metrics,
-                step=global_epoch_step,
-                loader_key=loader_key,
-                suffix="/epoch",
+                metrics=metrics, step=global_epoch_step, loader_key=loader_key, suffix="/epoch",
             )
         elif scope == "epoch":
             loader_key = "_epoch_"
