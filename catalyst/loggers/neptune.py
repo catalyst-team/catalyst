@@ -11,20 +11,43 @@ if SETTINGS.neptune_required:
 
 class NeptuneLogger(ILogger):
     def __init__(self, base_namespace=None, api_token=None, project=None, run=None, **neptune_run_kwargs):
-        if base_namespace is None:
-            self.base_namespace = 'catalyst_training'
-        else:
-            self.base_namespace = base_namespace
+        self.base_namespace = base_namespace
         self._api_token = api_token
         self._project = project
         self._neptune_run_kwargs = neptune_run_kwargs
         if run is None:
-            self.run = neptune.init(project=self._project, api_token=self._api_token, run=run,
+            self.run = neptune.init(project=self._project,
+                                    api_token=self._api_token,
                                     **self._neptune_run_kwargs)
+        else:
+            self.run = run
+
+    @staticmethod
+    def _prepare_metrics(metrics):
+        conflict_keys = []
+        _metrics = {k: v for k, v in metrics.items()}
+        for k, v in _metrics.items():
+            if k.endswith("/std"):
+                k_stripped = k[:-4]
+                k_val = k_stripped + "/val"
+                if k_val not in _metrics.keys():
+                    _metrics[k_val] = _metrics.pop(k_stripped)
+        for k in _metrics.keys():
+            for j in _metrics.keys():
+                if j.startswith(k) and j != k and k not in conflict_keys:
+                    conflict_keys.append(k)
+        for i in conflict_keys:
+            _metrics[i + "_val"] = _metrics.pop(i)
+        return _metrics
 
     def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
         for key, value in metrics.items():
-            self.run[f"{loader_key}/{key}/{suffix}"].log(value=float(value), step=step)
+            if self.base_namespace is not None:
+                self.run[f"{self.base_namespace}/{loader_key}/{suffix}/{key}"].log(value=float(value),
+                                                                                   step=step)
+            else:
+                self.run[f"{loader_key}/{suffix}/{key}"].log(value=float(value),
+                                                             step=step)
 
     def log_metrics(
         self,
@@ -48,25 +71,21 @@ class NeptuneLogger(ILogger):
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """Logs batch and epoch metrics to Neptune."""
+        """Logs batch, epoch and loader metrics to Neptune."""
         if scope == "batch":
-            # metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
                 metrics=metrics, step=global_sample_step, loader_key=loader_key, suffix="batch"
             )
         elif scope == "epoch":
-            self._log_metrics(
-                metrics=metrics, step=global_epoch_step, loader_key=loader_key, suffix="epoch",
-            )
-        # ToDo check below logic
+            for loader_key, per_loader_metrics in metrics.items():
+                _metrics = self._prepare_metrics(per_loader_metrics)
+                self._log_metrics(
+                    metrics=_metrics, step=global_epoch_step, loader_key=loader_key, suffix="epoch",
+                )
         elif scope == "loader":
-            loader_key = "_epoch_"
-            per_loader_metrics = metrics[loader_key]
+            _metrics = self._prepare_metrics(metrics)
             self._log_metrics(
-                metrics=per_loader_metrics,
-                step=global_epoch_step,
-                loader_key=loader_key,
-                suffix="loader",
+                metrics=_metrics, step=global_epoch_step, loader_key=loader_key, suffix="loader"
             )
 
     def log_image(
@@ -94,7 +113,14 @@ class NeptuneLogger(ILogger):
     ) -> None:
         """Logs image to Neptune for current scope on current step."""
         assert loader_key is not None
-        self.run[f"{loader_key}/{tag}/{scope}/epoch_{global_epoch_step}"].log(neptune.types.File.as_image(image))
+        if self.base_namespace is not None:
+            self.run[f"{self.base_namespace}/{loader_key}/{tag}/{scope}/epoch_{global_epoch_step}"].log(
+                neptune.types.File.as_image(image)
+            )
+        else:
+            self.run[f"{loader_key}/{tag}/{scope}/epoch_{global_epoch_step}"].log(
+                neptune.types.File.as_image(image)
+            )
 
     def log_hparams(
             self,
@@ -105,11 +131,14 @@ class NeptuneLogger(ILogger):
             stage_key: str = None,
     ) -> None:
         """Logs hyper-parameters to Neptune."""
-        self.run['hparams'] = hparams
+        if self.base_namespace is not None:
+            self.run[f"{self.base_namespace}/hparams"] = hparams
+        else:
+            self.run["hparams"] = hparams
 
     def flush_log(self) -> None:
         """Flushes the loggers."""
-        self.run.wait()
+        pass
 
     def close_log(self) -> None:
         """Closes the loggers."""
