@@ -114,11 +114,11 @@ class NeptuneLogger(ILogger):
         """Logs image to Neptune for current scope on current step."""
         assert loader_key is not None
         if self.base_namespace is not None:
-            self.run[f"{self.base_namespace}/{loader_key}/{tag}/{scope}/epoch_{global_epoch_step}"].log(
+            self.run[f"{self.base_namespace}/{loader_key}/{scope}/epoch_{global_epoch_step}/{tag}"].log(
                 neptune.types.File.as_image(image)
             )
         else:
-            self.run[f"{loader_key}/{tag}/{scope}/epoch_{global_epoch_step}"].log(
+            self.run[f"{loader_key}/{scope}/epoch_{global_epoch_step}/{tag}"].log(
                 neptune.types.File.as_image(image)
             )
 
