@@ -19,4 +19,3 @@ if SETTINGS.mlflow_required:
 
 if SETTINGS.wandb_required:
     __all__ += ["WandbLogger"]
-
