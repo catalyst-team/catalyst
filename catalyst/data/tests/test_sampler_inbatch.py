@@ -5,8 +5,6 @@ from random import randint
 
 import numpy as np
 import pytest
-from scipy.spatial.distance import squareform
-from scipy.special import binom
 import torch
 from torch import Tensor, tensor
 
@@ -17,7 +15,12 @@ from catalyst.data.sampler_inbatch import (
     TLabels,
 )
 from catalyst.data.tests.test_sampler import generate_valid_labels
+from catalyst.settings import SETTINGS
 from catalyst.utils.misc import find_value_ids
+
+if SETTINGS.ml_required:
+    from scipy.spatial.distance import squareform
+    from scipy.special import binom
 
 
 @pytest.fixture()
@@ -129,6 +132,7 @@ def check_triplets_are_hardest(
         assert torch.isclose(distmat[i_a, ids_neg_cur].min(), distmat[i_a, i_n])
 
 
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
 def test_all_triplets_sampler(features_and_labels) -> None:  # noqa: WPS442
     """
     Args:
@@ -147,6 +151,7 @@ def test_all_triplets_sampler(features_and_labels) -> None:  # noqa: WPS442
         check_triplets_consistency(ids_anchor=ids_a, ids_pos=ids_p, ids_neg=ids_n, labels=labels)
 
 
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
 def test_hard_sampler_from_features(features_and_labels) -> None:  # noqa: WPS442
     """
     Args:
@@ -162,6 +167,7 @@ def test_hard_sampler_from_features(features_and_labels) -> None:  # noqa: WPS44
         assert len(ids_a) == len(labels)
 
 
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
 def test_hard_sampler_from_dist(distmats_and_labels) -> None:  # noqa: WPS442
     """
     Args:
@@ -184,6 +190,7 @@ def test_hard_sampler_from_dist(distmats_and_labels) -> None:  # noqa: WPS442
         assert len(labels) == len(ids_a)
 
 
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
 def test_hard_sampler_manual() -> None:
     """
     Test on manual example.
@@ -209,6 +216,7 @@ def test_hard_sampler_manual() -> None:
     assert predict == gt
 
 
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
 @pytest.mark.parametrize(
     ["labels", "expected"],
     [
@@ -250,6 +258,7 @@ def test_cluster_get_labels_mask(labels: List[int], expected: torch.Tensor) -> N
     assert (labels_mask == expected).all()
 
 
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
 @pytest.mark.parametrize(
     ["features", "expected"],
     [
@@ -291,6 +300,7 @@ def test_cluster_count_intra_class_distances(
     assert (distances == expected).all()
 
 
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
 @pytest.mark.parametrize(
     ["mean_vectors", "expected"],
     [
@@ -325,6 +335,7 @@ def test_cluster_count_inter_class_distances(mean_vectors, expected) -> None:
     assert (distances == expected).all()
 
 
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
 @pytest.mark.parametrize(
     ["embed_dim", "labels", "expected_shape"],
     [
@@ -355,6 +366,7 @@ def test_cluster_sample_shapes(
     assert negative.shape == neg_shape
 
 
+@pytest.mark.skipif(not (SETTINGS.ml_required), reason="No scipy required")
 def test_triplet_cluster_edge_case() -> None:
     """
     Check an edge case of trivial samples for classes:

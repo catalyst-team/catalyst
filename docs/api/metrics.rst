@@ -19,31 +19,29 @@ Metric API
 IMetric
 ~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._metric.IMetric
-    :exclude-members: __init__
     :members:
-    :undoc-members:
+    :exclude-members: __init__
     :show-inheritance:
 
 ICallbackBatchMetric
 ~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._metric.ICallbackBatchMetric
-    :exclude-members: __init__
     :members:
-    :undoc-members:
+    :exclude-members: __init__
     :show-inheritance:
 
 ICallbackLoaderMetric
 ~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._metric.ICallbackLoaderMetric
+    :members:
     :exclude-members: __init__
-    :undoc-members:
     :show-inheritance:
 
 AccumulationMetric
 ~~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._metric.AccumulationMetric
+    :members:
     :exclude-members: __init__
-    :undoc-members:
     :show-inheritance:
 
 General Metrics
@@ -52,8 +50,8 @@ General Metrics
 AdditiveValueMetric
 ~~~~~~~~~~~~~~~~~~~~
 .. autoclass:: catalyst.metrics._additive.AdditiveValueMetric
+    :members:
     :exclude-members: __init__
-    :undoc-members:
     :show-inheritance:
 
 ConfusionMatrixMetric

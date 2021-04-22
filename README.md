@@ -115,7 +115,7 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 ```
 
 ### Step-by-step Guide
-1. Start with [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff) introduction. 
+1. Start with [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762) introduction. 
 1. Check the [minimal examples](#minimal-examples).
 1. Try [notebook tutorials with Google Colab](#notebooks).
 1. Read the [blog posts](#notable-blog-posts) with use-cases and guides.
@@ -408,8 +408,18 @@ runner.train(
     minimize_valid_metric=False,
     verbose=True,
     callbacks=[
-        dl.AUCCallback(input_key="logits", target_key="targets"),
-        dl.MultilabelAccuracyCallback(input_key="logits", target_key="targets", threshold=0.5)
+        dl.BatchTransformCallback(
+            transform=torch.sigmoid,
+            scope="on_batch_end",
+            input_key="logits",
+            output_key="scores"
+        ),
+        dl.AUCCallback(input_key="scores", target_key="targets"),
+        # uncomment for extra metrics:
+        # dl.MultilabelAccuracyCallback(input_key="scores", target_key="targets", threshold=0.5),
+        # dl.MultilabelPrecisionRecallF1SupportCallback(
+        #     input_key="scores", target_key="targets", threshold=0.5
+        # ),
     ]
 )
 ```
@@ -539,16 +549,10 @@ criterion = torch.nn.BCEWithLogitsLoss()
 optimizer = torch.optim.Adam(model.parameters())
 scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
-class CustomRunner(dl.Runner):
-    def handle_batch(self, batch):
-        x, y = batch
-        logits = self.model(x)
-        self.batch = {
-            "features": x, "logits": logits, "scores": torch.sigmoid(logits), "targets": y
-        }
-
 # model training
-runner = CustomRunner()
+runner = dl.SupervisedRunner(
+    input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+)
 runner.train(
     model=model,
     criterion=criterion,
@@ -558,6 +562,12 @@ runner.train(
     num_epochs=3,
     verbose=True,
     callbacks=[
+        dl.BatchTransformCallback(
+            transform=torch.sigmoid,
+            scope="on_batch_end",
+            input_key="logits",
+            output_key="scores"
+        ),
         dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
         # uncomment for extra metrics:
         # dl.AUCCallback(input_key="scores", target_key="targets"),
@@ -568,7 +578,7 @@ runner.train(
         dl.OptimizerCallback(metric_key="loss"),
         dl.SchedulerCallback(),
         dl.CheckpointCallback(
-            logdir="./logs", loader_key="valid", metric_key="map01", minimize=False
+            logdir="./logs", loader_key="valid", metric_key="loss", minimize=True
         ),
     ]
 )
@@ -1452,6 +1462,7 @@ best practices for your deep learning research and development.
 
 ### Documentation
 - [master](https://catalyst-team.github.io/catalyst/)
+- [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html)
 - [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html), [21.03.1/21.03.2](https://catalyst-team.github.io/catalyst/v21.03.1/index.html)
 - [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
 - [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
@@ -1470,8 +1481,7 @@ best practices for your deep learning research and development.
 - Catalyst with Google TPUs [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)
 
 ### Notable Blog Posts
-- [Catalyst 101 — Accelerated PyTorch](https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff)
-- [Catalyst 102 — The Core Trinity](https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&sk=2aff824412e2f653587a30cd853b030c)
+- [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762)
 - [BERT Distillation with Catalyst](https://medium.com/pytorch/bert-distillation-with-catalyst-c6f30c985854?source=friends_link&sk=1a28469ac8c0e6e6ad35bd26dfd95dd9)
 - [Metric Learning with Catalyst](https://medium.com/pytorch/metric-learning-with-catalyst-8c8337dfab1a?source=friends_link&sk=320b95f9b2a9074aab8d916ed78912d6)
 - [Pruning with Catalyst](https://medium.com/pytorch/pruning-with-catalyst-50e98f2cef2d?source=friends_link&sk=688e7a2c2e963c69c7e022e3204de5ef)

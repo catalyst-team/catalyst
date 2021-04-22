@@ -11,3 +11,12 @@ if SETTINGS.mlflow_required:
 
 if SETTINGS.wandb_required:
     from catalyst.loggers.wandb import WandbLogger
+__all__ = ["ConsoleLogger", "CSVLogger", "TensorboardLogger"]
+
+
+if SETTINGS.mlflow_required:
+    __all__ += ["MLflowLogger"]
+
+if SETTINGS.wandb_required:
+    __all__ += ["WandbLogger"]
+

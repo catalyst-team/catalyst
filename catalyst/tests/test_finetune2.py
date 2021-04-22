@@ -25,13 +25,16 @@ class CustomRunner(dl.IRunner):
         return self._engine or dl.DeviceEngine(self._device)
 
     def get_loggers(self):
-        return {
+        loggers = {
             "console": dl.ConsoleLogger(),
             "csv": dl.CSVLogger(logdir=self._logdir),
             "tensorboard": dl.TensorboardLogger(logdir=self._logdir),
-            "mlflow": dl.MLflowLogger(experiment=self._name),
-            "wandb": dl.WandbLogger(project="catalyst_test", config=self.hparams),
         }
+        if SETTINGS.ml_required:
+            loggers["mlflow"]: dl.MLflowLogger(experiment=self._name)
+        if SETTINGS.wandb_required:
+            loggers["wandb"]: dl.WandbLogger(project="catalyst_test", config=self.hparams)            
+        return loggers
 
     @property
     def stages(self):
@@ -79,7 +82,7 @@ class CustomRunner(dl.IRunner):
         return None
 
     def get_callbacks(self, stage: str):
-        return {
+        callbacks = {
             "criterion": dl.CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
@@ -95,13 +98,15 @@ class CustomRunner(dl.IRunner):
             "classification": dl.PrecisionRecallF1SupportCallback(
                 input_key="logits", target_key="targets", num_classes=10
             ),
-            "confusion_matrix": dl.ConfusionMatrixCallback(
-                input_key="logits", target_key="targets", num_classes=10
-            ),
             "checkpoint": dl.CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=3
             ),
         }
+        if SETTINGS.ml_required:
+            callbacks["confusion_matrix"] = dl.ConfusionMatrixCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            )
+        return callbacks
 
     def handle_batch(self, batch):
         x, y = batch

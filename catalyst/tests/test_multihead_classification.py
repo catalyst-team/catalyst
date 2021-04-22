@@ -57,6 +57,61 @@ def train_experiment(device, engine=None):
         optimizer = optim.Adam(model.parameters())
         scheduler = optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
+        callbacks = [
+            dl.CriterionCallback(metric_key="loss1", input_key="logits1", target_key="targets1"),
+            dl.CriterionCallback(metric_key="loss2", input_key="logits2", target_key="targets2"),
+            dl.MetricAggregationCallback(
+                metric_key="loss", metrics=["loss1", "loss2"], mode="mean"
+            ),
+            dl.OptimizerCallback(metric_key="loss"),
+            dl.SchedulerCallback(),
+            dl.AccuracyCallback(
+                input_key="logits1",
+                target_key="targets1",
+                num_classes=num_classes1,
+                prefix="one_",
+            ),
+            dl.AccuracyCallback(
+                input_key="logits2",
+                target_key="targets2",
+                num_classes=num_classes2,
+                prefix="two_",
+            ),
+            dl.CheckpointCallback(
+                "./logs/one",
+                loader_key="valid",
+                metric_key="one_accuracy",
+                minimize=False,
+                save_n_best=1,
+            ),
+            dl.CheckpointCallback(
+                "./logs/two",
+                loader_key="valid",
+                metric_key="two_accuracy03",
+                minimize=False,
+                save_n_best=3,
+            ),
+        ]
+        if SETTINGS.ml_required:
+            # catalyst[ml] required
+            callbacks.append(
+                dl.ConfusionMatrixCallback(
+                    input_key="logits1",
+                    target_key="targets1",
+                    num_classes=num_classes1,
+                    prefix="one_cm",
+                )
+            )
+            # catalyst[ml] required
+            callbacks.append(
+                dl.ConfusionMatrixCallback(
+                    input_key="logits2",
+                    target_key="targets2",
+                    num_classes=num_classes2,
+                    prefix="two_cm",
+                )
+            )
+
         # model training
         runner = CustomRunner()
         runner.train(
@@ -68,59 +123,7 @@ def train_experiment(device, engine=None):
             loaders=loaders,
             num_epochs=1,
             verbose=False,
-            callbacks=[
-                dl.CriterionCallback(
-                    metric_key="loss1", input_key="logits1", target_key="targets1"
-                ),
-                dl.CriterionCallback(
-                    metric_key="loss2", input_key="logits2", target_key="targets2"
-                ),
-                dl.MetricAggregationCallback(
-                    metric_key="loss", metrics=["loss1", "loss2"], mode="mean"
-                ),
-                dl.OptimizerCallback(metric_key="loss"),
-                dl.SchedulerCallback(),
-                dl.AccuracyCallback(
-                    input_key="logits1",
-                    target_key="targets1",
-                    num_classes=num_classes1,
-                    prefix="one_",
-                ),
-                dl.AccuracyCallback(
-                    input_key="logits2",
-                    target_key="targets2",
-                    num_classes=num_classes2,
-                    prefix="two_",
-                ),
-                dl.ConfusionMatrixCallback(
-                    input_key="logits1",
-                    target_key="targets1",
-                    num_classes=num_classes1,
-                    prefix="one_cm",
-                ),
-                # catalyst[ml] required
-                dl.ConfusionMatrixCallback(
-                    input_key="logits2",
-                    target_key="targets2",
-                    num_classes=num_classes2,
-                    prefix="two_cm",
-                ),
-                # catalyst[ml] required
-                dl.CheckpointCallback(
-                    "./logs/one",
-                    loader_key="valid",
-                    metric_key="one_accuracy",
-                    minimize=False,
-                    save_n_best=1,
-                ),
-                dl.CheckpointCallback(
-                    "./logs/two",
-                    loader_key="valid",
-                    metric_key="two_accuracy03",
-                    minimize=False,
-                    save_n_best=3,
-                ),
-            ],
+            callbacks=callbacks,
             loggers={"console": dl.ConsoleLogger(), "tb": dl.TensorboardLogger("./logs/tb")},
         )
 

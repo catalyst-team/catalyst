@@ -22,6 +22,16 @@ class AMPEngine(DeviceEngine):
 
         from catalyst import dl
 
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.AMPEngine("cuda:1"),
+            ...
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
@@ -84,6 +94,16 @@ class DataParallelAMPEngine(AMPEngine):
             https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler
 
     Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.DataParallelAMPEngine(),
+            ...
+        )
 
     .. code-block:: python
 
@@ -167,6 +187,16 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
             https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler
 
     Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.DistributedDataParallelAMPEngine(),
+            ...
+        )
 
     .. code-block:: python
 

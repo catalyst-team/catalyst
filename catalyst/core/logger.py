@@ -4,7 +4,14 @@ import numpy as np
 
 
 class ILogger:
-    """An abstraction that syncs experiment run with monitoring tools."""
+    """An abstraction that syncs experiment run with monitoring tools.
+
+    Abstraction, please check out implementations for more details:
+
+        - :py:mod:`catalyst.loggers.console.ConsoleLogger`
+        - :py:mod:`catalyst.loggers.tensorboard.TensorboardLogger`
+        - :py:mod:`catalyst.loggers.mlflow.MLflowLogger`
+    """
 
     def log_metrics(
         self,

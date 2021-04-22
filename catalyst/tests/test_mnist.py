@@ -36,10 +36,19 @@ def train_experiment(device, engine=None):
             dl.PrecisionRecallF1SupportCallback(
                 input_key="logits", target_key="targets", num_classes=10
             ),
-            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
         ]
-        if engine is None or not isinstance(
-            engine, (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine)
+        if SETTINGS.ml_required:
+            callbacks.append(
+                dl.ConfusionMatrixCallback(
+                    input_key="logits", target_key="targets", num_classes=10
+                )
+            )
+        if SETTINGS.amp_required and (
+            engine is None
+            or not isinstance(
+                engine,
+                (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine),
+            )
         ):
             callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
         if SETTINGS.onnx_required:
