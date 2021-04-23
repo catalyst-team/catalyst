@@ -29,20 +29,31 @@ def recall(
         Tensor: recall for every class
 
     Examples:
-        >>> recall(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
-        >>>     ]),
-        >>>     targets=torch.tensor([0, 1, 2]),
-        >>> )
-        tensor([1., 1., 1.])
-        >>> precision_recall_fbeta_support(
-        >>>     outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),
-        >>>     targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),
-        >>> )
-        tensor([0.5000, 0.5000])
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.recall(
+            outputs=torch.tensor([
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+            ]),
+            targets=torch.tensor([0, 1, 2]),
+        )
+        # tensor([1., 1., 1.])
+
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.recall(
+            outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),
+            targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),
+        )
+        # tensor([0.5000, 0.5000]
     """
     _, recall_score, _, _ = precision_recall_fbeta_support(
         outputs=outputs, targets=targets, argmax_dim=argmax_dim, eps=eps, num_classes=num_classes,
