@@ -399,32 +399,42 @@
 <span class="sd">        tuple of precision_val, recall, fbeta_score</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; precision_recall_fbeta_support(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([0, 1, 2]),</span>
-<span class="sd">        &gt;&gt;&gt;     beta=1,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        (</span>
-<span class="sd">            tensor([1., 1., 1.]),  # precision_val per class</span>
-<span class="sd">            tensor([1., 1., 1.]),  # recall per class</span>
-<span class="sd">            tensor([1., 1., 1.]),  # fbeta per class</span>
-<span class="sd">            tensor([1., 1., 1.]),  # support per class</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.precision_recall_fbeta_support(</span>
+<span class="sd">            outputs=torch.tensor([</span>
+<span class="sd">                [1, 0, 0],</span>
+<span class="sd">                [0, 1, 0],</span>
+<span class="sd">                [0, 0, 1],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([0, 1, 2]),</span>
+<span class="sd">            beta=1,</span>
 <span class="sd">        )</span>
-<span class="sd">        &gt;&gt;&gt; precision_recall_fbeta_support(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),</span>
-<span class="sd">        &gt;&gt;&gt;     beta=1,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        (</span>
-<span class="sd">            tensor([0.5000, 0.5000]),  # precision per class</span>
-<span class="sd">            tensor([0.5000, 0.5000]),  # recall per class</span>
-<span class="sd">            tensor([0.5000, 0.5000]),  # fbeta per class</span>
-<span class="sd">            tensor([4., 4.]),          # support per class</span>
+<span class="sd">        # (</span>
+<span class="sd">        #     tensor([1., 1., 1.]),  # per class precision</span>
+<span class="sd">        #     tensor([1., 1., 1.]),  # per class recall</span>
+<span class="sd">        #     tensor([1., 1., 1.]),  # per class fbeta</span>
+<span class="sd">        #     tensor([1., 1., 1.]),  # per class support</span>
+<span class="sd">        # )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.precision_recall_fbeta_support(</span>
+<span class="sd">            outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),</span>
+<span class="sd">            targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),</span>
+<span class="sd">            beta=1,</span>
 <span class="sd">        )</span>
+<span class="sd">        # (</span>
+<span class="sd">        #     tensor([0.5000, 0.5000]),  # per class precision</span>
+<span class="sd">        #     tensor([0.5000, 0.5000]),  # per class recall</span>
+<span class="sd">        #     tensor([0.5000, 0.5000]),  # per class fbeta</span>
+<span class="sd">        #     tensor([4., 4.]),          # per class support</span>
+<span class="sd">        # )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_multiclass_statistics</span><span class="p">(</span>
         <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">argmax_dim</span><span class="o">=</span><span class="n">argmax_dim</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>

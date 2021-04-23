@@ -330,6 +330,42 @@
 <span class="sd">    .. warning::</span>
 
 <span class="sd">        This metric is under API improvement.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.binary_auc(</span>
+<span class="sd">            scores=torch.tensor([</span>
+<span class="sd">                0.9,</span>
+<span class="sd">                0.8,</span>
+<span class="sd">                0.7,</span>
+<span class="sd">                0.6,</span>
+<span class="sd">                0.5,</span>
+<span class="sd">                0.4,</span>
+<span class="sd">                0.3,</span>
+<span class="sd">                0.2,</span>
+<span class="sd">                0.1,</span>
+<span class="sd">                0.0,</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([</span>
+<span class="sd">                0,</span>
+<span class="sd">                1,</span>
+<span class="sd">                1,</span>
+<span class="sd">                1,</span>
+<span class="sd">                1,</span>
+<span class="sd">                1,</span>
+<span class="sd">                1,</span>
+<span class="sd">                0,</span>
+<span class="sd">                0,</span>
+<span class="sd">                0,</span>
+<span class="sd">            ]),</span>
+<span class="sd">        )</span>
+<span class="sd">        # 0.7500,</span>
+<span class="sd">        # [0.  , 0.  , 0.16, 0.33, 0.5 , 0.66, 0.83, 0.83, 1. , 1.  , 1.  ],</span>
+<span class="sd">        # [0.  , 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.5, 0.75, 1.  ]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">targets</span> <span class="o">=</span> <span class="n">targets</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
 
@@ -379,45 +415,54 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        torch.Tensor: Tensor with [num_classes] shape of per-class-aucs</span>
 
-<span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; auc(</span>
-<span class="sd">        &gt;&gt;&gt;     scores=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [0.9, 0.1],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.1, 0.9],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([1., 1.])</span>
-<span class="sd">        &gt;&gt;&gt; auc(</span>
-<span class="sd">        &gt;&gt;&gt;     scores=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [0.9],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.8],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.7],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.6],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.5],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.4],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.3],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.2],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.1],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [0],</span>
-<span class="sd">        &gt;&gt;&gt;         [1],</span>
-<span class="sd">        &gt;&gt;&gt;         [1],</span>
-<span class="sd">        &gt;&gt;&gt;         [1],</span>
-<span class="sd">        &gt;&gt;&gt;         [1],</span>
-<span class="sd">        &gt;&gt;&gt;         [1],</span>
-<span class="sd">        &gt;&gt;&gt;         [1],</span>
-<span class="sd">        &gt;&gt;&gt;         [0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([0.7500])</span>
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.auc(</span>
+<span class="sd">            scores=torch.tensor([</span>
+<span class="sd">                [0.9, 0.1],</span>
+<span class="sd">                [0.1, 0.9],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([</span>
+<span class="sd">                [1, 0],</span>
+<span class="sd">                [0, 1],</span>
+<span class="sd">            ]),</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([1., 1.])</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.auc(</span>
+<span class="sd">            scores=torch.tensor([</span>
+<span class="sd">                [0.9],</span>
+<span class="sd">                [0.8],</span>
+<span class="sd">                [0.7],</span>
+<span class="sd">                [0.6],</span>
+<span class="sd">                [0.5],</span>
+<span class="sd">                [0.4],</span>
+<span class="sd">                [0.3],</span>
+<span class="sd">                [0.2],</span>
+<span class="sd">                [0.1],</span>
+<span class="sd">                [0.0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([</span>
+<span class="sd">                [0],</span>
+<span class="sd">                [1],</span>
+<span class="sd">                [1],</span>
+<span class="sd">                [1],</span>
+<span class="sd">                [1],</span>
+<span class="sd">                [1],</span>
+<span class="sd">                [1],</span>
+<span class="sd">                [0],</span>
+<span class="sd">                [0],</span>
+<span class="sd">                [0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([0.7500])</span>
 
 <span class="sd">    .. warning::</span>
 

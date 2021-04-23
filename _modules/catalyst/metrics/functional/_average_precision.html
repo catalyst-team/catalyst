@@ -320,7 +320,7 @@
 <div class="viewcode-block" id="binary_average_precision"><a class="viewcode-back" href="../../../../api/metrics.html#catalyst.metrics.functional._average_precision.binary_average_precision">[docs]</a><span class="k">def</span> <span class="nf">binary_average_precision</span><span class="p">(</span>
     <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">weights</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Computes the average precision.</span>
+    <span class="sd">&quot;&quot;&quot;Computes the binary average precision.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        outputs: NxK tensor that for each of the N examples</span>
@@ -333,15 +333,19 @@
 <span class="sd">        weights: importance for each sample</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        torch.Tensor: tensor of [K; ] shape,</span>
-<span class="sd">        with average precision for K classes</span>
+<span class="sd">        torch.Tensor: tensor of [K; ] shape, with average precision for K classes</span>
 
-<span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; binary_average_precision(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.Tensor([0.1, 0.4, 0.35, 0.8]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.Tensor([0, 0, 1, 1]),</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([0.8333])</span>
+<span class="sd">    Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.binary_average_precision(</span>
+<span class="sd">            outputs=torch.Tensor([0.1, 0.4, 0.35, 0.8]),</span>
+<span class="sd">            targets=torch.Tensor([0, 0, 1, 1]),</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([0.8333])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># outputs - [bs; num_classes] with scores</span>
     <span class="c1"># targets - [bs; num_classes] with binary labels</span>
@@ -421,18 +425,24 @@
 <span class="sd">            The map score for each batch.</span>
 <span class="sd">            size: [batch_size, 1]</span>
 
-<span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; average_precision(</span>
-<span class="sd">        &gt;&gt;&gt;   outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;   ]),</span>
-<span class="sd">        &gt;&gt;&gt;   targets=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;     [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],</span>
-<span class="sd">        &gt;&gt;&gt;     [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],</span>
-<span class="sd">        &gt;&gt;&gt;   ]),</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([0.6222, 0.4429])</span>
+<span class="sd">    Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.average_precision(</span>
+<span class="sd">            outputs=torch.tensor([</span>
+<span class="sd">                [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
+<span class="sd">                [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([</span>
+<span class="sd">                [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],</span>
+<span class="sd">                [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            k=10,</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([0.6222, 0.4429])</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">targets_sort_by_outputs</span> <span class="o">=</span> <span class="n">process_recsys_components</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span>
     <span class="n">precisions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">targets_sort_by_outputs</span><span class="p">)</span>
@@ -471,28 +481,31 @@
 <span class="sd">            1 means the item is relevant and 0 not relevant</span>
 <span class="sd">            size: [batch_szie, slate_length]</span>
 <span class="sd">            ground truth, labels</span>
-<span class="sd">        topk (List[int]):</span>
-<span class="sd">            List of parameter for evaluation</span>
-<span class="sd">            topK items</span>
+<span class="sd">        topk (List[int]): List of parameter for evaluation topK items</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        map_at_k (Tuple[float]):</span>
 <span class="sd">        The map score for every k.</span>
 <span class="sd">        size: len(top_k)</span>
 
-<span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; mean_average_precision(</span>
-<span class="sd">        &gt;&gt;&gt;   outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;   ]),</span>
-<span class="sd">        &gt;&gt;&gt;   targets=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;     [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],</span>
-<span class="sd">        &gt;&gt;&gt;     [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],</span>
-<span class="sd">        &gt;&gt;&gt;   ]),</span>
-<span class="sd">        &gt;&gt;&gt;   topk=[10],</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        [tensor(0.5325)]</span>
+<span class="sd">    Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.mean_average_precision(</span>
+<span class="sd">            outputs=torch.tensor([</span>
+<span class="sd">                [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
+<span class="sd">                [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([</span>
+<span class="sd">                [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],</span>
+<span class="sd">                [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            topk=[1, 3, 5, 10],</span>
+<span class="sd">        )</span>
+<span class="sd">        # [tensor(0.5000), tensor(0.6667), tensor(0.6417), tensor(0.5325)]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">topk</span><span class="p">:</span>

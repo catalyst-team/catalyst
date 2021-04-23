@@ -323,6 +323,30 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        cmc score</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.cmc_score_count(</span>
+<span class="sd">            distances=torch.tensor([[1, 2], [2, 1]]),</span>
+<span class="sd">            conformity_matrix=torch.tensor([[0, 1], [1, 0]]),</span>
+<span class="sd">            topk=1,</span>
+<span class="sd">        )</span>
+<span class="sd">        # 0.0</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.cmc_score_count(</span>
+<span class="sd">            distances=torch.tensor([[1, 0.5, 0.2], [2, 3, 4], [0.4, 3, 4]]),</span>
+<span class="sd">            conformity_matrix=torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),</span>
+<span class="sd">            topk=2,</span>
+<span class="sd">        )</span>
+<span class="sd">        # 0.33</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">perm_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
     <span class="n">position_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">perm_matrix</span><span class="p">)</span>
@@ -354,6 +378,29 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        cmc score</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.cmc_score(</span>
+<span class="sd">            query_embeddings=torch.tensor([</span>
+<span class="sd">                [1, 1, 0, 0], [1, 0, 0, 0], [0, 1, 1, 1], [0, 0, 1, 1],</span>
+<span class="sd">            ]).float(),</span>
+<span class="sd">            gallery_embeddings=torch.tensor([</span>
+<span class="sd">                [1, 1, 1, 0], [1, 1, 1, 1], [0, 1, 1, 0],</span>
+<span class="sd">            ]).float(),</span>
+<span class="sd">            conformity_matrix=torch.tensor([</span>
+<span class="sd">                [True, False, False],</span>
+<span class="sd">                [True, False, False],</span>
+<span class="sd">                [False, True, True],</span>
+<span class="sd">                [False, True, True],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            topk=1,</span>
+<span class="sd">        )</span>
+<span class="sd">        # 1.0</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">distances</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cdist</span><span class="p">(</span><span class="n">query_embeddings</span><span class="p">,</span> <span class="n">gallery_embeddings</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">cmc_score_count</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">conformity_matrix</span><span class="p">,</span> <span class="n">topk</span><span class="p">)</span></div>
@@ -385,6 +432,35 @@
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: if there are items that have different labels and are</span>
 <span class="sd">            unavailable for each other according to availability matrix</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.masked_cmc_score(</span>
+<span class="sd">            query_embeddings=torch.tensor([</span>
+<span class="sd">                [1, 1, 0, 0], [1, 0, 0, 0], [0, 1, 1, 1], [0, 0, 1, 1],</span>
+<span class="sd">            ]).float(),</span>
+<span class="sd">            gallery_embeddings=torch.tensor([</span>
+<span class="sd">                [1, 1, 1, 0], [1, 1, 1, 1], [0, 1, 1, 0],</span>
+<span class="sd">            ]).float(),</span>
+<span class="sd">            conformity_matrix=torch.tensor([</span>
+<span class="sd">                [True, False, False],</span>
+<span class="sd">                [True, False, False],</span>
+<span class="sd">                [False, True, True],</span>
+<span class="sd">                [False, True, True],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            available_samples=torch.tensor([</span>
+<span class="sd">                [False, True, True],</span>
+<span class="sd">                [True, True, True],</span>
+<span class="sd">                [True, False, True],</span>
+<span class="sd">                [True, True, True],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            topk=1,</span>
+<span class="sd">        )</span>
+<span class="sd">        # 0.75</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">available_samples</span><span class="p">[</span><span class="n">conformity_matrix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>

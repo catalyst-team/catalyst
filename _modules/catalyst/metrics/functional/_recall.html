@@ -338,20 +338,31 @@
 <span class="sd">        Tensor: recall for every class</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; recall(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([0, 1, 2]),</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([1., 1., 1.])</span>
-<span class="sd">        &gt;&gt;&gt; precision_recall_fbeta_support(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([0.5000, 0.5000])</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.recall(</span>
+<span class="sd">            outputs=torch.tensor([</span>
+<span class="sd">                [1, 0, 0],</span>
+<span class="sd">                [0, 1, 0],</span>
+<span class="sd">                [0, 0, 1],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([0, 1, 2]),</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([1., 1., 1.])</span>
+
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.recall(</span>
+<span class="sd">            outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),</span>
+<span class="sd">            targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([0.5000, 0.5000]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">_</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">precision_recall_fbeta_support</span><span class="p">(</span>
         <span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">argmax_dim</span><span class="o">=</span><span class="n">argmax_dim</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">,</span> <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span>

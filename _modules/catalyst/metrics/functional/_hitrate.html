@@ -357,6 +357,19 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        hitrate_at_k (List[torch.Tensor]): the hitrate score</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.hitrate(</span>
+<span class="sd">            outputs=torch.Tensor([[4.0, 2.0, 3.0, 1.0], [1.0, 2.0, 3.0, 4.0]]),</span>
+<span class="sd">            targets=torch.Tensor([[0, 0, 1.0, 1.0], [0, 0, 0.0, 0.0]]),</span>
+<span class="sd">            topk=[1, 2, 3, 4],</span>
+<span class="sd">        )</span>
+<span class="sd">        # [tensor(0.), tensor(0.2500), tensor(0.2500), tensor(0.5000)]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
 

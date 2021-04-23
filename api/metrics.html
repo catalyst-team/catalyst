@@ -2071,45 +2071,59 @@ with shape [bs; 1]</p></li>
 <dd class="field-even"><p>list with computed <a class="reference external" href="mailto:accuracy&#37;&#52;&#48;topk">accuracy<span>&#64;</span>topk</a></p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">[tensor([1.])]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">[tensor([0.6667])]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">[tensor([1.]), tensor([1.])]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">accuracy</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">[tensor([0.6667]), tensor([1.])]</span>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1"># [tensor([1.])]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1"># [tensor([0.6667])]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="c1"># [tensor([1.]), tensor([1.])]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">accuracy</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="c1"># [tensor([0.6667]), tensor([1.])]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2135,43 +2149,53 @@ associated with classes 2 and 4)</p></li>
 <dd class="field-even"><p>computed multilabel accuracy</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">multilabel_accuracy</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([1.])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">multilabel_accuracy</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor(0.7500)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">multilabel_accuracy</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor(1.0)</span>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">multilabel_accuracy</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># tensor([1.])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">multilabel_accuracy</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># tensor(0.7500)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">multilabel_accuracy</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># tensor(1.0)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2202,6 +2226,40 @@ true positive rate, false positive rate</p>
 <p class="admonition-title">Warning</p>
 <p>This metric is under API improvement.</p>
 </div>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">binary_auc</span><span class="p">(</span>
+    <span class="n">scores</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="mf">0.9</span><span class="p">,</span>
+        <span class="mf">0.8</span><span class="p">,</span>
+        <span class="mf">0.7</span><span class="p">,</span>
+        <span class="mf">0.6</span><span class="p">,</span>
+        <span class="mf">0.5</span><span class="p">,</span>
+        <span class="mf">0.4</span><span class="p">,</span>
+        <span class="mf">0.3</span><span class="p">,</span>
+        <span class="mf">0.2</span><span class="p">,</span>
+        <span class="mf">0.1</span><span class="p">,</span>
+        <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="mi">1</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span>
+    <span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1"># 0.7500,</span>
+<span class="c1"># [0.  , 0.  , 0.16, 0.33, 0.5 , 0.66, 0.83, 0.83, 1. , 1.  , 1.  ],</span>
+<span class="c1"># [0.  , 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.5, 0.75, 1.  ]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -2227,45 +2285,50 @@ associated with classes 2 and 4)</p></li>
 <dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">auc</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">scores</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([1., 1.])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">auc</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">scores</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.9</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.8</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.7</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.6</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.4</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.3</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([0.7500])</span>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">auc</span><span class="p">(</span>
+    <span class="n">scores</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1"># tensor([1., 1.])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">auc</span><span class="p">(</span>
+    <span class="n">scores</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">0.9</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.8</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.7</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.6</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.5</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.4</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.3</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.2</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1"># tensor([0.7500])</span>
 </pre></div>
 </div>
 <div class="admonition warning">
@@ -2280,7 +2343,7 @@ associated with classes 2 and 4)</p></li>
 <dl class="function">
 <dt id="catalyst.metrics.functional._average_precision.binary_average_precision">
 <code class="sig-prename descclassname">catalyst.metrics.functional._average_precision.</code><code class="sig-name descname">binary_average_precision</code><span class="sig-paren">(</span><em class="sig-param">outputs: torch.Tensor</em>, <em class="sig-param">targets: torch.Tensor</em>, <em class="sig-param">weights: Optional[torch.Tensor] = None</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/metrics/functional/_average_precision.html#binary_average_precision"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics.functional._average_precision.binary_average_precision" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the average precision.</p>
+<dd><p>Computes the binary average precision.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -2295,19 +2358,20 @@ associated with classes 2 and 4)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>tensor of [K; ] shape,
-with average precision for K classes</p>
+<dd class="field-even"><p>tensor of [K; ] shape, with average precision for K classes</p>
 </dd>
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p>torch.Tensor</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">binary_average_precision</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([0.8333])</span>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">binary_average_precision</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1"># tensor([0.8333])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2329,8 +2393,7 @@ model outputs, logits</p></li>
 1 means the item is relevant and 0 not relevant
 size: [batch_szie, slate_length]
 ground truth, labels</p></li>
-<li><p><strong>topk</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – List of parameter for evaluation
-topK items</p></li>
+<li><p><strong>topk</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – List of parameter for evaluation topK items</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2341,19 +2404,21 @@ size: len(top_k)</p>
 <dd class="field-odd"><p>map_at_k (Tuple[float])</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mean_average_precision</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>  <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>  <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>  <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>  <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>  <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">[tensor(0.5325)]</span>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">mean_average_precision</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="c1"># [tensor(0.5000), tensor(0.6667), tensor(0.6417), tensor(0.5325)]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2397,18 +2462,21 @@ size: [batch_size, 1]</p>
 <dd class="field-odd"><p>ap_score (torch.Tensor)</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">average_precision</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>  <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>  <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>  <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>  <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([0.6222, 0.4429])</span>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">average_precision</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># tensor([0.6222, 0.4429])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2456,33 +2524,39 @@ used for precision_val and recall computation</p></li>
 <dd class="field-even"><p>tuple of precision_val, recall, fbeta_score</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">precision_recall_fbeta_support</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">beta</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">(</span>
-<span class="go">    tensor([1., 1., 1.]),  # precision_val per class</span>
-<span class="go">    tensor([1., 1., 1.]),  # recall per class</span>
-<span class="go">    tensor([1., 1., 1.]),  # fbeta per class</span>
-<span class="go">    tensor([1., 1., 1.]),  # support per class</span>
-<span class="go">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">precision_recall_fbeta_support</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">beta</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">(</span>
-<span class="go">    tensor([0.5000, 0.5000]),  # precision per class</span>
-<span class="go">    tensor([0.5000, 0.5000]),  # recall per class</span>
-<span class="go">    tensor([0.5000, 0.5000]),  # fbeta per class</span>
-<span class="go">    tensor([4., 4.]),          # support per class</span>
-<span class="go">)</span>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">precision_recall_fbeta_support</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+    <span class="n">beta</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     tensor([1., 1., 1.]),  # per class precision</span>
+<span class="c1">#     tensor([1., 1., 1.]),  # per class recall</span>
+<span class="c1">#     tensor([1., 1., 1.]),  # per class fbeta</span>
+<span class="c1">#     tensor([1., 1., 1.]),  # per class support</span>
+<span class="c1"># )</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">precision_recall_fbeta_support</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+    <span class="n">beta</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     tensor([0.5000, 0.5000]),  # per class precision</span>
+<span class="c1">#     tensor([0.5000, 0.5000]),  # per class recall</span>
+<span class="c1">#     tensor([0.5000, 0.5000]),  # per class fbeta</span>
+<span class="c1">#     tensor([4., 4.]),          # per class support</span>
+<span class="c1"># )</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2592,6 +2666,27 @@ used for precision and recall computation</p></li>
 <dd class="field-even"><p>cmc score</p>
 </dd>
 </dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">cmc_score_count</span><span class="p">(</span>
+    <span class="n">distances</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+    <span class="n">conformity_matrix</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># 0.0</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">cmc_score_count</span><span class="p">(</span>
+    <span class="n">distances</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]]),</span>
+    <span class="n">conformity_matrix</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># 0.33</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -2613,6 +2708,27 @@ embeddings of the objects in gallery</p></li>
 <dd class="field-even"><p>cmc score</p>
 </dd>
 </dl>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">cmc_score</span><span class="p">(</span>
+    <span class="n">query_embeddings</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">])</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span>
+    <span class="n">gallery_embeddings</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">])</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span>
+    <span class="n">conformity_matrix</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+        <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+        <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># 1.0</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -2641,6 +2757,33 @@ should be used while scoring i-th query one</p></li>
     unavailable for each other according to availability matrix</p>
 </dd>
 </dl>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">masked_cmc_score</span><span class="p">(</span>
+    <span class="n">query_embeddings</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">])</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span>
+    <span class="n">gallery_embeddings</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">])</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span>
+    <span class="n">conformity_matrix</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+        <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">],</span>
+        <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">available_samples</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+        <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># 0.75</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -2668,6 +2811,20 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 <dd class="field-odd"><p>float</p>
 </dd>
 </dl>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">f1_score</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1"># tensor([1., 1., 1.]),  # per class fbeta</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="function">
@@ -2690,12 +2847,27 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 <dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">beta</span></code> is a negative number.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>F_1 score.</p>
+<dd class="field-odd"><p>F_beta score.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>float</p>
 </dd>
 </dl>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">fbeta_score</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+    <span class="n">beta</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># tensor([1., 1., 1.]),  # per class fbeta</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -2802,6 +2974,17 @@ should be one of 0 or 1</p></li>
 <dd class="field-odd"><p>hitrate_at_k (List[torch.Tensor])</p>
 </dd>
 </dl>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">hitrate</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]]),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="c1"># [tensor(0.), tensor(0.2500), tensor(0.2500), tensor(0.5000)]</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -2831,31 +3014,37 @@ ground truth, labels</p></li>
 <dd class="field-even"><p>MRR score</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">reciprocal_rank</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([[0.], [1.]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">reciprocal_rank</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([[0.5000], [1.0000]])</span>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">reciprocal_rank</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># tensor([[0.], [1.]])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">reciprocal_rank</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># tensor([[0.5000], [1.0000]])</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2888,19 +3077,21 @@ ground truth, labels</p></li>
 <dd class="field-even"><p>MRR score</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mrr</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">[tensor(0.5000), tensor(0.7500)]</span>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">mrr</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+<span class="p">)</span>
+<span class="c1"># [tensor(0.5000), tensor(0.7500)]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -2943,47 +3134,57 @@ to emphasize on retrieving the relevant documents.</p></li>
 <dd class="field-even"><p><strong>ValueError</strong> – gain function can be either <cite>pow_rank</cite> or <cite>rank</cite></p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;linear_rank&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([[2.0000, 2.0000, 0.6309, 0.0000]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;linear_rank&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-<span class="go">tensor(4.6309)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([[3.0000, 1.8928, 0.5000, 0.0000]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dcg</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-<span class="go">tensor(5.3928)</span>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">dcg</span><span class="p">(</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;linear_rank&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># tensor([[2.0000, 2.0000, 0.6309, 0.0000]])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">dcg</span><span class="p">(</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;linear_rank&quot;</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="c1"># tensor(4.6309)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">dcg</span><span class="p">(</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># tensor([[3.0000, 1.8928, 0.5000, 0.0000]])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">dcg</span><span class="p">(</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
+<span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<span class="c1"># tensor(5.3928)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3015,33 +3216,39 @@ to emphasize on retrieving the relevant documents.</p></li>
 <dd class="field-odd"><p>results (Tuple[float])</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ndcg</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">[tensor(0.6131)]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ndcg</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">[tensor(0.5000)]</span>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">ndcg</span><span class="p">(</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># [tensor(0.6131)]</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">ndcg</span><span class="p">(</span>
+    <span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">topk</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="n">gain_function</span><span class="o">=</span><span class="s2">&quot;exp_rank&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># [tensor(0.5000)]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3073,22 +3280,27 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 <dd class="field-odd"><p>Tensor</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">precision</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">beta</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([1., 1., 1.])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">precision</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([0.5000, 0.5000]</span>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">precision</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1"># tensor([1., 1., 1.])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">precision</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+<span class="p">)</span>
+<span class="c1"># tensor([0.5000, 0.5000]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3120,21 +3332,27 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 <dd class="field-odd"><p>Tensor</p>
 </dd>
 </dl>
-<p class="rubric">Examples</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">recall</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([1., 1., 1.])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">precision_recall_fbeta_support</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([0.5000, 0.5000])</span>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">recall</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+        <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="p">]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span>
+<span class="p">)</span>
+<span class="c1"># tensor([1., 1., 1.])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">metrics</span><span class="o">.</span><span class="n">recall</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+<span class="p">)</span>
+<span class="c1"># tensor([0.5000, 0.5000]</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3173,28 +3391,50 @@ calculated separately for all classes</p></li>
 <dd class="field-even"><p>IoU (Jaccard) score for each class(if mode=’weighted’) or aggregated IOU</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="mi">4</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">half_size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">empty</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top_left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">full</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">iou</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;per-class&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])</span>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">size</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">half_size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+<span class="n">empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">right</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">top_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">top_left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">empty</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top_left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">full</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">iou</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;per-class&quot;</span>
+<span class="p">)</span>
+<span class="c1"># tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">iou</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span>
+<span class="p">)</span>
+<span class="c1"># tensor(0.5833)</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">iou</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;micro&quot;</span>
+<span class="p">)</span>
+<span class="c1"># tensor(0.4375)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3231,28 +3471,50 @@ calculated separately for all classes</p></li>
 <dd class="field-even"><p>Dice score for each class(if mode=’weighted’) or aggregated Dice</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="mi">4</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">half_size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">empty</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top_left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">full</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dice</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>     <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>     <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>     <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>     <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>     <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;per-class&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.6667])</span>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">size</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">half_size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+<span class="n">empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">right</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">top_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">top_left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">empty</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top_left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">full</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">dice</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;per-class&quot;</span>
+<span class="p">)</span>
+<span class="c1"># tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.6667])</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">dice</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span>
+<span class="p">)</span>
+<span class="c1"># tensor(0.6111)</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">dice</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;micro&quot;</span>
+<span class="p">)</span>
+<span class="c1"># tensor(0.6087)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3292,29 +3554,53 @@ calculated separately for all classes</p></li>
 <dd class="field-even"><p>Trevsky score for each class(if mode=’weighted’) or aggregated score</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="mi">4</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">half_size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">empty</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top_left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">full</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">trevsky</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;per-class&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.8333])</span>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">size</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">half_size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+<span class="n">empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">right</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">top_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">top_left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">empty</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top_left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">full</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">trevsky</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;per-class&quot;</span>
+<span class="p">)</span>
+<span class="c1"># tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.8333])</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">trevsky</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;macro&quot;</span>
+<span class="p">)</span>
+<span class="c1"># tensor(0.6389)</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">trevsky</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;micro&quot;</span>
+<span class="p">)</span>
+<span class="c1"># tensor(0.7000)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3341,29 +3627,35 @@ classes are associated with the N-th input</p></li>
 <dd class="field-even"><p>Segmentation stats</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">size</span> <span class="o">=</span> <span class="mi">4</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">half_size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">right</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">top_left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">empty</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top_left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">full</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">get_segmentation_statistics</span><span class="p">(</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span>    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
-<span class="go">(tensor([ 0.,  0.,  0., 16.,  8.,  4.]),</span>
-<span class="go">tensor([0., 8., 0., 0., 0., 0.]),</span>
-<span class="go">tensor([16.,  8.,  0.,  0.,  0.,  4.]))</span>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">size</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">half_size</span> <span class="o">=</span> <span class="n">size</span> <span class="o">//</span> <span class="mi">2</span>
+<span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+<span class="n">empty</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">full</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="n">half_size</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">right</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">right</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">top_left</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">top_left</span><span class="p">[:,</span> <span class="p">:,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">,</span> <span class="p">:</span><span class="n">half_size</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">empty</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">top_left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">full</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">empty</span><span class="p">,</span> <span class="n">full</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">left</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">metrics</span><span class="o">.</span><span class="n">get_segmentation_statistics</span><span class="p">(</span>
+    <span class="n">outputs</span><span class="o">=</span><span class="n">pred</span><span class="p">,</span>
+    <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span>
+    <span class="n">class_dim</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">threshold</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     tensor([ 0.,  0.,  0., 16.,  8.,  4.]),  # per class TP</span>
+<span class="c1">#     tensor([0., 8., 0., 0., 0., 0.]),        # per class FP</span>
+<span class="c1">#     tensor([16.,  8.,  0.,  0.,  0.,  4.]),  # per class TN</span>
+<span class="c1"># )</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3460,11 +3752,13 @@ with shape [bs; …, 1]</p></li>
 <dd class="field-odd"><p>Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_binary_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
-<span class="go">tensor(2) tensor(2) tensor(2) tensor(2) tensor(4)</span>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">get_binary_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
+<span class="c1"># tensor(2) tensor(2) tensor(2) tensor(2) tensor(4)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3494,13 +3788,19 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 <dd class="field-odd"><p>Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_multiclass_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
-<span class="go">tensor([3., 3., 3., 2., 3.]), tensor([0., 0., 1., 1., 0.]),</span>
-<span class="go">tensor([0., 0., 0., 1., 1.]), tensor([1., 1., 0., 0., 0.]),</span>
-<span class="go">tensor([1., 1., 0., 1., 1.])</span>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">get_multiclass_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     tensor([3., 3., 3., 2., 3.]),</span>
+<span class="c1">#     tensor([0., 0., 1., 1., 0.]),</span>
+<span class="c1">#     tensor([0., 0., 0., 1., 1.]),</span>
+<span class="c1">#     tensor([1., 1., 0., 0., 0.]),</span>
+<span class="c1">#     tensor([1., 1., 0., 1., 1.])</span>
+<span class="c1"># )</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -3527,29 +3827,47 @@ with shape [bs; …, 1]</p></li>
 <dd class="field-odd"><p>Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]</p>
 </dd>
 </dl>
-<p class="rubric">Example</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_multilabel_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
-<span class="go">tensor([2., 0., 0., 0.]) tensor([0., 1., 1., 0.]),</span>
-<span class="go">tensor([0., 1., 1., 0.]) tensor([0., 0., 0., 2.]),</span>
-<span class="go">tensor([0., 1., 1., 2.])</span>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">get_multilabel_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     tensor([2., 0., 0., 0.]),</span>
+<span class="c1">#     tensor([0., 1., 1., 0.]),</span>
+<span class="c1">#     tensor([0., 1., 1., 0.]),</span>
+<span class="c1">#     tensor([0., 0., 0., 2.]),</span>
+<span class="c1">#     tensor([0., 1., 1., 2.]),</span>
+<span class="c1"># )</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_multilabel_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
-<span class="go">tensor([2., 2., 2.]) tensor([0., 0., 0.])</span>
-<span class="go">tensor([0., 0., 0.]) tensor([1., 1., 1.])</span>
-<span class="go">tensor([1., 1., 1.])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">get_multilabel_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     tensor([2., 2., 2.]),</span>
+<span class="c1">#     tensor([0., 0., 0.]),</span>
+<span class="c1">#     tensor([0., 0., 0.]),</span>
+<span class="c1">#     tensor([1., 1., 1.]),</span>
+<span class="c1">#     tensor([1., 1., 1.]),</span>
+<span class="c1"># )</span>
 </pre></div>
 </div>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">get_multilabel_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
-<span class="go">tensor([2., 2., 2.]) tensor([0., 0., 0.])</span>
-<span class="go">tensor([0., 0., 0.]) tensor([1., 1., 1.])</span>
-<span class="go">tensor([1., 1., 1.])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span>
+<span class="n">y_true</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]))</span>
+<span class="n">tn</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">support</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">get_multilabel_statistics</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">y_true</span><span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     tensor([2., 2., 2.]),</span>
+<span class="c1">#     tensor([0., 0., 0.]),</span>
+<span class="c1">#     tensor([0., 0., 0.]),</span>
+<span class="c1">#     tensor([1., 1., 1.]),</span>
+<span class="c1">#     tensor([1., 1., 1.]),</span>
+<span class="c1"># )</span>
 </pre></div>
 </div>
 </dd></dl>

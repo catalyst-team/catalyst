@@ -331,45 +331,65 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        list with computed accuracy@topk</span>
 
-<span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; accuracy(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([0, 1, 2]),</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        [tensor([1.])]</span>
-<span class="sd">        &gt;&gt;&gt; accuracy(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([0, 1, 2]),</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        [tensor([0.6667])]</span>
-<span class="sd">        &gt;&gt;&gt; accuracy(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([0, 1, 2]),</span>
-<span class="sd">        &gt;&gt;&gt;     topk=[1, 3],</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        [tensor([1.]), tensor([1.])]</span>
-<span class="sd">        &gt;&gt;&gt; accuracy(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([0, 1, 2]),</span>
-<span class="sd">        &gt;&gt;&gt;     topk=[1, 3],</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        [tensor([0.6667]), tensor([1.])]</span>
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.accuracy(</span>
+<span class="sd">            outputs=torch.tensor([</span>
+<span class="sd">                [1, 0, 0],</span>
+<span class="sd">                [0, 1, 0],</span>
+<span class="sd">                [0, 0, 1],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([0, 1, 2]),</span>
+<span class="sd">        )</span>
+<span class="sd">        # [tensor([1.])]</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.accuracy(</span>
+<span class="sd">            outputs=torch.tensor([</span>
+<span class="sd">                [1, 0, 0],</span>
+<span class="sd">                [0, 1, 0],</span>
+<span class="sd">                [0, 1, 0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([0, 1, 2]),</span>
+<span class="sd">        )</span>
+<span class="sd">        # [tensor([0.6667])]</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.accuracy(</span>
+<span class="sd">            outputs=torch.tensor([</span>
+<span class="sd">                [1, 0, 0],</span>
+<span class="sd">                [0, 1, 0],</span>
+<span class="sd">                [0, 0, 1],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([0, 1, 2]),</span>
+<span class="sd">            topk=[1, 3],</span>
+<span class="sd">        )</span>
+<span class="sd">        # [tensor([1.]), tensor([1.])]</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.accuracy(</span>
+<span class="sd">            outputs=torch.tensor([</span>
+<span class="sd">                [1, 0, 0],</span>
+<span class="sd">                [0, 1, 0],</span>
+<span class="sd">                [0, 1, 0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([0, 1, 2]),</span>
+<span class="sd">            topk=[1, 3],</span>
+<span class="sd">        )</span>
+<span class="sd">        # [tensor([0.6667]), tensor([1.])]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">max_k</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">topk</span><span class="p">)</span>
     <span class="n">batch_size</span> <span class="o">=</span> <span class="n">targets</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
@@ -409,43 +429,58 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        computed multilabel accuracy</span>
 
-<span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; multilabel_accuracy(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     threshold=0.5,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([1.])</span>
-<span class="sd">        &gt;&gt;&gt; multilabel_accuracy(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1.0, 0.0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.6, 1.0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     threshold=0.5,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor(0.7500)</span>
-<span class="sd">        &gt;&gt;&gt; multilabel_accuracy(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1.0, 0.0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.4, 1.0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets=torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;         [0, 1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     threshold=0.5,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor(1.0)</span>
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.multilabel_accuracy(</span>
+<span class="sd">            outputs=torch.tensor([</span>
+<span class="sd">                [1, 0],</span>
+<span class="sd">                [0, 1],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([</span>
+<span class="sd">                [1, 0],</span>
+<span class="sd">                [0, 1],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([1.])</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.multilabel_accuracy(</span>
+<span class="sd">            outputs=torch.tensor([</span>
+<span class="sd">                [1.0, 0.0],</span>
+<span class="sd">                [0.6, 1.0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([</span>
+<span class="sd">                [1, 0],</span>
+<span class="sd">                [0, 1],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor(0.7500)</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.multilabel_accuracy(</span>
+<span class="sd">            outputs=torch.tensor([</span>
+<span class="sd">                [1.0, 0.0],</span>
+<span class="sd">                [0.4, 1.0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets=torch.tensor([</span>
+<span class="sd">                [1, 0],</span>
+<span class="sd">                [0, 1],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor(1.0)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">process_multilabel_components</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
 

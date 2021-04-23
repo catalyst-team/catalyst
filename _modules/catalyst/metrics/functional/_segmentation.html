@@ -334,28 +334,37 @@
 <span class="sd">        Segmentation stats</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; size = 4</span>
-<span class="sd">        &gt;&gt;&gt; half_size = size // 2</span>
-<span class="sd">        &gt;&gt;&gt; shape = (1, 1, size, size)</span>
-<span class="sd">        &gt;&gt;&gt; empty = torch.zeros(shape)</span>
-<span class="sd">        &gt;&gt;&gt; full = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; left = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; left[:, :, :, half_size:] = 0</span>
-<span class="sd">        &gt;&gt;&gt; right = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; right[:, :, :, :half_size] = 0</span>
-<span class="sd">        &gt;&gt;&gt; top_left = torch.zeros(shape)</span>
-<span class="sd">        &gt;&gt;&gt; top_left[:, :, :half_size, :half_size] = 1</span>
-<span class="sd">        &gt;&gt;&gt; pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)</span>
-<span class="sd">        &gt;&gt;&gt; targets = torch.cat([full, right, empty, full, left, left], dim=1)</span>
-<span class="sd">        &gt;&gt;&gt; get_segmentation_statistics(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=pred,</span>
-<span class="sd">        &gt;&gt;&gt;     targets=targets,</span>
-<span class="sd">        &gt;&gt;&gt;     class_dim=1,</span>
-<span class="sd">        &gt;&gt;&gt;     threshold=0.5,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        (tensor([ 0.,  0.,  0., 16.,  8.,  4.]),</span>
-<span class="sd">        tensor([0., 8., 0., 0., 0., 0.]),</span>
-<span class="sd">        tensor([16.,  8.,  0.,  0.,  0.,  4.]))</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        size = 4</span>
+<span class="sd">        half_size = size // 2</span>
+<span class="sd">        shape = (1, 1, size, size)</span>
+<span class="sd">        empty = torch.zeros(shape)</span>
+<span class="sd">        full = torch.ones(shape)</span>
+<span class="sd">        left = torch.ones(shape)</span>
+<span class="sd">        left[:, :, :, half_size:] = 0</span>
+<span class="sd">        right = torch.ones(shape)</span>
+<span class="sd">        right[:, :, :, :half_size] = 0</span>
+<span class="sd">        top_left = torch.zeros(shape)</span>
+<span class="sd">        top_left[:, :, :half_size, :half_size] = 1</span>
+<span class="sd">        pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)</span>
+<span class="sd">        targets = torch.cat([full, right, empty, full, left, left], dim=1)</span>
+
+<span class="sd">        metrics.get_segmentation_statistics(</span>
+<span class="sd">            outputs=pred,</span>
+<span class="sd">            targets=targets,</span>
+<span class="sd">            class_dim=1,</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">        )</span>
+<span class="sd">        # (</span>
+<span class="sd">        #     tensor([ 0.,  0.,  0., 16.,  8.,  4.]),  # per class TP</span>
+<span class="sd">        #     tensor([0., 8., 0., 0., 0., 0.]),        # per class FP</span>
+<span class="sd">        #     tensor([16.,  8.,  0.,  0.,  0.,  4.]),  # per class TN</span>
+<span class="sd">        # )</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">outputs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;targets(shape </span><span class="si">{</span><span class="n">targets</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">)&quot;</span>
@@ -500,27 +509,52 @@
 <span class="sd">        IoU (Jaccard) score for each class(if mode=&#39;weighted&#39;) or aggregated IOU</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; size = 4</span>
-<span class="sd">        &gt;&gt;&gt; half_size = size // 2</span>
-<span class="sd">        &gt;&gt;&gt; shape = (1, 1, size, size)</span>
-<span class="sd">        &gt;&gt;&gt; empty = torch.zeros(shape)</span>
-<span class="sd">        &gt;&gt;&gt; full = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; left = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; left[:, :, :, half_size:] = 0</span>
-<span class="sd">        &gt;&gt;&gt; right = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; right[:, :, :, :half_size] = 0</span>
-<span class="sd">        &gt;&gt;&gt; top_left = torch.zeros(shape)</span>
-<span class="sd">        &gt;&gt;&gt; top_left[:, :, :half_size, :half_size] = 1</span>
-<span class="sd">        &gt;&gt;&gt; pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)</span>
-<span class="sd">        &gt;&gt;&gt; targets = torch.cat([full, right, empty, full, left, left], dim=1)</span>
-<span class="sd">        &gt;&gt;&gt; iou(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=pred,</span>
-<span class="sd">        &gt;&gt;&gt;     targets=targets,</span>
-<span class="sd">        &gt;&gt;&gt;     class_dim=1,</span>
-<span class="sd">        &gt;&gt;&gt;     threshold=0.5,</span>
-<span class="sd">        &gt;&gt;&gt;     mode=&quot;per-class&quot;</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        size = 4</span>
+<span class="sd">        half_size = size // 2</span>
+<span class="sd">        shape = (1, 1, size, size)</span>
+<span class="sd">        empty = torch.zeros(shape)</span>
+<span class="sd">        full = torch.ones(shape)</span>
+<span class="sd">        left = torch.ones(shape)</span>
+<span class="sd">        left[:, :, :, half_size:] = 0</span>
+<span class="sd">        right = torch.ones(shape)</span>
+<span class="sd">        right[:, :, :, :half_size] = 0</span>
+<span class="sd">        top_left = torch.zeros(shape)</span>
+<span class="sd">        top_left[:, :, :half_size, :half_size] = 1</span>
+<span class="sd">        pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)</span>
+<span class="sd">        targets = torch.cat([full, right, empty, full, left, left], dim=1)</span>
+
+<span class="sd">        metrics.iou(</span>
+<span class="sd">            outputs=pred,</span>
+<span class="sd">            targets=targets,</span>
+<span class="sd">            class_dim=1,</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">            mode=&quot;per-class&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])</span>
+
+<span class="sd">        metrics.iou(</span>
+<span class="sd">            outputs=pred,</span>
+<span class="sd">            targets=targets,</span>
+<span class="sd">            class_dim=1,</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">            mode=&quot;macro&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor(0.5833)</span>
+
+<span class="sd">        metrics.iou(</span>
+<span class="sd">            outputs=pred,</span>
+<span class="sd">            targets=targets,</span>
+<span class="sd">            class_dim=1,</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">            mode=&quot;micro&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor(0.4375)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">metric_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_iou</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
     <span class="n">score</span> <span class="o">=</span> <span class="n">_get_region_based_metrics</span><span class="p">(</span>
@@ -573,27 +607,52 @@
 <span class="sd">        Dice score for each class(if mode=&#39;weighted&#39;) or aggregated Dice</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; size = 4</span>
-<span class="sd">        &gt;&gt;&gt; half_size = size // 2</span>
-<span class="sd">        &gt;&gt;&gt; shape = (1, 1, size, size)</span>
-<span class="sd">        &gt;&gt;&gt; empty = torch.zeros(shape)</span>
-<span class="sd">        &gt;&gt;&gt; full = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; left = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; left[:, :, :, half_size:] = 0</span>
-<span class="sd">        &gt;&gt;&gt; right = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; right[:, :, :, :half_size] = 0</span>
-<span class="sd">        &gt;&gt;&gt; top_left = torch.zeros(shape)</span>
-<span class="sd">        &gt;&gt;&gt; top_left[:, :, :half_size, :half_size] = 1</span>
-<span class="sd">        &gt;&gt;&gt; pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)</span>
-<span class="sd">        &gt;&gt;&gt; targets = torch.cat([full, right, empty, full, left, left], dim=1)</span>
-<span class="sd">        &gt;&gt;&gt; dice(</span>
-<span class="sd">        &gt;&gt;&gt;      outputs=pred,</span>
-<span class="sd">        &gt;&gt;&gt;      targets=targets,</span>
-<span class="sd">        &gt;&gt;&gt;      class_dim=1,</span>
-<span class="sd">        &gt;&gt;&gt;      threshold=0.5,</span>
-<span class="sd">        &gt;&gt;&gt;      mode=&quot;per-class&quot;</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.6667])</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        size = 4</span>
+<span class="sd">        half_size = size // 2</span>
+<span class="sd">        shape = (1, 1, size, size)</span>
+<span class="sd">        empty = torch.zeros(shape)</span>
+<span class="sd">        full = torch.ones(shape)</span>
+<span class="sd">        left = torch.ones(shape)</span>
+<span class="sd">        left[:, :, :, half_size:] = 0</span>
+<span class="sd">        right = torch.ones(shape)</span>
+<span class="sd">        right[:, :, :, :half_size] = 0</span>
+<span class="sd">        top_left = torch.zeros(shape)</span>
+<span class="sd">        top_left[:, :, :half_size, :half_size] = 1</span>
+<span class="sd">        pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)</span>
+<span class="sd">        targets = torch.cat([full, right, empty, full, left, left], dim=1)</span>
+
+<span class="sd">        metrics.dice(</span>
+<span class="sd">            outputs=pred,</span>
+<span class="sd">            targets=targets,</span>
+<span class="sd">            class_dim=1,</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">            mode=&quot;per-class&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.6667])</span>
+
+<span class="sd">        metrics.dice(</span>
+<span class="sd">            outputs=pred,</span>
+<span class="sd">            targets=targets,</span>
+<span class="sd">            class_dim=1,</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">            mode=&quot;macro&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor(0.6111)</span>
+
+<span class="sd">        metrics.dice(</span>
+<span class="sd">            outputs=pred,</span>
+<span class="sd">            targets=targets,</span>
+<span class="sd">            class_dim=1,</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">            mode=&quot;micro&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor(0.6087)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">metric_fn</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">_dice</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="n">eps</span><span class="p">)</span>
     <span class="n">score</span> <span class="o">=</span> <span class="n">_get_region_based_metrics</span><span class="p">(</span>
@@ -650,28 +709,55 @@
 <span class="sd">        Trevsky score for each class(if mode=&#39;weighted&#39;) or aggregated score</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; size = 4</span>
-<span class="sd">        &gt;&gt;&gt; half_size = size // 2</span>
-<span class="sd">        &gt;&gt;&gt; shape = (1, 1, size, size)</span>
-<span class="sd">        &gt;&gt;&gt; empty = torch.zeros(shape)</span>
-<span class="sd">        &gt;&gt;&gt; full = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; left = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; left[:, :, :, half_size:] = 0</span>
-<span class="sd">        &gt;&gt;&gt; right = torch.ones(shape)</span>
-<span class="sd">        &gt;&gt;&gt; right[:, :, :, :half_size] = 0</span>
-<span class="sd">        &gt;&gt;&gt; top_left = torch.zeros(shape)</span>
-<span class="sd">        &gt;&gt;&gt; top_left[:, :, :half_size, :half_size] = 1</span>
-<span class="sd">        &gt;&gt;&gt; pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)</span>
-<span class="sd">        &gt;&gt;&gt; targets = torch.cat([full, right, empty, full, left, left], dim=1)</span>
-<span class="sd">        &gt;&gt;&gt; trevsky(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs=pred,</span>
-<span class="sd">        &gt;&gt;&gt;     targets=targets,</span>
-<span class="sd">        &gt;&gt;&gt;     alpha=0.2,</span>
-<span class="sd">        &gt;&gt;&gt;     class_dim=1,</span>
-<span class="sd">        &gt;&gt;&gt;     threshold=0.5,</span>
-<span class="sd">        &gt;&gt;&gt;     mode=&quot;per-class&quot;</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.8333])</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        size = 4</span>
+<span class="sd">        half_size = size // 2</span>
+<span class="sd">        shape = (1, 1, size, size)</span>
+<span class="sd">        empty = torch.zeros(shape)</span>
+<span class="sd">        full = torch.ones(shape)</span>
+<span class="sd">        left = torch.ones(shape)</span>
+<span class="sd">        left[:, :, :, half_size:] = 0</span>
+<span class="sd">        right = torch.ones(shape)</span>
+<span class="sd">        right[:, :, :, :half_size] = 0</span>
+<span class="sd">        top_left = torch.zeros(shape)</span>
+<span class="sd">        top_left[:, :, :half_size, :half_size] = 1</span>
+<span class="sd">        pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)</span>
+<span class="sd">        targets = torch.cat([full, right, empty, full, left, left], dim=1)</span>
+
+<span class="sd">        metrics.trevsky(</span>
+<span class="sd">            outputs=pred,</span>
+<span class="sd">            targets=targets,</span>
+<span class="sd">            alpha=0.2,</span>
+<span class="sd">            class_dim=1,</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">            mode=&quot;per-class&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.8333])</span>
+
+<span class="sd">        metrics.trevsky(</span>
+<span class="sd">            outputs=pred,</span>
+<span class="sd">            targets=targets,</span>
+<span class="sd">            alpha=0.2,</span>
+<span class="sd">            class_dim=1,</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">            mode=&quot;macro&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor(0.6389)</span>
+
+<span class="sd">        metrics.trevsky(</span>
+<span class="sd">            outputs=pred,</span>
+<span class="sd">            targets=targets,</span>
+<span class="sd">            alpha=0.2,</span>
+<span class="sd">            class_dim=1,</span>
+<span class="sd">            threshold=0.5,</span>
+<span class="sd">            mode=&quot;micro&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor(0.7000)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># assert 0 &lt; alpha &lt; 1  # I am not sure about this</span>
     <span class="k">if</span> <span class="n">beta</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

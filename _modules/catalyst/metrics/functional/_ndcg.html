@@ -345,46 +345,62 @@
 <span class="sd">        ValueError: gain function can be either `pow_rank` or `rank`</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; dcg(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs = torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [3, 2, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets = torch.Tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [2.0, 2.0, 1.0, 0.0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     gain_function=&quot;linear_rank&quot;,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([[2.0000, 2.0000, 0.6309, 0.0000]])</span>
-<span class="sd">        &gt;&gt;&gt; dcg(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs = torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [3, 2, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets = torch.Tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [2.0, 2.0, 1.0, 0.0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     gain_function=&quot;linear_rank&quot;,</span>
-<span class="sd">        &gt;&gt;&gt; ).sum()</span>
-<span class="sd">        tensor(4.6309)</span>
-<span class="sd">        &gt;&gt;&gt; dcg(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs = torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [3, 2, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets = torch.Tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [2.0, 2.0, 1.0, 0.0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     gain_function=&quot;exp_rank&quot;,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        tensor([[3.0000, 1.8928, 0.5000, 0.0000]])</span>
-<span class="sd">        &gt;&gt;&gt; dcg(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs = torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [3, 2, 1, 0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets = torch.Tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [2.0, 2.0, 1.0, 0.0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     gain_function=&quot;exp_rank&quot;,</span>
-<span class="sd">        &gt;&gt;&gt; ).sum()</span>
-<span class="sd">        tensor(5.3928)</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.dcg(</span>
+<span class="sd">            outputs = torch.tensor([</span>
+<span class="sd">                [3, 2, 1, 0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets = torch.Tensor([</span>
+<span class="sd">                [2.0, 2.0, 1.0, 0.0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            gain_function=&quot;linear_rank&quot;,</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([[2.0000, 2.0000, 0.6309, 0.0000]])</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.dcg(</span>
+<span class="sd">            outputs = torch.tensor([</span>
+<span class="sd">                [3, 2, 1, 0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets = torch.Tensor([</span>
+<span class="sd">                [2.0, 2.0, 1.0, 0.0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            gain_function=&quot;linear_rank&quot;,</span>
+<span class="sd">        ).sum()</span>
+<span class="sd">        # tensor(4.6309)</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.dcg(</span>
+<span class="sd">            outputs = torch.tensor([</span>
+<span class="sd">                [3, 2, 1, 0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets = torch.Tensor([</span>
+<span class="sd">                [2.0, 2.0, 1.0, 0.0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            gain_function=&quot;exp_rank&quot;,</span>
+<span class="sd">        )</span>
+<span class="sd">        # tensor([[3.0000, 1.8928, 0.5000, 0.0000]])</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.dcg(</span>
+<span class="sd">            outputs = torch.tensor([</span>
+<span class="sd">                [3, 2, 1, 0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets = torch.Tensor([</span>
+<span class="sd">                [2.0, 2.0, 1.0, 0.0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            gain_function=&quot;exp_rank&quot;,</span>
+<span class="sd">        ).sum()</span>
+<span class="sd">        # tensor(5.3928)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">targets_sort_by_outputs</span> <span class="o">=</span> <span class="n">process_recsys_components</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
     <span class="n">target_device</span> <span class="o">=</span> <span class="n">targets_sort_by_outputs</span><span class="o">.</span><span class="n">device</span>
@@ -443,32 +459,42 @@
 <span class="sd">            tuple with computed ndcg@topk</span>
 
 <span class="sd">    Examples:</span>
-<span class="sd">        &gt;&gt;&gt; ndcg(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs = torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [0.5, 0.2, 0.1],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.5, 0.2, 0.1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets = torch.Tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1.0, 0.0, 1.0],</span>
-<span class="sd">        &gt;&gt;&gt;         [1.0, 0.0, 1.0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     topk=[2],</span>
-<span class="sd">        &gt;&gt;&gt;     gain_function=&quot;exp_rank&quot;,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        [tensor(0.6131)]</span>
-<span class="sd">        &gt;&gt;&gt; ndcg(</span>
-<span class="sd">        &gt;&gt;&gt;     outputs = torch.tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [0.5, 0.2, 0.1],</span>
-<span class="sd">        &gt;&gt;&gt;         [0.5, 0.2, 0.1],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     targets = torch.Tensor([</span>
-<span class="sd">        &gt;&gt;&gt;         [1.0, 0.0, 1.0],</span>
-<span class="sd">        &gt;&gt;&gt;         [1.0, 0.0, 1.0],</span>
-<span class="sd">        &gt;&gt;&gt;     ]),</span>
-<span class="sd">        &gt;&gt;&gt;     topk=[2],</span>
-<span class="sd">        &gt;&gt;&gt;     gain_function=&quot;exp_rank&quot;,</span>
-<span class="sd">        &gt;&gt;&gt; )</span>
-<span class="sd">        [tensor(0.5000)]</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.ndcg(</span>
+<span class="sd">            outputs = torch.tensor([</span>
+<span class="sd">                [0.5, 0.2, 0.1],</span>
+<span class="sd">                [0.5, 0.2, 0.1],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets = torch.Tensor([</span>
+<span class="sd">                [1.0, 0.0, 1.0],</span>
+<span class="sd">                [1.0, 0.0, 1.0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            topk=[2],</span>
+<span class="sd">            gain_function=&quot;exp_rank&quot;,</span>
+<span class="sd">        )</span>
+<span class="sd">        # [tensor(0.6131)]</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        metrics.ndcg(</span>
+<span class="sd">            outputs = torch.tensor([</span>
+<span class="sd">                [0.5, 0.2, 0.1],</span>
+<span class="sd">                [0.5, 0.2, 0.1],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            targets = torch.Tensor([</span>
+<span class="sd">                [1.0, 0.0, 1.0],</span>
+<span class="sd">                [1.0, 0.0, 1.0],</span>
+<span class="sd">            ]),</span>
+<span class="sd">            topk=[2],</span>
+<span class="sd">            gain_function=&quot;exp_rank&quot;,</span>
+<span class="sd">        )</span>
+<span class="sd">        # [tensor(0.5000)]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">topk</span><span class="p">:</span>
