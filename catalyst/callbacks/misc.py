@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-# from tqdm.auto import tqdm
-from torch.utils.model_zoo import tqdm
+from tqdm.auto import tqdm
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
