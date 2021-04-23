@@ -22,45 +22,65 @@ def accuracy(
     Returns:
         list with computed accuracy@topk
 
-    Example:
-        >>> accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
-        >>>     ]),
-        >>>     targets=torch.tensor([0, 1, 2]),
-        >>> )
-        [tensor([1.])]
-        >>> accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 1, 0],
-        >>>     ]),
-        >>>     targets=torch.tensor([0, 1, 2]),
-        >>> )
-        [tensor([0.6667])]
-        >>> accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
-        >>>     ]),
-        >>>     targets=torch.tensor([0, 1, 2]),
-        >>>     topk=[1, 3],
-        >>> )
-        [tensor([1.]), tensor([1.])]
-        >>> accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 1, 0],
-        >>>     ]),
-        >>>     targets=torch.tensor([0, 1, 2]),
-        >>>     topk=[1, 3],
-        >>> )
-        [tensor([0.6667]), tensor([1.])]
+    Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.accuracy(
+            outputs=torch.tensor([
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+            ]),
+            targets=torch.tensor([0, 1, 2]),
+        )
+        # [tensor([1.])]
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.accuracy(
+            outputs=torch.tensor([
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 1, 0],
+            ]),
+            targets=torch.tensor([0, 1, 2]),
+        )
+        # [tensor([0.6667])]
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.accuracy(
+            outputs=torch.tensor([
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+            ]),
+            targets=torch.tensor([0, 1, 2]),
+            topk=[1, 3],
+        )
+        # [tensor([1.]), tensor([1.])]
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.accuracy(
+            outputs=torch.tensor([
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 1, 0],
+            ]),
+            targets=torch.tensor([0, 1, 2]),
+            topk=[1, 3],
+        )
+        # [tensor([0.6667]), tensor([1.])]
     """
     max_k = max(topk)
     batch_size = targets.size(0)
@@ -100,43 +120,58 @@ def multilabel_accuracy(
     Returns:
         computed multilabel accuracy
 
-    Example:
-        >>> multilabel_accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0],
-        >>>         [0, 1],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1, 0],
-        >>>         [0, 1],
-        >>>     ]),
-        >>>     threshold=0.5,
-        >>> )
-        tensor([1.])
-        >>> multilabel_accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1.0, 0.0],
-        >>>         [0.6, 1.0],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1, 0],
-        >>>         [0, 1],
-        >>>     ]),
-        >>>     threshold=0.5,
-        >>> )
-        tensor(0.7500)
-        >>> multilabel_accuracy(
-        >>>     outputs=torch.tensor([
-        >>>         [1.0, 0.0],
-        >>>         [0.4, 1.0],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1, 0],
-        >>>         [0, 1],
-        >>>     ]),
-        >>>     threshold=0.5,
-        >>> )
-        tensor(1.0)
+    Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.multilabel_accuracy(
+            outputs=torch.tensor([
+                [1, 0],
+                [0, 1],
+            ]),
+            targets=torch.tensor([
+                [1, 0],
+                [0, 1],
+            ]),
+            threshold=0.5,
+        )
+        # tensor([1.])
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.multilabel_accuracy(
+            outputs=torch.tensor([
+                [1.0, 0.0],
+                [0.6, 1.0],
+            ]),
+            targets=torch.tensor([
+                [1, 0],
+                [0, 1],
+            ]),
+            threshold=0.5,
+        )
+        # tensor(0.7500)
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.multilabel_accuracy(
+            outputs=torch.tensor([
+                [1.0, 0.0],
+                [0.4, 1.0],
+            ]),
+            targets=torch.tensor([
+                [1, 0],
+                [0, 1],
+            ]),
+            threshold=0.5,
+        )
+        # tensor(1.0)
     """
     outputs, targets, _ = process_multilabel_components(outputs=outputs, targets=targets)
 
