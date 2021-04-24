@@ -123,16 +123,16 @@ class NeptuneLogger(ILogger):
     ) -> None:
         """Logs image to Neptune for current scope on current step."""
         if scope == "batch" or scope == "loader":
-            neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope, tag])
+            neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope, '_images', tag])
             self._log_image(image, neptune_path)
         elif scope == "epoch":
-            neptune_path = "/".join([self.base_namespace, stage_key, scope, tag])
+            neptune_path = "/".join([self.base_namespace, stage_key, scope, '_images', tag])
             self._log_image(image, neptune_path)
         elif scope == 'stage':
-            neptune_path = "/".join([self.base_namespace, stage_key, tag])
+            neptune_path = "/".join([self.base_namespace, stage_key, '_images', tag])
             self._log_image(image, neptune_path)
         elif scope == 'experiment' or scope is None:
-            neptune_path = "/".join([self.base_namespace, tag])
+            neptune_path = "/".join([self.base_namespace, '_images', tag])
             self._log_image(image, neptune_path)
 
     def log_hparams(
@@ -176,17 +176,25 @@ class NeptuneLogger(ILogger):
         """Logs arbitrary file (audio, video, csv, etc.) to Neptune."""
         if artifact is not None and path_to_artifact is not None:
             ValueError("artifact and path_to_artifact are mutually exclusive")
-        if scope == "batch" or scope == "loader":
-            neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope, tag])
+        if scope == "batch":
+            neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope,
+                                     '_artifacts', 'batch-' + str(global_batch_step), tag])
+            self._log_artifact(artifact, path_to_artifact, neptune_path)
+        elif scope == "loader":
+            neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope,
+                                     '_artifacts', 'epoch-' + str(global_epoch_step), tag])
             self._log_artifact(artifact, path_to_artifact, neptune_path)
         elif scope == "epoch":
-            neptune_path = "/".join([self.base_namespace, stage_key, scope, tag])
+            neptune_path = "/".join([self.base_namespace, stage_key, scope,
+                                     '_artifacts', 'epoch-' + str(global_epoch_step), tag])
             self._log_artifact(artifact, path_to_artifact, neptune_path)
         elif scope == 'stage':
-            neptune_path = "/".join([self.base_namespace, stage_key, tag])
+            neptune_path = "/".join([self.base_namespace, stage_key,
+                                     '_artifacts', 'epoch-' + str(global_epoch_step), tag])
             self._log_artifact(artifact, path_to_artifact, neptune_path)
         elif scope == 'experiment' or scope is None:
-            neptune_path = "/".join([self.base_namespace, tag])
+            neptune_path = "/".join([self.base_namespace,
+                                     '_artifacts', 'epoch-' + str(global_epoch_step), tag])
             self._log_artifact(artifact, path_to_artifact, neptune_path)
 
     def flush_log(self) -> None:
