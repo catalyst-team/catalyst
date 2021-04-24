@@ -31,6 +31,16 @@ class DeviceEngine(IEngine):
 
         from catalyst import dl
 
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.DeviceEngine("cuda:1"),
+            ...
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
@@ -205,6 +215,16 @@ class DataParallelEngine(DeviceEngine):
 
         from catalyst import dl
 
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.DataParallelEngine(),
+            ...
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
@@ -277,6 +297,16 @@ class DistributedDataParallelEngine(DeviceEngine):
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
 
     Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.DistributedDataParallelEngine(),
+            ...
+        )
 
     .. code-block:: python
 

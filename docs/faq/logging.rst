@@ -21,7 +21,7 @@ Catalyst supports a variety of metrics storages during the experiment
         runner.epoch_metrics = {
             "train": {"loss": ..., "accuracy": ..., "auc": ...},
             "valid: {"loss": ..., "accuracy": ..., "auc": ...}
-            "_epoc_": {"lr": ..., "momentum": ...,}
+            "_epoch_": {"lr": ..., "momentum": ...,}
         }
 
 You could log any new metric in a straightforward way:

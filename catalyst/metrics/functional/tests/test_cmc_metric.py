@@ -11,8 +11,7 @@ from catalyst.metrics.functional._cmc_score import cmc_score, cmc_score_count, m
 EPS = 1e-4
 
 TEST_DATA_SIMPLE = (
-    # (distance_matrix, conformity_matrix,
-    #  topk, expected_value)
+    # (distance_matrix, conformity_matrix,  topk, expected_value)
     (torch.tensor([[1, 2], [2, 1]]), torch.tensor([[0, 1], [1, 0]]), 1, 0.0),
     (torch.tensor([[0, 0.5], [0.0, 0.5]]), torch.tensor([[0, 1], [1, 0]]), 1, 0.5),
     (torch.tensor([[0, 0.5], [0.0, 0.5]]), torch.tensor([[0, 1], [1, 0]]), 2, 1),

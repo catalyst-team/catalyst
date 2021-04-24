@@ -14,6 +14,30 @@ def cmc_score_count(
 
     Returns:
         cmc score
+
+    Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.cmc_score_count(
+            distances=torch.tensor([[1, 2], [2, 1]]),
+            conformity_matrix=torch.tensor([[0, 1], [1, 0]]),
+            topk=1,
+        )
+        # 0.0
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.cmc_score_count(
+            distances=torch.tensor([[1, 0.5, 0.2], [2, 3, 4], [0.4, 3, 4]]),
+            conformity_matrix=torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]]),
+            topk=2,
+        )
+        # 0.33
     """
     perm_matrix = torch.argsort(distances)
     position_matrix = torch.argsort(perm_matrix)
@@ -45,6 +69,29 @@ def cmc_score(
 
     Returns:
         cmc score
+
+    Example:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.cmc_score(
+            query_embeddings=torch.tensor([
+                [1, 1, 0, 0], [1, 0, 0, 0], [0, 1, 1, 1], [0, 0, 1, 1],
+            ]).float(),
+            gallery_embeddings=torch.tensor([
+                [1, 1, 1, 0], [1, 1, 1, 1], [0, 1, 1, 0],
+            ]).float(),
+            conformity_matrix=torch.tensor([
+                [True, False, False],
+                [True, False, False],
+                [False, True, True],
+                [False, True, True],
+            ]),
+            topk=1,
+        )
+        # 1.0
     """
     distances = torch.cdist(query_embeddings, gallery_embeddings)
     return cmc_score_count(distances, conformity_matrix, topk)
@@ -76,6 +123,35 @@ def masked_cmc_score(
     Raises:
         ValueError: if there are items that have different labels and are
             unavailable for each other according to availability matrix
+
+    Example:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.masked_cmc_score(
+            query_embeddings=torch.tensor([
+                [1, 1, 0, 0], [1, 0, 0, 0], [0, 1, 1, 1], [0, 0, 1, 1],
+            ]).float(),
+            gallery_embeddings=torch.tensor([
+                [1, 1, 1, 0], [1, 1, 1, 1], [0, 1, 1, 0],
+            ]).float(),
+            conformity_matrix=torch.tensor([
+                [True, False, False],
+                [True, False, False],
+                [False, True, True],
+                [False, True, True],
+            ]),
+            available_samples=torch.tensor([
+                [False, True, True],
+                [True, True, True],
+                [True, False, True],
+                [True, True, True],
+            ]),
+            topk=1,
+        )
+        # 0.75
     """
     if not available_samples[conformity_matrix == 0].all():
         raise ValueError(
