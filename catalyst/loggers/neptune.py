@@ -52,9 +52,9 @@ class NeptuneLogger(ILogger):
 
     def _log_artifact(self, artifact: object, path_to_artifact: str, neptune_path: str):
         if artifact is not None:
-            self.run[neptune_path].log(neptune.types.File.as_pickle(artifact))
+            self.run[neptune_path].upload(neptune.types.File.as_pickle(artifact))
         elif path_to_artifact is not None:
-            self.run[neptune_path].log(neptune.types.File(path=path_to_artifact))
+            self.run[neptune_path].upload(path_to_artifact)
 
     def log_metrics(
         self,
