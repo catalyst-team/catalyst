@@ -28,7 +28,14 @@ def _prepare_metrics(metrics):
 
 
 class NeptuneLogger(ILogger):
-    def __init__(self, base_namespace=None, api_token=None, project=None, run=None, **neptune_run_kwargs):
+    def __init__(
+            self,
+            base_namespace=None,
+            api_token=None,
+            project=None,
+            run=None,
+            **neptune_run_kwargs
+    ):
         if base_namespace is None:
             self.base_namespace = "experiment"
         else:
@@ -91,7 +98,11 @@ class NeptuneLogger(ILogger):
             _metrics = _prepare_metrics(metrics[loader_key])
             neptune_path = "/".join([self.base_namespace, stage_key, scope])
             if _metrics:
-                self._log_metrics(metrics=_metrics, neptune_path=neptune_path, step=global_epoch_step)
+                self._log_metrics(
+                    metrics=_metrics,
+                    neptune_path=neptune_path,
+                    step=global_epoch_step
+                )
         elif scope == 'stage':
             neptune_path = "/".join([self.base_namespace, stage_key])
             self._log_metrics(metrics=metrics, neptune_path=neptune_path, step=0)
@@ -123,7 +134,9 @@ class NeptuneLogger(ILogger):
     ) -> None:
         """Logs image to Neptune for current scope on current step."""
         if scope == "batch" or scope == "loader":
-            neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope, '_images', tag])
+            neptune_path = "/".join(
+                [self.base_namespace, stage_key, loader_key, scope, '_images', tag]
+            )
             self._log_image(image, neptune_path)
         elif scope == "epoch":
             neptune_path = "/".join([self.base_namespace, stage_key, scope, '_images', tag])
