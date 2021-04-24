@@ -92,7 +92,7 @@ class ILogger:
         loader_batch_step: int = 0,
         loader_sample_step: int = 0,
     ) -> None:
-        """Logs arbitrary file (audio, video, csv, etc.) to the logger. Log from disk or from memory."""
+        """Logs artifact (arbitrary file like audio, video, csv, etc.) to the logger (from disk or from memory)."""
         pass
 
     def flush_log(self) -> None:
