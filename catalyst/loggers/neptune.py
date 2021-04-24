@@ -95,7 +95,7 @@ class NeptuneLogger(ILogger):
         elif scope == 'stage':
             neptune_path = "/".join([self.base_namespace, stage_key])
             self._log_metrics(metrics=metrics, neptune_path=neptune_path, step=0)
-        elif scope == 'experiment':
+        elif scope == 'experiment' or scope is None:
             self._log_metrics(metrics=metrics, neptune_path=self.base_namespace, step=0)
 
     def log_image(
@@ -131,7 +131,7 @@ class NeptuneLogger(ILogger):
         elif scope == 'stage':
             neptune_path = "/".join([self.base_namespace, stage_key, tag])
             self._log_image(image, neptune_path)
-        elif scope == 'experiment':
+        elif scope == 'experiment' or scope is None:
             neptune_path = "/".join([self.base_namespace, tag])
             self._log_image(image, neptune_path)
 
@@ -144,10 +144,10 @@ class NeptuneLogger(ILogger):
             stage_key: str = None,
     ) -> None:
         """Logs hyper-parameters to Neptune."""
-        if scope == "experiment":
-            self.run[f"{self.base_namespace}/hparams"] = hparams
-        elif scope == "stage":
+        if scope == "stage":
             self.run[f"{self.base_namespace}/{stage_key}/hparams"] = hparams
+        elif scope == "experiment" or scope is None:
+            self.run[f"{self.base_namespace}/hparams"] = hparams
 
     def log_artifact(
             self,
@@ -185,7 +185,7 @@ class NeptuneLogger(ILogger):
         elif scope == 'stage':
             neptune_path = "/".join([self.base_namespace, stage_key, tag])
             self._log_artifact(artifact, path_to_artifact, neptune_path)
-        elif scope == 'experiment':
+        elif scope == 'experiment' or scope is None:
             neptune_path = "/".join([self.base_namespace, tag])
             self._log_artifact(artifact, path_to_artifact, neptune_path)
 
