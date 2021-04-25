@@ -25,6 +25,40 @@ class MRRMetric(ICallbackBatchMetric):
     .. code-block:: python
 
         import torch
+        from catalyst import metrics
+
+        outputs = torch.Tensor([
+            [4.0, 2.0, 3.0, 1.0],
+            [1.0, 2.0, 3.0, 4.0],
+        ])
+        targets = torch.tensor([
+            [0, 0, 1.0, 1.0],
+            [0, 0, 1.0, 1.0],
+        ])
+        metric = metrics.MRRMetric(topk_args=[1, 3])
+        metric.reset()
+
+        metric.update(outputs, targets)
+        metric.compute()
+        # ((0.5, 0.75), (0.0, 0.0))  # mean, std for @01, @03
+
+        metric.compute_key_value()
+        # {
+        #     'mrr01': 0.5,
+        #     'mrr03': 0.75,
+        #     'mrr': 0.5,
+        #     'mrr01/std': 0.0,
+        #     'mrr03/std': 0.0,
+        #     'mrr/std': 0.0
+        # }
+
+        metric.reset()
+        metric(outputs, targets)
+        # ((0.5, 0.75), (0.0, 0.0))  # mean, std for @01, @03
+
+    .. code-block:: python
+
+        import torch
         from torch.utils.data import DataLoader, TensorDataset
         from catalyst import dl
 

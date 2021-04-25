@@ -25,6 +25,47 @@ class NDCGMetric(ICallbackBatchMetric):
     .. code-block:: python
 
         import torch
+        from catalyst import metrics
+
+        outputs = torch.Tensor([
+            [0.5, 0.2, 0.1],
+            [0.5, 0.2, 0.1],
+        ])
+        targets = torch.tensor([
+            [1.0, 0.0, 1.0],
+            [1.0, 0.0, 1.0],
+        ])
+        metric = metrics.NDCGMetric(topk_args=[1, 2])
+        metric.reset()
+
+        metric.update(outputs, targets)
+        metric.compute()
+        # (
+        #     (1.0, 0.6131471991539001),  # mean for @01, @02
+        #     (0.0, 0.0)                  # std for @01, @02
+        # )
+
+        metric.compute_key_value()
+        # {
+        #     'ndcg01': 1.0,
+        #     'ndcg02': 0.6131471991539001,
+        #     'ndcg': 1.0,
+        #     'ndcg01/std': 0.0,
+        #     'ndcg02/std': 0.0,
+        #     'ndcg/std': 0.0
+        # }
+
+        metric.reset()
+        metric(outputs, targets)
+        # (
+        #     (1.0, 0.6131471991539001),  # mean for @01, @02
+        #     (0.0, 0.0)                  # std for @01, @02
+        # )
+        # ((0.5, 0.75), (0.0, 0.0))  # mean, std for @01, @03
+
+    .. code-block:: python
+
+        import torch
         from torch.utils.data import DataLoader, TensorDataset
         from catalyst import dl
 

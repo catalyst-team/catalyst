@@ -23,6 +23,43 @@ class CMCMetric(AccumulationMetric):
 
     .. code-block:: python
 
+        import torch
+        from catalyst import metrics
+
+        batch = {
+            "embeddings": torch.tensor(
+                [
+                    [1, 1, 0, 0],
+                    [1, 0, 1, 1],
+                    [0, 1, 1, 1],
+                    [0, 0, 1, 1],
+                    [1, 1, 1, 0],
+                    [1, 1, 1, 1],
+                    [0, 1, 1, 0],
+                ]
+            ).float(),
+            "labels": torch.tensor([0, 0, 1, 1, 0, 1, 1]),
+            "is_query": torch.tensor([1, 1, 1, 1, 0, 0, 0]).bool(),
+        }
+        topk = (1, 3)
+
+        metric = metrics.CMCMetric(
+            embeddings_key="embeddings",
+            labels_key="labels",
+            is_query_key="is_query",
+            topk_args=topk,
+        )
+        metric.reset(num_batches=1, num_samples=len(batch["embeddings"]))
+
+        metric.update(**batch)
+        metric.compute()
+        # [0.75, 1.0]  # CMC@01, CMC@03
+
+        metric.compute_key_value()
+        # {'cmc01': 0.75, 'cmc03': 1.0}
+
+    .. code-block:: python
+
         import os
         from torch.optim import Adam
         from torch.utils.data import DataLoader
