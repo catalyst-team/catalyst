@@ -11,30 +11,29 @@ if SETTINGS.neptune_required:
 
 def _prepare_metrics(metrics):
     conflict_keys = []
-    _metrics = dict(metrics)
-    for k, v in _metrics.items():
+    processed_metrics = dict(metrics)
+    for k in processed_metrics.keys():
         if k.endswith("/std"):
             k_stripped = k[:-4]
             k_val = k_stripped + "/val"
-            if k_val not in _metrics.keys():
-                _metrics[k_val] = _metrics.pop(k_stripped)
-    for k in _metrics.keys():
-        for j in _metrics.keys():
+            if k_val not in processed_metrics.keys():
+                processed_metrics[k_val] = processed_metrics.pop(k_stripped)
+    for k in processed_metrics.keys():
+        for j in processed_metrics.keys():
             if j.startswith(k) and j != k and k not in conflict_keys:
                 conflict_keys.append(k)
     for i in conflict_keys:
-        _metrics[i + "_val"] = _metrics.pop(i)
-    return _metrics
+        processed_metrics[i + "_val"] = processed_metrics.pop(i)
+    return processed_metrics
 
 
 class NeptuneLogger(ILogger):
+    """
+    NeptuneLogger docs
+    """
+
     def __init__(
-            self,
-            base_namespace=None,
-            api_token=None,
-            project=None,
-            run=None,
-            **neptune_run_kwargs
+        self, base_namespace=None, api_token=None, project=None, run=None, **neptune_run_kwargs
     ):
         if base_namespace is None:
             self.base_namespace = "experiment"
@@ -44,9 +43,9 @@ class NeptuneLogger(ILogger):
         self._project = project
         self._neptune_run_kwargs = neptune_run_kwargs
         if run is None:
-            self.run = neptune.init(project=self._project,
-                                    api_token=self._api_token,
-                                    **self._neptune_run_kwargs)
+            self.run = neptune.init(
+                project=self._project, api_token=self._api_token, **self._neptune_run_kwargs
+            )
         else:
             self.run = run
 
@@ -90,23 +89,24 @@ class NeptuneLogger(ILogger):
             neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope])
             self._log_metrics(metrics=metrics, neptune_path=neptune_path, step=global_batch_step)
         elif scope == "loader":
-            _metrics = _prepare_metrics(metrics)
             neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope])
-            self._log_metrics(metrics=_metrics, neptune_path=neptune_path, step=global_epoch_step)
+            self._log_metrics(
+                metrics=_prepare_metrics(metrics),
+                neptune_path=neptune_path,
+                step=global_epoch_step,
+            )
         elif scope == "epoch":
             loader_key = "_epoch_"
-            _metrics = _prepare_metrics(metrics[loader_key])
+            prepared_metrics = _prepare_metrics(metrics[loader_key])
             neptune_path = "/".join([self.base_namespace, stage_key, scope])
-            if _metrics:
+            if prepared_metrics:
                 self._log_metrics(
-                    metrics=_metrics,
-                    neptune_path=neptune_path,
-                    step=global_epoch_step
+                    metrics=prepared_metrics, neptune_path=neptune_path, step=global_epoch_step
                 )
-        elif scope == 'stage':
+        elif scope == "stage":
             neptune_path = "/".join([self.base_namespace, stage_key])
             self._log_metrics(metrics=metrics, neptune_path=neptune_path, step=0)
-        elif scope == 'experiment' or scope is None:
+        elif scope == "experiment" or scope is None:
             self._log_metrics(metrics=metrics, neptune_path=self.base_namespace, step=0)
 
     def log_image(
@@ -135,26 +135,26 @@ class NeptuneLogger(ILogger):
         """Logs image to Neptune for current scope on current step."""
         if scope == "batch" or scope == "loader":
             neptune_path = "/".join(
-                [self.base_namespace, stage_key, loader_key, scope, '_images', tag]
+                [self.base_namespace, stage_key, loader_key, scope, "_images", tag]
             )
             self._log_image(image, neptune_path)
         elif scope == "epoch":
-            neptune_path = "/".join([self.base_namespace, stage_key, scope, '_images', tag])
+            neptune_path = "/".join([self.base_namespace, stage_key, scope, "_images", tag])
             self._log_image(image, neptune_path)
-        elif scope == 'stage':
-            neptune_path = "/".join([self.base_namespace, stage_key, '_images', tag])
+        elif scope == "stage":
+            neptune_path = "/".join([self.base_namespace, stage_key, "_images", tag])
             self._log_image(image, neptune_path)
-        elif scope == 'experiment' or scope is None:
-            neptune_path = "/".join([self.base_namespace, '_images', tag])
+        elif scope == "experiment" or scope is None:
+            neptune_path = "/".join([self.base_namespace, "_images", tag])
             self._log_image(image, neptune_path)
 
     def log_hparams(
-            self,
-            hparams: Dict,
-            scope: str = None,
-            # experiment info
-            run_key: str = None,
-            stage_key: str = None,
+        self,
+        hparams: Dict,
+        scope: str = None,
+        # experiment info
+        run_key: str = None,
+        stage_key: str = None,
     ) -> None:
         """Logs hyper-parameters to Neptune."""
         if scope == "stage":
@@ -163,51 +163,85 @@ class NeptuneLogger(ILogger):
             self.run[f"{self.base_namespace}/hparams"] = hparams
 
     def log_artifact(
-            self,
-            tag: str,
-            artifact: object = None,
-            path_to_artifact: str = None,
-            scope: str = None,
-            # experiment info
-            run_key: str = None,
-            global_epoch_step: int = 0,
-            global_batch_step: int = 0,
-            global_sample_step: int = 0,
-            # stage info
-            stage_key: str = None,
-            stage_epoch_len: int = 0,
-            stage_epoch_step: int = 0,
-            stage_batch_step: int = 0,
-            stage_sample_step: int = 0,
-            # loader info
-            loader_key: str = None,
-            loader_batch_len: int = 0,
-            loader_sample_len: int = 0,
-            loader_batch_step: int = 0,
-            loader_sample_step: int = 0,
+        self,
+        tag: str,
+        artifact: object = None,
+        path_to_artifact: str = None,
+        scope: str = None,
+        # experiment info
+        run_key: str = None,
+        global_epoch_step: int = 0,
+        global_batch_step: int = 0,
+        global_sample_step: int = 0,
+        # stage info
+        stage_key: str = None,
+        stage_epoch_len: int = 0,
+        stage_epoch_step: int = 0,
+        stage_batch_step: int = 0,
+        stage_sample_step: int = 0,
+        # loader info
+        loader_key: str = None,
+        loader_batch_len: int = 0,
+        loader_sample_len: int = 0,
+        loader_batch_step: int = 0,
+        loader_sample_step: int = 0,
     ) -> None:
         """Logs arbitrary file (audio, video, csv, etc.) to Neptune."""
         if artifact is not None and path_to_artifact is not None:
             ValueError("artifact and path_to_artifact are mutually exclusive")
         if scope == "batch":
-            neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope,
-                                     '_artifacts', 'batch-' + str(global_batch_step), tag])
+            neptune_path = "/".join(
+                [
+                    self.base_namespace,
+                    stage_key,
+                    loader_key,
+                    scope,
+                    "_artifacts",
+                    "batch-" + str(global_batch_step),
+                    tag,
+                ]
+            )
             self._log_artifact(artifact, path_to_artifact, neptune_path)
         elif scope == "loader":
-            neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope,
-                                     '_artifacts', 'epoch-' + str(global_epoch_step), tag])
+            neptune_path = "/".join(
+                [
+                    self.base_namespace,
+                    stage_key,
+                    loader_key,
+                    scope,
+                    "_artifacts",
+                    "epoch-" + str(global_epoch_step),
+                    tag,
+                ]
+            )
             self._log_artifact(artifact, path_to_artifact, neptune_path)
         elif scope == "epoch":
-            neptune_path = "/".join([self.base_namespace, stage_key, scope,
-                                     '_artifacts', 'epoch-' + str(global_epoch_step), tag])
+            neptune_path = "/".join(
+                [
+                    self.base_namespace,
+                    stage_key,
+                    scope,
+                    "_artifacts",
+                    "epoch-" + str(global_epoch_step),
+                    tag,
+                ]
+            )
             self._log_artifact(artifact, path_to_artifact, neptune_path)
-        elif scope == 'stage':
-            neptune_path = "/".join([self.base_namespace, stage_key,
-                                     '_artifacts', 'epoch-' + str(global_epoch_step), tag])
+        elif scope == "stage":
+            neptune_path = "/".join(
+                [
+                    self.base_namespace,
+                    stage_key,
+                    "_artifacts",
+                    "epoch-" + str(global_epoch_step),
+                    tag,
+                ]
+            )
             self._log_artifact(artifact, path_to_artifact, neptune_path)
-        elif scope == 'experiment' or scope is None:
-            neptune_path = "/".join([self.base_namespace,
-                                     '_artifacts', 'epoch-' + str(global_epoch_step), tag])
+        elif scope == "experiment" or scope is None:
+            neptune_path = "/".join(
+                [self.base_namespace, "_artifacts", "epoch-" + str(global_epoch_step), tag]
+            )
             self._log_artifact(artifact, path_to_artifact, neptune_path)
 
     def flush_log(self) -> None:

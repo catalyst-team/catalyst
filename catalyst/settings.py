@@ -260,8 +260,7 @@ class Settings(FrozenClass):
         self.neptune_required: bool = _get_optional_value(
             neptune_required,
             _is_neptune_available,
-            "neptune is not available, to install it, "
-            "run `pip install neptune-client`.",
+            "neptune is not available, to install it, run `pip install neptune-client`.",
         )
         self.mlflow_required: bool = _get_optional_value(
             mlflow_required,

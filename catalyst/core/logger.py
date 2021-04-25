@@ -11,6 +11,7 @@ class ILogger:
         - :py:mod:`catalyst.loggers.console.ConsoleLogger`
         - :py:mod:`catalyst.loggers.tensorboard.TensorboardLogger`
         - :py:mod:`catalyst.loggers.mlflow.MLflowLogger`
+        - :py:mod:`catalyst.loggers.neptune.NeptuneLogger`
     """
 
     def log_metrics(
