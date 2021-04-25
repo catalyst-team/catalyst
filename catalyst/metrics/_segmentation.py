@@ -212,6 +212,25 @@ class IOUMetric(RegionBasedMetric):
 
     .. code-block:: python
 
+        import torch
+        from catalyst import metrics
+
+        outputs = torch.tensor([[[[0.8, 0.1, 0], [0, 0.4, 0.3], [0, 0, 1]]]])
+        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])
+        metric = metrics.IOUMetric()
+        metric.reset()
+
+        metric.update_key_value(outputs, targets)
+        metric.compute_key_value()
+        # {
+        #     'iou': tensor(0.2222),
+        #     'iou/_macro': tensor(0.2222),
+        #     'iou/_micro': tensor(0.2222),
+        #     'iou/class_00': tensor(0.2222),
+        # }
+
+    .. code-block:: python
+
         import os
         import torch
         from torch import nn
@@ -319,6 +338,25 @@ class DiceMetric(RegionBasedMetric):
         suffix: metric suffix
 
     Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        outputs = torch.tensor([[[[0.8, 0.1, 0], [0, 0.4, 0.3], [0, 0, 1]]]])
+        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])
+        metric = metrics.DiceMetric()
+        metric.reset()
+
+        metric.update_key_value(outputs, targets)
+        metric.compute_key_value()
+        # {
+        #     'dice': tensor(0.3636),
+        #     'dice/_macro': tensor(0.3636),
+        #     'dice/_micro': tensor(0.3636),
+        #     'dice/class_00': tensor(0.3636),
+        # }
 
     .. code-block:: python
 
@@ -433,6 +471,25 @@ class TrevskyMetric(RegionBasedMetric):
         suffix: metric suffix
 
     Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        outputs = torch.tensor([[[[0.8, 0.1, 0], [0, 0.4, 0.3], [0, 0, 1]]]])
+        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])
+        metric = metrics.TrevskyMetric(alpha=0.2)
+        metric.reset()
+
+        metric.update_key_value(outputs, targets)
+        metric.compute_key_value()
+        # {
+        #     'trevsky': tensor(0.4167),
+        #     'trevsky/_macro': tensor(0.4167)
+        #     'trevsky/_micro': tensor(0.4167),
+        #     'trevsky/class_00': tensor(0.4167),
+        # }
 
     .. code-block:: python
 

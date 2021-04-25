@@ -27,6 +27,45 @@ class AccuracyMetric(ICallbackBatchMetric):
     .. code-block:: python
 
         import torch
+        from catalyst import metrics
+
+        outputs = torch.tensor([
+            [0.2, 0.5, 0.0, 0.3],
+            [0.9, 0.1, 0.0, 0.0],
+            [0.0, 0.1, 0.6, 0.3],
+            [0.0, 0.8, 0.2, 0.0],
+        ])
+        targets = torch.tensor([3, 0, 2, 2])
+        metric = metrics.AccuracyMetric(topk_args=(1, 3))
+
+        metric.reset()
+        metric.update(outputs, targets)
+        metric.compute()
+        # (
+        #     (0.5, 1.0),  # top1, top3 mean
+        #     (0.0, 0.0),  # top1, top3 std
+        # )
+
+        metric.compute_key_value()
+        # {
+        #     'accuracy': 0.5,
+        #     'accuracy/std': 0.0,
+        #     'accuracy01': 0.5,
+        #     'accuracy01/std': 0.0,
+        #     'accuracy03': 1.0,
+        #     'accuracy03/std': 0.0,
+        # }
+
+        metric.reset()
+        metric(outputs, targets)
+        # (
+        #     (0.5, 1.0),  # top1, top3 mean
+        #     (0.0, 0.0),  # top1, top3 std
+        # )
+
+    .. code-block:: python
+
+        import torch
         from torch.utils.data import DataLoader, TensorDataset
         from catalyst import dl
 
@@ -182,6 +221,40 @@ class MultilabelAccuracyMetric(AdditiveValueMetric, ICallbackBatchMetric):
         threshold: thresholds for model scores
 
     Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        outputs = torch.tensor([
+            [0.1, 0.9, 0.0, 0.8],
+            [0.96, 0.01, 0.85, 0.2],
+            [0.98, 0.4, 0.2, 0.1],
+            [0.1, 0.89, 0.2, 0.0],
+        ])
+        targets = torch.tensor([
+            [0, 1, 1, 0],
+            [1, 0, 1, 0],
+            [0, 1, 0, 0],
+            [0, 1, 0, 0],
+        ])
+        metric = metrics.MultilabelAccuracyMetric(threshold=0.6)
+
+        metric.reset()
+        metric.update(outputs, targets)
+        metric.compute()
+        # (0.75, 0.0)  # mean, std
+
+        metric.compute_key_value()
+        # {
+        #     'accuracy': 0.75,
+        #     'accuracy/std': 0.0,
+        # }
+
+        metric.reset()
+        metric(outputs, targets)
+        # (0.75, 0.0)  # mean, std
 
     .. code-block:: python
 

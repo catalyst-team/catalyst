@@ -23,6 +23,44 @@ class HitrateMetric(ICallbackBatchMetric):
     .. code-block:: python
 
         import torch
+        from catalyst import metrics
+
+        outputs = torch.Tensor([[4.0, 2.0, 3.0, 1.0], [1.0, 2.0, 3.0, 4.0]])
+        targets = torch.Tensor([[0, 0, 1.0, 1.0], [0, 0, 0.0, 0.0]])
+        metric = metrics.HitrateMetric(topk_args=[1, 2, 3, 4])
+        metric.reset()
+
+        metric.update(outputs, targets)
+        metric.compute()
+        # (
+        #     (0.0, 0.25, 0.25, 0.5),  # mean for @01, @02, @03, @04
+        #     (0.0, 0.0, 0.0, 0.0)     # std for @01, @02, @03, @04
+        # )
+
+        metric.compute_key_value()
+        # {
+        #     'hitrate': 0.0,
+        #     'hitrate/std': 0.0,
+        #     'hitrate01': 0.0,
+        #     'hitrate01/std': 0.0,
+        #     'hitrate02': 0.25,
+        #     'hitrate02/std': 0.0,
+        #     'hitrate03': 0.25,
+        #     'hitrate03/std': 0.0,
+        #     'hitrate04': 0.5,
+        #     'hitrate04/std': 0.0
+        # }
+
+        metric.reset()
+        metric(outputs, targets)
+        # (
+        #     (0.0, 0.25, 0.25, 0.5),  # mean for @01, @02, @03, @04
+        #     (0.0, 0.0, 0.0, 0.0)     # std for @01, @02, @03, @04
+        # )
+
+    .. code-block:: python
+
+        import torch
         from torch.utils.data import DataLoader, TensorDataset
         from catalyst import dl
 
