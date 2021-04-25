@@ -25,6 +25,51 @@ class AUCMetric(ICallbackLoaderMetric):
     .. code-block:: python
 
         import torch
+        from catalyst import metrics
+
+        scores = torch.tensor([
+            [0.9, 0.1],
+            [0.1, 0.9],
+        ])
+        targets = torch.tensor([
+            [1, 0],
+            [0, 1],
+        ])
+        metric = metrics.AUCMetric()
+
+        # for efficient statistics storage
+        metric.reset(num_batches=1, num_samples=len(scores))
+        metric.update(scores, targets)
+        metric.compute()
+        # (
+        #     tensor([1., 1.])  # per class
+        #     1.0,              # micro
+        #     1.0,              # macro
+        #     1.0               # weighted
+        # )
+
+        metric.compute_key_value()
+        # {
+        #     'auc': 1.0,
+        #     'auc/_micro': 1.0,
+        #     'auc/_macro': 1.0,
+        #     'auc/_weighted': 1.0
+        #     'auc/class_00': 1.0,
+        #     'auc/class_01': 1.0,
+        # }
+
+        metric.reset(num_batches=1, num_samples=len(scores))
+        metric(scores, targets)
+        # (
+        #     tensor([1., 1.])  # per class
+        #     1.0,              # micro
+        #     1.0,              # macro
+        #     1.0               # weighted
+        # )
+
+    .. code-block:: python
+
+        import torch
         from torch.utils.data import DataLoader, TensorDataset
         from catalyst import dl
 

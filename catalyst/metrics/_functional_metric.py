@@ -21,6 +21,30 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
 
         Loader metrics calculated as average over all batch metrics.
 
+    Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        import sklearn.metrics
+
+        outputs = torch.tensor([1, 0, 2, 1])
+        targets = torch.tensor([3, 0, 2, 2])
+
+        metric = metrics.FunctionalBatchMetric(
+            metric_fn=sklearn.metrics.accuracy_score,
+            metric_key="sk_accuracy",
+        )
+        metric.reset()
+
+        metric.update(batch_size=len(outputs), y_pred=outputs, y_true=targets)
+        metric.compute()
+        # (0.5, 0.0)  # mean, std
+
+        metric.compute_key_value()
+        # {'sk_accuracy': 0.5, 'sk_accuracy/mean': 0.5, 'sk_accuracy/std': 0.0}
+
     """
 
     def __init__(
