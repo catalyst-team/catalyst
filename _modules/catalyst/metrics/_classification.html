@@ -795,6 +795,88 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        num_classes = 4</span>
+<span class="sd">        zero_division = 0</span>
+<span class="sd">        outputs_list = [torch.tensor([0, 1, 2]), torch.tensor([2, 3]), torch.tensor([0, 1, 3])]</span>
+<span class="sd">        targets_list = [torch.tensor([0, 1, 1]), torch.tensor([2, 3]), torch.tensor([0, 1, 2])]</span>
+
+<span class="sd">        metric = metrics.MulticlassPrecisionRecallF1SupportMetric(</span>
+<span class="sd">            num_classes=num_classes, zero_division=zero_division</span>
+<span class="sd">        )</span>
+<span class="sd">        metric.reset()</span>
+
+<span class="sd">        for outputs, targets in zip(outputs_list, targets_list):</span>
+<span class="sd">            metric.update(outputs=outputs, targets=targets)</span>
+
+<span class="sd">        metric.compute()</span>
+<span class="sd">        # (</span>
+<span class="sd">        #     # per class precision, recall, f1, support</span>
+<span class="sd">        #     (</span>
+<span class="sd">        #         array([1. , 1. , 0.5, 0.5]),</span>
+<span class="sd">        #         array([1.        , 0.66666667, 0.5       , 1.        ]),</span>
+<span class="sd">        #         array([0.999995  , 0.7999952 , 0.499995  , 0.66666222]),</span>
+<span class="sd">        #         array([2., 3., 2., 1.]),</span>
+<span class="sd">        #     ),</span>
+<span class="sd">        #     # micro precision, recall, f1, support</span>
+<span class="sd">        #     (0.75, 0.75, 0.7499950000333331, None),</span>
+<span class="sd">        #     # macro precision, recall, f1, support</span>
+<span class="sd">        #     (0.75, 0.7916666666666667, 0.7416618555889127, None),</span>
+<span class="sd">        #     # weighted precision, recall, f1, support</span>
+<span class="sd">        #     (0.8125, 0.75, 0.7583284778110313, None)</span>
+<span class="sd">        # )</span>
+
+<span class="sd">        metric.compute_key_value()</span>
+<span class="sd">        # {</span>
+<span class="sd">        #     &#39;f1/_macro&#39;: 0.7416618555889127,</span>
+<span class="sd">        #     &#39;f1/_micro&#39;: 0.7499950000333331,</span>
+<span class="sd">        #     &#39;f1/_weighted&#39;: 0.7583284778110313,</span>
+<span class="sd">        #     &#39;f1/class_00&#39;: 0.9999950000249999,</span>
+<span class="sd">        #     &#39;f1/class_01&#39;: 0.7999952000287999,</span>
+<span class="sd">        #     &#39;f1/class_02&#39;: 0.49999500004999947,</span>
+<span class="sd">        #     &#39;f1/class_03&#39;: 0.6666622222518517,</span>
+<span class="sd">        #     &#39;precision/_macro&#39;: 0.75,</span>
+<span class="sd">        #     &#39;precision/_micro&#39;: 0.75,</span>
+<span class="sd">        #     &#39;precision/_weighted&#39;: 0.8125,</span>
+<span class="sd">        #     &#39;precision/class_00&#39;: 1.0,</span>
+<span class="sd">        #     &#39;precision/class_01&#39;: 1.0,</span>
+<span class="sd">        #     &#39;precision/class_02&#39;: 0.5,</span>
+<span class="sd">        #     &#39;precision/class_03&#39;: 0.5,</span>
+<span class="sd">        #     &#39;recall/_macro&#39;: 0.7916666666666667,</span>
+<span class="sd">        #     &#39;recall/_micro&#39;: 0.75,</span>
+<span class="sd">        #     &#39;recall/_weighted&#39;: 0.75,</span>
+<span class="sd">        #     &#39;recall/class_00&#39;: 1.0,</span>
+<span class="sd">        #     &#39;recall/class_01&#39;: 0.6666666666666667,</span>
+<span class="sd">        #     &#39;recall/class_02&#39;: 0.5,</span>
+<span class="sd">        #     &#39;recall/class_03&#39;: 1.0,</span>
+<span class="sd">        #     &#39;support/class_00&#39;: 2.0,</span>
+<span class="sd">        #     &#39;support/class_01&#39;: 3.0,</span>
+<span class="sd">        #     &#39;support/class_02&#39;: 2.0,</span>
+<span class="sd">        #     &#39;support/class_03&#39;: 1.0</span>
+<span class="sd">        # }</span>
+
+<span class="sd">        metric.reset()</span>
+<span class="sd">        metric(outputs_list[0], targets_list[0])</span>
+<span class="sd">        # (</span>
+<span class="sd">        #     # per class precision, recall, f1, support</span>
+<span class="sd">        #     (</span>
+<span class="sd">        #         array([1., 1., 0., 0.]),</span>
+<span class="sd">        #         array([1. , 0.5, 0. , 0. ]),</span>
+<span class="sd">        #         array([0.999995  , 0.66666222, 0.        , 0.        ]),</span>
+<span class="sd">        #         array([1., 2., 0., 0.]),</span>
+<span class="sd">        #     ),</span>
+<span class="sd">        #     # micro precision, recall, f1, support</span>
+<span class="sd">        #     (0.6666666666666667, 0.6666666666666667, 0.6666616667041664, None),</span>
+<span class="sd">        #     # macro precision, recall, f1, support</span>
+<span class="sd">        #     (0.5, 0.375, 0.41666430556921286, None),</span>
+<span class="sd">        #     # weighted precision, recall, f1, support</span>
+<span class="sd">        #     (1.0, 0.6666666666666666, 0.7777731481762343, None)</span>
+<span class="sd">        # )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
 <span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
 <span class="sd">        from catalyst import dl</span>
 
@@ -880,6 +962,97 @@
 <span class="sd">        suffix: metric suffix</span>
 
 <span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        num_classes = 4</span>
+<span class="sd">        zero_division = 0</span>
+<span class="sd">        outputs_list = [</span>
+<span class="sd">            torch.tensor([[0, 1, 0, 1], [0, 0, 0, 0], [0, 1, 1, 0]]),</span>
+<span class="sd">            torch.tensor([[0, 1, 1, 1], [0, 0, 0, 1], [0, 1, 0, 1]]),</span>
+<span class="sd">            torch.tensor([[0, 1, 0, 0], [0, 1, 0, 1]]),</span>
+<span class="sd">        ]</span>
+<span class="sd">        targets_list = [</span>
+<span class="sd">            torch.tensor([[0, 1, 1, 1], [0, 0, 0, 0], [0, 1, 0, 1]]),</span>
+<span class="sd">            torch.tensor([[0, 1, 0, 0], [0, 0, 1, 1], [1, 0, 1, 0]]),</span>
+<span class="sd">            torch.tensor([[0, 1, 0, 0], [0, 0, 1, 0]]),</span>
+<span class="sd">        ]</span>
+
+<span class="sd">        metric = metrics.MultilabelPrecisionRecallF1SupportMetric(</span>
+<span class="sd">            num_classes=num_classes, zero_division=zero_division</span>
+<span class="sd">        )</span>
+<span class="sd">        metric.reset()</span>
+
+<span class="sd">        for outputs, targets in zip(outputs_list, targets_list):</span>
+<span class="sd">            metric.update(outputs=outputs, targets=targets)</span>
+
+<span class="sd">        metric.compute()</span>
+<span class="sd">        # (</span>
+<span class="sd">        #     # per class precision, recall, f1, support</span>
+<span class="sd">        #     (</span>
+<span class="sd">        #         array([0.        , 0.66666667, 0.        , 0.4       ]),</span>
+<span class="sd">        #         array([0.        , 1.        , 0.        , 0.66666667]),</span>
+<span class="sd">        #         array([0.        , 0.7999952 , 0.        , 0.49999531]),</span>
+<span class="sd">        #         array([1., 4., 4., 3.])</span>
+<span class="sd">        #     ),</span>
+<span class="sd">        #     # micro precision, recall, f1, support</span>
+<span class="sd">        #     (0.46153846153846156, 0.5, 0.4799950080519163, None),</span>
+<span class="sd">        #     # macro precision, recall, f1, support</span>
+<span class="sd">        #     (0.2666666666666667, 0.4166666666666667, 0.32499762814318617, None),</span>
+<span class="sd">        #     # weighted precision, recall, f1, support</span>
+<span class="sd">        #     (0.32222222222222224, 0.5, 0.39166389481225283, None)</span>
+<span class="sd">        # )</span>
+
+<span class="sd">        metric.compute_key_value()</span>
+<span class="sd">        # {</span>
+<span class="sd">        #     &#39;f1/_macro&#39;: 0.32499762814318617,</span>
+<span class="sd">        #     &#39;f1/_micro&#39;: 0.4799950080519163,</span>
+<span class="sd">        #     &#39;f1/_weighted&#39;: 0.39166389481225283,</span>
+<span class="sd">        #     &#39;f1/class_00&#39;: 0.0,</span>
+<span class="sd">        #     &#39;f1/class_01&#39;: 0.7999952000287999,</span>
+<span class="sd">        #     &#39;f1/class_02&#39;: 0.0,</span>
+<span class="sd">        #     &#39;f1/class_03&#39;: 0.49999531254394486,</span>
+<span class="sd">        #     &#39;precision/_macro&#39;: 0.2666666666666667,</span>
+<span class="sd">        #     &#39;precision/_micro&#39;: 0.46153846153846156,</span>
+<span class="sd">        #     &#39;precision/_weighted&#39;: 0.32222222222222224,</span>
+<span class="sd">        #     &#39;precision/class_00&#39;: 0.0,</span>
+<span class="sd">        #     &#39;precision/class_01&#39;: 0.6666666666666667,</span>
+<span class="sd">        #     &#39;precision/class_02&#39;: 0.0,</span>
+<span class="sd">        #     &#39;precision/class_03&#39;: 0.4,</span>
+<span class="sd">        #     &#39;recall/_macro&#39;: 0.4166666666666667,</span>
+<span class="sd">        #     &#39;recall/_micro&#39;: 0.5,</span>
+<span class="sd">        #     &#39;recall/_weighted&#39;: 0.5,</span>
+<span class="sd">        #     &#39;recall/class_00&#39;: 0.0,</span>
+<span class="sd">        #     &#39;recall/class_01&#39;: 1.0,</span>
+<span class="sd">        #     &#39;recall/class_02&#39;: 0.0,</span>
+<span class="sd">        #     &#39;recall/class_03&#39;: 0.6666666666666667,</span>
+<span class="sd">        #     &#39;support/class_00&#39;: 1.0,</span>
+<span class="sd">        #     &#39;support/class_01&#39;: 4.0,</span>
+<span class="sd">        #     &#39;support/class_02&#39;: 4.0,</span>
+<span class="sd">        #     &#39;support/class_03&#39;: 3.0</span>
+<span class="sd">        # }</span>
+
+
+<span class="sd">        metric.reset()</span>
+<span class="sd">        metric(outputs_list[0], targets_list[0])</span>
+<span class="sd">        # (</span>
+<span class="sd">        #     # per class precision, recall, f1, support</span>
+<span class="sd">        #     (</span>
+<span class="sd">        #         array([0., 1., 0., 1.]),</span>
+<span class="sd">        #         array([0. , 1. , 0. , 0.5]),</span>
+<span class="sd">        #         array([0.        , 0.999995  , 0.        , 0.66666222]),</span>
+<span class="sd">        #         array([0., 2., 1., 2.])</span>
+<span class="sd">        #     ),</span>
+<span class="sd">        #     # micro precision, recall, f1, support</span>
+<span class="sd">        #     (0.75, 0.6, 0.6666617284316411, None),</span>
+<span class="sd">        #     # macro precision, recall, f1, support</span>
+<span class="sd">        #     (0.5, 0.375, 0.41666430556921286, None),</span>
+<span class="sd">        #     # weighted precision, recall, f1, support</span>
+<span class="sd">        #     (0.8, 0.6000000000000001, 0.6666628889107407, None)</span>
+<span class="sd">        # )</span>
 
 <span class="sd">    .. code-block:: python</span>
 

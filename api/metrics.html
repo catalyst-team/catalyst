@@ -633,6 +633,20 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="n">num_samples_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+<span class="n">true_values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.666667</span><span class="p">,</span> <span class="mf">2.333333</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">3.666667</span><span class="p">]</span>
+
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AdditiveValueMetric</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">value</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> <span class="n">true_value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">num_samples_list</span><span class="p">,</span> <span class="n">true_values</span><span class="p">):</span>
+    <span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="n">num_samples</span><span class="p">)</span>
+    <span class="n">mean</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">true_value</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
 <span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">functional</span> <span class="k">as</span> <span class="n">F</span>
@@ -849,6 +863,28 @@ Used for per-batch logging. default: True</p></li>
 <p class="admonition-title">Note</p>
 <p>Loader metrics calculated as average over all batch metrics.</p>
 </div>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+<span class="kn">import</span> <span class="nn">sklearn.metrics</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">FunctionalBatchMetric</span><span class="p">(</span>
+    <span class="n">metric_fn</span><span class="o">=</span><span class="n">sklearn</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">accuracy_score</span><span class="p">,</span>
+    <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;sk_accuracy&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">outputs</span><span class="p">),</span> <span class="n">y_pred</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">y_true</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># (0.5, 0.0)  # mean, std</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {&#39;sk_accuracy&#39;: 0.5, &#39;sk_accuracy/mean&#39;: 0.5, &#39;sk_accuracy/std&#39;: 0.0}</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </div>
@@ -876,6 +912,44 @@ It computes mean value of accuracy and it’s approximate std value
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AccuracyMetric</span><span class="p">(</span><span class="n">topk_args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># (</span>
+<span class="c1">#     (0.5, 1.0),  # top1, top3 mean</span>
+<span class="c1">#     (0.0, 0.0),  # top1, top3 std</span>
+<span class="c1"># )</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;accuracy&#39;: 0.5,</span>
+<span class="c1">#     &#39;accuracy/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;accuracy01&#39;: 0.5,</span>
+<span class="c1">#     &#39;accuracy01/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;accuracy03&#39;: 1.0,</span>
+<span class="c1">#     &#39;accuracy03/std&#39;: 0.0,</span>
+<span class="c1"># }</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">metric</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     (0.5, 1.0),  # top1, top3 mean</span>
+<span class="c1">#     (0.0, 0.0),  # top1, top3 std</span>
+<span class="c1"># )</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
@@ -952,6 +1026,39 @@ It computes mean value of accuracy and it’s approximate std value
 </dl>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.96</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.85</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">MultilabelAccuracyMetric</span><span class="p">(</span><span class="n">threshold</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># (0.75, 0.0)  # mean, std</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;accuracy&#39;: 0.75,</span>
+<span class="c1">#     &#39;accuracy/std&#39;: 0.0,</span>
+<span class="c1"># }</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">metric</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="c1"># (0.75, 0.0)  # mean, std</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
@@ -1024,6 +1131,50 @@ It computes mean value of accuracy and it’s approximate std value
 <p>This metric is under API improvement.</p>
 </div>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">scores</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">AUCMetric</span><span class="p">()</span>
+
+<span class="c1"># for efficient statistics storage</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">num_batches</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># (</span>
+<span class="c1">#     tensor([1., 1.])  # per class</span>
+<span class="c1">#     1.0,              # micro</span>
+<span class="c1">#     1.0,              # macro</span>
+<span class="c1">#     1.0               # weighted</span>
+<span class="c1"># )</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;auc&#39;: 1.0,</span>
+<span class="c1">#     &#39;auc/_micro&#39;: 1.0,</span>
+<span class="c1">#     &#39;auc/_macro&#39;: 1.0,</span>
+<span class="c1">#     &#39;auc/_weighted&#39;: 1.0</span>
+<span class="c1">#     &#39;auc/class_00&#39;: 1.0,</span>
+<span class="c1">#     &#39;auc/class_01&#39;: 1.0,</span>
+<span class="c1"># }</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">num_batches</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">scores</span><span class="p">))</span>
+<span class="n">metric</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     tensor([1., 1.])  # per class</span>
+<span class="c1">#     1.0,              # micro</span>
+<span class="c1">#     1.0,              # macro</span>
+<span class="c1">#     1.0               # weighted</span>
+<span class="c1"># )</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
@@ -1122,6 +1273,87 @@ Counts metrics with macro, micro and weighted average.</p>
 </dl>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">num_classes</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">zero_division</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">outputs_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])]</span>
+<span class="n">targets_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]),</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])]</span>
+
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">MulticlassPrecisionRecallF1SupportMetric</span><span class="p">(</span>
+    <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span>
+<span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">outputs_list</span><span class="p">,</span> <span class="n">targets_list</span><span class="p">):</span>
+    <span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># (</span>
+<span class="c1">#     # per class precision, recall, f1, support</span>
+<span class="c1">#     (</span>
+<span class="c1">#         array([1. , 1. , 0.5, 0.5]),</span>
+<span class="c1">#         array([1.        , 0.66666667, 0.5       , 1.        ]),</span>
+<span class="c1">#         array([0.999995  , 0.7999952 , 0.499995  , 0.66666222]),</span>
+<span class="c1">#         array([2., 3., 2., 1.]),</span>
+<span class="c1">#     ),</span>
+<span class="c1">#     # micro precision, recall, f1, support</span>
+<span class="c1">#     (0.75, 0.75, 0.7499950000333331, None),</span>
+<span class="c1">#     # macro precision, recall, f1, support</span>
+<span class="c1">#     (0.75, 0.7916666666666667, 0.7416618555889127, None),</span>
+<span class="c1">#     # weighted precision, recall, f1, support</span>
+<span class="c1">#     (0.8125, 0.75, 0.7583284778110313, None)</span>
+<span class="c1"># )</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;f1/_macro&#39;: 0.7416618555889127,</span>
+<span class="c1">#     &#39;f1/_micro&#39;: 0.7499950000333331,</span>
+<span class="c1">#     &#39;f1/_weighted&#39;: 0.7583284778110313,</span>
+<span class="c1">#     &#39;f1/class_00&#39;: 0.9999950000249999,</span>
+<span class="c1">#     &#39;f1/class_01&#39;: 0.7999952000287999,</span>
+<span class="c1">#     &#39;f1/class_02&#39;: 0.49999500004999947,</span>
+<span class="c1">#     &#39;f1/class_03&#39;: 0.6666622222518517,</span>
+<span class="c1">#     &#39;precision/_macro&#39;: 0.75,</span>
+<span class="c1">#     &#39;precision/_micro&#39;: 0.75,</span>
+<span class="c1">#     &#39;precision/_weighted&#39;: 0.8125,</span>
+<span class="c1">#     &#39;precision/class_00&#39;: 1.0,</span>
+<span class="c1">#     &#39;precision/class_01&#39;: 1.0,</span>
+<span class="c1">#     &#39;precision/class_02&#39;: 0.5,</span>
+<span class="c1">#     &#39;precision/class_03&#39;: 0.5,</span>
+<span class="c1">#     &#39;recall/_macro&#39;: 0.7916666666666667,</span>
+<span class="c1">#     &#39;recall/_micro&#39;: 0.75,</span>
+<span class="c1">#     &#39;recall/_weighted&#39;: 0.75,</span>
+<span class="c1">#     &#39;recall/class_00&#39;: 1.0,</span>
+<span class="c1">#     &#39;recall/class_01&#39;: 0.6666666666666667,</span>
+<span class="c1">#     &#39;recall/class_02&#39;: 0.5,</span>
+<span class="c1">#     &#39;recall/class_03&#39;: 1.0,</span>
+<span class="c1">#     &#39;support/class_00&#39;: 2.0,</span>
+<span class="c1">#     &#39;support/class_01&#39;: 3.0,</span>
+<span class="c1">#     &#39;support/class_02&#39;: 2.0,</span>
+<span class="c1">#     &#39;support/class_03&#39;: 1.0</span>
+<span class="c1"># }</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">metric</span><span class="p">(</span><span class="n">outputs_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">targets_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="c1"># (</span>
+<span class="c1">#     # per class precision, recall, f1, support</span>
+<span class="c1">#     (</span>
+<span class="c1">#         array([1., 1., 0., 0.]),</span>
+<span class="c1">#         array([1. , 0.5, 0. , 0. ]),</span>
+<span class="c1">#         array([0.999995  , 0.66666222, 0.        , 0.        ]),</span>
+<span class="c1">#         array([1., 2., 0., 0.]),</span>
+<span class="c1">#     ),</span>
+<span class="c1">#     # micro precision, recall, f1, support</span>
+<span class="c1">#     (0.6666666666666667, 0.6666666666666667, 0.6666616667041664, None),</span>
+<span class="c1">#     # macro precision, recall, f1, support</span>
+<span class="c1">#     (0.5, 0.375, 0.41666430556921286, None),</span>
+<span class="c1">#     # weighted precision, recall, f1, support</span>
+<span class="c1">#     (1.0, 0.6666666666666666, 0.7777731481762343, None)</span>
+<span class="c1"># )</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
@@ -1197,6 +1429,96 @@ Counts metrics with macro, micro and weighted average.</p>
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">num_classes</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">zero_division</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">outputs_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+<span class="p">]</span>
+<span class="n">targets_list</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]),</span>
+    <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]),</span>
+<span class="p">]</span>
+
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">MultilabelPrecisionRecallF1SupportMetric</span><span class="p">(</span>
+    <span class="n">num_classes</span><span class="o">=</span><span class="n">num_classes</span><span class="p">,</span> <span class="n">zero_division</span><span class="o">=</span><span class="n">zero_division</span>
+<span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">outputs_list</span><span class="p">,</span> <span class="n">targets_list</span><span class="p">):</span>
+    <span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="o">=</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="o">=</span><span class="n">targets</span><span class="p">)</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># (</span>
+<span class="c1">#     # per class precision, recall, f1, support</span>
+<span class="c1">#     (</span>
+<span class="c1">#         array([0.        , 0.66666667, 0.        , 0.4       ]),</span>
+<span class="c1">#         array([0.        , 1.        , 0.        , 0.66666667]),</span>
+<span class="c1">#         array([0.        , 0.7999952 , 0.        , 0.49999531]),</span>
+<span class="c1">#         array([1., 4., 4., 3.])</span>
+<span class="c1">#     ),</span>
+<span class="c1">#     # micro precision, recall, f1, support</span>
+<span class="c1">#     (0.46153846153846156, 0.5, 0.4799950080519163, None),</span>
+<span class="c1">#     # macro precision, recall, f1, support</span>
+<span class="c1">#     (0.2666666666666667, 0.4166666666666667, 0.32499762814318617, None),</span>
+<span class="c1">#     # weighted precision, recall, f1, support</span>
+<span class="c1">#     (0.32222222222222224, 0.5, 0.39166389481225283, None)</span>
+<span class="c1"># )</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;f1/_macro&#39;: 0.32499762814318617,</span>
+<span class="c1">#     &#39;f1/_micro&#39;: 0.4799950080519163,</span>
+<span class="c1">#     &#39;f1/_weighted&#39;: 0.39166389481225283,</span>
+<span class="c1">#     &#39;f1/class_00&#39;: 0.0,</span>
+<span class="c1">#     &#39;f1/class_01&#39;: 0.7999952000287999,</span>
+<span class="c1">#     &#39;f1/class_02&#39;: 0.0,</span>
+<span class="c1">#     &#39;f1/class_03&#39;: 0.49999531254394486,</span>
+<span class="c1">#     &#39;precision/_macro&#39;: 0.2666666666666667,</span>
+<span class="c1">#     &#39;precision/_micro&#39;: 0.46153846153846156,</span>
+<span class="c1">#     &#39;precision/_weighted&#39;: 0.32222222222222224,</span>
+<span class="c1">#     &#39;precision/class_00&#39;: 0.0,</span>
+<span class="c1">#     &#39;precision/class_01&#39;: 0.6666666666666667,</span>
+<span class="c1">#     &#39;precision/class_02&#39;: 0.0,</span>
+<span class="c1">#     &#39;precision/class_03&#39;: 0.4,</span>
+<span class="c1">#     &#39;recall/_macro&#39;: 0.4166666666666667,</span>
+<span class="c1">#     &#39;recall/_micro&#39;: 0.5,</span>
+<span class="c1">#     &#39;recall/_weighted&#39;: 0.5,</span>
+<span class="c1">#     &#39;recall/class_00&#39;: 0.0,</span>
+<span class="c1">#     &#39;recall/class_01&#39;: 1.0,</span>
+<span class="c1">#     &#39;recall/class_02&#39;: 0.0,</span>
+<span class="c1">#     &#39;recall/class_03&#39;: 0.6666666666666667,</span>
+<span class="c1">#     &#39;support/class_00&#39;: 1.0,</span>
+<span class="c1">#     &#39;support/class_01&#39;: 4.0,</span>
+<span class="c1">#     &#39;support/class_02&#39;: 4.0,</span>
+<span class="c1">#     &#39;support/class_03&#39;: 3.0</span>
+<span class="c1"># }</span>
+
+
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">metric</span><span class="p">(</span><span class="n">outputs_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">targets_list</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="c1"># (</span>
+<span class="c1">#     # per class precision, recall, f1, support</span>
+<span class="c1">#     (</span>
+<span class="c1">#         array([0., 1., 0., 1.]),</span>
+<span class="c1">#         array([0. , 1. , 0. , 0.5]),</span>
+<span class="c1">#         array([0.        , 0.999995  , 0.        , 0.66666222]),</span>
+<span class="c1">#         array([0., 2., 1., 2.])</span>
+<span class="c1">#     ),</span>
+<span class="c1">#     # micro precision, recall, f1, support</span>
+<span class="c1">#     (0.75, 0.6, 0.6666617284316411, None),</span>
+<span class="c1">#     # macro precision, recall, f1, support</span>
+<span class="c1">#     (0.5, 0.375, 0.41666430556921286, None),</span>
+<span class="c1">#     # weighted precision, recall, f1, support</span>
+<span class="c1">#     (0.8, 0.6000000000000001, 0.6666628889107407, None)</span>
+<span class="c1"># )</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
@@ -1279,6 +1601,42 @@ Counts metrics with macro, micro and weighted average.</p>
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;embeddings&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+        <span class="p">]</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span>
+    <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+    <span class="s2">&quot;is_query&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">bool</span><span class="p">(),</span>
+<span class="p">}</span>
+<span class="n">topk</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">CMCMetric</span><span class="p">(</span>
+    <span class="n">embeddings_key</span><span class="o">=</span><span class="s2">&quot;embeddings&quot;</span><span class="p">,</span>
+    <span class="n">labels_key</span><span class="o">=</span><span class="s2">&quot;labels&quot;</span><span class="p">,</span>
+    <span class="n">is_query_key</span><span class="o">=</span><span class="s2">&quot;is_query&quot;</span><span class="p">,</span>
+    <span class="n">topk_args</span><span class="o">=</span><span class="n">topk</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">num_batches</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_samples</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;embeddings&quot;</span><span class="p">]))</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">batch</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># [0.75, 1.0]  # CMC@01, CMC@03</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {&#39;cmc01&#39;: 0.75, &#39;cmc03&#39;: 1.0}</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">Adam</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
@@ -1417,6 +1775,43 @@ Counts metrics with macro, micro and weighted average.</p>
 <p>Compute mean value of hitrate and it’s approximate std value.</p>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]])</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]])</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">HitrateMetric</span><span class="p">(</span><span class="n">topk_args</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># (</span>
+<span class="c1">#     (0.0, 0.25, 0.25, 0.5),  # mean for @01, @02, @03, @04</span>
+<span class="c1">#     (0.0, 0.0, 0.0, 0.0)     # std for @01, @02, @03, @04</span>
+<span class="c1"># )</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;hitrate&#39;: 0.0,</span>
+<span class="c1">#     &#39;hitrate/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;hitrate01&#39;: 0.0,</span>
+<span class="c1">#     &#39;hitrate01/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;hitrate02&#39;: 0.25,</span>
+<span class="c1">#     &#39;hitrate02/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;hitrate03&#39;: 0.25,</span>
+<span class="c1">#     &#39;hitrate03/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;hitrate04&#39;: 0.5,</span>
+<span class="c1">#     &#39;hitrate04/std&#39;: 0.0</span>
+<span class="c1"># }</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">metric</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     (0.0, 0.25, 0.25, 0.5),  # mean for @01, @02, @03, @04</span>
+<span class="c1">#     (0.0, 0.0, 0.0, 0.0)     # std for @01, @02, @03, @04</span>
+<span class="c1"># )</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
@@ -1502,6 +1897,53 @@ Computes mean value of MAP and it’s approximate std value</p>
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">9</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">MAPMetric</span><span class="p">(</span><span class="n">topk_args</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># (</span>
+<span class="c1">#     # mean for @01, @03, @05, @10</span>
+<span class="c1">#     (0.5, 0.6666666865348816, 0.6416666507720947, 0.5325397253036499),</span>
+<span class="c1">#     # std for @01, @03, @05, @10</span>
+<span class="c1">#     (0.0, 0.0, 0.0, 0.0)</span>
+<span class="c1"># )</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;map&#39;: 0.5,</span>
+<span class="c1">#     &#39;map/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;map01&#39;: 0.5,</span>
+<span class="c1">#     &#39;map01/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;map03&#39;: 0.6666666865348816,</span>
+<span class="c1">#     &#39;map03/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;map05&#39;: 0.6416666507720947,</span>
+<span class="c1">#     &#39;map05/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;map10&#39;: 0.5325397253036499,</span>
+<span class="c1">#     &#39;map10/std&#39;: 0.0</span>
+<span class="c1"># }</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">metric</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     # mean for @01, @03, @05, @10</span>
+<span class="c1">#     (0.5, 0.6666666865348816, 0.6416666507720947, 0.5325397253036499),</span>
+<span class="c1">#     # std for @01, @03, @05, @10</span>
+<span class="c1">#     (0.0, 0.0, 0.0, 0.0)</span>
+<span class="c1"># )</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
@@ -1589,6 +2031,39 @@ Computes mean value of map and it’s approximate std value</p>
 </dl>
 <p>Examples:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">MRRMetric</span><span class="p">(</span><span class="n">topk_args</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># ((0.5, 0.75), (0.0, 0.0))  # mean, std for @01, @03</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;mrr01&#39;: 0.5,</span>
+<span class="c1">#     &#39;mrr03&#39;: 0.75,</span>
+<span class="c1">#     &#39;mrr&#39;: 0.5,</span>
+<span class="c1">#     &#39;mrr01/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;mrr03/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;mrr/std&#39;: 0.0</span>
+<span class="c1"># }</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">metric</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="c1"># ((0.5, 0.75), (0.0, 0.0))  # mean, std for @01, @03</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
 
@@ -1674,6 +2149,46 @@ Computes mean value of NDCG and it’s approximate std value</p>
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+    <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<span class="p">])</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">NDCGMetric</span><span class="p">(</span><span class="n">topk_args</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># (</span>
+<span class="c1">#     (1.0, 0.6131471991539001),  # mean for @01, @02</span>
+<span class="c1">#     (0.0, 0.0)                  # std for @01, @02</span>
+<span class="c1"># )</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;ndcg01&#39;: 1.0,</span>
+<span class="c1">#     &#39;ndcg02&#39;: 0.6131471991539001,</span>
+<span class="c1">#     &#39;ndcg&#39;: 1.0,</span>
+<span class="c1">#     &#39;ndcg01/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;ndcg02/std&#39;: 0.0,</span>
+<span class="c1">#     &#39;ndcg/std&#39;: 0.0</span>
+<span class="c1"># }</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">metric</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="c1"># (</span>
+<span class="c1">#     (1.0, 0.6131471991539001),  # mean for @01, @02</span>
+<span class="c1">#     (0.0, 0.0)                  # std for @01, @02</span>
+<span class="c1"># )</span>
+<span class="c1"># ((0.5, 0.75), (0.0, 0.0))  # mean, std for @01, @03</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
 <span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
@@ -1799,6 +2314,24 @@ Used for per-batch logging. default: True</p></li>
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]]])</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]]])</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DiceMetric</span><span class="p">()</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">update_key_value</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;dice&#39;: tensor(0.3636),</span>
+<span class="c1">#     &#39;dice/_macro&#39;: tensor(0.3636),</span>
+<span class="c1">#     &#39;dice/_micro&#39;: tensor(0.3636),</span>
+<span class="c1">#     &#39;dice/class_00&#39;: tensor(0.3636),</span>
+<span class="c1"># }</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
@@ -1889,6 +2422,24 @@ Used for per-batch logging. default: True</p></li>
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]]])</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]]])</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">IOUMetric</span><span class="p">()</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">update_key_value</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;iou&#39;: tensor(0.2222),</span>
+<span class="c1">#     &#39;iou/_macro&#39;: tensor(0.2222),</span>
+<span class="c1">#     &#39;iou/_micro&#39;: tensor(0.2222),</span>
+<span class="c1">#     &#39;iou/class_00&#39;: tensor(0.2222),</span>
+<span class="c1"># }</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
@@ -1983,6 +2534,24 @@ Used for per-batch logging. default: True</p></li>
 </dd>
 </dl>
 <p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">metrics</span>
+
+<span class="n">outputs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]]])</span>
+<span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]]])</span>
+<span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">TrevskyMetric</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">update_key_value</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
+<span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
+<span class="c1"># {</span>
+<span class="c1">#     &#39;trevsky&#39;: tensor(0.4167),</span>
+<span class="c1">#     &#39;trevsky/_macro&#39;: tensor(0.4167)</span>
+<span class="c1">#     &#39;trevsky/_micro&#39;: tensor(0.4167),</span>
+<span class="c1">#     &#39;trevsky/class_00&#39;: tensor(0.4167),</span>
+<span class="c1"># }</span>
+</pre></div>
+</div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>

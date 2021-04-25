@@ -334,6 +334,51 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        scores = torch.tensor([</span>
+<span class="sd">            [0.9, 0.1],</span>
+<span class="sd">            [0.1, 0.9],</span>
+<span class="sd">        ])</span>
+<span class="sd">        targets = torch.tensor([</span>
+<span class="sd">            [1, 0],</span>
+<span class="sd">            [0, 1],</span>
+<span class="sd">        ])</span>
+<span class="sd">        metric = metrics.AUCMetric()</span>
+
+<span class="sd">        # for efficient statistics storage</span>
+<span class="sd">        metric.reset(num_batches=1, num_samples=len(scores))</span>
+<span class="sd">        metric.update(scores, targets)</span>
+<span class="sd">        metric.compute()</span>
+<span class="sd">        # (</span>
+<span class="sd">        #     tensor([1., 1.])  # per class</span>
+<span class="sd">        #     1.0,              # micro</span>
+<span class="sd">        #     1.0,              # macro</span>
+<span class="sd">        #     1.0               # weighted</span>
+<span class="sd">        # )</span>
+
+<span class="sd">        metric.compute_key_value()</span>
+<span class="sd">        # {</span>
+<span class="sd">        #     &#39;auc&#39;: 1.0,</span>
+<span class="sd">        #     &#39;auc/_micro&#39;: 1.0,</span>
+<span class="sd">        #     &#39;auc/_macro&#39;: 1.0,</span>
+<span class="sd">        #     &#39;auc/_weighted&#39;: 1.0</span>
+<span class="sd">        #     &#39;auc/class_00&#39;: 1.0,</span>
+<span class="sd">        #     &#39;auc/class_01&#39;: 1.0,</span>
+<span class="sd">        # }</span>
+
+<span class="sd">        metric.reset(num_batches=1, num_samples=len(scores))</span>
+<span class="sd">        metric(scores, targets)</span>
+<span class="sd">        # (</span>
+<span class="sd">        #     tensor([1., 1.])  # per class</span>
+<span class="sd">        #     1.0,              # micro</span>
+<span class="sd">        #     1.0,              # macro</span>
+<span class="sd">        #     1.0               # weighted</span>
+<span class="sd">        # )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
 <span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
 <span class="sd">        from catalyst import dl</span>
 

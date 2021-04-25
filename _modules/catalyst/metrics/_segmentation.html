@@ -521,6 +521,25 @@
 
 <span class="sd">    .. code-block:: python</span>
 
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        outputs = torch.tensor([[[[0.8, 0.1, 0], [0, 0.4, 0.3], [0, 0, 1]]]])</span>
+<span class="sd">        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])</span>
+<span class="sd">        metric = metrics.IOUMetric()</span>
+<span class="sd">        metric.reset()</span>
+
+<span class="sd">        metric.update_key_value(outputs, targets)</span>
+<span class="sd">        metric.compute_key_value()</span>
+<span class="sd">        # {</span>
+<span class="sd">        #     &#39;iou&#39;: tensor(0.2222),</span>
+<span class="sd">        #     &#39;iou/_macro&#39;: tensor(0.2222),</span>
+<span class="sd">        #     &#39;iou/_micro&#39;: tensor(0.2222),</span>
+<span class="sd">        #     &#39;iou/class_00&#39;: tensor(0.2222),</span>
+<span class="sd">        # }</span>
+
+<span class="sd">    .. code-block:: python</span>
+
 <span class="sd">        import os</span>
 <span class="sd">        import torch</span>
 <span class="sd">        from torch import nn</span>
@@ -628,6 +647,25 @@
 <span class="sd">        suffix: metric suffix</span>
 
 <span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        outputs = torch.tensor([[[[0.8, 0.1, 0], [0, 0.4, 0.3], [0, 0, 1]]]])</span>
+<span class="sd">        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])</span>
+<span class="sd">        metric = metrics.DiceMetric()</span>
+<span class="sd">        metric.reset()</span>
+
+<span class="sd">        metric.update_key_value(outputs, targets)</span>
+<span class="sd">        metric.compute_key_value()</span>
+<span class="sd">        # {</span>
+<span class="sd">        #     &#39;dice&#39;: tensor(0.3636),</span>
+<span class="sd">        #     &#39;dice/_macro&#39;: tensor(0.3636),</span>
+<span class="sd">        #     &#39;dice/_micro&#39;: tensor(0.3636),</span>
+<span class="sd">        #     &#39;dice/class_00&#39;: tensor(0.3636),</span>
+<span class="sd">        # }</span>
 
 <span class="sd">    .. code-block:: python</span>
 
@@ -742,6 +780,25 @@
 <span class="sd">        suffix: metric suffix</span>
 
 <span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        outputs = torch.tensor([[[[0.8, 0.1, 0], [0, 0.4, 0.3], [0, 0, 1]]]])</span>
+<span class="sd">        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])</span>
+<span class="sd">        metric = metrics.TrevskyMetric(alpha=0.2)</span>
+<span class="sd">        metric.reset()</span>
+
+<span class="sd">        metric.update_key_value(outputs, targets)</span>
+<span class="sd">        metric.compute_key_value()</span>
+<span class="sd">        # {</span>
+<span class="sd">        #     &#39;trevsky&#39;: tensor(0.4167),</span>
+<span class="sd">        #     &#39;trevsky/_macro&#39;: tensor(0.4167)</span>
+<span class="sd">        #     &#39;trevsky/_micro&#39;: tensor(0.4167),</span>
+<span class="sd">        #     &#39;trevsky/class_00&#39;: tensor(0.4167),</span>
+<span class="sd">        # }</span>
 
 <span class="sd">    .. code-block:: python</span>
 

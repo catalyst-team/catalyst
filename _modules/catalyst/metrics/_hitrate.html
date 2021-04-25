@@ -332,6 +332,44 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        outputs = torch.Tensor([[4.0, 2.0, 3.0, 1.0], [1.0, 2.0, 3.0, 4.0]])</span>
+<span class="sd">        targets = torch.Tensor([[0, 0, 1.0, 1.0], [0, 0, 0.0, 0.0]])</span>
+<span class="sd">        metric = metrics.HitrateMetric(topk_args=[1, 2, 3, 4])</span>
+<span class="sd">        metric.reset()</span>
+
+<span class="sd">        metric.update(outputs, targets)</span>
+<span class="sd">        metric.compute()</span>
+<span class="sd">        # (</span>
+<span class="sd">        #     (0.0, 0.25, 0.25, 0.5),  # mean for @01, @02, @03, @04</span>
+<span class="sd">        #     (0.0, 0.0, 0.0, 0.0)     # std for @01, @02, @03, @04</span>
+<span class="sd">        # )</span>
+
+<span class="sd">        metric.compute_key_value()</span>
+<span class="sd">        # {</span>
+<span class="sd">        #     &#39;hitrate&#39;: 0.0,</span>
+<span class="sd">        #     &#39;hitrate/std&#39;: 0.0,</span>
+<span class="sd">        #     &#39;hitrate01&#39;: 0.0,</span>
+<span class="sd">        #     &#39;hitrate01/std&#39;: 0.0,</span>
+<span class="sd">        #     &#39;hitrate02&#39;: 0.25,</span>
+<span class="sd">        #     &#39;hitrate02/std&#39;: 0.0,</span>
+<span class="sd">        #     &#39;hitrate03&#39;: 0.25,</span>
+<span class="sd">        #     &#39;hitrate03/std&#39;: 0.0,</span>
+<span class="sd">        #     &#39;hitrate04&#39;: 0.5,</span>
+<span class="sd">        #     &#39;hitrate04/std&#39;: 0.0</span>
+<span class="sd">        # }</span>
+
+<span class="sd">        metric.reset()</span>
+<span class="sd">        metric(outputs, targets)</span>
+<span class="sd">        # (</span>
+<span class="sd">        #     (0.0, 0.25, 0.25, 0.5),  # mean for @01, @02, @03, @04</span>
+<span class="sd">        #     (0.0, 0.0, 0.0, 0.0)     # std for @01, @02, @03, @04</span>
+<span class="sd">        # )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
 <span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
 <span class="sd">        from catalyst import dl</span>
 

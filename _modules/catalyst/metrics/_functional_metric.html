@@ -330,6 +330,30 @@
 
 <span class="sd">        Loader metrics calculated as average over all batch metrics.</span>
 
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        import sklearn.metrics</span>
+
+<span class="sd">        outputs = torch.tensor([1, 0, 2, 1])</span>
+<span class="sd">        targets = torch.tensor([3, 0, 2, 2])</span>
+
+<span class="sd">        metric = metrics.FunctionalBatchMetric(</span>
+<span class="sd">            metric_fn=sklearn.metrics.accuracy_score,</span>
+<span class="sd">            metric_key=&quot;sk_accuracy&quot;,</span>
+<span class="sd">        )</span>
+<span class="sd">        metric.reset()</span>
+
+<span class="sd">        metric.update(batch_size=len(outputs), y_pred=outputs, y_true=targets)</span>
+<span class="sd">        metric.compute()</span>
+<span class="sd">        # (0.5, 0.0)  # mean, std</span>
+
+<span class="sd">        metric.compute_key_value()</span>
+<span class="sd">        # {&#39;sk_accuracy&#39;: 0.5, &#39;sk_accuracy/mean&#39;: 0.5, &#39;sk_accuracy/std&#39;: 0.0}</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

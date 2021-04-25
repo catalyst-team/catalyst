@@ -324,6 +324,21 @@
 
 <span class="sd">    .. code-block:: python</span>
 
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from catalyst import metrics</span>
+
+<span class="sd">        values = [1, 2, 3, 4, 5]</span>
+<span class="sd">        num_samples_list = [1, 2, 3, 4, 5]</span>
+<span class="sd">        true_values = [1, 1.666667, 2.333333, 3, 3.666667]</span>
+
+<span class="sd">        metric = metrics.AdditiveValueMetric()</span>
+<span class="sd">        for value, num_samples, true_value in zip(values, num_samples_list, true_values):</span>
+<span class="sd">            metric.update(value=value, num_samples=num_samples)</span>
+<span class="sd">            mean, _ = metric.compute()</span>
+<span class="sd">            assert np.isclose(mean, true_value)</span>
+
+<span class="sd">    .. code-block:: python</span>
+
 <span class="sd">        import os</span>
 <span class="sd">        from torch import nn, optim</span>
 <span class="sd">        from torch.nn import functional as F</span>
