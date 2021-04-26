@@ -29,7 +29,7 @@ class WandbLogger(ILogger):
         runner = dl.SupervisedRunner()
         runner.train(
             ...,
-            loggers={"wandb": dl.WandbLogger(project="wandb_test", name="expeirment1")}
+            loggers={"wandb": dl.WandbLogger(project="wandb_test", name="expeirment_1")}
         )
 
     .. code-block:: python
@@ -42,7 +42,7 @@ class WandbLogger(ILogger):
             def get_loggers(self):
                 return {
                     "console": dl.ConsoleLogger(),
-                    "wandb": dl.WandbLogger(project="wandb_test", config=self.hparams)
+                    "wandb": dl.WandbLogger(project="wandb_test", name="experiment_1")
                 }
 
             # ...
@@ -73,19 +73,13 @@ class WandbLogger(ILogger):
     """
 
     def __init__(
-        self,
-        project: str,
-        name: Optional[str] = None,
-        config: Optional[Dict] = None,
-        entity: Optional[str] = None,
+        self, project: str, name: Optional[str] = None, entity: Optional[str] = None,
     ) -> None:
         self.project = project
         self.name = name
         self.config = config
         self.entity = entity
-        self.run = wandb.init(
-            project=self.project, name=self.name, config=self.config, entity=self.entity
-        )
+        self.run = wandb.init(project=self.project, name=self.name, entity=self.entity)
 
     def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
         for key, value in metrics.items():
@@ -171,8 +165,7 @@ class WandbLogger(ILogger):
         stage_key: str = None,
     ) -> None:
         """Logs hyperparameters to the logger."""
-        pass
-        # self.run.config.update(hparams)
+        self.run.config.update(hparams)
 
     def flush_log(self) -> None:
         """Flushes the logger."""
