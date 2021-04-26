@@ -25,6 +25,54 @@ class MAPMetric(ICallbackBatchMetric):
     .. code-block:: python
 
         import torch
+        from catalyst import metrics
+
+        outputs = torch.tensor([
+            [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+            [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+        ])
+        targets = torch.tensor([
+            [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
+            [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+        ])
+        metric = metrics.MAPMetric(topk_args=[1, 3, 5, 10])
+        metric.reset()
+
+        metric.update(outputs, targets)
+        metric.compute()
+        # (
+        #     # mean for @01, @03, @05, @10
+        #     (0.5, 0.6666666865348816, 0.6416666507720947, 0.5325397253036499),
+        #     # std for @01, @03, @05, @10
+        #     (0.0, 0.0, 0.0, 0.0)
+        # )
+
+        metric.compute_key_value()
+        # {
+        #     'map': 0.5,
+        #     'map/std': 0.0,
+        #     'map01': 0.5,
+        #     'map01/std': 0.0,
+        #     'map03': 0.6666666865348816,
+        #     'map03/std': 0.0,
+        #     'map05': 0.6416666507720947,
+        #     'map05/std': 0.0,
+        #     'map10': 0.5325397253036499,
+        #     'map10/std': 0.0
+        # }
+
+        metric.reset()
+        metric(outputs, targets)
+        # (
+        #     # mean for @01, @03, @05, @10
+        #     (0.5, 0.6666666865348816, 0.6416666507720947, 0.5325397253036499),
+        #     # std for @01, @03, @05, @10
+        #     (0.0, 0.0, 0.0, 0.0)
+        # )
+
+    .. code-block:: python
+
+        import torch
         from torch.utils.data import DataLoader, TensorDataset
         from catalyst import dl
 

@@ -25,28 +25,37 @@ def get_segmentation_statistics(
         Segmentation stats
 
     Example:
-        >>> size = 4
-        >>> half_size = size // 2
-        >>> shape = (1, 1, size, size)
-        >>> empty = torch.zeros(shape)
-        >>> full = torch.ones(shape)
-        >>> left = torch.ones(shape)
-        >>> left[:, :, :, half_size:] = 0
-        >>> right = torch.ones(shape)
-        >>> right[:, :, :, :half_size] = 0
-        >>> top_left = torch.zeros(shape)
-        >>> top_left[:, :, :half_size, :half_size] = 1
-        >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
-        >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
-        >>> get_segmentation_statistics(
-        >>>     outputs=pred,
-        >>>     targets=targets,
-        >>>     class_dim=1,
-        >>>     threshold=0.5,
-        >>> )
-        (tensor([ 0.,  0.,  0., 16.,  8.,  4.]),
-        tensor([0., 8., 0., 0., 0., 0.]),
-        tensor([16.,  8.,  0.,  0.,  0.,  4.]))
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        size = 4
+        half_size = size // 2
+        shape = (1, 1, size, size)
+        empty = torch.zeros(shape)
+        full = torch.ones(shape)
+        left = torch.ones(shape)
+        left[:, :, :, half_size:] = 0
+        right = torch.ones(shape)
+        right[:, :, :, :half_size] = 0
+        top_left = torch.zeros(shape)
+        top_left[:, :, :half_size, :half_size] = 1
+        pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        targets = torch.cat([full, right, empty, full, left, left], dim=1)
+
+        metrics.get_segmentation_statistics(
+            outputs=pred,
+            targets=targets,
+            class_dim=1,
+            threshold=0.5,
+        )
+        # (
+        #     tensor([ 0.,  0.,  0., 16.,  8.,  4.]),  # per class TP
+        #     tensor([0., 8., 0., 0., 0., 0.]),        # per class FP
+        #     tensor([16.,  8.,  0.,  0.,  0.,  4.]),  # per class TN
+        # )
     """
     assert outputs.shape == targets.shape, (
         f"targets(shape {targets.shape})"
@@ -191,27 +200,52 @@ def iou(
         IoU (Jaccard) score for each class(if mode='weighted') or aggregated IOU
 
     Example:
-        >>> size = 4
-        >>> half_size = size // 2
-        >>> shape = (1, 1, size, size)
-        >>> empty = torch.zeros(shape)
-        >>> full = torch.ones(shape)
-        >>> left = torch.ones(shape)
-        >>> left[:, :, :, half_size:] = 0
-        >>> right = torch.ones(shape)
-        >>> right[:, :, :, :half_size] = 0
-        >>> top_left = torch.zeros(shape)
-        >>> top_left[:, :, :half_size, :half_size] = 1
-        >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
-        >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
-        >>> iou(
-        >>>     outputs=pred,
-        >>>     targets=targets,
-        >>>     class_dim=1,
-        >>>     threshold=0.5,
-        >>>     mode="per-class"
-        >>> )
-        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        size = 4
+        half_size = size // 2
+        shape = (1, 1, size, size)
+        empty = torch.zeros(shape)
+        full = torch.ones(shape)
+        left = torch.ones(shape)
+        left[:, :, :, half_size:] = 0
+        right = torch.ones(shape)
+        right[:, :, :, :half_size] = 0
+        top_left = torch.zeros(shape)
+        top_left[:, :, :half_size, :half_size] = 1
+        pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        targets = torch.cat([full, right, empty, full, left, left], dim=1)
+
+        metrics.iou(
+            outputs=pred,
+            targets=targets,
+            class_dim=1,
+            threshold=0.5,
+            mode="per-class"
+        )
+        # tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.5])
+
+        metrics.iou(
+            outputs=pred,
+            targets=targets,
+            class_dim=1,
+            threshold=0.5,
+            mode="macro"
+        )
+        # tensor(0.5833)
+
+        metrics.iou(
+            outputs=pred,
+            targets=targets,
+            class_dim=1,
+            threshold=0.5,
+            mode="micro"
+        )
+        # tensor(0.4375)
     """
     metric_fn = partial(_iou, eps=eps)
     score = _get_region_based_metrics(
@@ -264,27 +298,52 @@ def dice(
         Dice score for each class(if mode='weighted') or aggregated Dice
 
     Example:
-        >>> size = 4
-        >>> half_size = size // 2
-        >>> shape = (1, 1, size, size)
-        >>> empty = torch.zeros(shape)
-        >>> full = torch.ones(shape)
-        >>> left = torch.ones(shape)
-        >>> left[:, :, :, half_size:] = 0
-        >>> right = torch.ones(shape)
-        >>> right[:, :, :, :half_size] = 0
-        >>> top_left = torch.zeros(shape)
-        >>> top_left[:, :, :half_size, :half_size] = 1
-        >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
-        >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
-        >>> dice(
-        >>>      outputs=pred,
-        >>>      targets=targets,
-        >>>      class_dim=1,
-        >>>      threshold=0.5,
-        >>>      mode="per-class"
-        >>> )
-        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.6667])
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        size = 4
+        half_size = size // 2
+        shape = (1, 1, size, size)
+        empty = torch.zeros(shape)
+        full = torch.ones(shape)
+        left = torch.ones(shape)
+        left[:, :, :, half_size:] = 0
+        right = torch.ones(shape)
+        right[:, :, :, :half_size] = 0
+        top_left = torch.zeros(shape)
+        top_left[:, :, :half_size, :half_size] = 1
+        pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        targets = torch.cat([full, right, empty, full, left, left], dim=1)
+
+        metrics.dice(
+            outputs=pred,
+            targets=targets,
+            class_dim=1,
+            threshold=0.5,
+            mode="per-class"
+        )
+        # tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.6667])
+
+        metrics.dice(
+            outputs=pred,
+            targets=targets,
+            class_dim=1,
+            threshold=0.5,
+            mode="macro"
+        )
+        # tensor(0.6111)
+
+        metrics.dice(
+            outputs=pred,
+            targets=targets,
+            class_dim=1,
+            threshold=0.5,
+            mode="micro"
+        )
+        # tensor(0.6087)
     """
     metric_fn = partial(_dice, eps=eps)
     score = _get_region_based_metrics(
@@ -341,28 +400,55 @@ def trevsky(
         Trevsky score for each class(if mode='weighted') or aggregated score
 
     Example:
-        >>> size = 4
-        >>> half_size = size // 2
-        >>> shape = (1, 1, size, size)
-        >>> empty = torch.zeros(shape)
-        >>> full = torch.ones(shape)
-        >>> left = torch.ones(shape)
-        >>> left[:, :, :, half_size:] = 0
-        >>> right = torch.ones(shape)
-        >>> right[:, :, :, :half_size] = 0
-        >>> top_left = torch.zeros(shape)
-        >>> top_left[:, :, :half_size, :half_size] = 1
-        >>> pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
-        >>> targets = torch.cat([full, right, empty, full, left, left], dim=1)
-        >>> trevsky(
-        >>>     outputs=pred,
-        >>>     targets=targets,
-        >>>     alpha=0.2,
-        >>>     class_dim=1,
-        >>>     threshold=0.5,
-        >>>     mode="per-class"
-        >>> )
-        tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.8333])
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        size = 4
+        half_size = size // 2
+        shape = (1, 1, size, size)
+        empty = torch.zeros(shape)
+        full = torch.ones(shape)
+        left = torch.ones(shape)
+        left[:, :, :, half_size:] = 0
+        right = torch.ones(shape)
+        right[:, :, :, :half_size] = 0
+        top_left = torch.zeros(shape)
+        top_left[:, :, :half_size, :half_size] = 1
+        pred = torch.cat([empty, left, empty, full, left, top_left], dim=1)
+        targets = torch.cat([full, right, empty, full, left, left], dim=1)
+
+        metrics.trevsky(
+            outputs=pred,
+            targets=targets,
+            alpha=0.2,
+            class_dim=1,
+            threshold=0.5,
+            mode="per-class"
+        )
+        # tensor([0.0000, 0.0000, 1.0000, 1.0000, 1.0000, 0.8333])
+
+        metrics.trevsky(
+            outputs=pred,
+            targets=targets,
+            alpha=0.2,
+            class_dim=1,
+            threshold=0.5,
+            mode="macro"
+        )
+        # tensor(0.6389)
+
+        metrics.trevsky(
+            outputs=pred,
+            targets=targets,
+            alpha=0.2,
+            class_dim=1,
+            threshold=0.5,
+            mode="micro"
+        )
+        # tensor(0.7000)
     """
     # assert 0 < alpha < 1  # I am not sure about this
     if beta is None:

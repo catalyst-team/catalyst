@@ -21,6 +21,42 @@ def binary_auc(
     .. warning::
 
         This metric is under API improvement.
+
+    Example:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.binary_auc(
+            scores=torch.tensor([
+                0.9,
+                0.8,
+                0.7,
+                0.6,
+                0.5,
+                0.4,
+                0.3,
+                0.2,
+                0.1,
+                0.0,
+            ]),
+            targets=torch.tensor([
+                0,
+                1,
+                1,
+                1,
+                1,
+                1,
+                1,
+                0,
+                0,
+                0,
+            ]),
+        )
+        # 0.7500,
+        # [0.  , 0.  , 0.16, 0.33, 0.5 , 0.66, 0.83, 0.83, 1. , 1.  , 1.  ],
+        # [0.  , 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.5, 0.75, 1.  ]
     """
     targets = targets.numpy()
 
@@ -70,45 +106,54 @@ def auc(scores: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
     Returns:
         torch.Tensor: Tensor with [num_classes] shape of per-class-aucs
 
-    Example:
-        >>> auc(
-        >>>     scores=torch.tensor([
-        >>>         [0.9, 0.1],
-        >>>         [0.1, 0.9],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [1, 0],
-        >>>         [0, 1],
-        >>>     ]),
-        >>> )
-        tensor([1., 1.])
-        >>> auc(
-        >>>     scores=torch.tensor([
-        >>>         [0.9],
-        >>>         [0.8],
-        >>>         [0.7],
-        >>>         [0.6],
-        >>>         [0.5],
-        >>>         [0.4],
-        >>>         [0.3],
-        >>>         [0.2],
-        >>>         [0.1],
-        >>>         [0.0],
-        >>>     ]),
-        >>>     targets=torch.tensor([
-        >>>         [0],
-        >>>         [1],
-        >>>         [1],
-        >>>         [1],
-        >>>         [1],
-        >>>         [1],
-        >>>         [1],
-        >>>         [0],
-        >>>         [0],
-        >>>         [0],
-        >>>     ]),
-        >>> )
-        tensor([0.7500])
+    Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.auc(
+            scores=torch.tensor([
+                [0.9, 0.1],
+                [0.1, 0.9],
+            ]),
+            targets=torch.tensor([
+                [1, 0],
+                [0, 1],
+            ]),
+        )
+        # tensor([1., 1.])
+
+    .. code-block:: python
+
+        from catalyst import metrics
+        metrics.auc(
+            scores=torch.tensor([
+                [0.9],
+                [0.8],
+                [0.7],
+                [0.6],
+                [0.5],
+                [0.4],
+                [0.3],
+                [0.2],
+                [0.1],
+                [0.0],
+            ]),
+            targets=torch.tensor([
+                [0],
+                [1],
+                [1],
+                [1],
+                [1],
+                [1],
+                [1],
+                [0],
+                [0],
+                [0],
+            ]),
+        )
+        # tensor([0.7500])
 
     .. warning::
 

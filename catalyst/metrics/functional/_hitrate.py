@@ -48,6 +48,19 @@ def hitrate(
 
     Returns:
         hitrate_at_k (List[torch.Tensor]): the hitrate score
+
+    Example:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.hitrate(
+            outputs=torch.Tensor([[4.0, 2.0, 3.0, 1.0], [1.0, 2.0, 3.0, 4.0]]),
+            targets=torch.Tensor([[0, 0, 1.0, 1.0], [0, 0, 0.0, 0.0]]),
+            topk=[1, 2, 3, 4],
+        )
+        # [tensor(0.), tensor(0.2500), tensor(0.2500), tensor(0.5000)]
     """
     results = []
 

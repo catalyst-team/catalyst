@@ -15,6 +15,21 @@ class AdditiveValueMetric(IMetric):
 
     .. code-block:: python
 
+        import numpy as np
+        from catalyst import metrics
+
+        values = [1, 2, 3, 4, 5]
+        num_samples_list = [1, 2, 3, 4, 5]
+        true_values = [1, 1.666667, 2.333333, 3, 3.666667]
+
+        metric = metrics.AdditiveValueMetric()
+        for value, num_samples, true_value in zip(values, num_samples_list, true_values):
+            metric.update(value=value, num_samples=num_samples)
+            mean, _ = metric.compute()
+            assert np.isclose(mean, true_value)
+
+    .. code-block:: python
+
         import os
         from torch import nn, optim
         from torch.nn import functional as F
