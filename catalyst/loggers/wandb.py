@@ -77,7 +77,6 @@ class WandbLogger(ILogger):
     ) -> None:
         self.project = project
         self.name = name
-        self.config = config
         self.entity = entity
         self.run = wandb.init(project=self.project, name=self.name, entity=self.entity)
 
