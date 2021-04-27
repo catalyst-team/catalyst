@@ -78,7 +78,9 @@ class WandbLogger(ILogger):
         self.project = project
         self.name = name
         self.entity = entity
-        self.run = wandb.init(project=self.project, name=self.name, entity=self.entity)
+        self.run = wandb.init(
+            project=self.project, name=self.name, entity=self.entity, allow_val_change=True
+        )
 
     def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
         for key, value in metrics.items():

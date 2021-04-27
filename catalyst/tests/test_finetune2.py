@@ -33,7 +33,7 @@ class CustomRunner(dl.IRunner):
         if SETTINGS.mlflow_required:
             loggers["mlflow"] = dl.MLflowLogger(experiment=self._name)
         if SETTINGS.wandb_required:
-            loggers["wandb"] = dl.WandbLogger(project="catalyst_test", config=self.hparams)
+            loggers["wandb"] = dl.WandbLogger(project="catalyst_test", name=self._name)
         return loggers
 
     @property
