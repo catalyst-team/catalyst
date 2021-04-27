@@ -87,7 +87,7 @@ class NeptuneLogger(ILogger):
         """Logs batch, epoch and loader metrics to Neptune."""
         if scope == "batch":
             neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope])
-            self._log_metrics(metrics=metrics, neptune_path=neptune_path, step=global_batch_step)
+            self._log_metrics(metrics=metrics, neptune_path=neptune_path, step=global_sample_step)
         elif scope == "loader":
             neptune_path = "/".join([self.base_namespace, stage_key, loader_key, scope])
             self._log_metrics(
