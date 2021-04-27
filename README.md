@@ -42,6 +42,15 @@ Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/).
 
 [Catalyst at AI Landscape](https://landscape.lfai.foundation/selected=catalyst)
 
+<details>
+<summary>Catalyst at PyTorch Ecosystem Day</summary>
+<p>
+
+[![Catalyst poster](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/Catalyst-PTED21.png)](https://github.com/catalyst-team/catalyst)
+
+</p>
+</details>
+
 ----
 
 ## Getting started
