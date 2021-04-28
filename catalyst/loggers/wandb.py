@@ -82,9 +82,9 @@ class WandbLogger(ILogger):
             project=self.project, name=self.name, entity=self.entity, allow_val_change=True
         )
 
-    def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
+    def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, prefix=""):
         for key, value in metrics.items():
-            self.run.log({f"{key}/{loader_key}{suffix}": value}, step=step)
+            self.run.log({f"{prefix}/{key}_{loader_key}": value}, step=step)
 
     def log_metrics(
         self,
@@ -112,11 +112,11 @@ class WandbLogger(ILogger):
         if scope == "batch":
             metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
-                metrics=metrics, step=global_epoch_step, loader_key=loader_key, suffix="/batch"
+                metrics=metrics, step=global_epoch_step, loader_key=loader_key, prefix="batch"
             )
         elif scope == "loader":
             self._log_metrics(
-                metrics=metrics, step=global_epoch_step, loader_key=loader_key, suffix="/epoch",
+                metrics=metrics, step=global_epoch_step, loader_key=loader_key, prefix="epoch",
             )
         elif scope == "epoch":
             loader_key = "_epoch_"
@@ -125,7 +125,7 @@ class WandbLogger(ILogger):
                 metrics=per_loader_metrics,
                 step=global_epoch_step,
                 loader_key=loader_key,
-                suffix="/epoch",
+                prefix="epoch",
             )
 
     def log_image(
