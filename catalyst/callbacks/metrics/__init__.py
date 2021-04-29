@@ -29,3 +29,5 @@ from catalyst.callbacks.metrics.segmentation import (
     IOUCallback,
     TrevskyCallback,
 )
+
+from catalyst.callbacks.metrics.sklearn import SklearnCallback
