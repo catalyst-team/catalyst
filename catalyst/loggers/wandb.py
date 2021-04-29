@@ -84,7 +84,7 @@ class WandbLogger(ILogger):
 
     def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, prefix=""):
         for key, value in metrics.items():
-            self.run.log({f"{prefix}/{key}_{loader_key}": value}, step=step)
+            self.run.log({f"{key}_{prefix}/{loader_key}": value}, step=step)
 
     def log_metrics(
         self,
