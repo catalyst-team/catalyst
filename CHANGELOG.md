@@ -9,7 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- Weights and Biases Logger (``WandbLogger``) ([#1176](https://github.com/catalyst-team/catalyst/pull/1176))
 
 ### Changed
 
@@ -23,10 +23,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 -
 
-## [21.04] - 2021-04-29
+## [21.04] - 2021-04-17
 
 ### Added
-- Weights and Biases Logger (``WandbLogger``) ([#1176](https://github.com/catalyst-team/catalyst/pull/1176))
 - Nifti Reader (NiftiReader) ([#1151](https://github.com/catalyst-team/catalyst/pull/1151))
 - CMC score and callback for ReID task (ReidCMCMetric and ReidCMCScoreCallback) ([#1170](https://github.com/catalyst-team/catalyst/pull/1170))
 - Market1501 metric learning datasets (Market1501MLDataset and Market1501QGDataset) ([#1170](https://github.com/catalyst-team/catalyst/pull/1170))
