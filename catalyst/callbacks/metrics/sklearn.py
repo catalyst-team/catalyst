@@ -1,8 +1,9 @@
-from typing import Callable, List, Mapping, Optional, Dict
+from typing import Callable, Dict, Mapping
 
 import torch
-from catalyst.core.runner import IRunner
+
 from catalyst.callbacks.metric import FunctionalBatchMetricCallback
+from catalyst.core.runner import IRunner
 from catalyst.metrics import FunctionalBatchMetric
 
 
@@ -21,7 +22,7 @@ class SklearnCallback(FunctionalBatchMetricCallback):
             metric=FunctionalBatchMetric(metric_fn=metric_fn, metric_key=metric_key),
             input_key=keys,
             target_key=keys,
-            log_on_batch=log_on_batch
+            log_on_batch=log_on_batch,
         )
 
     def _get_key_value_inputs(self, runner: "IRunner") -> Dict[str, torch.Tensor]:
