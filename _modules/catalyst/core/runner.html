@@ -878,6 +878,31 @@
                 <span class="n">stage_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stage_key</span><span class="p">,</span>
             <span class="p">)</span></div>
 
+    <span class="k">def</span> <span class="nf">log_artifact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Logs artifact (file like audio, video, csv, etc.) to available loggers.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">log_artifact</span><span class="p">(</span>
+                <span class="o">*</span><span class="n">args</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+                <span class="c1"># experiment info</span>
+                <span class="n">run_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">run_key</span><span class="p">,</span>
+                <span class="n">global_sample_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">global_sample_step</span><span class="p">,</span>
+                <span class="n">global_batch_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">global_batch_step</span><span class="p">,</span>
+                <span class="n">global_epoch_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">global_epoch_step</span><span class="p">,</span>
+                <span class="c1"># stage info</span>
+                <span class="n">stage_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stage_key</span><span class="p">,</span>
+                <span class="n">stage_epoch_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stage_epoch_len</span><span class="p">,</span>
+                <span class="n">stage_epoch_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stage_epoch_step</span><span class="p">,</span>
+                <span class="n">stage_batch_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stage_batch_step</span><span class="p">,</span>
+                <span class="n">stage_sample_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">stage_sample_step</span><span class="p">,</span>
+                <span class="c1"># loader info</span>
+                <span class="n">loader_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span><span class="p">,</span>
+                <span class="n">loader_batch_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_len</span><span class="p">,</span>
+                <span class="n">loader_sample_len</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_sample_len</span><span class="p">,</span>
+                <span class="n">loader_batch_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_step</span><span class="p">,</span>
+                <span class="n">loader_sample_step</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_sample_step</span><span class="p">,</span>
+            <span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">flush_log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Flushes the loggers.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>

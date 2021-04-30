@@ -1604,6 +1604,7 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <li><p><a class="reference internal" href="loggers.html#catalyst.loggers.console.ConsoleLogger" title="catalyst.loggers.console.ConsoleLogger"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.loggers.console.ConsoleLogger</span></code></a></p></li>
 <li><p><a class="reference internal" href="loggers.html#catalyst.loggers.tensorboard.TensorboardLogger" title="catalyst.loggers.tensorboard.TensorboardLogger"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.loggers.tensorboard.TensorboardLogger</span></code></a></p></li>
 <li><p><a class="reference internal" href="loggers.html#catalyst.loggers.mlflow.MLflowLogger" title="catalyst.loggers.mlflow.MLflowLogger"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.loggers.mlflow.MLflowLogger</span></code></a></p></li>
+<li><p><a class="reference internal" href="loggers.html#catalyst.loggers.neptune.NeptuneLogger" title="catalyst.loggers.neptune.NeptuneLogger"><code class="xref py py-mod docutils literal notranslate"><span class="pre">catalyst.loggers.neptune.NeptuneLogger</span></code></a></p></li>
 </ul>
 </div></blockquote>
 <dl class="method">
@@ -1616,6 +1617,12 @@ default <code class="docutils literal notranslate"><span class="pre">True</span>
 <dt id="catalyst.core.logger.ILogger.flush_log">
 <code class="sig-name descname">flush_log</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger.flush_log"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger.flush_log" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flushes the logger.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.logger.ILogger.log_artifact">
+<code class="sig-name descname">log_artifact</code><span class="sig-paren">(</span><em class="sig-param">tag: str</em>, <em class="sig-param">artifact: object = None</em>, <em class="sig-param">path_to_artifact: str = None</em>, <em class="sig-param">scope: str = None</em>, <em class="sig-param">run_key: str = None</em>, <em class="sig-param">global_epoch_step: int = 0</em>, <em class="sig-param">global_batch_step: int = 0</em>, <em class="sig-param">global_sample_step: int = 0</em>, <em class="sig-param">stage_key: str = None</em>, <em class="sig-param">stage_epoch_len: int = 0</em>, <em class="sig-param">stage_epoch_step: int = 0</em>, <em class="sig-param">stage_batch_step: int = 0</em>, <em class="sig-param">stage_sample_step: int = 0</em>, <em class="sig-param">loader_key: str = None</em>, <em class="sig-param">loader_batch_len: int = 0</em>, <em class="sig-param">loader_sample_len: int = 0</em>, <em class="sig-param">loader_batch_step: int = 0</em>, <em class="sig-param">loader_sample_step: int = 0</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/logger.html#ILogger.log_artifact"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.logger.ILogger.log_artifact" title="Permalink to this definition">¶</a></dt>
+<dd><p>Logs artifact (arbitrary file like audio, video, model weights) to the logger.</p>
 </dd></dl>
 
 <dl class="method">
