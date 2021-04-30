@@ -1,1 +1,1 @@
-neptune-client
+neptune-client>=0.9.5
