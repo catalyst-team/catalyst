@@ -107,7 +107,7 @@ class NeptuneLogger(ILogger):
             self.run = run
         try:
             import catalyst.__version__ as version
-            
+
             self.run["source_code/integrations/neptune-catalyst"] = version
         except (ImportError, NameError, AttributeError):
             pass
