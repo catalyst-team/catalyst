@@ -1471,6 +1471,7 @@ best practices for your deep learning research and development.
 
 ### Documentation
 - [master](https://catalyst-team.github.io/catalyst/)
+- [21.04.2](https://catalyst-team.github.io/catalyst/v21.04.2/index.html)
 - [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html)
 - [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html), [21.03.1/21.03.2](https://catalyst-team.github.io/catalyst/v21.03.1/index.html)
 - [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
