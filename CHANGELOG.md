@@ -9,7 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- Neptune Logger (``NeptuneLogger``) ([#1196](https://github.com/catalyst-team/catalyst/pull/1196)
+- `log_artifact` method for logging arbitrary files like audio, video, or model weights to `ILogger` and `IRunner` ([#1196](https://github.com/catalyst-team/catalyst/pull/1196)
 
 ### Changed
 
