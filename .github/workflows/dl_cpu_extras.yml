@@ -22,7 +22,7 @@ jobs:
         os: [ubuntu-20.04]
         python-version: [3.7]
         requirements: ['latest']
-        extras: ['base', 'cv', 'ml', 'hydra', 'optuna', 'onnx']
+        extras: ['base', 'cv', 'ml', 'hydra', 'optuna', 'onnx', 'neptune']
 
     timeout-minutes: 30
     steps:

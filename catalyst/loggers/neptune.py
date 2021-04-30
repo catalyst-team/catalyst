@@ -105,6 +105,11 @@ class NeptuneLogger(ILogger):
             )
         else:
             self.run = run
+        try:
+            import catalyst.__version__ as version
+            self.run['source_code/integrations/neptune-catalyst'] = version
+        except (ImportError, NameError, AttributeError):
+            pass
 
     def _log_metrics(self, metrics: Dict[str, float], neptune_path: str, step: int):
         for key, value in metrics.items():
