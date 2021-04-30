@@ -12,7 +12,7 @@ if SETTINGS.neptune_required:
 def _prepare_metrics(metrics):
     conflict_keys = []
     processed_metrics = dict(metrics)
-    for k in processed_metrics.keys():
+    for k in list(processed_metrics.keys()):
         if k.endswith("/std"):
             k_stripped = k[:-4]
             k_val = k_stripped + "/val"
@@ -32,23 +32,26 @@ class NeptuneLogger(ILogger):
 
         Neptune documentation: https://docs.neptune.ai
 
-        You can acquire api_token by following https://docs.neptune.ai/getting-started/installation#authentication
+        You can acquire api_token by following:
+            https://docs.neptune.ai/getting-started/installation#authentication
         or, you can use special token 'ANONYMOUS' for testing without registration
         if not provided, Neptune will try to use environmental variable NEPTUNE_API_TOKEN
 
-        If using 'ANONYMOUS' token, you can set project to 'common/catalyst-integration' for test purposes.
+        If using 'ANONYMOUS' token, you can set project to 'common/catalyst-integration'
+        for test purposes.
 
         Additional keyword arguments will be passed directly to neptune.init() function,
         see https://docs.neptune.ai/api-reference/neptune#init
 
-        After creation of the logger without passing run parameter, a link to created run will be printed.
-        You can also retrieve the run object by calling NeptuneLogger.run to access it directly
+        After creation of the logger without passing run parameter, a link to created run
+        will be printed. You can also retrieve the run object by calling NeptuneLogger.run
+        to access it directly
 
         Args:
             base_namespace: Optional. namespace within Neptune's Run to put all metric in
             api_token: Optional. Your Neptune API token. Use 'ANONYMOUS' for common, public access
             project: Optional. Name of your workspace in a form of 'workspaceName/projectName'
-            run: Optional. Pass if you want to resume a Neptune run. See https://docs.neptune.ai/api-reference/run
+            run: Optional. Pass if you want to resume a Neptune run.
 
         Python API examples:
 
