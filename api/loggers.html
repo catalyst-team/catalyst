@@ -321,9 +321,9 @@
 <li><p><a class="reference internal" href="#consolelogger" id="id1">ConsoleLogger</a></p></li>
 <li><p><a class="reference internal" href="#csvlogger" id="id2">CSVLogger</a></p></li>
 <li><p><a class="reference internal" href="#mlflowlogger" id="id3">MLflowLogger</a></p></li>
-<li><p><a class="reference internal" href="#tensorboardlogger" id="id4">TensorboardLogger</a></p></li>
-<li><p><a class="reference internal" href="#wandblogger" id="id5">WandbLogger</a></p></li>
-<li><p><a class="reference internal" href="#neptunelogger" id="id6">NeptuneLogger</a></p></li>
+<li><p><a class="reference internal" href="#neptunelogger" id="id4">NeptuneLogger</a></p></li>
+<li><p><a class="reference internal" href="#tensorboardlogger" id="id5">TensorboardLogger</a></p></li>
+<li><p><a class="reference internal" href="#wandblogger" id="id6">WandbLogger</a></p></li>
 </ul>
 </div>
 <div class="section" id="consolelogger">
@@ -485,8 +485,72 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 </dd></dl>
 
 </div>
+<div class="section" id="neptunelogger">
+<h2><a class="toc-backref" href="#id4">NeptuneLogger</a><a class="headerlink" href="#neptunelogger" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="catalyst.loggers.neptune.NeptuneLogger">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.neptune.</code><code class="sig-name descname">NeptuneLogger</code><span class="sig-paren">(</span><em class="sig-param">base_namespace=None</em>, <em class="sig-param">api_token=None</em>, <em class="sig-param">project=None</em>, <em class="sig-param">run=None</em>, <em class="sig-param">**neptune_run_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/neptune.html#NeptuneLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.neptune.NeptuneLogger" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
+<p>Neptune logger for parameters, metrics, images and other artifacts.</p>
+<p>Neptune documentation: <a class="reference external" href="https://docs.neptune.ai">https://docs.neptune.ai</a></p>
+<p>You can acquire api_token by following:
+<a class="reference external" href="https://docs.neptune.ai/getting-started/installation#authentication">https://docs.neptune.ai/getting-started/installation#authentication</a>
+or, you can use special token ‘ANONYMOUS’ for testing without registration
+if not provided, Neptune will try to use environmental variable NEPTUNE_API_TOKEN</p>
+<p>If using ‘ANONYMOUS’ token, you can set project to ‘common/catalyst-integration’
+for test purposes.</p>
+<p>Additional keyword arguments will be passed directly to neptune.init() function,
+see <a class="reference external" href="https://docs.neptune.ai/api-reference/neptune#init">https://docs.neptune.ai/api-reference/neptune#init</a></p>
+<p>After creation of the logger without passing run parameter, a link to created run
+will be printed. You can also retrieve the run object by calling NeptuneLogger.run
+to access it directly</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_namespace</strong> – Optional. namespace within Neptune’s Run to put all metric in</p></li>
+<li><p><strong>api_token</strong> – Optional. Your Neptune API token. Use ‘ANONYMOUS’ for common, public access</p></li>
+<li><p><strong>project</strong> – Optional. Name of your workspace in a form of ‘workspaceName/projectName’</p></li>
+<li><p><strong>run</strong> – Optional. Pass if you want to resume a Neptune run.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Python API examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="o">...</span><span class="p">,</span>
+    <span class="n">loggers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;neptune&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">NeptuneLogger</span><span class="p">(</span>
+        <span class="n">base_namespace</span><span class="o">=</span><span class="s2">&quot;catalyst-tests&quot;</span><span class="p">,</span>
+        <span class="n">api_token</span><span class="o">=</span><span class="s2">&quot;ANONYMOUS&quot;</span><span class="p">,</span>
+        <span class="n">project</span><span class="o">=</span><span class="s2">&quot;common/catalyst-integration&quot;</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+
+    <span class="k">def</span> <span class="nf">get_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;console&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">ConsoleLogger</span><span class="p">(),</span>
+            <span class="s2">&quot;neptune&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">NeptuneLogger</span><span class="p">(</span>
+                <span class="n">base_namespace</span><span class="o">=</span><span class="s2">&quot;catalyst-tests&quot;</span><span class="p">,</span>
+                <span class="n">api_token</span><span class="o">=</span><span class="s2">&quot;ANONYMOUS&quot;</span><span class="p">,</span>
+                <span class="n">project</span><span class="o">=</span><span class="s2">&quot;common/catalyst-integration&quot;</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="c1"># ...</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
 <div class="section" id="tensorboardlogger">
-<h2><a class="toc-backref" href="#id4">TensorboardLogger</a><a class="headerlink" href="#tensorboardlogger" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">TensorboardLogger</a><a class="headerlink" href="#tensorboardlogger" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.loggers.tensorboard.TensorboardLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.tensorboard.</code><code class="sig-name descname">TensorboardLogger</code><span class="sig-paren">(</span><em class="sig-param">logdir: str</em>, <em class="sig-param">use_logdir_postfix: bool = False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/tensorboard.html#TensorboardLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.tensorboard.TensorboardLogger" title="Permalink to this definition">¶</a></dt>
@@ -556,7 +620,7 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 
 </div>
 <div class="section" id="wandblogger">
-<h2><a class="toc-backref" href="#id5">WandbLogger</a><a class="headerlink" href="#wandblogger" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id6">WandbLogger</a><a class="headerlink" href="#wandblogger" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.loggers.wandb.WandbLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.wandb.</code><code class="sig-name descname">WandbLogger</code><span class="sig-paren">(</span><em class="sig-param">project: str</em>, <em class="sig-param">name: Optional[str] = None</em>, <em class="sig-param">entity: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/wandb.html#WandbLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.wandb.WandbLogger" title="Permalink to this definition">¶</a></dt>
@@ -620,70 +684,6 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 </dd></dl>
 
 </div>
-<div class="section" id="neptunelogger">
-<h2><a class="toc-backref" href="#id6">NeptuneLogger</a><a class="headerlink" href="#neptunelogger" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="catalyst.loggers.neptune.NeptuneLogger">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.neptune.</code><code class="sig-name descname">NeptuneLogger</code><span class="sig-paren">(</span><em class="sig-param">base_namespace=None</em>, <em class="sig-param">api_token=None</em>, <em class="sig-param">project=None</em>, <em class="sig-param">run=None</em>, <em class="sig-param">**neptune_run_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/neptune.html#NeptuneLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.neptune.NeptuneLogger" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
-<p>Neptune logger for parameters, metrics, images and other artifacts.</p>
-<p>Neptune documentation: <a class="reference external" href="https://docs.neptune.ai">https://docs.neptune.ai</a></p>
-<p>You can acquire api_token by following:
-<a class="reference external" href="https://docs.neptune.ai/getting-started/installation#authentication">https://docs.neptune.ai/getting-started/installation#authentication</a>
-or, you can use special token ‘ANONYMOUS’ for testing without registration
-if not provided, Neptune will try to use environmental variable NEPTUNE_API_TOKEN</p>
-<p>If using ‘ANONYMOUS’ token, you can set project to ‘common/catalyst-integration’
-for test purposes.</p>
-<p>Additional keyword arguments will be passed directly to neptune.init() function,
-see <a class="reference external" href="https://docs.neptune.ai/api-reference/neptune#init">https://docs.neptune.ai/api-reference/neptune#init</a></p>
-<p>After creation of the logger without passing run parameter, a link to created run
-will be printed. You can also retrieve the run object by calling NeptuneLogger.run
-to access it directly</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>base_namespace</strong> – Optional. namespace within Neptune’s Run to put all metric in</p></li>
-<li><p><strong>api_token</strong> – Optional. Your Neptune API token. Use ‘ANONYMOUS’ for common, public access</p></li>
-<li><p><strong>project</strong> – Optional. Name of your workspace in a form of ‘workspaceName/projectName’</p></li>
-<li><p><strong>run</strong> – Optional. Pass if you want to resume a Neptune run.</p></li>
-</ul>
-</dd>
-</dl>
-<p>Python API examples:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
-
-<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-    <span class="o">...</span><span class="p">,</span>
-    <span class="n">loggers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;neptune&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">NeptuneLogger</span><span class="p">(</span>
-        <span class="n">base_namespace</span><span class="o">=</span><span class="s2">&quot;catalyst-tests&quot;</span><span class="p">,</span>
-        <span class="n">api_token</span><span class="o">=</span><span class="s2">&quot;ANONYMOUS&quot;</span><span class="p">,</span>
-        <span class="n">project</span><span class="o">=</span><span class="s2">&quot;common/catalyst-integration&quot;</span><span class="p">)</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
-
-<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
-    <span class="c1"># ...</span>
-
-    <span class="k">def</span> <span class="nf">get_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;console&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">ConsoleLogger</span><span class="p">(),</span>
-            <span class="s2">&quot;neptune&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">NeptuneLogger</span><span class="p">(</span>
-                <span class="n">base_namespace</span><span class="o">=</span><span class="s2">&quot;catalyst-tests&quot;</span><span class="p">,</span>
-                <span class="n">api_token</span><span class="o">=</span><span class="s2">&quot;ANONYMOUS&quot;</span><span class="p">,</span>
-                <span class="n">project</span><span class="o">=</span><span class="s2">&quot;common/catalyst-integration&quot;</span><span class="p">)</span>
-        <span class="p">}</span>
-    <span class="c1"># ...</span>
-
-<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
-</pre></div>
-</div>
-</dd></dl>
-
-</div>
 </div>
 
 
@@ -729,9 +729,9 @@ to access it directly</p>
 <li><a class="reference internal" href="#consolelogger">ConsoleLogger</a></li>
 <li><a class="reference internal" href="#csvlogger">CSVLogger</a></li>
 <li><a class="reference internal" href="#mlflowlogger">MLflowLogger</a></li>
+<li><a class="reference internal" href="#neptunelogger">NeptuneLogger</a></li>
 <li><a class="reference internal" href="#tensorboardlogger">TensorboardLogger</a></li>
 <li><a class="reference internal" href="#wandblogger">WandbLogger</a></li>
-<li><a class="reference internal" href="#neptunelogger">NeptuneLogger</a></li>
 </ul>
 </li>
 </ul>
