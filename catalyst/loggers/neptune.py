@@ -87,7 +87,7 @@ class NeptuneLogger(ILogger):
     """
 
     def __init__(
-            self, base_namespace=None, api_token=None, project=None, run=None, **neptune_run_kwargs
+        self, base_namespace=None, api_token=None, project=None, run=None, **neptune_run_kwargs
     ):
         if base_namespace is None:
             self.base_namespace = "experiment"
