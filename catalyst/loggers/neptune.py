@@ -304,7 +304,7 @@ class NeptuneLogger(ILogger):
 
     def close_log(self) -> None:
         """Closes the loggers."""
-        self.run.stop()
+        self.run.wait()
 
 
 __all__ = ["NeptuneLogger"]
