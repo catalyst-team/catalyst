@@ -97,8 +97,9 @@ extras = {
     "mlflow": load_requirements("requirements/requirements-mlflow.txt"),
     "neptune": load_requirements("requirements/requirements-neptune.txt"),
 }
-extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"] + extras["neptune"]
-
+extras["all"] = (
+    extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"] + extras["neptune"]
+)
 # Meta dependency groups.
 # all_deps = []
 # for group_name in extras:

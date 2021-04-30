@@ -117,26 +117,26 @@ class NeptuneLogger(ILogger):
             self.run[neptune_path].upload(path_to_artifact)
 
     def log_metrics(
-            self,
-            metrics: Dict[str, float],
-            scope: str = None,
-            # experiment info
-            run_key: str = None,
-            global_epoch_step: int = 0,
-            global_batch_step: int = 0,
-            global_sample_step: int = 0,
-            # stage info
-            stage_key: str = None,
-            stage_epoch_len: int = 0,
-            stage_epoch_step: int = 0,
-            stage_batch_step: int = 0,
-            stage_sample_step: int = 0,
-            # loader info
-            loader_key: str = None,
-            loader_batch_len: int = 0,
-            loader_sample_len: int = 0,
-            loader_batch_step: int = 0,
-            loader_sample_step: int = 0,
+        self,
+        metrics: Dict[str, float],
+        scope: str = None,
+        # experiment info
+        run_key: str = None,
+        global_epoch_step: int = 0,
+        global_batch_step: int = 0,
+        global_sample_step: int = 0,
+        # stage info
+        stage_key: str = None,
+        stage_epoch_len: int = 0,
+        stage_epoch_step: int = 0,
+        stage_batch_step: int = 0,
+        stage_sample_step: int = 0,
+        # loader info
+        loader_key: str = None,
+        loader_batch_len: int = 0,
+        loader_sample_len: int = 0,
+        loader_batch_step: int = 0,
+        loader_sample_step: int = 0,
     ) -> None:
         """Logs batch, epoch and loader metrics to Neptune."""
         if scope == "batch":
@@ -164,27 +164,27 @@ class NeptuneLogger(ILogger):
             self._log_metrics(metrics=metrics, neptune_path=self.base_namespace, step=0)
 
     def log_image(
-            self,
-            tag: str,
-            image: np.ndarray,
-            scope: str = None,
-            # experiment info
-            run_key: str = None,
-            global_epoch_step: int = 0,
-            global_batch_step: int = 0,
-            global_sample_step: int = 0,
-            # stage info
-            stage_key: str = None,
-            stage_epoch_len: int = 0,
-            stage_epoch_step: int = 0,
-            stage_batch_step: int = 0,
-            stage_sample_step: int = 0,
-            # loader info
-            loader_key: str = None,
-            loader_batch_len: int = 0,
-            loader_sample_len: int = 0,
-            loader_batch_step: int = 0,
-            loader_sample_step: int = 0,
+        self,
+        tag: str,
+        image: np.ndarray,
+        scope: str = None,
+        # experiment info
+        run_key: str = None,
+        global_epoch_step: int = 0,
+        global_batch_step: int = 0,
+        global_sample_step: int = 0,
+        # stage info
+        stage_key: str = None,
+        stage_epoch_len: int = 0,
+        stage_epoch_step: int = 0,
+        stage_batch_step: int = 0,
+        stage_sample_step: int = 0,
+        # loader info
+        loader_key: str = None,
+        loader_batch_len: int = 0,
+        loader_sample_len: int = 0,
+        loader_batch_step: int = 0,
+        loader_sample_step: int = 0,
     ) -> None:
         """Logs image to Neptune for current scope on current step."""
         if scope == "batch" or scope == "loader":
@@ -203,12 +203,12 @@ class NeptuneLogger(ILogger):
             self._log_image(image, neptune_path)
 
     def log_hparams(
-            self,
-            hparams: Dict,
-            scope: str = None,
-            # experiment info
-            run_key: str = None,
-            stage_key: str = None,
+        self,
+        hparams: Dict,
+        scope: str = None,
+        # experiment info
+        run_key: str = None,
+        stage_key: str = None,
     ) -> None:
         """Logs hyper-parameters to Neptune."""
         if scope == "stage":
@@ -217,28 +217,28 @@ class NeptuneLogger(ILogger):
             self.run[f"{self.base_namespace}/hparams"] = hparams
 
     def log_artifact(
-            self,
-            tag: str,
-            artifact: object = None,
-            path_to_artifact: str = None,
-            scope: str = None,
-            # experiment info
-            run_key: str = None,
-            global_epoch_step: int = 0,
-            global_batch_step: int = 0,
-            global_sample_step: int = 0,
-            # stage info
-            stage_key: str = None,
-            stage_epoch_len: int = 0,
-            stage_epoch_step: int = 0,
-            stage_batch_step: int = 0,
-            stage_sample_step: int = 0,
-            # loader info
-            loader_key: str = None,
-            loader_batch_len: int = 0,
-            loader_sample_len: int = 0,
-            loader_batch_step: int = 0,
-            loader_sample_step: int = 0,
+        self,
+        tag: str,
+        artifact: object = None,
+        path_to_artifact: str = None,
+        scope: str = None,
+        # experiment info
+        run_key: str = None,
+        global_epoch_step: int = 0,
+        global_batch_step: int = 0,
+        global_sample_step: int = 0,
+        # stage info
+        stage_key: str = None,
+        stage_epoch_len: int = 0,
+        stage_epoch_step: int = 0,
+        stage_batch_step: int = 0,
+        stage_sample_step: int = 0,
+        # loader info
+        loader_key: str = None,
+        loader_batch_len: int = 0,
+        loader_sample_len: int = 0,
+        loader_batch_step: int = 0,
+        loader_sample_step: int = 0,
     ) -> None:
         """Logs arbitrary file (audio, video, csv, etc.) to Neptune."""
         if artifact is not None and path_to_artifact is not None:
