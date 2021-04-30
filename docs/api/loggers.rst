@@ -42,3 +42,10 @@ WandbLogger
     :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
+    
+NeptuneLogger
+--------------------------------
+.. autoclass:: catalyst.loggers.neptune.NeptuneLogger
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:

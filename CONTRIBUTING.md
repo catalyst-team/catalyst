@@ -87,7 +87,8 @@ If you are not familiar with creating a Pull Request, here are some guides:
       -r requirements/requirements-mlflow.txt \
       -r requirements/requirements-nifti.txt \
       -r requirements/requirements-onnx.txt \
-      -r requirements/requirements-optuna.txt
+      -r requirements/requirements-optuna.txt \
+      -r requirements/requirements-neptune.txt
     ```
 2. Break your work into small, single-purpose updates if possible.
 It's much harder to merge in a large change with a lot of disjoint features.
