@@ -33,7 +33,7 @@ class NeptuneLogger(ILogger):
     Neptune documentation: https://docs.neptune.ai
 
     You can acquire api_token by following:
-        https://docs.neptune.ai/getting-started/installation#authentication
+    https://docs.neptune.ai/getting-started/installation#authentication
     or, you can use special token 'ANONYMOUS' for testing without registration
     if not provided, Neptune will try to use environmental variable NEPTUNE_API_TOKEN
 
