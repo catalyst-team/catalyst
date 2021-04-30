@@ -1,0 +1,1237 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>catalyst.callbacks.checkpoint &mdash; Catalyst 21.04.2 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Alchemy</span>
+                  <p>Experiments logging & visualization</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
+                  <span class=dropdown-title>Catalyst</span>
+                  <p>Accelerated deep learning R&D</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Reaction</span>
+                  <p>Convenient deep learning models serving</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
+                  <span class=dropdown-title>Codestyle</span>
+                  <p>Joint R&D codestyle</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Classification</span>
+                  <p>Image classification pipeline with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
+                  <span class=dropdown-title>Detection</span>
+                  <p>Object detection pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Segmentation</span>
+                  <p>Image semantic segmentation pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.04</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&amp;sk=865d3c472cfb10379864656fedcfe762">Catalyst 2021 — Accelerated PyTorch 2.0</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/engine.html">Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/logger.html">Logger</a></li>
+</ul>
+<p class="caption"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/finetuning.html">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../../../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../index.html">Module code</a> &gt;</li>
+        
+      <li>catalyst.callbacks.checkpoint</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <h1>Source code for catalyst.callbacks.checkpoint</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+
+<span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="nn">dist</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackNode</span><span class="p">,</span> <span class="n">CallbackOrder</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
+<span class="kn">from</span> <span class="nn">catalyst.tools.metric_handler</span> <span class="kn">import</span> <span class="n">MetricHandler</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.config</span> <span class="kn">import</span> <span class="n">save_config</span>
+
+
+<span class="k">def</span> <span class="nf">_save_checkpoint</span><span class="p">(</span>
+    <span class="n">checkpoint</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
+    <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
+    <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">is_best</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">is_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">extra_suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Saving checkpoint to a file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        checkpoint: data to save.</span>
+<span class="sd">        runner: current runner</span>
+<span class="sd">        logdir: directory where checkpoint should be stored.</span>
+<span class="sd">        suffix: checkpoint file name.</span>
+<span class="sd">        is_best: if ``True`` then also will be generated best checkpoint file.</span>
+<span class="sd">        is_last: if ``True`` then also will be generated last checkpoint file.</span>
+<span class="sd">        extra_suffix: suffix to use for saving best/last checkpoints.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        path to saved checkpoint</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">.pth&quot;</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">save_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_best</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/best</span><span class="si">{</span><span class="n">extra_suffix</span><span class="si">}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">is_last</span><span class="p">:</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/last</span><span class="si">{</span><span class="n">extra_suffix</span><span class="si">}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filename</span>
+
+
+<span class="k">def</span> <span class="nf">_load_checkpoint</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">,</span> <span class="n">load_full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load checkpoint from a file.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        filename: path to checkpoint</span>
+<span class="sd">        runner: current runner</span>
+<span class="sd">        load_full: if true (default) then will be performed</span>
+<span class="sd">            loading states for criterion, optimizer and scheduler.</span>
+<span class="sd">            File should contain keys required for</span>
+<span class="sd">            loading model (``&#39;model_state_dict&#39;``),</span>
+<span class="sd">            criterion (``&#39;criterion_state_dict&#39;``) (only for full load),</span>
+<span class="sd">            optimizer (``&#39;optimizer_state_dict&#39;``),</span>
+<span class="sd">            scheduler (``&#39;scheduler_state_dict&#39;``).</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileNotFoundError: when file specified in ``filename``</span>
+<span class="sd">            is not exist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">is_master_process</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_master_process</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No checkpoint found at </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is_master_process</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;=&gt; Loading checkpoint </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">runner</span><span class="o">.</span><span class="n">stage_key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">load_full</span><span class="p">:</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">global_epoch_step</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;global_epoch_step&quot;</span><span class="p">]</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">global_batch_step</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;global_batch_step&quot;</span><span class="p">]</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">global_sample_step</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;global_sample_step&quot;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">load_full</span><span class="p">:</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">unpack_checkpoint</span><span class="p">(</span>
+            <span class="n">checkpoint</span><span class="p">,</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">criterion</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">criterion</span><span class="p">,</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span>
+            <span class="n">scheduler</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_master_process</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;full checkpoint </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> loaded &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(global epoch </span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;global_epoch_step&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;stage_key&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;epoch </span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;stage_epoch_step&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">is_master_process</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;model checkpoint </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2"> loaded &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;(global epoch </span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;global_epoch_step&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;stage </span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;stage_key&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;epoch </span><span class="si">{</span><span class="n">checkpoint</span><span class="p">[</span><span class="s1">&#39;stage_epoch_step&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_required_files</span><span class="p">(</span><span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">load_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate required files for load model, criterion,</span>
+<span class="sd">    scheduler, optimizer specified in ``load_map``.</span>
+
+<span class="sd">    Expected that ``load_map`` contains keys:</span>
+<span class="sd">    ``&quot;model&quot;``, ``&quot;criterion&quot;``, ``&quot;optimizer&quot;``, ``&quot;scheduler&quot;``.</span>
+<span class="sd">    Otherwise an empty dict will be generated.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        logdir: directory with logs</span>
+<span class="sd">        load_map (Dict[str, str]): dict with specification what should be loaded</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Mapping from file to parts required from this file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">load_map</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+    <span class="n">default_states</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="s2">&quot;best_full&quot;</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="s2">&quot;last_full&quot;</span><span class="p">}</span>
+    <span class="n">required_full_checkpoint</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;global_epoch_step&quot;</span><span class="p">,</span> <span class="s2">&quot;global_batch_step&quot;</span><span class="p">,</span> <span class="s2">&quot;global_sample_step&quot;</span><span class="p">]</span>
+    <span class="n">experiment_parts</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;model&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">required_full_checkpoint</span> <span class="o">+</span> <span class="n">steps</span>
+
+    <span class="c1"># keep required parts</span>
+    <span class="n">experiment_parts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">part</span><span class="p">:</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">load_map</span><span class="p">,</span> <span class="n">experiment_parts</span><span class="p">))</span>
+
+    <span class="c1"># avoid unnecessary loading</span>
+    <span class="k">if</span> <span class="s2">&quot;model&quot;</span> <span class="ow">in</span> <span class="n">experiment_parts</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">experiment_parts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">required_full_checkpoint</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">)</span>
+
+    <span class="c1"># mapping - &lt;filename&gt;: &lt;list of parts to load from this file&gt;</span>
+    <span class="n">required_files</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">experiment_parts</span><span class="p">:</span>
+        <span class="n">fname</span> <span class="o">=</span> <span class="n">load_map</span><span class="p">[</span><span class="n">part</span><span class="p">]</span>
+        <span class="n">required_full</span> <span class="o">=</span> <span class="n">fname</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;_full&quot;</span><span class="p">)</span>
+        <span class="c1"># specified default state</span>
+        <span class="k">if</span> <span class="n">fname</span> <span class="ow">in</span> <span class="n">default_states</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">required_full_checkpoint</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">required_full</span><span class="p">:</span>
+                <span class="n">fname</span> <span class="o">=</span> <span class="n">fname</span> <span class="o">+</span> <span class="s2">&quot;_full&quot;</span>
+            <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">fname</span><span class="si">}</span><span class="s2">.pth&quot;</span>
+        <span class="c1"># in other case specified path to checkpoint</span>
+        <span class="n">required_files</span><span class="p">[</span><span class="n">fname</span><span class="p">]</span> <span class="o">=</span> <span class="n">required_files</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="p">[])</span> <span class="o">+</span> <span class="p">[</span><span class="n">part</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">required_files</span>
+
+
+<span class="k">def</span> <span class="nf">_load_states_from_file_map</span><span class="p">(</span>
+    <span class="o">*</span><span class="p">,</span> <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">,</span> <span class="n">load_map</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load state of a model, criterion, optimizer, scheduler</span>
+<span class="sd">    from files specified in ``load_map``.</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        runner: current runner</span>
+<span class="sd">        load_map (Dict[str, str]): dict with mappings to load.</span>
+<span class="sd">            Expected keys - ``&#39;model&#39;``, ``&#39;criterion&#39;``</span>
+<span class="sd">            ``&#39;optimizer&#39;``, ``&#39;scheduler&#39;``, other keys will be</span>
+<span class="sd">            ignored.</span>
+<span class="sd">            Expected that values will be states (``&#39;best&#39;``,</span>
+<span class="sd">            ``&quot;best_full&quot;``, ``&quot;last&quot;``, ``&quot;last_full&quot;``) or</span>
+<span class="sd">            path to checkpoint.</span>
+<span class="sd">            **NOTE:** for successful load criterion, optimizer,</span>
+<span class="sd">            scheduler states required a full checkpoint.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        FileNotFoundError: when file/state specified in ``load_map``</span>
+<span class="sd">            is not exist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">required_files</span> <span class="o">=</span> <span class="n">_get_required_files</span><span class="p">(</span><span class="n">logdir</span><span class="p">,</span> <span class="n">load_map</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">required_files</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No checkpoint found at </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span>
+
+    <span class="c1"># extracting parts from files</span>
+    <span class="k">for</span> <span class="n">filename</span><span class="p">,</span> <span class="n">parts_to_load</span> <span class="ow">in</span> <span class="n">required_files</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;=&gt; Loading </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts_to_load</span><span class="p">)</span><span class="si">}</span><span class="s2"> from </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">load_checkpoint</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="n">to_unpack</span> <span class="o">=</span> <span class="p">{</span><span class="n">part</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="n">part</span><span class="p">)</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts_to_load</span><span class="p">}</span>
+        <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">unpack_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">,</span> <span class="o">**</span><span class="n">to_unpack</span><span class="p">)</span>
+        <span class="c1"># hotfix</span>
+        <span class="k">if</span> <span class="s2">&quot;global_epoch_step&quot;</span> <span class="ow">in</span> <span class="n">to_unpack</span><span class="p">:</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">global_epoch_step</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;global_epoch_step&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;global_batch_step&quot;</span> <span class="ow">in</span> <span class="n">to_unpack</span><span class="p">:</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">global_batch_step</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;global_batch_step&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s2">&quot;global_sample_step&quot;</span> <span class="ow">in</span> <span class="n">to_unpack</span><span class="p">:</span>
+            <span class="n">runner</span><span class="o">.</span><span class="n">global_sample_step</span> <span class="o">=</span> <span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;global_sample_step&quot;</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;   loaded: </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts_to_load</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_load_runner</span><span class="p">(</span>
+    <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">,</span> <span class="n">mapping</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">load_full</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Selects a loading method based on type of mapping.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        logdir: logdir with checkpoints</span>
+<span class="sd">        runner: current runner</span>
+<span class="sd">        mapping: mapping to use for loading</span>
+<span class="sd">        load_full: load a full model, used only when mapping type is string</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">mapping</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="s2">&quot;best_full&quot;</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="s2">&quot;last_full&quot;</span><span class="p">}:</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">mapping</span><span class="si">}</span><span class="s2">.pth&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">mapping</span>
+        <span class="n">_load_checkpoint</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">,</span> <span class="n">load_full</span><span class="o">=</span><span class="n">load_full</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mapping</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">_load_states_from_file_map</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span> <span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">,</span> <span class="n">load_map</span><span class="o">=</span><span class="n">mapping</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">ICheckpointCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Criterion callback interface, abstraction over checkpoint step.&quot;&quot;&quot;</span>
+
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="CheckpointCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.checkpoint.CheckpointCallback">[docs]</a><span class="k">class</span> <span class="nc">CheckpointCallback</span><span class="p">(</span><span class="n">ICheckpointCallback</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Checkpoint callback to save/restore your model/criterion/optimizer/scheduler.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        logdir: directory to store chekpoints</span>
+<span class="sd">        loader_key: loader key for best model selection (based on metric score over the dataset)</span>
+<span class="sd">        metric_key: metric key for best model selection (based on metric score over the dataset)</span>
+<span class="sd">        minimize: boolean flag to minimize the required metric</span>
+<span class="sd">        min_delta: minimal delta for metric improve</span>
+<span class="sd">        save_n_best: number of best checkpoint to keep,</span>
+<span class="sd">            if ``0`` then  store only last state of model and</span>
+<span class="sd">            ``load_on_stage_end`` should be one of</span>
+<span class="sd">            ``last`` or ``last_full``.</span>
+<span class="sd">        load_on_stage_start (str or Dict[str, str]): load specified</span>
+<span class="sd">            state/model at stage start.</span>
+
+<span class="sd">            If passed **string** then will be performed initialization from</span>
+<span class="sd">            specified state (``best``/``best_full``/``last``/``last_full``)</span>
+<span class="sd">            or checkpoint file.</span>
+
+<span class="sd">            If passed **dict** then will be performed initialization only</span>
+<span class="sd">            for specified parts - model, criterion, optimizer, scheduler.</span>
+
+<span class="sd">            Example:</span>
+
+<span class="sd">                &gt;&gt;&gt; # possible checkpoints to use:</span>
+<span class="sd">                &gt;&gt;&gt; #   &quot;best&quot;/&quot;best_full&quot;/&quot;last&quot;/&quot;last_full&quot;</span>
+<span class="sd">                &gt;&gt;&gt; #   or path to specific checkpoint</span>
+<span class="sd">                &gt;&gt;&gt; to_load = {</span>
+<span class="sd">                &gt;&gt;&gt;    &quot;model&quot;: &quot;path/to/checkpoint.pth&quot;,</span>
+<span class="sd">                &gt;&gt;&gt;    &quot;criterion&quot;: &quot;best&quot;,</span>
+<span class="sd">                &gt;&gt;&gt;    &quot;optimizer&quot;: &quot;last_full&quot;,</span>
+<span class="sd">                &gt;&gt;&gt;    &quot;scheduler&quot;: &quot;best_full&quot;,</span>
+<span class="sd">                &gt;&gt;&gt; }</span>
+<span class="sd">                &gt;&gt;&gt; CheckpointCallback(load_on_stage_start=to_load)</span>
+
+<span class="sd">            All other keys instead of ``&quot;model&quot;``, ``&quot;criterion&quot;``,</span>
+<span class="sd">            ``&quot;optimizer&quot;`` and ``&quot;scheduler&quot;`` will be ignored.</span>
+
+<span class="sd">            If ``None`` or an empty dict (or dict without mentioned</span>
+<span class="sd">            above keys) then no action is required at stage start and:</span>
+
+<span class="sd">            - Config API - will be used best state of model</span>
+<span class="sd">            - Notebook API - no action will be performed (will be used the last state)</span>
+
+<span class="sd">            **NOTE:** Loading will be performed on all stages except first.</span>
+
+<span class="sd">            **NOTE:** Criterion, optimizer and scheduler are optional keys</span>
+<span class="sd">            and should be loaded from full checkpoint.</span>
+
+<span class="sd">            Model state can be loaded from any checkpoint.</span>
+
+<span class="sd">            When dict contains keys for model and some other part</span>
+<span class="sd">            (for example ``{&quot;model&quot;: &quot;last&quot;, &quot;optimizer&quot;: &quot;last&quot;}``)</span>
+<span class="sd">            and they match in prefix (``&quot;best&quot;`` and</span>
+<span class="sd">            ``&quot;best_full&quot;``) then will be loaded full checkpoint</span>
+<span class="sd">            because it contains required states.</span>
+<span class="sd">        load_on_stage_end (str or Dict[str, str]): load specified</span>
+<span class="sd">            state/model at stage end.</span>
+
+<span class="sd">            If passed **string** then will be performed initialization from</span>
+<span class="sd">            specified state (``best``/``best_full``/``last``/``last_full``)</span>
+<span class="sd">            or checkpoint file.</span>
+
+<span class="sd">            If passed **dict** then will be performed initialization only</span>
+<span class="sd">            for specified parts - model, criterion, optimizer, scheduler.</span>
+<span class="sd">            Logic for dict is the same as for ``load_on_stage_start``.</span>
+
+<span class="sd">            If ``None`` then no action is required at stage end</span>
+<span class="sd">            and will be used the last runner.</span>
+
+<span class="sd">            **NOTE:** Loading will be performed always at stage end.</span>
+<span class="sd">        metrics_filename: filename to save metrics</span>
+<span class="sd">            in checkpoint folder.</span>
+<span class="sd">            Must ends on ``.json`` or ``.yml``</span>
+<span class="sd">        mode: checkpoining mode, could be ``all``, ``full``, ``model``</span>
+<span class="sd">        use_logdir_postfix: boolean flag to use extra prefix ``checkpoints`` for logdir</span>
+<span class="sd">        use_runner_logdir: boolean flag to use ``runner._logdir`` as logdir</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import torch</span>
+<span class="sd">        from torch.utils.data import DataLoader, TensorDataset</span>
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        # sample data</span>
+<span class="sd">        num_users, num_features, num_items = int(1e4), int(1e1), 10</span>
+<span class="sd">        X = torch.rand(num_users, num_features)</span>
+<span class="sd">        y = (torch.rand(num_users, num_items) &gt; 0.5).to(torch.float32)</span>
+
+<span class="sd">        # pytorch loaders</span>
+<span class="sd">        dataset = TensorDataset(X, y)</span>
+<span class="sd">        loader = DataLoader(dataset, batch_size=32, num_workers=1)</span>
+<span class="sd">        loaders = {&quot;train&quot;: loader, &quot;valid&quot;: loader}</span>
+
+<span class="sd">        # model, criterion, optimizer, scheduler</span>
+<span class="sd">        model = torch.nn.Linear(num_features, num_items)</span>
+<span class="sd">        criterion = torch.nn.BCEWithLogitsLoss()</span>
+<span class="sd">        optimizer = torch.optim.Adam(model.parameters())</span>
+<span class="sd">        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])</span>
+
+<span class="sd">        # model training</span>
+<span class="sd">        runner = dl.SupervisedRunner(</span>
+<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            scheduler=scheduler,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            num_epochs=3,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.BatchTransformCallback(</span>
+<span class="sd">                    transform=torch.sigmoid,</span>
+<span class="sd">                    scope=&quot;on_batch_end&quot;,</span>
+<span class="sd">                    input_key=&quot;logits&quot;,</span>
+<span class="sd">                    output_key=&quot;scores&quot;</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.CriterionCallback(</span>
+<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, metric_key=&quot;loss&quot;</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.AUCCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">                dl.HitrateCallback(</span>
+<span class="sd">                    input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.MRRCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
+<span class="sd">                dl.MAPCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
+<span class="sd">                dl.NDCGCallback(input_key=&quot;scores&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3, 5)),</span>
+<span class="sd">                dl.OptimizerCallback(metric_key=&quot;loss&quot;),</span>
+<span class="sd">                dl.SchedulerCallback(),</span>
+<span class="sd">                dl.CheckpointCallback(</span>
+<span class="sd">                    logdir=&quot;./logs&quot;, loader_key=&quot;valid&quot;, metric_key=&quot;loss&quot;, minimize=True</span>
+<span class="sd">                ),</span>
+<span class="sd">            ]</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for more use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="CheckpointCallback.__init__"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.checkpoint.CheckpointCallback.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># model selection info</span>
+        <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">minimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">min_delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
+        <span class="n">save_n_best</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="c1"># loading info</span>
+        <span class="n">load_on_stage_start</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">load_on_stage_end</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># resume: str = None,</span>
+        <span class="c1"># resume_dir: str = None,</span>
+        <span class="c1"># checkpointer info</span>
+        <span class="n">metrics_filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_metrics.json&quot;</span><span class="p">,</span>
+        <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+        <span class="n">use_logdir_postfix</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">use_runner_logdir</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">external</span><span class="p">,</span> <span class="n">node</span><span class="o">=</span><span class="n">CallbackNode</span><span class="o">.</span><span class="n">all</span><span class="p">)</span>
+        <span class="n">possible_states</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;best&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;last&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;best_full&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;last_full&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">assert</span> <span class="n">save_n_best</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">save_n_best</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">load_on_stage_end</span> <span class="ow">in</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="s2">&quot;last_full&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">load_on_stage_start</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">load_on_stage_start</span> <span class="ow">in</span> <span class="n">possible_states</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">load_on_stage_end</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="n">load_on_stage_end</span> <span class="ow">in</span> <span class="n">possible_states</span>
+        <span class="c1"># if resume_dir is not None:</span>
+        <span class="c1">#     assert resume is not None</span>
+
+        <span class="k">if</span> <span class="n">loader_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">metric_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">loader_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">metric_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="p">(</span>
+                <span class="s2">&quot;For checkpoint selection `CheckpointCallback` &quot;</span>
+                <span class="s2">&quot;requires both `loader_key` and `metric_key` specified.&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_use_model_selection</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">minimize</span> <span class="o">=</span> <span class="n">minimize</span> <span class="k">if</span> <span class="n">minimize</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">True</span>  <span class="c1"># loss-oriented selection</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_use_model_selection</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">minimize</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># epoch-num-oriented selection</span>
+
+        <span class="k">assert</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span>
+            <span class="s2">&quot;all&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;full&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;model&quot;</span><span class="p">,</span>
+        <span class="p">),</span> <span class="s2">&quot;`CheckpointCallback` could work only in `all`, `full` or `model` modes.&quot;</span>
+
+        <span class="c1"># checkpointer info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span> <span class="o">=</span> <span class="n">logdir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics_filename</span> <span class="o">=</span> <span class="n">metrics_filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_logdir_postfix</span> <span class="o">=</span> <span class="n">use_logdir_postfix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">use_runner_logdir</span> <span class="o">=</span> <span class="n">use_runner_logdir</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_runner_logdir</span>
+        <span class="p">),</span> <span class="s2">&quot;CheckpointCallback requires specified `logdir`&quot;</span>
+
+        <span class="c1"># model selection info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span> <span class="o">=</span> <span class="n">loader_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span> <span class="o">=</span> <span class="n">metric_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span> <span class="o">=</span> <span class="n">MetricHandler</span><span class="p">(</span><span class="n">minimize</span><span class="o">=</span><span class="n">minimize</span><span class="p">,</span> <span class="n">min_delta</span><span class="o">=</span><span class="n">min_delta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_n_best</span> <span class="o">=</span> <span class="n">save_n_best</span>
+        <span class="c1"># list with topN metrics [(score, filepath, stage_key, stage_epoch_step, epoch metrics)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># loading info</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_start</span> <span class="o">=</span> <span class="n">load_on_stage_start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span> <span class="o">=</span> <span class="n">load_on_stage_end</span></div>
+        <span class="c1"># self.resume = resume</span>
+        <span class="c1"># self.resume_dir = resume_dir</span>
+
+    <span class="k">def</span> <span class="nf">_pack_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
+        <span class="n">checkpoint</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">pack_checkpoint</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">criterion</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">criterion</span><span class="p">,</span>
+            <span class="n">optimizer</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">optimizer</span><span class="p">,</span>
+            <span class="n">scheduler</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">scheduler</span><span class="p">,</span>
+            <span class="c1"># experiment info</span>
+            <span class="n">run_key</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">run_key</span><span class="p">,</span>
+            <span class="n">global_epoch_step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">global_epoch_step</span><span class="p">,</span>
+            <span class="n">global_batch_step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">global_batch_step</span><span class="p">,</span>
+            <span class="n">global_sample_step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">global_sample_step</span><span class="p">,</span>
+            <span class="c1"># stage info</span>
+            <span class="n">stage_key</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_key</span><span class="p">,</span>
+            <span class="n">stage_epoch_step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_epoch_step</span><span class="p">,</span>
+            <span class="n">stage_batch_step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_batch_step</span><span class="p">,</span>
+            <span class="n">stage_sample_step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_sample_step</span><span class="p">,</span>
+            <span class="c1"># epoch info</span>
+            <span class="n">epoch_metrics</span><span class="o">=</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">dict</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
+            <span class="c1"># loader info</span>
+            <span class="n">loader_key</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_key</span><span class="p">,</span>
+            <span class="n">loader_batch_step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_batch_step</span><span class="p">,</span>
+            <span class="n">loader_sample_step</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">loader_sample_step</span><span class="p">,</span>
+            <span class="c1"># checkpointer info</span>
+            <span class="n">checkpointer_loader_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span><span class="p">,</span>
+            <span class="n">checkpointer_metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span><span class="p">,</span>
+            <span class="n">checkpointer_minimize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">minimize</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">checkpoint</span>
+
+    <span class="k">def</span> <span class="nf">_save_checkpoint</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="n">IRunner</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">is_best</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span> <span class="n">is_last</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves checkpoints: full with model/criterion/optimizer/scheduler</span>
+<span class="sd">        and truncated with model only.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/&quot;</span><span class="p">)</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_key</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_epoch_step</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;full&quot;</span><span class="p">):</span>
+            <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">_save_checkpoint</span><span class="p">(</span>
+                <span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">,</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
+                <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">_full&quot;</span><span class="p">,</span>
+                <span class="n">is_best</span><span class="o">=</span><span class="n">is_best</span><span class="p">,</span>
+                <span class="n">is_last</span><span class="o">=</span><span class="n">is_last</span><span class="p">,</span>
+                <span class="n">extra_suffix</span><span class="o">=</span><span class="s2">&quot;_full&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="s2">&quot;model&quot;</span><span class="p">):</span>
+            <span class="n">exclude</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">]</span>
+            <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="n">_save_checkpoint</span><span class="p">(</span>
+                <span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">,</span>
+                <span class="n">checkpoint</span><span class="o">=</span><span class="p">{</span>
+                    <span class="n">key</span><span class="p">:</span> <span class="n">value</span>
+                    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">checkpoint</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">z</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">)</span>
+                <span class="p">},</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="n">logdir</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">,</span>
+                <span class="n">is_best</span><span class="o">=</span><span class="n">is_best</span><span class="p">,</span>
+                <span class="n">is_last</span><span class="o">=</span><span class="n">is_last</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">checkpoint_path</span>
+
+    <span class="k">def</span> <span class="nf">_truncate_checkpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimize</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_n_best</span><span class="p">:</span>
+            <span class="n">last_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">last_filepath</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">last_item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">last_filepaths</span> <span class="o">=</span> <span class="n">last_filepath</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">last_filepath</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.pth&quot;</span><span class="p">,</span> <span class="s2">&quot;*&quot;</span><span class="p">))</span>
+            <span class="k">for</span> <span class="n">filepath</span> <span class="ow">in</span> <span class="n">last_filepaths</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_prepare_metrics_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">last_epoch_score</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">last_epoch_metrics</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="n">top_best_checkpoints</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">stem</span><span class="p">,</span> <span class="p">{</span><span class="o">**</span><span class="n">epoch_metrics</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;_score_&quot;</span><span class="p">:</span> <span class="n">score</span><span class="p">}})</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">epoch_metrics</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_n_best</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">best_epoch_score</span> <span class="o">=</span> <span class="n">top_best_checkpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">best_epoch_metrics</span> <span class="o">=</span> <span class="n">top_best_checkpoints</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span>
+                <span class="p">(</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="p">{</span><span class="o">**</span><span class="n">best_epoch_metrics</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;_score_&quot;</span><span class="p">:</span> <span class="n">best_epoch_score</span><span class="p">}}),</span>
+                <span class="p">(</span><span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="p">{</span><span class="o">**</span><span class="n">last_epoch_metrics</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;_score_&quot;</span><span class="p">:</span> <span class="n">last_epoch_score</span><span class="p">}}),</span>
+            <span class="p">]</span> <span class="o">+</span> <span class="n">top_best_checkpoints</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">metrics</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="p">{</span><span class="o">**</span><span class="n">last_epoch_metrics</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s2">&quot;_score_&quot;</span><span class="p">:</span> <span class="n">last_epoch_score</span><span class="p">}})]</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">metrics</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_stage_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Setup model for stage.</span>
+
+<span class="sd">        .. note::</span>
+
+<span class="sd">            If CheckpointCallback initialized with</span>
+<span class="sd">            ``resume`` (as path to checkpoint file)</span>
+<span class="sd">            or ``resume`` (as filename)</span>
+<span class="sd">            and ``resume_dir`` (as directory with file)</span>
+<span class="sd">            then will be performed loading checkpoint.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            FileNotFoundError: if specified load_on_stage_start</span>
+<span class="sd">                but checkpoint file is missing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_infer_stage</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="c1"># @TODO: very tricky hack, should be removed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_runner_logdir</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">runner</span><span class="p">,</span> <span class="s2">&quot;_logdir&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_logdir_postfix</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">logdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="s2">&quot;checkpoints&quot;</span><span class="p">)</span>
+
+        <span class="c1"># @TODO:</span>
+        <span class="c1"># # Use a barrier() to make sure that process 1 loads the model after process 0 saves it.</span>
+        <span class="c1"># dist.barrier()</span>
+        <span class="c1"># # configure map_location properly</span>
+        <span class="c1"># map_location = {&quot;cuda:%d&quot; % 0: &quot;cuda:%d&quot; % rank}</span>
+        <span class="c1"># ddp_model.load_state_dict(torch.load(CHECKPOINT_PATH, map_location=map_location))</span>
+        <span class="c1"># Use a barrier() to make sure that all processes have finished reading the checkpoint</span>
+        <span class="c1"># dist.barrier()</span>
+
+        <span class="n">is_first_stage</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">stages</span><span class="p">)</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">stage_key</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_first_stage</span><span class="p">:</span>
+            <span class="n">need_full</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">file_exists</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_start</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                <span class="n">need_full</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_start</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
+                <span class="n">use_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_start</span><span class="si">}</span><span class="s2">.pth&quot;</span><span class="p">)</span>
+                <span class="n">file_exists</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">use_file</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">file_exists</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing file &#39;</span><span class="si">{</span><span class="n">use_file</span><span class="si">}</span><span class="s2">&#39;!&quot;</span><span class="p">)</span>  <span class="c1"># noqa: F821</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_start</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">required_files</span> <span class="o">=</span> <span class="n">_get_required_files</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_start</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="n">file_exists</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">for</span> <span class="n">use_file</span> <span class="ow">in</span> <span class="n">required_files</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">use_file</span><span class="p">):</span>
+                        <span class="n">file_exists</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing file &#39;</span><span class="si">{</span><span class="n">use_file</span><span class="si">}</span><span class="s2">&#39;!&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_start</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">file_exists</span><span class="p">:</span>
+                <span class="n">_load_runner</span><span class="p">(</span>
+                    <span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span>
+                    <span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">,</span>
+                    <span class="n">mapping</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_start</span><span class="p">,</span>
+                    <span class="n">load_full</span><span class="o">=</span><span class="n">need_full</span><span class="p">,</span>
+                <span class="p">)</span>
+
+    <span class="c1">#     if getattr(runner, &quot;resume&quot;, None) is not None:</span>
+    <span class="c1">#         self.resume = runner.resume</span>
+    <span class="c1">#         runner.resume = None</span>
+    <span class="c1">#     elif getattr(runner, &quot;autoresume&quot;, None) is not None:</span>
+    <span class="c1">#         self.resume_dir = runner.logdir / &quot;checkpoints&quot;</span>
+    <span class="c1">#         self.resume = f&quot;{runner.autoresume}_full.pth&quot;</span>
+    <span class="c1">#         runner.autoresume = None</span>
+    <span class="c1">#</span>
+    <span class="c1">#     for key in self._keys_from_runner:</span>
+    <span class="c1">#         value = getattr(runner, key, None)</span>
+    <span class="c1">#         if value is not None:</span>
+    <span class="c1">#             setattr(self, key, value)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if self.resume_dir is not None:</span>
+    <span class="c1">#         self.resume = str(self.resume_dir) + &quot;/&quot; + str(self.resume)</span>
+    <span class="c1">#</span>
+    <span class="c1">#     if self.resume is not None:</span>
+    <span class="c1">#         _load_runner(logdir=self.logdir, runner=runner, mapping=self.resume, load_full=True)</span>
+    <span class="c1">#         self.resume = None</span>
+    <span class="c1">#     else:</span>
+    <span class="c1">#         checkpoint_exists = False</span>
+    <span class="c1">#         need_load_full = False</span>
+    <span class="c1">#         if isinstance(self.load_on_stage_start, str):</span>
+    <span class="c1">#             checkpoint_exists =</span>
+    <span class="c1">#               os.path.isfile(f&quot;{self.logdir}/{self.load_on_stage_start}.pth&quot;)</span>
+    <span class="c1">#             need_load_full = self.load_on_stage_start.endswith(&quot;full&quot;)</span>
+    <span class="c1">#         elif isinstance(self.load_on_stage_start, dict):</span>
+    <span class="c1">#             required_files =</span>
+    <span class="c1">#               _get_required_files(self.logdir, self.load_on_stage_start).keys()</span>
+    <span class="c1">#             checkpoint_exists = all(os.path.isfile(file) for file in required_files)</span>
+    <span class="c1">#</span>
+    <span class="c1">#         if self.load_on_stage_start is not None and checkpoint_exists:</span>
+    <span class="c1">#             _load_runner(</span>
+    <span class="c1">#                 logdir=self.logdir,</span>
+    <span class="c1">#                 runner=runner,</span>
+    <span class="c1">#                 mapping=self.load_on_stage_start,</span>
+    <span class="c1">#                 load_full=need_load_full,</span>
+    <span class="c1">#             )</span>
+
+    <span class="k">def</span> <span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Collects and saves checkpoint after epoch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_infer_stage</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_ddp</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_master_process</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_use_model_selection</span><span class="p">:</span>
+            <span class="c1"># score model based on the specified metric</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># score model based on epoch number</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">global_epoch_step</span>
+
+        <span class="n">is_best</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_better</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">best_score</span> <span class="o">=</span> <span class="n">score</span>
+            <span class="n">is_best</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_n_best</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># pack checkpoint</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pack_checkpoint</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
+            <span class="c1"># save checkpoint</span>
+            <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_checkpoint</span><span class="p">(</span>
+                <span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">,</span> <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">is_best</span><span class="o">=</span><span class="n">is_best</span><span class="p">,</span> <span class="n">is_last</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="c1"># add metrics to records</span>
+            <span class="n">metrics_record</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">),</span>
+                <span class="n">checkpoint_path</span><span class="p">,</span>
+                <span class="n">runner</span><span class="o">.</span><span class="n">stage_key</span><span class="p">,</span>
+                <span class="n">runner</span><span class="o">.</span><span class="n">stage_epoch_step</span><span class="p">,</span>
+                <span class="nb">dict</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">metrics_record</span><span class="p">)</span>
+            <span class="c1"># truncate checkpoints</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_truncate_checkpoints</span><span class="p">()</span>
+            <span class="c1"># save checkpoint metrics</span>
+            <span class="n">metrics_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_metrics_log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">))</span>
+            <span class="n">save_config</span><span class="p">(</span><span class="n">metrics_log</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_stage_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Show information about best checkpoints during the stage and</span>
+<span class="sd">        load model specified in ``load_on_stage_end``.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            runner: current runner</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">is_infer_stage</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_ddp</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_master_process</span><span class="p">:</span>
+            <span class="c1"># worker sync</span>
+            <span class="n">dist</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
+            <span class="k">return</span>
+
+        <span class="c1"># let&#39;s log Top-N base metrics</span>
+        <span class="n">log_message</span> <span class="o">=</span> <span class="s2">&quot;Top best models:</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="c1"># store latest state</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_n_best</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_key</span><span class="p">]</span>
+            <span class="c1"># pack checkpoint</span>
+            <span class="n">checkpoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pack_checkpoint</span><span class="p">(</span><span class="n">runner</span><span class="p">)</span>
+            <span class="c1"># save checkpoint</span>
+            <span class="n">checkpoint_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_save_checkpoint</span><span class="p">(</span>
+                <span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">,</span>
+                <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
+                <span class="n">is_best</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># will duplicate current (last) as best</span>
+                <span class="n">is_last</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="c1"># don&#39;t need that because current state is last</span>
+            <span class="p">)</span>
+            <span class="c1"># add metrics to records</span>
+            <span class="c1"># save checkpoint metrics</span>
+            <span class="n">metrics_log</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_metrics_log</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">score</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">runner</span><span class="o">.</span><span class="n">epoch_metrics</span><span class="p">))</span>
+            <span class="n">save_config</span><span class="p">(</span><span class="n">metrics_log</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics_filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">log_message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">checkpoint_path</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">3.4f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log_message</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                <span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filepath</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">3.4f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">score</span><span class="p">,</span> <span class="n">filepath</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_best_metrics</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">log_message</span><span class="p">)</span>
+
+        <span class="c1"># let&#39;s load runner state (model, criterion, optimizer, scheduler) if required</span>
+        <span class="n">not_required_load_states</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;last&quot;</span><span class="p">,</span> <span class="s2">&quot;last_full&quot;</span><span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">not_required_load_states</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_n_best</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="p">):</span>
+            <span class="n">need_load_full</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+                <span class="k">else</span> <span class="kc">False</span>
+            <span class="p">)</span>
+            <span class="n">_load_runner</span><span class="p">(</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span>
+                <span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">,</span>
+                <span class="n">mapping</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span><span class="p">,</span>
+                <span class="n">load_full</span><span class="o">=</span><span class="n">need_load_full</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_n_best</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">to_load</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_on_stage_end</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">v</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">not_required_load_states</span>
+            <span class="p">}</span>
+            <span class="n">_load_runner</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">logdir</span><span class="p">,</span> <span class="n">runner</span><span class="o">=</span><span class="n">runner</span><span class="p">,</span> <span class="n">mapping</span><span class="o">=</span><span class="n">to_load</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_ddp</span> <span class="ow">and</span> <span class="n">runner</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">is_master_process</span><span class="p">:</span>
+            <span class="c1"># master sync</span>
+            <span class="n">dist</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ICheckpointCallback&quot;</span><span class="p">,</span> <span class="s2">&quot;CheckpointCallback&quot;</span><span class="p">]</span>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+         <script src="../../../_static/jquery.js"></script>
+         <script src="../../../_static/underscore.js"></script>
+         <script src="../../../_static/doctools.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
