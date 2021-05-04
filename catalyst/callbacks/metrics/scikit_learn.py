@@ -1,5 +1,6 @@
-from typing import Callable, Dict, Mapping
+from typing import Any, Callable, Dict, Mapping, Union
 
+import sklearn
 import torch
 
 from catalyst.callbacks.metric import FunctionalBatchMetricCallback
@@ -8,16 +9,26 @@ from catalyst.metrics import FunctionalBatchMetric
 
 
 class SklearnCallback(FunctionalBatchMetricCallback):
-    """@TODO: Docs."""
+    """
+
+    Args:
+        keys:
+        metric_fn:
+        metric_key:
+        log_on_batch:
+    """
 
     def __init__(
         self,
-        keys: Mapping[str, str],
-        metric_fn: Callable,
+        keys: Mapping[str, Any],
+        metric_fn: Union[Callable, str],
         metric_key: str,
         log_on_batch: bool = True,
     ):
         """Init."""
+        if isinstance(metric_fn, str):
+            metric_fn = sklearn.metrics.__dict__[metric_fn]
+
         super().__init__(
             metric=FunctionalBatchMetric(metric_fn=metric_fn, metric_key=metric_key),
             input_key=keys,
@@ -28,7 +39,10 @@ class SklearnCallback(FunctionalBatchMetricCallback):
     def _get_key_value_inputs(self, runner: "IRunner") -> Dict[str, torch.Tensor]:
         """@TODO: Docs."""
         kv_inputs = {}
-        for key in self._keys:
-            kv_inputs[key] = runner.batch[self._keys[key]].cpu().detach().numpy()
+        for key, value in self._keys.items():
+            if value in runner.batch:
+                kv_inputs[key] = runner.batch[value].cpu().detach().numpy()
+            else:
+                kv_inputs[key] = self._keys[key]
         kv_inputs["batch_size"] = runner.batch_size
         return kv_inputs
