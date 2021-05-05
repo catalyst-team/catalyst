@@ -677,7 +677,6 @@ class Runner(IRunner):
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]",
         seed: int = 42,
         verbose: bool = False,
-        **kwargs
     ) -> Dict:
         """
             Evaluates data from loader with given model and returns obtained metrics.
@@ -696,11 +695,15 @@ class Runner(IRunner):
         if isinstance(callbacks, List):
             for callback in callbacks:
                 if isinstance(callback, CheckpointCallback):
-                    raise RunnerException('CheckpointCallback isn`t allowed for evaluation loader method')
+                    raise RunnerException(
+                        "CheckpointCallback isn`t allowed for evaluation loader method"
+                    )
         else:
             for callback in callbacks.values():
                 if isinstance(callback, CheckpointCallback):
-                    raise RunnerException('CheckpointCallback isn`t allowed for evaluation loader method')
+                    raise RunnerException(
+                        "CheckpointCallback isn`t allowed for evaluation loader method"
+                    )
 
         self.train(
             model=model,
@@ -710,7 +713,6 @@ class Runner(IRunner):
             callbacks=callbacks,
             valid_loader="valid",
             seed=seed,
-            **kwargs
         )
 
         return self.loader_metrics
