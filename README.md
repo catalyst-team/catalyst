@@ -108,14 +108,15 @@ runner.train(
 )
 
 # loader evaluation
-metrics = runner.evaluate_loader(model=runner.model, # or any other model, compatable with current runner
-                                 loader=loaders['valid'],
-                                 callbacks=[
-                                    dl.AccuracyCallback(
-                                        input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-                                        # ... any other callback, compatable with runner
-                                    ]
-                                    )
+metrics = runner.evaluate_loader(
+    model=runner.model, # or any other model, compatable with current runner
+    loader=loaders['valid'],
+    callbacks=[
+    dl.AccuracyCallback(
+        input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
+        # ... any other callback, compatable with runner
+    ]
+    )
 assert 'accuracy' in metrics.keys()
 
 # model inference
