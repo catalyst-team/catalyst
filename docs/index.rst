@@ -226,6 +226,7 @@ Indices and tables
     faq/amp
     faq/ddp
 
+    faq/engines
     faq/multi_components
     faq/multiple_keys
     faq/early_stopping
