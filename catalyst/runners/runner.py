@@ -16,7 +16,7 @@ from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
-from catalyst.core.runner import IRunner
+from catalyst.core.runner import IRunner, RunnerException
 from catalyst.core.trial import ITrial
 from catalyst.data.loader import ILoaderWrapper
 from catalyst.engines import IEngine
@@ -386,6 +386,51 @@ class Runner(IRunner):
         set_global_seed(seed)
         for batch in loader:
             yield self.predict_batch(batch)
+
+    def evaluate_loader(
+        self,
+        model: Model,
+        loader: DataLoader,
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]",
+        seed: int = 42,
+        verbose: bool = False,
+        **kwargs
+    ) -> Dict:
+        """
+            Evaluates data from loader with given model and returns obtained metrics.
+            Args:
+                loader: loader to predict
+                model: model to use for prediction
+                callbacks: list or dictionary with catalyst callbacks
+                seed: random seed to use before prediction
+                verbose: if `True`, it displays the status of the evaluation to the console.
+
+
+            Returns:
+                Dict with metrics counted on the loader.
+        """
+
+        if isinstance(callbacks, List):
+            for callback in callbacks:
+                if isinstance(callback, CheckpointCallback):
+                    raise RunnerException('CheckpointCallback isn`t allowed for evaluation loader method')
+        else:
+            for callback in callbacks.values():
+                if isinstance(callback, CheckpointCallback):
+                    raise RunnerException('CheckpointCallback isn`t allowed for evaluation loader method')
+
+        self.train(
+            model=model,
+            loaders=OrderedDict([("valid", loader)]),
+            num_epochs=1,
+            verbose=verbose,
+            callbacks=callbacks,
+            valid_loader="valid",
+            seed=seed,
+            **kwargs
+        )
+
+        return self.loader_metrics
 
 
 class SupervisedRunner(ISupervisedRunner, Runner):

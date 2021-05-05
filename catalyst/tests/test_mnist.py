@@ -80,6 +80,17 @@ def train_experiment(device, engine=None):
             fp16=False,
             ddp=False,
         )
+
+        # loader evaluation
+        metrics = runner.evaluate_loader(model=runner.model,
+                                         loader=loaders['valid'],
+                                         callbacks=[
+                                             dl.AccuracyCallback(
+                                                 input_key="logits", target_key="targets", topk_args=(1, 3, 5))
+                                         ]
+                                         )
+        assert 'accuracy' in metrics.keys()
+
         # model inference
         for prediction in runner.predict_loader(loader=loaders["valid"]):
             assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
