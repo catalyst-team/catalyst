@@ -227,6 +227,7 @@ Indices and tables
     faq/ddp
 
     faq/multi_components
+    faq/multiple_keys
     faq/early_stopping
     faq/checkpointing
     faq/debugging
