@@ -29,30 +29,40 @@ def reciprocal_rank(outputs: torch.Tensor, targets: torch.Tensor, k: int) -> tor
         MRR score
 
     Examples:
-        >>> reciprocal_rank(
-        >>>     outputs=torch.Tensor([
-        >>>         [4.0, 2.0, 3.0, 1.0],
-        >>>         [1.0, 2.0, 3.0, 4.0],
-        >>>     ]),
-        >>>     targets=torch.Tensor([
-        >>>         [0, 0, 1.0, 1.0],
-        >>>         [0, 0, 1.0, 1.0],
-        >>>     ]),
-        >>>     k=1,
-        >>> )
-        tensor([[0.], [1.]])
-        >>> reciprocal_rank(
-        >>>     outputs=torch.Tensor([
-        >>>         [4.0, 2.0, 3.0, 1.0],
-        >>>         [1.0, 2.0, 3.0, 4.0],
-        >>>     ]),
-        >>>     targets=torch.Tensor([
-        >>>         [0, 0, 1.0, 1.0],
-        >>>         [0, 0, 1.0, 1.0],
-        >>>     ]),
-        >>>     k=3,
-        >>> )
-        tensor([[0.5000], [1.0000]])
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.reciprocal_rank(
+            outputs=torch.Tensor([
+                [4.0, 2.0, 3.0, 1.0],
+                [1.0, 2.0, 3.0, 4.0],
+            ]),
+            targets=torch.Tensor([
+                [0, 0, 1.0, 1.0],
+                [0, 0, 1.0, 1.0],
+            ]),
+            k=1,
+        )
+        # tensor([[0.], [1.]])
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.reciprocal_rank(
+            outputs=torch.Tensor([
+                [4.0, 2.0, 3.0, 1.0],
+                [1.0, 2.0, 3.0, 4.0],
+            ]),
+            targets=torch.Tensor([
+                [0, 0, 1.0, 1.0],
+                [0, 0, 1.0, 1.0],
+            ]),
+            k=3,
+        )
+        # tensor([[0.5000], [1.0000]])
     """
     k = min(outputs.size(1), k)
     targets_sort_by_outputs_at_k = process_recsys_components(outputs, targets)[:, :k]
@@ -93,19 +103,24 @@ def mrr(outputs: torch.Tensor, targets: torch.Tensor, topk: List[int]) -> List[t
     Returns:
         MRR score
 
-    Examples:
-        >>> mrr(
-        >>>     outputs=torch.Tensor([
-        >>>         [4.0, 2.0, 3.0, 1.0],
-        >>>         [1.0, 2.0, 3.0, 4.0],
-        >>>     ]),
-        >>>     targets=torch.Tensor([
-        >>>         [0, 0, 1.0, 1.0],
-        >>>         [0, 0, 1.0, 1.0],
-        >>>     ]),
-        >>>     topk=[1, 3],
-        >>> )
-        [tensor(0.5000), tensor(0.7500)]
+    Example:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.mrr(
+            outputs=torch.Tensor([
+                [4.0, 2.0, 3.0, 1.0],
+                [1.0, 2.0, 3.0, 4.0],
+            ]),
+            targets=torch.Tensor([
+                [0, 0, 1.0, 1.0],
+                [0, 0, 1.0, 1.0],
+            ]),
+            topk=[1, 3],
+        )
+        # [tensor(0.5000), tensor(0.7500)]
     """
     results = []
     for k in topk:

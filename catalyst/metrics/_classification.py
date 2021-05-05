@@ -28,6 +28,62 @@ class StatisticsMetric(ICallbackBatchMetric):
         compute_on_call: if True, computes and returns metric value during metric call
         prefix: metric prefix
         suffix: metric suffix
+
+    Examples:
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # sample data
+        num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+        X = torch.rand(num_samples, num_features)
+        y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
+
+        # pytorch loaders
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, num_classes)
+        criterion = torch.nn.CrossEntropyLoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
+
+        # model training
+        runner = dl.SupervisedRunner(
+            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+        )
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=3,
+            valid_loader="valid",
+            valid_metric="accuracy03",
+            minimize_valid_metric=False,
+            verbose=True,
+            callbacks=[
+                dl.AccuracyCallback(
+                    input_key="logits", target_key="targets", num_classes=num_classes
+                ),
+                dl.PrecisionRecallF1SupportCallback(
+                    input_key="logits", target_key="targets", num_classes=num_classes
+                ),
+                dl.AUCCallback(input_key="logits", target_key="targets"),
+            ],
+        )
+
+    .. note::
+        Please follow the `minimal examples`_ sections for more use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(
@@ -149,8 +205,8 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         zero_division: value to set in case of zero division during metrics
             (precision, recall) computation; should be one of 0 or 1
         compute_on_call: if True, allows compute metric's value on call
-        prefix: TODO
-        suffix: TODO
+        prefix: metrics prefix
+        suffix: metrics suffix
     """
 
     def __init__(
@@ -424,6 +480,144 @@ class MulticlassPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
         compute_on_call: if True, allows compute metric's value on call
         prefix: metric prefix
         suffix: metric suffix
+
+    Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        num_classes = 4
+        zero_division = 0
+        outputs_list = [torch.tensor([0, 1, 2]), torch.tensor([2, 3]), torch.tensor([0, 1, 3])]
+        targets_list = [torch.tensor([0, 1, 1]), torch.tensor([2, 3]), torch.tensor([0, 1, 2])]
+
+        metric = metrics.MulticlassPrecisionRecallF1SupportMetric(
+            num_classes=num_classes, zero_division=zero_division
+        )
+        metric.reset()
+
+        for outputs, targets in zip(outputs_list, targets_list):
+            metric.update(outputs=outputs, targets=targets)
+
+        metric.compute()
+        # (
+        #     # per class precision, recall, f1, support
+        #     (
+        #         array([1. , 1. , 0.5, 0.5]),
+        #         array([1.        , 0.66666667, 0.5       , 1.        ]),
+        #         array([0.999995  , 0.7999952 , 0.499995  , 0.66666222]),
+        #         array([2., 3., 2., 1.]),
+        #     ),
+        #     # micro precision, recall, f1, support
+        #     (0.75, 0.75, 0.7499950000333331, None),
+        #     # macro precision, recall, f1, support
+        #     (0.75, 0.7916666666666667, 0.7416618555889127, None),
+        #     # weighted precision, recall, f1, support
+        #     (0.8125, 0.75, 0.7583284778110313, None)
+        # )
+
+        metric.compute_key_value()
+        # {
+        #     'f1/_macro': 0.7416618555889127,
+        #     'f1/_micro': 0.7499950000333331,
+        #     'f1/_weighted': 0.7583284778110313,
+        #     'f1/class_00': 0.9999950000249999,
+        #     'f1/class_01': 0.7999952000287999,
+        #     'f1/class_02': 0.49999500004999947,
+        #     'f1/class_03': 0.6666622222518517,
+        #     'precision/_macro': 0.75,
+        #     'precision/_micro': 0.75,
+        #     'precision/_weighted': 0.8125,
+        #     'precision/class_00': 1.0,
+        #     'precision/class_01': 1.0,
+        #     'precision/class_02': 0.5,
+        #     'precision/class_03': 0.5,
+        #     'recall/_macro': 0.7916666666666667,
+        #     'recall/_micro': 0.75,
+        #     'recall/_weighted': 0.75,
+        #     'recall/class_00': 1.0,
+        #     'recall/class_01': 0.6666666666666667,
+        #     'recall/class_02': 0.5,
+        #     'recall/class_03': 1.0,
+        #     'support/class_00': 2.0,
+        #     'support/class_01': 3.0,
+        #     'support/class_02': 2.0,
+        #     'support/class_03': 1.0
+        # }
+
+        metric.reset()
+        metric(outputs_list[0], targets_list[0])
+        # (
+        #     # per class precision, recall, f1, support
+        #     (
+        #         array([1., 1., 0., 0.]),
+        #         array([1. , 0.5, 0. , 0. ]),
+        #         array([0.999995  , 0.66666222, 0.        , 0.        ]),
+        #         array([1., 2., 0., 0.]),
+        #     ),
+        #     # micro precision, recall, f1, support
+        #     (0.6666666666666667, 0.6666666666666667, 0.6666616667041664, None),
+        #     # macro precision, recall, f1, support
+        #     (0.5, 0.375, 0.41666430556921286, None),
+        #     # weighted precision, recall, f1, support
+        #     (1.0, 0.6666666666666666, 0.7777731481762343, None)
+        # )
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # sample data
+        num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+        X = torch.rand(num_samples, num_features)
+        y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
+
+        # pytorch loaders
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, num_classes)
+        criterion = torch.nn.CrossEntropyLoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
+
+        # model training
+        runner = dl.SupervisedRunner(
+            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+        )
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=3,
+            valid_loader="valid",
+            valid_metric="accuracy03",
+            minimize_valid_metric=False,
+            verbose=True,
+            callbacks=[
+                dl.AccuracyCallback(
+                    input_key="logits", target_key="targets", num_classes=num_classes
+                ),
+                dl.PrecisionRecallF1SupportCallback(
+                    input_key="logits", target_key="targets", num_classes=num_classes
+                ),
+                dl.AUCCallback(input_key="logits", target_key="targets"),
+            ],
+        )
+
+    .. note::
+        Please follow the `minimal examples`_ sections for more use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(
@@ -457,6 +651,159 @@ class MultilabelPrecisionRecallF1SupportMetric(PrecisionRecallF1SupportMetric):
         compute_on_call: if True, allows compute metric's value on call
         prefix: metric prefix
         suffix: metric suffix
+
+    Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        num_classes = 4
+        zero_division = 0
+        outputs_list = [
+            torch.tensor([[0, 1, 0, 1], [0, 0, 0, 0], [0, 1, 1, 0]]),
+            torch.tensor([[0, 1, 1, 1], [0, 0, 0, 1], [0, 1, 0, 1]]),
+            torch.tensor([[0, 1, 0, 0], [0, 1, 0, 1]]),
+        ]
+        targets_list = [
+            torch.tensor([[0, 1, 1, 1], [0, 0, 0, 0], [0, 1, 0, 1]]),
+            torch.tensor([[0, 1, 0, 0], [0, 0, 1, 1], [1, 0, 1, 0]]),
+            torch.tensor([[0, 1, 0, 0], [0, 0, 1, 0]]),
+        ]
+
+        metric = metrics.MultilabelPrecisionRecallF1SupportMetric(
+            num_classes=num_classes, zero_division=zero_division
+        )
+        metric.reset()
+
+        for outputs, targets in zip(outputs_list, targets_list):
+            metric.update(outputs=outputs, targets=targets)
+
+        metric.compute()
+        # (
+        #     # per class precision, recall, f1, support
+        #     (
+        #         array([0.        , 0.66666667, 0.        , 0.4       ]),
+        #         array([0.        , 1.        , 0.        , 0.66666667]),
+        #         array([0.        , 0.7999952 , 0.        , 0.49999531]),
+        #         array([1., 4., 4., 3.])
+        #     ),
+        #     # micro precision, recall, f1, support
+        #     (0.46153846153846156, 0.5, 0.4799950080519163, None),
+        #     # macro precision, recall, f1, support
+        #     (0.2666666666666667, 0.4166666666666667, 0.32499762814318617, None),
+        #     # weighted precision, recall, f1, support
+        #     (0.32222222222222224, 0.5, 0.39166389481225283, None)
+        # )
+
+        metric.compute_key_value()
+        # {
+        #     'f1/_macro': 0.32499762814318617,
+        #     'f1/_micro': 0.4799950080519163,
+        #     'f1/_weighted': 0.39166389481225283,
+        #     'f1/class_00': 0.0,
+        #     'f1/class_01': 0.7999952000287999,
+        #     'f1/class_02': 0.0,
+        #     'f1/class_03': 0.49999531254394486,
+        #     'precision/_macro': 0.2666666666666667,
+        #     'precision/_micro': 0.46153846153846156,
+        #     'precision/_weighted': 0.32222222222222224,
+        #     'precision/class_00': 0.0,
+        #     'precision/class_01': 0.6666666666666667,
+        #     'precision/class_02': 0.0,
+        #     'precision/class_03': 0.4,
+        #     'recall/_macro': 0.4166666666666667,
+        #     'recall/_micro': 0.5,
+        #     'recall/_weighted': 0.5,
+        #     'recall/class_00': 0.0,
+        #     'recall/class_01': 1.0,
+        #     'recall/class_02': 0.0,
+        #     'recall/class_03': 0.6666666666666667,
+        #     'support/class_00': 1.0,
+        #     'support/class_01': 4.0,
+        #     'support/class_02': 4.0,
+        #     'support/class_03': 3.0
+        # }
+
+
+        metric.reset()
+        metric(outputs_list[0], targets_list[0])
+        # (
+        #     # per class precision, recall, f1, support
+        #     (
+        #         array([0., 1., 0., 1.]),
+        #         array([0. , 1. , 0. , 0.5]),
+        #         array([0.        , 0.999995  , 0.        , 0.66666222]),
+        #         array([0., 2., 1., 2.])
+        #     ),
+        #     # micro precision, recall, f1, support
+        #     (0.75, 0.6, 0.6666617284316411, None),
+        #     # macro precision, recall, f1, support
+        #     (0.5, 0.375, 0.41666430556921286, None),
+        #     # weighted precision, recall, f1, support
+        #     (0.8, 0.6000000000000001, 0.6666628889107407, None)
+        # )
+
+    .. code-block:: python
+
+        import torch
+        from torch.utils.data import DataLoader, TensorDataset
+        from catalyst import dl
+
+        # sample data
+        num_samples, num_features, num_classes = int(1e4), int(1e1), 4
+        X = torch.rand(num_samples, num_features)
+        y = (torch.rand(num_samples, num_classes) > 0.5).to(torch.float32)
+
+        # pytorch loaders
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
+
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, num_classes)
+        criterion = torch.nn.BCEWithLogitsLoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
+
+        # model training
+        runner = dl.SupervisedRunner(
+            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+        )
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir="./logdir",
+            num_epochs=3,
+            valid_loader="valid",
+            valid_metric="accuracy",
+            minimize_valid_metric=False,
+            verbose=True,
+            callbacks=[
+                dl.BatchTransformCallback(
+                    transform=torch.sigmoid,
+                    scope="on_batch_end",
+                    input_key="logits",
+                    output_key="scores"
+                ),
+                dl.AUCCallback(input_key="scores", target_key="targets"),
+                dl.MultilabelAccuracyCallback(
+                    input_key="scores", target_key="targets", threshold=0.5
+                ),
+                dl.MultilabelPrecisionRecallF1SupportCallback(
+                    input_key="scores", target_key="targets", threshold=0.5
+                ),
+            ]
+        )
+
+    .. note::
+        Please follow the `minimal examples`_ sections for more use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(

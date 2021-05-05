@@ -11,7 +11,7 @@ from catalyst.metrics.functional._misc import (
 def binary_average_precision(
     outputs: torch.Tensor, targets: torch.Tensor, weights: Optional[torch.Tensor] = None,
 ) -> torch.Tensor:
-    """Computes the average precision.
+    """Computes the binary average precision.
 
     Args:
         outputs: NxK tensor that for each of the N examples
@@ -24,15 +24,19 @@ def binary_average_precision(
         weights: importance for each sample
 
     Returns:
-        torch.Tensor: tensor of [K; ] shape,
-        with average precision for K classes
+        torch.Tensor: tensor of [K; ] shape, with average precision for K classes
 
-    Examples:
-        >>> binary_average_precision(
-        >>>     outputs=torch.Tensor([0.1, 0.4, 0.35, 0.8]),
-        >>>     targets=torch.Tensor([0, 0, 1, 1]),
-        >>> )
-        tensor([0.8333])
+    Example:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.binary_average_precision(
+            outputs=torch.Tensor([0.1, 0.4, 0.35, 0.8]),
+            targets=torch.Tensor([0, 0, 1, 1]),
+        )
+        # tensor([0.8333])
     """
     # outputs - [bs; num_classes] with scores
     # targets - [bs; num_classes] with binary labels
@@ -112,18 +116,24 @@ def average_precision(outputs: torch.Tensor, targets: torch.Tensor, k: int) -> t
             The map score for each batch.
             size: [batch_size, 1]
 
-    Examples:
-        >>> average_precision(
-        >>>   outputs=torch.tensor([
-        >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-        >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-        >>>   ]),
-        >>>   targets=torch.tensor([
-        >>>     [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
-        >>>     [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-        >>>   ]),
-        >>> )
-        tensor([0.6222, 0.4429])
+    Example:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.average_precision(
+            outputs=torch.tensor([
+                [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+            ]),
+            targets=torch.tensor([
+                [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
+                [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+            ]),
+            k=10,
+        )
+        # tensor([0.6222, 0.4429])
     """
     targets_sort_by_outputs = process_recsys_components(outputs, targets)[:, :k]
     precisions = torch.zeros_like(targets_sort_by_outputs)
@@ -162,28 +172,31 @@ def mean_average_precision(
             1 means the item is relevant and 0 not relevant
             size: [batch_szie, slate_length]
             ground truth, labels
-        topk (List[int]):
-            List of parameter for evaluation
-            topK items
+        topk (List[int]): List of parameter for evaluation topK items
 
     Returns:
         map_at_k (Tuple[float]):
         The map score for every k.
         size: len(top_k)
 
-    Examples:
-        >>> mean_average_precision(
-        >>>   outputs=torch.tensor([
-        >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-        >>>     [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
-        >>>   ]),
-        >>>   targets=torch.tensor([
-        >>>     [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
-        >>>     [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
-        >>>   ]),
-        >>>   topk=[10],
-        >>> )
-        [tensor(0.5325)]
+    Example:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.mean_average_precision(
+            outputs=torch.tensor([
+                [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+                [9, 8, 7, 6, 5, 4, 3, 2, 1, 0],
+            ]),
+            targets=torch.tensor([
+                [1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0],
+                [0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0],
+            ]),
+            topk=[1, 3, 5, 10],
+        )
+        # [tensor(0.5000), tensor(0.6667), tensor(0.6417), tensor(0.5325)]
     """
     results = []
     for k in topk:

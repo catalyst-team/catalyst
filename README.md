@@ -17,7 +17,7 @@
 ![codestyle](https://github.com/catalyst-team/catalyst/workflows/codestyle/badge.svg?branch=master&event=push)
 ![docs](https://github.com/catalyst-team/catalyst/workflows/docs/badge.svg?branch=master&event=push)
 ![catalyst](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
-![intergations](https://github.com/catalyst-team/catalyst/workflows/intergations/badge.svg?branch=master&event=push)
+![integrations](https://github.com/catalyst-team/catalyst/workflows/integrations/badge.svg?branch=master&event=push)
 
 [![python](https://img.shields.io/badge/python_3.6-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
 [![python](https://img.shields.io/badge/python_3.7-passing-success)](https://github.com/catalyst-team/catalyst/workflows/catalyst/badge.svg?branch=master&event=push)
@@ -41,6 +41,15 @@ Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/).
 - [Reaction](https://github.com/catalyst-team/reaction) - convenient deep learning model serving
 
 [Catalyst at AI Landscape](https://landscape.lfai.foundation/selected=catalyst)
+
+<details>
+<summary>Catalyst at PyTorch Ecosystem Day</summary>
+<p>
+
+[![Catalyst poster](https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/Catalyst-PTED21.png)](https://github.com/catalyst-team/catalyst)
+
+</p>
+</details>
 
 ----
 
@@ -420,8 +429,18 @@ runner.train(
     minimize_valid_metric=False,
     verbose=True,
     callbacks=[
-        dl.AUCCallback(input_key="logits", target_key="targets"),
-        dl.MultilabelAccuracyCallback(input_key="logits", target_key="targets", threshold=0.5)
+        dl.BatchTransformCallback(
+            transform=torch.sigmoid,
+            scope="on_batch_end",
+            input_key="logits",
+            output_key="scores"
+        ),
+        dl.AUCCallback(input_key="scores", target_key="targets"),
+        # uncomment for extra metrics:
+        # dl.MultilabelAccuracyCallback(input_key="scores", target_key="targets", threshold=0.5),
+        # dl.MultilabelPrecisionRecallF1SupportCallback(
+        #     input_key="scores", target_key="targets", threshold=0.5
+        # ),
     ]
 )
 ```
@@ -1464,7 +1483,8 @@ best practices for your deep learning research and development.
 
 ### Documentation
 - [master](https://catalyst-team.github.io/catalyst/)
-- [21.04](https://catalyst-team.github.io/catalyst/v21.04/index.html)
+- [21.04.2](https://catalyst-team.github.io/catalyst/v21.04.2/index.html)
+- [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html)
 - [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html), [21.03.1/21.03.2](https://catalyst-team.github.io/catalyst/v21.03.1/index.html)
 - [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
 - [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)

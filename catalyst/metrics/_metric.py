@@ -10,7 +10,8 @@ class IMetric(ABC):
 
     Args:
         compute_on_call: Computes and returns metric value during metric call.
-            Used for per-batch logging. default: True
+            Used for per-batch logging.
+            default: ``True``
     """
 
     def __init__(self, compute_on_call: bool = True):
@@ -67,17 +68,28 @@ class IMetric(ABC):
 
 
 class ICallbackBatchMetric(IMetric):
-    """@TODO: docs here"""
+    """Interface for all batch-based Metrics."""
 
     def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
-        """@TODO: docs here"""
+        """Init"""
         super().__init__(compute_on_call=compute_on_call)
         self.prefix = prefix or ""
         self.suffix = suffix or ""
 
     @abstractmethod
     def update_key_value(self, *args, **kwargs) -> Dict[str, float]:
-        """@TODO: docs here"""
+        """Updates the metric based with new input.
+
+        By default, this is called at the end of each loader
+        (`on_loader_end` event).
+
+        Args:
+            *args: some args
+            **kwargs: some kwargs
+
+        Returns:
+            Dict: computed value in key-value format.  # noqa: DAR202
+        """
         pass
 
     @abstractmethod
@@ -94,12 +106,14 @@ class ICallbackBatchMetric(IMetric):
 
 
 class ICallbackLoaderMetric(IMetric):
-    """Interface for all Metrics.
+    """Interface for all loader-based Metrics.
 
     Args:
-        compute_on_call: @TODO: docs
-        prefix:  @TODO: docs
-        suffix:  @TODO: docs
+        compute_on_call: Computes and returns metric value during metric call.
+            Used for per-batch logging.
+            default: ``True``
+        prefix:  metrics prefix
+        suffix:  metrics suffix
     """
 
     def __init__(self, compute_on_call: bool = True, prefix: str = None, suffix: str = None):
@@ -109,15 +123,15 @@ class ICallbackLoaderMetric(IMetric):
         self.suffix = suffix or ""
 
     @abstractmethod
-    def reset(self, num_batches, num_samples) -> None:
+    def reset(self, num_batches: int, num_samples: int) -> None:
         """Resets the metric to it's initial state.
 
         By default, this is called at the start of each loader
         (`on_loader_start` event).
 
         Args:
-            num_batches: @TODO: docs.
-            num_samples: @TODO: docs.
+            num_batches: number of expected batches.
+            num_samples: number of expected samples.
         """
         pass
 

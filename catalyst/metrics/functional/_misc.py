@@ -179,10 +179,14 @@ def get_binary_statistics(
 
     Example:
 
-        >>> y_pred = torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]])
-        >>> y_true = torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]])
-        >>> tn, fp, fn, tp, support = get_binary_statistics(y_pred, y_true)
-        tensor(2) tensor(2) tensor(2) tensor(2) tensor(4)
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        y_pred = torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]])
+        y_true = torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]])
+        tn, fp, fn, tp, support = metrics.get_binary_statistics(y_pred, y_true)
+        # tensor(2) tensor(2) tensor(2) tensor(2) tensor(4)
 
     """
     tn = ((outputs != label) * (targets != label)).to(torch.long).sum()
@@ -215,12 +219,20 @@ def get_multiclass_statistics(
 
     Example:
 
-        >>> y_pred = torch.tensor([1, 2, 3, 0])
-        >>> y_true = torch.tensor([1, 3, 4, 0])
-        >>> tn, fp, fn, tp, support = get_multiclass_statistics(y_pred, y_true)
-        tensor([3., 3., 3., 2., 3.]), tensor([0., 0., 1., 1., 0.]),
-        tensor([0., 0., 0., 1., 1.]), tensor([1., 1., 0., 0., 0.]),
-        tensor([1., 1., 0., 1., 1.])
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        y_pred = torch.tensor([1, 2, 3, 0])
+        y_true = torch.tensor([1, 3, 4, 0])
+        tn, fp, fn, tp, support = metrics.get_multiclass_statistics(y_pred, y_true)
+        # (
+        #     tensor([3., 3., 3., 2., 3.]),
+        #     tensor([0., 0., 1., 1., 0.]),
+        #     tensor([0., 0., 0., 1., 1.]),
+        #     tensor([1., 1., 0., 0., 0.]),
+        #     tensor([1., 1., 0., 1., 1.])
+        # )
     """
     outputs, targets, num_classes = process_multiclass_components(
         outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes,
@@ -261,28 +273,52 @@ def get_multilabel_statistics(
     Returns:
         Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]: stats
 
-    Example:
+    Examples:
 
-        >>> y_pred = torch.tensor([[0, 0, 1, 1], [0, 1, 0, 1]])
-        >>> y_true = torch.tensor([[0, 1, 0, 1], [0, 0, 1, 1]])
-        >>> tn, fp, fn, tp, support = get_multilabel_statistics(y_pred, y_true)
-        tensor([2., 0., 0., 0.]) tensor([0., 1., 1., 0.]),
-        tensor([0., 1., 1., 0.]) tensor([0., 0., 0., 2.]),
-        tensor([0., 1., 1., 2.])
+    .. code-block:: python
 
-        >>> y_pred = torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-        >>> y_true = torch.tensor([0, 1, 2])
-        >>> tn, fp, fn, tp, support = get_multilabel_statistics(y_pred, y_true)
-        tensor([2., 2., 2.]) tensor([0., 0., 0.])
-        tensor([0., 0., 0.]) tensor([1., 1., 1.])
-        tensor([1., 1., 1.])
+        import torch
+        from catalyst import metrics
+        y_pred = torch.tensor([[0, 0, 1, 1], [0, 1, 0, 1]])
+        y_true = torch.tensor([[0, 1, 0, 1], [0, 0, 1, 1]])
+        tn, fp, fn, tp, support = metrics.get_multilabel_statistics(y_pred, y_true)
+        # (
+        #     tensor([2., 0., 0., 0.]),
+        #     tensor([0., 1., 1., 0.]),
+        #     tensor([0., 1., 1., 0.]),
+        #     tensor([0., 0., 0., 2.]),
+        #     tensor([0., 1., 1., 2.]),
+        # )
 
-        >>> y_pred = torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-        >>> y_true = torch.nn.functional.one_hot(torch.tensor([0, 1, 2]))
-        >>> tn, fp, fn, tp, support = get_multilabel_statistics(y_pred, y_true)
-        tensor([2., 2., 2.]) tensor([0., 0., 0.])
-        tensor([0., 0., 0.]) tensor([1., 1., 1.])
-        tensor([1., 1., 1.])
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        y_pred = torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        y_true = torch.tensor([0, 1, 2])
+        tn, fp, fn, tp, support = metrics.get_multilabel_statistics(y_pred, y_true)
+        # (
+        #     tensor([2., 2., 2.]),
+        #     tensor([0., 0., 0.]),
+        #     tensor([0., 0., 0.]),
+        #     tensor([1., 1., 1.]),
+        #     tensor([1., 1., 1.]),
+        # )
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        y_pred = torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+        y_true = torch.nn.functional.one_hot(torch.tensor([0, 1, 2]))
+        tn, fp, fn, tp, support = metrics.get_multilabel_statistics(y_pred, y_true)
+        # (
+        #     tensor([2., 2., 2.]),
+        #     tensor([0., 0., 0.]),
+        #     tensor([0., 0., 0.]),
+        #     tensor([1., 1., 1.]),
+        #     tensor([1., 1., 1.]),
+        # )
 
     """
     outputs, targets, _ = process_multilabel_components(outputs=outputs, targets=targets)
