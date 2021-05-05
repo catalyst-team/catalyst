@@ -679,19 +679,18 @@ class Runner(IRunner):
         verbose: bool = False,
     ) -> Dict:
         """
-            Evaluates data from loader with given model and returns obtained metrics.
-            Args:
-                loader: loader to predict
-                model: model to use for prediction
-                callbacks: list or dictionary with catalyst callbacks
-                seed: random seed to use before prediction
-                verbose: if `True`, it displays the status of the evaluation to the console.
+        Evaluates data from loader with given model and returns obtained metrics. # noqa: DAR401
 
+        Args:
+            model: model to use for prediction
+            loader: loader to predict
+            callbacks: list or dictionary with catalyst callbacks
+            seed: random seed to use before prediction
+            verbose: if `True`, it displays the status of the evaluation to the console.
 
-            Returns:
-                Dict with metrics counted on the loader.
+        Returns:
+            Dict with metrics counted on the loader.
         """
-
         if isinstance(callbacks, List):
             for callback in callbacks:
                 if isinstance(callback, CheckpointCallback):
