@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
+- customizing what happens in `train()` notebook ([#1203](https://github.com/catalyst-team/catalyst/pull/1203))
 
 
 ## [21.04.2] - 2021-04-30
