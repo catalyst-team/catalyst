@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generator, Iterable, List, Mapping, Union
+from typing import Any, Dict, Generator, Iterable, List, Mapping, Optional, Union
 from collections import OrderedDict
 import os
 
@@ -674,7 +674,7 @@ class Runner(IRunner):
         self,
         loader: DataLoader,
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]",
-        model: Model = None,
+        model: Optional[Model] = None,
         seed: int = 42,
         verbose: bool = False,
     ) -> Dict:
