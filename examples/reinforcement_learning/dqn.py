@@ -1,3 +1,4 @@
+# flake8: noqa
 from typing import Iterator, Optional, Sequence, Tuple
 from collections import deque, namedtuple
 
@@ -348,9 +349,9 @@ if __name__ == "__main__":
     # # show video
     # from IPython.display import HTML
     # import os
-    #
+    # 
     # video_names = list(filter(lambda s: s.endswith(".mp4"), os.listdir("./videos_dqn/")))
-    #
+    # 
     # HTML("""
     # <video width="640" height="480" controls>
     #   <source src="{}" type="video/mp4">

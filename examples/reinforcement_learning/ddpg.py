@@ -1,3 +1,4 @@
+# flake8: noqa
 from typing import Iterator, Optional, Sequence, Tuple
 from collections import deque, namedtuple
 

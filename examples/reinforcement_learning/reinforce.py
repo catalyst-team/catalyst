@@ -1,4 +1,5 @@
-import typing as tp
+# flake8: noqa
+from typing import Iterator, Optional, Sequence, Tuple
 from collections import deque, namedtuple
 
 import gym
@@ -24,7 +25,7 @@ class RolloutBuffer:
     def append(self, rollout: Rollout):
         self.buffer.append(rollout)
 
-    def sample(self, idx: int) -> tp.Sequence[np.array]:
+    def sample(self, idx: int) -> Sequence[np.array]:
         states, actions, rewards = self.buffer[idx]
         states, actions, rewards = (
             np.array(states, dtype=np.float32),
@@ -43,7 +44,7 @@ class RolloutDataset(IterableDataset):
     def __init__(self, buffer: RolloutBuffer):
         self.buffer = buffer
 
-    def __iter__(self) -> tp.Iterator[tp.Sequence[np.array]]:
+    def __iter__(self) -> Iterator[Sequence[np.array]]:
         for i in range(len(self.buffer)):
             states, actions, rewards = self.buffer.sample(i)
             yield states, actions, rewards
@@ -85,8 +86,8 @@ def generate_session(
     network: nn.Module,
     t_max: int = 1000,
     epsilon: float = -1,
-    rollout_buffer: tp.Optional[RolloutBuffer] = None,
-) -> tp.Tuple[float, int]:
+    rollout_buffer: Optional[RolloutBuffer] = None,
+) -> Tuple[float, int]:
     total_reward = 0
     states, actions, rewards = [], [], []
     state = env.reset()
@@ -115,9 +116,9 @@ def generate_sessions(
     network: nn.Module,
     t_max: int = 1000,
     epsilon: float = -1,
-    rollout_buffer: tp.Optional[RolloutBuffer] = None,
+    rollout_buffer: Optional[RolloutBuffer] = None,
     num_sessions: int = 100,
-) -> tp.Tuple[float, int]:
+) -> Tuple[float, int]:
     sessions_reward, sessions_steps = 0, 0
     for i_episone in range(num_sessions):
         r, t = generate_session(
@@ -185,7 +186,7 @@ class CustomRunner(dl.Runner):
         self.gamma: float = gamma
         self._initialized = False
 
-    def handle_batch(self, batch: tp.Sequence[np.array]):
+    def handle_batch(self, batch: Sequence[np.array]):
         # model train/valid step
         # ATTENTION:
         #   because of different trajectories lens
