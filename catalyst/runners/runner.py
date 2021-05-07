@@ -684,7 +684,8 @@ class Runner(IRunner):
         Args:
             loader: loader to predict
             callbacks: list or dictionary with catalyst callbacks
-            model: model, compatable with current runner. If `None` simply takes current model from runner.
+            model: model, compatable with current runner.
+                If `None` simply takes current model from runner.
             seed: random seed to use before prediction
             verbose: if `True`, it displays the status of the evaluation to the console.
 
