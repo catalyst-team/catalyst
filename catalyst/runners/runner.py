@@ -672,9 +672,9 @@ class Runner(IRunner):
 
     def evaluate_loader(
         self,
-        model: Model,
         loader: DataLoader,
         callbacks: "Union[List[Callback], OrderedDict[str, Callback]]",
+        model: Model = None,
         seed: int = 42,
         verbose: bool = False,
     ) -> Dict:
@@ -682,9 +682,9 @@ class Runner(IRunner):
         Evaluates data from loader with given model and returns obtained metrics. # noqa: DAR401
 
         Args:
-            model: model to use for prediction
             loader: loader to predict
             callbacks: list or dictionary with catalyst callbacks
+            model: model, compatable with current runner. If `None` simply takes current model from runner.
             seed: random seed to use before prediction
             verbose: if `True`, it displays the status of the evaluation to the console.
 
@@ -703,6 +703,9 @@ class Runner(IRunner):
                     raise RunnerException(
                         "CheckpointCallback isn`t allowed for evaluation loader method"
                     )
+
+        if model is None:
+            model = self.model
 
         self.train(
             model=model,
