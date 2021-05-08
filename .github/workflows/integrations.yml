@@ -1,4 +1,4 @@
-name: intergations
+name: integrations
 # <- standard block end ->
 on:
   push:
@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    name: intergations
+    name: integrations
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -59,6 +59,7 @@ jobs:
           python -c "req = open('./requirements/requirements-hydra.txt').read().replace('>', '=') ; open('./requirements/requirements-hydra.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-optuna.txt').read().replace('>', '=') ; open('./requirements/requirements-optuna.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-nifti.txt').read().replace('>', '=') ; open('./requirements/requirements-nifti.txt', 'w').write(req)"
+          python -c "req = open('./requirements/requirements-neptune.txt').read().replace('>', '=') ; open('./requirements/requirements-neptune.txt', 'w').write(req)"
 
       # https://github.com/actions/cache/blob/master/examples.md
       # Note: This uses an internal pip API and may not always work
@@ -80,14 +81,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements-cv.txt') }} -${{ hashFiles('./requirements/requirements-hydra.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }} -${{ hashFiles('./requirements/requirements-nifti.txt') }}
+          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements-cv.txt') }} -${{ hashFiles('./requirements/requirements-hydra.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }} -${{ hashFiles('./requirements/requirements-nifti.txt') }} -${{ hashFiles('./requirements/requirements-neptune.txt') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
 
       - name: install dependencies
         run: |
           # python -m pip install --upgrade --user pip
-          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-mlflow.txt
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-neptune.txt
           python --version
           pip --version
           pip list
@@ -97,6 +98,8 @@ jobs:
       - name: check examples
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
+          OMP_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
         run: |
           pip install -e .
           bash bin/workflows/check_projector.sh

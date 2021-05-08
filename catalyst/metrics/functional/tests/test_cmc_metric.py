@@ -6,13 +6,12 @@ import numpy as np
 import pytest
 import torch
 
-from catalyst.metrics.functional._cmc_score import cmc_score, cmc_score_count
+from catalyst.metrics.functional._cmc_score import cmc_score, cmc_score_count, masked_cmc_score
 
 EPS = 1e-4
 
 TEST_DATA_SIMPLE = (
-    # (distance_matrix, conformity_matrix,
-    #  topk, expected_value)
+    # (distance_matrix, conformity_matrix,  topk, expected_value)
     (torch.tensor([[1, 2], [2, 1]]), torch.tensor([[0, 1], [1, 0]]), 1, 0.0),
     (torch.tensor([[0, 0.5], [0.0, 0.5]]), torch.tensor([[0, 1], [1, 0]]), 1, 0.5),
     (torch.tensor([[0, 0.5], [0.0, 0.5]]), torch.tensor([[0, 1], [1, 0]]), 2, 1),
@@ -159,3 +158,105 @@ def test_cmc_score_with_samples(generate_samples_for_cmc_score):
             topk=1,
         )
         assert abs(cmc - true_cmc_01) <= 0.05
+
+
+@pytest.mark.parametrize(
+    (
+        "query_embeddings",
+        "gallery_embeddings",
+        "conformity_matrix",
+        "available_samples",
+        "topk",
+        "expected",
+    ),
+    (
+        (
+            torch.tensor([[1, 1, 0, 0], [1, 0, 0, 0], [0, 1, 1, 1], [0, 0, 1, 1],]).float(),
+            torch.tensor([[1, 1, 1, 0], [1, 1, 1, 1], [0, 1, 1, 0],]).float(),
+            torch.tensor(
+                [
+                    [True, False, False],
+                    [True, False, False],
+                    [False, True, True],
+                    [False, True, True],
+                ]
+            ),
+            torch.tensor(
+                [[False, True, True], [True, True, True], [True, False, True], [True, True, True],]
+            ),
+            1,
+            0.75,
+        ),
+        (
+            torch.tensor([[1, 0, 0], [0, 1, 0], [0, 0, 1], [1, 1, 1],]).float(),
+            torch.tensor([[0, 1, 0], [0, 0, 1], [1, 0, 1],]).float(),
+            torch.tensor(
+                [
+                    [False, False, True],
+                    [True, False, False],
+                    [False, True, False],
+                    [False, False, True],
+                ]
+            ),
+            torch.tensor(
+                [
+                    [True, True, True],
+                    [False, True, True],
+                    [True, False, True],
+                    [True, True, False],
+                ]
+            ),
+            1,
+            0.25,
+        ),
+    ),
+)
+def test_masked_cmc_score(
+    query_embeddings, gallery_embeddings, conformity_matrix, available_samples, topk, expected,
+):
+    score = masked_cmc_score(
+        query_embeddings=query_embeddings,
+        gallery_embeddings=gallery_embeddings,
+        conformity_matrix=conformity_matrix,
+        available_samples=available_samples,
+        topk=topk,
+    )
+    assert score == expected
+
+
+@pytest.mark.parametrize(
+    ("query_embeddings", "gallery_embeddings", "conformity_matrix", "available_samples", "topk",),
+    (
+        (
+            torch.rand(size=(query_size, 32)).float(),
+            torch.rand(size=(gallery_size, 32)).float(),
+            torch.randint(low=0, high=2, size=(query_size, gallery_size)).bool(),
+            torch.ones(size=(query_size, gallery_size)).bool(),
+            k,
+        )
+        for query_size, gallery_size, k in zip(
+            list(range(10, 20)), list(range(25, 35)), list(range(1, 11))
+        )
+    ),
+)
+def test_no_mask_cmc_score(
+    query_embeddings, gallery_embeddings, conformity_matrix, available_samples, topk,
+) -> None:
+    """
+    In this test we just check that masked_cmc_score is equal to cmc_score
+    when all the samples are available for for scoring.
+    """
+    masked_score = masked_cmc_score(
+        query_embeddings=query_embeddings,
+        gallery_embeddings=gallery_embeddings,
+        conformity_matrix=conformity_matrix,
+        available_samples=available_samples,
+        topk=topk,
+    )
+    score = cmc_score(
+        query_embeddings=query_embeddings,
+        gallery_embeddings=gallery_embeddings,
+        conformity_matrix=conformity_matrix,
+        topk=topk,
+    )
+    assert masked_score == score

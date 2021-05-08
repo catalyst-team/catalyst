@@ -1,9 +1,12 @@
 # framework must-have
-numpy>=1.16.4
+numpy>=1.18
 torch>=1.3.0
 
 # Config API
 PyYAML>=5.1
+
+# progress bar
+tqdm>=4.33.0
 
 # for future development:
 # tensorboardX provides tensorboard support for any framework

@@ -10,18 +10,6 @@ from catalyst import dl
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 
-class CustomRunner(dl.Runner):
-    def handle_batch(self, batch):
-        x, y = batch
-        logits = self.model(x)
-        self.batch = {
-            "features": x,
-            "logits": logits,
-            "scores": torch.sigmoid(logits),
-            "targets": y,
-        }
-
-
 def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
         # sample data
@@ -41,6 +29,12 @@ def train_experiment(device, engine=None):
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
         callbacks = [
+            dl.BatchTransformCallback(
+                input_key="logits",
+                output_key="scores",
+                transform=torch.sigmoid,
+                scope="on_batch_end",
+            ),
             dl.CriterionCallback(input_key="logits", target_key="targets", metric_key="loss"),
             dl.AUCCallback(input_key="scores", target_key="targets"),
             dl.HitrateCallback(input_key="scores", target_key="targets", topk_args=(1, 3, 5)),
@@ -53,13 +47,19 @@ def train_experiment(device, engine=None):
                 logdir=logdir, loader_key="valid", metric_key="map01", minimize=False
             ),
         ]
-        if engine is None or not isinstance(
-            engine, (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine)
+        if SETTINGS.amp_required and (
+            engine is None
+            or not isinstance(
+                engine,
+                (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine),
+            )
         ):
             callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
 
         # model training
-        runner = CustomRunner()
+        runner = dl.SupervisedRunner(
+            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+        )
         runner.train(
             engine=engine or dl.DeviceEngine(device),
             model=model,

@@ -77,19 +77,27 @@ class MLflowLogger(ILogger):
     Args:
         experiment: Name of the experiment in MLflow to log to.
         run: Name of the run in Mlflow to log to.
-        tracking_uri: URI of tracking server against which
-            to log run information related.
+        tracking_uri: URI of tracking server against which to log run information related.
         registry_uri: Address of local or remote model registry server.
 
-    Notebook API example:
+    Python API examples:
 
     .. code-block:: python
 
         from catalyst import dl
 
-        class CustomSupervisedRunner(dl.IRunner):
-            def get_engine(self) -> dl.IEngine:
-                return dl.DeviceEngine("cpu")
+        runner = dl.SupervisedRunner()
+        runner.train(
+            ...,
+            loggers={"mlflow": dl.MLflowLogger(experiment="test_exp", run="test_run")}
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class CustomRunner(dl.IRunner):
+            # ...
 
             def get_loggers(self):
                 return {
@@ -97,8 +105,9 @@ class MLflowLogger(ILogger):
                     "mlflow": dl.MLflowLogger(experiment="test_exp", run="test_run")
                 }
 
-        runner = CustomSupervisedRunner().run()
-        model = runner.model
+            # ...
+
+        runner = CustomRunner().run()
 
     Config API example:
 
@@ -107,6 +116,17 @@ class MLflowLogger(ILogger):
         loggers:
             mlflow:
                 _target_: MLflowLogger
+                experiment: test_exp
+                run: test_run
+        ...
+
+    Hydra API example:
+
+    .. code-block:: yaml
+
+        loggers:
+            mlflow:
+                _target_: catalyst.dl.MLflowLogger
                 experiment: test_exp
                 run: test_run
         ...

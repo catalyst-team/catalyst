@@ -33,12 +33,25 @@ def train_experiment(device, engine=None):
             input_key="features", output_key="logits", target_key="targets", loss_key="loss"
         )
         callbacks = [
-            dl.MultilabelAccuracyCallback(input_key="logits", target_key="targets", threshold=0.5),
+            dl.BatchTransformCallback(
+                transform=torch.sigmoid,
+                scope="on_batch_end",
+                input_key="logits",
+                output_key="scores",
+            ),
+            dl.MultilabelAccuracyCallback(input_key="scores", target_key="targets", threshold=0.5),
+            dl.MultilabelPrecisionRecallF1SupportCallback(
+                input_key="scores", target_key="targets", num_classes=num_classes
+            ),
         ]
-        if engine is None or not isinstance(
-            engine, (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine)
+        if SETTINGS.amp_required and (
+            engine is None
+            or not isinstance(
+                engine,
+                (dl.AMPEngine, dl.DataParallelAMPEngine, dl.DistributedDataParallelAMPEngine),
+            )
         ):
-            callbacks.append(dl.AUCCallback(input_key="logits", target_key="targets"))
+            callbacks.append(dl.AUCCallback(input_key="scores", target_key="targets"))
         runner.train(
             engine=engine or dl.DeviceEngine(device),
             model=model,

@@ -131,6 +131,24 @@ def _is_mlflow_available():
         return False
 
 
+def _is_wandb_available():
+    try:
+        import wandb  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
+def _is_neptune_available():
+    try:
+        import neptune.new as neptune  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
 def _get_optional_value(
     is_required: Optional[bool], is_available_fn: Callable, assert_msg: str
 ) -> bool:
@@ -166,9 +184,9 @@ class Settings(FrozenClass):
         quantization_required: Optional[bool] = None,
         # [logging]
         # alchemy_required: Optional[bool] = None,
-        # neptune_required: Optional[bool] = None,
+        neptune_required: Optional[bool] = None,
         mlflow_required: Optional[bool] = None,
-        # wandb_required: Optional[bool] = None,
+        wandb_required: Optional[bool] = None,
         # [extras]
         use_lz4: Optional[bool] = None,
         use_pyarrow: Optional[bool] = None,
@@ -248,13 +266,24 @@ class Settings(FrozenClass):
 
         # [logging]
         # self.alchemy_required: bool = alchemy_required
-        # self.neptune_required: bool = neptune_required
+        self.neptune_required: bool = _get_optional_value(
+            neptune_required,
+            _is_neptune_available,
+            "neptune is not available, to install it, run `pip install neptune-client`.",
+        )
         self.mlflow_required: bool = _get_optional_value(
             mlflow_required,
             _is_mlflow_available,
             "catalyst[mlflow] is not available, to install it, "
             "run `pip install catalyst[mlflow]`.",
         )
+
+        self.wandb_required: bool = _get_optional_value(
+            wandb_required,
+            _is_wandb_available,
+            "wandb is not available, to install it, " "run `pip install wandb`.",
+        )
+
         # self.wandb_required: bool = wandb_required
 
         # [extras]

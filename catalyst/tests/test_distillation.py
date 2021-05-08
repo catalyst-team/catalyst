@@ -81,7 +81,7 @@ def train_experiment(device, engine=None):
                     criterion_key="kl",
                 ),
                 dl.MetricAggregationCallback(
-                    prefix="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"
+                    metric_key="loss", metrics=["kl_div_loss", "cls_loss"], mode="mean"
                 ),
                 dl.OptimizerCallback(metric_key="loss", model_key="student"),
                 dl.CheckpointCallback(

@@ -18,6 +18,7 @@ from catalyst.core.logger import ILogger
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
 from catalyst.core.runner import IRunner
 from catalyst.core.trial import ITrial
+from catalyst.data.loader import ILoaderWrapper
 from catalyst.engines import IEngine
 from catalyst.loggers.console import ConsoleLogger
 from catalyst.loggers.csv import CSVLogger
@@ -41,7 +42,7 @@ from catalyst.utils.torch import get_available_engine
 def _process_loaders(
     loaders: "OrderedDict[str, DataLoader]", initial_seed: int
 ) -> "OrderedDict[str, DataLoader]":
-    if not isinstance(loaders[list(loaders.keys())[0]], DataLoader):
+    if not isinstance(loaders[list(loaders.keys())[0]], (DataLoader, ILoaderWrapper)):
         loaders = get_loaders_from_params(initial_seed=initial_seed, **loaders)
     return loaders
 
@@ -49,9 +50,112 @@ def _process_loaders(
 class Runner(IRunner):
     """Single-stage deep learning Runner with user-friendly API.
 
+    Runner supports the logic for deep learning pipeline configuration with pure python code.
+    Please check the examples for intuition.
+
     Args:
-        *args:
-        **kwargs:
+        *args: `IRunner` args (model, engine)
+        **kwargs: `IRunner` kwargs (model, engine)
+
+    .. note::
+        IRunner supports only base user-friendly callbacks, like
+        TqdmCallback, TimerCallback, CheckRunCallback, BatchOverfitCallback,
+        and CheckpointCallback.
+
+        It does not automatically add Criterion, Optimizer or Scheduler callbacks.
+
+        That means, that you have do optimization step by yourself during ``handle_batch`` method
+        or specify the required callbacks in ``.train`` or ``get_callbacks`` methods.
+
+        For more easy-to-go supervised use case please follow
+        :py:mod:`catalyst.runners.runner.SupervisedRunner`.
+
+    .. note::
+        Please follow the `minimal examples`_ sections for use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+
+    Examples:
+
+    .. code-block:: python
+
+        import os
+        from torch import nn, optim
+        from torch.nn import functional as F
+        from torch.utils.data import DataLoader
+        from catalyst import dl, metrics
+        from catalyst.data.transforms import ToTensor
+        from catalyst.contrib.datasets import MNIST
+
+        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+        optimizer = optim.Adam(model.parameters(), lr=0.02)
+
+        loaders = {
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                batch_size=32
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                batch_size=32
+            ),
+        }
+
+        class CustomRunner(dl.Runner):
+            def predict_batch(self, batch):
+                # model inference step
+                return self.model(batch[0].to(self.device))
+
+            def on_loader_start(self, runner):
+                super().on_loader_start(runner)
+                self.meters = {
+                    key: metrics.AdditiveValueMetric(compute_on_call=False)
+                    for key in ["loss", "accuracy01", "accuracy03"]
+                }
+
+            def handle_batch(self, batch):
+                # model train/valid step
+                # unpack the batch
+                x, y = batch
+                # run model forward pass
+                logits = self.model(x)
+                # compute the loss
+                loss = F.cross_entropy(logits, y)
+                # compute other metrics of interest
+                accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
+                # log metrics
+                self.batch_metrics.update(
+                    {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
+                )
+                for key in ["loss", "accuracy01", "accuracy03"]:
+                    self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
+                # run model backward pass
+                if self.is_train_loader:
+                    loss.backward()
+                    self.optimizer.step()
+                    self.optimizer.zero_grad()
+
+            def on_loader_end(self, runner):
+                for key in ["loss", "accuracy01", "accuracy03"]:
+                    self.loader_metrics[key] = self.meters[key].compute()[0]
+                super().on_loader_end(runner)
+
+        runner = CustomRunner()
+        # model training
+        runner.train(
+            model=model,
+            optimizer=optimizer,
+            loaders=loaders,
+            logdir="./logs",
+            num_epochs=5,
+            verbose=True,
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+        )
+        # model inference
+        for logits in runner.predict_loader(loader=loaders["valid"]):
+            assert logits.detach().cpu().numpy().shape[-1] == 10
     """
 
     def __init__(self, *args, **kwargs):
@@ -134,10 +238,10 @@ class Runner(IRunner):
         if not is_logger_exists(ConsoleLogger):
             loggers["_console"] = ConsoleLogger()
         if self._logdir is not None and not is_logger_exists(CSVLogger):
-            loggers["_csv"] = CSVLogger(logdir=self._logdir)
+            loggers["_csv"] = CSVLogger(logdir=self._logdir, use_logdir_postfix=True)
         if self._logdir is not None and not is_logger_exists(TensorboardLogger):
             loggers["_tensorboard"] = TensorboardLogger(
-                logdir=os.path.join(self._logdir, "tensorboard")
+                logdir=self._logdir, use_logdir_postfix=True
             )
 
         return loggers
@@ -271,7 +375,7 @@ class Runner(IRunner):
             valid_metric: the key to the name of the metric
                 by which the checkpoints will be selected.
             minimize_valid_metric: flag to indicate whether
-                the ``valid_metric`` should be minimized or not.
+                the ``valid_metric`` should be minimized or not (default: True).
             verbose: if `True`, it displays the status of the training to the console.
             timeit: if True, computes the execution time
                 of training process and displays it to the console.
@@ -288,6 +392,96 @@ class Runner(IRunner):
             apex: boolean flag to use apex half-precision
             ddp: if `True` will start training in distributed mode.
                 Note: Works only with python scripts. No jupyter support.
+
+        .. note::
+            Please follow the `minimal examples`_ sections for use cases.
+
+            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+
+        Examples:
+
+        .. code-block:: python
+
+            import os
+            from torch import nn, optim
+            from torch.nn import functional as F
+            from torch.utils.data import DataLoader
+            from catalyst import dl, metrics
+            from catalyst.data.transforms import ToTensor
+            from catalyst.contrib.datasets import MNIST
+
+            model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+            optimizer = optim.Adam(model.parameters(), lr=0.02)
+
+            loaders = {
+                "train": DataLoader(
+                    MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                    batch_size=32
+                ),
+                "valid": DataLoader(
+                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                    batch_size=32
+                ),
+            }
+
+            class CustomRunner(dl.Runner):
+                def predict_batch(self, batch):
+                    # model inference step
+                    return self.model(batch[0].to(self.device))
+
+                def on_loader_start(self, runner):
+                    super().on_loader_start(runner)
+                    self.meters = {
+                        key: metrics.AdditiveValueMetric(compute_on_call=False)
+                        for key in ["loss", "accuracy01", "accuracy03"]
+                    }
+
+                def handle_batch(self, batch):
+                    # model train/valid step
+                    # unpack the batch
+                    x, y = batch
+                    # run model forward pass
+                    logits = self.model(x)
+                    # compute the loss
+                    loss = F.cross_entropy(logits, y)
+                    # compute other metrics of interest
+                    accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
+                    # log metrics
+                    self.batch_metrics.update(
+                        {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
+                    )
+                    for key in ["loss", "accuracy01", "accuracy03"]:
+                        self.meters[key].update(
+                            self.batch_metrics[key].item(),
+                            self.batch_size
+                        )
+                    # run model backward pass
+                    if self.is_train_loader:
+                        loss.backward()
+                        self.optimizer.step()
+                        self.optimizer.zero_grad()
+
+                def on_loader_end(self, runner):
+                    for key in ["loss", "accuracy01", "accuracy03"]:
+                        self.loader_metrics[key] = self.meters[key].compute()[0]
+                    super().on_loader_end(runner)
+
+            runner = CustomRunner()
+            # model training
+            runner.train(
+                model=model,
+                optimizer=optimizer,
+                loaders=loaders,
+                logdir="./logs",
+                num_epochs=5,
+                verbose=True,
+                valid_loader="valid",
+                valid_metric="loss",
+                minimize_valid_metric=True,
+            )
+            # model inference
+            for logits in runner.predict_loader(loader=loaders["valid"]):
+                assert logits.detach().cpu().numpy().shape[-1] == 10
         """
         # experiment setup
         self._engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
@@ -368,6 +562,96 @@ class Runner(IRunner):
 
         Yields:
             bathes with model predictions
+
+        .. note::
+            Please follow the `minimal examples`_ sections for use cases.
+
+            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+
+        Examples:
+
+        .. code-block:: python
+
+            import os
+            from torch import nn, optim
+            from torch.nn import functional as F
+            from torch.utils.data import DataLoader
+            from catalyst import dl, metrics
+            from catalyst.data.transforms import ToTensor
+            from catalyst.contrib.datasets import MNIST
+
+            model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+            optimizer = optim.Adam(model.parameters(), lr=0.02)
+
+            loaders = {
+                "train": DataLoader(
+                    MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                    batch_size=32
+                ),
+                "valid": DataLoader(
+                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                    batch_size=32
+                ),
+            }
+
+            class CustomRunner(dl.Runner):
+                def predict_batch(self, batch):
+                    # model inference step
+                    return self.model(batch[0].to(self.device))
+
+                def on_loader_start(self, runner):
+                    super().on_loader_start(runner)
+                    self.meters = {
+                        key: metrics.AdditiveValueMetric(compute_on_call=False)
+                        for key in ["loss", "accuracy01", "accuracy03"]
+                    }
+
+                def handle_batch(self, batch):
+                    # model train/valid step
+                    # unpack the batch
+                    x, y = batch
+                    # run model forward pass
+                    logits = self.model(x)
+                    # compute the loss
+                    loss = F.cross_entropy(logits, y)
+                    # compute other metrics of interest
+                    accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
+                    # log metrics
+                    self.batch_metrics.update(
+                        {"loss": loss, "accuracy01": accuracy01, "accuracy03": accuracy03}
+                    )
+                    for key in ["loss", "accuracy01", "accuracy03"]:
+                        self.meters[key].update(
+                            self.batch_metrics[key].item(),
+                            self.batch_size
+                        )
+                    # run model backward pass
+                    if self.is_train_loader:
+                        loss.backward()
+                        self.optimizer.step()
+                        self.optimizer.zero_grad()
+
+                def on_loader_end(self, runner):
+                    for key in ["loss", "accuracy01", "accuracy03"]:
+                        self.loader_metrics[key] = self.meters[key].compute()[0]
+                    super().on_loader_end(runner)
+
+            runner = CustomRunner()
+            # model training
+            runner.train(
+                model=model,
+                optimizer=optimizer,
+                loaders=loaders,
+                logdir="./logs",
+                num_epochs=5,
+                verbose=True,
+                valid_loader="valid",
+                valid_metric="loss",
+                minimize_valid_metric=True,
+            )
+            # model inference
+            for logits in runner.predict_loader(loader=loaders["valid"]):
+                assert logits.detach().cpu().numpy().shape[-1] == 10
         """
         self._engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
 
@@ -397,6 +681,65 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         output_key: key for ``runner.batch`` to store model output
         target_key: key in ``runner.batch`` dict mapping for target
         loss_key: key for ``runner.batch_metrics`` to store criterion loss output
+
+    .. note::
+        Please follow the `minimal examples`_ sections for use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+
+    Examples:
+
+    .. code-block:: python
+
+        import os
+        from torch import nn, optim
+        from torch.utils.data import DataLoader
+        from catalyst import dl, utils
+        from catalyst.data.transforms import ToTensor
+        from catalyst.contrib.datasets import MNIST
+
+        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(model.parameters(), lr=0.02)
+
+        loaders = {
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                batch_size=32
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                batch_size=32
+            ),
+        }
+
+        runner = dl.SupervisedRunner(
+            input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+        )
+        # model training
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            num_epochs=1,
+            callbacks=[
+                dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3)),
+                dl.PrecisionRecallF1SupportCallback(
+                    input_key="logits", target_key="targets", num_classes=10
+                ),
+                dl.AUCCallback(input_key="logits", target_key="targets"),
+            ],
+            logdir="./logs",
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            verbose=True,
+            load_best_on_end=True,
+        )
+        # model inference
+        for prediction in runner.predict_loader(loader=loaders["valid"]):
+            assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
     """
 
     def __init__(
