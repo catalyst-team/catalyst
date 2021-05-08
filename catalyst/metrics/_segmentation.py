@@ -109,6 +109,11 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 self.statistics[idx]["fp"] = fp_class
                 self.statistics[idx]["fn"] = fn_class
 
+        # need only one time
+        if not self._checked_params:
+            self._check_parameters()
+            self._checked_params = True
+
         metrics_per_class = self.metric_fn(tp, fp, fn)
         return metrics_per_class
 
@@ -126,10 +131,6 @@ class RegionBasedMetric(ICallbackBatchMetric):
         """
         metrics_per_class = self.update(outputs, targets)
         macro_metric = torch.mean(metrics_per_class)
-        # need only one time
-        if not self._checked_params:
-            self._check_parameters()
-            self._checked_params = True
         metrics = {
             f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[idx]}": value
             for idx, value in enumerate(metrics_per_class)
@@ -151,11 +152,30 @@ class RegionBasedMetric(ICallbackBatchMetric):
         Returns:
              dict of metrics, including micro, macro and weighted (if weights were given) metrics
         """
+        if self.weights is not None:
+            per_class, micro_metric, macro_metric, weighted_metric = self.compute()
+        else:
+            per_class, micro_metric, macro_metric = self.compute()
+
         metrics = {}
+        for class_idx, value in enumerate(per_class):
+            metrics[
+                f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[class_idx]}"
+            ] = value
+
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_micro"] = micro_metric
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_macro"] = macro_metric
+        if self.weights is not None:
+            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
+        return metrics
+
+    def compute(self):
+        """@TODO: Docs."""
+        per_class = []
         total_statistics = {}
         macro_metric = 0
         weighted_metric = 0
-
         # @TODO: ddp hotfix, could be done better
         if self._is_ddp:
             for _, statistics in self.statistics.items():
@@ -167,28 +187,18 @@ class RegionBasedMetric(ICallbackBatchMetric):
 
         for class_idx, statistics in self.statistics.items():
             value = self.metric_fn(**statistics)
+            per_class.append(value)
             macro_metric += value
             if self.weights is not None:
                 weighted_metric += value * self.weights[class_idx]
-            metrics[
-                f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[class_idx]}"
-            ] = value
             for stats_name, value in statistics.items():
                 total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
+
         macro_metric /= len(self.statistics)
         micro_metric = self.metric_fn(**total_statistics)
-        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_micro"] = micro_metric
-        metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
-        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_macro"] = macro_metric
         if self.weights is not None:
-            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
-        # convert torch.Tensor to float
-        # metrics = {k: float(v) for k, v in metrics.items()}
-        return metrics
-
-    def compute(self):
-        """@TODO: Docs."""
-        return self.compute_key_value()
+            return per_class, micro_metric, macro_metric, weighted_metric
+        return per_class, micro_metric, macro_metric
 
 
 class IOUMetric(RegionBasedMetric):
