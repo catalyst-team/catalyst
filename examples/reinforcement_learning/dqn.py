@@ -9,7 +9,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import IterableDataset
 
-from catalyst import dl, utils
+from catalyst import dl, metrics, utils
 
 # Off-policy common
 
@@ -28,13 +28,11 @@ class ReplayBuffer:
     def sample(self, size: int) -> Sequence[np.array]:
         indices = np.random.choice(len(self.buffer), size, replace=size > len(self.buffer))
         states, actions, rewards, dones, next_states = zip(*[self.buffer[idx] for idx in indices])
-        states, actions, rewards, dones, next_states = (
-            np.array(states, dtype=np.float32),
-            np.array(actions, dtype=np.int64),
-            np.array(rewards, dtype=np.float32),
-            np.array(dones, dtype=np.bool),
-            np.array(next_states, dtype=np.float32),
-        )
+        states = np.array(states, dtype=np.float32)
+        actions = np.array(actions, dtype=np.int64)
+        rewards = np.array(rewards, dtype=np.float32)
+        dones = np.array(dones, dtype=np.bool)
+        next_states = np.array(next_states, dtype=np.float32)
         return states, actions, rewards, dones, next_states
 
     def __len__(self) -> int:
@@ -239,23 +237,23 @@ class CustomRunner(dl.Runner):
         self.target_key: str = target_key
         self.origin_network: nn.Module = None
         self.target_network: nn.Module = None
-        self._initialized = False
 
     def on_stage_start(self, runner: dl.IRunner):
         super().on_stage_start(runner)
-        if self._initialized:
-            return
         self.origin_network = self.model[self.origin_key]
         self.target_network = self.model[self.target_key]
         soft_update(self.target_network, self.origin_network, 1.0)
 
+    def on_loader_start(self, runner: dl.IRunner):
+        super().on_loader_start(runner)
+        self.meters = {key: metrics.AdditiveValueMetric(compute_on_call=False) for key in ["loss"]}
+
     def handle_batch(self, batch: Sequence[np.array]):
         # model train/valid step
         states, actions, rewards, dones, next_states = batch
-        network, target_network = self.origin_network, self.target_network
 
         # get q-values for all actions in current states
-        state_qvalues = network(states)
+        state_qvalues = self.origin_network(states)
         # select q-values for chosen actions
         state_action_qvalues = state_qvalues.gather(1, actions.unsqueeze(-1)).squeeze(-1)
 
@@ -264,7 +262,7 @@ class CustomRunner(dl.Runner):
         # at the last state we shall use simplified formula:
         # Q(s,a) = r(s,a) since s' doesn't exist
         with torch.no_grad():
-            next_state_qvalues = target_network(next_states)
+            next_state_qvalues = self.target_network(next_states)
             next_state_values = next_state_qvalues.max(1)[0]
             next_state_values[dones] = 0.0
             next_state_values = next_state_values.detach()
@@ -276,6 +274,8 @@ class CustomRunner(dl.Runner):
         # mean squared error loss to minimize
         loss = self.criterion(state_action_qvalues, target_state_action_qvalues.detach())
         self.batch_metrics.update({"loss": loss})
+        for key in ["loss"]:
+            self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
 
         if self.is_train_loader:
             loss.backward()
@@ -283,7 +283,12 @@ class CustomRunner(dl.Runner):
             self.optimizer.zero_grad()
 
             if self.global_batch_step % self.tau_period == 0:
-                soft_update(target_network, network, self.tau)
+                soft_update(self.target_network, self.origin_network, self.tau)
+
+    def on_loader_end(self, runner: dl.IRunner):
+        for key in ["loss"]:
+            self.loader_metrics[key] = self.meters[key].compute()[0]
+        super().on_loader_end(runner)
 
 
 if __name__ == "__main__":
@@ -349,9 +354,9 @@ if __name__ == "__main__":
     # # show video
     # from IPython.display import HTML
     # import os
-    # 
+    #
     # video_names = list(filter(lambda s: s.endswith(".mp4"), os.listdir("./videos_dqn/")))
-    # 
+    #
     # HTML("""
     # <video width="640" height="480" controls>
     #   <source src="{}" type="video/mp4">

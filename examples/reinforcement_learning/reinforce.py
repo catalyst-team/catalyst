@@ -10,7 +10,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import IterableDataset
 
-from catalyst import dl, utils
+from catalyst import dl, metrics, utils
 
 # On-policy common
 
@@ -27,11 +27,9 @@ class RolloutBuffer:
 
     def sample(self, idx: int) -> Sequence[np.array]:
         states, actions, rewards = self.buffer[idx]
-        states, actions, rewards = (
-            np.array(states, dtype=np.float32),
-            np.array(actions, dtype=np.int64),
-            np.array(rewards, dtype=np.float32),
-        )
+        states = np.array(states, dtype=np.float32)
+        actions = np.array(actions, dtype=np.int64)
+        rewards = np.array(rewards, dtype=np.float32)
         return states, actions, rewards
 
     def __len__(self) -> int:
@@ -184,7 +182,10 @@ class CustomRunner(dl.Runner):
     ):
         super().__init__(**kwargs)
         self.gamma: float = gamma
-        self._initialized = False
+
+    def on_loader_start(self, runner: dl.IRunner):
+        super().on_loader_start(runner)
+        self.meters = {key: metrics.AdditiveValueMetric(compute_on_call=False) for key in ["loss"]}
 
     def handle_batch(self, batch: Sequence[np.array]):
         # model train/valid step
@@ -194,9 +195,8 @@ class CustomRunner(dl.Runner):
         states, actions, rewards = batch
         states, actions, rewards = states[0], actions[0], rewards[0]
         cumulative_returns = torch.tensor(get_cumulative_rewards(rewards, gamma))
-        network = self.model
 
-        logits = network(states)
+        logits = self.model(states)
         probas = F.softmax(logits, -1)
         logprobas = F.log_softmax(logits, -1)
         n_actions = probas.shape[1]
@@ -207,10 +207,18 @@ class CustomRunner(dl.Runner):
         loss = -J_hat - 0.1 * entropy_reg
 
         self.batch_metrics.update({"loss": loss})
+        for key in ["loss"]:
+            self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
+
         if self.is_train_loader:
             loss.backward()
             self.optimizer.step()
             self.optimizer.zero_grad()
+
+    def on_loader_end(self, runner: dl.IRunner):
+        for key in ["loss"]:
+            self.loader_metrics[key] = self.meters[key].compute()[0]
+        super().on_loader_end(runner)
 
 
 if __name__ == "__main__":

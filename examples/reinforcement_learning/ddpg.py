@@ -9,7 +9,7 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 from torch.utils.data.dataset import IterableDataset
 
-from catalyst import dl, utils
+from catalyst import dl, metrics, utils
 
 # Off-policy common
 
@@ -28,13 +28,11 @@ class ReplayBuffer:
     def sample(self, size: int) -> Sequence[np.array]:
         indices = np.random.choice(len(self.buffer), size, replace=size > len(self.buffer))
         states, actions, rewards, dones, next_states = zip(*[self.buffer[idx] for idx in indices])
-        states, actions, rewards, dones, next_states = (
-            np.array(states, dtype=np.float32),
-            np.array(actions, dtype=np.int64),
-            np.array(rewards, dtype=np.float32),
-            np.array(dones, dtype=np.bool),
-            np.array(next_states, dtype=np.float32),
-        )
+        states = np.array(states, dtype=np.float32)
+        actions = np.array(actions, dtype=np.int64)
+        rewards = np.array(rewards, dtype=np.float32)
+        dones = np.array(dones, dtype=np.bool)
+        next_states = np.array(next_states, dtype=np.float32)
         return states, actions, rewards, dones, next_states
 
     def __len__(self) -> int:
@@ -57,8 +55,8 @@ class ReplayDataset(IterableDataset):
         return self.epoch_size
 
 
-def soft_update(target: nn.Module, source: nn.Module, tau: float):
-    """Updates the target data with smoothing by ``tau``"""
+def soft_update(target: nn.Module, source: nn.Module, tau: float) -> None:
+    """Updates the `target` data with the `source` one smoothing by ``tau`` (inplace operation)."""
     for target_param, param in zip(target.parameters(), source.parameters()):
         target_param.data.copy_(target_param.data * (1.0 - tau) + param.data * tau)
 
@@ -246,65 +244,105 @@ class GameCallback(dl.Callback):
 
 class CustomRunner(dl.Runner):
     def __init__(
-        self, *, gamma: float, tau: float, tau_period: int = 1, **kwargs,
+        self,
+        *,
+        gamma: float,
+        tau: float,
+        tau_period: int = 1,
+        actor_key: str = "actor",
+        critic_key: str = "critic",
+        target_actor_key: str = "target_actor",
+        target_critic_key: str = "target_critic",
+        actor_optimizer_key: str = "actor",
+        critic_optimizer_key: str = "critic",
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.gamma = gamma
         self.tau = tau
         self.tau_period = tau_period
+        self.actor_key: str = actor_key
+        self.critic_key: str = critic_key
+        self.target_actor_key: str = target_actor_key
+        self.target_critic_key: str = target_critic_key
+        self.actor_optimizer_key: str = actor_optimizer_key
+        self.critic_optimizer_key: str = critic_optimizer_key
+        self.actor: nn.Module = None
+        self.critic: nn.Module = None
+        self.target_actor: nn.Module = None
+        self.target_critic: nn.Module = None
+        self.actor_optimizer: nn.Module = None
+        self.critic_optimizer: nn.Module = None
 
     def on_stage_start(self, runner: dl.IRunner):
         super().on_stage_start(runner)
-        soft_update(self.model["target_actor"], self.model["actor"], 1.0)
-        soft_update(self.model["target_critic"], self.model["critic"], 1.0)
+        self.actor = self.model[self.actor_key]
+        self.critic = self.model[self.critic_key]
+        self.target_actor = self.model[self.target_actor_key]
+        self.target_critic = self.model[self.target_critic_key]
+        soft_update(self.target_actor, self.actor, 1.0)
+        soft_update(self.target_critic, self.critic, 1.0)
+        self.actor_optimizer = self.optimizer[self.actor_optimizer_key]
+        self.critic_optimizer = self.optimizer[self.critic_optimizer_key]
+
+    def on_loader_start(self, runner: dl.IRunner):
+        super().on_loader_start(runner)
+        self.meters = {
+            key: metrics.AdditiveValueMetric(compute_on_call=False)
+            for key in ["critic_loss", "actor_loss"]
+        }
 
     def handle_batch(self, batch: Sequence[torch.Tensor]):
         # model train/valid step
         states, actions, rewards, dones, next_states = batch
-        actor, target_actor = self.model["actor"], self.model["target_actor"]
-        critic, target_critic = self.model["critic"], self.model["target_critic"]
-        actor_optimizer, critic_optimizer = self.optimizer["actor"], self.optimizer["critic"]
 
         # get actions for the current state
-        pred_actions = actor(states)
+        pred_actions = self.actor(states)
         # get q-values for the actions in current states
         pred_critic_states = torch.cat([states, pred_actions], 1)
         # use q-values to train the actor model
-        policy_loss = (-critic(pred_critic_states)).mean()
+        policy_loss = (-self.critic(pred_critic_states)).mean()
 
         with torch.no_grad():
             # get possible actions for the next states
-            next_state_actions = target_actor(next_states)
+            next_state_actions = self.target_actor(next_states)
             # get possible q-values for the next actions
             next_critic_states = torch.cat([next_states, next_state_actions], 1)
-            next_state_values = target_critic(next_critic_states).detach().squeeze()
+            next_state_values = self.target_critic(next_critic_states).detach().squeeze()
             next_state_values[dones] = 0.0
 
         # compute Bellman's equation value
         target_state_values = next_state_values * self.gamma + rewards
         # compute predicted values
         critic_states = torch.cat([states, actions], 1)
-        state_values = critic(critic_states).squeeze()
+        state_values = self.critic(critic_states).squeeze()
 
         # train the critic model
         value_loss = self.criterion(state_values, target_state_values.detach())
 
         self.batch_metrics.update({"critic_loss": value_loss, "actor_loss": policy_loss})
+        for key in ["critic_loss", "actor_loss"]:
+            self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)
 
         if self.is_train_loader:
-            actor.zero_grad()
-            actor_optimizer.zero_grad()
+            self.actor.zero_grad()
+            self.actor_optimizer.zero_grad()
             policy_loss.backward()
-            actor_optimizer.step()
+            self.actor_optimizer.step()
 
-            critic.zero_grad()
-            critic_optimizer.zero_grad()
+            self.critic.zero_grad()
+            self.critic_optimizer.zero_grad()
             value_loss.backward()
-            critic_optimizer.step()
+            self.critic_optimizer.step()
 
             if self.global_batch_step % self.tau_period == 0:
-                soft_update(target_actor, actor, self.tau)
-                soft_update(target_critic, critic, self.tau)
+                soft_update(self.target_actor, self.actor, self.tau)
+                soft_update(self.target_critic, self.critic, self.tau)
+
+    def on_loader_end(self, runner: dl.IRunner):
+        for key in ["critic_loss", "actor_loss"]:
+            self.loader_metrics[key] = self.meters[key].compute()[0]
+        super().on_loader_end(runner)
 
 
 if __name__ == "__main__":
