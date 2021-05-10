@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generator, Iterable, List, Mapping, Union
+from typing import Any, Dict, Generator, Iterable, List, Mapping, Optional, Union
 from collections import OrderedDict
 import os
 
@@ -16,7 +16,7 @@ from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
-from catalyst.core.runner import IRunner
+from catalyst.core.runner import IRunner, RunnerException
 from catalyst.core.trial import ITrial
 from catalyst.data.loader import ILoaderWrapper
 from catalyst.engines import IEngine
@@ -669,6 +669,56 @@ class Runner(IRunner):
         set_global_seed(seed)
         for batch in loader:
             yield self.predict_batch(batch)
+
+    def evaluate_loader(
+        self,
+        loader: DataLoader,
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]",
+        model: Optional[Model] = None,
+        seed: int = 42,
+        verbose: bool = False,
+    ) -> Dict:
+        """
+        Evaluates data from loader with given model and returns obtained metrics. # noqa: DAR401
+
+        Args:
+            loader: loader to predict
+            callbacks: list or dictionary with catalyst callbacks
+            model: model, compatable with current runner.
+                If `None` simply takes current model from runner.
+            seed: random seed to use before prediction
+            verbose: if `True`, it displays the status of the evaluation to the console.
+
+        Returns:
+            Dict with metrics counted on the loader.
+        """
+        if isinstance(callbacks, List):
+            for callback in callbacks:
+                if isinstance(callback, CheckpointCallback):
+                    raise RunnerException(
+                        "CheckpointCallback isn`t allowed for evaluation loader method"
+                    )
+        else:
+            for callback in callbacks.values():
+                if isinstance(callback, CheckpointCallback):
+                    raise RunnerException(
+                        "CheckpointCallback isn`t allowed for evaluation loader method"
+                    )
+
+        if model is None:
+            model = self.model
+
+        self.train(
+            model=model,
+            loaders=OrderedDict([("valid", loader)]),
+            num_epochs=1,
+            verbose=verbose,
+            callbacks=callbacks,
+            valid_loader="valid",
+            seed=seed,
+        )
+
+        return self.loader_metrics
 
 
 class SupervisedRunner(ISupervisedRunner, Runner):
