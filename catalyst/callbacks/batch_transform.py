@@ -1,6 +1,7 @@
 from typing import Callable, List, Union
 
 from catalyst.core import Callback, CallbackOrder, IRunner
+from catalyst.registry import REGISTRY
 
 
 def _tuple_wrapper(transform: Callable):
@@ -170,7 +171,7 @@ class BatchTransformCallback(Callback):
 
     def __init__(
         self,
-        transform: Callable,
+        transform: Union[Callable, str],
         scope: str,
         input_key: Union[List[str], str] = None,
         output_key: Union[List[str], str] = None,
@@ -179,7 +180,7 @@ class BatchTransformCallback(Callback):
         Preprocess your batch with specified function.
 
         Args:
-            transform (Callable): Function to apply.
+            transform (Callable, str): Function to apply. If string will get function from registry.
             scope (str): ``"on_batch_end"`` (post-processing model output) or
                 ``"on_batch_start"`` (pre-processing model input).
             input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
@@ -219,6 +220,8 @@ class BatchTransformCallback(Callback):
             raise TypeError('Expected scope to be on of the ["on_batch_end", "on_batch_start"]')
         self.input_key = input_key
         self.output_key = output_key
+        if isinstance(transform, str):
+            transform = REGISTRY.get(transform)
         self.transform = transform
 
     def _handle_value(self, runner):
