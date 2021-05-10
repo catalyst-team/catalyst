@@ -190,7 +190,8 @@ class BatchTransformCallback(Callback):
         Preprocess your batch with specified function.
 
         Args:
-            transform (Callable, str): Function to apply. If string will get function from registry.
+            transform (Callable, str): Function to apply.
+                If string will get function from registry.
             scope (str): ``"on_batch_end"`` (post-processing model output) or
                 ``"on_batch_start"`` (pre-processing model input).
             input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
