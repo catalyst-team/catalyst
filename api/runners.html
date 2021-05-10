@@ -589,6 +589,27 @@ or specify the required callbacks in <code class="docutils literal notranslate">
 </pre></div>
 </div>
 <dl class="method">
+<dt id="catalyst.runners.runner.Runner.evaluate_loader">
+<code class="sig-name descname">evaluate_loader</code><span class="sig-paren">(</span><em class="sig-param">loader: torch.utils.data.dataloader.DataLoader, callbacks: Union[List[Callback], OrderedDict[str, Callback]], model: Optional[torch.nn.modules.module.Module] = None, seed: int = 42, verbose: bool = False</em><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.evaluate_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.evaluate_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates data from loader with given model and returns obtained metrics. # noqa: DAR401</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>loader</strong> – loader to predict</p></li>
+<li><p><strong>callbacks</strong> – list or dictionary with catalyst callbacks</p></li>
+<li><p><strong>model</strong> – model, compatable with current runner.
+If <cite>None</cite> simply takes current model from runner.</p></li>
+<li><p><strong>seed</strong> – random seed to use before prediction</p></li>
+<li><p><strong>verbose</strong> – if <cite>True</cite>, it displays the status of the evaluation to the console.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dict with metrics counted on the loader.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.runners.runner.Runner.get_callbacks">
 <code class="sig-name descname">get_callbacks</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Callback]<a class="reference internal" href="../_modules/catalyst/runners/runner.html#Runner.get_callbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.runner.Runner.get_callbacks" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the callbacks for a given stage.</p>
