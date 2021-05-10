@@ -993,7 +993,7 @@
 <span class="sd">        Args:</span>
 <span class="sd">            loader: loader to predict</span>
 <span class="sd">            callbacks: list or dictionary with catalyst callbacks</span>
-<span class="sd">            model: model, compatable with current runner.</span>
+<span class="sd">            model: model, compatible with current runner.</span>
 <span class="sd">                If `None` simply takes current model from runner.</span>
 <span class="sd">            seed: random seed to use before prediction</span>
 <span class="sd">            verbose: if `True`, it displays the status of the evaluation to the console.</span>
@@ -1016,6 +1016,7 @@
 
         <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
