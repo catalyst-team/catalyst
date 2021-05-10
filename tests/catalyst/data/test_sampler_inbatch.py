@@ -14,9 +14,10 @@ from catalyst.data.sampler_inbatch import (
     HardTripletsSampler,
     TLabels,
 )
-from catalyst.data.tests.test_sampler import generate_valid_labels
+
 from catalyst.settings import SETTINGS
 from catalyst.utils.misc import find_value_ids
+from .test_sampler import generate_valid_labels
 
 if SETTINGS.ml_required:
     from scipy.spatial.distance import squareform
