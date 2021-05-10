@@ -166,6 +166,16 @@ class BatchTransformCallback(Callback):
                     )
                 ],
             )
+        .. code-block:: yaml
+
+            ...
+            callbacks:
+                transform:
+                    _target_: BatchTransformCallback
+                    transform: catalyst.ToTensor
+                    scope: on_batch_start
+                    input_key: features
+
 
     """
 
@@ -207,7 +217,9 @@ class BatchTransformCallback(Callback):
         output_key = output_key or input_key
         if output_key is not None:
             if input_key is None:
-                raise TypeError("You should define input_key in " "case if output_key is not None")
+                raise TypeError(
+                    "You should define input_key in " "case if output_key is not None"
+                )
             if not isinstance(output_key, (list, str)):
                 raise TypeError("output key should be str or a list of str.")
             if isinstance(output_key, str):
