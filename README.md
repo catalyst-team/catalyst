@@ -29,12 +29,12 @@
 </div>
 
 Catalyst is a PyTorch framework for Deep Learning Research and Development.
-It focuses on reproducibility, rapid experimentation, and codebase reuse 
+It focuses on reproducibility, rapid experimentation, and codebase reuse
 so you can create something new rather than write yet another train loop.
 <br/> Break the cycle – use the Catalyst!
 
-Read more about our vision in the [Project Manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md). 
-Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/). 
+Read more about our vision in the [Project Manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md).
+Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/).
 <br/> [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing) consists of:
 - [Alchemy](https://github.com/catalyst-team/alchemy) - experiments logging & visualization
 - [Catalyst](https://github.com/catalyst-team/catalyst) - accelerated deep learning R&D
@@ -106,6 +106,17 @@ runner.train(
     verbose=True,
     load_best_on_end=True,
 )
+
+# loader evaluation
+metrics = runner.evaluate_loader(
+    loader=loaders["valid"],
+    callbacks=[
+        dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
+        # ... any other callback, compatable with runner
+    ],
+)
+assert "accuracy" in metrics.keys()
+
 # model inference
 for prediction in runner.predict_loader(loader=loaders["valid"]):
     assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
@@ -124,12 +135,12 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 ```
 
 ### Step-by-step Guide
-1. Start with [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762) introduction. 
+1. Start with [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762) introduction.
 1. Check the [minimal examples](#minimal-examples).
 1. Try [notebook tutorials with Google Colab](#notebooks).
 1. Read the [blog posts](#notable-blog-posts) with use-cases and guides.
-1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://catalyst-team.com/#course). 
-1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
+1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://catalyst-team.com/#course).
+1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md).
 1. If you are motivated by Catalyst vision, you could [support our initiative](https://opencollective.com/catalyst) or [write us](#user-feedback) for collaboration.
 1. **And finally, [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) if you want to chat with the team and contributors**.
 
@@ -367,7 +378,7 @@ runner.train(
         # catalyst[ml] required ``pip install catalyst[ml]``
         # dl.ConfusionMatrixCallback(
         #     input_key="logits", target_key="targets", num_classes=num_classes
-        # ), 
+        # ),
     ],
 )
 ```
@@ -463,7 +474,7 @@ class CustomModule(nn.Module):
         self.shared = nn.Linear(in_features, 128)
         self.head1 = nn.Linear(128, out_features1)
         self.head2 = nn.Linear(128, out_features2)
-    
+
     def forward(self, x):
         x = self.shared(x)
         y1 = self.head1(x)
@@ -513,16 +524,16 @@ runner.train(
         # catalyst[ml] required ``pip install catalyst[ml]``
         # dl.ConfusionMatrixCallback(
         #     input_key="logits1", target_key="targets1", num_classes=num_classes1, prefix="one_cm"
-        # ), 
+        # ),
         # dl.ConfusionMatrixCallback(
         #     input_key="logits2", target_key="targets2", num_classes=num_classes2, prefix="two_cm"
         # ),
         dl.CheckpointCallback(
-            logdir="./logs/one", 
+            logdir="./logs/one",
             loader_key="valid", metric_key="one_accuracy", minimize=False, save_n_best=1
         ),
         dl.CheckpointCallback(
-            logdir="./logs/two", 
+            logdir="./logs/two",
             loader_key="valid", metric_key="two_accuracy03", minimize=False, save_n_best=3
         ),
     ],
@@ -644,7 +655,7 @@ runner.train(
 #         # catalyst[ml] required ``pip install catalyst[ml]``
 #         dl.ConfusionMatrixCallback(
 #             input_key="logits", target_key="targets", num_classes=num_classes
-#         ), 
+#         ),
 #     ]
 )
 ```
@@ -668,7 +679,7 @@ from catalyst.contrib.nn import IoULoss
 
 
 model = nn.Sequential(
-    nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(), 
+    nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
     nn.Conv2d(1, 1, 3, 1, 1), nn.Sigmoid(),
 )
 criterion = IoULoss()
@@ -993,13 +1004,13 @@ runner.train(
             criterion_key="generator",
         ),
         dl.OptimizerCallback(
-            model_key="generator", 
-            optimizer_key="generator", 
+            model_key="generator",
+            optimizer_key="generator",
             metric_key="loss_generator"
         ),
         dl.OptimizerCallback(
-            model_key="discriminator", 
-            optimizer_key="discriminator", 
+            model_key="discriminator",
+            optimizer_key="discriminator",
             metric_key="loss_discriminator"
         ),
     ],
@@ -1134,7 +1145,7 @@ class CustomRunner(dl.IRunner):
         for key in ["loss_ae", "loss_kld", "loss"]:
             self.loader_metrics[key] = self.meters[key].compute()[0]
         super().on_loader_end(runner)
-    
+
     def predict_batch(self, batch):
         random_latent_vectors = torch.randn(1, self.model.hid_features).to(self.device)
         generated_images = self.model.decoder(random_latent_vectors).detach()
@@ -1389,7 +1400,7 @@ from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.data.transforms import ToTensor
 from catalyst.contrib.datasets import MNIST
-    
+
 
 def objective(trial):
     lr = trial.suggest_loguniform("lr", 1e-3, 1e-1)
@@ -1461,10 +1472,10 @@ We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codes
 
 During testing, we train a variety of different models: image classification,
 image segmentation, text classification, GANs, and much more.
-We then compare their convergence metrics in order to verify 
+We then compare their convergence metrics in order to verify
 the correctness of the training procedure and its reproducibility.
 
-As a result, Catalyst provides fully tested and reproducible 
+As a result, Catalyst provides fully tested and reproducible
 best practices for your deep learning research and development.
 
 
@@ -1528,7 +1539,7 @@ best practices for your deep learning research and development.
 - [iMet Collection 2019 - FGVC6](https://github.com/ngxbac/Kaggle-iMet) - 24th place
 - [ID R&D Anti-spoofing Challenge](https://github.com/bagxi/idrnd-anti-spoofing-challenge-solution) - 14th place
 - [NeurIPS 2019: Recursion Cellular Image Classification](https://github.com/ngxbac/Kaggle-Recursion-Cellular) - 4th place
-- [MICCAI 2019: Automatic Structure Segmentation for Radiotherapy Planning Challenge 2019](https://github.com/ngxbac/StructSeg2019) 
+- [MICCAI 2019: Automatic Structure Segmentation for Radiotherapy Planning Challenge 2019](https://github.com/ngxbac/StructSeg2019)
   * 3rd place solution for `Task 3: Organ-at-risk segmentation from chest CT scans`
   * and 4th place solution for `Task 4: Gross Target Volume segmentation of lung cancer`
 - [Kaggle Seversteal steel detection](https://github.com/bamps53/kaggle-severstal) - 5th place
@@ -1560,10 +1571,10 @@ best practices for your deep learning research and development.
 
 See other projects at [the GitHub dependency graph](https://github.com/catalyst-team/catalyst/network/dependents).
 
-If your project implements a paper, 
+If your project implements a paper,
 a notable use-case/tutorial, or a Kaggle competition solution, or
 if your code simply presents interesting results and uses Catalyst,
-we would be happy to add your project to the list above!  
+we would be happy to add your project to the list above!
 Do not hesitate to send us a PR with a brief description of the project similar to the above.
 
 ## Community
