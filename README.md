@@ -83,6 +83,7 @@ loaders = {
 runner = dl.SupervisedRunner(
     input_key="features", output_key="logits", target_key="targets", loss_key="loss"
 )
+
 # model training
 runner.train(
     model=model,
@@ -95,9 +96,6 @@ runner.train(
         dl.PrecisionRecallF1SupportCallback(
             input_key="logits", target_key="targets", num_classes=10
         ),
-        dl.AUCCallback(input_key="logits", target_key="targets"),
-        # catalyst[ml] required ``pip install catalyst[ml]``
-        # dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
     ],
     logdir="./logs",
     valid_loader="valid",
@@ -107,13 +105,10 @@ runner.train(
     load_best_on_end=True,
 )
 
-# loader evaluation
+# model evaluation
 metrics = runner.evaluate_loader(
     loader=loaders["valid"],
-    callbacks=[
-        dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-        # ... any other callback, compatable with runner
-    ],
+    callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5))],
 )
 assert "accuracy" in metrics.keys()
 
