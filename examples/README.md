@@ -14,7 +14,7 @@ and [notebook section](https://github.com/catalyst-team/catalyst#notebooks).
 
 ### Scripts
 
-- [Reinforcement Learning examples with Catalyst](./reinforcement_learning)
+- [Reinforcement Learning with Catalyst](./reinforcement_learning)
 
 ----
 

@@ -1493,7 +1493,7 @@ best practices for your deep learning research and development.
 ### Notebooks
 - Introduction tutorial "[Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb)" [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb)
 - Demo with [customization examples](./examples/notebooks/customization_tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customization_tutorial.ipynb)
-- [Reinforcement Learning examples with Catalyst](./examples/notebooks/reinforcement_learning.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/reinforcement_learning.ipynb)
+- [Reinforcement Learning with Catalyst](./examples/notebooks/reinforcement_learning.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/reinforcement_learning.ipynb)
 
 ### Notable Blog Posts
 - [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762)
