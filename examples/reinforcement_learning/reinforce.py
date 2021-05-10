@@ -71,7 +71,7 @@ def to_one_hot(y, n_dims=None):
     return y_one_hot
 
 
-def get_action(env, network: nn.Module, state: np.array, epsilon: float = -1) -> int:
+def get_action(env, network: nn.Module, state: np.array) -> int:
     state = torch.tensor(state[None], dtype=torch.float32)
     logits = network(state).detach()
     probas = F.softmax(logits, -1).cpu().numpy()[0]
@@ -80,18 +80,14 @@ def get_action(env, network: nn.Module, state: np.array, epsilon: float = -1) ->
 
 
 def generate_session(
-    env,
-    network: nn.Module,
-    t_max: int = 1000,
-    epsilon: float = -1,
-    rollout_buffer: Optional[RolloutBuffer] = None,
+    env, network: nn.Module, t_max: int = 1000, rollout_buffer: Optional[RolloutBuffer] = None,
 ) -> Tuple[float, int]:
     total_reward = 0
     states, actions, rewards = [], [], []
     state = env.reset()
 
     for t in range(t_max):
-        action = get_action(env, network, state=state, epsilon=epsilon)
+        action = get_action(env, network, state=state)
         next_state, reward, done, _ = env.step(action)
 
         # record session history to train later
@@ -113,14 +109,13 @@ def generate_sessions(
     env,
     network: nn.Module,
     t_max: int = 1000,
-    epsilon: float = -1,
     rollout_buffer: Optional[RolloutBuffer] = None,
     num_sessions: int = 100,
 ) -> Tuple[float, int]:
     sessions_reward, sessions_steps = 0, 0
     for i_episone in range(num_sessions):
         r, t = generate_session(
-            env=env, network=network, t_max=t_max, epsilon=epsilon, rollout_buffer=rollout_buffer,
+            env=env, network=network, t_max=t_max, rollout_buffer=rollout_buffer,
         )
         sessions_reward += r
         sessions_steps += t
@@ -149,39 +144,56 @@ def get_network(env, num_hidden: int = 128):
 
 
 class GameCallback(dl.Callback):
-    def __init__(self, *, env, rollout_buffer: RolloutBuffer):
+    def __init__(
+        self,
+        *,
+        env,
+        rollout_buffer: RolloutBuffer,
+        num_train_sessions: int = int(1e2),
+        num_valid_sessions: int = int(1e2),
+    ):
         super().__init__(order=0)
         self.env = env
         self.rollout_buffer = rollout_buffer
+        self.num_train_sessions = num_train_sessions
+        self.num_valid_sessions = num_valid_sessions
 
     def on_epoch_start(self, runner: dl.IRunner):
         self.actor = runner.model
 
         self.actor.eval()
-        generate_sessions(
-            env=self.env, network=self.actor, rollout_buffer=self.rollout_buffer, num_sessions=100,
+        train_rewards, train_steps = generate_sessions(
+            env=self.env,
+            network=self.actor,
+            rollout_buffer=self.rollout_buffer,
+            num_sessions=self.num_train_sessions,
         )
+        train_rewards /= float(self.num_train_sessions)
+        train_steps /= float(self.num_train_sessions)
+        runner.epoch_metrics["_epoch_"]["t_reward"] = train_rewards
+        runner.epoch_metrics["_epoch_"]["t_steps"] = train_steps
         self.actor.train()
 
     def on_epoch_end(self, runner: dl.IRunner):
-        num_sessions = 100
-
         self.actor.eval()
         valid_rewards, valid_steps = generate_sessions(
-            env=self.env, network=self.actor, num_sessions=num_sessions
+            env=self.env, network=self.actor, num_sessions=self.num_valid_sessions
         )
         self.actor.train()
 
-        valid_rewards /= num_sessions
+        valid_rewards /= float(self.num_valid_sessions)
+        valid_steps /= float(self.num_valid_sessions)
         runner.epoch_metrics["_epoch_"]["v_reward"] = valid_rewards
+        runner.epoch_metrics["_epoch_"]["v_steps"] = valid_steps
 
 
 class CustomRunner(dl.Runner):
     def __init__(
-        self, *, gamma: float, **kwargs,
+        self, *, gamma: float, entropy_coef: float = 0.1, **kwargs,
     ):
         super().__init__(**kwargs)
         self.gamma: float = gamma
+        self.entropy_coef: float = entropy_coef
 
     def on_loader_start(self, runner: dl.IRunner):
         super().on_loader_start(runner)
@@ -204,7 +216,7 @@ class CustomRunner(dl.Runner):
 
         J_hat = torch.mean(logprobas_for_actions * cumulative_returns)
         entropy_reg = -torch.mean(torch.sum(probas * logprobas, dim=1))
-        loss = -J_hat - 0.1 * entropy_reg
+        loss = -J_hat - self.entropy_coef * entropy_reg
 
         self.batch_metrics.update({"loss": loss})
         for key in ["loss"]:
@@ -243,6 +255,7 @@ if __name__ == "__main__":
 
     runner = CustomRunner(gamma=gamma)
     runner.train(
+        engine=dl.DeviceEngine("cpu"),  # for simplicity reasons, let's run everything on cpu
         model=model,
         optimizer=optimizer,
         loaders=loaders,

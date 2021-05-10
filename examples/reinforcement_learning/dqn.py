@@ -55,8 +55,8 @@ class ReplayDataset(IterableDataset):
         return self.epoch_size
 
 
-def soft_update(target: nn.Module, source: nn.Module, tau: float):
-    """Updates the target data with smoothing by ``tau``"""
+def soft_update(target: nn.Module, source: nn.Module, tau: float) -> None:
+    """Updates the `target` data with the `source` one smoothing by ``tau`` (inplace operation)."""
     for target_param, param in zip(target.parameters(), source.parameters()):
         target_param.data.copy_(target_param.data * (1.0 - tau) + param.data * tau)
 
@@ -148,8 +148,10 @@ class GameCallback(dl.Callback):
         replay_buffer: ReplayBuffer,
         session_period: int,
         epsilon: float,
-        epsilon_k: int,
-        actor_key,
+        epsilon_k: float,
+        actor_key: str,
+        num_start_sessions: int = int(1e3),
+        num_valid_sessions: int = int(1e2),
     ):
         super().__init__(order=0)
         self.env = env
@@ -158,16 +160,13 @@ class GameCallback(dl.Callback):
         self.epsilon = epsilon
         self.epsilon_k = epsilon_k
         self.actor_key = actor_key
-        self._initialized = False
-
-    def on_epoch_start(self, runner: dl.IRunner):
-        self.epsilon *= self.epsilon_k
+        self.actor: nn.Module = None
+        self.num_start_sessions = num_start_sessions
+        self.num_valid_sessions = num_valid_sessions
         self.session_counter = 0
         self.session_steps = 0
 
-        if self._initialized:
-            return
-
+    def on_stage_start(self, runner: dl.IRunner) -> None:
         self.actor = runner.model[self.actor_key]
 
         self.actor.eval()
@@ -176,10 +175,14 @@ class GameCallback(dl.Callback):
             network=self.actor,
             epsilon=self.epsilon,
             replay_buffer=self.replay_buffer,
-            num_sessions=1000,
+            num_sessions=self.num_start_sessions,
         )
         self.actor.train()
-        self._initialized = True
+
+    def on_epoch_start(self, runner: dl.IRunner):
+        self.epsilon *= self.epsilon_k
+        self.session_counter = 0
+        self.session_steps = 0
 
     def on_batch_end(self, runner: dl.IRunner):
         if runner.global_batch_step % self.session_period == 0:
@@ -201,21 +204,22 @@ class GameCallback(dl.Callback):
             self.actor.train()
 
     def on_epoch_end(self, runner: dl.IRunner):
-        num_sessions = 100
-
         self.actor.eval()
         valid_rewards, valid_steps = generate_sessions(
-            env=self.env, network=self.actor, num_sessions=num_sessions
+            env=self.env, network=self.actor, num_sessions=int(self.num_valid_sessions)
         )
         self.actor.train()
 
-        valid_rewards /= num_sessions
+        valid_rewards /= float(self.num_valid_sessions)
+        valid_steps /= float(self.num_valid_sessions)
+        runner.epoch_metrics["_epoch_"]["epsilon"] = self.epsilon
+        runner.epoch_metrics["_epoch_"]["num_sessions"] = self.session_counter
         runner.epoch_metrics["_epoch_"]["num_samples"] = self.session_steps
         runner.epoch_metrics["_epoch_"]["updates_per_sample"] = (
             runner.loader_sample_step / self.session_steps
         )
         runner.epoch_metrics["_epoch_"]["v_reward"] = valid_rewards
-        runner.epoch_metrics["_epoch_"]["epsilon"] = self.epsilon
+        runner.epoch_metrics["_epoch_"]["v_steps"] = valid_steps
 
 
 class CustomRunner(dl.Runner):
@@ -324,6 +328,7 @@ if __name__ == "__main__":
 
     runner = CustomRunner(gamma=gamma, tau=tau, tau_period=tau_period)
     runner.train(
+        engine=dl.DeviceEngine("cpu"),  # for simplicity reasons, let's run everything on cpu
         model=models,
         criterion=criterion,
         optimizer=optimizer,
