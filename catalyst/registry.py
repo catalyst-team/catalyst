@@ -175,6 +175,7 @@ def _torch_functional_loader(r: registry.Registry):
         "normalize",
     ]
     import torch.nn.functional as F
+
     for func in functions:
         r.add(getattr(F, func), func)
 

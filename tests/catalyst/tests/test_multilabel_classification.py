@@ -34,10 +34,7 @@ def train_experiment(device, engine=None):
         )
         callbacks = [
             dl.BatchTransformCallback(
-                transform="sigmoid",
-                scope="on_batch_end",
-                input_key="logits",
-                output_key="scores",
+                transform="sigmoid", scope="on_batch_end", input_key="logits", output_key="scores",
             ),
             dl.MultilabelAccuracyCallback(input_key="scores", target_key="targets", threshold=0.5),
             dl.MultilabelPrecisionRecallF1SupportCallback(
