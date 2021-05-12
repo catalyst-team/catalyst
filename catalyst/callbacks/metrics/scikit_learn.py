@@ -1,11 +1,14 @@
 from typing import Any, Callable, Dict, Mapping, Union
 
-import sklearn
 import torch
 
 from catalyst.callbacks.metric import FunctionalBatchMetricCallback
 from catalyst.core.runner import IRunner
 from catalyst.metrics import FunctionalBatchMetric
+from catalyst.settings import SETTINGS
+
+if SETTINGS.ml_required:
+    import sklearn
 
 
 class SklearnCallback(FunctionalBatchMetricCallback):
@@ -37,7 +40,6 @@ class SklearnCallback(FunctionalBatchMetricCallback):
         )
 
     def _get_key_value_inputs(self, runner: "IRunner") -> Dict[str, torch.Tensor]:
-        """@TODO: Docs."""
         kv_inputs = {}
         for key, value in self._keys.items():
             if value in runner.batch:

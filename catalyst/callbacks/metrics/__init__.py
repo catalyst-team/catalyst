@@ -30,4 +30,5 @@ from catalyst.callbacks.metrics.segmentation import (
     TrevskyCallback,
 )
 
-from catalyst.callbacks.metrics.scikit_learn import SklearnCallback
+if SETTINGS.ml_required:
+    from catalyst.callbacks.metrics.scikit_learn import SklearnCallback
