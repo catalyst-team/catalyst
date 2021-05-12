@@ -205,7 +205,8 @@ class BatchTransformCallback(Callback):
                 When ``scope`` is not in ``["on_batch_end", "on_batch_start"]``.
         """
         super().__init__(order=CallbackOrder.Internal)
-
+        if isinstance(transform, str):
+            transform = REGISTRY.get(transform)
         if input_key is not None:
             if not isinstance(input_key, (list, str)):
                 raise TypeError("input key should be str or a list of str.")
@@ -231,8 +232,7 @@ class BatchTransformCallback(Callback):
             raise TypeError('Expected scope to be on of the ["on_batch_end", "on_batch_start"]')
         self.input_key = input_key
         self.output_key = output_key
-        if isinstance(transform, str):
-            transform = REGISTRY.get(transform)
+
         self.transform = transform
 
     def _handle_value(self, runner):
