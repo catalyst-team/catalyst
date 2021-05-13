@@ -1,9 +1,11 @@
 # flake8: noqa
 
+from functools import partial
 import os
 from tempfile import TemporaryDirectory
 
 from pytest import mark
+import torch
 from torch import nn, optim
 from torch.utils.data import DataLoader
 
@@ -92,6 +94,18 @@ class CustomRunner(dl.IRunner):
 
     def get_callbacks(self, stage: str):
         callbacks = {
+            "scores": dl.BatchTransformCallback(
+                input_key="logits",
+                output_key="scores",
+                transform=partial(torch.softmax, dim=1),
+                scope="on_batch_end",
+            ),
+            "labels": dl.BatchTransformCallback(
+                input_key="scores",
+                output_key="labels",
+                transform=partial(torch.argmax, dim=1),
+                scope="on_batch_end",
+            ),
             "criterion": dl.CriterionCallback(
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
@@ -114,6 +128,16 @@ class CustomRunner(dl.IRunner):
         if SETTINGS.ml_required:
             callbacks["confusion_matrix"] = dl.ConfusionMatrixCallback(
                 input_key="logits", target_key="targets", num_classes=10
+            )
+            callbacks["f1_score"] = dl.SklearnCallback(
+                keys={
+                    "y_pred": "labels",
+                    "y_true": "targets",
+                    "average": "micro",
+                    "zero_division": 1,
+                },
+                metric_fn="f1_score",
+                metric_key="f1_score",
             )
         return callbacks
 
