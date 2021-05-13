@@ -25,7 +25,7 @@ from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.models import MnistSimpleNet
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder, CallbackScope
 from catalyst.core.runner import IRunner
-from catalyst.data import ToTensor
+from catalyst.data.transforms import ToTensor
 from catalyst.engines.torch import DataParallelEngine, DeviceEngine, DistributedDataParallelEngine
 from catalyst.loggers import ConsoleLogger, CSVLogger
 from catalyst.runners.config import SupervisedConfigRunner
