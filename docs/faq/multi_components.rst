@@ -14,7 +14,7 @@ Suppose you have the following classification pipeline (in pure PyTorch):
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -96,7 +96,7 @@ Multi-model example:
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     # <--- multi-model setup --->
@@ -191,7 +191,7 @@ Multi-optimizer example:
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     # <--- multi-model/optimizer setup --->
@@ -290,7 +290,7 @@ Multi-criterion example:
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
