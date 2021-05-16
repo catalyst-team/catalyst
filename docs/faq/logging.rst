@@ -33,7 +33,7 @@ You could log any new metric in a straightforward way:
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
     from catalyst import dl, metrics
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))

@@ -86,7 +86,7 @@ class IRunner(ICallback, ILogger, ABC):
         from torch.utils.data import DataLoader
         from catalyst import dl, utils
         from catalyst.contrib.datasets import MNIST
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
 
 
         class CustomRunner(dl.IRunner):

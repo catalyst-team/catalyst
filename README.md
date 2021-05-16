@@ -64,7 +64,7 @@ import os
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl, utils
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -206,7 +206,7 @@ from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -241,7 +241,7 @@ class CustomRunner(dl.Runner):
         logits = self.model(x)
         # compute the loss
         loss = F.cross_entropy(logits, y)
-        # compute other metrics of interest
+        # compute the metrics
         accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
         # log metrics
         self.batch_metrics.update(
@@ -611,7 +611,7 @@ import os
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -668,7 +668,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn import IoULoss
 
@@ -733,7 +733,7 @@ from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 # [!] teacher model should be already pretrained
@@ -895,7 +895,7 @@ from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 
 latent_dim = 128
 generator = nn.Sequential(
@@ -1038,7 +1038,7 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 
 LOG_SCALE_MAX = 2
 LOG_SCALE_MIN = -10
@@ -1167,7 +1167,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl, utils
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 
 
 class CustomRunner(dl.IRunner):
@@ -1277,7 +1277,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl, utils
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 
 
 class CustomRunner(dl.IRunner):
@@ -1393,7 +1393,7 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 
@@ -1491,9 +1491,9 @@ best practices for your deep learning research and development.
 - [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
 
 ### Notebooks
-- Introduction tutorial "[Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb)" [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb)
-- Demo with [customization examples](./examples/notebooks/customization_tutorial.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customization_tutorial.ipynb)
-- [Reinforcement Learning with Catalyst](./examples/notebooks/reinforcement_learning.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/reinforcement_learning.ipynb)
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb) Introduction tutorial "[Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb)"
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customization_tutorial.ipynb) Demo with [customization examples](./examples/notebooks/customization_tutorial.ipynb)
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/reinforcement_learning.ipynb) [Reinforcement Learning with Catalyst](./examples/notebooks/reinforcement_learning.ipynb)
 
 ### Notable Blog Posts
 - [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762)

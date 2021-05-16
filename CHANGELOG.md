@@ -8,11 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- Reinforcement learning tutorials ([#1205](https://github.com/catalyst-team/catalyst/pull/1205))
+- customization demo ([#1207](https://github.com/catalyst-team/catalyst/pull/1207))
 
 ### Changed
 
--
+- tests moved to `tests` folder ([#1208](https://github.com/catalyst-team/catalyst/pull/1208))
 
 ### Removed
 
@@ -21,6 +22,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - customizing what happens in `train()` notebook ([#1203](https://github.com/catalyst-team/catalyst/pull/1203))
+- transforms imports under catalyst.data ([#1211](https://github.com/catalyst-team/catalyst/pull/1211))
 
 
 ## [21.04.2] - 2021-04-30
