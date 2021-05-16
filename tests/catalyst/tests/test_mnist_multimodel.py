@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl, metrics, utils
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 

@@ -84,7 +84,7 @@ class Runner(IRunner):
         from torch.nn import functional as F
         from torch.utils.data import DataLoader
         from catalyst import dl, metrics
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
 
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -407,7 +407,7 @@ class Runner(IRunner):
             from torch.nn import functional as F
             from torch.utils.data import DataLoader
             from catalyst import dl, metrics
-            from catalyst.data.transforms import ToTensor
+            from catalyst.data import ToTensor
             from catalyst.contrib.datasets import MNIST
 
             model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -577,7 +577,7 @@ class Runner(IRunner):
             from torch.nn import functional as F
             from torch.utils.data import DataLoader
             from catalyst import dl, metrics
-            from catalyst.data.transforms import ToTensor
+            from catalyst.data import ToTensor
             from catalyst.contrib.datasets import MNIST
 
             model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -673,7 +673,7 @@ class Runner(IRunner):
     def evaluate_loader(
         self,
         loader: DataLoader,
-        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]",
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
         model: Optional[Model] = None,
         seed: int = 42,
         verbose: bool = False,
@@ -746,7 +746,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         from torch import nn, optim
         from torch.utils.data import DataLoader
         from catalyst import dl, utils
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
 
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))

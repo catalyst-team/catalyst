@@ -236,7 +236,7 @@ class IOUMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
         from catalyst.contrib.nn import IoULoss
 
@@ -365,7 +365,7 @@ class DiceMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
         from catalyst.contrib.nn import IoULoss
 
@@ -498,7 +498,7 @@ class TrevskyMetric(RegionBasedMetric):
         from torch import nn
         from torch.utils.data import DataLoader
         from catalyst import dl
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
         from catalyst.contrib.nn import IoULoss
 

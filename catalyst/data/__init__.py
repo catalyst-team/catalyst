@@ -30,4 +30,6 @@ from catalyst.data.sampler_inbatch import (
     HardClusterSampler,
 )
 
+from catalyst.data.transforms import Compose, Normalize, ToTensor, to_tensor, normalize
+
 from catalyst.contrib.data import *
