@@ -51,6 +51,8 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
       batch_size: 1  # KEYWORD, batch size for all the stages
       num_workers: 1  # KEYWORD, Number of parallel processes for DataLoader
       drop_last: False  # KEYWORD, parameter for DataLoader (Default is False)
+      loaders_params:  # KEYWORD, dict with additional loaders parameters. Also can do it for Sampler by dict with name samplers_params
+        persistent_workers: True # KEYWORD, parameter example. Full list of parameters you can find in torch.utils.data.DataLoader documentation
       per_gpu_scaling: False  # KEYWORD, if True it increases the batch size and the number of workers in proportion to the number of GPUs (for distributed increases only batch_size)
 
       # kwargs for `runner.get_datasets(...)` for this stage
@@ -66,7 +68,7 @@ stages:  # REQUIRED KEYWORD, dictionary of all stages of Catalyst, for training 
 
     optimizer: # REQUIRED KEYWORD, parameters for the optimizer
       _key_value: False  # OPTIONAL KEYWORD, if True, there may be several optimizers and then they should be wrapped in key-value
-      layerwise: # OPTIONAL KEYWORD, optimizer parameters for different network layers, optional
+      layerwise_params: # OPTIONAL KEYWORD, optimizer parameters for different network layers, optional
         conv1.*: # regexp with layer name
           lr: 0.001
           weight_decay: 0.0003
