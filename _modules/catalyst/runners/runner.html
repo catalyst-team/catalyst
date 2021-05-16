@@ -393,7 +393,7 @@
 <span class="sd">        from torch.nn import functional as F</span>
 <span class="sd">        from torch.utils.data import DataLoader</span>
 <span class="sd">        from catalyst import dl, metrics</span>
-<span class="sd">        from catalyst.data.transforms import ToTensor</span>
+<span class="sd">        from catalyst.data import ToTensor</span>
 <span class="sd">        from catalyst.contrib.datasets import MNIST</span>
 
 <span class="sd">        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
@@ -716,7 +716,7 @@
 <span class="sd">            from torch.nn import functional as F</span>
 <span class="sd">            from torch.utils.data import DataLoader</span>
 <span class="sd">            from catalyst import dl, metrics</span>
-<span class="sd">            from catalyst.data.transforms import ToTensor</span>
+<span class="sd">            from catalyst.data import ToTensor</span>
 <span class="sd">            from catalyst.contrib.datasets import MNIST</span>
 
 <span class="sd">            model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
@@ -886,7 +886,7 @@
 <span class="sd">            from torch.nn import functional as F</span>
 <span class="sd">            from torch.utils.data import DataLoader</span>
 <span class="sd">            from catalyst import dl, metrics</span>
-<span class="sd">            from catalyst.data.transforms import ToTensor</span>
+<span class="sd">            from catalyst.data import ToTensor</span>
 <span class="sd">            from catalyst.contrib.datasets import MNIST</span>
 
 <span class="sd">            model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
@@ -982,7 +982,7 @@
 <div class="viewcode-block" id="Runner.evaluate_loader"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.evaluate_loader">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_loader</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
-        <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;Union[List[Callback], OrderedDict[str, Callback]]&quot;</span><span class="p">,</span>
+        <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;Union[List[Callback], OrderedDict[str, Callback]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Model</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -1055,7 +1055,7 @@
 <span class="sd">        from torch import nn, optim</span>
 <span class="sd">        from torch.utils.data import DataLoader</span>
 <span class="sd">        from catalyst import dl, utils</span>
-<span class="sd">        from catalyst.data.transforms import ToTensor</span>
+<span class="sd">        from catalyst.data import ToTensor</span>
 <span class="sd">        from catalyst.contrib.datasets import MNIST</span>
 
 <span class="sd">        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
