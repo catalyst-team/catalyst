@@ -4,8 +4,8 @@ Multiple input and output keys
 Catalyst supports models with multiple input arguments and multiple outputs.
 
 Suppose that we need to train a siamese network.
-Firstly, need to create a dataset which will yield pairs of images and same class indicator
-which later can be used in contrastive loss.
+Firstly, need to create a dataset that will yield pairs of images and the same class indicator
+which later can be used in a contrastive loss.
 
 
 .. code-block:: python
@@ -51,7 +51,7 @@ Do not forget about contrastive loss:
 
 
 Suppose you have a model which accepts two tensors - `first` and `second`
-and returns embeddings for an input batches and distance between them:
+and returns embeddings for input batches and distance between them:
 
 .. code-block:: python
 
