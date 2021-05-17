@@ -29,12 +29,12 @@
 </div>
 
 Catalyst is a PyTorch framework for Deep Learning Research and Development.
-It focuses on reproducibility, rapid experimentation, and codebase reuse 
+It focuses on reproducibility, rapid experimentation, and codebase reuse
 so you can create something new rather than write yet another train loop.
 <br/> Break the cycle – use the Catalyst!
 
-Read more about our vision in the [Project Manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md). 
-Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/). 
+Read more about our vision in the [Project Manifest](https://github.com/catalyst-team/catalyst/blob/master/MANIFEST.md).
+Catalyst is a part of the [PyTorch Ecosystem](https://pytorch.org/ecosystem/).
 <br/> [Catalyst Ecosystem](https://docs.google.com/presentation/d/1D-yhVOg6OXzjo9K_-IS5vSHLPIUxp1PEkFGnpRcNCNU/edit?usp=sharing) consists of:
 - [Alchemy](https://github.com/catalyst-team/alchemy) - experiments logging & visualization
 - [Catalyst](https://github.com/catalyst-team/catalyst) - accelerated deep learning R&D
@@ -64,7 +64,7 @@ import os
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl, utils
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -83,6 +83,7 @@ loaders = {
 runner = dl.SupervisedRunner(
     input_key="features", output_key="logits", target_key="targets", loss_key="loss"
 )
+
 # model training
 runner.train(
     model=model,
@@ -95,9 +96,6 @@ runner.train(
         dl.PrecisionRecallF1SupportCallback(
             input_key="logits", target_key="targets", num_classes=10
         ),
-        dl.AUCCallback(input_key="logits", target_key="targets"),
-        # catalyst[ml] required ``pip install catalyst[ml]``
-        # dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
     ],
     logdir="./logs",
     valid_loader="valid",
@@ -106,6 +104,14 @@ runner.train(
     verbose=True,
     load_best_on_end=True,
 )
+
+# model evaluation
+metrics = runner.evaluate_loader(
+    loader=loaders["valid"],
+    callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5))],
+)
+assert "accuracy" in metrics.keys()
+
 # model inference
 for prediction in runner.predict_loader(loader=loaders["valid"]):
     assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
@@ -124,12 +130,12 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 ```
 
 ### Step-by-step Guide
-1. Start with [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762) introduction. 
+1. Start with [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762) introduction.
 1. Check the [minimal examples](#minimal-examples).
 1. Try [notebook tutorials with Google Colab](#notebooks).
 1. Read the [blog posts](#notable-blog-posts) with use-cases and guides.
-1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://catalyst-team.com/#course). 
-1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md). 
+1. Learn machine learning with our ["Deep Learning with Catalyst" course](https://catalyst-team.com/#course).
+1. If you would like to contribute to the project, follow our [contribution guidelines](https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md).
 1. If you are motivated by Catalyst vision, you could [support our initiative](https://opencollective.com/catalyst) or [write us](#user-feedback) for collaboration.
 1. **And finally, [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) if you want to chat with the team and contributors**.
 
@@ -200,7 +206,7 @@ from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -235,7 +241,7 @@ class CustomRunner(dl.Runner):
         logits = self.model(x)
         # compute the loss
         loss = F.cross_entropy(logits, y)
-        # compute other metrics of interest
+        # compute the metrics
         accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
         # log metrics
         self.batch_metrics.update(
@@ -367,7 +373,7 @@ runner.train(
         # catalyst[ml] required ``pip install catalyst[ml]``
         # dl.ConfusionMatrixCallback(
         #     input_key="logits", target_key="targets", num_classes=num_classes
-        # ), 
+        # ),
     ],
 )
 ```
@@ -463,7 +469,7 @@ class CustomModule(nn.Module):
         self.shared = nn.Linear(in_features, 128)
         self.head1 = nn.Linear(128, out_features1)
         self.head2 = nn.Linear(128, out_features2)
-    
+
     def forward(self, x):
         x = self.shared(x)
         y1 = self.head1(x)
@@ -513,16 +519,16 @@ runner.train(
         # catalyst[ml] required ``pip install catalyst[ml]``
         # dl.ConfusionMatrixCallback(
         #     input_key="logits1", target_key="targets1", num_classes=num_classes1, prefix="one_cm"
-        # ), 
+        # ),
         # dl.ConfusionMatrixCallback(
         #     input_key="logits2", target_key="targets2", num_classes=num_classes2, prefix="two_cm"
         # ),
         dl.CheckpointCallback(
-            logdir="./logs/one", 
+            logdir="./logs/one",
             loader_key="valid", metric_key="one_accuracy", minimize=False, save_n_best=1
         ),
         dl.CheckpointCallback(
-            logdir="./logs/two", 
+            logdir="./logs/two",
             loader_key="valid", metric_key="two_accuracy03", minimize=False, save_n_best=3
         ),
     ],
@@ -605,7 +611,7 @@ import os
 from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -644,7 +650,7 @@ runner.train(
 #         # catalyst[ml] required ``pip install catalyst[ml]``
 #         dl.ConfusionMatrixCallback(
 #             input_key="logits", target_key="targets", num_classes=num_classes
-#         ), 
+#         ),
 #     ]
 )
 ```
@@ -662,13 +668,13 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn import IoULoss
 
 
 model = nn.Sequential(
-    nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(), 
+    nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
     nn.Conv2d(1, 1, 3, 1, 1), nn.Sigmoid(),
 )
 criterion = IoULoss()
@@ -727,7 +733,7 @@ from torch import nn, optim
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
 
 # [!] teacher model should be already pretrained
@@ -889,7 +895,7 @@ from torch.utils.data import DataLoader
 from catalyst import dl
 from catalyst.contrib.datasets import MNIST
 from catalyst.contrib.nn.modules import Flatten, GlobalMaxPool2d, Lambda
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 
 latent_dim = 128
 generator = nn.Sequential(
@@ -993,13 +999,13 @@ runner.train(
             criterion_key="generator",
         ),
         dl.OptimizerCallback(
-            model_key="generator", 
-            optimizer_key="generator", 
+            model_key="generator",
+            optimizer_key="generator",
             metric_key="loss_generator"
         ),
         dl.OptimizerCallback(
-            model_key="discriminator", 
-            optimizer_key="discriminator", 
+            model_key="discriminator",
+            optimizer_key="discriminator",
             metric_key="loss_discriminator"
         ),
     ],
@@ -1032,7 +1038,7 @@ from torch.nn import functional as F
 from torch.utils.data import DataLoader
 from catalyst import dl, metrics
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 
 LOG_SCALE_MAX = 2
 LOG_SCALE_MIN = -10
@@ -1134,7 +1140,7 @@ class CustomRunner(dl.IRunner):
         for key in ["loss_ae", "loss_kld", "loss"]:
             self.loader_metrics[key] = self.meters[key].compute()[0]
         super().on_loader_end(runner)
-    
+
     def predict_batch(self, batch):
         random_latent_vectors = torch.randn(1, self.model.hid_features).to(self.device)
         generated_images = self.model.decoder(random_latent_vectors).detach()
@@ -1161,7 +1167,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl, utils
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 
 
 class CustomRunner(dl.IRunner):
@@ -1271,7 +1277,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader
 from catalyst import dl, utils
 from catalyst.contrib.datasets import MNIST
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 
 
 class CustomRunner(dl.IRunner):
@@ -1387,9 +1393,9 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from catalyst import dl
-from catalyst.data.transforms import ToTensor
+from catalyst.data import ToTensor
 from catalyst.contrib.datasets import MNIST
-    
+
 
 def objective(trial):
     lr = trial.suggest_loguniform("lr", 1e-3, 1e-1)
@@ -1441,7 +1447,8 @@ print(study.best_value, study.best_params)
 </p>
 </details>
 
-[Minimal example for Config/Hydra API](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages)
+- [More Catalyst examples](./examples/).
+- [Minimal example for Config/Hydra API](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
 
 
 ### Features
@@ -1460,10 +1467,10 @@ We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codes
 
 During testing, we train a variety of different models: image classification,
 image segmentation, text classification, GANs, and much more.
-We then compare their convergence metrics in order to verify 
+We then compare their convergence metrics in order to verify
 the correctness of the training procedure and its reproducibility.
 
-As a result, Catalyst provides fully tested and reproducible 
+As a result, Catalyst provides fully tested and reproducible
 best practices for your deep learning research and development.
 
 
@@ -1471,8 +1478,7 @@ best practices for your deep learning research and development.
 
 ### Documentation
 - [master](https://catalyst-team.github.io/catalyst/)
-- [21.04.2](https://catalyst-team.github.io/catalyst/v21.04.2/index.html)
-- [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html)
+- [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html), [21.04.2](https://catalyst-team.github.io/catalyst/v21.04.2/index.html)
 - [21.03](https://catalyst-team.github.io/catalyst/v21.03/index.html), [21.03.1/21.03.2](https://catalyst-team.github.io/catalyst/v21.03.1/index.html)
 - [20.12](https://catalyst-team.github.io/catalyst/v20.12/index.html)
 - [20.11](https://catalyst-team.github.io/catalyst/v20.11/index.html)
@@ -1485,10 +1491,9 @@ best practices for your deep learning research and development.
 - [20.04](https://catalyst-team.github.io/catalyst/v20.04/index.html), [20.04.1](https://catalyst-team.github.io/catalyst/v20.04.1/index.html), [20.04.2](https://catalyst-team.github.io/catalyst/v20.04.2/index.html)
 
 ### Notebooks
-- [Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb) [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb)
-- [Demo with minimal examples](./examples/notebooks/demo.ipynb) for ML, CV, NLP, GANs and RecSys [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/demo.ipynb)
-- Metric Learning Tutorial [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1xcob6Y2W0O1JiN-juoF1YfJMJsScCVhV?usp=sharing)
-- Catalyst with Google TPUs [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1AhvNzTRb3gd3AYhzUfm3dzw8TddlsfhD?usp=sharing)
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customizing_what_happens_in_train.ipynb) Introduction tutorial "[Customizing what happens in `train`](./examples/notebooks/customizing_what_happens_in_train.ipynb)"
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/customization_tutorial.ipynb) Demo with [customization examples](./examples/notebooks/customization_tutorial.ipynb)
+- [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/reinforcement_learning.ipynb) [Reinforcement Learning with Catalyst](./examples/notebooks/reinforcement_learning.ipynb)
 
 ### Notable Blog Posts
 - [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762)
@@ -1529,7 +1534,7 @@ best practices for your deep learning research and development.
 - [iMet Collection 2019 - FGVC6](https://github.com/ngxbac/Kaggle-iMet) - 24th place
 - [ID R&D Anti-spoofing Challenge](https://github.com/bagxi/idrnd-anti-spoofing-challenge-solution) - 14th place
 - [NeurIPS 2019: Recursion Cellular Image Classification](https://github.com/ngxbac/Kaggle-Recursion-Cellular) - 4th place
-- [MICCAI 2019: Automatic Structure Segmentation for Radiotherapy Planning Challenge 2019](https://github.com/ngxbac/StructSeg2019) 
+- [MICCAI 2019: Automatic Structure Segmentation for Radiotherapy Planning Challenge 2019](https://github.com/ngxbac/StructSeg2019)
   * 3rd place solution for `Task 3: Organ-at-risk segmentation from chest CT scans`
   * and 4th place solution for `Task 4: Gross Target Volume segmentation of lung cancer`
 - [Kaggle Seversteal steel detection](https://github.com/bamps53/kaggle-severstal) - 5th place
@@ -1561,10 +1566,10 @@ best practices for your deep learning research and development.
 
 See other projects at [the GitHub dependency graph](https://github.com/catalyst-team/catalyst/network/dependents).
 
-If your project implements a paper, 
+If your project implements a paper,
 a notable use-case/tutorial, or a Kaggle competition solution, or
 if your code simply presents interesting results and uses Catalyst,
-we would be happy to add your project to the list above!  
+we would be happy to add your project to the list above!
 Do not hesitate to send us a PR with a brief description of the project similar to the above.
 
 ## Community
