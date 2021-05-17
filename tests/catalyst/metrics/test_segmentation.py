@@ -35,11 +35,11 @@ EPS = 1e-5
                     "dice/_weighted": 0.8727272748947144,
                 },
                 {
-                    'dice/class_name_00': 0.781818151473999,
-                    'dice/class_name_01': 0.9055555462837219,
-                    'dice': 0.8436868190765381,
-                    'dice/_weighted': 0.8808081150054932
-                }
+                    "dice/class_name_00": 0.781818151473999,
+                    "dice/class_name_01": 0.9055555462837219,
+                    "dice": 0.8436868190765381,
+                    "dice/_weighted": 0.8808081150054932,
+                },
             ],
             [
                 {
@@ -50,14 +50,14 @@ EPS = 1e-5
                     "dice/_weighted": 0.8727272748947144,
                 },
                 {
-                    'dice/class_name_00': 0.5888112187385559,
-                    'dice/class_name_01': 0.9552631378173828,
-                    'dice/_micro': 0.7776271104812622,
-                    'dice': 0.772037148475647,
-                    'dice/_macro': 0.772037148475647,
-                    'dice/_weighted': 0.8819727897644043
-                }
-            ]
+                    "dice/class_name_00": 0.5888112187385559,
+                    "dice/class_name_01": 0.9552631378173828,
+                    "dice/_micro": 0.7776271104812622,
+                    "dice": 0.772037148475647,
+                    "dice/_macro": 0.772037148475647,
+                    "dice/_weighted": 0.8819727897644043,
+                },
+            ],
         ),
     ),
 )
@@ -71,8 +71,9 @@ def test_dice_metric(
 ):
     """Docs."""
     metric = DiceMetric(weights=weights, class_names=class_names)
-    for output, target, batch_answer, total_answer in zip(outputs, targets, batch_answers,
-                                                          total_answers):
+    for output, target, batch_answer, total_answer in zip(
+        outputs, targets, batch_answers, total_answers
+    ):
         batch_score = metric.update_key_value(output, target)
         total_score = metric.compute_key_value()
         for key, value in batch_answer.items():
@@ -99,11 +100,11 @@ def test_dice_metric(
                     "iou/_weighted": 0.8444444537162781,
                 },
                 {
-                    'iou/class_name_00': 0.641791045665741,
-                    'iou/class_name_01': 0.8274111747741699,
-                    'iou': 0.7346011400222778,
-                    'iou/_weighted': 0.7902871370315552
-                }
+                    "iou/class_name_00": 0.641791045665741,
+                    "iou/class_name_01": 0.8274111747741699,
+                    "iou": 0.7346011400222778,
+                    "iou/_weighted": 0.7902871370315552,
+                },
             ],
             [
                 {
@@ -114,12 +115,13 @@ def test_dice_metric(
                     "iou/_weighted": 0.8444444537162781,
                 },
                 {
-                    'iou/class_name_00': 0.4172447919845581,
-                    'iou/class_name_01': 0.9143576622009277,
-                    'iou/_micro': 0.6361619234085083,
-                    'iou': 0.6658012270927429,
-                    'iou/_macro': 0.6658012270927429,
-                    'iou/_weighted': 0.8149350881576538}
+                    "iou/class_name_00": 0.4172447919845581,
+                    "iou/class_name_01": 0.9143576622009277,
+                    "iou/_micro": 0.6361619234085083,
+                    "iou": 0.6658012270927429,
+                    "iou/_macro": 0.6658012270927429,
+                    "iou/_weighted": 0.8149350881576538,
+                },
             ],
         ),
     ),
@@ -134,8 +136,9 @@ def test_iou_metric(
 ):
     """Docs."""
     metric = IOUMetric(weights=weights, class_names=class_names)
-    for output, target, batch_answer, total_answer in zip(outputs, targets, batch_answers,
-                                                          total_answers):
+    for output, target, batch_answer, total_answer in zip(
+        outputs, targets, batch_answers, total_answers
+    ):
         batch_score = metric.update_key_value(output, target)
         total_score = metric.compute_key_value()
         for key, value in batch_answer.items():
@@ -163,12 +166,12 @@ def test_iou_metric(
                     "trevsky/_weighted": 0.8833333253860474,
                 },
                 {
-                    'trevsky/class_name_00': 0.7524999976158142,
-                    'trevsky/class_name_01': 0.9055555462837219,
-                    'trevsky': 0.8290277719497681,
-                    'trevsky/_weighted': 0.8749444484710693}
-            ]
-            ,
+                    "trevsky/class_name_00": 0.7524999976158142,
+                    "trevsky/class_name_01": 0.9055555462837219,
+                    "trevsky": 0.8290277719497681,
+                    "trevsky/_weighted": 0.8749444484710693,
+                },
+            ],
             [
                 {
                     "trevsky/class_name_00": 0.4166666567325592,
@@ -178,13 +181,13 @@ def test_iou_metric(
                     "trevsky/_weighted": 0.8833333253860474,
                 },
                 {
-                    'trevsky/class_name_00': 0.6119186282157898,
-                    'trevsky/class_name_01': 0.9552631974220276,
-                    'trevsky/_micro': 0.7921270728111267,
-                    'trevsky': 0.7835909128189087,
-                    'trevsky/_macro': 0.7835909128189087,
-                    'trevsky/_weighted': 0.886594295501709
-                 }
+                    "trevsky/class_name_00": 0.6119186282157898,
+                    "trevsky/class_name_01": 0.9552631974220276,
+                    "trevsky/_micro": 0.7921270728111267,
+                    "trevsky": 0.7835909128189087,
+                    "trevsky/_macro": 0.7835909128189087,
+                    "trevsky/_weighted": 0.886594295501709,
+                },
             ],
         ),
     ),
@@ -199,8 +202,9 @@ def test_trevsky_metric(
     total_answers: List[Dict[str, float]],
 ):
     metric = TrevskyMetric(alpha=alpha, weights=weights, class_names=class_names)
-    for output, target, batch_answer, total_answer in zip(outputs, targets, batch_answers,
-                                                          total_answers):
+    for output, target, batch_answer, total_answer in zip(
+        outputs, targets, batch_answers, total_answers
+    ):
         batch_score = metric.update_key_value(output, target)
         total_score = metric.compute_key_value()
         for key, value in batch_answer.items():
