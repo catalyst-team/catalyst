@@ -145,31 +145,6 @@ class RegionBasedMetric(ICallbackBatchMetric):
         # metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
 
-    def compute_key_value(self) -> Dict[str, torch.Tensor]:
-        """
-        Compute segmentation metric for all data and return results in key-value format
-
-        Returns:
-             dict of metrics, including micro, macro and weighted (if weights were given) metrics
-        """
-        if self.weights is not None:
-            per_class, micro_metric, macro_metric, weighted_metric = self.compute()
-        else:
-            per_class, micro_metric, macro_metric = self.compute()
-
-        metrics = {}
-        for class_idx, value in enumerate(per_class):
-            metrics[
-                f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[class_idx]}"
-            ] = value
-
-        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_micro"] = micro_metric
-        metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
-        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_macro"] = macro_metric
-        if self.weights is not None:
-            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
-        return metrics
-
     def compute(self):
         """@TODO: Docs."""
         per_class = []
@@ -196,9 +171,32 @@ class RegionBasedMetric(ICallbackBatchMetric):
 
         macro_metric /= len(self.statistics)
         micro_metric = self.metric_fn(**total_statistics)
+
+        if self.weights is None:
+            weighted_metric = None
+        return per_class, micro_metric, macro_metric, weighted_metric
+
+    def compute_key_value(self) -> Dict[str, torch.Tensor]:
+        """
+        Compute segmentation metric for all data and return results in key-value format
+
+        Returns:
+             dict of metrics, including micro, macro and weighted (if weights were given) metrics
+        """
+        per_class, micro_metric, macro_metric, weighted_metric = self.compute()
+
+        metrics = {}
+        for class_idx, value in enumerate(per_class):
+            metrics[
+                f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[class_idx]}"
+            ] = value
+
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_micro"] = micro_metric
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_macro"] = macro_metric
         if self.weights is not None:
-            return per_class, micro_metric, macro_metric, weighted_metric
-        return per_class, micro_metric, macro_metric
+            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
+        return metrics
 
 
 class IOUMetric(RegionBasedMetric):
