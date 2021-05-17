@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Mixed precision training &mdash; Catalyst 21.05 documentation</title>
+  <title>Multiple input and output keys &mdash; Catalyst 21.05 documentation</title>
   
 
   
@@ -29,8 +29,8 @@
   <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Distributed training" href="ddp.html" />
-    <link rel="prev" title="DataParallel training (cpu, single/multi-gpu)" href="dp.html" /> 
+    <link rel="next" title="Early stopping" href="early_stopping.html" />
+    <link rel="prev" title="Multiple components" href="multi_components.html" /> 
 
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
@@ -210,11 +210,11 @@
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Dataflow</a></li>
 <li class="toctree-l1"><a class="reference internal" href="dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="amp.html">Mixed precision training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ddp.html">Distributed training</a></li>
 <li class="toctree-l1"><a class="reference internal" href="engines.html">Engines</a></li>
 <li class="toctree-l1"><a class="reference internal" href="multi_components.html">Multiple components</a></li>
-<li class="toctree-l1"><a class="reference internal" href="multiple_keys.html">Multiple input and output keys</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Multiple input and output keys</a></li>
 <li class="toctree-l1"><a class="reference internal" href="early_stopping.html">Early stopping</a></li>
 <li class="toctree-l1"><a class="reference internal" href="checkpointing.html">Model checkpointing</a></li>
 <li class="toctree-l1"><a class="reference internal" href="debugging.html">Model debugging</a></li>
@@ -282,14 +282,14 @@
       </li>
 
         
-      <li>Mixed precision training</li>
+      <li>Multiple input and output keys</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
         
             
             
-              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/faq/amp.rst" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/faq/multiple_keys.rst" class="fa fa-github"> Edit on GitHub</a>
             
           
         
@@ -314,152 +314,200 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="mixed-precision-training">
-<h1>Mixed precision training<a class="headerlink" href="#mixed-precision-training" title="Permalink to this headline">¶</a></h1>
-<p>Catalyst support a variety of backends for mixed precision training.
-For the PyTorch versions below 1.6 it’s better to use <code class="docutils literal notranslate"><span class="pre">Nvidia</span> <span class="pre">Apex</span></code> helper.
-After PyTorch 1.6 release, it’s possible to use AMP natively inside <code class="docutils literal notranslate"><span class="pre">torch.amp</span></code> package.</p>
-<p>Suppose you have the following pipeline with Linear Regression:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
+  <div class="section" id="multiple-input-and-output-keys">
+<h1>Multiple input and output keys<a class="headerlink" href="#multiple-input-and-output-keys" title="Permalink to this headline">¶</a></h1>
+<p>Catalyst supports models with multiple input arguments and multiple outputs.</p>
+<p>Suppose that we need to train a siamese network.
+Firstly, need to create a dataset that will yield pairs of images and the same class indicator
+which later can be used in a contrastive loss.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">cv2</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">Dataset</span>
 
-<span class="c1"># data</span>
-<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
-<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">SiameseDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">images</span> <span class="o">=</span> <span class="n">images</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">images</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="n">original_image</span> <span class="o">=</span> <span class="o">...</span> <span class="c1"># load image using `idx`</span>
+        <span class="n">is_same</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mf">0.5</span>  <span class="c1"># use same or opposite class</span>
+        <span class="k">if</span> <span class="n">is_same</span><span class="p">:</span>
+            <span class="n">pair_image</span> <span class="o">=</span> <span class="o">...</span> <span class="c1"># load image from the same class and with index != `idx`</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pair_image</span> <span class="o">=</span> <span class="o">...</span> <span class="c1"># load image from another class</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">FloatTensor</span><span class="p">([</span><span class="n">is_same</span><span class="p">])</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;first&quot;</span><span class="p">:</span> <span class="n">original_image</span><span class="p">,</span> <span class="s2">&quot;second&quot;</span><span class="p">:</span> <span class="n">pair_image</span><span class="p">,</span> <span class="s2">&quot;labels&quot;</span><span class="p">:</span> <span class="n">label</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Do not forget about contrastive loss:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+
+<span class="k">class</span> <span class="nc">ContrastiveLoss</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">margin</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">margin</span> <span class="o">=</span> <span class="n">margin</span>
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l2_distance</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="c1"># ...</span>
+        <span class="k">return</span> <span class="n">loss</span>
+</pre></div>
+</div>
+<p>Suppose you have a model which accepts two tensors - <cite>first</cite> and <cite>second</cite>
+and returns embeddings for input batches and distance between them:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+
+<span class="k">class</span> <span class="nc">SiameseNet</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_features</span><span class="p">,</span> <span class="n">out_features</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layers</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span><span class="p">,</span> <span class="n">in_features</span> <span class="o">*</span> <span class="mi">2</span><span class="p">),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">in_features</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">out_features</span><span class="p">),</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_embeddings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Generate embeddings for a given batch of images.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch (torch.Tensor): batch with images,</span>
+<span class="sd">                expected shapes - [B, C, H, W].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            embeddings (torch.Tensor) for a given batch of images,</span>
+<span class="sd">                output shapes - [B, out_features].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">layers</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Forward pass.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            first (torch.Tensor): batch with images,</span>
+<span class="sd">                expected shapes - [B, C, H, W].</span>
+<span class="sd">            second (torch.Tensor): batch with images,</span>
+<span class="sd">                expected shapes - [B, C, H, W].</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            embeddings (torch.Tensor) for a first batch of images,</span>
+<span class="sd">                output shapes - [B, out_features]</span>
+<span class="sd">            embeddings (torch.Tensor) for a second batch of images,</span>
+<span class="sd">                output shapes - [B, out_features]</span>
+<span class="sd">            l2 distance (torch.Tensor) between first and second image embeddings,</span>
+<span class="sd">                output shapes - [B,]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">first</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_embeddings</span><span class="p">(</span><span class="n">first</span><span class="p">)</span>
+        <span class="n">second</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_embeddings</span><span class="p">(</span><span class="n">second</span><span class="p">)</span>
+        <span class="n">difference</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">first</span> <span class="o">-</span> <span class="n">second</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span><span class="p">,</span> <span class="n">distance</span>
+</pre></div>
+</div>
+<p>And then for python API:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">SiameseDataset</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
 <span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
 
-<span class="c1"># model, criterion, optimizer, scheduler</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">SiameseNet</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">ContrastiveLoss</span><span class="p">(</span><span class="n">margin</span><span class="o">=</span><span class="mf">1.1</span><span class="p">)</span>
 
-<span class="c1"># model training</span>
-<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">(</span>
+    <span class="n">input_key</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;first&quot;</span><span class="p">,</span> <span class="s2">&quot;second&quot;</span><span class="p">],</span>  <span class="c1"># model inputs, should be the same as in forward method</span>
+    <span class="n">output_key</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;first_emb&quot;</span><span class="p">,</span> <span class="s2">&quot;second_emb&quot;</span><span class="p">,</span> <span class="s2">&quot;l2_distance&quot;</span><span class="p">],</span>  <span class="c1"># model outputs, part of them will be passed to loss</span>
+    <span class="n">target_key</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;labels&quot;</span><span class="p">],</span>  <span class="c1"># key from dataset</span>
+    <span class="n">loss_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>  <span class="c1"># key to use for loss values</span>
+<span class="p">)</span>
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
     <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
     <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
     <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
-    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
     <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
-    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;l2_distance&quot;</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;labels&quot;</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span>
+        <span class="p">),</span>
+    <span class="p">],</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./siamese_logs&quot;</span><span class="p">,</span>
     <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
     <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
     <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">load_best_on_end</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<div class="section" id="nvidia-apex">
-<h2>Nvidia Apex<a class="headerlink" href="#nvidia-apex" title="Permalink to this headline">¶</a></h2>
-<p>To use Nvidia Apex fp16 support you firstly need to install it with,</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>!git clone https://github.com/NVIDIA/apex
-!pip install -v --no-cache-dir --global-option<span class="o">=</span><span class="s2">&quot;--cpp_ext&quot;</span> --global-option<span class="o">=</span><span class="s2">&quot;--cuda_ext&quot;</span> ./apex
-</pre></div>
-</div>
-<p>After that you could easily extend our current pipeline with just one line of code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
+<p>For config API:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logdir</span><span class="p">:</span> <span class="nl">&amp;logdir</span> <span class="l l-Scalar l-Scalar-Plain">./siamese_logs</span>
+    <span class="nt">seed</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">42</span>
 
-<span class="c1"># data</span>
-<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
-<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+<span class="nt">runner</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SupervisedRunner</span>
+    <span class="nt">input_key</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">first</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">second</span>
+    <span class="nt">output_key</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">first_emb</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">second_emb</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">l2_distance</span>
+    <span class="nt">target_key</span><span class="p">:</span>
+        <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">labels</span>
+    <span class="nt">loss_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">loss</span>
 
-<span class="c1"># model, criterion, optimizer, scheduler</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DeviceEngine</span>
 
-<span class="c1"># model training</span>
-<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
-    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
-    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
-    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
-    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
-    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
-    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">apex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-<p>You could also check out the example above in <a class="reference external" href="https://colab.research.google.com/drive/12ONaj4sMPiOT_64wh2bpH_AvRCuNFxLx?usp=sharing">this Google Colab notebook</a></p>
-</div>
-<div class="section" id="torch-amp">
-<h2>Torch AMP<a class="headerlink" href="#torch-amp" title="Permalink to this headline">¶</a></h2>
-<p>If you would like to use native AMP support, you could do the following:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">TensorDataset</span>
-<span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="n">SupervisedRunner</span>
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SiameseNet</span>  <span class="c1"># don&#39;t forget to register model!</span>
+    <span class="c1"># ...</span>
 
-<span class="c1"># data</span>
-<span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="mf">1e1</span><span class="p">)</span>
-<span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">,</span> <span class="n">num_features</span><span class="p">),</span> <span class="n">torch</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">num_samples</span><span class="p">)</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">TensorDataset</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-<span class="n">loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">num_workers</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">loader</span><span class="p">}</span>
+<span class="nt">loggers</span><span class="p">:</span>
+    <span class="nt">console</span><span class="p">:</span>
+        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ConsoleLogger</span>
+    <span class="nt">tensorboard</span><span class="p">:</span>
+        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">TensorboardLogger</span>
+        <span class="nt">logdir</span><span class="p">:</span> <span class="nv">*logdir</span>
+        <span class="nt">use_logdir_postfix</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
 
-<span class="c1"># model, criterion, optimizer, scheduler</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-<span class="n">criterion</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">MSELoss</span><span class="p">()</span>
-<span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">())</span>
-<span class="n">scheduler</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">MultiStepLR</span><span class="p">(</span><span class="n">optimizer</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
-
-<span class="c1"># model training</span>
-<span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
-    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
-    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-    <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">,</span>
-    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logdir&quot;</span><span class="p">,</span>
-    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
-    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">,</span>
-    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">amp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="nt">train</span><span class="p">:</span>
+        <span class="nt">num_epochs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">3</span>
+        <span class="nt">loaders</span><span class="p">:</span>
+            <span class="nt">batch_size</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">32</span>
+            <span class="nt">num_workers</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1</span>
+        <span class="nt">criterion</span><span class="p">:</span>
+            <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">ContrastiveLoss</span> <span class="c1"># don&#39;t forget to register loss!</span>
+            <span class="c1"># ...</span>
+        <span class="nt">optimizer</span><span class="p">:</span>
+            <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Adam</span>
+            <span class="nt">lr</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.001</span>
+        <span class="nt">callbacks</span><span class="p">:</span> <span class="nl">&amp;callbacks</span>
+            <span class="nt">loss</span><span class="p">:</span>
+                <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CriterionCallback</span>
+                <span class="nt">input_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">l2_distance</span>
+                <span class="nt">target_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">labels</span>
+                <span class="nt">metric_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">loss</span>
+            <span class="nt">optimizer</span><span class="p">:</span>
+                <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">OptimizerCallback</span>
+                <span class="nt">metric_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">loss</span>
+            <span class="nt">saver</span><span class="p">:</span>
+                <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">CheckpointCallback</span>
+                <span class="nt">logdir</span><span class="p">:</span> <span class="nv">*logdir</span>
+                <span class="nt">loader_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">valid</span>
+                <span class="nt">metric_key</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">loss</span>
+                <span class="nt">minimize</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
+                <span class="nt">use_logdir_postfix</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">True</span>
 </pre></div>
-</div>
-<p>You could also check out the example above in <a class="reference external" href="https://colab.research.google.com/drive/12ONaj4sMPiOT_64wh2bpH_AvRCuNFxLx?usp=sharing">this Google Colab notebook</a></p>
-</div>
-<div class="section" id="nvidia-apex-config-api">
-<h2>Nvidia Apex (Config API)<a class="headerlink" href="#nvidia-apex-config-api" title="Permalink to this headline">¶</a></h2>
-<p>Firstly, prepare the config. For example:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">engine</span><span class="p">:</span>
-    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">APEXEngine</span>
-    <span class="nt">opt_level</span><span class="p">:</span> <span class="s">&quot;O1&quot;</span>
-    <span class="l l-Scalar l-Scalar-Plain">...</span>
-</pre></div>
-</div>
-<p>After that just run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>catalyst-dl run -C<span class="o">=</span>/path/to/configs --apex
-</pre></div>
-</div>
-</div>
-<div class="section" id="torch-amp-config-api">
-<h2>Torch AMP (Config API)<a class="headerlink" href="#torch-amp-config-api" title="Permalink to this headline">¶</a></h2>
-<p>For native AMP support you only need to pass required flag to the <code class="docutils literal notranslate"><span class="pre">run</span></code> command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>catalyst-dl run -C<span class="o">=</span>/path/to/configs --amp
-</pre></div>
-</div>
-<p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
 </div>
 </div>
 
@@ -471,10 +519,10 @@ After PyTorch 1.6 release, it’s possible to use AMP natively inside <code clas
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="ddp.html" class="btn btn-neutral float-right" title="Distributed training" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+        <a href="early_stopping.html" class="btn btn-neutral float-right" title="Early stopping" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
       
       
-        <a href="dp.html" class="btn btn-neutral" title="DataParallel training (cpu, single/multi-gpu)" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+        <a href="multi_components.html" class="btn btn-neutral" title="Multiple components" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
       
     </div>
   
@@ -502,13 +550,7 @@ After PyTorch 1.6 release, it’s possible to use AMP natively inside <code clas
           <div class="catalyst-right-menu" id="catalyst-right-menu">
             <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
               <ul>
-<li><a class="reference internal" href="#">Mixed precision training</a><ul>
-<li><a class="reference internal" href="#nvidia-apex">Nvidia Apex</a></li>
-<li><a class="reference internal" href="#torch-amp">Torch AMP</a></li>
-<li><a class="reference internal" href="#nvidia-apex-config-api">Nvidia Apex (Config API)</a></li>
-<li><a class="reference internal" href="#torch-amp-config-api">Torch AMP (Config API)</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#">Multiple input and output keys</a></li>
 </ul>
 
             </div>
