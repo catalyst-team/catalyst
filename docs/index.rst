@@ -39,7 +39,7 @@ Getting started
     from torch import nn, optim
     from torch.utils.data import DataLoader
     from catalyst import dl, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -47,10 +47,18 @@ Getting started
     optimizer = optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
-        "train": DataLoader(MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32),
-        "valid": DataLoader(MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32),
+        "train": DataLoader(
+            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
+        ),
+        "valid": DataLoader(
+            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
+        ),
     }
-    runner = dl.SupervisedRunner(input_key="features", output_key="logits", target_key="targets", loss_key="loss")
+
+    runner = dl.SupervisedRunner(
+        input_key="features", output_key="logits", target_key="targets", loss_key="loss"
+    )
+
     # model training
     runner.train(
         model=model,
@@ -60,8 +68,9 @@ Getting started
         num_epochs=1,
         callbacks=[
             dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5)),
-            # catalyst[ml] required
-            dl.ConfusionMatrixCallback(input_key="logits", target_key="targets", num_classes=10),
+            dl.PrecisionRecallF1SupportCallback(
+                input_key="logits", target_key="targets", num_classes=10
+            ),
         ],
         logdir="./logs",
         valid_loader="valid",
@@ -70,6 +79,14 @@ Getting started
         verbose=True,
         load_best_on_end=True,
     )
+
+    # model evaluation
+    metrics = runner.evaluate_loader(
+        loader=loaders["valid"],
+        callbacks=[dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1, 3, 5))],
+    )
+    assert "accuracy" in metrics.keys()
+
     # model inference
     for prediction in runner.predict_loader(loader=loaders["valid"]):
         assert prediction["logits"].detach().cpu().numpy().shape[-1] == 10
@@ -89,7 +106,7 @@ Getting started
 
 Step by step guide
 ~~~~~~~~~~~~~~~~~~~~~~
-1. Start with `Catalyst 101 — Accelerated PyTorch`_ introduction.
+1. Start with `Catalyst 2021–Accelerated PyTorch 2.0`_ introduction.
 2. Check `minimal examples`_.
 3. Try `notebook tutorials with Google Colab`_.
 4. Read `blogposts`_ with use-cases and guides.
@@ -98,7 +115,7 @@ Step by step guide
 7. If you want to support the project, feel free to donate on `patreon page`_ or `write us`_ with your proposals.
 8. And do not forget to `join our slack`_ for collaboration.
 
-.. _`Catalyst 101 — Accelerated PyTorch`: https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff
+.. _`Catalyst 2021–Accelerated PyTorch 2.0`: https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762
 .. _`Kittylyst`: https://github.com/Scitator/kittylyst
 .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
 .. _`Notebook Tutorials with Google Colab`: https://github.com/catalyst-team/catalyst#tutorials
@@ -194,8 +211,7 @@ Indices and tables
     getting_started/quickstart
     Minimal examples <https://github.com/catalyst-team/catalyst#minimal-examples>
     getting_started/migrating_from_other
-    Catalyst 101 — Accelerated PyTorch <https://medium.com/pytorch/catalyst-101-accelerated-pytorch-bd766a556d92?source=friends_link&sk=d3dd9b2b23500eca046361187b4619ff>
-    Catalyst 102 — Core Trinity <https://medium.com/pytorch/catalyst-102-core-trinity-experiment-runner-and-callback-54adc384b57c?source=friends_link&sk=2aff824412e2f653587a30cd853b030c>
+    Catalyst 2021 — Accelerated PyTorch 2.0 <https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762>
 
 .. toctree::
     :caption: Tutorials
@@ -212,6 +228,8 @@ Indices and tables
     core/runner
     core/engine
     core/callback
+    core/metric
+    core/logger
 
 .. toctree::
     :caption: FAQ
@@ -240,16 +258,6 @@ Indices and tables
 
 
 .. toctree::
-    :caption: Contribution guide
-    :maxdepth: 2
-    :hidden:
-
-    How to start <https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md>
-    Codestyle <https://github.com/catalyst-team/codestyle>
-    Acknowledgments <https://github.com/catalyst-team/catalyst#acknowledgments>
-
-
-.. toctree::
     :caption: API
 
     api/callbacks
@@ -263,3 +271,12 @@ Indices and tables
     api/tools
     api/utils
 
+
+.. toctree::
+    :caption: Contribution guide
+    :maxdepth: 2
+    :hidden:
+
+    How to start <https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md>
+    Codestyle <https://github.com/catalyst-team/codestyle>
+    Acknowledgments <https://github.com/catalyst-team/catalyst#acknowledgments>

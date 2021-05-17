@@ -21,6 +21,12 @@ class IEngine(ABC):
     - multi-gpu
     - amp (nvidia, torch)
     - ddp (torch, etc)
+
+    Abstraction, please check out implementations for more details:
+
+        - :py:mod:`catalyst.engines.amp.AMPEngine`
+        - :py:mod:`catalyst.engines.apex.APEXEngine`
+        - :py:mod:`catalyst.engines.torch.DeviceEngine`
     """
 
     # @property
@@ -213,3 +219,6 @@ class IEngine(ABC):
             context
         """
         return nullcontext()
+
+
+__all__ = ["IEngine"]

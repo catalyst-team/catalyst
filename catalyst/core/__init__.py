@@ -5,6 +5,7 @@
 
 from catalyst.core.runner import IRunner, RunnerException
 from catalyst.core.callback import (
+    ICallback,
     Callback,
     CallbackNode,
     CallbackOrder,

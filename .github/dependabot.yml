@@ -1,0 +1,13 @@
+version: 2
+updates:
+- package-ecosystem: docker
+  directory: "/docker"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  labels:
+  - dependencies
+  ignore:
+  - dependency-name: nvidia/cuda
+    versions:
+    - ">= 0"

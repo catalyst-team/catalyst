@@ -4,16 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-
 ## [YY.MM.R] - YYYY-MM-DD
 
 ### Added
 
-- Nifti Reader (NiftiReader) ([#1151](https://github.com/catalyst-team/catalyst/pull/1151))
+- Reinforcement learning tutorials ([#1205](https://github.com/catalyst-team/catalyst/pull/1205))
+- customization demo ([#1207](https://github.com/catalyst-team/catalyst/pull/1207))
 
 ### Changed
 
--
+- tests moved to `tests` folder ([#1208](https://github.com/catalyst-team/catalyst/pull/1208))
 
 ### Removed
 
@@ -21,14 +21,53 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
+- customizing what happens in `train()` notebook ([#1203](https://github.com/catalyst-team/catalyst/pull/1203))
+- transforms imports under catalyst.data ([#1211](https://github.com/catalyst-team/catalyst/pull/1211))
+
+
+## [21.04.2] - 2021-04-30
+
+### Added
+
+- Weights and Biases Logger (``WandbLogger``) ([#1176](https://github.com/catalyst-team/catalyst/pull/1176))
+- Neptune Logger (``NeptuneLogger``) ([#1196](https://github.com/catalyst-team/catalyst/pull/1196))
+- `log_artifact` method for logging arbitrary files like audio, video, or model weights to `ILogger` and `IRunner` ([#1196](https://github.com/catalyst-team/catalyst/pull/1196))
+
+## [21.04/21.04.1] - 2021-04-17
+
+### Added
+
+- Nifti Reader (NiftiReader) ([#1151](https://github.com/catalyst-team/catalyst/pull/1151))
+- CMC score and callback for ReID task (ReidCMCMetric and ReidCMCScoreCallback) ([#1170](https://github.com/catalyst-team/catalyst/pull/1170))
+- Market1501 metric learning datasets (Market1501MLDataset and Market1501QGDataset) ([#1170](https://github.com/catalyst-team/catalyst/pull/1170))
+- extra kwargs support for Engines ([#1156](https://github.com/catalyst-team/catalyst/pull/1156))
+- engines exception for unknown model type ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- a few docs to the supported loggers ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+
+### Changed
+
+- ``TensorboardLogger`` switched from ``global_batch_step`` counter to ``global_sample_step`` one ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- ``TensorboardLogger`` logs loader metric ``on_loader_end`` rather than ``on_epoch_end`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- ``prefix`` renamed to ``metric_key`` for ``MetricAggregationCallback`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- ``micro``, ``macro`` and ``weighted`` aggregations renamed to ``_micro``, ``_macro`` and ``_weighted`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- ``BatchTransformCallback`` updated ([#1153](https://github.com/catalyst-team/catalyst/issues/1153))
+
+### Removed
+
+- auto ``torch.sigmoid`` usage for ``metrics.AUCMetric`` and ``metrics.auc`` ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+
+### Fixed
+
+- hitrate calculation issue ([#1155](https://github.com/catalyst-team/catalyst/issues/1155))
+- ILoader wrapper usage issue with Runner ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
+- counters for ddp case ([#1174](https://github.com/catalyst-team/catalyst/issues/1174))
 
 ## [21.03.2] - 2021-03-29
 
 ### Fixed
 
 - minimal requirements issue ([#1147](https://github.com/catalyst-team/catalyst/issues/1147))
-- nested dicts in `loaders_params`/`samplers_params` overriding fixed ([#1150](https://github.com/catalyst-team/catalyst/pull/1150))
+- nested dicts in `loaders_params`/`samplers_params` overriding ([#1150](https://github.com/catalyst-team/catalyst/pull/1150))
 
 ## [21.03.1] - 2021-03-28
 
@@ -43,7 +82,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - FactorizedLinear to contrib ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
 - Extra init params for ``ConsoleLogger`` ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
 - Tracing, Quantization, Onnx, Pruninng Callbacks ([1127](https://github.com/catalyst-team/catalyst/pull/1127))
-- `_key_value` for schedulers in case of multiple optimizers fixed ([#1146](https://github.com/catalyst-team/catalyst/pull/1146))
+
 
 ### Changed
 
@@ -60,7 +99,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - BatchLimitLoaderWrapper logic for loaders with shuffle flag ([#1136](https://github.com/catalyst-team/catalyst/issues/1136))
 - config description in the examples ([1142](https://github.com/catalyst-team/catalyst/pull/1142))
 - Config API deprecated parsings logic ([1142](https://github.com/catalyst-team/catalyst/pull/1142)) ([1138](https://github.com/catalyst-team/catalyst/pull/1138))
-- RecSys metrics Top_k calculations ([#1140] (https://github.com/catalyst-team/catalyst/pull/1140))
+- RecSys metrics Top_k calculations ([#1140](https://github.com/catalyst-team/catalyst/pull/1140))
+- `_key_value` for schedulers in case of multiple optimizers ([#1146](https://github.com/catalyst-team/catalyst/pull/1146))
 
 ## [21.03] - 2021-03-13 ([#1095](https://github.com/catalyst-team/catalyst/issues/1095))
 

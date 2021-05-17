@@ -55,14 +55,14 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{hashFiles('./requirements/requirements-cv.txt') }} -${{hashFiles('./requirements/requirements-nifti.txt') }} -${{ hashFiles('./requirements/requirements-hydra.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }}
+          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{hashFiles('./requirements/requirements-cv.txt') }} -${{hashFiles('./requirements/requirements-nifti.txt') }} -${{ hashFiles('./requirements/requirements-hydra.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }} -${{ hashFiles('./requirements/requirements-neptune.txt') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
 
       - name: install dependencies
         run: |
           # python -m pip install --upgrade --user pip
-          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-nifti.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-nifti.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-neptune.txt
           python --version
           pip --version
           pip list
@@ -77,7 +77,7 @@ jobs:
           git clone https://github.com/catalyst-team/catalyst.git --branch gh-pages --single-branch gh-pages
           cd gh-pages
           # Remove master docs, do not touch the past versions
-          rm -f * || true
+          find . -maxdepth 1  ! -name 'versions.html' ! -name ".buildinfo" ! -name ".nojekyll" -type f -exec rm -f {} + || true
           rm -rf .doctrees _modules _sources _static api info
           cp -a ../builds/* .
           # commit changes

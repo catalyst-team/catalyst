@@ -45,6 +45,11 @@ class HydraRunner(IRunner):
 
     Args:
         cfg: Hydra dictionary with parameters
+
+    .. note::
+        Please follow the `minimal examples`_ sections for use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(self, cfg: DictConfig):
@@ -98,7 +103,7 @@ class HydraRunner(IRunner):
 
     @property
     def logdir(self) -> str:
-        """@TODO: docs."""
+        """Experiment's logdir for artefacts and logging."""
         return self._logdir
 
     @property
@@ -164,10 +169,10 @@ class HydraRunner(IRunner):
         if not is_logger_exists(ConsoleLogger):
             loggers["_console"] = ConsoleLogger()
         if self._logdir is not None and not is_logger_exists(CSVLogger):
-            loggers["_csv"] = CSVLogger(logdir=self._logdir)
+            loggers["_csv"] = CSVLogger(logdir=self._logdir, use_logdir_postfix=True)
         if self._logdir is not None and not is_logger_exists(TensorboardLogger):
             loggers["_tensorboard"] = TensorboardLogger(
-                logdir=os.path.join(self._logdir, "tensorboard")
+                logdir=self._logdir, use_logdir_postfix=True,
             )
 
         return loggers
@@ -381,6 +386,11 @@ class SupervisedHydraRunner(ISupervisedRunner, HydraRunner):
         output_key: key for ``runner.batch`` to store model output
         target_key: key in ``runner.batch`` dict mapping for target
         loss_key: key for ``runner.batch_metrics`` to store criterion loss output
+
+    .. note::
+        Please follow the `minimal examples`_ sections for use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(

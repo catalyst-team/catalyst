@@ -22,6 +22,20 @@ CSVLogger
     :undoc-members:
     :show-inheritance:
 
+MLflowLogger
+--------------------------------
+.. autoclass:: catalyst.loggers.mlflow.MLflowLogger
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+NeptuneLogger
+--------------------------------
+.. autoclass:: catalyst.loggers.neptune.NeptuneLogger
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 TensorboardLogger
 --------------------------------
 .. autoclass:: catalyst.loggers.tensorboard.TensorboardLogger
@@ -29,9 +43,9 @@ TensorboardLogger
     :undoc-members:
     :show-inheritance:
 
-MLflowLogger
+WandbLogger
 --------------------------------
-.. autoclass:: catalyst.loggers.mlflow.MLflowLogger
-    :members: __init__
+.. autoclass:: catalyst.loggers.wandb.WandbLogger
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
