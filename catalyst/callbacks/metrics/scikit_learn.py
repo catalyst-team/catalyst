@@ -31,6 +31,7 @@ class SklearnCallback(FunctionalBatchMetricCallback):
         import torch
         from torch.utils.data import DataLoader, TensorDataset
         from catalyst import dl
+        from functools import partial
 
         # sample data
         num_samples, num_features, num_classes = int(1e4), int(1e1), 4
@@ -62,19 +63,30 @@ class SklearnCallback(FunctionalBatchMetricCallback):
             verbose=True,
             callbacks=[
                 dl.BatchTransformCallback(
-                    transform=torch.sigmoid,
-                    scope="on_batch_end",
                     input_key="logits",
-                    output_key="scores"
+                    output_key="scores",
+                    transform=partial(torch.softmax, dim=1),
+                    scope="on_batch_end",
+                ),
+                dl.BatchTransformCallback(
+                    input_key="scores",
+                    output_key="labels",
+                    transform=partial(torch.argmax, dim=1),
+                    scope="on_batch_end",
                 ),
                 dl.AUCCallback(input_key="logits", target_key="targets"),
                 dl.MultilabelAccuracyCallback(
                     input_key="logits", target_key="targets", threshold=0.5
                 ),
                 dl.SklearnCallback(
-                    keys={"y_score": "scores", "y_true": "targets"},
-                    metric_fn=sklearn.metrics.coverage_error,
-                    metric_key="coverage_error",
+                    keys={
+                        "y_pred": "labels",
+                        "y_true": "targets",
+                        "average": "micro",
+                        "zero_division": 1,
+                    },
+                    metric_fn="f1_score",
+                    metric_key="f1_score",
                 )
             ]
         )
