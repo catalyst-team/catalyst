@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - Reinforcement learning tutorials ([#1205](https://github.com/catalyst-team/catalyst/pull/1205))
 - customization demo ([#1207](https://github.com/catalyst-team/catalyst/pull/1207))
+- FAQ docs: multiple input and output keys, engine tutorial ([#1202](https://github.com/catalyst-team/catalyst/pull/1202))
 
 ### Changed
 
