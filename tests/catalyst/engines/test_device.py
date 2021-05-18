@@ -105,7 +105,6 @@ def train_from_config(device):
                 "args": {"logdir": logdir},
                 "model": {"_target_": "DummyModel", "in_features": 4, "out_features": 2},
                 "engine": {"_target_": "DeviceEngine", "device": device},
-                "args": {"logdir": logdir},
                 "stages": {
                     "stage1": {
                         "num_epochs": 10,

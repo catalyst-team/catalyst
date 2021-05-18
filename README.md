@@ -130,7 +130,7 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 ```
 
 ### Step-by-step Guide
-1. Start with [Catalyst 2021–Accelerated PyTorch 2.0](https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762) introduction.
+1. Start with [Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D](https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef) introduction.
 1. Check the [minimal examples](#minimal-examples).
 1. Try [notebook tutorials with Google Colab](#notebooks).
 1. Read the [blog posts](#notable-blog-posts) with use-cases and guides.
@@ -1447,8 +1447,103 @@ print(study.best_value, study.best_params)
 </p>
 </details>
 
+
+<details>
+<summary>Config API - minimal example</summary>
+<p>
+
+```python
+import torch
+from torch.utils.data import TensorDataset
+from catalyst import dl
+
+NUM_SAMPLES, NUM_FEATURES, NUM_CLASSES = int(1e4), int(1e1), 4
+LOGDIR = "./logs"
+
+class CustomConfigRunner(dl.SupervisedConfigRunner):
+    def get_datasets(self, stage: str):
+        # sample data
+        X = torch.rand(NUM_SAMPLES, NUM_FEATURES)
+        y = (torch.rand(NUM_SAMPLES,) * NUM_CLASSES).to(torch.int64)
+
+        # pytorch dataset
+        dataset = TensorDataset(X, y)
+        datasets = {"train": dataset, "valid": dataset}
+        return datasets
+
+
+runner = CustomConfigRunner(
+    input_key="features",
+    output_key="logits",
+    target_key="targets",
+    loss_key="loss",
+    config={
+        "args": {
+            "logdir": LOGDIR,
+            "valid_loader": "valid",
+            "valid_metric": "accuracy01",
+            "minimize_valid_metric": False,
+            "verbose": False,
+        },
+        "model": {
+            "_target_": "Linear",
+            "in_features": NUM_FEATURES,
+            "out_features": NUM_CLASSES,
+        },
+        "engine": {"_target_": "DeviceEngine"},
+        "loggers": {
+            "console": {"_target_": "ConsoleLogger"},
+            "csv": {"_target_": "CSVLogger", "logdir": LOGDIR},
+            "tensorboard": {"_target_": "TensorboardLogger", "logdir": LOGDIR},
+        },
+        "stages": {
+            "stage1": {
+                "num_epochs": 10,
+                "criterion": {"_target_": "CrossEntropyLoss"},
+                "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                "scheduler": {"_target_": "MultiStepLR", "milestones": [2]},
+                "loaders": {"batch_size": 32, "num_workers": 1},
+                "callbacks": {
+                    "accuracy": {
+                        "_target_": "AccuracyCallback",
+                        "input_key": "logits",
+                        "target_key": "targets",
+                        "num_classes": NUM_CLASSES,
+                    },
+                    "classification": {
+                        "_target_": "PrecisionRecallF1SupportCallback",
+                        "input_key": "logits",
+                        "target_key": "targets",
+                        "num_classes": NUM_CLASSES,
+                    },
+                    "criterion": {
+                        "_target_": "CriterionCallback",
+                        "input_key": "logits",
+                        "target_key": "targets",
+                        "metric_key": "loss",
+                    },
+                    "optimizer": {"_target_": "OptimizerCallback", "metric_key": "loss"},
+                    "scheduler": {"_target_": "SchedulerCallback"},
+                    "checkpointer": {
+                        "_target_": "CheckpointCallback",
+                        "logdir": LOGDIR,
+                        "loader_key": "valid",
+                        "metric_key": "accuracy01",
+                        "minimize": False,
+                        "save_n_best": 3,
+                    },
+                },
+            },
+        },
+    },
+)
+runner.run()
+```
+</p>
+</details>
+
 - [More Catalyst examples](./examples/).
-- [Minimal example for Config/Hydra API](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
+- [Config/Hydra API – full example](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
 
 
 ### Features
