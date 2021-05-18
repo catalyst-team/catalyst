@@ -1543,7 +1543,7 @@ runner.run()
 </details>
 
 - [More Catalyst examples](./examples/).
-- [Full Config/Hydra API example](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
+- [Config/Hydra API – full example](https://github.com/catalyst-team/catalyst/tree/master/examples/mnist_stages).
 
 
 ### Features
