@@ -28,13 +28,13 @@ jobs:
             os: macOS-10.15
           - python-version: 3.6
             os: macOS-10.15
-#          # github CI problems
-#          - python-version: 3.8
-#            os: ubuntu-18.04
-#            requirements: minimal
-#          - python-version: 3.8
-#            os: ubuntu-20.04
-#            requirements: minimal
+          # github CI problems
+          - python-version: 3.8
+            os: ubuntu-18.04
+            requirements: minimal
+          - python-version: 3.8
+            os: ubuntu-20.04
+            requirements: minimal
 #          - python-version: 3.7
 #            os: ubuntu-18.04
 #            requirements: minimal

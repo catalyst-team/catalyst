@@ -28,7 +28,7 @@ jobs:
             os: macOS-10.15
           - python-version: 3.6
             os: macOS-10.15
-#          # github CI problems
+          # github CI problems
 #          - python-version: 3.8
 #            os: ubuntu-18.04
 #            requirements: minimal
