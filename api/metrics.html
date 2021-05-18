@@ -626,12 +626,18 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 <h3><a class="toc-backref" href="#id21">AdditiveValueMetric</a><a class="headerlink" href="#additivevaluemetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._additive.AdditiveValueMetric">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._additive.</code><code class="sig-name descname">AdditiveValueMetric</code><span class="sig-paren">(</span><em class="sig-param">compute_on_call: bool = True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_additive.html#AdditiveValueMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._additive.AdditiveValueMetric" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._additive.</code><code class="sig-name descname">AdditiveValueMetric</code><span class="sig-paren">(</span><em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">mode: str = 'numpy'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_additive.html#AdditiveValueMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._additive.AdditiveValueMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._metric.IMetric" title="catalyst.metrics._metric.IMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._metric.IMetric</span></code></a></p>
 <p>This metric computes mean and std values of input data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>compute_on_call</strong> – if True, computes and returns metric value during metric call</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>compute_on_call</strong> – if True, computes and returns metric value during metric call</p></li>
+<li><p><strong>mode</strong> – expected dtype returned by the metric, <code class="docutils literal notranslate"><span class="pre">&quot;numpy&quot;</span></code> or <code class="docutils literal notranslate"><span class="pre">&quot;torch&quot;</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – if mode is not supported</p>
 </dd>
 </dl>
 <p>Examples:</p>
