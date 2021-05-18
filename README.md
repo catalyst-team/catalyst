@@ -1449,7 +1449,7 @@ print(study.best_value, study.best_params)
 
 
 <details>
-<summary>Minimal Config API example</summary>
+<summary>Config API - minimal example</summary>
 <p>
 
 ```python
