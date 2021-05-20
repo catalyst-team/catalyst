@@ -11,10 +11,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Reinforcement learning tutorials ([#1205](https://github.com/catalyst-team/catalyst/pull/1205))
 - customization demo ([#1207](https://github.com/catalyst-team/catalyst/pull/1207))
 - FAQ docs: multiple input and output keys, engine tutorial ([#1202](https://github.com/catalyst-team/catalyst/pull/1202))
+- minimal Config API example ([#1215](https://github.com/catalyst-team/catalyst/pull/1215))
 
 ### Changed
 
 - tests moved to `tests` folder ([#1208](https://github.com/catalyst-team/catalyst/pull/1208))
+- pipeline tests moved to `tests/pipelines` ([#1215](https://github.com/catalyst-team/catalyst/pull/1215))
 
 ### Removed
 
@@ -24,6 +26,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - customizing what happens in `train()` notebook ([#1203](https://github.com/catalyst-team/catalyst/pull/1203))
 - transforms imports under catalyst.data ([#1211](https://github.com/catalyst-team/catalyst/pull/1211))
+- change layerwise to layerwise_params ([#1210](https://github.com/catalyst-team/catalyst/pull/1210))
+- Add torch metrics support ([#1195](https://github.com/catalyst-team/catalyst/issues/1195))
 
 
 ## [21.04.2] - 2021-04-30
