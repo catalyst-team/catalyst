@@ -2369,6 +2369,10 @@ Used for per-batch logging. default: True</p></li>
 <span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">DiceMetric</span><span class="p">()</span>
 <span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># per_class, micro, macro, weighted</span>
+<span class="c1"># ([tensor(0.3636)], tensor(0.3636), tensor(0.3636), None)</span>
+
 <span class="n">metric</span><span class="o">.</span><span class="n">update_key_value</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
 <span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
 <span class="c1"># {</span>
@@ -2476,6 +2480,10 @@ Used for per-batch logging. default: True</p></li>
 <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]]])</span>
 <span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">IOUMetric</span><span class="p">()</span>
 <span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># per_class, micro, macro, weighted</span>
+<span class="c1"># ([tensor(0.2222)], tensor(0.2222), tensor(0.2222), None)</span>
 
 <span class="n">metric</span><span class="o">.</span><span class="n">update_key_value</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
 <span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>
@@ -2588,6 +2596,10 @@ Used for per-batch logging. default: True</p></li>
 <span class="n">targets</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[[[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]]]])</span>
 <span class="n">metric</span> <span class="o">=</span> <span class="n">metrics</span><span class="o">.</span><span class="n">TrevskyMetric</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
 <span class="n">metric</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="n">metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+<span class="c1"># per_class, micro, macro, weighted</span>
+<span class="c1"># ([tensor(0.4167)], tensor(0.4167), tensor(0.4167), None)</span>
 
 <span class="n">metric</span><span class="o">.</span><span class="n">update_key_value</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
 <span class="n">metric</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span>

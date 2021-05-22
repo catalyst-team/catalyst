@@ -420,6 +420,11 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;fp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fp_class</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">idx</span><span class="p">][</span><span class="s2">&quot;fn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fn_class</span>
 
+        <span class="c1"># need only one time</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checked_params</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_check_parameters</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_checked_params</span> <span class="o">=</span> <span class="kc">True</span>
+
         <span class="n">metrics_per_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_fn</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">fn</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">metrics_per_class</span>
 
@@ -437,10 +442,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">metrics_per_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">outputs</span><span class="p">,</span> <span class="n">targets</span><span class="p">)</span>
         <span class="n">macro_metric</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">metrics_per_class</span><span class="p">)</span>
-        <span class="c1"># need only one time</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checked_params</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_check_parameters</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_checked_params</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="p">{</span>
             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">class_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">value</span>
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metrics_per_class</span><span class="p">)</span>
@@ -451,22 +452,20 @@
             <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">metrics_per_class</span><span class="p">):</span>
                 <span class="n">weighted_metric</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
             <span class="n">metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">/_weighted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_metric</span>
-        <span class="c1"># convert torch.Tensor to float</span>
-        <span class="c1"># metrics = {k: float(v) for k, v in metrics.items()}</span>
         <span class="k">return</span> <span class="n">metrics</span>
 
-    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Compute segmentation metric for all data and return results in key-value format</span>
+<span class="sd">        Compute metrics with accumulated statistics</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">             dict of metrics, including micro, macro and weighted (if weights were given) metrics</span>
+<span class="sd">            tuple of metrics: per_class, micro_metric, macro_metric, weighted_metric(None if</span>
+<span class="sd">                weights is None)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">per_class</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">total_statistics</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">macro_metric</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">weighted_metric</span> <span class="o">=</span> <span class="mi">0</span>
-
         <span class="c1"># @TODO: ddp hotfix, could be done better</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_ddp</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">statistics</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
@@ -478,28 +477,41 @@
 
         <span class="k">for</span> <span class="n">class_idx</span><span class="p">,</span> <span class="n">statistics</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_fn</span><span class="p">(</span><span class="o">**</span><span class="n">statistics</span><span class="p">)</span>
+            <span class="n">per_class</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
             <span class="n">macro_metric</span> <span class="o">+=</span> <span class="n">value</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">weighted_metric</span> <span class="o">+=</span> <span class="n">value</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">[</span><span class="n">class_idx</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">stats_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">statistics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">total_statistics</span><span class="p">[</span><span class="n">stats_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_statistics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stats_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">value</span>
+
+        <span class="n">macro_metric</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">)</span>
+        <span class="n">micro_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_fn</span><span class="p">(</span><span class="o">**</span><span class="n">total_statistics</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">weighted_metric</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">per_class</span><span class="p">,</span> <span class="n">micro_metric</span><span class="p">,</span> <span class="n">macro_metric</span><span class="p">,</span> <span class="n">weighted_metric</span>
+
+    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute segmentation metric for all data and return results in key-value format</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">             dict of metrics, including micro, macro and weighted (if weights were given) metrics</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">per_class</span><span class="p">,</span> <span class="n">micro_metric</span><span class="p">,</span> <span class="n">macro_metric</span><span class="p">,</span> <span class="n">weighted_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+
+        <span class="n">metrics</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">class_idx</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">per_class</span><span class="p">):</span>
             <span class="n">metrics</span><span class="p">[</span>
                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">class_names</span><span class="p">[</span><span class="n">class_idx</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="k">for</span> <span class="n">stats_name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">statistics</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="n">total_statistics</span><span class="p">[</span><span class="n">stats_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_statistics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stats_name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">value</span>
-        <span class="n">macro_metric</span> <span class="o">/=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">)</span>
-        <span class="n">micro_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_fn</span><span class="p">(</span><span class="o">**</span><span class="n">total_statistics</span><span class="p">)</span>
+
         <span class="n">metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">/_micro&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">micro_metric</span>
         <span class="n">metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">macro_metric</span>
         <span class="n">metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">/_macro&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">macro_metric</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">metrics</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">/_weighted&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_metric</span>
-        <span class="c1"># convert torch.Tensor to float</span>
-        <span class="c1"># metrics = {k: float(v) for k, v in metrics.items()}</span>
-        <span class="k">return</span> <span class="n">metrics</span>
-
-    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;@TODO: Docs.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_key_value</span><span class="p">()</span></div>
+        <span class="k">return</span> <span class="n">metrics</span></div>
 
 
 <div class="viewcode-block" id="IOUMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._segmentation.IOUMetric">[docs]</a><span class="k">class</span> <span class="nc">IOUMetric</span><span class="p">(</span><span class="n">RegionBasedMetric</span><span class="p">):</span>
@@ -530,6 +542,10 @@
 <span class="sd">        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])</span>
 <span class="sd">        metric = metrics.IOUMetric()</span>
 <span class="sd">        metric.reset()</span>
+
+<span class="sd">        metric.compute()</span>
+<span class="sd">        # per_class, micro, macro, weighted</span>
+<span class="sd">        # ([tensor(0.2222)], tensor(0.2222), tensor(0.2222), None)</span>
 
 <span class="sd">        metric.update_key_value(outputs, targets)</span>
 <span class="sd">        metric.compute_key_value()</span>
@@ -659,6 +675,10 @@
 <span class="sd">        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])</span>
 <span class="sd">        metric = metrics.DiceMetric()</span>
 <span class="sd">        metric.reset()</span>
+
+<span class="sd">        metric.compute()</span>
+<span class="sd">        # per_class, micro, macro, weighted</span>
+<span class="sd">        # ([tensor(0.3636)], tensor(0.3636), tensor(0.3636), None)</span>
 
 <span class="sd">        metric.update_key_value(outputs, targets)</span>
 <span class="sd">        metric.compute_key_value()</span>
@@ -792,6 +812,10 @@
 <span class="sd">        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])</span>
 <span class="sd">        metric = metrics.TrevskyMetric(alpha=0.2)</span>
 <span class="sd">        metric.reset()</span>
+
+<span class="sd">        metric.compute()</span>
+<span class="sd">        # per_class, micro, macro, weighted</span>
+<span class="sd">        # ([tensor(0.4167)], tensor(0.4167), tensor(0.4167), None)</span>
 
 <span class="sd">        metric.update_key_value(outputs, targets)</span>
 <span class="sd">        metric.compute_key_value()</span>
