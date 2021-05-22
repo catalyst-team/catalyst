@@ -490,18 +490,19 @@ which could be complicated to understand</p></li>
 
         <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="p">}</span>
 
-<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomSupervisedRunner</span><span class="p">()</span>
-<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
-    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
-    <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-    <span class="n">loaders</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># as far as we have rewrite the loader logic already</span>
-    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs/example_3&quot;</span><span class="p">,</span>
-    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
-    <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-    <span class="n">ddp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomSupervisedRunner</span><span class="p">()</span>
+    <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+        <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
+        <span class="n">loaders</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>  <span class="c1"># as far as we have rewrite the loader logic already</span>
+        <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs/example_3&quot;</span><span class="p">,</span>
+        <span class="n">num_epochs</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">ddp</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span>
 </pre></div>
 </div>
 <dl class="simple">
