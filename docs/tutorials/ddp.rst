@@ -184,18 +184,19 @@ Yup, check this one, distributed training like a pro:
 
             return {"train": dataset, "valid": dataset}
 
-    runner = CustomSupervisedRunner()
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        scheduler=scheduler,
-        loaders=None,  # as far as we have rewrite the loader logic already
-        logdir="./logs/example_3",
-        num_epochs=8,
-        verbose=True,
-        ddp=True,
-    )
+    if __name__ == '__main__':
+        runner = CustomSupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=None,  # as far as we have rewrite the loader logic already
+            logdir="./logs/example_3",
+            num_epochs=8,
+            verbose=True,
+            ddp=True,
+        )
 
 Advantages,
     - you don't duplicate the data - it calls when it really needed
