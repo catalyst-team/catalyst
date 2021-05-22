@@ -232,6 +232,10 @@ class IOUMetric(RegionBasedMetric):
         metric = metrics.IOUMetric()
         metric.reset()
 
+        metric.compute()
+        # per_class, micro, macro, weighted
+        # ([tensor(0.2222)], tensor(0.2222), tensor(0.2222), None)
+
         metric.update_key_value(outputs, targets)
         metric.compute_key_value()
         # {
@@ -360,6 +364,10 @@ class DiceMetric(RegionBasedMetric):
         targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])
         metric = metrics.DiceMetric()
         metric.reset()
+
+        metric.compute()
+        # per_class, micro, macro, weighted
+        # ([tensor(0.3636)], tensor(0.3636), tensor(0.3636), None)
 
         metric.update_key_value(outputs, targets)
         metric.compute_key_value()
@@ -493,6 +501,10 @@ class TrevskyMetric(RegionBasedMetric):
         targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])
         metric = metrics.TrevskyMetric(alpha=0.2)
         metric.reset()
+
+        metric.compute()
+        # per_class, micro, macro, weighted
+        # ([tensor(0.4167)], tensor(0.4167), tensor(0.4167), None)
 
         metric.update_key_value(outputs, targets)
         metric.compute_key_value()
