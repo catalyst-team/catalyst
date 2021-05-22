@@ -1,8 +1,9 @@
 # flake8: noqa
-from typing import Iterable
+from typing import Iterable, Union
 
 import numpy as np
 import pytest
+import torch
 
 from catalyst.metrics._additive import AdditiveValueMetric
 
@@ -69,3 +70,42 @@ def test_additive_std(
         metric.update(value=value, num_samples=num_samples)
         _, std = metric.compute()
         assert np.isclose(std, true_value)
+
+
+@pytest.mark.parametrize(
+    "values_list,num_samples_list,true_values_list,mode",
+    (
+        (
+            [1.0, 0.0, 2.0, 3.0],
+            [10.0, 5.0, 15.0, 25.0],
+            [1.0, 0.666667, 1.333333, 2.090909],
+            "numpy",
+        ),
+        (
+            torch.tensor([1.0, 0.0, 2.0, 3.0], requires_grad=False),
+            [10.0, 5.0, 15.0, 25.0],
+            [1, 0.666667, 1.333333, 2.090909],
+            "torch",
+        ),
+    ),
+)
+def test_additive_mode(
+    values_list: Union[Iterable[float], Iterable[torch.Tensor]],
+    num_samples_list: Iterable[int],
+    true_values_list: Iterable[float],
+    mode: Iterable[str],
+):
+    """
+    Test additive metric std computation
+
+    Args:
+        values_list: list of values to update metric
+        num_samples_list: list of num_samples
+        true_values_list: list of metric intermediate value
+        mode: `AdditiveValueMetric` mode
+    """
+    metric = AdditiveValueMetric(mode=mode)
+    for value, num_samples, true_value in zip(values_list, num_samples_list, true_values_list):
+        metric.update(value=value, num_samples=num_samples)
+        mean, _ = metric.compute()
+        assert np.isclose(mean, true_value)

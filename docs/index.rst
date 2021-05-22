@@ -211,7 +211,7 @@ Indices and tables
     getting_started/quickstart
     Minimal examples <https://github.com/catalyst-team/catalyst#minimal-examples>
     getting_started/migrating_from_other
-    Catalyst 2021 — Accelerated PyTorch 2.0 <https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&sk=865d3c472cfb10379864656fedcfe762>
+    Catalyst — Accelerated Deep Learning R&D <https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef>
 
 .. toctree::
     :caption: Tutorials
@@ -244,7 +244,9 @@ Indices and tables
     faq/amp
     faq/ddp
 
+    faq/engines
     faq/multi_components
+    faq/multiple_keys
     faq/early_stopping
     faq/checkpointing
     faq/debugging
