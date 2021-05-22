@@ -141,12 +141,16 @@ class RegionBasedMetric(ICallbackBatchMetric):
             for idx, value in enumerate(metrics_per_class):
                 weighted_metric += value * self.weights[idx]
             metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
-        # convert torch.Tensor to float
-        # metrics = {k: float(v) for k, v in metrics.items()}
         return metrics
 
     def compute(self):
-        """@TODO: Docs."""
+        """
+        Compute metrics with accumulated statistics
+
+        Returns:
+            tuple of metrics: per_class, micro_metric, macro_metric, weighted_metric(None if
+                weights is None)
+        """
         per_class = []
         total_statistics = {}
         macro_metric = 0
