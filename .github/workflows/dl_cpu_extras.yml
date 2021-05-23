@@ -1,0 +1,136 @@
+name: catalyst-extras
+# <- standard block end ->
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - dev
+      - develop
+      - master
+
+
+jobs:
+  build:
+    name: dl-cpu-extras
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        os: [ubuntu-20.04]
+        python-version: [3.7]
+        requirements: ['latest']
+        extras: ['base', 'cv', 'ml', 'hydra', 'optuna', 'onnx', 'neptune']
+
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: set base extras
+        if: matrix.extras == 'base'
+        run: |
+          # python -m pip install --upgrade --user pip
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt
+          python --version
+          pip --version
+          pip list
+        shell: bash
+
+      - name: set cv extras
+        if: matrix.extras == 'cv'
+        run: |
+          # python -m pip install --upgrade --user pip
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-cv.txt
+          python --version
+          pip --version
+          pip list
+        shell: bash
+
+      - name: set ml extras
+        if: matrix.extras == 'ml'
+        run: |
+          # python -m pip install --upgrade --user pip
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-ml.txt
+          python --version
+          pip --version
+          pip list
+        shell: bash
+
+      - name: set hydra extras
+        if: matrix.extras == 'hydra'
+        run: |
+          # python -m pip install --upgrade --user pip
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt
+          python --version
+          pip --version
+          pip list
+        shell: bash
+
+      - name: set optuna extras
+        if: matrix.extras == 'optuna'
+        run: |
+          # python -m pip install --upgrade --user pip
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-optuna.txt
+          python --version
+          pip --version
+          pip list
+        shell: bash
+
+      - name: set onnx extras
+        if: matrix.extras == 'onnx'
+        run: |
+          # python -m pip install --upgrade --user pip
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-onnx.txt
+          python --version
+          pip --version
+          pip list
+        shell: bash
+
+      - name: set neptune extras
+        if: matrix.extras == 'neptune'
+        run: |
+          # python -m pip install --upgrade --user pip
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-neptune.txt
+          python --version
+          pip --version
+          pip list
+        shell: bash
+
+# <- standard block end ->
+
+      - name: check examples
+        env:
+          REQUIREMENTS: ${{ matrix.requirements }}
+          OMP_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
+        run: |
+          OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" pytest .
+          pip install -e .
+          OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_config.sh && cd ..
+
+      - name: check examples hydra
+        if: matrix.extras == 'hydra'
+        env:
+          REQUIREMENTS: ${{ matrix.requirements }}
+          OMP_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
+        run: |
+          pip install -e .
+          OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_hydra.sh && cd ..
+
+      - name: check examples optuna
+        if: matrix.extras == 'optuna'
+        env:
+          REQUIREMENTS: ${{ matrix.requirements }}
+          OMP_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
+        run: |
+          pip install -e .
+          OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_tune.sh && cd ..

@@ -8,173 +8,112 @@ Core
    :local:
 
 
-Core
-----------------------
 .. automodule:: catalyst.core
     :members:
-    :undoc-members:
     :show-inheritance:
 
-Experiment
-~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.experiment.IExperiment
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.core.experiment
-    :members:
-    :undoc-members:
-    :show-inheritance:
 
 Runner
-~~~~~~~~~~~~~~~~~~~~~~
+----------------------
 .. autoclass:: catalyst.core.runner.IRunner
+    :members: seed, hparams, stages, get_stage_len, get_trial, get_engine, get_loggers, get_datasets, get_loaders, get_model, get_criterion, get_optimizer, get_scheduler, get_callbacks, log_metrics, log_image, log_hparams, handle_batch, run
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :undoc-members:
+    :show-inheritance:
+
+.. autoclass:: catalyst.core.runner.RunnerException
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. autoclass:: catalyst.core.runner.IStageBasedRunner
+Engine
+----------------------
+.. autoclass:: catalyst.core.engine.IEngine
+    :members:
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+Callback
+----------------------
+
+ICallback
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.core.callback.ICallback
+    :members:
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+CallbackNode
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.core.callback.CallbackNode
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.core.runner
+CallbackOrder
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.core.callback.CallbackOrder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+CallbackScope
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.core.callback.CallbackScope
     :members:
     :undoc-members:
     :show-inheritance:
 
 Callback
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callback
+.. autoclass:: catalyst.core.callback.Callback
     :members:
+    :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
 
-Callbacks
+CallbackList
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.core.callback.CallbackList
+    :members:
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+CallbackWrapper
+~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.core.callback.CallbackWrapper
+    :members:
+    :exclude-members: __init__, on_experiment_start, on_stage_start, on_epoch_start, on_loader_start, on_batch_start, on_batch_end, on_loader_end, on_epoch_end, on_stage_end, on_experiment_end
+    :undoc-members:
+    :show-inheritance:
+
+Logger
 ----------------------
-
-BatchOverfitCallback
-~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.batch_overfit
+.. autoclass:: catalyst.core.logger.ILogger
     :members:
     :undoc-members:
     :show-inheritance:
 
-Checkpoint
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.checkpoint
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Control Flow
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.control_flow
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Criterion
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.criterion
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Early Stop
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.early_stop
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Exception
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.exception
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Logging
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.logging
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Metrics
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.metrics
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Optimizer
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.optimizer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-PeriodicLoaderCallback
-""""""""""""""""""""""
-.. automodule:: catalyst.core.callbacks.periodic_loader
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Scheduler
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.scheduler
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Timer
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.timer
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Validation
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.core.callbacks.validation
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Registry
+Trial
 ----------------------
-
-.. automodule:: catalyst.core.registry
+.. autoclass:: catalyst.core.trial.ITrial
     :members:
     :undoc-members:
     :show-inheritance:
 
+Scripts
+--------------------------------------
 
-Utils
-----------------------
+You can use Catalyst scripts with `catalyst-dl` in your terminal.
+For example:
 
-.. automodule:: catalyst.core.utils
+.. code-block:: bash
+
+    $ catalyst-dl run --help
+
+.. automodule:: catalyst.dl.__main__
     :members:
-    :undoc-members:
-    :show-inheritance:
-
-.. automodule:: catalyst.core.utils.callbacks
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Legacy
-----------------------
-
-Runner
-~~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.core.legacy.IRunnerLegacy
-    :members:
-    :undoc-members:
-    :show-inheritance:
+    :exclude-members: build_parser, main

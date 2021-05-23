@@ -1,23 +1,16 @@
-# Framework must-haves
-numpy>=1.16.4
-torch>=1.1.0
+# framework must-have
+numpy>=1.18
+torch>=1.3.0
+
+# Config API
+PyYAML>=5.1
+
+# progress bar
 tqdm>=4.33.0
-PyYAML
 
-# packaging
-packaging
-deprecation
-
-# wizard
-ipython
-
-# logging
-tensorboard>=1.14.0
-tensorboardX
-plotly>=4.1.0
-
-# Used in scripts  -> contrib (?)
-matplotlib
-pandas>=0.22
-scikit-learn>=0.20
-GitPython>=3.1.1
+# for future development:
+# tensorboardX provides tensorboard support for any framework
+# it's much easier to maintain one general tb provider
+# rather than a bunch of framework-adapted alternatives
+# and it's better than `tensorboard` ;)
+tensorboardX>=2.1.0

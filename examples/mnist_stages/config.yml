@@ -1,0 +1,115 @@
+# For detailed comments on this configuration file refer to configs/config-description-eng.yml
+
+shared:
+  dataset_root: &dataset_root "./data"
+  seed: &seed 42
+  valid_loader: &valid_loader valid
+  valid_metric: &valid_metric accuracy01
+  minimize_valid_metric: &minimize_valid_metric False
+
+
+args:
+  expdir: "mnist_stages"
+  logdir: &logdir "./logs/mnist_stages"
+  seed: *seed
+  distributed: False
+  apex: False
+  amp: False
+  verbose: False
+  timeit: False
+  check: False
+  overfit: False
+  deterministic: False
+  benchmark: False
+
+runner:
+  _target_: CustomSupervisedConfigRunner
+  input_key: &model_input "features"
+  output_key: &model_output "logits"
+  target_key: &model_target "targets"
+  loss_key: &model_loss "loss"
+
+engine:
+  _target_: DeviceEngine
+
+model:
+  _target_: SimpleNet
+
+loggers:
+  console:
+    _target_: ConsoleLogger
+  tensorboard:
+    _target_: TensorboardLogger
+    logdir: *logdir
+    use_logdir_postfix: True
+
+stages:
+  train:
+    num_epochs: 4
+
+    loaders: &loaders
+      # default kwargs for `runner.get_loaders`:
+      batch_size: 32
+      num_workers: 1
+      # kwargs for `runner.get_datasets`:
+      num_samples_per_class: 320
+
+    criterion:
+      _target_: CrossEntropyLoss
+
+    optimizer:
+      _target_: Adam
+
+    scheduler:
+      _target_: MultiStepLR
+      milestones: [ 2 ]
+      gamma: 0.3
+
+    callbacks: &callbacks
+      accuracy:
+        _target_: AccuracyCallback
+        input_key: *model_output
+        target_key: *model_target
+        topk_args: [ 1, 3, 5 ]
+      loss:
+        _target_: CriterionCallback
+        input_key: *model_output
+        target_key: *model_target
+        metric_key: *model_loss
+      optimizer:
+        _target_: OptimizerCallback
+        metric_key: *model_loss
+        grad_clip_fn: clip_grad_value_
+        grad_clip_params:
+          clip_value: 1.0
+      scheduler:
+        _target_: SchedulerCallback
+        loader_key: *valid_loader
+        metric_key: *valid_metric
+      saver:
+        _target_: CheckpointCallback
+        logdir: *logdir
+        loader_key: *valid_loader
+        metric_key: *valid_metric
+        minimize: *minimize_valid_metric
+        use_logdir_postfix: True
+#      verbose:
+#        _target_: TqdmCallback
+
+  tune:
+    num_epochs: 4
+
+    loaders: *loaders
+
+    criterion:
+      _target_: CrossEntropyLoss
+
+    optimizer:
+      _target_: Ralamb
+
+    scheduler:
+      _target_: MultiStepLR
+      milestones: [ 2 ]
+      gamma: 0.3
+
+    callbacks: *callbacks

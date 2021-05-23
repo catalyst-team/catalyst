@@ -65,7 +65,7 @@ class GaussianNoise(nn.Module):
     def __init__(self, stddev: float = 0.1):
         """
         Args:
-            stddev (float): The standard deviation of the normal distribution.
+            stddev: The standard deviation of the normal distribution.
                 Default: 0.1.
         """
         super().__init__()

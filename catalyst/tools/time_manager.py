@@ -1,6 +1,3 @@
-"""
-Simple timer.
-"""
 from time import time
 
 
@@ -8,7 +5,7 @@ class TimeManager(object):
     """@TODO: Docs. Contribution is welcome."""
 
     def __init__(self):
-        """@TODO: Docs. Contribution is welcome."""
+        """Initialization"""
         self._starts = {}
         self.elapsed = {}
 
@@ -16,7 +13,7 @@ class TimeManager(object):
         """Starts timer ``name``.
 
         Args:
-            name (str): name of a timer
+            name: name of a timer
         """
         self._starts[name] = time()
 
@@ -24,7 +21,7 @@ class TimeManager(object):
         """Stops timer ``name``.
 
         Args:
-            name (str): name of a timer
+            name: name of a timer
         """
         assert name in self._starts, f"Timer '{name}' wasn't started"
 

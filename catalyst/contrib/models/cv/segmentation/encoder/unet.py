@@ -5,9 +5,7 @@ from typing import List
 import torch
 from torch import nn
 
-from catalyst.contrib.models.cv.segmentation.blocks.unet import (
-    EncoderDownsampleBlock,
-)
+from catalyst.contrib.models.cv.segmentation.blocks.unet import EncoderDownsampleBlock
 from catalyst.contrib.models.cv.segmentation.encoder.core import (  # noqa: WPS450, E501
     _take,
     EncoderSpec,
@@ -32,9 +30,7 @@ class UnetEncoder(EncoderSpec):
         self.num_blocks = num_blocks
         self._layers_indices = layers_indices or list(range(num_blocks))
 
-        self._channels = [
-            self.num_filters * 2 ** i for i in range(self.num_blocks)
-        ]
+        self._channels = [self.num_filters * 2 ** i for i in range(self.num_blocks)]
         self._strides = [2 ** (i) for i in range(self.num_blocks)]
         self._channels = _take(self._channels, self._layers_indices)
         self._strides = _take(self._strides, self._layers_indices)
@@ -44,9 +40,7 @@ class UnetEncoder(EncoderSpec):
             out_channels = num_channels * 2 ** i
             self.add_module(
                 f"block{i + 1}",
-                EncoderDownsampleBlock(
-                    in_channels, out_channels, first_stride=1, **kwargs
-                ),
+                EncoderDownsampleBlock(in_channels, out_channels, first_stride=1, **kwargs),
             )
             if i != self.num_blocks - 1:
                 self.add_module(f"pool{i + 1}", nn.MaxPool2d(2, 2))

@@ -39,7 +39,7 @@ class Lamb(Optimizer):
     ):
         """
         Args:
-            params (iterable): iterable of parameters to optimize or dicts
+            params: iterable of parameters to optimize or dicts
                 defining parameter groups
             lr (float, optional): learning rate (default: 1e-3)
             betas (Tuple[float, float], optional): coefficients used for
@@ -93,8 +93,7 @@ class Lamb(Optimizer):
                 grad = p.grad.data
                 if grad.is_sparse:
                     raise RuntimeError(
-                        "Lamb does not support sparse gradients, "
-                        "consider SparseAdam instad."
+                        "Lamb does not support sparse gradients, " "consider SparseAdam instad."
                     )
 
                 state = self.state[p]

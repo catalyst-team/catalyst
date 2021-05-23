@@ -1,74 +1,48 @@
-# flake8: noqa
-# @TODO: code formatting issue for 20.07 release
+from typing import List
 from functools import partial
 
+import torch
 from torch import nn
 
-from catalyst.utils import metrics
+from catalyst.metrics.functional import iou
 
 
 class IoULoss(nn.Module):
     """The intersection over union (Jaccard) loss.
-
-    @TODO: Docs. Contribution is welcome.
+    IOULoss = 1 - iou score
+    iou score = intersection / union = tp / (tp + fp + fn)
     """
 
     def __init__(
         self,
+        class_dim: int = 1,
+        mode: str = "macro",
+        weights: List[float] = None,
         eps: float = 1e-7,
-        threshold: float = None,
-        activation: str = "Sigmoid",
     ):
         """
         Args:
-            eps (float): epsilon to avoid zero division
-            threshold (float): threshold for outputs binarization
-            activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
+            class_dim: indicates class dimention (K) for
+                ``outputs`` and ``targets`` tensors (default = 1)
+            mode: class summation strategy. Must be one of ['micro', 'macro',
+                'weighted']. If mode='micro', classes are ignored, and metric
+                are calculated generally. If mode='macro', metric are
+                calculated per-class and than are averaged over all classes.
+                If mode='weighted', metric are calculated per-class and than
+                summed over all classes with weights.
+            weights: class weights(for mode="weighted")
+            eps: epsilon to avoid zero division
         """
         super().__init__()
-        self.metric_fn = partial(
-            metrics.iou, eps=eps, threshold=threshold, activation=activation
+        assert mode in ["micro", "macro", "weighted"]
+        self.loss_fn = partial(
+            iou, eps=eps, class_dim=class_dim, threshold=None, mode=mode, weights=weights,
         )
 
-    def forward(self, outputs, targets):
-        """@TODO: Docs. Contribution is welcome."""
-        iou = self.metric_fn(outputs, targets)
-        return 1 - iou
+    def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
+        """Calculates loss between ``logits`` and ``target`` tensors."""
+        iou_score = self.loss_fn(outputs, targets)
+        return 1 - iou_score
 
 
-class BCEIoULoss(nn.Module):
-    """The Intersection over union (Jaccard) with BCE loss.
-
-    @TODO: Docs. Contribution is welcome.
-    """
-
-    def __init__(
-        self,
-        eps: float = 1e-7,
-        threshold: float = None,
-        activation: str = "Sigmoid",
-        reduction: str = "mean",
-    ):
-        """
-        Args:
-            eps (float): epsilon to avoid zero division
-            threshold (float): threshold for outputs binarization
-            activation (str): An torch.nn activation applied to the outputs.
-                Must be one of ``'none'``, ``'Sigmoid'``, ``'Softmax2d'``
-            reduction (str): Specifies the reduction to apply
-                to the output of BCE
-        """
-        super().__init__()
-        self.bce_loss = nn.BCEWithLogitsLoss(reduction=reduction)
-        self.iou_loss = IoULoss(eps, threshold, activation)
-
-    def forward(self, outputs, targets):
-        """@TODO: Docs. Contribution is welcome."""
-        iou = self.iou_loss.forward(outputs, targets)
-        bce = self.bce_loss(outputs, targets)
-        loss = iou + bce
-        return loss
-
-
-__all__ = ["IoULoss", "BCEIoULoss"]
+__all__ = ["IoULoss"]

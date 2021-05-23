@@ -9,5 +9,5 @@ jobs:
     - uses: actions/first-interaction@v1
       with:
         repo-token: ${{ secrets.GITHUB_TOKEN }}
-        issue-message: 'Hi! Thank you for your contribution! Great first issue!'
-        pr-message: 'Hey thanks for the pull request! Please give us a bit of time to review it!'
+        issue-message: 'Hi! Thank you for your contribution! Please re-check all issue template checklists - unfilled issues would be closed automatically. And do not forget to [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for collaboration.'
+        pr-message: 'Hey thanks for the pull request! Please re-check all PR template checklists - unfilled PRs would be closed automatically. And do not forget to [join our slack](https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw) for collaboration.'

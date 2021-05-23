@@ -10,15 +10,13 @@ class RMSNorm(nn.Module):
     @TODO: Docs (link to paper). Contribution is welcome.
     """
 
-    def __init__(
-        self, dimension: int, epsilon: float = 1e-8, is_bias: bool = False
-    ):
+    def __init__(self, dimension: int, epsilon: float = 1e-8, is_bias: bool = False):
         """
         Args:
-            dimension (int): the dimension of the layer output to normalize
-            epsilon (float): an epsilon to prevent dividing by zero
+            dimension: the dimension of the layer output to normalize
+            epsilon: an epsilon to prevent dividing by zero
                 in case the layer has zero variance. (default = 1e-8)
-            is_bias (bool): a boolean value whether to include bias term
+            is_bias: a boolean value whether to include bias term
                 while normalization
         """
         super().__init__()

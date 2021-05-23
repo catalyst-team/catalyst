@@ -34,9 +34,7 @@ releases_github_path = "catalyst-team/catalyst"
 
 
 def get_version(mode: str = "full") -> str:
-    """
-    @TODO: Docs. Contribution is welcome
-    """
+    """Docs? Contribution is welcome."""
     current_dir = os.path.abspath(os.path.dirname(__file__))
     root = os.path.dirname(current_dir)
     version_file = os.path.join(root, "catalyst", "__version__.py")
@@ -46,9 +44,7 @@ def get_version(mode: str = "full") -> str:
     version_ = "1.0"
     try:
         with open(version_file) as f:
-            version_ = re.search(
-                r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M
-            ).group(1)
+            version_ = re.search(r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M).group(1)
     except Exception:
         pass
 
@@ -160,7 +156,7 @@ html_theme_options = {}
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ["_static"]
 
-html_short_title = "Catalyst DL R&D"
+html_short_title = "Accelerated Deep Learning R&D"
 
 # Custom sidebar templates, must be a dictionary that maps document names
 # to template names.
@@ -174,9 +170,7 @@ html_short_title = "Catalyst DL R&D"
 
 html_context = {
     "display_github": True,
-    "source_url_prefix": (
-        f"https://github.com/{docs_user}/{docs_repo}/tree/master/docs"
-    ),
+    "source_url_prefix": (f"https://github.com/{docs_user}/{docs_repo}/tree/master/docs"),
     "github_host": "github.com",
     "github_user": docs_user,
     "github_repo": docs_repo,
@@ -211,13 +205,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (
-        master_doc,
-        "Catalyst.tex",
-        "Catalyst Documentation",
-        "Scitator",
-        "manual",
-    ),
+    (master_doc, "Catalyst.tex", "Catalyst Documentation", "Scitator", "manual",),
 ]
 
 # -- Options for manual page output ------------------------------------------

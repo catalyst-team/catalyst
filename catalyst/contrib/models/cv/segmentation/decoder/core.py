@@ -13,8 +13,8 @@ class DecoderSpec(ABC, nn.Module):
     def __init__(self, in_channels: List[int], in_strides: List[int]):
         """
         Args:
-            in_channels (List[int]): number of channels in the input sample
-            in_strides (List[int]): the stride of the block
+            in_channels: number of channels in the input sample
+            in_strides: the stride of the block
         """
         super().__init__()
         self.in_channels = in_channels

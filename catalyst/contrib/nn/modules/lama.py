@@ -3,15 +3,13 @@
 import torch
 from torch import nn
 
-from catalyst.utils.initialization import outer_init
+from catalyst.utils.torch import outer_init
 
 
 class TemporalLastPooling(nn.Module):
     """@TODO: Docs. Contribution is welcome."""
 
-    def forward(
-        self, x: torch.Tensor, mask: torch.Tensor = None
-    ) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None) -> torch.Tensor:
         """Forward call."""
         x_out = x[:, -1:, :]
         return x_out
@@ -20,9 +18,7 @@ class TemporalLastPooling(nn.Module):
 class TemporalAvgPooling(nn.Module):
     """@TODO: Docs. Contribution is welcome."""
 
-    def forward(
-        self, x: torch.Tensor, mask: torch.Tensor = None
-    ) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None) -> torch.Tensor:
         """Forward call."""
         if mask is None:
             x_out = x.mean(1, keepdim=True)
@@ -36,9 +32,7 @@ class TemporalAvgPooling(nn.Module):
 class TemporalMaxPooling(nn.Module):
     """@TODO: Docs. Contribution is welcome."""
 
-    def forward(
-        self, x: torch.Tensor, mask: torch.Tensor = None
-    ) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None) -> torch.Tensor:
         """Forward call."""
         if mask is not None:
             x_mask = (~mask.bool()).float() * (-x.max()).float()
@@ -63,24 +57,17 @@ class TemporalAttentionPooling(nn.Module):
         activation = activation or "softmax"
 
         self.attention_pooling = nn.Sequential(
-            nn.Conv1d(
-                in_channels=in_features,
-                out_channels=1,
-                kernel_size=kernel_size,
-                **params
-            ),
+            nn.Conv1d(in_channels=in_features, out_channels=1, kernel_size=kernel_size, **params),
             TemporalAttentionPooling.name2activation[activation],
         )
         self.attention_pooling.apply(outer_init)
 
-    def forward(
-        self, x: torch.Tensor, mask: torch.Tensor = None
-    ) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None) -> torch.Tensor:
         """
         Forward call.
 
         Args:
-            x (torch.Tensor): tensor of size
+            x: tensor of size
                 (batch_size, history_len, feature_size)
             mask: mask to use
 
@@ -106,14 +93,12 @@ class TemporalConcatPooling(nn.Module):
         self.in_features = in_features
         self.out_features = in_features * history_len
 
-    def forward(
-        self, x: torch.Tensor, mask: torch.Tensor = None
-    ) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None) -> torch.Tensor:
         """
         Concat pooling forward.
 
         Args:
-            x (torch.Tensor): tensor of size
+            x: tensor of size
                 (batch_size, history_len, feature_size)
             mask: mask to use
 
@@ -150,9 +135,7 @@ def _get_pooling(key, in_features, **params):
     elif key_prefix == "max":
         layer = TemporalMaxPooling()
     elif key_prefix in ["softmax", "tanh", "sigmoid"]:
-        layer = TemporalAttentionPooling(
-            in_features=in_features, activation=key_prefix, **params
-        )
+        layer = TemporalAttentionPooling(in_features=in_features, activation=key_prefix, **params)
     else:
         raise NotImplementedError()
 
@@ -203,16 +186,14 @@ class LamaPooling(nn.Module):
 
         self.groups = nn.ModuleDict(groups)
 
-    def forward(
-        self, x: torch.Tensor, mask: torch.Tensor = None
-    ) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, mask: torch.Tensor = None) -> torch.Tensor:
         """
         Forward method of the LAMA.
 
         Args:
-            x (torch.Tensor): tensor of size
+            x: tensor of size
                 (batch_size, history_len, feature_size)
-            mask (torch.Tensor): mask to use for attention compute
+            mask: mask to use for attention compute
 
         Returns:
             torch.Tensor: LAMA pooling result

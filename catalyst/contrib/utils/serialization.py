@@ -1,11 +1,11 @@
 import logging
 import pickle
 
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
 
 logger = logging.getLogger(__name__)
 
-if settings.use_pyarrow:
+if SETTINGS.use_pyarrow:
     try:
         import pyarrow
     except ImportError as ex:
@@ -64,7 +64,7 @@ def pickle_deserialize(bytes):
     return pickle.loads(bytes)
 
 
-if settings.use_pyarrow:
+if SETTINGS.use_pyarrow:
     serialize = pyarrow_serialize
     deserialize = pyarrow_deserialize
 else:

@@ -13,14 +13,12 @@ class NaiveCrossEntropyLoss(nn.Module):
         super().__init__()
         self.size_average = size_average
 
-    def forward(
-        self, input_: torch.Tensor, target: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, input_: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
         """Calculates loss between ``input_`` and ``target`` tensors.
 
         Args:
-            input_ (torch.Tensor): input tensor of shape ...
-            target (torch.Tensor): target tensor of shape ...
+            input_: input tensor of shape ...
+            target: target tensor of shape ...
 
         @TODO: Docs (add shapes). Contribution is welcome.
         """
@@ -53,15 +51,13 @@ class SymmetricCrossEntropyLoss(nn.Module):
         self.alpha = alpha
         self.beta = beta
 
-    def forward(
-        self, input_: torch.Tensor, target: torch.Tensor
-    ) -> torch.Tensor:
+    def forward(self, input_: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
         """Calculates loss between ``input_`` and ``target`` tensors.
 
         Args:
-            input_ (torch.Tensor): input tensor of size
+            input_: input tensor of size
                 (batch_size, num_classes)
-            target (torch.Tensor): target tensor of size (batch_size), where
+            target: target tensor of size (batch_size), where
                 values of a vector correspond to class index
 
         Returns:
@@ -74,12 +70,8 @@ class SymmetricCrossEntropyLoss(nn.Module):
         input_ = torch.clamp(input_, min=1e-7, max=1.0)
         target_one_hot = torch.clamp(target_one_hot, min=1e-4, max=1.0)
 
-        cross_entropy = (
-            -torch.sum(target_one_hot * torch.log(input_), dim=1)
-        ).mean()
-        reverse_cross_entropy = (
-            -torch.sum(input_ * torch.log(target_one_hot), dim=1)
-        ).mean()
+        cross_entropy = (-torch.sum(target_one_hot * torch.log(input_), dim=1)).mean()
+        reverse_cross_entropy = (-torch.sum(input_ * torch.log(target_one_hot), dim=1)).mean()
         loss = self.alpha * cross_entropy + self.beta * reverse_cross_entropy
         return loss
 

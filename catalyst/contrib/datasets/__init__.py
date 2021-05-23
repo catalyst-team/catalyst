@@ -1,7 +1,12 @@
 # flake8: noqa
-import logging
 
-from catalyst.tools import settings
+from catalyst.settings import SETTINGS
+
+if SETTINGS.cv_required:  # we need imread function here
+    from catalyst.contrib.datasets.market1501 import (
+        Market1501MLDataset,
+        Market1501QGDataset,
+    )
 
 from catalyst.contrib.datasets.mnist import (
     MnistMLDataset,
@@ -9,14 +14,8 @@ from catalyst.contrib.datasets.mnist import (
     MNIST,
 )
 
-logger = logging.getLogger(__name__)
+if SETTINGS.ml_required:
+    from catalyst.contrib.datasets.movielens import MovieLens
 
-try:
+if SETTINGS.cv_required:
     from catalyst.contrib.datasets.cv import *
-except ImportError as ex:
-    if settings.cv_required:
-        logger.warning(
-            "some of catalyst-cv dependencies not available,"
-            " to install dependencies, run `pip install catalyst[cv]`."
-        )
-        raise ex

@@ -6,13 +6,11 @@ from random import sample
 from sys import maxsize
 
 import numpy as np
-
 import torch
 from torch import Tensor
+from torch.nn import functional as F
 
-from catalyst.contrib.utils.misc import find_value_ids
-from catalyst.data.utils import convert_labels2list
-from catalyst.utils.torch import normalize
+from catalyst.utils.misc import convert_labels2list, find_value_ids
 
 # order in the triplets: (anchor, positive, negative)
 TTriplets = Tuple[Tensor, Tensor, Tensor]
@@ -21,9 +19,7 @@ TLabels = Union[List[int], Tensor]
 
 
 class IInbatchTripletSampler(ABC):
-    """
-    An abstraction of inbatch triplet sampler.
-    """
+    """An abstraction of inbatch triplet sampler."""
 
     @abstractmethod
     def _check_input_labels(self, labels: List[int]) -> None:
@@ -77,6 +73,7 @@ class InBatchTripletsSampler(IInbatchTripletSampler):
         """
         The input must satisfy the conditions described in
         the class documentation.
+
         Args:
             labels: labels of the samples in the batch
         """
@@ -140,7 +137,7 @@ class AllTripletsSampler(InBatchTripletsSampler):
             labels: labels of the samples in the batch
             *_: note, that we ignore features argument
 
-        Returns: indeces of triplets
+        Returns: indices of triplets
         """
         num_labels = len(labels)
 
@@ -195,20 +192,16 @@ class HardTripletsSampler(InBatchTripletsSampler):
         assert features.shape[0] == len(labels)
 
         if self._norm_required:
-            features = normalize(samples=features.detach())
+            features = F.normalize(features.detach(), p=2, dim=1)
 
         dist_mat = torch.cdist(x1=features, x2=features, p=2)
 
-        ids_anchor, ids_pos, ids_neg = self._sample_from_distmat(
-            distmat=dist_mat, labels=labels
-        )
+        ids_anchor, ids_pos, ids_neg = self._sample_from_distmat(distmat=dist_mat, labels=labels)
 
         return ids_anchor, ids_pos, ids_neg
 
     @staticmethod
-    def _sample_from_distmat(
-        distmat: Tensor, labels: List[int]
-    ) -> TTripletsIds:
+    def _sample_from_distmat(distmat: Tensor, labels: List[int]) -> TTripletsIds:
         """
         This method samples the hardest triplets based on the given
         distances matrix. It chooses each sample in the batch as an
@@ -284,7 +277,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         the batch relates to i-th class and False otherwise.
 
         Args:
-            labels: labels of the batch, shape (batch_size,)
+            labels: labels of the batch, shape (batch_size)
 
         Returns:
             matrix of indices of classes in batch
@@ -298,9 +291,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         return labels_mask.type(torch.bool)
 
     @staticmethod
-    def _count_intra_class_distances(
-        embeddings: Tensor, mean_vectors: Tensor
-    ) -> Tensor:
+    def _count_intra_class_distances(embeddings: Tensor, mean_vectors: Tensor) -> Tensor:
         """
         Count matrix of distances from mean vector of each class to it's
         samples embeddings.
@@ -362,7 +353,7 @@ class HardClusterSampler(IInbatchTripletSampler):
         Args:
             features: tensor of shape (batch_size; embed_dim) that contains
                 k samples for each of p classes
-            labels: labels of the batch, list or tensor of size (batch_size,)
+            labels: labels of the batch, list or tensor of size (batch_size)
 
         Returns:
             p triplets of (mean_vector, positive, negative_mean_vector)

@@ -24,16 +24,13 @@ class ContrastiveEmbeddingLoss(nn.Module):
         self.reduction = reduction or "none"
 
     def forward(
-        self,
-        embeddings_left: torch.Tensor,
-        embeddings_right: torch.Tensor,
-        distance_true,
+        self, embeddings_left: torch.Tensor, embeddings_right: torch.Tensor, distance_true,
     ) -> torch.Tensor:
         """Forward propagation method for the contrastive loss.
 
         Args:
-            embeddings_left (torch.Tensor): left objects embeddings
-            embeddings_right (torch.Tensor): right objects embeddings
+            embeddings_left: left objects embeddings
+            embeddings_right: right objects embeddings
             distance_true: true distances
 
         Returns:
@@ -46,9 +43,9 @@ class ContrastiveEmbeddingLoss(nn.Module):
         bs = len(distance_true)
         margin_distance = self.margin - distance_pred
         margin_distance = torch.clamp(margin_distance, min=0.0)
-        loss = (1 - distance_true) * torch.pow(
-            distance_pred, 2
-        ) + distance_true * torch.pow(margin_distance, 2)
+        loss = (1 - distance_true) * torch.pow(distance_pred, 2) + distance_true * torch.pow(
+            margin_distance, 2
+        )
 
         if self.reduction == "mean":
             loss = torch.sum(loss) / 2.0 / bs
@@ -67,7 +64,7 @@ class ContrastiveDistanceLoss(nn.Module):
         """
         Args:
             margin: margin parameter
-            reduction (str): criterion reduction type
+            reduction: criterion reduction type
         """
         super().__init__()
         self.margin = margin
@@ -86,9 +83,9 @@ class ContrastiveDistanceLoss(nn.Module):
         bs = len(distance_true)
         margin_distance = self.margin - distance_pred
         margin_distance = torch.clamp(margin_distance, min=0.0)
-        loss = (1 - distance_true) * torch.pow(
-            distance_pred, 2
-        ) + distance_true * torch.pow(margin_distance, 2)
+        loss = (1 - distance_true) * torch.pow(distance_pred, 2) + distance_true * torch.pow(
+            margin_distance, 2
+        )
 
         if self.reduction == "mean":
             loss = torch.sum(loss) / 2.0 / bs
@@ -131,14 +128,10 @@ class ContrastivePairwiseEmbeddingLoss(nn.Module):
         # s - state space
         # d - embeddings space
         # a - action space
-        pairwise_similarity = torch.einsum(
-            "se,ae->sa", embeddings_pred, embeddings_true
-        )
+        pairwise_similarity = torch.einsum("se,ae->sa", embeddings_pred, embeddings_true)
         bs = embeddings_pred.shape[0]
         batch_idx = torch.arange(bs, device=device)
-        loss = F.cross_entropy(
-            pairwise_similarity, batch_idx, reduction=self.reduction
-        )
+        loss = F.cross_entropy(pairwise_similarity, batch_idx, reduction=self.reduction)
         return loss
 
 

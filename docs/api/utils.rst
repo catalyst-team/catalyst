@@ -1,4 +1,4 @@
-Tools and Utilities
+Utilities
 ================================================
 
 .. toctree::
@@ -8,132 +8,10 @@ Tools and Utilities
    :local:
 
 
-Tools
+Main
 ----------------------
-
-.. automodule:: catalyst.tools
-    :members:
-    :show-inheritance:
-
-Frozen Class
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.frozen_class
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Time Manager
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.time_manager
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Typing
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.typing
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Meters
-------------------------
-
-The meters from torchnet.meters.
-
-Every meter implements :py:class:`catalyst.tools.meters.meter.Meter` interface.
-
-Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.meter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-AP Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.apmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-AUC Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.aucmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Average Value Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.averagevaluemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Class Error Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.classerrormeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Confusion Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.confusionmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Map Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.mapmeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Moving Average Value Meter
-~~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.movingaveragevaluemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-MSE Meter
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.msemeter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Precision-Recall-F1 Meter
-~~~~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.tools.meters.ppv_tpr_f1_meter
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-Utils
-----------------------
-
 .. automodule:: catalyst.utils
     :members:
-    :show-inheritance:
-
-Checkpoint
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.checkpoint
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Components
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.components
-    :members:
-    :undoc-members:
     :show-inheritance:
 
 Config
@@ -143,23 +21,16 @@ Config
     :undoc-members:
     :show-inheritance:
 
+Data
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.data
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Distributed
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.distributed
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Hash
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.hash
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Initialization
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.initialization
     :members:
     :undoc-members:
     :show-inheritance:
@@ -178,23 +49,31 @@ Numpy
     :undoc-members:
     :show-inheritance:
 
-Parser
+Onnx
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.parser
+.. automodule:: catalyst.utils.onnx
     :members:
     :undoc-members:
     :show-inheritance:
 
-Scripts
+Pruning
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.scripts
+.. automodule:: catalyst.utils.pruning
     :members:
     :undoc-members:
     :show-inheritance:
 
-Seed
+Quantization
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.seed
+.. automodule:: catalyst.utils.quantization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Stochastic Weights Averaging (SWA)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.swa
     :members:
     :undoc-members:
     :show-inheritance:
@@ -213,80 +92,65 @@ Torch
     :undoc-members:
     :show-inheritance:
 
-
-Metrics
-------------------------
-
-Accuracy
+Tracing
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.accuracy
+.. automodule:: catalyst.utils.tracing
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.metrics.multi_label_accuracy
+
+Contrib
+----------------------
+.. automodule:: catalyst.contrib.utils
     :members:
-    :undoc-members:
     :show-inheritance:
 
-AUC
+Compression
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.auc
+.. automodule:: catalyst.contrib.utils.compression
     :members:
     :undoc-members:
     :show-inheritance:
 
-
-CMC score
+Image
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.cmc_score_count
+.. automodule:: catalyst.contrib.utils.image
     :members:
     :undoc-members:
     :show-inheritance:
 
-.. automodule:: catalyst.utils.metrics.cmc_score
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Dice
+Pandas
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.dice
+.. automodule:: catalyst.contrib.utils.pandas
     :members:
     :undoc-members:
     :show-inheritance:
 
-F1 score
+Parallel
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.f1_score
+.. automodule:: catalyst.contrib.utils.parallel
     :members:
     :undoc-members:
     :show-inheritance:
 
-Focal
+Serialization
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.focal
+.. automodule:: catalyst.contrib.utils.serialization
     :members:
     :undoc-members:
     :show-inheritance:
 
-IoU
+Thresholds
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.iou
+.. automodule:: catalyst.contrib.utils.thresholds
     :members:
     :undoc-members:
     :show-inheritance:
 
-Precision
+Visualization
 ~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.average_precision
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-Functional
-~~~~~~~~~~~~~~~~~~~~~~
-.. automodule:: catalyst.utils.metrics.functional
+.. automodule:: catalyst.contrib.utils.visualization
     :members:
     :undoc-members:
     :show-inheritance:

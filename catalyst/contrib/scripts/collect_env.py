@@ -1,5 +1,4 @@
 # flake8: noqa
-# @TODO: code formatting issue for 20.07 release
 """
 This script outputs relevant system environment info.
 Diagnose your system and show basic information.
@@ -87,10 +86,7 @@ def parse_args():
 def run(command):
     """Returns (return-code, stdout, stderr)"""
     p = subprocess.Popen(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        shell=True,  # noqa: S602
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True,  # noqa: S602
     )
     output, err = p.communicate()
     rc = p.returncode
@@ -101,9 +97,7 @@ def run(command):
 
 
 def run_and_read_all(run_lambda, command):
-    """
-    Runs command using run_lambda; reads and returns entire output if rc is 0
-    """
+    """Runs command using run_lambda; reads and returns entire output if rc is 0"""
     rc, out, _ = run_lambda(command)
     if rc != 0:
         return None
@@ -111,9 +105,7 @@ def run_and_read_all(run_lambda, command):
 
 
 def run_and_parse_first_match(run_lambda, command, regex):
-    """
-    Runs command using run_lambda, returns the first regex match if it exists
-    """
+    """Runs command using run_lambda, returns the first regex match if it exists"""
     rc, out, _ = run_lambda(command)
     if rc != 0:
         return None
@@ -151,22 +143,16 @@ def get_gcc_version(run_lambda):
 
 def get_cmake_version(run_lambda):
     """Returns cmake version"""
-    return run_and_parse_first_match(
-        run_lambda, "cmake --version", r"cmake (.*)"
-    )
+    return run_and_parse_first_match(run_lambda, "cmake --version", r"cmake (.*)")
 
 
 def get_nvidia_driver_version(run_lambda):
     """Returns nvidia driver version"""
     if get_platform() == "darwin":
         cmd = "kextstat | grep -i cuda"
-        return run_and_parse_first_match(
-            run_lambda, cmd, r"com[.]nvidia[.]CUDA [(](.*?)[)]"
-        )
+        return run_and_parse_first_match(run_lambda, cmd, r"com[.]nvidia[.]CUDA [(](.*?)[)]")
     smi = get_nvidia_smi()
-    return run_and_parse_first_match(
-        run_lambda, smi, r"Driver Version: (.*?) "
-    )
+    return run_and_parse_first_match(run_lambda, smi, r"Driver Version: (.*?) ")
 
 
 def get_gpu_info(run_lambda):
@@ -190,10 +176,7 @@ def get_running_cuda_version(run_lambda):
 
 
 def get_cudnn_version(run_lambda):
-    """
-    This will return a list of libcudnn.so;
-    it"s hard to tell which one is being used
-    """
+    """This will return a list of libcudnn.so; it"s hard to tell which one is being used"""
     if get_platform() == "win32":
         cudnn_cmd = "where /R '%CUDA_PATH%\\bin' cudnn*.dll"  # noqa: WPS342
     elif get_platform() == "darwin":
@@ -232,8 +215,7 @@ def get_nvidia_smi():
     smi = "nvidia-smi"
     if get_platform() == "win32":
         smi = (
-            "'C:\\Program Files\\NVIDIA Corporation\\NVSMI\\%s'"  # noqa: WPS342, W505, E501
-            % smi
+            "'C:\\Program Files\\NVIDIA Corporation\\NVSMI\\%s'" % smi  # noqa: WPS342, W505, E501
         )
     return smi
 
@@ -254,36 +236,26 @@ def get_platform():
 
 def get_mac_version(run_lambda):
     """Returns Mac version"""
-    return run_and_parse_first_match(
-        run_lambda, "sw_vers -productVersion", r"(.*)"
-    )
+    return run_and_parse_first_match(run_lambda, "sw_vers -productVersion", r"(.*)")
 
 
 def get_windows_version(run_lambda):
     """Returns windows version"""
-    return run_and_read_all(
-        run_lambda, "wmic os get Caption | findstr /v Caption"
-    )
+    return run_and_read_all(run_lambda, "wmic os get Caption | findstr /v Caption")
 
 
 def get_lsb_version(run_lambda):
     """Returns lsb version"""
-    return run_and_parse_first_match(
-        run_lambda, "lsb_release -a", r"Description:\t(.*)"
-    )
+    return run_and_parse_first_match(run_lambda, "lsb_release -a", r"Description:\t(.*)")
 
 
 def check_release_file(run_lambda):
     """Checks release file"""
-    return run_and_parse_first_match(
-        run_lambda, "cat /etc/*-release", r"PRETTY_NAME='(.*)'"
-    )
+    return run_and_parse_first_match(run_lambda, "cat /etc/*-release", r"PRETTY_NAME='(.*)'")
 
 
 def get_os(run_lambda):
-    """
-    Returns OS info.
-    """
+    """Returns OS info."""
     platform = get_platform()
 
     if platform == "win32" or platform == "cygwin":
@@ -313,23 +285,14 @@ def get_os(run_lambda):
 
 
 def get_pip_packages(run_lambda):
-    """
-    Returns `pip list` output. Note: will also find conda-installed pytorch
-    and numpy packages.
-    """
+    """Returns `pip list` output. Note: also finds conda-installed pytorch and numpy packages."""
     # People generally have `pip` as `pip` or `pip3`
     def run_with_pip(pip):
         if get_platform() == "win32":
-            grep_cmd = (
-                r"findstr /R 'numpy torch catalyst tensorflow tensorboard'"
-            )
+            grep_cmd = r"findstr /R 'numpy torch catalyst tensorflow tensorboard'"
         else:
-            grep_cmd = (
-                r"grep 'torch\|numpy\|catalyst\|tensorflow\|tensorboard'"
-            )
-        return run_and_read_all(
-            run_lambda, pip + " list --format=freeze | " + grep_cmd
-        )
+            grep_cmd = r"grep 'torch\|numpy\|catalyst\|tensorflow\|tensorboard'"
+        return run_and_read_all(run_lambda, pip + " list --format=freeze | " + grep_cmd)
 
     # Try to figure out if the user is running pip or pip3.
     out2 = run_with_pip("pip")
@@ -360,15 +323,11 @@ def get_env_info():
         cuda_available_str = torch.cuda.is_available()
         cuda_version_str = torch.version.cuda
     else:
-        version_str = (
-            debug_mode_str
-        ) = cuda_available_str = cuda_version_str = "N/A"
+        version_str = debug_mode_str = cuda_available_str = cuda_version_str = "N/A"
 
     catalyst_str = catalyst.__version__ if CATALYST_AVAILABLE else "N/A"
     tensorflow_str = tensorflow.__version__ if TENSORFLOW_AVAILABLE else "N/A"
-    tensorboard_str = (
-        tensorboard.__version__ if TENSORBOARD_AVAILABLE else "N/A"
-    )
+    tensorboard_str = tensorboard.__version__ if TENSORBOARD_AVAILABLE else "N/A"
 
     return SystemEnv(
         catalyst_version=catalyst_str,
@@ -376,9 +335,7 @@ def get_env_info():
         is_debug_build=debug_mode_str,
         tensorflow_version=tensorflow_str,
         tensorboard_version=tensorboard_str,
-        python_version="{}.{}".format(
-            sys.version_info[0], sys.version_info[1]
-        ),
+        python_version="{}.{}".format(sys.version_info[0], sys.version_info[1]),
         is_cuda_available=cuda_available_str,
         cuda_compiled_version=cuda_version_str,
         cuda_runtime_version=get_running_cuda_version(run_lambda),
@@ -456,9 +413,7 @@ def pretty_str(envinfo):  # noqa: C901
     mutable_dict = envinfo._asdict()  # noqa: WPS437
 
     # If nvidia_gpu_models is multiline, start on the next line
-    mutable_dict["nvidia_gpu_models"] = maybe_start_on_next_line(
-        envinfo.nvidia_gpu_models
-    )
+    mutable_dict["nvidia_gpu_models"] = maybe_start_on_next_line(envinfo.nvidia_gpu_models)
 
     # If the machine doesn"t have CUDA, report some fields as "No CUDA"
     dynamic_cuda_fields = [
@@ -470,11 +425,7 @@ def pretty_str(envinfo):  # noqa: C901
     all_dynamic_cuda_fields_missing = all(
         mutable_dict[field] is None for field in dynamic_cuda_fields
     )
-    if (
-        TORCH_AVAILABLE
-        and not torch.cuda.is_available()
-        and all_dynamic_cuda_fields_missing
-    ):
+    if TORCH_AVAILABLE and not torch.cuda.is_available() and all_dynamic_cuda_fields_missing:
         for field in all_cuda_fields:
             mutable_dict[field] = "No CUDA"
         if envinfo.cuda_compiled_version is None:
@@ -487,12 +438,8 @@ def pretty_str(envinfo):  # noqa: C901
     mutable_dict = replace_nones(mutable_dict)
 
     # If either of these are "", replace with "No relevant packages"
-    mutable_dict["pip_packages"] = replace_if_empty(
-        mutable_dict["pip_packages"]
-    )
-    mutable_dict["conda_packages"] = replace_if_empty(
-        mutable_dict["conda_packages"]
-    )
+    mutable_dict["pip_packages"] = replace_if_empty(mutable_dict["pip_packages"])
+    mutable_dict["conda_packages"] = replace_if_empty(mutable_dict["conda_packages"])
 
     # Tag conda and pip packages with a prefix
     # If they were previously None,
@@ -502,9 +449,7 @@ def pretty_str(envinfo):  # noqa: C901
             mutable_dict["pip_packages"], "[{}] ".format(envinfo.pip_version)
         )
     if mutable_dict["conda_packages"]:
-        mutable_dict["conda_packages"] = prepend(
-            mutable_dict["conda_packages"], "[conda] "
-        )
+        mutable_dict["conda_packages"] = prepend(mutable_dict["conda_packages"], "[conda] ")
     return env_info_fmt.format(**mutable_dict)
 
 

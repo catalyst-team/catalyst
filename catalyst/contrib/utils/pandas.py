@@ -1,24 +1,136 @@
 # flake8: noqa
-# TODO: add docs and refactor for pure contrib
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from collections import defaultdict
+import glob
+import itertools
+import os
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.utils import shuffle
-from tqdm.auto import tqdm
 
-from catalyst.contrib.utils.misc import args_are_not_none
+from catalyst.utils.misc import args_are_not_none
 
-tqdm.pandas()
+DictDataset = Dict[str, List[Any]]
+
+
+def create_dataset(
+    dirs: str,
+    extension: str = None,
+    process_fn: Callable[[str], object] = None,
+    recursive: bool = False,
+) -> DictDataset:
+    """
+    Create dataset (dict like `{key: [values]}`) from vctk-like dataset::
+
+        dataset/
+            cat/
+                *.ext
+            dog/
+                *.ext
+
+    Args:
+        dirs: path to dirs, for example /home/user/data/**
+        extension: data extension you are looking for
+        process_fn (Callable[[str], object]): function(path_to_file) -> object
+            process function for found files, by default
+        recursive: enables recursive globbing
+
+    Returns:
+        dict: dataset
+    """
+    extension = extension or "*"
+    dataset = defaultdict(list)
+
+    dirs = [os.path.expanduser(k) for k in dirs.strip().split()]
+    dirs = itertools.chain(*(glob.glob(d) for d in dirs))
+    dirs = [d for d in dirs if os.path.isdir(d)]
+
+    for d in sorted(dirs):
+        label = os.path.basename(d.rstrip("/"))
+        pathname = d + ("/**/" if recursive else "/") + extension
+        files = glob.iglob(pathname, recursive=recursive)
+        files = sorted(filter(os.path.isfile, files))
+        if process_fn is None:
+            dataset[label].extend(files)
+        else:
+            dataset[label].extend([process_fn(x) for x in files])
+
+    return dataset
+
+
+def split_dataset_train_test(
+    dataset: pd.DataFrame, **train_test_split_args
+) -> Tuple[DictDataset, DictDataset]:
+    """Split dataset in train and test parts.
+
+    Args:
+        dataset: dict like dataset
+        **train_test_split_args:
+            test_size : float, int, or None (default is None)
+                If float, should be between 0.0 and 1.0 and represent the
+                proportion of the dataset to include in the test split. If
+                int, represents the absolute number of test samples. If None,
+                the value is automatically set
+                to the complement of the train size.
+                If train size is also None, test size is set to 0.25.
+
+            train_size : float, int, or None (default is None)
+                If float, should be between 0.0 and 1.0 and represent the
+                proportion of the dataset to include in the train split. If
+                int, represents the absolute number of train samples. If None,
+                the value is automatically set
+                to the complement of the test size.
+
+            random_state : int or RandomState
+                Pseudo-random number generator state used for random sampling.
+
+            stratify : array-like or None (default is None)
+                If not None, data is split in a stratified fashion,
+                using this as the class labels.
+
+    Returns:
+        train and test dicts
+    """
+    train_dataset = defaultdict(list)
+    test_dataset = defaultdict(list)
+    for key, value in dataset.items():
+        train_ids, test_ids = train_test_split(range(len(value)), **train_test_split_args)
+        train_dataset[key].extend([value[i] for i in train_ids])
+        test_dataset[key].extend([value[i] for i in test_ids])
+    return train_dataset, test_dataset
+
+
+def create_dataframe(dataset: DictDataset, **dataframe_args) -> pd.DataFrame:
+    """Create pd.DataFrame from dict like `{key: [values]}`.
+
+    Args:
+        dataset: dict like `{key: [values]}`
+        **dataframe_args:
+            index : Index or array-like
+                Index to use for resulting frame.
+                Will default to np.arange(n) if no indexing information
+                part of input data and no index provided
+            columns : Index or array-like
+                Column labels to use for resulting frame. Will default to
+                np.arange(n) if no column labels are provided
+            dtype : dtype, default None
+                Data type to force, otherwise infer
+
+    Returns:
+        pd.DataFrame: dataframe from giving dataset
+    """
+    data = [(key, value) for key, values in dataset.items() for value in values]
+    df = pd.DataFrame(data, **dataframe_args)
+    return df
 
 
 def dataframe_to_list(dataframe: pd.DataFrame) -> List[dict]:
     """Converts dataframe to a list of rows (without indexes).
 
     Args:
-        dataframe (DataFrame): input dataframe
+        dataframe: input dataframe
 
     Returns:
         List[dict]: list of rows
@@ -120,10 +232,7 @@ def split_dataframe_on_folds(
 
 
 def split_dataframe_on_stratified_folds(
-    dataframe: pd.DataFrame,
-    class_column: str,
-    random_state: int = 42,
-    n_folds: int = 5,
+    dataframe: pd.DataFrame, class_column: str, random_state: int = 42, n_folds: int = 5,
 ) -> pd.DataFrame:
     """Splits DataFrame into `N` stratified folds.
 
@@ -132,29 +241,22 @@ def split_dataframe_on_stratified_folds(
     Args:
         dataframe: a dataset
         class_column: which column to use for split
-        random_state (int): seed for random shuffle
+        random_state: seed for random shuffle
         n_folds: number of result folds
 
     Returns:
         pd.DataFrame: new dataframe with `fold` column
     """
-    skf = StratifiedKFold(
-        n_splits=n_folds, shuffle=True, random_state=random_state
-    )
+    skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=random_state)
     fold_column = np.zeros(len(dataframe), dtype=int)
-    for i, (_, test_index) in enumerate(
-        skf.split(range(len(dataframe)), dataframe[class_column])
-    ):
+    for i, (_, test_index) in enumerate(skf.split(range(len(dataframe)), dataframe[class_column])):
         fold_column[test_index] = i
     dataframe["fold"] = fold_column
     return dataframe
 
 
 def split_dataframe_on_column_folds(
-    dataframe: pd.DataFrame,
-    column: str,
-    random_state: int = 42,
-    n_folds: int = 5,
+    dataframe: pd.DataFrame, column: str, random_state: int = 42, n_folds: int = 5,
 ) -> pd.DataFrame:
     """Splits DataFrame into `N` folds.
 
@@ -168,9 +270,7 @@ def split_dataframe_on_column_folds(
         pd.DataFrame: new dataframe with `fold` column
     """
     df_tmp = []
-    labels = shuffle(
-        sorted(dataframe[column].unique()), random_state=random_state
-    )
+    labels = shuffle(sorted(dataframe[column].unique()), random_state=random_state)
     for i, fold_labels in enumerate(np.array_split(labels, n_folds)):
         df_label = dataframe[dataframe[column].isin(fold_labels)]
         df_label["fold"] = i
@@ -190,8 +290,8 @@ def map_dataframe(
     ``class_column`` using ``tag2class`` dictionary.
 
     Args:
-        dataframe (pd.DataFrame): input dataframe
-        tag_column (str): column with tags
+        dataframe: input dataframe
+        tag_column: column with tags
         class_column (str) output column with classes
         tag2class (Dict[str, int]): mapping from tags to class labels
         verbose: flag if true, uses tqdm
@@ -234,9 +334,7 @@ def separate_tags(
     return df_new
 
 
-def get_dataset_labeling(
-    dataframe: pd.DataFrame, tag_column: str
-) -> Dict[str, int]:
+def get_dataset_labeling(dataframe: pd.DataFrame, tag_column: str) -> Dict[str, int]:
     """Prepares a mapping using unique values from ``tag_column``.
 
     .. code-block:: javascript
@@ -257,9 +355,7 @@ def get_dataset_labeling(
     """
     tag_to_labels = {
         str(class_name): label
-        for label, class_name in enumerate(
-            sorted(dataframe[tag_column].unique())
-        )
+        for label, class_name in enumerate(sorted(dataframe[tag_column].unique()))
     }
     return tag_to_labels
 
@@ -278,8 +374,8 @@ def split_dataframe(
     """Split a Pandas DataFrame into folds.
 
     Args:
-        dataframe (pd.DataFrame): input dataframe
-        train_folds (List[int]): train folds
+        dataframe: input dataframe
+        train_folds: train folds
         valid_folds (List[int], optional): valid folds.
             If none takes all folds not included in ``train_folds``
         infer_folds (List[int], optional): infer folds.
@@ -288,231 +384,211 @@ def split_dataframe(
         tag2class (Dict[str, int], optional): mapping from label names into int
         tag_column (str, optional): column with label names
         class_column (str, optional): column to use for split
-        seed (int): seed for split
-        n_folds (int): number of folds
+        seed: seed for split
+        n_folds: number of folds
 
     Returns:
         tuple: tuple with 4 dataframes
             whole dataframe, train part, valid part and infer part
     """
     if args_are_not_none(tag2class, tag_column, class_column):
-        dataframe = map_dataframe(
-            dataframe, tag_column, class_column, tag2class
-        )
+        dataframe = map_dataframe(dataframe, tag_column, class_column, tag2class)
 
     if class_column is not None:
-        result_dataframe = split_dataframe_on_stratified_folds(
-            dataframe,
-            class_column=class_column,
-            random_state=seed,
-            n_folds=n_folds,
+        df_all = split_dataframe_on_stratified_folds(
+            dataframe, class_column=class_column, random_state=seed, n_folds=n_folds,
         )
     else:
-        result_dataframe = split_dataframe_on_folds(
-            dataframe, random_state=seed, n_folds=n_folds
-        )
+        df_all = split_dataframe_on_folds(dataframe, random_state=seed, n_folds=n_folds)
 
-    fold_series = result_dataframe["fold"]
+    fold_series = df_all["fold"]
 
     train_folds = folds_to_list(train_folds)
-    df_train = result_dataframe[fold_series.isin(train_folds)]
+    df_train = df_all[fold_series.isin(train_folds)]
 
     if valid_folds is None:
         mask = ~fold_series.isin(train_folds)
-        valid_folds = result_dataframe[mask]["fold"]
+        valid_folds = df_all[mask]["fold"]
 
     valid_folds = folds_to_list(valid_folds)
-    df_valid = result_dataframe[fold_series.isin(valid_folds)]
+    df_valid = df_all[fold_series.isin(valid_folds)]
 
     infer_folds = folds_to_list(infer_folds or [])
-    df_infer = result_dataframe[fold_series.isin(infer_folds)]
+    df_infer = df_all[fold_series.isin(infer_folds)]
 
-    return result_dataframe, df_train, df_valid, df_infer
-
-
-def merge_multiple_fold_csv(
-    fold_name: str, paths: Optional[str]
-) -> pd.DataFrame:
-    """Reads csv into one DataFrame with column ``fold``.
-
-    Args:
-        fold_name (str): current fold name
-        paths (str): paths to csv separated by commas
-
-    Returns:
-         pd.DataFrame: merged dataframes with column ``fold`` == ``fold_name``
-    """
-    result = pd.DataFrame()
-    if paths is not None:
-        for csv_path in paths.split(","):
-            dataframe = pd.read_csv(csv_path)
-            dataframe["fold"] = fold_name
-            result = result.append(dataframe, ignore_index=True)
-
-    return result
+    return df_all, df_train, df_valid, df_infer
 
 
-def read_multiple_dataframes(
-    in_csv_train: str = None,
-    in_csv_valid: str = None,
-    in_csv_infer: str = None,
-    tag2class: Optional[Dict[str, int]] = None,
-    class_column: str = None,
-    tag_column: str = None,
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """This function reads train/valid/infer dataframes from giving paths.
-
-    Args:
-        in_csv_train (str): paths to train csv separated by commas
-        in_csv_valid (str): paths to valid csv separated by commas
-        in_csv_infer (str): paths to infer csv separated by commas
-        tag2class (Dict[str, int], optional): mapping from label names into int
-        tag_column (str, optional): column with label names
-        class_column (str, optional): column to use for split
-
-    Returns:
-        tuple: tuple with 4 dataframes
-            whole dataframe, train part, valid part and infer part
-    """
-    assert any(
-        x is not None for x in (in_csv_train, in_csv_valid, in_csv_infer)
-    )
-
-    result_df = None
-    fold_dfs = {}
-    for fold_df, fold_name in zip(
-        (in_csv_train, in_csv_valid, in_csv_infer), ("train", "valid", "infer")
-    ):
-        if fold_df is not None:
-            fold_df = merge_multiple_fold_csv(
-                fold_name=fold_name, paths=fold_df
-            )
-            if args_are_not_none(tag2class, tag_column, class_column):
-                fold_df = map_dataframe(
-                    fold_df, tag_column, class_column, tag2class
-                )
-            fold_dfs[fold_name] = fold_df
-
-            result_df = (
-                fold_df
-                if result_df is None
-                else result_df.append(fold_df, ignore_index=True)
-            )
-
-    output = (
-        result_df,
-        fold_dfs.get("train", None),
-        fold_dfs.get("valid", None),
-        fold_dfs.get("infer", None),
-    )
-
-    return output
+# def merge_multiple_fold_csv(fold_name: str, paths: Optional[str]) -> pd.DataFrame:
+#     """Reads csv into one DataFrame with column ``fold``.
+#
+#     Args:
+#         fold_name: current fold name
+#         paths: paths to csv separated by commas
+#
+#     Returns:
+#          pd.DataFrame: merged dataframes with column ``fold`` == ``fold_name``
+#     """
+#     result = pd.DataFrame()
+#     if paths is not None:
+#         for csv_path in paths.split(","):
+#             dataframe = pd.read_csv(csv_path)
+#             dataframe["fold"] = fold_name
+#             result = result.append(dataframe, ignore_index=True)
+#
+#     return result
 
 
-def read_csv_data(
-    in_csv: str = None,
-    train_folds: Optional[List[int]] = None,
-    valid_folds: Optional[List[int]] = None,
-    infer_folds: Optional[List[int]] = None,
-    seed: int = 42,
-    n_folds: int = 5,
-    in_csv_train: str = None,
-    in_csv_valid: str = None,
-    in_csv_infer: str = None,
-    tag2class: Optional[Dict[str, int]] = None,
-    class_column: str = None,
-    tag_column: str = None,
-) -> Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]:
-    """
-    From giving path ``in_csv`` reads a dataframe
-    and split it to train/valid/infer folds
-    or from several paths ``in_csv_train``, ``in_csv_valid``, ``in_csv_infer``
-    reads independent folds.
+# def read_multiple_dataframes(
+#     in_csv_train: str = None,
+#     in_csv_valid: str = None,
+#     in_csv_infer: str = None,
+#     tag2class: Optional[Dict[str, int]] = None,
+#     class_column: str = None,
+#     tag_column: str = None,
+# ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+#     """This function reads train/valid/infer dataframes from giving paths.
+#
+#     Args:
+#         in_csv_train: paths to train csv separated by commas
+#         in_csv_valid: paths to valid csv separated by commas
+#         in_csv_infer: paths to infer csv separated by commas
+#         tag2class (Dict[str, int], optional): mapping from label names into int
+#         tag_column (str, optional): column with label names
+#         class_column (str, optional): column to use for split
+#
+#     Returns:
+#         tuple: tuple with 4 dataframes
+#             whole dataframe, train part, valid part and infer part
+#     """
+#     assert any(x is not None for x in (in_csv_train, in_csv_valid, in_csv_infer))
+#
+#     result_df = None
+#     fold_dfs = {}
+#     for fold_df, fold_name in zip(
+#         (in_csv_train, in_csv_valid, in_csv_infer), ("train", "valid", "infer")
+#     ):
+#         if fold_df is not None:
+#             fold_df = merge_multiple_fold_csv(fold_name=fold_name, paths=fold_df)
+#             if args_are_not_none(tag2class, tag_column, class_column):
+#                 fold_df = map_dataframe(fold_df, tag_column, class_column, tag2class)
+#             fold_dfs[fold_name] = fold_df
+#
+#             result_df = (
+#                 fold_df if result_df is None else result_df.append(fold_df, ignore_index=True)
+#             )
+#
+#     output = (
+#         result_df,
+#         fold_dfs.get("train", None),
+#         fold_dfs.get("valid", None),
+#         fold_dfs.get("infer", None),
+#     )
+#
+#     return output
 
-    .. note::
-       This function can be used with different combinations of params.
-        First block is used to get dataset from one `csv`:
-            in_csv, train_folds, valid_folds, infer_folds, seed, n_folds
-        Second includes paths to different csv for train/valid and infer parts:
-            in_csv_train, in_csv_valid, in_csv_infer
-        The other params (tag2class, tag_column, class_column) are optional
-            for any previous block
 
-    Args:
-        in_csv (str): paths to whole dataset
-        train_folds (List[int]): train folds
-        valid_folds (List[int], optional): valid folds.
-            If none takes all folds not included in ``train_folds``
-        infer_folds (List[int], optional): infer folds.
-            If none takes all folds not included in ``train_folds``
-            and ``valid_folds``
-        seed (int): seed for split
-        n_folds (int): number of folds
-
-        in_csv_train (str): paths to train csv separated by commas
-        in_csv_valid (str): paths to valid csv separated by commas
-        in_csv_infer (str): paths to infer csv separated by commas
-
-        tag2class (Dict[str, int]): mapping from label names into ints
-        tag_column (str): column with label names
-        class_column (str): column to use for split
-
-    Returns:
-        Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]:
-            tuple with 4 elements
-            (whole dataframe,
-            list with train data,
-            list with valid data
-            and list with infer data)
-    """
-    from_one_df: bool = in_csv is not None
-    from_multiple_df: bool = (
-        in_csv_train is not None
-        or in_csv_valid is not None
-        or in_csv_infer is not None
-    )
-
-    if from_one_df == from_multiple_df:
-        raise ValueError(
-            "You should pass `in_csv` "
-            "or `in_csv_train` with `in_csv_valid` but not both!"
-        )
-
-    if from_one_df:
-        dataframe: pd.DataFrame = pd.read_csv(in_csv)
-        dataframe, df_train, df_valid, df_infer = split_dataframe(
-            dataframe,
-            train_folds=train_folds,
-            valid_folds=valid_folds,
-            infer_folds=infer_folds,
-            tag2class=tag2class,
-            class_column=class_column,
-            tag_column=tag_column,
-            seed=seed,
-            n_folds=n_folds,
-        )
-    else:
-        dataframe, df_train, df_valid, df_infer = read_multiple_dataframes(
-            in_csv_train=in_csv_train,
-            in_csv_valid=in_csv_valid,
-            in_csv_infer=in_csv_infer,
-            tag2class=tag2class,
-            class_column=class_column,
-            tag_column=tag_column,
-        )
-
-    for data in [df_train, df_valid, df_infer]:
-        if data is not None and "fold" in data.columns:
-            del data["fold"]
-
-    result = (
-        dataframe,
-        dataframe_to_list(df_train) if df_train is not None else None,
-        dataframe_to_list(df_valid) if df_valid is not None else None,
-        dataframe_to_list(df_infer) if df_infer is not None else None,
-    )
-
-    return result
+# def read_csv_data(
+#     in_csv: str = None,
+#     train_folds: Optional[List[int]] = None,
+#     valid_folds: Optional[List[int]] = None,
+#     infer_folds: Optional[List[int]] = None,
+#     seed: int = 42,
+#     n_folds: int = 5,
+#     in_csv_train: str = None,
+#     in_csv_valid: str = None,
+#     in_csv_infer: str = None,
+#     tag2class: Optional[Dict[str, int]] = None,
+#     class_column: str = None,
+#     tag_column: str = None,
+# ) -> Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]:
+#     """
+#     From giving path ``in_csv`` reads a dataframe
+#     and split it to train/valid/infer folds
+#     or from several paths ``in_csv_train``, ``in_csv_valid``, ``in_csv_infer``
+#     reads independent folds.
+#
+#     .. note::
+#        This function can be used with different combinations of params.
+#         First block is used to get dataset from one `csv`:
+#             in_csv, train_folds, valid_folds, infer_folds, seed, n_folds
+#         Second includes paths to different csv for train/valid and infer parts:
+#             in_csv_train, in_csv_valid, in_csv_infer
+#         The other params (tag2class, tag_column, class_column) are optional
+#             for any previous block
+#
+#     Args:
+#         in_csv: paths to whole dataset
+#         train_folds: train folds
+#         valid_folds (List[int], optional): valid folds.
+#             If none takes all folds not included in ``train_folds``
+#         infer_folds (List[int], optional): infer folds.
+#             If none takes all folds not included in ``train_folds``
+#             and ``valid_folds``
+#         seed: seed for split
+#         n_folds: number of folds
+#
+#         in_csv_train: paths to train csv separated by commas
+#         in_csv_valid: paths to valid csv separated by commas
+#         in_csv_infer: paths to infer csv separated by commas
+#
+#         tag2class (Dict[str, int]): mapping from label names into ints
+#         tag_column: column with label names
+#         class_column: column to use for split
+#
+#     Returns:
+#         Tuple[pd.DataFrame, List[dict], List[dict], List[dict]]:
+#             tuple with 4 elements
+#             (whole dataframe,
+#             list with train data,
+#             list with valid data
+#             and list with infer data)
+#     """
+#     from_one_df: bool = in_csv is not None
+#     from_multiple_df: bool = (
+#         in_csv_train is not None or in_csv_valid is not None or in_csv_infer is not None
+#     )
+#
+#     if from_one_df == from_multiple_df:
+#         raise ValueError(
+#             "You should pass `in_csv` " "or `in_csv_train` with `in_csv_valid` but not both!"
+#         )
+#
+#     if from_one_df:
+#         dataframe: pd.DataFrame = pd.read_csv(in_csv)
+#         dataframe, df_train, df_valid, df_infer = split_dataframe(
+#             dataframe,
+#             train_folds=train_folds,
+#             valid_folds=valid_folds,
+#             infer_folds=infer_folds,
+#             tag2class=tag2class,
+#             class_column=class_column,
+#             tag_column=tag_column,
+#             seed=seed,
+#             n_folds=n_folds,
+#         )
+#     else:
+#         dataframe, df_train, df_valid, df_infer = read_multiple_dataframes(
+#             in_csv_train=in_csv_train,
+#             in_csv_valid=in_csv_valid,
+#             in_csv_infer=in_csv_infer,
+#             tag2class=tag2class,
+#             class_column=class_column,
+#             tag_column=tag_column,
+#         )
+#
+#     for data in [df_train, df_valid, df_infer]:
+#         if data is not None and "fold" in data.columns:
+#             del data["fold"]
+#
+#     result = (
+#         dataframe,
+#         dataframe_to_list(df_train) if df_train is not None else None,
+#         dataframe_to_list(df_valid) if df_valid is not None else None,
+#         dataframe_to_list(df_infer) if df_infer is not None else None,
+#     )
+#
+#     return result
 
 
 def balance_classes(
@@ -528,7 +604,7 @@ def balance_classes(
     Args:
         dataframe: a dataset
         class_column: which column to use for split
-        random_state (int): seed for random shuffle
+        random_state: seed for random shuffle
         how: strategy to sample, must be one on ["downsampling", "upsampling"]
 
     Returns:
@@ -558,17 +634,13 @@ def balance_classes(
                     replace=True,
                     random_state=random_state,
                 )
-                balanced_dfs[label] = pd.concat(
-                    (df_class_column, df_class_column_additional)
-                )
+                balanced_dfs[label] = pd.concat((df_class_column, df_class_column_additional))
     elif how == "downsampling":
         samples_per_class = min(cnt.values())
 
         balanced_dfs = {}
         for label in sorted(dataframe[class_column].unique()):
-            balanced_dfs[label] = dataframe[
-                dataframe[class_column] == label
-            ].sample(
+            balanced_dfs[label] = dataframe[dataframe[class_column] == label].sample(
                 samples_per_class, replace=False, random_state=random_state
             )
     else:
@@ -588,10 +660,10 @@ __all__ = [
     "split_dataframe_on_stratified_folds",
     "split_dataframe_train_test",
     "separate_tags",
-    "read_multiple_dataframes",
     "map_dataframe",
     "get_dataset_labeling",
-    "merge_multiple_fold_csv",
-    "read_csv_data",
     "balance_classes",
+    "create_dataset",
+    "create_dataframe",
+    "split_dataset_train_test",
 ]
