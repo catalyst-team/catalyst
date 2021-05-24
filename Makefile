@@ -1,38 +1,47 @@
-.PHONY: check-docs docker docker-fp16 docker-dev docker-dev-fp16 install-from-source clean
+.PHONY: check-docs docker docker-apex docker-dev docker-apex-dev install-from-source clean
+
+PYTHON ?= python
+TAG=$(shell ${PYTHON} docker/collect_dependencies_hash.py)
 
 check-docs:
 	bash ./bin/workflows/check_docs.sh
 
-docker: ./requirements/
-	echo building $${REPO_NAME:-catalyst-base}:$${TAG:-latest} ...
+docker:
+	echo building $${REPO_NAME:-catalyst}:$${TAG:-latest} ...
 	docker build \
-		-t $${REPO_NAME:-catalyst-base}:$${TAG:-latest} . \
-		-f ./docker/Dockerfile --no-cache
+		-t $${REPO_NAME:-catalyst}:$${TAG:-latest} . \
+		-f ./docker/Dockerfile --no-cache \
+		--build-arg PYTORCH_TAG=$$PYTORCH_TAG \
+		--build-arg CATALYST_APEX=$$CATALYST_APEX \
+		--build-arg CATALYST_DEV=$$CATALYST_DEV \
+		--build-arg CATALYST_CV=$$CATALYST_CV \
+		--build-arg CATALYST_ML=$$CATALYST_ML \
+		--build-arg CATALYST_HYDRA=$$CATALYST_HYDRA \
+		--build-arg CATALYST_OPTUNA=$$CATALYST_OPTUNA \
+		--build-arg CATALYST_ONNX=$$CATALYST_ONNX \
+		--build-arg CATALYST_ONNX_GPU=$$CATALYST_ONNX_GPU
 
-docker-fp16: ./requirements/
-	echo building $${REPO_NAME:-catalyst-base-fp16}:$${TAG:-latest} ...
-	docker build \
-		-t $${REPO_NAME:-catalyst-base-fp16}:$${TAG:-latest} . \
-		-f ./docker/Dockerfile-fp16 --no-cache
-
-docker-dev: ./requirements/
+docker-dev:
 	echo building $${REPO_NAME:-catalyst-dev}:$${TAG:-latest} ...
 	docker build \
 		-t $${REPO_NAME:-catalyst-dev}:$${TAG:-latest} . \
-		-f ./docker/Dockerfile-dev --no-cache
-
-docker-dev-fp16: ./requirements/
-	echo building $${REPO_NAME:-catalyst-dev-fp16}:$${TAG:-latest} ...
-	docker build \
-		-t $${REPO_NAME:-catalyst-dev-fp16}:$${TAG:-latest} . \
-		-f ./docker/Dockerfile-dev-fp16 --no-cache
+		-f ./docker/Dockerfile --no-cache \
+		--build-arg PYTORCH_TAG=$$PYTORCH_TAG \
+		--build-arg CATALYST_APEX=$$CATALYST_APEX \
+		--build-arg CATALYST_DEV=$$CATALYST_DEV \
+		--build-arg CATALYST_CV=$$CATALYST_CV \
+		--build-arg CATALYST_ML=$$CATALYST_ML \
+		--build-arg CATALYST_HYDRA=$$CATALYST_HYDRA \
+		--build-arg CATALYST_OPTUNA=$$CATALYST_OPTUNA \
+		--build-arg CATALYST_ONNX=$$CATALYST_ONNX \
+		--build-arg CATALYST_ONNX_GPU=$$CATALYST_ONNX_GPU
 
 install-from-source:
 	pip uninstall catalyst -y && pip install -e ./
 
 clean:
 	rm -rf build/
-	docker rmi -f catalyst-base:latest
-	docker rmi -f catalyst-base-fp16:latest
-	docker rmi -f catalyst-dev:latest
-	docker rmi -f catalyst-dev-fp16:latest
+	docker rmi -f catalyst:latest
+	docker rmi -f catalyst-apex:latest
+	docker rmi -f catalyst-apex-dev:latest
+	docker rmi -f catalyst-apex-dev-fp16:latest
