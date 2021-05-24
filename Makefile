@@ -1,4 +1,4 @@
-.PHONY: check-docs docker docker-apex docker-dev docker-apex-dev install-from-source clean
+.PHONY: check-docs docker docker-dev install-from-source clean
 
 PYTHON ?= python
 TAG=$(shell ${PYTHON} docker/collect_dependencies_hash.py)
@@ -42,6 +42,4 @@ install-from-source:
 clean:
 	rm -rf build/
 	docker rmi -f catalyst:latest
-	docker rmi -f catalyst-apex:latest
-	docker rmi -f catalyst-apex-dev:latest
-	docker rmi -f catalyst-apex-dev-fp16:latest
+	docker rmi -f catalyst-dev:latest
