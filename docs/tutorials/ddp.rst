@@ -20,35 +20,40 @@ For instance, here is a minimal script that trains a linear regression model.
     from torch.utils.data import DataLoader, TensorDataset
     from catalyst.dl import SupervisedRunner
 
-    # experiment setup
-    logdir = "./logdir"
-    num_epochs = 8
+    if __name__ == "__main__":
+        # experiment setup
+        logdir = "./logdir1"
+        num_epochs = 1
 
-    # data
-    num_samples, num_features = int(1e4), int(1e1)
-    X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
-    dataset = TensorDataset(X, y)
-    loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {"train": loader, "valid": loader}
+        # data
+        num_samples, num_features = int(1e4), int(1e1)
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
 
-    # model, criterion, optimizer, scheduler
-    model = torch.nn.Linear(num_features, 1)
-    criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters())
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
 
-    # model training
-    runner = SupervisedRunner()
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        scheduler=scheduler,
-        loaders=loaders,
-        logdir=logdir,
-        num_epochs=num_epochs,
-        verbose=True,
-    )
+        # model training
+        runner = SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir=logdir,
+            num_epochs=num_epochs,
+            verbose=True,
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+        )
+
 
 Stage 1 - 1 line ddp
 ------------------------------------------------
@@ -62,32 +67,41 @@ you can just pass ``ddp=True`` to ``.train`` call
     from torch.utils.data import DataLoader, TensorDataset
     from catalyst.dl import SupervisedRunner
 
-    # data
-    num_samples, num_features = int(1e4), int(1e1)
-    X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
-    dataset = TensorDataset(X, y)
-    loader = DataLoader(dataset, batch_size=32, num_workers=1)
-    loaders = {"train": loader, "valid": loader}
+    if __name__ == "__main__":
+        # experiment setup
+        logdir = "./logdir2"
+        num_epochs = 1
 
-    # model, criterion, optimizer, scheduler
-    model = torch.nn.Linear(num_features, 1)
-    criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters())
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+        # data
+        num_samples, num_features = int(1e4), int(1e1)
+        X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=32, num_workers=1)
+        loaders = {"train": loader, "valid": loader}
 
-    # model training
-    runner = SupervisedRunner()
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        scheduler=scheduler,
-        loaders=loaders,
-        logdir="./logs/example_1",
-        num_epochs=8,
-        verbose=True,
-        ddp=True,
-    )
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        # model training
+        runner = SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders=loaders,
+            logdir=logdir,
+            num_epochs=num_epochs,
+            verbose=True,
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            ddp=True,
+        )
+
 
 In this way Catalyst
 will try to automatically make your loaders work in distributed setup
@@ -116,30 +130,38 @@ Let's make it more reusable:
         dataset = TensorDataset(X, y)
         return {"train": dataset, "valid": dataset}
 
-    num_features = int(1e1)
-    # model, criterion, optimizer, scheduler
-    model = torch.nn.Linear(num_features, 1)
-    criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters())
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+    if __name__ == "__main__":
+        # experiment setup
+        logdir = "./logdir3"
+        num_epochs = 1
 
-    runner = SupervisedRunner()
-    runner.train(
-        model=model,
-        criterion=criterion,
-        optimizer=optimizer,
-        scheduler=scheduler,
-        loaders={
-            "batch_size": 32,
-            "num_workers": 1,
-            "datasets_fn": datasets_fn,
-            "num_features": num_features,
-        },
-        logdir="./logs/example_2",
-        num_epochs=8,
-        verbose=True,
-        ddp=True,
-    )
+        num_features = int(1e1)
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        runner = SupervisedRunner()
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            loaders={
+                "batch_size": 32,
+                "num_workers": 1,
+                "datasets_fn": datasets_fn,
+                "num_features": num_features,
+            },
+            logdir=logdir,
+            num_epochs=num_epochs,
+            verbose=True,
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            ddp=True,
+        )
 
 Advantages,
     - you don't duplicate the data - it calls when it really needed
@@ -162,19 +184,16 @@ Yup, check this one, distributed training like a pro:
 .. code-block:: python
 
     import torch
-    from torch.utils.data import DataLoader, Dataset, DistributedSampler
+    from torch.utils.data import DataLoader, TensorDataset, DistributedSampler
     from catalyst import dl, utils
 
-    num_features = int(1e1)
-    # model, criterion, optimizer, scheduler
-    model = torch.nn.Linear(num_features, 1)
-    criterion = torch.nn.MSELoss()
-    optimizer = torch.optim.Adam(model.parameters())
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
-
     class CustomSupervisedRunner(dl.SupervisedRunner):
+        def __init__(self, num_samples, num_features):
+            super().__init__()
+            self.num_samples, self.num_features = num_samples, num_features
+
         def get_loaders(self, stage: str):
-            X = torch.rand(int(1e4), num_features)
+            X = torch.rand(self.num_samples, self.num_features)
             y = torch.rand(X.shape[0])
             is_ddp = utils.get_rank() > -1
 
@@ -182,21 +201,36 @@ Yup, check this one, distributed training like a pro:
             sampler = DistributedSampler(dataset) if is_ddp else None
             loader = DataLoader(dataset=dataset, sampler=sampler, batch_size=32, num_workers=1)
 
-            return {"train": dataset, "valid": dataset}
+            return {"train": loader, "valid": loader}
 
-    if __name__ == '__main__':
-        runner = CustomSupervisedRunner()
+    if __name__ == "__main__":
+        # experiment setup
+        logdir = "./logdir4"
+        num_epochs = 1
+
+        num_samples, num_features = int(1e4), int(1e1)
+        # model, criterion, optimizer, scheduler
+        model = torch.nn.Linear(num_features, 1)
+        criterion = torch.nn.MSELoss()
+        optimizer = torch.optim.Adam(model.parameters())
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [3, 6])
+
+        runner = CustomSupervisedRunner(num_samples=num_samples, num_features=num_features)
         runner.train(
             model=model,
             criterion=criterion,
             optimizer=optimizer,
             scheduler=scheduler,
             loaders=None,  # as far as we have rewrite the loader logic already
-            logdir="./logs/example_3",
-            num_epochs=8,
+            logdir=logdir,
+            num_epochs=num_epochs,
             verbose=True,
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
             ddp=True,
         )
+
 
 Advantages,
     - you don't duplicate the data - it calls when it really needed
@@ -213,7 +247,7 @@ type the following line (adapt `script_name` to your script name ending with .py
 
     python {script_name}
 
-You can vary availble GPUs with ``CUDA_VIBIBLE_DEVICES`` option, for example,
+You can vary available GPUs with ``CUDA_VIBIBLE_DEVICES`` option, for example,
 
 .. code-block:: bash
 
