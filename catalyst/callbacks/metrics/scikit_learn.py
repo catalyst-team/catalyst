@@ -23,6 +23,9 @@ class SklearnCallback(FunctionalBatchMetricCallback):
         metric_key: key to store computed metric in ``runner.batch_metrics`` dictionary
         log_on_batch: boolean flag to log computed metrics every batch
 
+    .. note::
+            catalyst[ml] required for this callback
+
     Examples:
 
     .. code-block:: python
