@@ -62,8 +62,7 @@ class ProfilerCallback(Callback):
                 if torch.cuda.is_available():
                     print(profiler.key_averages().table(sort_by="cuda_time_total", row_limit=10))
     """
-    
-    
+
     def __init__(self, profiler=None):
         """
         Performs the profiler step for the PyTorch:1.8 profiler
