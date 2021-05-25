@@ -19,7 +19,7 @@ class ProfilerCallback(Callback):
             from catalyst.callbacks.batch_overfit import BatchOverfitCallback  # noqa
             from catalyst.callbacks.misc import TimerCallback  # noqa
             from catalyst.utils.misc import set_global_seed  # noqa
-            from profile_callback import ProfilerCallback
+            from catalyst.callbacks.profiler import ProfilerCallback  # noqa
             profiler = torch.profiler.profile(
                 profile_memory=True,
                 schedule=torch.profiler.schedule(
