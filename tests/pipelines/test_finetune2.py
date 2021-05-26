@@ -130,14 +130,11 @@ class CustomRunner(dl.IRunner):
                 input_key="logits", target_key="targets", num_classes=10
             )
             callbacks["f1_score"] = dl.SklearnBatchCallback(
-                keys={
-                    "y_pred": "labels",
-                    "y_true": "targets",
-                },
+                keys={"y_pred": "labels", "y_true": "targets",},
                 metric_fn="f1_score",
                 metric_key="sk_f1",
                 average="macro",
-                zero_division=1
+                zero_division=1,
             )
         return callbacks
 
