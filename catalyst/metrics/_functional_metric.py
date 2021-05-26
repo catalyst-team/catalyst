@@ -1,13 +1,13 @@
-from typing import Callable, Dict
+from typing import Callable, Dict, Iterable
 
 import torch
 
-from catalyst.metrics import ICallbackBatchMetric
+from catalyst.metrics import ICallbackBatchMetric, ICallbackLoaderMetric, AccumulationMetric
 from catalyst.metrics._additive import AdditiveValueMetric
 
 
 class FunctionalBatchMetric(ICallbackBatchMetric):
-    """Class for custom metrics in a functional way.
+    """Class for custom **batch-based** metrics in a functional way.
 
     Args:
         metric_fn: metric function, that get outputs, targets and return score as torch.Tensor
@@ -120,4 +120,107 @@ class FunctionalBatchMetric(ICallbackBatchMetric):
         }
 
 
-__all__ = ["FunctionalBatchMetric"]
+class FunctionalLoaderMetric(ICallbackLoaderMetric):
+    """Class for custom **loader-based** metrics in a functional way.
+
+    Args:
+        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor
+        metric_key: metric name
+        accumulative_fields: list of keys to accumulate data from batch
+        compute_on_call: if True, allows compute metric's value on call
+        prefix: metric prefix
+        suffix: metric suffix
+
+    .. note::
+
+        Metrics are calculated over all samples.
+
+    Examples:
+
+    .. code-block:: python
+
+        from functools import partial
+        import torch
+        from catalyst import metrics
+        import sklearn.metrics
+
+        targets = torch.tensor([3, 0, 2, 2, 1])
+        outputs = torch.rand((len(targets), targets.max()+1)).softmax(1)
+
+        metric = metrics.FunctionalLoaderMetric(
+            metric_fn=partial(
+                sklearn.metrics.roc_auc_score, average="macro", multi_class="ovr"
+            ),
+            metric_key="sk_auc",
+            accumulative_fields=['y_score','y_true'],
+
+        )
+        metric.reset(len(outputs), len(outputs))
+
+        metric.update(y_score=outputs, y_true=targets)
+        metric.compute()
+        # ...
+
+        metric.compute_key_value()
+        # {'sk_auc': ...}
+
+    """
+
+    def __init__(
+        self,
+        metric_fn: Callable,
+        metric_key: str,
+        accumulative_fields: Iterable[str] = None,
+        compute_on_call: bool = True,
+        prefix: str = None,
+        suffix: str = None,
+    ):
+        """Init"""
+        super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
+        self.metric_fn = metric_fn
+        self.metric_name = f"{self.prefix}{metric_key}{self.suffix}"
+        self.accumulative_metric = AccumulationMetric(
+            accumulative_fields=accumulative_fields,
+            compute_on_call=compute_on_call
+        )
+
+    def reset(self, num_batches: int, num_samples: int) -> None:
+        """
+        Reset metrics fields
+
+        Args:
+            num_batches: expected number of batches
+            num_samples: expected number of samples to accumulate
+        """
+        self.accumulative_metric.reset(num_batches, num_samples)
+
+    def update(self, **kwargs) -> None:
+        """
+        Update storage
+
+        Args:
+            **kwargs: ``self.metric_fn`` inputs to store
+        """
+        self.accumulative_metric.update(**kwargs)
+
+    def compute(self) -> torch.Tensor:
+        """
+        Get metric for the whole loader
+
+        Returns:
+            custom metric
+        """
+        stored_values = self.accumulative_metric.compute()
+        return self.metric_fn(**stored_values)
+
+    def compute_key_value(self) -> Dict[str, torch.Tensor]:
+        """
+        Get metric for the whole loader
+
+        Returns:
+            Dict with one element-custom metric
+        """
+        return {self.metric_name: self.compute()}
+
+
+__all__ = ["FunctionalBatchMetric", "FunctionalLoaderMetric"]

@@ -31,4 +31,7 @@ from catalyst.callbacks.metrics.segmentation import (
 )
 
 if SETTINGS.ml_required:
-    from catalyst.callbacks.metrics.scikit_learn import SklearnCallback
+    from catalyst.callbacks.metrics.scikit_learn import (
+        SklearnBatchCallback,
+        SklearnLoaderCallback
+    )
