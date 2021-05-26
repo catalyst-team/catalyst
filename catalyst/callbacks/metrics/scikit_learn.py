@@ -25,6 +25,9 @@ class SklearnBatchCallback(FunctionalBatchMetricCallback):
         log_on_batch: boolean flag to log computed metrics every batch
         metric_kwargs: additional parameters for ``metric_fn``
 
+    .. note::
+        catalyst[ml] required for this callback
+
     Examples:
 
     .. code-block:: python
@@ -96,9 +99,6 @@ class SklearnBatchCallback(FunctionalBatchMetricCallback):
         )
 
     .. note::
-        catalyst[ml] required for this callback
-
-    .. note::
         Please follow the `minimal examples`_ sections for more use cases.
 
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
@@ -149,6 +149,9 @@ class SklearnLoaderCallback(LoaderMetricCallback):
             in ``keys`` and returns score
         metric_key: key to store computed metric in ``runner.batch_metrics`` dictionary
         metric_kwargs: additional parameters for ``metric_fn``
+
+    .. note::
+        catalyst[ml] required for this callback
 
     Examples:
 
@@ -219,9 +222,6 @@ class SklearnLoaderCallback(LoaderMetricCallback):
                 )
             ]
         )
-
-    .. note::
-        catalyst[ml] required for this callback
 
     .. note::
         Please follow the `minimal examples`_ sections for more use cases.
