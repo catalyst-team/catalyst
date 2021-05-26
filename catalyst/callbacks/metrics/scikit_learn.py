@@ -262,3 +262,6 @@ class SklearnLoaderCallback(LoaderMetricCallback):
         for key, value in self._keys.items():
             kv_inputs[key] = runner.batch[value].cpu().detach()
         return kv_inputs
+
+
+__all__ = ["SklearnBatchCallback", "SklearnLoaderCallback"]
