@@ -1,5 +1,6 @@
 from typing import Any, Callable, Dict, Mapping, Union
 from functools import partial
+
 import torch
 
 from catalyst.callbacks.metric import FunctionalBatchMetricCallback, LoaderMetricCallback

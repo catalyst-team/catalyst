@@ -2,7 +2,7 @@ from typing import Callable, Dict, Iterable
 
 import torch
 
-from catalyst.metrics import ICallbackBatchMetric, ICallbackLoaderMetric, AccumulationMetric
+from catalyst.metrics import AccumulationMetric, ICallbackBatchMetric, ICallbackLoaderMetric
 from catalyst.metrics._additive import AdditiveValueMetric
 
 
@@ -180,8 +180,7 @@ class FunctionalLoaderMetric(ICallbackLoaderMetric):
         self.metric_fn = metric_fn
         self.metric_name = f"{self.prefix}{metric_key}{self.suffix}"
         self.accumulative_metric = AccumulationMetric(
-            accumulative_fields=accumulative_fields,
-            compute_on_call=compute_on_call
+            accumulative_fields=accumulative_fields, compute_on_call=compute_on_call
         )
 
     def reset(self, num_batches: int, num_samples: int) -> None:
