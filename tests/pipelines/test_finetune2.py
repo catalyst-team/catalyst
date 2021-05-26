@@ -129,15 +129,15 @@ class CustomRunner(dl.IRunner):
             callbacks["confusion_matrix"] = dl.ConfusionMatrixCallback(
                 input_key="logits", target_key="targets", num_classes=10
             )
-            callbacks["f1_score"] = dl.SklearnCallback(
+            callbacks["f1_score"] = dl.SklearnBatchCallback(
                 keys={
                     "y_pred": "labels",
                     "y_true": "targets",
-                    "average": "micro",
-                    "zero_division": 1,
                 },
                 metric_fn="f1_score",
-                metric_key="f1_score",
+                metric_key="sk_f1",
+                average="macro",
+                zero_division=1
             )
         return callbacks
 
