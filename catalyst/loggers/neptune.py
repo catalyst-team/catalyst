@@ -113,7 +113,7 @@ class NeptuneLogger(ILogger):
             neptune:
                 _target_: catalyst.dl.NeptuneLogger
                 project: my_workspace/my_project
-                base_namespace: "catalyst"
+                base_namespace: catalyst
         ...
     """
 
