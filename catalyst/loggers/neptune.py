@@ -28,28 +28,35 @@ def _prepare_metrics(metrics):
 
 
 class NeptuneLogger(ILogger):
-    """Neptune logger for parameters, metrics, images and other artifacts (videos, audio, model checkpoints, etc.).
+    """Neptune logger for parameters, metrics, images and other artifacts (videos, audio,
+    model checkpoints, etc.).
 
-    Neptune documentation: https://docs.neptune.ai/integrations-and-supported-tools/model-training/catalyst
+    Neptune documentation:
+    https://docs.neptune.ai/integrations-and-supported-tools/model-training/catalyst
 
-    When the logger is created, link to the run in Neptune will be printed to stdout. It looks like this:
+    When the logger is created, link to the run in Neptune will be printed to stdout.
+    It looks like this:
     https://ui.neptune.ai/common/catalyst-integration/e/CATALYST-1379
 
     To start with Neptune please check
-    `Neptune getting-started docs <https://docs.neptune.ai/getting-started/installation>`_ because you will need
-    ``api_token`` and project to log your Catalyst runs to.
+    `Neptune getting-started docs <https://docs.neptune.ai/getting-started/installation>`_
+    because you will need ``api_token`` and project to log your Catalyst runs to.
 
     .. note::
-        You can use public api_token ``ANONYMOUS`` and set project to ``common/catalyst-integration``
-        for testing without registration.
+        You can use public api_token ``ANONYMOUS`` and set project to
+        ``common/catalyst-integration`` for testing without registration.
 
     Args:
-        base_namespace: Optional, ``str``, root namespace within Neptune's run. Default is "experiment".
+        base_namespace: Optional, ``str``, root namespace within Neptune's run.
+          Default is "experiment".
         api_token: Optional, ``str``. Your Neptune API token. Read more about it in the
           `Neptune installation docs <https://docs.neptune.ai/getting-started/installation>`_.
-        project: Optional, ``str``. Name of the project to log runs to. It looks like this: "my_workspace/my_project".
-        run: Optional, pass Neptune run object if you want to continue logging to the existing run (resume run).
-          Read more about it `here <https://docs.neptune.ai/how-to-guides/neptune-api/resume-run>`_.
+        project: Optional, ``str``. Name of the project to log runs to.
+          It looks like this: "my_workspace/my_project".
+        run: Optional, pass Neptune run object if you want to continue logging
+          to the existing run (resume run).
+          Read more about it
+          `here <https://docs.neptune.ai/how-to-guides/neptune-api/resume-run>`_.
         neptune_run_kwargs: Optional, additional keyword arguments to be passed directly to the
           `neptune.init() <https://docs.neptune.ai/api-reference/neptune#init>`_ function.
 
