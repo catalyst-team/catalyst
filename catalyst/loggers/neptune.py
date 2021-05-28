@@ -28,30 +28,37 @@ def _prepare_metrics(metrics):
 
 
 class NeptuneLogger(ILogger):
-    """Neptune logger for parameters, metrics, images and other artifacts.
+    """Neptune logger for parameters, metrics, images and other artifacts (videos, audio,
+    model checkpoints, etc.).
 
-    Neptune documentation: https://docs.neptune.ai
+    Neptune documentation:
+    https://docs.neptune.ai/integrations-and-supported-tools/model-training/catalyst
 
-    You can acquire api_token by following:
-    https://docs.neptune.ai/getting-started/installation#authentication
-    or, you can use special token 'ANONYMOUS' for testing without registration
-    if not provided, Neptune will try to use environmental variable NEPTUNE_API_TOKEN
+    When the logger is created, link to the run in Neptune will be printed to stdout.
+    It looks like this:
+    https://ui.neptune.ai/common/catalyst-integration/e/CATALYST-1379
 
-    If using 'ANONYMOUS' token, you can set project to 'common/catalyst-integration'
-    for test purposes.
+    To start with Neptune please check
+    `Neptune getting-started docs <https://docs.neptune.ai/getting-started/installation>`_
+    because you will need ``api_token`` and project to log your Catalyst runs to.
 
-    Additional keyword arguments will be passed directly to neptune.init() function,
-    see https://docs.neptune.ai/api-reference/neptune#init
-
-    After creation of the logger without passing run parameter, a link to created run
-    will be printed. You can also retrieve the run object by calling NeptuneLogger.run
-    to access it directly
+    .. note::
+        You can use public api_token ``ANONYMOUS`` and set project to
+        ``common/catalyst-integration`` for testing without registration.
 
     Args:
-        base_namespace: Optional. namespace within Neptune's Run to put all metric in
-        api_token: Optional. Your Neptune API token. Use 'ANONYMOUS' for common, public access
-        project: Optional. Name of your workspace in a form of 'workspaceName/projectName'
-        run: Optional. Pass if you want to resume a Neptune run.
+        base_namespace: Optional, ``str``, root namespace within Neptune's run.
+          Default is "experiment".
+        api_token: Optional, ``str``. Your Neptune API token. Read more about it in the
+          `Neptune installation docs <https://docs.neptune.ai/getting-started/installation>`_.
+        project: Optional, ``str``. Name of the project to log runs to.
+          It looks like this: "my_workspace/my_project".
+        run: Optional, pass Neptune run object if you want to continue logging
+          to the existing run (resume run).
+          Read more about it
+          `here <https://docs.neptune.ai/how-to-guides/neptune-api/resume-run>`_.
+        neptune_run_kwargs: Optional, additional keyword arguments to be passed directly to the
+          `neptune.init() <https://docs.neptune.ai/api-reference/neptune#init>`_ function.
 
     Python API examples:
 
@@ -61,11 +68,12 @@ class NeptuneLogger(ILogger):
 
         runner = dl.SupervisedRunner()
         runner.train(
-            ...,
-            loggers={"neptune": dl.NeptuneLogger(
-                base_namespace="catalyst-tests",
-                api_token="ANONYMOUS",
-                project="common/catalyst-integration")
+            ...
+            loggers={
+                "neptune": dl.NeptuneLogger(
+                    project="my_workspace/my_project",
+                    tags=["pretraining", "retina"],
+                )
             }
         )
 
@@ -80,13 +88,33 @@ class NeptuneLogger(ILogger):
                 return {
                     "console": dl.ConsoleLogger(),
                     "neptune": dl.NeptuneLogger(
-                        base_namespace="catalyst-tests",
-                        api_token="ANONYMOUS",
-                        project="common/catalyst-integration")
+                        project="my_workspace/my_project"
+                    )
                 }
             # ...
 
         runner = CustomRunner().run()
+
+    Config API example:
+
+    .. code-block:: yaml
+
+        loggers:
+            neptune:
+                _target_: NeptuneLogger
+                project: my_workspace/my_project
+        ...
+
+    Hydra API example:
+
+    .. code-block:: yaml
+
+        loggers:
+            neptune:
+                _target_: catalyst.dl.NeptuneLogger
+                project: my_workspace/my_project
+                base_namespace: catalyst
+        ...
     """
 
     def __init__(

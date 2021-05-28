@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 - tests moved to `tests` folder ([#1208](https://github.com/catalyst-team/catalyst/pull/1208))
 - pipeline tests moved to `tests/pipelines` ([#1215](https://github.com/catalyst-team/catalyst/pull/1215))
+- updated NeptuneLogger docstrings ([#1223](https://github.com/catalyst-team/catalyst/pull/1223))
 
 ### Removed
 
