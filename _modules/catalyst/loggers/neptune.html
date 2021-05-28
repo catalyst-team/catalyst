@@ -339,30 +339,37 @@
 
 
 <div class="viewcode-block" id="NeptuneLogger"><a class="viewcode-back" href="../../../api/loggers.html#catalyst.loggers.neptune.NeptuneLogger">[docs]</a><span class="k">class</span> <span class="nc">NeptuneLogger</span><span class="p">(</span><span class="n">ILogger</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Neptune logger for parameters, metrics, images and other artifacts.</span>
+    <span class="sd">&quot;&quot;&quot;Neptune logger for parameters, metrics, images and other artifacts (videos, audio,</span>
+<span class="sd">    model checkpoints, etc.).</span>
 
-<span class="sd">    Neptune documentation: https://docs.neptune.ai</span>
+<span class="sd">    Neptune documentation:</span>
+<span class="sd">    https://docs.neptune.ai/integrations-and-supported-tools/model-training/catalyst</span>
 
-<span class="sd">    You can acquire api_token by following:</span>
-<span class="sd">    https://docs.neptune.ai/getting-started/installation#authentication</span>
-<span class="sd">    or, you can use special token &#39;ANONYMOUS&#39; for testing without registration</span>
-<span class="sd">    if not provided, Neptune will try to use environmental variable NEPTUNE_API_TOKEN</span>
+<span class="sd">    When the logger is created, link to the run in Neptune will be printed to stdout.</span>
+<span class="sd">    It looks like this:</span>
+<span class="sd">    https://ui.neptune.ai/common/catalyst-integration/e/CATALYST-1379</span>
 
-<span class="sd">    If using &#39;ANONYMOUS&#39; token, you can set project to &#39;common/catalyst-integration&#39;</span>
-<span class="sd">    for test purposes.</span>
+<span class="sd">    To start with Neptune please check</span>
+<span class="sd">    `Neptune getting-started docs &lt;https://docs.neptune.ai/getting-started/installation&gt;`_</span>
+<span class="sd">    because you will need ``api_token`` and project to log your Catalyst runs to.</span>
 
-<span class="sd">    Additional keyword arguments will be passed directly to neptune.init() function,</span>
-<span class="sd">    see https://docs.neptune.ai/api-reference/neptune#init</span>
-
-<span class="sd">    After creation of the logger without passing run parameter, a link to created run</span>
-<span class="sd">    will be printed. You can also retrieve the run object by calling NeptuneLogger.run</span>
-<span class="sd">    to access it directly</span>
+<span class="sd">    .. note::</span>
+<span class="sd">        You can use public api_token ``ANONYMOUS`` and set project to</span>
+<span class="sd">        ``common/catalyst-integration`` for testing without registration.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        base_namespace: Optional. namespace within Neptune&#39;s Run to put all metric in</span>
-<span class="sd">        api_token: Optional. Your Neptune API token. Use &#39;ANONYMOUS&#39; for common, public access</span>
-<span class="sd">        project: Optional. Name of your workspace in a form of &#39;workspaceName/projectName&#39;</span>
-<span class="sd">        run: Optional. Pass if you want to resume a Neptune run.</span>
+<span class="sd">        base_namespace: Optional, ``str``, root namespace within Neptune&#39;s run.</span>
+<span class="sd">          Default is &quot;experiment&quot;.</span>
+<span class="sd">        api_token: Optional, ``str``. Your Neptune API token. Read more about it in the</span>
+<span class="sd">          `Neptune installation docs &lt;https://docs.neptune.ai/getting-started/installation&gt;`_.</span>
+<span class="sd">        project: Optional, ``str``. Name of the project to log runs to.</span>
+<span class="sd">          It looks like this: &quot;my_workspace/my_project&quot;.</span>
+<span class="sd">        run: Optional, pass Neptune run object if you want to continue logging</span>
+<span class="sd">          to the existing run (resume run).</span>
+<span class="sd">          Read more about it</span>
+<span class="sd">          `here &lt;https://docs.neptune.ai/how-to-guides/neptune-api/resume-run&gt;`_.</span>
+<span class="sd">        neptune_run_kwargs: Optional, additional keyword arguments to be passed directly to the</span>
+<span class="sd">          `neptune.init() &lt;https://docs.neptune.ai/api-reference/neptune#init&gt;`_ function.</span>
 
 <span class="sd">    Python API examples:</span>
 
@@ -372,11 +379,12 @@
 
 <span class="sd">        runner = dl.SupervisedRunner()</span>
 <span class="sd">        runner.train(</span>
-<span class="sd">            ...,</span>
-<span class="sd">            loggers={&quot;neptune&quot;: dl.NeptuneLogger(</span>
-<span class="sd">                base_namespace=&quot;catalyst-tests&quot;,</span>
-<span class="sd">                api_token=&quot;ANONYMOUS&quot;,</span>
-<span class="sd">                project=&quot;common/catalyst-integration&quot;)</span>
+<span class="sd">            ...</span>
+<span class="sd">            loggers={</span>
+<span class="sd">                &quot;neptune&quot;: dl.NeptuneLogger(</span>
+<span class="sd">                    project=&quot;my_workspace/my_project&quot;,</span>
+<span class="sd">                    tags=[&quot;pretraining&quot;, &quot;retina&quot;],</span>
+<span class="sd">                )</span>
 <span class="sd">            }</span>
 <span class="sd">        )</span>
 
@@ -391,13 +399,33 @@
 <span class="sd">                return {</span>
 <span class="sd">                    &quot;console&quot;: dl.ConsoleLogger(),</span>
 <span class="sd">                    &quot;neptune&quot;: dl.NeptuneLogger(</span>
-<span class="sd">                        base_namespace=&quot;catalyst-tests&quot;,</span>
-<span class="sd">                        api_token=&quot;ANONYMOUS&quot;,</span>
-<span class="sd">                        project=&quot;common/catalyst-integration&quot;)</span>
+<span class="sd">                        project=&quot;my_workspace/my_project&quot;</span>
+<span class="sd">                    )</span>
 <span class="sd">                }</span>
 <span class="sd">            # ...</span>
 
 <span class="sd">        runner = CustomRunner().run()</span>
+
+<span class="sd">    Config API example:</span>
+
+<span class="sd">    .. code-block:: yaml</span>
+
+<span class="sd">        loggers:</span>
+<span class="sd">            neptune:</span>
+<span class="sd">                _target_: NeptuneLogger</span>
+<span class="sd">                project: my_workspace/my_project</span>
+<span class="sd">        ...</span>
+
+<span class="sd">    Hydra API example:</span>
+
+<span class="sd">    .. code-block:: yaml</span>
+
+<span class="sd">        loggers:</span>
+<span class="sd">            neptune:</span>
+<span class="sd">                _target_: catalyst.dl.NeptuneLogger</span>
+<span class="sd">                project: my_workspace/my_project</span>
+<span class="sd">                base_namespace: catalyst</span>
+<span class="sd">        ...</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>

@@ -493,26 +493,36 @@ specified logdir in config <code class="docutils literal notranslate"><span clas
 <dt id="catalyst.loggers.neptune.NeptuneLogger">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.loggers.neptune.</code><code class="sig-name descname">NeptuneLogger</code><span class="sig-paren">(</span><em class="sig-param">base_namespace=None</em>, <em class="sig-param">api_token=None</em>, <em class="sig-param">project=None</em>, <em class="sig-param">run=None</em>, <em class="sig-param">**neptune_run_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/loggers/neptune.html#NeptuneLogger"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.loggers.neptune.NeptuneLogger" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.logger.ILogger" title="catalyst.core.logger.ILogger"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.logger.ILogger</span></code></a></p>
-<p>Neptune logger for parameters, metrics, images and other artifacts.</p>
-<p>Neptune documentation: <a class="reference external" href="https://docs.neptune.ai">https://docs.neptune.ai</a></p>
-<p>You can acquire api_token by following:
-<a class="reference external" href="https://docs.neptune.ai/getting-started/installation#authentication">https://docs.neptune.ai/getting-started/installation#authentication</a>
-or, you can use special token ‘ANONYMOUS’ for testing without registration
-if not provided, Neptune will try to use environmental variable NEPTUNE_API_TOKEN</p>
-<p>If using ‘ANONYMOUS’ token, you can set project to ‘common/catalyst-integration’
-for test purposes.</p>
-<p>Additional keyword arguments will be passed directly to neptune.init() function,
-see <a class="reference external" href="https://docs.neptune.ai/api-reference/neptune#init">https://docs.neptune.ai/api-reference/neptune#init</a></p>
-<p>After creation of the logger without passing run parameter, a link to created run
-will be printed. You can also retrieve the run object by calling NeptuneLogger.run
-to access it directly</p>
+<p>Neptune logger for parameters, metrics, images and other artifacts (videos, audio,
+model checkpoints, etc.).</p>
+<p>Neptune documentation:
+<a class="reference external" href="https://docs.neptune.ai/integrations-and-supported-tools/model-training/catalyst">https://docs.neptune.ai/integrations-and-supported-tools/model-training/catalyst</a></p>
+<p>When the logger is created, link to the run in Neptune will be printed to stdout.
+It looks like this:
+<a class="reference external" href="https://ui.neptune.ai/common/catalyst-integration/e/CATALYST-1379">https://ui.neptune.ai/common/catalyst-integration/e/CATALYST-1379</a></p>
+<p>To start with Neptune please check
+<a class="reference external" href="https://docs.neptune.ai/getting-started/installation">Neptune getting-started docs</a>
+because you will need <code class="docutils literal notranslate"><span class="pre">api_token</span></code> and project to log your Catalyst runs to.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can use public api_token <code class="docutils literal notranslate"><span class="pre">ANONYMOUS</span></code> and set project to
+<code class="docutils literal notranslate"><span class="pre">common/catalyst-integration</span></code> for testing without registration.</p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>base_namespace</strong> – Optional. namespace within Neptune’s Run to put all metric in</p></li>
-<li><p><strong>api_token</strong> – Optional. Your Neptune API token. Use ‘ANONYMOUS’ for common, public access</p></li>
-<li><p><strong>project</strong> – Optional. Name of your workspace in a form of ‘workspaceName/projectName’</p></li>
-<li><p><strong>run</strong> – Optional. Pass if you want to resume a Neptune run.</p></li>
+<li><p><strong>base_namespace</strong> – Optional, <code class="docutils literal notranslate"><span class="pre">str</span></code>, root namespace within Neptune’s run.
+Default is “experiment”.</p></li>
+<li><p><strong>api_token</strong> – Optional, <code class="docutils literal notranslate"><span class="pre">str</span></code>. Your Neptune API token. Read more about it in the
+<a class="reference external" href="https://docs.neptune.ai/getting-started/installation">Neptune installation docs</a>.</p></li>
+<li><p><strong>project</strong> – Optional, <code class="docutils literal notranslate"><span class="pre">str</span></code>. Name of the project to log runs to.
+It looks like this: “my_workspace/my_project”.</p></li>
+<li><p><strong>run</strong> – Optional, pass Neptune run object if you want to continue logging
+to the existing run (resume run).
+Read more about it
+<a class="reference external" href="https://docs.neptune.ai/how-to-guides/neptune-api/resume-run">here</a>.</p></li>
+<li><p><strong>neptune_run_kwargs</strong> – Optional, additional keyword arguments to be passed directly to the
+<a class="reference external" href="https://docs.neptune.ai/api-reference/neptune#init">neptune.init()</a> function.</p></li>
 </ul>
 </dd>
 </dl>
@@ -521,11 +531,12 @@ to access it directly</p>
 
 <span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
-    <span class="o">...</span><span class="p">,</span>
-    <span class="n">loggers</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;neptune&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">NeptuneLogger</span><span class="p">(</span>
-        <span class="n">base_namespace</span><span class="o">=</span><span class="s2">&quot;catalyst-tests&quot;</span><span class="p">,</span>
-        <span class="n">api_token</span><span class="o">=</span><span class="s2">&quot;ANONYMOUS&quot;</span><span class="p">,</span>
-        <span class="n">project</span><span class="o">=</span><span class="s2">&quot;common/catalyst-integration&quot;</span><span class="p">)</span>
+    <span class="o">...</span>
+    <span class="n">loggers</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;neptune&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">NeptuneLogger</span><span class="p">(</span>
+            <span class="n">project</span><span class="o">=</span><span class="s2">&quot;my_workspace/my_project&quot;</span><span class="p">,</span>
+            <span class="n">tags</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pretraining&quot;</span><span class="p">,</span> <span class="s2">&quot;retina&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
     <span class="p">}</span>
 <span class="p">)</span>
 </pre></div>
@@ -539,13 +550,29 @@ to access it directly</p>
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;console&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">ConsoleLogger</span><span class="p">(),</span>
             <span class="s2">&quot;neptune&quot;</span><span class="p">:</span> <span class="n">dl</span><span class="o">.</span><span class="n">NeptuneLogger</span><span class="p">(</span>
-                <span class="n">base_namespace</span><span class="o">=</span><span class="s2">&quot;catalyst-tests&quot;</span><span class="p">,</span>
-                <span class="n">api_token</span><span class="o">=</span><span class="s2">&quot;ANONYMOUS&quot;</span><span class="p">,</span>
-                <span class="n">project</span><span class="o">=</span><span class="s2">&quot;common/catalyst-integration&quot;</span><span class="p">)</span>
+                <span class="n">project</span><span class="o">=</span><span class="s2">&quot;my_workspace/my_project&quot;</span>
+            <span class="p">)</span>
         <span class="p">}</span>
     <span class="c1"># ...</span>
 
 <span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Config API example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
+    <span class="nt">neptune</span><span class="p">:</span>
+        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">NeptuneLogger</span>
+        <span class="nt">project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_workspace/my_project</span>
+<span class="nn">...</span>
+</pre></div>
+</div>
+<p>Hydra API example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">loggers</span><span class="p">:</span>
+    <span class="nt">neptune</span><span class="p">:</span>
+        <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst.dl.NeptuneLogger</span>
+        <span class="nt">project</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">my_workspace/my_project</span>
+        <span class="nt">base_namespace</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">catalyst</span>
+<span class="nn">...</span>
 </pre></div>
 </div>
 </dd></dl>
