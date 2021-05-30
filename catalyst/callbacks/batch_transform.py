@@ -68,7 +68,7 @@ class BatchTransformCallback(Callback):
                 verbose=True,
                 callbacks=[
                     dl.BatchTransformCallback(
-                        input_key="logits", output_key="scores", transform="sigmoid",
+                        input_key="logits", output_key="scores", transform="F.sigmoid",
                     ),
                     dl.CriterionCallback(
                         input_key="logits", target_key="targets", metric_key="loss"
