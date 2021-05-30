@@ -176,8 +176,7 @@ def _torch_functional_loader(r: registry.Registry):
     ]
     import torch.nn.functional as F
 
-    for func in functions:
-        r[func] = getattr(F, func)
+    r.add_from_module(F, "F")
 
 
 REGISTRY.late_add(_torch_functional_loader)

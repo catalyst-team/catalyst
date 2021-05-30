@@ -1,4 +1,5 @@
-from typing import Callable, List, Union
+from typing import Callable, List, Union, Dict, Any
+from functools import partial
 
 from catalyst.core import Callback, CallbackOrder, IRunner
 from catalyst.registry import REGISTRY
@@ -26,6 +27,7 @@ class BatchTransformCallback(Callback):
         output_key (Union[List[str], str], optional): Keys for output.
             If None then will apply function inplace to ``keys_to_apply``.
             Defaults to ``None``.
+        transform_kwargs (Dict[str, Any]): Kwargs for transform.
 
     Raises:
         TypeError: When keys is not str or a list.
@@ -185,6 +187,7 @@ class BatchTransformCallback(Callback):
         scope: str,
         input_key: Union[List[str], str] = None,
         output_key: Union[List[str], str] = None,
+        transform_kwargs: Dict[str, Any] = None,
     ):
         """
         Preprocess your batch with specified function.
@@ -199,12 +202,14 @@ class BatchTransformCallback(Callback):
             output_key (Union[List[str], str], optional): Keys for output.
                 If None then will apply function inplace to ``keys_to_apply``.
                 Defaults to ``None``.
-
+            transform_kwargs (Dict[str, Any]): Kwargs for transform.
         Raises:
             TypeError: When keys is not str or a list.
                 When ``scope`` is not in ``["on_batch_end", "on_batch_start"]``.
         """
         super().__init__(order=CallbackOrder.Internal)
+        if transform_kwargs is not None:
+            transform = partial(transform, **transform_kwargs)
         if isinstance(transform, str):
             transform = REGISTRY.get(transform)
         if input_key is not None:
