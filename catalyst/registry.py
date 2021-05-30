@@ -145,35 +145,6 @@ REGISTRY.late_add(_loggers_loader)
 
 
 def _torch_functional_loader(r: registry.Registry):
-    functions = [
-        "relu",
-        "hardtanh",
-        "hardswish",
-        "relu6",
-        "elu",
-        "selu",
-        "celu",
-        "leaky_relu",
-        "prelu",
-        "rrelu",
-        "glu",
-        "gelu",
-        "logsigmoid",
-        "hardshrink",
-        "tanhshrink",
-        "softsign",
-        "softplus",
-        "softmin",
-        "softmax",
-        "softshrink",
-        "gumbel_softmax",
-        "log_softmax",
-        "tanh",
-        "sigmoid",
-        "hardsigmoid",
-        "silu",
-        "normalize",
-    ]
     import torch.nn.functional as F
 
     r.add_from_module(F, "F")
