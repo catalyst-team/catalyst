@@ -309,9 +309,11 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.callbacks.batch_transform</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">Callback</span><span class="p">,</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">IRunner</span>
+<span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="n">REGISTRY</span>
 
 
 <span class="k">def</span> <span class="nf">_tuple_wrapper</span><span class="p">(</span><span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
@@ -328,7 +330,7 @@
 <span class="sd">    Preprocess your batch with specified function.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        transform (Callable): Function to apply.</span>
+<span class="sd">        transform (Callable, str): Function to apply. If string will get function from registry.</span>
 <span class="sd">        scope (str): ``&quot;on_batch_end&quot;`` (post-processing model output) or</span>
 <span class="sd">            ``&quot;on_batch_start&quot;`` (pre-processing model input).</span>
 <span class="sd">        input_key (Union[List[str], str], optional): Keys in batch dict to apply function.</span>
@@ -336,6 +338,7 @@
 <span class="sd">        output_key (Union[List[str], str], optional): Keys for output.</span>
 <span class="sd">            If None then will apply function inplace to ``keys_to_apply``.</span>
 <span class="sd">            Defaults to ``None``.</span>
+<span class="sd">        transform_kwargs (Dict[str, Any]): Kwargs for transform.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        TypeError: When keys is not str or a list.</span>
@@ -375,8 +378,8 @@
 <span class="sd">                num_epochs=3,</span>
 <span class="sd">                verbose=True,</span>
 <span class="sd">                callbacks=[</span>
-<span class="sd">                    dl.LambdaPreprocessCallback(</span>
-<span class="sd">                        input_key=&quot;logits&quot;, output_key=&quot;scores&quot;, transform=torch.sigmoid</span>
+<span class="sd">                    dl.BatchTransformCallback(</span>
+<span class="sd">                        input_key=&quot;logits&quot;, output_key=&quot;scores&quot;, transform=&quot;F.sigmoid&quot;,</span>
 <span class="sd">                    ),</span>
 <span class="sd">                    dl.CriterionCallback(</span>
 <span class="sd">                        input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, metric_key=&quot;loss&quot;</span>
@@ -476,21 +479,33 @@
 <span class="sd">                    )</span>
 <span class="sd">                ],</span>
 <span class="sd">            )</span>
+<span class="sd">        .. code-block:: yaml</span>
+
+<span class="sd">            ...</span>
+<span class="sd">            callbacks:</span>
+<span class="sd">                transform:</span>
+<span class="sd">                    _target_: BatchTransformCallback</span>
+<span class="sd">                    transform: catalyst.ToTensor</span>
+<span class="sd">                    scope: on_batch_start</span>
+<span class="sd">                    input_key: features</span>
+
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+        <span class="n">transform</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span>
         <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">transform_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Preprocess your batch with specified function.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            transform (Callable): Function to apply.</span>
+<span class="sd">            transform (Callable, str): Function to apply.</span>
+<span class="sd">                If string will get function from registry.</span>
 <span class="sd">            scope (str): ``&quot;on_batch_end&quot;`` (post-processing model output) or</span>
 <span class="sd">                ``&quot;on_batch_start&quot;`` (pre-processing model input).</span>
 <span class="sd">            input_key (Union[List[str], str], optional): Keys in batch dict to apply function.</span>
@@ -498,13 +513,17 @@
 <span class="sd">            output_key (Union[List[str], str], optional): Keys for output.</span>
 <span class="sd">                If None then will apply function inplace to ``keys_to_apply``.</span>
 <span class="sd">                Defaults to ``None``.</span>
+<span class="sd">            transform_kwargs (Dict[str, Any]): Kwargs for transform.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            TypeError: When keys is not str or a list.</span>
 <span class="sd">                When ``scope`` is not in ``[&quot;on_batch_end&quot;, &quot;on_batch_start&quot;]``.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">order</span><span class="o">=</span><span class="n">CallbackOrder</span><span class="o">.</span><span class="n">Internal</span><span class="p">)</span>
-
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">transform</span> <span class="o">=</span> <span class="n">REGISTRY</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">transform</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">transform_kwargs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">transform</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="o">**</span><span class="n">transform_kwargs</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">input_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_key</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
                 <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;input key should be str or a list of str.&quot;</span><span class="p">)</span>

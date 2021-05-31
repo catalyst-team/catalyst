@@ -309,16 +309,16 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.metrics._functional_metric</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.metrics</span> <span class="kn">import</span> <span class="n">ICallbackBatchMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics</span> <span class="kn">import</span> <span class="n">AccumulationMetric</span><span class="p">,</span> <span class="n">ICallbackBatchMetric</span><span class="p">,</span> <span class="n">ICallbackLoaderMetric</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._additive</span> <span class="kn">import</span> <span class="n">AdditiveValueMetric</span>
 
 
 <div class="viewcode-block" id="FunctionalBatchMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._functional_metric.FunctionalBatchMetric">[docs]</a><span class="k">class</span> <span class="nc">FunctionalBatchMetric</span><span class="p">(</span><span class="n">ICallbackBatchMetric</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Class for custom metrics in a functional way.</span>
+    <span class="sd">&quot;&quot;&quot;Class for custom **batch-based** metrics in a functional way.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor</span>
@@ -431,7 +431,109 @@
         <span class="p">}</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FunctionalBatchMetric&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="FunctionalLoaderMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._functional_metric.FunctionalLoaderMetric">[docs]</a><span class="k">class</span> <span class="nc">FunctionalLoaderMetric</span><span class="p">(</span><span class="n">ICallbackLoaderMetric</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Class for custom **loader-based** metrics in a functional way.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        metric_fn: metric function, that get outputs, targets and return score as torch.Tensor</span>
+<span class="sd">        metric_key: metric name</span>
+<span class="sd">        accumulative_fields: list of keys to accumulate data from batch</span>
+<span class="sd">        compute_on_call: if True, allows compute metric&#39;s value on call</span>
+<span class="sd">        prefix: metric prefix</span>
+<span class="sd">        suffix: metric suffix</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        Metrics are calculated over all samples.</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from functools import partial</span>
+<span class="sd">        import torch</span>
+<span class="sd">        from catalyst import metrics</span>
+<span class="sd">        import sklearn.metrics</span>
+
+<span class="sd">        targets = torch.tensor([3, 0, 2, 2, 1])</span>
+<span class="sd">        outputs = torch.rand((len(targets), targets.max()+1)).softmax(1)</span>
+
+<span class="sd">        metric = metrics.FunctionalLoaderMetric(</span>
+<span class="sd">            metric_fn=partial(</span>
+<span class="sd">                sklearn.metrics.roc_auc_score, average=&quot;macro&quot;, multi_class=&quot;ovr&quot;</span>
+<span class="sd">            ),</span>
+<span class="sd">            metric_key=&quot;sk_auc&quot;,</span>
+<span class="sd">            accumulative_fields=[&#39;y_score&#39;,&#39;y_true&#39;],</span>
+
+<span class="sd">        )</span>
+<span class="sd">        metric.reset(len(outputs), len(outputs))</span>
+
+<span class="sd">        metric.update(y_score=outputs, y_true=targets)</span>
+<span class="sd">        metric.compute()</span>
+<span class="sd">        # ...</span>
+
+<span class="sd">        metric.compute_key_value()</span>
+<span class="sd">        # {&#39;sk_auc&#39;: ...}</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">metric_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span>
+        <span class="n">metric_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">accumulative_fields</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_fn</span> <span class="o">=</span> <span class="n">metric_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="si">}{</span><span class="n">metric_key</span><span class="si">}{</span><span class="bp">self</span><span class="o">.</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accumulative_metric</span> <span class="o">=</span> <span class="n">AccumulationMetric</span><span class="p">(</span>
+            <span class="n">accumulative_fields</span><span class="o">=</span><span class="n">accumulative_fields</span><span class="p">,</span> <span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_batches</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Reset metrics fields</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            num_batches: expected number of batches</span>
+<span class="sd">            num_samples: expected number of samples to accumulate</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accumulative_metric</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">num_batches</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update storage</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            **kwargs: ``self.metric_fn`` inputs to store</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">accumulative_metric</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get metric for the whole loader</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            custom metric</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stored_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accumulative_metric</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric_fn</span><span class="p">(</span><span class="o">**</span><span class="n">stored_values</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get metric for the whole loader</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict with one element-custom metric</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()}</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FunctionalBatchMetric&quot;</span><span class="p">,</span> <span class="s2">&quot;FunctionalLoaderMetric&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>
