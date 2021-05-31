@@ -203,6 +203,7 @@ class BatchTransformCallback(Callback):
                 If None then will apply function inplace to ``keys_to_apply``.
                 Defaults to ``None``.
             transform_kwargs (Dict[str, Any]): Kwargs for transform.
+
         Raises:
             TypeError: When keys is not str or a list.
                 When ``scope`` is not in ``["on_batch_end", "on_batch_start"]``.
