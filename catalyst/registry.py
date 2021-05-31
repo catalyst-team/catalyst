@@ -147,7 +147,7 @@ REGISTRY.late_add(_loggers_loader)
 def _torch_functional_loader(r: registry.Registry):
     import torch.nn.functional as F
 
-    r.add_from_module(F, "F")
+    r.add_from_module(F, ["F."])
 
 
 REGISTRY.late_add(_torch_functional_loader)
