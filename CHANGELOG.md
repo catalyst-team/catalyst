@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - FAQ docs: multiple input and output keys, engine tutorial ([#1202](https://github.com/catalyst-team/catalyst/pull/1202))
 - minimal Config API example ([#1215](https://github.com/catalyst-team/catalyst/pull/1215))
 - Distributed RL example (Catalyst.RL 2.0 concepts) ([#1224](https://github.com/catalyst-team/catalyst/pull/1224))
+- SklearnCallback as integration of sklearn metrics ([#1198](https://github.com/catalyst-team/catalyst/pull/1198))
 
 ### Changed
 
@@ -29,7 +30,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - customizing what happens in `train()` notebook ([#1203](https://github.com/catalyst-team/catalyst/pull/1203))
 - transforms imports under catalyst.data ([#1211](https://github.com/catalyst-team/catalyst/pull/1211))
 - change layerwise to layerwise_params ([#1210](https://github.com/catalyst-team/catalyst/pull/1210))
-- Add torch metrics support ([#1195](https://github.com/catalyst-team/catalyst/issues/1195))
+- add torch metrics support ([#1195](https://github.com/catalyst-team/catalyst/issues/1195))
+- add Config API support for BatchTransformCallback ([#1209](https://github.com/catalyst-team/catalyst/issues/1209))
 
 
 ## [21.04.2] - 2021-04-30

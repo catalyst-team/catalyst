@@ -68,6 +68,13 @@ FunctionalBatchMetric
     :undoc-members:
     :show-inheritance:
 
+FunctionalLoaderMetric
+~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.metrics._functional_metric.FunctionalLoaderMetric
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
 
 Runner Metrics
 ----------------------
