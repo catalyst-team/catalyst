@@ -36,15 +36,15 @@ class ProfilerCallback(Callback):
         self.profiler.__exit__()
 
     def on_epoch_start(self, runner: IRunner) -> None:
-        self._enter_profiler(self.loader_key, "epoch")
+        self._enter_profiler(runner.loader_key, "epoch")
 
     def on_epoch_end(self, runner: IRunner) -> None:
-        self._exit_profiler(self.loader_key, "epoch")
+        self._exit_profiler(runner.loader_key, "epoch")
 
     def on_batch_start(self, runner: IRunner) -> None:
-        self._enter_profiler(self.loader_key, "batch")
+        self._enter_profiler(runner.loader_key, "batch")
 
     def on_batch_end(self, runner: IRunner) -> None:
         # do a profiling step after each batch
         self.profiler.step()
-        self._exit_profiler(self.loader_key, "batch")
+        self._exit_profiler(runner.loader_key, "batch")
