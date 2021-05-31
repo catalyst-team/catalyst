@@ -1,4 +1,4 @@
-from typing import Callable, List, Union, Dict, Any
+from typing import Any, Callable, Dict, List, Union
 from functools import partial
 
 from catalyst.core import Callback, CallbackOrder, IRunner
