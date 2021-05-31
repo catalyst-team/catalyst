@@ -4,6 +4,7 @@ from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 
 
+# TODO: how to show logs/trace ?
 class ProfilerCallback(Callback):
     """Performs the profiler step for the PyTorch:1.8 profiler"""
 
@@ -44,4 +45,6 @@ class ProfilerCallback(Callback):
         self._enter_profiler(self.loader_key, "batch")
 
     def on_batch_end(self, runner: IRunner) -> None:
+        # do a profiling step after each batch
+        self.profiler.step()
         self._exit_profiler(self.loader_key, "batch")
