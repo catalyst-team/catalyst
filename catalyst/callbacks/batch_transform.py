@@ -1,6 +1,8 @@
-from typing import Callable, List, Union
+from typing import Callable, List, Union, Dict, Any
+from functools import partial
 
 from catalyst.core import Callback, CallbackOrder, IRunner
+from catalyst.registry import REGISTRY
 
 
 def _tuple_wrapper(transform: Callable):
@@ -17,7 +19,7 @@ class BatchTransformCallback(Callback):
     Preprocess your batch with specified function.
 
     Args:
-        transform (Callable): Function to apply.
+        transform (Callable, str): Function to apply. If string will get function from registry.
         scope (str): ``"on_batch_end"`` (post-processing model output) or
             ``"on_batch_start"`` (pre-processing model input).
         input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
@@ -25,6 +27,7 @@ class BatchTransformCallback(Callback):
         output_key (Union[List[str], str], optional): Keys for output.
             If None then will apply function inplace to ``keys_to_apply``.
             Defaults to ``None``.
+        transform_kwargs (Dict[str, Any]): Kwargs for transform.
 
     Raises:
         TypeError: When keys is not str or a list.
@@ -64,8 +67,8 @@ class BatchTransformCallback(Callback):
                 num_epochs=3,
                 verbose=True,
                 callbacks=[
-                    dl.LambdaPreprocessCallback(
-                        input_key="logits", output_key="scores", transform=torch.sigmoid
+                    dl.BatchTransformCallback(
+                        input_key="logits", output_key="scores", transform="F.sigmoid",
                     ),
                     dl.CriterionCallback(
                         input_key="logits", target_key="targets", metric_key="loss"
@@ -165,21 +168,33 @@ class BatchTransformCallback(Callback):
                     )
                 ],
             )
+        .. code-block:: yaml
+
+            ...
+            callbacks:
+                transform:
+                    _target_: BatchTransformCallback
+                    transform: catalyst.ToTensor
+                    scope: on_batch_start
+                    input_key: features
+
 
     """
 
     def __init__(
         self,
-        transform: Callable,
+        transform: Union[Callable, str],
         scope: str,
         input_key: Union[List[str], str] = None,
         output_key: Union[List[str], str] = None,
+        transform_kwargs: Dict[str, Any] = None,
     ):
         """
         Preprocess your batch with specified function.
 
         Args:
-            transform (Callable): Function to apply.
+            transform (Callable, str): Function to apply.
+                If string will get function from registry.
             scope (str): ``"on_batch_end"`` (post-processing model output) or
                 ``"on_batch_start"`` (pre-processing model input).
             input_key (Union[List[str], str], optional): Keys in batch dict to apply function.
@@ -187,13 +202,16 @@ class BatchTransformCallback(Callback):
             output_key (Union[List[str], str], optional): Keys for output.
                 If None then will apply function inplace to ``keys_to_apply``.
                 Defaults to ``None``.
-
+            transform_kwargs (Dict[str, Any]): Kwargs for transform.
         Raises:
             TypeError: When keys is not str or a list.
                 When ``scope`` is not in ``["on_batch_end", "on_batch_start"]``.
         """
         super().__init__(order=CallbackOrder.Internal)
-
+        if isinstance(transform, str):
+            transform = REGISTRY.get(transform)
+        if transform_kwargs is not None:
+            transform = partial(transform, **transform_kwargs)
         if input_key is not None:
             if not isinstance(input_key, (list, str)):
                 raise TypeError("input key should be str or a list of str.")
