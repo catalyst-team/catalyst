@@ -138,7 +138,6 @@ def _callbacks_loader(r: registry.Registry):
     r.add(CallbackWrapper)
 
     from catalyst import callbacks as m  # noqa: WPS347
-    print(m)
 
     r.add_from_module(m)
 
