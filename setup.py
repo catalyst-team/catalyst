@@ -96,6 +96,7 @@ extras = {
     "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
     "mlflow": load_requirements("requirements/requirements-mlflow.txt"),
     "neptune": load_requirements("requirements/requirements-neptune.txt"),
+    "albu": load_requirements("requirements/requirements-albu.txt"),
 }
 extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
 # Meta dependency groups.

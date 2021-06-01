@@ -1,5 +1,6 @@
 import logging
 
+from catalyst.settings import SETTINGS
 from catalyst.tools import registry
 
 logger = logging.getLogger(__name__)
@@ -12,6 +13,15 @@ def _transforms_loader(r: registry.Registry):
     from catalyst.data import transforms as t
 
     r.add_from_module(t, prefix=["catalyst.", "C."])
+
+    if SETTINGS.albu_required:
+        import albumentations as m
+
+        r.add_from_module(m, prefix=["A.", "albu.", "albumentations."])
+
+        from albumentations import pytorch as p
+
+        r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
 
 
 REGISTRY.late_add(_transforms_loader)
@@ -128,6 +138,7 @@ def _callbacks_loader(r: registry.Registry):
     r.add(CallbackWrapper)
 
     from catalyst import callbacks as m  # noqa: WPS347
+    print(m)
 
     r.add_from_module(m)
 
