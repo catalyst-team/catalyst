@@ -41,7 +41,12 @@ def _is_ddp_wrapped(model: nn.Module) -> bool:
             ShardedDataParallel as ShardedDDP,
         )
 
-        parallel_wrappers = parallel_wrappers + (ShardedDDP, FSDP,)
+        parallel_wrappers = parallel_wrappers + (ShardedDDP, FSDP)
+
+    if SETTINGS.deepspeed_required:
+        from deepspeed import DeepSpeedEngine, PipelineEngine
+
+        parallel_wrappers = parallel_wrappers + (DeepSpeedEngine, PipelineEngine)
 
     return isinstance(model, parallel_wrappers)
 
