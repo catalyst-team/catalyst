@@ -225,8 +225,8 @@ def get_available_engine(
         assert not amp, "Could not use both apex and amp engines"
         from catalyst.engines.apex import (
             APEXEngine,
-            DataParallelApexEngine,
-            DistributedDataParallelApexEngine,
+            DataParallelAPEXEngine,
+            DistributedDataParallelAPEXEngine,
         )
 
     is_multiple_gpus = NUM_CUDA_DEVICES > 1
@@ -237,14 +237,14 @@ def get_available_engine(
             if amp:
                 return DistributedDataParallelAMPEngine()
             elif apex:
-                return DistributedDataParallelApexEngine()
+                return DistributedDataParallelAPEXEngine()
             else:
                 return DistributedDataParallelEngine()
         else:
             if amp:
                 return DataParallelAMPEngine()
             elif apex:
-                return DataParallelApexEngine()
+                return DataParallelAPEXEngine()
             else:
                 return DataParallelEngine()
     else:

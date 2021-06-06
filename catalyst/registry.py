@@ -1,5 +1,6 @@
 import logging
 
+from catalyst.settings import SETTINGS
 from catalyst.tools import registry
 
 logger = logging.getLogger(__name__)
@@ -80,6 +81,11 @@ def _optimizers_loader(r: registry.Registry):
     from catalyst.contrib.nn import optimizers as m
 
     r.add_from_module(m)
+
+    if SETTINGS.fairscale_required:
+        from fairscale import optim as m2
+
+        r.add_from_module(m2, prefix=["fairscale."])
 
 
 REGISTRY.late_add(_optimizers_loader)

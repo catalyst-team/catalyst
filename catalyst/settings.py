@@ -42,6 +42,15 @@ def _is_xla_available():
         return False
 
 
+def _is_fairscale_available():
+    try:
+        import fairscale  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
 def _is_onnx_available():
     try:
         import onnx  # noqa: F401, E401
@@ -178,6 +187,7 @@ class Settings(FrozenClass):
         amp_required: Optional[bool] = None,
         apex_required: Optional[bool] = None,
         xla_required: Optional[bool] = None,
+        fairscale_required: Optional[bool] = None,
         # [dl-extras]
         onnx_required: Optional[bool] = None,
         pruning_required: Optional[bool] = None,
@@ -242,6 +252,12 @@ class Settings(FrozenClass):
             xla_required,
             _is_xla_available,
             "catalyst[xla] is not available, to install it, run `pip install catalyst[xla]`.",
+        )
+        self.fairscale_required: bool = _get_optional_value(
+            fairscale_required,
+            _is_fairscale_available,
+            "catalyst[fairscale] is not available, "
+            "to install it, run `pip install catalyst[fairscale]`.",
         )
 
         # [dl-extras]

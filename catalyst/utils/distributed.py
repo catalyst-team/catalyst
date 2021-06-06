@@ -35,6 +35,14 @@ def _is_ddp_wrapped(model: nn.Module) -> bool:
 
         parallel_wrappers = parallel_wrappers + (apex_DDP,)
 
+    if SETTINGS.fairscale_required:
+        from fairscale.nn.data_parallel import (
+            FullyShardedDataParallel as FSDP,
+            ShardedDataParallel as ShardedDDP,
+        )
+
+        parallel_wrappers = parallel_wrappers + (ShardedDDP, FSDP,)
+
     return isinstance(model, parallel_wrappers)
 
 

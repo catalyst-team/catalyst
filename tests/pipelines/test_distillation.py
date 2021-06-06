@@ -163,7 +163,7 @@ def test_distillation_on_apex():
     reason="No CUDA>=2 or Apex found",
 )
 def test_distillation_on_apex_dp():
-    train_experiment(None, dl.DataParallelApexEngine())
+    train_experiment(None, dl.DataParallelAPEXEngine())
 
 
 # @mark.skipif(
