@@ -4,7 +4,6 @@ from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 
 
-# TODO: how to show logs/trace ?
 class ProfilerCallback(Callback):
     """Performs the profiler step for the PyTorch:1.8 profiler"""
 
@@ -45,20 +44,17 @@ class ProfilerCallback(Callback):
 
         if self.profiler is None:
             self.profiler = torch.profiler.profile(**self.profiler_kwargs)
-            self.profiler.__enter__()
-
-            print(">>>> INITIALIZED PROFILER <<<<")
+            self.profiler = self.profiler.__enter__()
 
     def _exit_profiler(self, loader_key: str, epoch: int) -> None:
         if not self._should_use_profiler(loader_key, epoch) or self.profiler is None:
             return
 
-        self.stats = self.profiler.key_averages()
-        print("-" * 100)
-        print(self.stats.table(sort_by="cpu_time_total", row_limit=10))
-        print("-" * 100)
-
         self.profiler.__exit__(None, None, None)
+        self.stats = self.profiler.key_averages()
+
+        # TODO: how to show table in other logers ?
+        print(self.stats.table(sort_by="cpu_time_total", row_limit=10))
 
     def on_loader_start(self, runner: IRunner) -> None:
         """

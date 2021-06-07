@@ -76,7 +76,7 @@ class CustomRunner(dl.IRunner):
             "profiler": ProfilerCallback(
                 loader_key="train",
                 epoch=1,
-                schedule=torch.profiler.schedule(wait=2, warmup=3, active=6),
+                # schedule=torch.profiler.schedule(wait=2, warmup=3, active=6),
                 activities=[
                     torch.profiler.ProfilerActivity.CPU,
                     torch.profiler.ProfilerActivity.CUDA,
