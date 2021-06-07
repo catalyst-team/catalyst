@@ -757,14 +757,14 @@ class IRunner(ICallback, ILogger, ABC):
         Used to make a train/valid/infer stage during Experiment run.
 
         Args:
-            batch (Mapping[str, Any]): dictionary with data batches
-                from DataLoader.
+            batch (Mapping[str, Any]): dictionary with data batches from DataLoader.
         """
         pass
 
     def _run_batch(self) -> None:
         self._run_event("on_batch_start")
         self.handle_batch(batch=self.batch)
+        self.batch = self.engine.sync_device(self.batch)
         self._run_event("on_batch_end")
 
     def _run_loader(self) -> None:
