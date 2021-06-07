@@ -1,12 +1,11 @@
 from typing import Any, Dict, List
 from collections import OrderedDict
 from copy import deepcopy
-from functools import partial
 import logging
 import os
 
 from torch import nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
@@ -216,6 +215,34 @@ class ConfigRunner(IRunner):
 
         return loggers
 
+    @staticmethod
+    def get_dataset_from_params(**params) -> "Dataset":
+        """Creates dataset from ``**params`` parameters."""
+        params = deepcopy(params)
+
+        dataset = REGISTRY.get_from_params(**params)
+
+        return dataset
+
+    def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
+        """
+        Returns datasets for a given stage.
+
+        Args:
+            stage: stage name
+
+        Returns:
+            Dict: datasets objects
+
+        """
+        params = deepcopy(self._stage_config[stage]["loaders"]["datasets"])
+
+        datasets = [
+            (key, self.get_dataset_from_params(**dataset_params))
+            for key, dataset_params in params.items()
+        ]
+        return OrderedDict(datasets)
+
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """
         Returns loaders for a given stage.
@@ -227,12 +254,11 @@ class ConfigRunner(IRunner):
             Dict: loaders objects
 
         """
-        loaders_params = dict(self._stage_config[stage]["loaders"])
+        loaders_params = deepcopy(self._stage_config[stage]["loaders"])
+        loaders_params.pop("datasets", None)
+
         loaders = get_loaders_from_params(
-            datasets_fn=partial(self.get_datasets, stage=stage),
-            initial_seed=self.seed,
-            stage=stage,
-            **loaders_params,
+            datasets=self.get_datasets(stage=stage), initial_seed=self.seed, **loaders_params,
         )
         return loaders
 

@@ -51,8 +51,19 @@ stages:
       # default kwargs for `runner.get_loaders`:
       batch_size: 32
       num_workers: 1
-      # kwargs for `runner.get_datasets`:
-      num_samples_per_class: 320
+
+      datasets:
+        train:
+          # _target_: MNIST
+          root: *dataset_root
+          train: True
+          download: True
+          num_samples_per_class: 320
+        valid:
+          # _target_: MNIST
+          root: *dataset_root
+          train: False
+          download: True
 
     criterion:
       _target_: CrossEntropyLoss

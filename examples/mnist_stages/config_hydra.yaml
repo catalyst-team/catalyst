@@ -50,8 +50,18 @@ stages:
       # default kwargs for `runner.get_loaders`:
       batch_size: 32
       num_workers: 1
-      # kwargs for `runner.get_datasets`:
-      num_samples_per_class: 320
+
+      datasets:
+        train:
+          _target_: catalyst.contrib.datasets.MNIST
+          root: ${shared.dataset_root}
+          train: true
+          download: true
+        valid:
+          _target_: catalyst.contrib.datasets.MNIST
+          root: ${shared.dataset_root}
+          train: false
+          download: true
 
     criterion:
       _target_: torch.nn.CrossEntropyLoss

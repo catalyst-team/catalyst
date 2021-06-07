@@ -13,15 +13,18 @@ NUM_SAMPLES, NUM_FEATURES, NUM_CLASSES = int(1e4), int(1e1), 4
 
 
 class CustomConfigRunner(dl.SupervisedConfigRunner):
-    def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
+    @staticmethod
+    def get_dataset_from_params(
+        num_samples: int, num_features: int, num_classes: int
+    ) -> "Dataset":
         # sample data
-        X = torch.rand(NUM_SAMPLES, NUM_FEATURES)
-        y = (torch.rand(NUM_SAMPLES,) * NUM_CLASSES).to(torch.int64)
+        X = torch.rand(num_samples, num_features)
+        y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
 
         # pytorch dataset
         dataset = TensorDataset(X, y)
-        datasets = {"train": dataset, "valid": dataset}
-        return datasets
+
+        return dataset
 
 
 def train_experiment(engine):
@@ -57,7 +60,22 @@ def train_experiment(engine):
                         "criterion": {"_target_": "CrossEntropyLoss"},
                         "optimizer": {"_target_": "Adam", "lr": 1e-3},
                         "scheduler": {"_target_": "MultiStepLR", "milestones": [2]},
-                        "loaders": {"batch_size": 32, "num_workers": 1},
+                        "loaders": {
+                            "batch_size": 32,
+                            "num_workers": 1,
+                            "datasets": {
+                                "train": {
+                                    "num_samples": NUM_SAMPLES,
+                                    "num_features": NUM_FEATURES,
+                                    "num_classes": NUM_CLASSES,
+                                },
+                                "valid": {
+                                    "num_samples": NUM_SAMPLES,
+                                    "num_features": NUM_FEATURES,
+                                    "num_classes": NUM_CLASSES,
+                                },
+                            },
+                        },
                         "callbacks": {
                             "accuracy": {
                                 "_target_": "AccuracyCallback",
