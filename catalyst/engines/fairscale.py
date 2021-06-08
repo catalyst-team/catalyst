@@ -15,6 +15,7 @@ if SETTINGS.fairscale_required:
         FullyShardedDataParallel as FSDP,
         ShardedDataParallel as ShardedDDP,
     )
+    from fairscale.optim import OSS
     from fairscale.optim.grad_scaler import ShardedGradScaler
 
 
@@ -134,6 +135,7 @@ class SharedDataParallelFairScaleEngine(DistributedDataParallelEngine):
         optimizer = optimizer_fn()
         optimizer = self.sync_device(optimizer)
 
+        optimizer = OSS(model.parameters(), optim=optimizer.__class__, **optimizer.defaults)
         model = ShardedDDP(model, optimizer, **self.ddp_kwargs)
 
         scheduler = scheduler_fn()

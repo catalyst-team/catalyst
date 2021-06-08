@@ -26,6 +26,7 @@ from catalyst.typing import (
     RunnerScheduler,
     Scheduler,
 )
+from catalyst.utils.distributed import ddp_sync_run
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
 LOGGER = logging.getLogger(__name__)
@@ -648,7 +649,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.stage_epoch_step: int = 0
         self.stage_batch_step: int = 0
         self.stage_sample_step: int = 0
-        self._setup_loaders()
+        ddp_sync_run(self._setup_loaders)
         self._setup_components()
         self._setup_callbacks()
         self.log_hparams(hparams=self.hparams, scope="stage")

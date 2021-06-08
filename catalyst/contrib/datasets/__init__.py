@@ -14,6 +14,8 @@ from catalyst.contrib.datasets.mnist import (
     MNIST,
 )
 
+from catalyst.contrib.datasets.cifar import CIFAR10, CIFAR100
+
 if SETTINGS.ml_required:
     from catalyst.contrib.datasets.movielens import MovieLens
 

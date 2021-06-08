@@ -77,4 +77,17 @@ class GaussianNoise(nn.Module):
         noise.normal_(0, self.stddev)
 
 
-__all__ = ["Flatten", "Lambda", "Normalize", "GaussianNoise"]
+class ResidualBlock(nn.Module):
+    """ResidualBlock"""
+
+    def __init__(self, block):
+        """ResidualBlock"""
+        super().__init__()
+        self.block = block
+
+    def forward(self, x: torch.Tensor):
+        """Forward call."""
+        return self.block(x) + x
+
+
+__all__ = ["Flatten", "Lambda", "Normalize", "GaussianNoise", "ResidualBlock"]
