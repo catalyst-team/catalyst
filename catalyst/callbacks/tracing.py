@@ -145,9 +145,9 @@ class TracingCallback(Callback):
         Args:
             runner: runner for experiment
         """
-        model = runner.model
+        model = runner.engine.sync_device(runner.model)
         batch = tuple(runner.batch[key] for key in self.input_key)
-        batch = any2device(batch, "cpu")
+        batch = runner.engine.sync_device(batch)
         traced_model = trace_model(model=model, batch=batch, method_name=self.method_name)
         torch.jit.save(traced_model, self.filename)
 
