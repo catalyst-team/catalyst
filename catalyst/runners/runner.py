@@ -653,7 +653,7 @@ class Runner(IRunner):
             for logits in runner.predict_loader(loader=loaders["valid"]):
                 assert logits.detach().cpu().numpy().shape[-1] == 10
         """
-        self._engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
+        self.engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
 
         if model is not None:
             self.model = model
