@@ -4,7 +4,6 @@ from pathlib import Path
 import torch
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder
-from catalyst.utils.torch import any2device
 from catalyst.utils.tracing import trace_model
 
 if TYPE_CHECKING:
