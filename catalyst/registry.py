@@ -159,4 +159,17 @@ def _torch_functional_loader(r: registry.Registry):
 REGISTRY.late_add(_torch_functional_loader)
 
 
+def _datasets_loader(r: registry.Registry):
+    from catalyst.data import dataset as m  # noqa: WPS347
+
+    r.add_from_module(m)
+
+    from catalyst.contrib import datasets as m_contrib  # noqa: WPS347
+
+    r.add_from_module(m_contrib)
+
+
+REGISTRY.late_add(_datasets_loader)
+
+
 __all__ = ["REGISTRY"]

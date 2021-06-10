@@ -54,13 +54,13 @@ stages:
 
       datasets:
         train:
-          # _target_: MNIST
+          _target_: MNIST
           root: *dataset_root
           train: True
           download: True
           num_samples_per_class: 320
         valid:
-          # _target_: MNIST
+          _target_: MNIST
           root: *dataset_root
           train: False
           download: True

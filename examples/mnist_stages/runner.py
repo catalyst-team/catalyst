@@ -30,15 +30,9 @@ class IRunnerMixin(IRunner):
 
 
 class CustomSupervisedConfigRunner(IRunnerMixin, SupervisedConfigRunner):
-    def get_dataset_from_params(
-        self,
-        root: str = "./data",
-        train: bool = True,
-        download: bool = False,
-        num_samples_per_class=320,
-    ):
-        dataset = MNIST(root, train=train, download=download, transform=self.get_transform(),)
-        if train:
+    def get_dataset_from_params(self, num_samples_per_class=320, **kwargs):
+        dataset = super().get_dataset_from_params(transform=self.get_transform(), **kwargs)
+        if kwargs.get("train", True):
             dataset = {
                 "dataset": dataset,
                 "sampler": BalanceClassSampler(labels=dataset.targets, mode=num_samples_per_class),

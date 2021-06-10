@@ -1,5 +1,7 @@
 # flake8: noqa
 
+import collections
+from copy import deepcopy
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -13,18 +15,20 @@ NUM_SAMPLES, NUM_FEATURES, NUM_CLASSES = int(1e4), int(1e1), 4
 
 
 class CustomConfigRunner(dl.SupervisedConfigRunner):
-    @staticmethod
-    def get_dataset_from_params(
-        num_samples: int, num_features: int, num_classes: int
-    ) -> "Dataset":
+    def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
+        params = deepcopy(self._stage_config[stage]["loaders"]["datasets"])
+        num_samples = params.get("num_samples", NUM_SAMPLES)
+        num_features = params.get("num_features", NUM_FEATURES)
+        num_classes = params.get("num_classes", NUM_CLASSES)
+
         # sample data
         X = torch.rand(num_samples, num_features)
         y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
 
         # pytorch dataset
         dataset = TensorDataset(X, y)
-
-        return dataset
+        datasets = {"train": dataset, "valid": dataset}
+        return datasets
 
 
 def train_experiment(engine):
@@ -64,16 +68,9 @@ def train_experiment(engine):
                             "batch_size": 32,
                             "num_workers": 1,
                             "datasets": {
-                                "train": {
-                                    "num_samples": NUM_SAMPLES,
-                                    "num_features": NUM_FEATURES,
-                                    "num_classes": NUM_CLASSES,
-                                },
-                                "valid": {
-                                    "num_samples": NUM_SAMPLES,
-                                    "num_features": NUM_FEATURES,
-                                    "num_classes": NUM_CLASSES,
-                                },
+                                "num_samples": NUM_SAMPLES,
+                                "num_features": NUM_FEATURES,
+                                "num_classes": NUM_CLASSES,
                             },
                         },
                         "callbacks": {

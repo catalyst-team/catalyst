@@ -51,7 +51,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
+- batch overfit test fixed ([#1232](https://github.com/catalyst-team/catalyst/pull/1232/files))
 
 
 ## [21.05] - 2021-05-31
