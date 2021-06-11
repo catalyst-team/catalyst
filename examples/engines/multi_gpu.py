@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# flake8: noqa
 from argparse import ArgumentParser, RawTextHelpFormatter
 from functools import partial
 import os
@@ -142,7 +143,11 @@ class CustomRunner(dl.IRunner):
                 input_key="logits", target_key="targets", topk_args=(1, 3, 5)
             ),
             "checkpoint": dl.CheckpointCallback(
-                self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=1
+                self._logdir,
+                loader_key="valid",
+                metric_key="accuracy",
+                minimize=False,
+                save_n_best=1,
             ),
         }
 

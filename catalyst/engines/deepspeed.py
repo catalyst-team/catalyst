@@ -5,7 +5,7 @@ import os
 import torch
 import torch.distributed as dist
 
-from catalyst.engines.torch import DistributedDataParallelEngine
+from catalyst.engines.torch import DeviceEngine
 from catalyst.settings import SETTINGS
 from catalyst.utils.distributed import mean_reduce, sum_reduce
 
@@ -13,7 +13,8 @@ if SETTINGS.deepspeed_required:
     import deepspeed
 
 
-class DistributedDataParallelDeepSpeedEngine(DistributedDataParallelEngine):
+# @TODO: create distributed abstraction
+class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
     """Distributed DeepSpeed MultiGPU training device engine.
 
     Args:
@@ -29,6 +30,7 @@ class DistributedDataParallelDeepSpeedEngine(DistributedDataParallelEngine):
         self,
         address: str = None,
         port: Union[str, int] = None,
+        train_batch_size: int = 256,
         process_group_kwargs: Dict[str, Any] = None,
         deepspeed_kwargs: Dict[str, Any] = None,
     ):
@@ -36,6 +38,7 @@ class DistributedDataParallelDeepSpeedEngine(DistributedDataParallelEngine):
         super().__init__()
         self.address = address or "localhost"
         self.port = port or 12345
+        self.train_batch_size = train_batch_size
         self._rank = 0
         self.device = None
 
@@ -153,7 +156,8 @@ class DistributedDataParallelDeepSpeedEngine(DistributedDataParallelEngine):
         model, optimizer, _, _ = deepspeed.initialize(
             model=model,
             optimizer=optimizer,
-            config={"train_batch_size": 32},
+            # @TODO: not sure about this deepspeed feature
+            config={"train_batch_size": self.train_batch_size},
             **self.deepspeed_kwargs,
         )
 

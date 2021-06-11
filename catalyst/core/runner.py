@@ -14,7 +14,6 @@ from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import filter_callbacks_by_node, sort_callbacks_by_order, validate_loaders
 from catalyst.core.trial import ITrial
-from catalyst.engines.torch import DistributedDataParallelEngine
 from catalyst.typing import (
     Criterion,
     Device,
@@ -789,7 +788,7 @@ class IRunner(ICallback, ILogger, ABC):
         self._run_event("on_epoch_end")
 
     def _run_stage(self, rank: int = -1, world_size: int = 1) -> None:
-        if isinstance(self.engine, DistributedDataParallelEngine):
+        if self.engine.is_ddp:
             self.engine.setup_process(rank=rank, world_size=world_size)
             if not self.engine.is_master_process:
                 self.loggers = {}
@@ -805,7 +804,7 @@ class IRunner(ICallback, ILogger, ABC):
     def _run_experiment(self) -> None:
         self._run_event("on_experiment_start")
         for self.stage_key in self.stages:
-            if isinstance(self.engine, DistributedDataParallelEngine):
+            if self.engine.is_ddp:
                 # ddp-device branch
                 world_size = self.engine.world_size
                 torch.multiprocessing.spawn(
