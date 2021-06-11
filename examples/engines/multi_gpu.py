@@ -1,4 +1,4 @@
-# CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=fs-pp
+#!/usr/bin/env python
 from argparse import ArgumentParser, RawTextHelpFormatter
 from functools import partial
 import os
@@ -11,21 +11,33 @@ from catalyst.contrib.datasets import CIFAR10
 from catalyst.contrib.nn import ResidualBlock
 from catalyst.data import transforms
 
+# tested with `pip install catalyst`
+# CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=dp
+# CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=ddp
 E2E = {
     "dp": dl.DataParallelEngine,
     "ddp": dl.DistributedDataParallelEngine,
 }
 
+# tested with `pip install catalyst`
+# CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=amp-dp
+# CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=amp-ddp
 if SETTINGS.amp_required:
     E2E.update(
         {"amp-dp": dl.DataParallelAMPEngine, "amp-ddp": dl.DistributedDataParallelAMPEngine}
     )
 
+# tested with `pip install catalyst && install-apex`
 if SETTINGS.apex_required:
     E2E.update(
         {"apex-dp": dl.DataParallelAPEXEngine, "apex-ddp": dl.DistributedDataParallelAPEXEngine}
     )
 
+# `pip install catalyst[fairscale]`
+# CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=fs-pp
+# CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=fs-ddp
+# CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=fs-ddp-amp
+# CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=fs-fddp
 if SETTINGS.fairscale_required:
     E2E.update(
         {
@@ -37,6 +49,8 @@ if SETTINGS.fairscale_required:
     )
 
 # tested with `docker pull deepspeed/deepspeed:v031_torch17_cuda11`
+# and `pip install catalyst[deepspeed]`
+# CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=ds-ddp
 if SETTINGS.deepspeed_required:
     E2E.update(
         {"ds-ddp": dl.DistributedDataParallelDeepSpeedEngine,}
@@ -115,7 +129,7 @@ class CustomRunner(dl.IRunner):
         return optim.Adam(model.parameters(), lr=1e-3)
 
     def get_scheduler(self, stage: str, optimizer):
-        return None
+        return optim.lr_scheduler.MultiStepLR(optimizer, [5, 8], gamma=0.3)
 
     def get_callbacks(self, stage: str):
         return {
@@ -123,16 +137,10 @@ class CustomRunner(dl.IRunner):
                 metric_key="loss", input_key="logits", target_key="targets"
             ),
             "optimizer": dl.OptimizerCallback(metric_key="loss"),
-            # "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
-            # "accuracy": dl.AccuracyCallback(
-            #     input_key="logits", target_key="targets", topk_args=(1, 3, 5)
-            # ),
-            # "classification": dl.PrecisionRecallF1SupportCallback(
-            #     input_key="logits", target_key="targets", num_classes=10
-            # ),
-            # "confusion_matrix": dl.ConfusionMatrixCallback(
-            #     input_key="logits", target_key="targets", num_classes=10
-            # ),
+            "scheduler": dl.SchedulerCallback(loader_key="valid", metric_key="loss"),
+            "accuracy": dl.AccuracyCallback(
+                input_key="logits", target_key="targets", topk_args=(1, 3, 5)
+            ),
             "checkpoint": dl.CheckpointCallback(
                 self._logdir, loader_key="valid", metric_key="loss", minimize=True, save_n_best=1
             ),
