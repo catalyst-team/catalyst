@@ -41,8 +41,7 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
     """FairScale multi-gpu training device engine.
 
     Args:
-        pipe_kwargs: parameters for `fairscale.nn.Pipe`
-
+        pipe_kwargs: parameters for `fairscale.nn.Pipe`.
             Docs for `fairscale.nn.Pipe`:
             https://fairscale.readthedocs.io/en/latest/api/nn/pipe.html
 
@@ -332,13 +331,13 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
 
-        optimizer = optimizer_fn()
+        optimizer = optimizer_fn(model)
         optimizer = self.sync_device(optimizer)
 
         optimizer = OSS(model.parameters(), optim=optimizer.__class__, **optimizer.defaults)
         model = ShardedDDP(model, optimizer, **self.ddp_kwargs)
 
-        scheduler = scheduler_fn()
+        scheduler = scheduler_fn(optimizer)
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
@@ -418,6 +417,8 @@ class SharedDataParallelFairScaleAMPEngine(SharedDataParallelFairScaleEngine):
         address: address to use for backend.
         port: port to use for backend.
         ddp_kwargs: parameters for `fairscale.nn.data_parallel.ShardedDataParallel`.
+            Docs for `fairscale.nn.ShardedDataParallel`:
+            https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html
         process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
@@ -524,6 +525,8 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
         address: address to use for backend.
         port: port to use for backend.
         ddp_kwargs: parameters for `fairscale.nn.data_parallel.FullyShardedDataParallel`.
+            Docs for `fairscale.nn.FullyShardedDataParallel`:
+            https://fairscale.readthedocs.io/en/latest/api/nn/fsdp.html
         process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
@@ -598,16 +601,18 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
         model = model_fn()
         model = self.sync_device(model)
 
+        model = FSDP(model, **self.ddp_kwargs)
+
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
 
-        optimizer = optimizer_fn()
+        optimizer = optimizer_fn(model)
         optimizer = self.sync_device(optimizer)
 
-        scheduler = scheduler_fn()
+        scheduler = scheduler_fn(optimizer)
         scheduler = self.sync_device(scheduler)
 
-        model = FSDP(model, **self.ddp_kwargs)
+
         return model, criterion, optimizer, scheduler
 
 

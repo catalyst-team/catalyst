@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # flake8: noqa
 from argparse import ArgumentParser, RawTextHelpFormatter
-from functools import partial
 import os
 
 from torch import nn, optim
@@ -30,7 +29,7 @@ if SETTINGS.apex_required:
 if SETTINGS.fairscale_required:
     E2E.update(
         {
-            "fs-pp": partial(dl.PipelineParallelFairScaleEngine, pipe_kwargs=dict(balance=[3, 4])),
+            "fs-pp": dl.PipelineParallelFairScaleEngine,
             "fs-ddp": dl.SharedDataParallelFairScaleEngine,
             "fs-ddp-amp": dl.SharedDataParallelFairScaleAMPEngine,
             "fs-fddp": dl.FullySharedDataParallelFairScaleEngine,
