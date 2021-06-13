@@ -37,7 +37,7 @@ def _is_ddp_wrapped(model: nn.Module) -> bool:
     if SETTINGS.fairscale_required:
         from fairscale.nn.data_parallel import FullyShardedDataParallel, ShardedDataParallel
 
-        parallel_wrappers = parallel_wrappers + (ShardedDataParallel, FullyShardedDataParallel,)
+        parallel_wrappers = parallel_wrappers + (ShardedDataParallel, FullyShardedDataParallel)
 
     if SETTINGS.deepspeed_required:
         from deepspeed import DeepSpeedEngine, PipelineEngine

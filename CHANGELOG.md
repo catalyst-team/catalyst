@@ -18,8 +18,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Changed
 
 - ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
-  - loaders creation now wrapper with `utils.ddp_sync_run`
-    for `utils.ddp_sync_run` data preparation
+  - loaders creation now wrapper with `utils.ddp_sync_run` for `utils.ddp_sync_run` data preparation
   - runner support stage cleanup: loaders and callbacks will be deleted on the stage end
   - Apex-based engines now support both APEXEngine and ApexEngine registry names
 
@@ -29,7 +28,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
+- multiprocessing in minimal tests hotfix ([#1232](https://github.com/catalyst-team/catalyst/pull/1232))
+- Tracing callback hotfix ([#1234](https://github.com/catalyst-team/catalyst/pull/1234))
+- Engine hotfix for `predict_loader` ([#1235](https://github.com/catalyst-team/catalyst/pull/1235))
 
 
 ## [21.05] - YYYY-MM-DD
