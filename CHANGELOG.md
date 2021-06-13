@@ -31,6 +31,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - multiprocessing in minimal tests hotfix ([#1232](https://github.com/catalyst-team/catalyst/pull/1232))
 - Tracing callback hotfix ([#1234](https://github.com/catalyst-team/catalyst/pull/1234))
 - Engine hotfix for `predict_loader` ([#1235](https://github.com/catalyst-team/catalyst/pull/1235))
+- ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
+  - Hydra hotfix due to `1.1.0` version changes
 
 
 ## [21.05] - YYYY-MM-DD
