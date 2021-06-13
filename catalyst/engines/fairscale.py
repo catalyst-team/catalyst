@@ -344,7 +344,8 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
 
     def deinit_components(self):
         """Deinits the runs components."""
-        self.cleanup_process()
+        pass
+        # self.cleanup_process()
 
     def zero_grad(self, loss, model, optimizer) -> None:
         """Abstraction over ``model.zero_grad()`` step."""

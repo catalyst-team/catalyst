@@ -247,6 +247,8 @@ class IRunner(ICallback, ILogger, ABC):
         # extra
         self.exception: Exception = None
         self.need_early_stop: bool = False
+        self._stage_rank: int = -1
+        self._stage_world_size: int = -1
 
     # @TODO: remove hotfix
     @property
@@ -648,6 +650,13 @@ class IRunner(ICallback, ILogger, ABC):
         self.stage_epoch_step: int = 0
         self.stage_batch_step: int = 0
         self.stage_sample_step: int = 0
+
+        if self.engine.is_ddp:
+            self.engine.setup_process(rank=self._stage_rank, world_size=self._stage_world_size)
+            if not self.engine.is_master_process:
+                del self.loggers
+                self.loggers = {}
+
         ddp_sync_run(self._setup_loaders)
         self._setup_components()
         self._setup_callbacks()
@@ -733,10 +742,18 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler."""
+        # due to multiprocessing setup we have to close current loggers
+        # to prevent EOF-like errors
+        if self.engine.is_ddp:
+            self.flush_log()
+            self.close_log()
         self.engine.deinit_components()
+        if self.engine.is_ddp:
+            self.engine.cleanup_process()
 
     def on_experiment_end(self, runner: "IRunner"):
         """Event handler."""
+        self.flush_log()
         self.close_log()
 
     def on_exception(self, runner: "IRunner"):
@@ -789,11 +806,7 @@ class IRunner(ICallback, ILogger, ABC):
         self._run_event("on_epoch_end")
 
     def _run_stage(self, rank: int = -1, world_size: int = 1) -> None:
-        if self.engine.is_ddp:
-            self.engine.setup_process(rank=rank, world_size=world_size)
-            if not self.engine.is_master_process:
-                self.loggers = {}
-
+        self._stage_rank, self._stage_world_size = rank, world_size
         self._run_event("on_stage_start")
         while self.stage_epoch_step < self.stage_epoch_len:
             self._run_epoch()
