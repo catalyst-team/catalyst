@@ -491,14 +491,14 @@ class IRunner(ICallback, ILogger, ABC):
     def _get_optimizer(self, model: Model = None) -> Optimizer:
         if model is not None:
             self.model = model
-        assert self.model is not None, "You need to setup model first"
+        # assert self.model is not None, "You need to setup model first"
         self.optimizer = self.get_optimizer(stage=self.stage_key, model=self.model)
         return self.optimizer
 
     def _get_scheduler(self, optimizer: Optimizer = None) -> Scheduler:
         if optimizer is not None:
             self.optimizer = optimizer
-        assert self.optimizer is not None, "You need to setup optimizer first"
+        # assert self.optimizer is not None, "You need to setup optimizer first"
         self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
         return self.scheduler
 

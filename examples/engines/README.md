@@ -21,6 +21,7 @@ CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=amp-ddp
 ## Nvidia APEX
 ```bash
 pip install catalyst && install-apex
+# or git clone https://github.com/NVIDIA/apex && cd apex && pip install -e .
 CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=apex-dp
 CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=apex-ddp
 ```
