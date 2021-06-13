@@ -215,8 +215,7 @@ class ConfigRunner(IRunner):
 
         return loggers
 
-    @staticmethod
-    def get_dataset_from_params(**params) -> "Dataset":
+    def get_dataset_from_params(self, **params) -> "Dataset":
         """Creates dataset from ``**params`` parameters."""
         params = deepcopy(params)
 

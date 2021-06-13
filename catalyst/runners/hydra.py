@@ -176,8 +176,7 @@ class HydraRunner(IRunner):
 
         return loggers
 
-    @staticmethod
-    def get_dataset_from_params(params: DictConfig) -> "Dataset":
+    def get_dataset_from_params(self, params: DictConfig) -> "Dataset":
         """Creates dataset from ``**params`` parameters."""
         dataset = hydra.utils.instantiate(params)
         raise dataset
