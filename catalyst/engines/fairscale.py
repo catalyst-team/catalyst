@@ -385,32 +385,10 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
             ``criterion_state_dict``, ``optimizer_state_dict``,
             ``scheduler_state_dict`` keys.
         """
-        # @TODO: correctly handle OSS optimizer
-        return {}
-
-    def unpack_checkpoint(
-        self,
-        checkpoint: Dict,
-        model: RunnerModel = None,
-        criterion: RunnerCriterion = None,
-        optimizer: RunnerOptimizer = None,
-        scheduler: RunnerScheduler = None,
-        **kwargs,
-    ) -> None:
-        """Load checkpoint from file and unpack the content to a model
-        (if not None), criterion (if not None), optimizer (if not None),
-        scheduler (if not None).
-
-        Args:
-            checkpoint: checkpoint to load
-            model: model where should be updated state
-            criterion: criterion where should be updated state
-            optimizer: optimizer where should be updated state
-            scheduler: scheduler where should be updated state
-            kwargs: extra arguments
-        """
-        # @TODO: correctly handle OSS optimizer
-        pass
+        optimizer.consolidate_state_dict(recipient_rank=-1)
+        return super().pack_checkpoint(
+            model=model, criterion=criterion, optimizer=optimizer, scheduler=scheduler, **kwargs
+        )
 
 
 class SharedDataParallelFairScaleAMPEngine(SharedDataParallelFairScaleEngine):
