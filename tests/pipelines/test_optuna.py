@@ -59,7 +59,7 @@ def train_experiment(device, engine=None):
                 },
                 num_epochs=2,
             )
-            score = runner.callbacks["optuna"].best_score
+            score = trial.best_score
             return score
 
         study = optuna.create_study(

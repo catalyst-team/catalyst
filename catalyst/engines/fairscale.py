@@ -99,7 +99,6 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
         """Inits the runs components."""
-
         model = model_fn()
         # model = self.sync_device(model)
 
@@ -385,9 +384,9 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
             ``criterion_state_dict``, ``optimizer_state_dict``,
             ``scheduler_state_dict`` keys.
         """
-        optimizer.consolidate_state_dict(recipient_rank=-1)
+        # optimizer.consolidate_state_dict(recipient_rank=0)
         return super().pack_checkpoint(
-            model=model, criterion=criterion, optimizer=optimizer, scheduler=scheduler, **kwargs
+            model=model, criterion=criterion, optimizer=None, scheduler=scheduler, **kwargs
         )
 
 

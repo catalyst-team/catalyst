@@ -8,11 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
+  - FairScale support
+  - DeepSpeed support
+  - `utils.ddp_sync_run` function for synchronous ddp run
+  - CIFAR10 and CIFAR100 datasets from torchvision (no cv-based requirements)
+  - [Catalyst Engines demo](https://github.com/catalyst-team/catalyst/tree/master/examples/engines)
 
 ### Changed
 
--
+- ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
+  - loaders creation now wrapper with `utils.ddp_sync_run`
+    for `utils.ddp_sync_run` data preparation
+  - runner support stage cleanup: loaders and callbacks will be deleted on the stage end
+  - Apex-based engines now support both APEXEngine and ApexEngine registry names
 
 ### Removed
 

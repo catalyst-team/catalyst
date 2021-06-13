@@ -35,12 +35,9 @@ def _is_ddp_wrapped(model: nn.Module) -> bool:
         parallel_wrappers = parallel_wrappers + (apex_DDP,)
 
     if SETTINGS.fairscale_required:
-        from fairscale.nn.data_parallel import (
-            FullyShardedDataParallel as FSDP,
-            ShardedDataParallel as ShardedDDP,
-        )
+        from fairscale.nn.data_parallel import FullyShardedDataParallel, ShardedDataParallel
 
-        parallel_wrappers = parallel_wrappers + (ShardedDDP, FSDP)
+        parallel_wrappers = parallel_wrappers + (ShardedDataParallel, FullyShardedDataParallel,)
 
     if SETTINGS.deepspeed_required:
         from deepspeed import DeepSpeedEngine, PipelineEngine
