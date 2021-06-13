@@ -220,6 +220,11 @@ def all_gather(data: Any) -> List[Any]:
 
 
 def ddp_sync_run(function: Callable):
+    """Runs function in a synchronous way: 0-rank first and all other processes after.
+
+    Args:
+        function: callable function
+    """
     rank = get_rank()
     if rank > 0:
         dist.barrier()

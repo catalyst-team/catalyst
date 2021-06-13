@@ -15,10 +15,7 @@ from catalyst.utils.distributed import mean_reduce, sum_reduce
 
 if SETTINGS.fairscale_required:
     from fairscale.nn import Pipe
-    from fairscale.nn.data_parallel import (
-        FullyShardedDataParallel as FSDP,
-        ShardedDataParallel as ShardedDDP,
-    )
+    from fairscale.nn.data_parallel import FullyShardedDataParallel, ShardedDataParallel
     from fairscale.optim import OSS
     from fairscale.optim.grad_scaler import ShardedGradScaler
 
@@ -130,9 +127,7 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
         return pipe_model, criterion, optimizer, scheduler
 
     def deinit_components(self, runner):
-        """Deinits the runs components.
-        In distributed mode should destroy process group.
-        """
+        """Deinits the runs components. In distributed mode should destroy process group."""
         del runner.model
 
     def zero_grad(self, loss, model, optimizer) -> None:
@@ -343,7 +338,7 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
         optimizer = self.sync_device(optimizer)
 
         optimizer = OSS(model.parameters(), optim=optimizer.__class__, **optimizer.defaults)
-        model = ShardedDDP(model, optimizer, **self.ddp_kwargs)
+        model = ShardedDataParallel(model, optimizer, **self.ddp_kwargs)
 
         scheduler = scheduler_fn(optimizer)
         scheduler = self.sync_device(scheduler)
@@ -609,7 +604,7 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
         model = model_fn()
         model = self.sync_device(model)
 
-        model = FSDP(model, **self.ddp_kwargs)
+        model = FullyShardedDataParallel(model, **self.ddp_kwargs)
 
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
