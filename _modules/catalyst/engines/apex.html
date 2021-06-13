@@ -592,7 +592,7 @@
             <span class="n">amp</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;amp&quot;</span><span class="p">])</span></div>
 
 
-<div class="viewcode-block" id="DataParallelApexEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.apex.DataParallelApexEngine">[docs]</a><span class="k">class</span> <span class="nc">DataParallelApexEngine</span><span class="p">(</span><span class="n">APEXEngine</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DataParallelAPEXEngine</span><span class="p">(</span><span class="n">APEXEngine</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Apex multi-gpu training device engine.</span>
 
 <span class="sd">    Args:</span>
@@ -673,10 +673,10 @@
         <span class="c1"># scheduler</span>
         <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">()</span>
         <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">scheduler</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span></div>
+        <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span>
 
 
-<div class="viewcode-block" id="DistributedDataParallelApexEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.apex.DistributedDataParallelApexEngine">[docs]</a><span class="k">class</span> <span class="nc">DistributedDataParallelApexEngine</span><span class="p">(</span><span class="n">DistributedDataParallelEngine</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DistributedDataParallelAPEXEngine</span><span class="p">(</span><span class="n">DistributedDataParallelEngine</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Distributed Apex MultiGPU training device engine.</span>
 
 <span class="sd">    Args:</span>
@@ -882,10 +882,19 @@
         <span class="c1"># NOTE: propper way to load state, docs:</span>
         <span class="c1">#   https://nvidia.github.io/apex/amp.html#checkpointing</span>
         <span class="k">if</span> <span class="s2">&quot;amp&quot;</span> <span class="ow">in</span> <span class="n">checkpoint</span><span class="p">:</span>
-            <span class="n">amp</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;amp&quot;</span><span class="p">])</span></div>
+            <span class="n">amp</span><span class="o">.</span><span class="n">load_state_dict</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">[</span><span class="s2">&quot;amp&quot;</span><span class="p">])</span>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;APEXEngine&quot;</span><span class="p">,</span> <span class="s2">&quot;DataParallelApexEngine&quot;</span><span class="p">,</span> <span class="s2">&quot;DistributedDataParallelApexEngine&quot;</span><span class="p">]</span>
+<span class="n">DataParallelApexEngine</span> <span class="o">=</span> <span class="n">DataParallelAPEXEngine</span>
+<span class="n">DistributedDataParallelApexEngine</span> <span class="o">=</span> <span class="n">DistributedDataParallelAPEXEngine</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;APEXEngine&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DataParallelAPEXEngine&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DistributedDataParallelAPEXEngine&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DataParallelApexEngine&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;DistributedDataParallelApexEngine&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
              </article>

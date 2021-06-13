@@ -536,8 +536,8 @@
         <span class="k">assert</span> <span class="ow">not</span> <span class="n">amp</span><span class="p">,</span> <span class="s2">&quot;Could not use both apex and amp engines&quot;</span>
         <span class="kn">from</span> <span class="nn">catalyst.engines.apex</span> <span class="kn">import</span> <span class="p">(</span>
             <span class="n">APEXEngine</span><span class="p">,</span>
-            <span class="n">DataParallelApexEngine</span><span class="p">,</span>
-            <span class="n">DistributedDataParallelApexEngine</span><span class="p">,</span>
+            <span class="n">DataParallelAPEXEngine</span><span class="p">,</span>
+            <span class="n">DistributedDataParallelAPEXEngine</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="n">is_multiple_gpus</span> <span class="o">=</span> <span class="n">NUM_CUDA_DEVICES</span> <span class="o">&gt;</span> <span class="mi">1</span>
@@ -548,14 +548,14 @@
             <span class="k">if</span> <span class="n">amp</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">DistributedDataParallelAMPEngine</span><span class="p">()</span>
             <span class="k">elif</span> <span class="n">apex</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">DistributedDataParallelApexEngine</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">DistributedDataParallelAPEXEngine</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">DistributedDataParallelEngine</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">amp</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">DataParallelAMPEngine</span><span class="p">()</span>
             <span class="k">elif</span> <span class="n">apex</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">DataParallelApexEngine</span><span class="p">()</span>
+                <span class="k">return</span> <span class="n">DataParallelAPEXEngine</span><span class="p">()</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">DataParallelEngine</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>

@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.engines.torch &mdash; Catalyst 21.06 documentation</title>
+  <title>catalyst.engines.fairscale &mdash; Catalyst 21.06 documentation</title>
   
 
   
@@ -282,7 +282,7 @@
         
           <li><a href="../../index.html">Module code</a> &gt;</li>
         
-      <li>catalyst.engines.torch</li>
+      <li>catalyst.engines.fairscale</li>
     
     
       <li class="catalyst-breadcrumbs-aside">
@@ -308,304 +308,50 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <h1>Source code for catalyst.engines.torch</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Union</span>
+  <h1>Source code for catalyst.engines.fairscale</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.cuda.amp</span> <span class="k">as</span> <span class="nn">amp</span>
 <span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="nn">dist</span>
-<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">from</span> <span class="nn">torch.nn.parallel</span> <span class="kn">import</span> <span class="n">DistributedDataParallel</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.core.engine</span> <span class="kn">import</span> <span class="n">IEngine</span>
+<span class="kn">from</span> <span class="nn">catalyst.engines.torch</span> <span class="kn">import</span> <span class="n">DeviceEngine</span>
+<span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">RunnerCriterion</span><span class="p">,</span> <span class="n">RunnerModel</span><span class="p">,</span> <span class="n">RunnerOptimizer</span><span class="p">,</span> <span class="n">RunnerScheduler</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">mean_reduce</span><span class="p">,</span> <span class="n">sum_reduce</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">any2device</span><span class="p">,</span>
-    <span class="n">load_checkpoint</span><span class="p">,</span>
-    <span class="n">pack_checkpoint</span><span class="p">,</span>
-    <span class="n">save_checkpoint</span><span class="p">,</span>
-    <span class="n">unpack_checkpoint</span><span class="p">,</span>
-<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">fairscale_required</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">fairscale.nn</span> <span class="kn">import</span> <span class="n">Pipe</span>
+    <span class="kn">from</span> <span class="nn">fairscale.nn.data_parallel</span> <span class="kn">import</span> <span class="n">FullyShardedDataParallel</span><span class="p">,</span> <span class="n">ShardedDataParallel</span>
+    <span class="kn">from</span> <span class="nn">fairscale.optim</span> <span class="kn">import</span> <span class="n">OSS</span>
+    <span class="kn">from</span> <span class="nn">fairscale.optim.grad_scaler</span> <span class="kn">import</span> <span class="n">ShardedGradScaler</span>
 
 
-<div class="viewcode-block" id="DeviceEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DeviceEngine">[docs]</a><span class="k">class</span> <span class="nc">DeviceEngine</span><span class="p">(</span><span class="n">IEngine</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Single training device engine.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        device: use device, default is `&quot;cpu&quot;`.</span>
-
-<span class="sd">    Examples:</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        from catalyst import dl</span>
-
-<span class="sd">        runner = dl.SupervisedRunner()</span>
-<span class="sd">        runner.train(</span>
-<span class="sd">            engine=dl.DeviceEngine(&quot;cuda:1&quot;),</span>
-<span class="sd">            ...</span>
-<span class="sd">        )</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        from catalyst import dl</span>
-
-<span class="sd">        class MyRunner(dl.IRunner):</span>
-<span class="sd">            # ...</span>
-<span class="sd">            def get_engine(self):</span>
-<span class="sd">                return dl.DeviceEngine(&quot;cuda:1&quot;)</span>
-<span class="sd">            # ...</span>
-
-<span class="sd">    .. code-block:: yaml</span>
-
-<span class="sd">        args:</span>
-<span class="sd">            logs: ...</span>
-
-<span class="sd">        model:</span>
-<span class="sd">            _target_: ...</span>
-<span class="sd">            ...</span>
-
-<span class="sd">        engine:</span>
-<span class="sd">            _target_: DeviceEngine</span>
-<span class="sd">            device: cuda:1</span>
-
-<span class="sd">        stages:</span>
-<span class="sd">            ...</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="n">device</span> <span class="o">=</span> <span class="n">device</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="n">device</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa: D105</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(device=&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="si">}</span><span class="s2">&#39;)&quot;</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Process rank for distributed training.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">world_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Process world size for distributed training.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="mi">1</span>
-
-    <span class="k">def</span> <span class="nf">sync_device</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">tensor_or_module</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">]</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Moves ``tensor_or_module`` to Engine&#39;s deivce.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">any2device</span><span class="p">(</span><span class="n">tensor_or_module</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">sync_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Syncs ``tensor`` over ``world_size`` in distributed mode.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">tensor</span>
-
-    <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
-        <span class="c1"># model</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-        <span class="c1"># criterion</span>
-        <span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">()</span>
-        <span class="n">criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">criterion</span><span class="p">)</span>
-        <span class="c1"># optimizer</span>
-        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">()</span>
-        <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
-        <span class="c1"># scheduler</span>
-        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">()</span>
-        <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">scheduler</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span>
-
-    <span class="k">def</span> <span class="nf">deinit_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Deinits the runs components.&quot;&quot;&quot;</span>
-        <span class="c1"># remove backend</span>
-        <span class="k">pass</span>
-
-    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Abstraction over ``model.zero_grad()`` step.&quot;&quot;&quot;</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">backward_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Abstraction over ``loss.backward()`` step.&quot;&quot;&quot;</span>
-        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">optimizer_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Abstraction over ``optimizer.step()`` step.&quot;&quot;&quot;</span>
-        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">pack_checkpoint</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">criterion</span><span class="p">:</span> <span class="n">RunnerCriterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">optimizer</span><span class="p">:</span> <span class="n">RunnerOptimizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">scheduler</span><span class="p">:</span> <span class="n">RunnerScheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``</span>
-<span class="sd">        and some extra info ``**kwargs`` to torch-based checkpoint.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            model: torch model</span>
-<span class="sd">            criterion: torch criterion</span>
-<span class="sd">            optimizer: torch optimizer</span>
-<span class="sd">            scheduler: torch scheduler</span>
-<span class="sd">            **kwargs: some extra info to pack</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            torch-based checkpoint with ``model_state_dict``,</span>
-<span class="sd">            ``criterion_state_dict``, ``optimizer_state_dict``,</span>
-<span class="sd">            ``scheduler_state_dict`` keys.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">pack_checkpoint</span><span class="p">(</span>
-            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">unpack_checkpoint</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">checkpoint</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">criterion</span><span class="p">:</span> <span class="n">RunnerCriterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">optimizer</span><span class="p">:</span> <span class="n">RunnerOptimizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">scheduler</span><span class="p">:</span> <span class="n">RunnerScheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Load checkpoint from file and unpack the content to a model</span>
-<span class="sd">        (if not None), criterion (if not None), optimizer (if not None),</span>
-<span class="sd">        scheduler (if not None).</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            checkpoint: checkpoint to load</span>
-<span class="sd">            model: model where should be updated state</span>
-<span class="sd">            criterion: criterion where should be updated state</span>
-<span class="sd">            optimizer: optimizer where should be updated state</span>
-<span class="sd">            scheduler: scheduler where should be updated state</span>
-<span class="sd">            kwargs: extra arguments</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">unpack_checkpoint</span><span class="p">(</span>
-            <span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span>
-            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-            <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
-            <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
-            <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">save_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkpoint</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Saves checkpoint to a file.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            checkpoint: data to save.</span>
-<span class="sd">            path: filepath where checkpoint should be stored.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">save_checkpoint</span><span class="p">(</span><span class="n">checkpoint</span><span class="o">=</span><span class="n">checkpoint</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">load_checkpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Load checkpoint from path.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            path: checkpoint file to load</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            loaded checkpoint</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">load_checkpoint</span><span class="p">(</span><span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="DataParallelEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DataParallelEngine">[docs]</a><span class="k">class</span> <span class="nc">DataParallelEngine</span><span class="p">(</span><span class="n">DeviceEngine</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;MultiGPU training device engine.</span>
-
-<span class="sd">    Examples:</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        from catalyst import dl</span>
-
-<span class="sd">        runner = dl.SupervisedRunner()</span>
-<span class="sd">        runner.train(</span>
-<span class="sd">            engine=dl.DataParallelEngine(),</span>
-<span class="sd">            ...</span>
-<span class="sd">        )</span>
-
-<span class="sd">    .. code-block:: python</span>
-
-<span class="sd">        from catalyst import dl</span>
-
-<span class="sd">        class MyRunner(dl.IRunner):</span>
-<span class="sd">            # ...</span>
-<span class="sd">            def get_engine(self):</span>
-<span class="sd">                return dl.DataParallelEngine()</span>
-<span class="sd">            # ...</span>
-
-<span class="sd">    .. code-block:: yaml</span>
-
-<span class="sd">        args:</span>
-<span class="sd">            logs: ...</span>
-
-<span class="sd">        model:</span>
-<span class="sd">            _target_: ...</span>
-<span class="sd">            ...</span>
-
-<span class="sd">        engine:</span>
-<span class="sd">            _target_: DataParallelEngine</span>
-
-<span class="sd">        stages:</span>
-<span class="sd">            ...</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">current_device</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">device_count</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa: D105</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(device_count=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_count</span><span class="si">}</span><span class="s2">)&quot;</span>
-
-    <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
-        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">DataParallel</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+<span class="k">def</span> <span class="nf">_generate_balance</span><span class="p">(</span><span class="n">num_devices</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_layers</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">balance</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">layers_assigned</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_devices</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">num_layers</span> <span class="o">-</span> <span class="n">layers_assigned</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">num_devices</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">is_integer</span><span class="p">():</span>
+            <span class="n">balance</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+            <span class="n">layers_assigned</span> <span class="o">+=</span> <span class="n">x</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model should be ``nn.Module`` or ``dict``&quot;</span><span class="p">)</span>
-
-        <span class="c1"># criterion</span>
-        <span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">()</span>
-        <span class="n">criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">criterion</span><span class="p">)</span>
-        <span class="c1"># optimizer</span>
-        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">()</span>
-        <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
-        <span class="c1"># scheduler</span>
-        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">()</span>
-        <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">scheduler</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span></div>
+            <span class="n">balance</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+            <span class="n">layers_assigned</span> <span class="o">+=</span> <span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">balance</span>
 
 
-<div class="viewcode-block" id="DistributedDataParallelEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.torch.DistributedDataParallelEngine">[docs]</a><span class="k">class</span> <span class="nc">DistributedDataParallelEngine</span><span class="p">(</span><span class="n">DeviceEngine</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Distributed MultiGPU training device engine.</span>
+<div class="viewcode-block" id="PipelineParallelFairScaleEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.fairscale.PipelineParallelFairScaleEngine">[docs]</a><span class="k">class</span> <span class="nc">PipelineParallelFairScaleEngine</span><span class="p">(</span><span class="n">DeviceEngine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;FairScale multi-gpu training device engine.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        address: address to use for backend.</span>
-<span class="sd">        port: port to use for backend.</span>
-<span class="sd">        ddp_kwargs: parameters for `torch.nn.parallel.DistributedDataParallel`.</span>
-<span class="sd">            More info here:</span>
-<span class="sd">            https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel</span>
-<span class="sd">        process_group_kwargs: parameters for `torch.distributed.init_process_group`.</span>
-<span class="sd">            More info here:</span>
-<span class="sd">            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</span>
+<span class="sd">        pipe_kwargs: parameters for `fairscale.nn.Pipe`.</span>
+<span class="sd">            Docs for `fairscale.nn.Pipe`:</span>
+<span class="sd">            https://fairscale.readthedocs.io/en/latest/api/nn/pipe.html</span>
 
 <span class="sd">    Examples:</span>
 
@@ -615,7 +361,7 @@
 
 <span class="sd">        runner = dl.SupervisedRunner()</span>
 <span class="sd">        runner.train(</span>
-<span class="sd">            engine=dl.DistributedDataParallelEngine(),</span>
+<span class="sd">            engine=dl.PipelineParallelFairScaleEngine(),</span>
 <span class="sd">            ...</span>
 <span class="sd">        )</span>
 
@@ -626,11 +372,8 @@
 <span class="sd">        class MyRunner(dl.IRunner):</span>
 <span class="sd">            # ...</span>
 <span class="sd">            def get_engine(self):</span>
-<span class="sd">                return dl.DistributedDataParallelEngine(</span>
-<span class="sd">                    address=&quot;0.0.0.0&quot;,</span>
-<span class="sd">                    port=23234,</span>
-<span class="sd">                    ddp_kwargs={&quot;find_unused_parameters&quot;: False},</span>
-<span class="sd">                    process_group_kwargs={&quot;backend&quot;: &quot;nccl&quot;},</span>
+<span class="sd">                return dl.PipelineParallelFairScaleEngine(</span>
+<span class="sd">                    pipe_kwargs={&quot;balance&quot;: [3, 1]},</span>
 <span class="sd">                )</span>
 <span class="sd">            # ...</span>
 
@@ -644,13 +387,129 @@
 <span class="sd">            ...</span>
 
 <span class="sd">        engine:</span>
-<span class="sd">            _target_: DistributedDataParallelEngine</span>
+<span class="sd">            _target_: PipelineParallelFairScaleEngine</span>
+<span class="sd">            pipe_kwargs:</span>
+<span class="sd">                balance: [3, 1]</span>
+
+<span class="sd">        stages:</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pipe_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">current_device</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">device_count</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">device_count</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pipe_kwargs</span> <span class="o">=</span> <span class="n">pipe_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa: D105</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(device_count=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">device_count</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
+        <span class="c1"># model = self.sync_device(model)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;balance&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipe_kwargs</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;With FairScale Pipe setup, &quot;</span>
+                <span class="s2">&quot;you need to specify ``balance`` under ``pipe_kwargs``. &quot;</span>
+                <span class="s2">&quot;Generating balance automatically. (Experimental feature)&quot;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pipe_kwargs</span><span class="p">[</span><span class="s2">&quot;balance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_generate_balance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">device_count</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="p">))</span>
+        <span class="n">pipe_model</span> <span class="o">=</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">pipe_kwargs</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">model</span>
+
+        <span class="c1"># criterion</span>
+        <span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">()</span>
+        <span class="c1"># criterion = self.sync_device(criterion)</span>
+
+        <span class="c1"># optimizer</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">(</span><span class="n">pipe_model</span><span class="p">)</span>
+        <span class="c1"># optimizer = self.sync_device(optimizer)</span>
+
+        <span class="c1"># scheduler</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">()</span>
+        <span class="c1"># scheduler = self.sync_device(scheduler)</span>
+        <span class="k">return</span> <span class="n">pipe_model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span>
+
+    <span class="k">def</span> <span class="nf">deinit_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deinits the runs components. In distributed mode should destroy process group.&quot;&quot;&quot;</span>
+        <span class="k">del</span> <span class="n">runner</span><span class="o">.</span><span class="n">model</span>
+
+    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Abstraction over ``model.zero_grad()`` step.&quot;&quot;&quot;</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">backward_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Abstraction over ``loss.backward()`` step.&quot;&quot;&quot;</span>
+        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">optimizer_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Abstraction over ``optimizer.step()`` step.&quot;&quot;&quot;</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SharedDataParallelFairScaleEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine">[docs]</a><span class="k">class</span> <span class="nc">SharedDataParallelFairScaleEngine</span><span class="p">(</span><span class="n">DeviceEngine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Distributed FairScale MultiGPU training device engine.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        address: address to use for backend.</span>
+<span class="sd">        port: port to use for backend.</span>
+<span class="sd">        ddp_kwargs: parameters for `fairscale.nn.data_parallel.ShardedDataParallel`.</span>
+<span class="sd">            More info here:</span>
+<span class="sd">            https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html</span>
+<span class="sd">        process_group_kwargs: parameters for `torch.distributed.init_process_group`.</span>
+<span class="sd">            More info here:</span>
+<span class="sd">            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.SharedDataParallelFairScaleEngine(),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        class MyRunner(dl.IRunner):</span>
+<span class="sd">            # ...</span>
+<span class="sd">            def get_engine(self):</span>
+<span class="sd">                return dl.SharedDataParallelFairScaleEngine(</span>
+<span class="sd">                    address=&quot;0.0.0.0&quot;,</span>
+<span class="sd">                    port=23234,</span>
+<span class="sd">                    ddp_kwargs={&quot;find_unused_parameters&quot;: False},</span>
+<span class="sd">                    process_group_kwargs={&quot;port&quot;: 12345},</span>
+<span class="sd">                )</span>
+<span class="sd">            # ...</span>
+
+<span class="sd">    .. code-block:: yaml</span>
+
+<span class="sd">        args:</span>
+<span class="sd">            logs: ...</span>
+
+<span class="sd">        model:</span>
+<span class="sd">            _target_: ...</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        engine:</span>
+<span class="sd">            _target_: SharedDataParallelFairScaleEngine</span>
 <span class="sd">            address: 0.0.0.0</span>
 <span class="sd">            port: 23234</span>
 <span class="sd">            ddp_kwargs:</span>
 <span class="sd">                find_unused_parameters: false</span>
 <span class="sd">            process_group_kwargs:</span>
-<span class="sd">                backend: nccl</span>
+<span class="sd">                port: 12345</span>
 
 <span class="sd">        stages:</span>
 <span class="sd">            ...</span>
@@ -726,7 +585,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">&gt;</span> <span class="mi">0</span>
 
-    <span class="c1"># TODO: merge with init_components?</span>
     <span class="k">def</span> <span class="nf">setup_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize DDP variables and processes.</span>
 
@@ -747,10 +605,7 @@
 
         <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">set_device</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;device_ids&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span><span class="p">[</span><span class="s2">&quot;device_ids&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">device</span><span class="p">]</span>
 
-    <span class="c1"># TODO: merge with deinit_components?</span>
     <span class="k">def</span> <span class="nf">cleanup_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clean DDP variables and processes.&quot;&quot;&quot;</span>
         <span class="n">dist</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
@@ -785,22 +640,18 @@
         <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="n">DistributedDataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">model</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">DistributedDataParallel</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Model should be ``nn.Module`` or ``dict``&quot;</span><span class="p">)</span>
-        <span class="c1"># criterion</span>
+
         <span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">()</span>
         <span class="n">criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">criterion</span><span class="p">)</span>
-        <span class="c1"># optimizer</span>
-        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">()</span>
+
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
-        <span class="c1"># scheduler</span>
-        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">()</span>
+
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">OSS</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">optim</span><span class="o">=</span><span class="n">optimizer</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="o">**</span><span class="n">optimizer</span><span class="o">.</span><span class="n">defaults</span><span class="p">)</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">ShardedDataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span><span class="p">)</span>
+
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
         <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">scheduler</span><span class="p">)</span>
-        <span class="n">dist</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span>
 
     <span class="k">def</span> <span class="nf">deinit_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -818,10 +669,249 @@
 
     <span class="k">def</span> <span class="nf">optimizer_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Abstraction over ``optimizer.step()`` step.&quot;&quot;&quot;</span>
-        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span></div>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">pack_checkpoint</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">criterion</span><span class="p">:</span> <span class="n">RunnerCriterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">RunnerOptimizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="p">:</span> <span class="n">RunnerScheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``</span>
+<span class="sd">        and some extra info ``**kwargs`` to torch-based checkpoint.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model: torch model</span>
+<span class="sd">            criterion: torch criterion</span>
+<span class="sd">            optimizer: torch optimizer</span>
+<span class="sd">            scheduler: torch scheduler</span>
+<span class="sd">            **kwargs: some extra info to pack</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            torch-based checkpoint with ``model_state_dict``,</span>
+<span class="sd">            ``criterion_state_dict``, ``optimizer_state_dict``,</span>
+<span class="sd">            ``scheduler_state_dict`` keys.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># optimizer.consolidate_state_dict(recipient_rank=0)</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">pack_checkpoint</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span></div>
 
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;DeviceEngine&quot;</span><span class="p">,</span> <span class="s2">&quot;DataParallelEngine&quot;</span><span class="p">,</span> <span class="s2">&quot;DistributedDataParallelEngine&quot;</span><span class="p">]</span>
+<div class="viewcode-block" id="SharedDataParallelFairScaleAMPEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine">[docs]</a><span class="k">class</span> <span class="nc">SharedDataParallelFairScaleAMPEngine</span><span class="p">(</span><span class="n">SharedDataParallelFairScaleEngine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Distributed FairScale MultiGPU training device engine.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        address: address to use for backend.</span>
+<span class="sd">        port: port to use for backend.</span>
+<span class="sd">        ddp_kwargs: parameters for `fairscale.nn.data_parallel.ShardedDataParallel`.</span>
+<span class="sd">            Docs for `fairscale.nn.ShardedDataParallel`:</span>
+<span class="sd">            https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html</span>
+<span class="sd">        process_group_kwargs: parameters for `torch.distributed.init_process_group`.</span>
+<span class="sd">            More info here:</span>
+<span class="sd">            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</span>
+<span class="sd">        scaler_kwargs: parameters for `fairscale.optim.grad_scaler.ShardedGradScaler`.</span>
+<span class="sd">            Possible parameters:</span>
+<span class="sd">            https://fairscale.readthedocs.io/en/latest/api/index.html</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.SharedDataParallelFairScaleAMPEngine(),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        class MyRunner(dl.IRunner):</span>
+<span class="sd">            # ...</span>
+<span class="sd">            def get_engine(self):</span>
+<span class="sd">                return dl.SharedDataParallelFairScaleAMPEngine(</span>
+<span class="sd">                    address=&quot;0.0.0.0&quot;,</span>
+<span class="sd">                    port=23234,</span>
+<span class="sd">                    ddp_kwargs={&quot;find_unused_parameters&quot;: False},</span>
+<span class="sd">                    process_group_kwargs={&quot;port&quot;: 12345},</span>
+<span class="sd">                    scaler_kwargs={&quot;growth_factor&quot;: 1.5}</span>
+<span class="sd">                )</span>
+<span class="sd">            # ...</span>
+
+<span class="sd">    .. code-block:: yaml</span>
+
+<span class="sd">        args:</span>
+<span class="sd">            logs: ...</span>
+
+<span class="sd">        model:</span>
+<span class="sd">            _target_: ...</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        engine:</span>
+<span class="sd">            _target_: SharedDataParallelFairScaleAMPEngine</span>
+<span class="sd">            address: 0.0.0.0</span>
+<span class="sd">            port: 23234</span>
+<span class="sd">            ddp_kwargs:</span>
+<span class="sd">                find_unused_parameters: false</span>
+<span class="sd">            process_group_kwargs:</span>
+<span class="sd">                port: 12345</span>
+<span class="sd">            scaler_kwargs:</span>
+<span class="sd">                growth_factor: 1.5</span>
+
+<span class="sd">        stages:</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ddp_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">process_group_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scaler_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span>
+            <span class="n">ddp_kwargs</span><span class="o">=</span><span class="n">ddp_kwargs</span><span class="p">,</span>
+            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="n">process_group_kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># @TODO: should we support scaler for each optimizer?</span>
+        <span class="k">if</span> <span class="n">scaler_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">scaler_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaler_kwargs</span> <span class="o">=</span> <span class="n">scaler_kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span> <span class="o">=</span> <span class="n">ShardedGradScaler</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">scaler_kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Abstraction over ``model.zero_grad()`` step.&quot;&quot;&quot;</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">backward_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Abstraction over ``loss.backward()`` step.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">scale</span><span class="p">(</span><span class="n">loss</span><span class="p">)</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">optimizer_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Abstraction over ``optimizer.step()`` step.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scaler</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">autocast</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;AMP context&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">amp</span><span class="o">.</span><span class="n">autocast</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="FullySharedDataParallelFairScaleEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine">[docs]</a><span class="k">class</span> <span class="nc">FullySharedDataParallelFairScaleEngine</span><span class="p">(</span><span class="n">SharedDataParallelFairScaleEngine</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Distributed FairScale MultiGPU training device engine.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        address: address to use for backend.</span>
+<span class="sd">        port: port to use for backend.</span>
+<span class="sd">        ddp_kwargs: parameters for `fairscale.nn.data_parallel.FullyShardedDataParallel`.</span>
+<span class="sd">            Docs for `fairscale.nn.FullyShardedDataParallel`:</span>
+<span class="sd">            https://fairscale.readthedocs.io/en/latest/api/nn/fsdp.html</span>
+<span class="sd">        process_group_kwargs: parameters for `torch.distributed.init_process_group`.</span>
+<span class="sd">            More info here:</span>
+<span class="sd">            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        runner = dl.SupervisedRunner()</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            engine=dl.FullySharedDataParallelFairScaleEngine(),</span>
+<span class="sd">            ...</span>
+<span class="sd">        )</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from catalyst import dl</span>
+
+<span class="sd">        class MyRunner(dl.IRunner):</span>
+<span class="sd">            # ...</span>
+<span class="sd">            def get_engine(self):</span>
+<span class="sd">                return dl.FullySharedDataParallelFairScaleEngine(</span>
+<span class="sd">                    address=&quot;0.0.0.0&quot;,</span>
+<span class="sd">                    port=23234,</span>
+<span class="sd">                    ddp_kwargs={&quot;find_unused_parameters&quot;: False},</span>
+<span class="sd">                    process_group_kwargs={&quot;port&quot;: 12345},</span>
+<span class="sd">                )</span>
+<span class="sd">            # ...</span>
+
+<span class="sd">    .. code-block:: yaml</span>
+
+<span class="sd">        args:</span>
+<span class="sd">            logs: ...</span>
+
+<span class="sd">        model:</span>
+<span class="sd">            _target_: ...</span>
+<span class="sd">            ...</span>
+
+<span class="sd">        engine:</span>
+<span class="sd">            _target_: FullySharedDataParallelFairScaleEngine</span>
+<span class="sd">            address: 0.0.0.0</span>
+<span class="sd">            port: 23234</span>
+<span class="sd">            ddp_kwargs:</span>
+<span class="sd">                find_unused_parameters: false</span>
+<span class="sd">            process_group_kwargs:</span>
+<span class="sd">                port: 12345</span>
+
+<span class="sd">        stages:</span>
+<span class="sd">            ...</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">port</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ddp_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">process_group_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">ddp_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">process_group_kwargs</span><span class="o">=</span><span class="n">process_group_kwargs</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span> <span class="o">=</span> <span class="n">ddp_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">FullyShardedDataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span><span class="p">)</span>
+
+        <span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">()</span>
+        <span class="n">criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">criterion</span><span class="p">)</span>
+
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
+
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">scheduler</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;PipelineParallelFairScaleEngine&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SharedDataParallelFairScaleEngine&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SharedDataParallelFairScaleAMPEngine&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;FullySharedDataParallelFairScaleEngine&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 </pre></div>
 
              </article>

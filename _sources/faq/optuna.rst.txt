@@ -54,7 +54,7 @@ You can easily use Optuna for hyperparameters optimization:
             },
             num_epochs=3,
         )
-        score = runner.callbacks["optuna"].best_score
+        score = trial.best_score
         return score
 
     study = optuna.create_study(

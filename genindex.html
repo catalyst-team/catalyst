@@ -666,10 +666,10 @@
 </li>
       <li><a href="api/metrics.html#module-catalyst.metrics.functional._ndcg">catalyst.metrics.functional._ndcg (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/metrics.html#module-catalyst.metrics.functional._precision">catalyst.metrics.functional._precision (module)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/metrics.html#module-catalyst.metrics.functional._recall">catalyst.metrics.functional._recall (module)</a>
 </li>
       <li><a href="api/metrics.html#module-catalyst.metrics.functional._segmentation">catalyst.metrics.functional._segmentation (module)</a>
@@ -707,6 +707,8 @@
       <li><a href="api/callbacks.html#catalyst.callbacks.misc.CheckRunCallback">CheckRunCallback (class in catalyst.callbacks.misc)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.circle.CircleLoss">CircleLoss (class in catalyst.contrib.nn.criterion.circle)</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.cleanup_process">cleanup_process() (catalyst.core.engine.IEngine method)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.logger.ILogger.close_log">close_log() (catalyst.core.logger.ILogger method)</a>
 </li>
@@ -772,13 +774,15 @@
 </li>
       <li><a href="api/engines.html#catalyst.engines.amp.DataParallelAMPEngine">DataParallelAMPEngine (class in catalyst.engines.amp)</a>
 </li>
-      <li><a href="api/engines.html#catalyst.engines.apex.DataParallelApexEngine">DataParallelApexEngine (class in catalyst.engines.apex)</a>
+      <li><a href="api/engines.html#catalyst.engines.apex.DataParallelApexEngine">DataParallelApexEngine (in module catalyst.engines.apex)</a>
 </li>
       <li><a href="api/engines.html#catalyst.engines.torch.DataParallelEngine">DataParallelEngine (class in catalyst.engines.torch)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.dataset.torch.DatasetFromSampler">DatasetFromSampler (class in catalyst.data.dataset.torch)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._ndcg.dcg">dcg() (in module catalyst.metrics.functional._ndcg)</a>
+</li>
+      <li><a href="api/utils.html#catalyst.utils.distributed.ddp_sync_run">ddp_sync_run() (in module catalyst.utils.distributed)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.engine.IEngine.deinit_components">deinit_components() (catalyst.core.engine.IEngine method)</a>
 </li>
@@ -800,7 +804,9 @@
 </li>
       <li><a href="api/engines.html#catalyst.engines.amp.DistributedDataParallelAMPEngine">DistributedDataParallelAMPEngine (class in catalyst.engines.amp)</a>
 </li>
-      <li><a href="api/engines.html#catalyst.engines.apex.DistributedDataParallelApexEngine">DistributedDataParallelApexEngine (class in catalyst.engines.apex)</a>
+      <li><a href="api/engines.html#catalyst.engines.apex.DistributedDataParallelApexEngine">DistributedDataParallelApexEngine (in module catalyst.engines.apex)</a>
+</li>
+      <li><a href="api/engines.html#catalyst.engines.deepspeed.DistributedDataParallelDeepSpeedEngine">DistributedDataParallelDeepSpeedEngine (class in catalyst.engines.deepspeed)</a>
 </li>
       <li><a href="api/engines.html#catalyst.engines.torch.DistributedDataParallelEngine">DistributedDataParallelEngine (class in catalyst.engines.torch)</a>
 </li>
@@ -889,6 +895,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/tools.html#catalyst.tools.frozen_class.FrozenClass">FrozenClass (class in catalyst.tools.frozen_class)</a>
+</li>
+      <li><a href="api/engines.html#catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine">FullySharedDataParallelFairScaleEngine (class in catalyst.engines.fairscale)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics._functional_metric.FunctionalBatchMetric">FunctionalBatchMetric (class in catalyst.metrics._functional_metric)</a>
 </li>
@@ -1530,6 +1538,8 @@
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.periodic_loader.PeriodicLoaderCallback">PeriodicLoaderCallback (class in catalyst.callbacks.periodic_loader)</a>
 </li>
+      <li><a href="api/engines.html#catalyst.engines.fairscale.PipelineParallelFairScaleEngine">PipelineParallelFairScaleEngine (class in catalyst.engines.fairscale)</a>
+</li>
       <li><a href="api/utils.html#catalyst.contrib.utils.visualization.plot_confusion_matrix">plot_confusion_matrix() (in module catalyst.contrib.utils.visualization)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._classification.precision">precision() (in module catalyst.metrics.functional._classification)</a>
@@ -1694,14 +1704,20 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.torch.set_requires_grad">set_requires_grad() (in module catalyst.utils.torch)</a>
 </li>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.setup_process">setup_process() (catalyst.core.engine.IEngine method)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.optimizers.sgdp.SGDP">SGDP (class in catalyst.contrib.nn.optimizers.sgdp)</a>
+</li>
+      <li><a href="api/engines.html#catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine">SharedDataParallelFairScaleAMPEngine (class in catalyst.engines.fairscale)</a>
+</li>
+      <li><a href="api/engines.html#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine">SharedDataParallelFairScaleEngine (class in catalyst.engines.fairscale)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._focal.sigmoid_focal_loss">sigmoid_focal_loss() (in module catalyst.metrics.functional._focal)</a>
 </li>
-      <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnBatchCallback">SklearnBatchCallback (class in catalyst.callbacks.metrics.scikit_learn)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnBatchCallback">SklearnBatchCallback (class in catalyst.callbacks.metrics.scikit_learn)</a>
+</li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnLoaderCallback">SklearnLoaderCallback (class in catalyst.callbacks.metrics.scikit_learn)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.softmax.SoftMax">SoftMax (class in catalyst.contrib.nn.modules.softmax)</a>

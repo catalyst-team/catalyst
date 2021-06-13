@@ -365,7 +365,7 @@
         <span class="p">},</span>
         <span class="n">num_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="n">score</span> <span class="o">=</span> <span class="n">runner</span><span class="o">.</span><span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;optuna&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">best_score</span>
+    <span class="n">score</span> <span class="o">=</span> <span class="n">trial</span><span class="o">.</span><span class="n">best_score</span>
     <span class="k">return</span> <span class="n">score</span>
 
 <span class="n">study</span> <span class="o">=</span> <span class="n">optuna</span><span class="o">.</span><span class="n">create_study</span><span class="p">(</span>

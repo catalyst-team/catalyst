@@ -711,8 +711,7 @@ like “pretrain” / “train” / “finetune” / etc</p></li>
 Used to make a train/valid/infer stage during Experiment run.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>batch</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – dictionary with data batches
-from DataLoader.</p>
+<dd class="field-odd"><p><strong>batch</strong> (<em>Mapping</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – dictionary with data batches from DataLoader.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -856,10 +855,15 @@ Examples - APEX and AMP.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.core.engine.IEngine.cleanup_process">
+<code class="sig-name descname">cleanup_process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.cleanup_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.cleanup_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean DDP variables and processes.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.core.engine.IEngine.deinit_components">
-<em class="property">abstract </em><code class="sig-name descname">deinit_components</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.deinit_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.deinit_components" title="Permalink to this definition">¶</a></dt>
-<dd><p>Deinits the runs components.
-In distributed mode should destroy process group.</p>
+<em class="property">abstract </em><code class="sig-name descname">deinit_components</code><span class="sig-paren">(</span><em class="sig-param">runner=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.deinit_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.deinit_components" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deinits the runs components. In distributed mode should destroy process group.</p>
 </dd></dl>
 
 <dl class="method">
@@ -961,6 +965,21 @@ and some extra info <code class="docutils literal notranslate"><span class="pre"
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>checkpoint</strong> – data to save.</p></li>
 <li><p><strong>path</strong> – filepath where checkpoint should be stored.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.engine.IEngine.setup_process">
+<code class="sig-name descname">setup_process</code><span class="sig-paren">(</span><em class="sig-param">rank: int = -1</em>, <em class="sig-param">world_size: int = 1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.setup_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.setup_process" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize DDP variables and processes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rank</strong> – process rank. Default is <cite>-1</cite>.</p></li>
+<li><p><strong>world_size</strong> – number of devices in netwok to expect for train.
+Default is <cite>1</cite>.</p></li>
 </ul>
 </dd>
 </dl>

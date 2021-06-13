@@ -384,6 +384,20 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="kc">False</span>
 
+<div class="viewcode-block" id="IEngine.setup_process"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.setup_process">[docs]</a>    <span class="k">def</span> <span class="nf">setup_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize DDP variables and processes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            rank: process rank. Default is `-1`.</span>
+<span class="sd">            world_size: number of devices in netwok to expect for train.</span>
+<span class="sd">                Default is `1`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="IEngine.cleanup_process"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.cleanup_process">[docs]</a>    <span class="k">def</span> <span class="nf">cleanup_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Clean DDP variables and processes.&quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
 <div class="viewcode-block" id="IEngine.sync_device"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.sync_device">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">sync_device</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor_or_module</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Moves ``tensor_or_module`` to Engine&#39;s device.</span>
@@ -405,11 +419,10 @@
         <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
+    <span class="c1"># @TODO: create RunnerLike type for .model, .criterion, .optimizer, .scheduler</span>
 <div class="viewcode-block" id="IEngine.deinit_components"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.deinit_components">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">deinit_components</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Deinits the runs components.</span>
-<span class="sd">        In distributed mode should destroy process group.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">deinit_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deinits the runs components. In distributed mode should destroy process group.&quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
 <div class="viewcode-block" id="IEngine.zero_grad"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.engine.IEngine.zero_grad">[docs]</a>    <span class="nd">@abstractmethod</span>
