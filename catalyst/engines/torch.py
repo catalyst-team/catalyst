@@ -440,6 +440,7 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     def cleanup_process(self):
         """Clean DDP variables and processes."""
+        dist.barrier()
         dist.destroy_process_group()
 
     # @TODO: add all_gather
@@ -491,7 +492,6 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     def deinit_components(self):
         """Deinits the runs components."""
-        dist.barrier()
         self.cleanup_process()
 
     def zero_grad(self, loss, model, optimizer) -> None:

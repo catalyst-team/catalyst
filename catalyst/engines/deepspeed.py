@@ -25,6 +25,56 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
         deepspeed_kwargs: parameters for `deepspeed.initialize`.
             More info here: https://deepspeed.readthedocs.io/en/latest/initialize.html
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.DistributedDataParallelDeepSpeedEngine(),
+            ...
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DistributedDataParallelDeepSpeedEngine(
+                    address="0.0.0.0",
+                    port=23234,
+                    process_group_kwargs={"port": 12345},
+                    deepspeed_kwargs={"config": 64}
+                )
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: DistributedDataParallelDeepSpeedEngine
+            address: 0.0.0.0
+            port: 23234
+            process_group_kwargs:
+                port: 12345
+            deepspeed_kwargs:
+                config:
+                    train_batch_size: 64
+
+        stages:
+            ...
+
     """
 
     def __init__(
@@ -115,6 +165,7 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
 
     def cleanup_process(self):
         """Clean DDP variables and processes."""
+        dist.barrier()
         dist.destroy_process_group()
 
     # @TODO: add all_gather
@@ -164,7 +215,6 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
 
     def deinit_components(self):
         """Deinits the runs components."""
-        dist.barrier()
         self.cleanup_process()
 
     def zero_grad(self, loss, model, optimizer) -> None:

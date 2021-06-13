@@ -46,6 +46,47 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
             Docs for `fairscale.nn.Pipe`:
             https://fairscale.readthedocs.io/en/latest/api/nn/pipe.html
 
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.PipelineParallelFairScaleEngine(),
+            ...
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.PipelineParallelFairScaleEngine(
+                    pipe_kwargs={"balance": [3, 1]},
+                )
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: PipelineParallelFairScaleEngine
+            pipe_kwargs:
+                balance: [3, 1]
+
+        stages:
+            ...
+
     """
 
     def __init__(self, pipe_kwargs: Dict[str, Any] = None):
@@ -112,6 +153,55 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
         process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.SharedDataParallelFairScaleEngine(),
+            ...
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.SharedDataParallelFairScaleEngine(
+                    address="0.0.0.0",
+                    port=23234,
+                    ddp_kwargs={"find_unused_parameters": False},
+                    process_group_kwargs={"port": 12345},
+                )
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: SharedDataParallelFairScaleEngine
+            address: 0.0.0.0
+            port: 23234
+            ddp_kwargs:
+                find_unused_parameters: false
+            process_group_kwargs:
+                port: 12345
+
+        stages:
+            ...
+
     """
 
     def __init__(
@@ -206,6 +296,7 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
 
     def cleanup_process(self):
         """Clean DDP variables and processes."""
+        dist.barrier()
         dist.destroy_process_group()
 
     # @TODO: add all_gather
@@ -253,7 +344,6 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
 
     def deinit_components(self):
         """Deinits the runs components."""
-        dist.barrier()
         self.cleanup_process()
 
     def zero_grad(self, loss, model, optimizer) -> None:
@@ -333,6 +423,58 @@ class SharedDataParallelFairScaleAMPEngine(SharedDataParallelFairScaleEngine):
         scaler_kwargs: parameters for `fairscale.optim.grad_scaler.ShardedGradScaler`.
             Possible parameters:
             https://fairscale.readthedocs.io/en/latest/api/index.html
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.SharedDataParallelFairScaleAMPEngine(),
+            ...
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.SharedDataParallelFairScaleAMPEngine(
+                    address="0.0.0.0",
+                    port=23234,
+                    ddp_kwargs={"find_unused_parameters": False},
+                    process_group_kwargs={"port": 12345},
+                    scaler_kwargs={"growth_factor": 1.5}
+                )
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: SharedDataParallelFairScaleAMPEngine
+            address: 0.0.0.0
+            port: 23234
+            ddp_kwargs:
+                find_unused_parameters: false
+            process_group_kwargs:
+                port: 12345
+            scaler_kwargs:
+                growth_factor: 1.5
+
+        stages:
+            ...
+
     """
 
     def __init__(
@@ -384,6 +526,55 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
         process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
+
+    Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.FullySharedDataParallelFairScaleEngine(),
+            ...
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.FullySharedDataParallelFairScaleEngine(
+                    address="0.0.0.0",
+                    port=23234,
+                    ddp_kwargs={"find_unused_parameters": False},
+                    process_group_kwargs={"port": 12345},
+                )
+            # ...
+
+    .. code-block:: yaml
+
+        args:
+            logs: ...
+
+        model:
+            _target_: ...
+            ...
+
+        engine:
+            _target_: FullySharedDataParallelFairScaleEngine
+            address: 0.0.0.0
+            port: 23234
+            ddp_kwargs:
+                find_unused_parameters: false
+            process_group_kwargs:
+                port: 12345
+
+        stages:
+            ...
+
     """
 
     def __init__(
