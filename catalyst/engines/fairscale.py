@@ -1,13 +1,17 @@
 from typing import Any, Dict, Union
+import copy
+import math
 import os
+import warnings
 
 import torch
 import torch.cuda.amp as amp
 import torch.distributed as dist
 
-from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
+from catalyst.engines.torch import DeviceEngine
 from catalyst.settings import SETTINGS
 from catalyst.typing import RunnerCriterion, RunnerModel, RunnerOptimizer, RunnerScheduler
+from catalyst.utils.distributed import mean_reduce, sum_reduce
 
 if SETTINGS.fairscale_required:
     from fairscale.nn import Pipe
@@ -17,6 +21,20 @@ if SETTINGS.fairscale_required:
     )
     from fairscale.optim import OSS
     from fairscale.optim.grad_scaler import ShardedGradScaler
+
+
+def _generate_balance(num_devices: int, num_layers: int):
+    balance = []
+    layers_assigned = 0
+    for i in range(num_devices):
+        x = (num_layers - layers_assigned) / (num_devices - i)
+        if x.is_integer():
+            balance.append(int(x))
+            layers_assigned += x
+        else:
+            balance.append(math.ceil(x))
+            layers_assigned += math.ceil(x)
+    return balance
 
 
 class PipelineParallelFairScaleEngine(DeviceEngine):
@@ -34,6 +52,7 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
         """Init."""
         super().__init__(f"cuda:{torch.cuda.current_device()}")
         self.device_count = torch.cuda.device_count()
+        assert self.device_count > 0
         self.pipe_kwargs = pipe_kwargs
 
     def __repr__(self) -> str:  # noqa: D105
@@ -46,6 +65,13 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
         model = model_fn()
         # model = self.sync_device(model)
 
+        if "balance" not in self.pipe_kwargs:
+            warnings.warn(
+                "With FairScale Pipe setup, "
+                "you need to specify ``balance`` under ``pipe_kwargs``."
+                "Generating balance automatically. (Experimental feature)"
+            )
+            self.pipe_kwargs["balance"] = _generate_balance(self.device_count, len(model))
         model = Pipe(model, **self.pipe_kwargs)
 
         # criterion
@@ -74,7 +100,7 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
         optimizer.step()
 
 
-class SharedDataParallelFairScaleEngine(DistributedDataParallelEngine):
+class SharedDataParallelFairScaleEngine(DeviceEngine):
     """Distributed FairScale MultiGPU training device engine.
 
     Args:
@@ -96,10 +122,66 @@ class SharedDataParallelFairScaleEngine(DistributedDataParallelEngine):
         process_group_kwargs: Dict[str, Any] = None,
     ):
         """Init."""
-        super().__init__(
-            address=address, port=port, ddp_kwargs=None, process_group_kwargs=process_group_kwargs
+        super().__init__()
+        self.address = address or "localhost"
+        self.port = port or 12345
+        self._rank = 0
+        self.device = None
+
+        if ddp_kwargs is None:
+            ddp_kwargs = {}
+        self.ddp_kwargs = copy.deepcopy(ddp_kwargs)
+
+        if process_group_kwargs is None:
+            process_group_kwargs = {}
+        self.process_group_kwargs = copy.deepcopy(process_group_kwargs)
+        # add missing arguments
+        if "backend" not in self.process_group_kwargs:
+            self.process_group_kwargs["backend"] = "nccl"
+        if "world_size" not in self.process_group_kwargs:
+            self.process_group_kwargs["world_size"] = torch.cuda.device_count()
+
+        self._world_size = (
+            self.process_group_kwargs.get("world_size", None) or torch.cuda.device_count()
         )
-        self.ddp_kwargs = ddp_kwargs or {}
+
+    def __repr__(self):  # noqa: D105
+        return (
+            f"{self.__class__.__name__}(address={self.address}, "
+            f"port={self.port}, "
+            f"ddp_kwargs={self.ddp_kwargs}, "
+            f"process_group_kwargs={self.process_group_kwargs})"
+        )
+
+    @property
+    def rank(self) -> int:
+        """Process rank for distributed training."""
+        return self._rank
+
+    @property
+    def world_size(self) -> int:
+        """Process world size  for distributed training."""
+        return self._world_size
+
+    @property
+    def is_master_process(self) -> bool:
+        """Checks if a process is master process.
+        Should be implemented only for DDP setup in other cases should always return True.
+
+        Returns:
+            `True` if current process is a master process, otherwise `False`.
+        """
+        return self._rank == 0
+
+    @property
+    def is_worker_process(self) -> bool:
+        """Checks if a process is worker process.
+        Should be implemented only for DDP setup in other cases should always return False.
+
+        Returns:
+            `True` if current process is a worker process, otherwise `False`.
+        """
+        return self._rank > 0
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes.
@@ -122,6 +204,33 @@ class SharedDataParallelFairScaleEngine(DistributedDataParallelEngine):
         torch.cuda.set_device(int(self._rank))
         self.device = f"cuda:{int(self._rank)}"
 
+    def cleanup_process(self):
+        """Clean DDP variables and processes."""
+        dist.destroy_process_group()
+
+    # @TODO: add all_gather
+    def sync_tensor(self, tensor: torch.Tensor, mode: str):
+        """Syncs ``tensor`` over ``world_size`` in distributed mode.
+
+        Args:
+            tensor: tensor to sync across the processes.
+            mode: tensor synchronization type,
+                should be one of 'sum' or 'mean'.
+                Default is 'mean'.
+
+        Returns:
+            torch.Tensor with synchronized values.
+
+        Raises:
+            ValueError: if mode is out of ``sum`` or ``mean``
+        """
+        if mode not in {"sum", "mean"}:
+            raise ValueError(f"Unknown sync_type '{mode}'")
+        if mode == "sum":
+            return sum_reduce(tensor)
+        else:
+            return mean_reduce(tensor, self.world_size)
+
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
@@ -141,6 +250,23 @@ class SharedDataParallelFairScaleEngine(DistributedDataParallelEngine):
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
+
+    def deinit_components(self):
+        """Deinits the runs components."""
+        dist.barrier()
+        self.cleanup_process()
+
+    def zero_grad(self, loss, model, optimizer) -> None:
+        """Abstraction over ``model.zero_grad()`` step."""
+        model.zero_grad()
+
+    def backward_loss(self, loss, model, optimizer) -> None:
+        """Abstraction over ``loss.backward()`` step."""
+        loss.backward()
+
+    def optimizer_step(self, loss, model, optimizer) -> None:
+        """Abstraction over ``optimizer.step()`` step."""
+        optimizer.step()
 
     def pack_checkpoint(
         self,
@@ -224,6 +350,7 @@ class SharedDataParallelFairScaleAMPEngine(SharedDataParallelFairScaleEngine):
             ddp_kwargs=ddp_kwargs,
             process_group_kwargs=process_group_kwargs,
         )
+        # @TODO: should we support scaler for each optimizer?
         if scaler_kwargs is None:
             scaler_kwargs = {}
         self.scaler_kwargs = scaler_kwargs
@@ -285,10 +412,10 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
         optimizer = optimizer_fn()
         optimizer = self.sync_device(optimizer)
 
-        model = FSDP(model, **self.ddp_kwargs)
-
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
+
+        model = FSDP(model, **self.ddp_kwargs)
         return model, criterion, optimizer, scheduler
 
 

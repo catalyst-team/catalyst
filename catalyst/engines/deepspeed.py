@@ -13,7 +13,7 @@ if SETTINGS.deepspeed_required:
     import deepspeed
 
 
-# @TODO: create distributed abstraction
+# @TODO: create distributed abstraction?
 class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
     """Distributed DeepSpeed MultiGPU training device engine.
 
@@ -23,14 +23,14 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         process_group_kwargs: parameters for `torch.distributed.init_process_group`.
             More info here:
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
-        deepspeed_kwargs: parameters for `deepspeed.initialize`
+        deepspeed_kwargs: parameters for `deepspeed.initialize`.
+            More info here: https://deepspeed.readthedocs.io/en/latest/initialize.html
     """
 
     def __init__(
         self,
         address: str = None,
         port: Union[str, int] = None,
-        train_batch_size: int = 256,
         process_group_kwargs: Dict[str, Any] = None,
         deepspeed_kwargs: Dict[str, Any] = None,
     ):
@@ -38,7 +38,6 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         super().__init__()
         self.address = address or "localhost"
         self.port = port or 12345
-        self.train_batch_size = train_batch_size
         self._rank = 0
         self.device = None
 
@@ -50,6 +49,10 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
             self.process_group_kwargs.get("world_size", None) or torch.cuda.device_count()
         )
         self.deepspeed_kwargs = deepspeed_kwargs or {}
+        self.deepspeed_kwargs["config"] = self.deepspeed_kwargs.get("config", {})
+        self.deepspeed_kwargs["config"]["train_batch_size"] = self.deepspeed_kwargs["config"].get(
+            "train_batch_size", 256
+        )
 
     def __repr__(self):  # noqa: D105
         return (
@@ -100,14 +103,11 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         self._rank = rank
         self._world_size = world_size
 
-        # self.process_group_kwargs["rank"] = rank
-        # self.process_group_kwargs["world_size"] = world_size
         os.environ["RANK"] = str(rank)
         os.environ["LOCAL_RANK"] = str(rank)
         os.environ["WORLD_SIZE"] = str(world_size)
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
-
         deepspeed.init_distributed(**self.process_group_kwargs)
 
         torch.cuda.set_device(int(self._rank))
@@ -153,16 +153,13 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         optimizer = optimizer_fn()
         optimizer = self.sync_device(optimizer)
 
-        model, optimizer, _, _ = deepspeed.initialize(
-            model=model,
-            optimizer=optimizer,
-            # @TODO: not sure about this deepspeed feature
-            config={"train_batch_size": self.train_batch_size},
-            **self.deepspeed_kwargs,
-        )
-
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
+
+        model, optimizer, _, scheduler = deepspeed.initialize(
+            model=model, optimizer=optimizer, lr_scheduler=scheduler, **self.deepspeed_kwargs,
+        )
+
         return model, criterion, optimizer, scheduler
 
     def deinit_components(self):

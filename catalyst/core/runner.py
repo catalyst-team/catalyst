@@ -712,10 +712,11 @@ class IRunner(ICallback, ILogger, ABC):
         # as far as we could `backward` anything from `batch_metrics` on the nodes during training,
         # they could not be synced before, so we have to sync them in the end of the batch
         # @TODO: could be done better
-        self.batch_metrics = {
-            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-            for k, v in self.batch_metrics.items()
-        }
+        if self.engine.is_ddp:
+            self.batch_metrics = {
+                k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+                for k, v in self.batch_metrics.items()
+            }
         self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
