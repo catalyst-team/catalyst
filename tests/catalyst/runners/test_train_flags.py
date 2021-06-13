@@ -13,8 +13,8 @@ from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 if SETTINGS.apex_required:
     from catalyst.engines import (
         APEXEngine,
-        DataParallelApexEngine,
-        DistributedDataParallelApexEngine,
+        DataParallelAPEXEngine,
+        DistributedDataParallelAPEXEngine,
     )
 
 if SETTINGS.amp_required:
@@ -117,7 +117,7 @@ def test_apex_arg():
 def test_dp_apex_arg():
     with TemporaryDirectory(), pytest.raises(EngineIsOk):
         runner = CustomRunner()
-        runner._expected_engine = DataParallelApexEngine
+        runner._expected_engine = DataParallelAPEXEngine
         runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), apex=True)
 
 
@@ -149,5 +149,5 @@ def test_ddp_amp_arg():
 def test_ddp_apex_arg():
     with TemporaryDirectory(), pytest.raises(Exception):
         runner = CustomRunner()
-        runner._expected_engine = DistributedDataParallelApexEngine
+        runner._expected_engine = DistributedDataParallelAPEXEngine
         runner.train(loaders=get_loaders(), model=torch.nn.Linear(4, 2), ddp=True, apex=True)

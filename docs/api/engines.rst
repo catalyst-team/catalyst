@@ -7,6 +7,9 @@ Engines
 .. contents::
    :local:
 
+You could check engines overview under `examples/engines`_ section.
+
+.. _`examples/engines`: https://github.com/catalyst-team/catalyst/tree/master/examples/engines
 
 AMP
 ----------------------
@@ -32,6 +35,7 @@ DistributedDataParallelAMPEngine
     :undoc-members:
     :show-inheritance:
 
+
 Apex
 ----------------------
 
@@ -56,6 +60,50 @@ DistributedDataParallelApexEngine
     :undoc-members:
     :show-inheritance:
 
+
+DeepSpeed
+----------------------
+
+DistributedDataParallelDeepSpeedEngine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.engines.deepspeed.DistributedDataParallelDeepSpeedEngine
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+
+FairScale
+----------------------
+
+PipelineParallelFairScaleEngine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.engines.fairscale.PipelineParallelFairScaleEngine
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+SharedDataParallelFairScaleEngine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.engines.fairscale.SharedDataParallelFairScaleEngine
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+SharedDataParallelFairScaleAMPEngine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+FullySharedDataParallelFairScaleEngine
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. autoclass:: catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine
+    :exclude-members: __init__
+    :undoc-members:
+    :show-inheritance:
+
+
 Torch
 ----------------------
 
@@ -79,3 +127,4 @@ DistributedDataParallelEngine
     :exclude-members: __init__
     :undoc-members:
     :show-inheritance:
+

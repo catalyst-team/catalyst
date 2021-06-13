@@ -15,7 +15,7 @@ from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 if SETTINGS.apex_required:
-    from catalyst.engines.apex import DataParallelApexEngine
+    from catalyst.engines.apex import DataParallelAPEXEngine
 
 from .misc import (
     DataParallelTypeChecker,
@@ -44,7 +44,7 @@ class CustomRunner(IRunner):
         self._opt_level = opt_level
 
     def get_engine(self):
-        return DataParallelApexEngine(apex_kwargs=dict(opt_level=self._opt_level))
+        return DataParallelAPEXEngine(apex_kwargs=dict(opt_level=self._opt_level))
 
     def get_callbacks(self, stage: str):
         return {

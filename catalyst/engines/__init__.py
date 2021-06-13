@@ -17,9 +17,22 @@ if SETTINGS.amp_required:
 if SETTINGS.apex_required:
     from catalyst.engines.apex import (
         APEXEngine,
+        DataParallelAPEXEngine,
         DataParallelApexEngine,
+        DistributedDataParallelAPEXEngine,
         DistributedDataParallelApexEngine,
     )
+
+if SETTINGS.fairscale_required:
+    from catalyst.engines.fairscale import (
+        PipelineParallelFairScaleEngine,
+        SharedDataParallelFairScaleEngine,
+        SharedDataParallelFairScaleAMPEngine,
+        FullySharedDataParallelFairScaleEngine,
+    )
+
+if SETTINGS.deepspeed_required:
+    from catalyst.engines.deepspeed import DistributedDataParallelDeepSpeedEngine
 
 
 __all__ = [
@@ -33,4 +46,23 @@ if SETTINGS.amp_required:
     __all__ += ["AMPEngine", "DataParallelAMPEngine", "DistributedDataParallelAMPEngine"]
 
 if SETTINGS.apex_required:
-    __all__ += ["APEXEngine", "DataParallelApexEngine", "DistributedDataParallelApexEngine"]
+    __all__ += [
+        "APEXEngine",
+        "DataParallelApexEngine",
+        "DataParallelAPEXEngine",
+        "DistributedDataParallelApexEngine",
+        "DistributedDataParallelAPEXEngine",
+    ]
+
+if SETTINGS.fairscale_required:
+    __all__ += [
+        "PipelineParallelFairScaleEngine",
+        "SharedDataParallelFairScaleEngine",
+        "SharedDataParallelFairScaleAMPEngine",
+        "FullySharedDataParallelFairScaleEngine",
+    ]
+
+if SETTINGS.deepspeed_required:
+    __all__ += [
+        "DistributedDataParallelDeepSpeedEngine",
+    ]
