@@ -93,7 +93,7 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
         super().__init__(f"cuda:{torch.cuda.current_device()}")
         self.device_count = torch.cuda.device_count()
         assert self.device_count > 0
-        self.pipe_kwargs = pipe_kwargs
+        self.pipe_kwargs = pipe_kwargs or {}
 
     def __repr__(self) -> str:  # noqa: D105
         return f"{self.__class__.__name__}(device_count={self.device_count})"
@@ -102,30 +102,38 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
     ):
         """Inits the runs components."""
+
         model = model_fn()
         # model = self.sync_device(model)
 
         if "balance" not in self.pipe_kwargs:
             warnings.warn(
                 "With FairScale Pipe setup, "
-                "you need to specify ``balance`` under ``pipe_kwargs``."
+                "you need to specify ``balance`` under ``pipe_kwargs``. "
                 "Generating balance automatically. (Experimental feature)"
             )
             self.pipe_kwargs["balance"] = _generate_balance(self.device_count, len(model))
-        model = Pipe(model, **self.pipe_kwargs)
+        pipe_model = Pipe(model, **self.pipe_kwargs)
+        del model
 
         # criterion
         criterion = criterion_fn()
         # criterion = self.sync_device(criterion)
 
         # optimizer
-        optimizer = optimizer_fn()
+        optimizer = optimizer_fn(pipe_model)
         # optimizer = self.sync_device(optimizer)
 
         # scheduler
         scheduler = scheduler_fn()
         # scheduler = self.sync_device(scheduler)
-        return model, criterion, optimizer, scheduler
+        return pipe_model, criterion, optimizer, scheduler
+
+    def deinit_components(self, runner):
+        """Deinits the runs components.
+        In distributed mode should destroy process group.
+        """
+        del runner.model
 
     def zero_grad(self, loss, model, optimizer) -> None:
         """Abstraction over ``model.zero_grad()`` step."""
@@ -341,7 +349,7 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
-    def deinit_components(self):
+    def deinit_components(self, runner=None):
         """Deinits the runs components."""
         pass
         # self.cleanup_process()
@@ -611,7 +619,6 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
 
         scheduler = scheduler_fn(optimizer)
         scheduler = self.sync_device(scheduler)
-
 
         return model, criterion, optimizer, scheduler
 

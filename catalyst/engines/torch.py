@@ -111,7 +111,7 @@ class DeviceEngine(IEngine):
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
-    def deinit_components(self):
+    def deinit_components(self, runner=None):
         """Deinits the runs components."""
         # remove backend
         pass
@@ -492,7 +492,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         dist.barrier()
         return model, criterion, optimizer, scheduler
 
-    def deinit_components(self):
+    def deinit_components(self, runner=None):
         """Deinits the runs components."""
         pass
         # self.cleanup_process()

@@ -108,8 +108,9 @@ class IEngine(ABC):
         """Inits the runs components."""
         pass
 
+    # @TODO: create RunnerLike type for .model, .criterion, .optimizer, .scheduler
     @abstractmethod
-    def deinit_components(self):
+    def deinit_components(self, runner=None):
         """Deinits the runs components.
         In distributed mode should destroy process group.
         """

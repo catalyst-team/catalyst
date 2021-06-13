@@ -746,13 +746,17 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler."""
+        del self.callbacks
+        self.callbacks = {}
+        del self.loaders
+        self.loaders = {}
+        self.engine.deinit_components(runner=self)
+
         # due to multiprocessing setup we have to close current loggers
         # to prevent EOF-like errors
         if self.engine.is_ddp:
             self.flush_log()
             self.close_log()
-        self.engine.deinit_components()
-        if self.engine.is_ddp:
             self.engine.cleanup_process()
 
     def on_experiment_end(self, runner: "IRunner"):

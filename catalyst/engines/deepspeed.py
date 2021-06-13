@@ -213,7 +213,7 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
 
         return model, criterion, optimizer, scheduler
 
-    def deinit_components(self):
+    def deinit_components(self, runner=None):
         """Deinits the runs components."""
         pass
         # self.cleanup_process()
