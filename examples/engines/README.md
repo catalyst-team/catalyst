@@ -2,6 +2,7 @@
 
 Let's check different
 DataParallel and DistributedDataParallel multi-GPU setups with Catalyst Engines. 
+> *Please use `pip install git+https://github.com/catalyst-team/catalyst@master --upgrade` before the `v21.06` release.*
 
 
 ## PyTorch
