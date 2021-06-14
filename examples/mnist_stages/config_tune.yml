@@ -60,17 +60,17 @@ stages:
       batch_size: 32
       num_workers: 1
 
-#      datasets:
-#        train:
-#          _target_: MNIST
-#          root: *dataset_root
-#          train: True
-#          download: True
-#        valid:
-#          _target_: MNIST
-#          root: *dataset_root
-#          train: False
-#          download: True
+      datasets:
+        train:
+          _target_: MNIST
+          root: *dataset_root
+          train: True
+          download: True
+        valid:
+          _target_: MNIST
+          root: *dataset_root
+          train: False
+          download: True
 #
 #      samplers:
 #        train:

@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Iterable
+from typing import Any, Callable, Dict, Iterable, Union
 from collections import OrderedDict
 import copy
 from functools import partial
@@ -81,10 +81,9 @@ def get_loaders_from_params(
     drop_last: bool = False,
     per_gpu_scaling: bool = False,
     loaders_params: Dict[str, Any] = None,
-    samplers_params: Dict[str, Any] = None,
+    samplers: Dict[str, Any] = None,
+    datasets: "OrderedDict[str, Union[Dataset, dict]]" = None,
     initial_seed: int = 42,
-    datasets_fn: Callable = None,
-    **data_params,
 ) -> "OrderedDict[str, DataLoader]":
     """
     Creates pytorch dataloaders from datasets and additional parameters.
@@ -98,22 +97,18 @@ def get_loaders_from_params(
             from ``torch.utils.data.DataLoader``
         per_gpu_scaling: boolean flag,
             if ``True``, scales batch_size in proportion to the number of GPUs
-        loaders_params (Dict[str, Any]): additional loaders parameters
-        samplers_params (Dict[str, Any]): additional sampler parameters
+        loaders_params: additional loaders parameters
+        samplers: additional sampler parameters
         initial_seed: initial seed for ``torch.utils.data.DataLoader``
             workers
-        datasets_fn(Callable): callable function to get dictionary with
-            ``torch.utils.data.Datasets``
-        **data_params: additional data parameters
-            or dictionary with ``torch.utils.data.Datasets`` to use for
-            pytorch dataloaders creation
+        datasets: ordered dictionary with ``torch.utils.data.Dataset``
 
     Returns:
         OrderedDict[str, DataLoader]: dictionary with
             ``torch.utils.data.DataLoader``
 
     Raises:
-        NotImplementedError: if datasource is out of `Dataset` or dict
+        NotImplementedError: if datasource is out of ``Dataset`` or dict
         ValueError: if batch_sampler option is mutually
             exclusive with distributed
     """
@@ -125,18 +120,12 @@ def get_loaders_from_params(
     assert isinstance(loaders_params, dict), (
         f"`loaders_params` should be a Dict. " f"Got: {loaders_params}"
     )
-    samplers_params = copy.deepcopy(samplers_params) or {}
-    assert isinstance(
-        samplers_params, dict
-    ), f"`samplers_params` should be a Dict. Got: {samplers_params}"
+    samplers = copy.deepcopy(samplers) or {}
+    assert isinstance(samplers, dict), f"`samplers` should be a Dict. Got: {samplers}"
+    datasets = datasets if datasets is not None else {}
 
     distributed_rank = get_rank()
     distributed = distributed_rank > -1
-
-    if datasets_fn is not None:
-        datasets = datasets_fn(**data_params)
-    else:
-        datasets = dict(**data_params)
 
     loaders = OrderedDict()
     for name, datasource in datasets.items():  # noqa: WPS426
@@ -147,7 +136,7 @@ def get_loaders_from_params(
         loader_params = loaders_params.pop(name, {})
         assert isinstance(loader_params, dict), f"{loader_params} should be Dict"
 
-        sampler_params = samplers_params.pop(name, None)
+        sampler_params = samplers.pop(name, None)
         if sampler_params is None:
             if isinstance(datasource, dict) and "sampler" in datasource:
                 sampler = datasource.pop("sampler", None)

@@ -28,40 +28,38 @@ class IRunnerMixin(IRunner):
     def get_transform(self, stage: str = None, mode: str = None):
         return ToTensor()
 
-    def get_datasets(
-        self, stage: str, num_samples_per_class: int = None
-    ) -> "OrderedDict[str, Dataset]":
-        """Provides train/validation datasets from MNIST dataset."""
-        num_samples_per_class = num_samples_per_class or 320
-        datasets = OrderedDict()
-        for mode in ("train", "valid"):
-            dataset = MNIST(
-                "./data",
-                train=(mode == "train"),
-                download=True,
-                transform=self.get_transform(stage=stage, mode=mode),
-            )
-            if mode == "train":
+
+class CustomSupervisedConfigRunner(IRunnerMixin, SupervisedConfigRunner):
+    def get_dataset_from_params(self, num_samples_per_class=320, **kwargs):
+        dataset = super().get_dataset_from_params(transform=self.get_transform(), **kwargs)
+        if kwargs.get("train", True):
+            dataset = {
+                "dataset": dataset,
+                "sampler": BalanceClassSampler(labels=dataset.targets, mode=num_samples_per_class),
+            }
+
+        return dataset
+
+
+if SETTINGS.hydra_required:
+    import hydra
+
+    from catalyst.dl import SupervisedHydraRunner
+
+    class CustomSupervisedHydraRunner(IRunnerMixin, SupervisedHydraRunner):
+        def get_dataset_from_params(self, params):
+            num_samples_per_class = 320
+
+            dataset = hydra.utils.instantiate(params, transform=self.get_transform())
+            if params["train"]:
                 dataset = {
                     "dataset": dataset,
                     "sampler": BalanceClassSampler(
                         labels=dataset.targets, mode=num_samples_per_class
                     ),
                 }
-            datasets[mode] = dataset
 
-        return datasets
-
-
-class CustomSupervisedConfigRunner(IRunnerMixin, SupervisedConfigRunner):
-    pass
-
-
-if SETTINGS.hydra_required:
-    from catalyst.dl import SupervisedHydraRunner
-
-    class CustomSupervisedHydraRunner(IRunnerMixin, SupervisedHydraRunner):
-        pass
+            return dataset
 
     __all__ = ["CustomSupervisedConfigRunner", "CustomSupervisedHydraRunner"]
 else:
