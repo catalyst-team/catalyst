@@ -44,17 +44,17 @@ class ProfilerCallback(Callback):
 
         if self.profiler is None:
             self.profiler = torch.profiler.profile(**self.profiler_kwargs)
-            self.profiler = self.profiler.__enter__()
+            self.profiler.__enter__()
 
     def _exit_profiler(self, loader_key: str, epoch: int) -> None:
         if not self._should_use_profiler(loader_key, epoch) or self.profiler is None:
             return
 
-        self.profiler.__exit__(None, None, None)
-        self.stats = self.profiler.key_averages()
-
-        # TODO: how to show table in other logers ?
-        print(self.stats.table(sort_by="cpu_time_total", row_limit=10))
+        if self.stats is None:
+            self.profiler.__exit__(None, None, None)
+            self.stats = self.profiler.key_averages()
+            # TODO: how to show table in other logers ?
+            print(self.stats.table(sort_by="cpu_time_total", row_limit=100))
 
     def on_loader_start(self, runner: IRunner) -> None:
         """

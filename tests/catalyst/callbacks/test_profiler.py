@@ -128,8 +128,6 @@ def _run_custom_runner(device):
         runner = CustomRunner(tmp_dir, device)
         runner.run()
 
-    assert False
-
 
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is not available!")
 def test_profiler_on_cuda():
