@@ -1,6 +1,8 @@
 # flake8: noqa
 
-import packaging
+
+from distutils.version import StrictVersion
+
 import torch
 
 from catalyst.settings import SETTINGS
@@ -51,7 +53,7 @@ if SETTINGS.pruning_required:
 if SETTINGS.quantization_required:
     from catalyst.callbacks.quantization import QuantizationCallback
 
-if packaging.version.parse(torch.__version__) >= packaging.version.parse("1.8.1"):
+if StrictVersion(torch.__version__) >= StrictVersion("1.8.1"):
     from catalyst.callbacks.profiler import ProfilerCallback
 
 from catalyst.callbacks.scheduler import (
