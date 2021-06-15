@@ -1,6 +1,6 @@
 # flake8: noqa
 
-from distutils.version import StrictVersion
+from distutils.version import LooseVersion
 import logging
 from tempfile import TemporaryDirectory
 
@@ -9,7 +9,7 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 
-HAS_REQUIRED_TORCH_VERSION = StrictVersion(torch.__version__) >= StrictVersion("1.8.1")
+HAS_REQUIRED_TORCH_VERSION = LooseVersion(torch.__version__) >= LooseVersion("1.8.1")
 
 from catalyst import dl  # noqa: E402
 
