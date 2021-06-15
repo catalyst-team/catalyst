@@ -135,7 +135,7 @@ def _run_custom_runner(device):
 
 
 @pytest.mark.skipif(
-    not not HAS_REQUIRED_TORCH_VERSION, reason="Need PyTorch version higher than 1.8.1!"
+    not HAS_REQUIRED_TORCH_VERSION, reason="Need PyTorch version higher than 1.8.1!"
 )
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is not available!")
 def test_profiler_on_cuda():
