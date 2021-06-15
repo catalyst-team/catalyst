@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader, Dataset
 
 HAS_REQUIRED_TORCH_VERSION = StrictVersion(torch.__version__) >= StrictVersion("1.8.1")
 
-from catalyst import dl
+from catalyst import dl  # noqa: E402
 
 if HAS_REQUIRED_TORCH_VERSION:
     from catalyst.callbacks import ProfilerCallback
