@@ -1,5 +1,6 @@
 # flake8: noqa
 
+from distutils.version import StrictVersion
 import logging
 from tempfile import TemporaryDirectory
 
@@ -8,8 +9,12 @@ import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, Dataset
 
+HAS_REQUIRED_TORCH_VERSION = StrictVersion(torch.__version__) >= StrictVersion("1.8.1")
+
 from catalyst import dl
-from catalyst.callbacks import ProfilerCallback
+
+if HAS_REQUIRED_TORCH_VERSION:
+    from catalyst.callbacks import ProfilerCallback
 
 logger = logging.getLogger(__name__)
 
@@ -129,6 +134,9 @@ def _run_custom_runner(device):
         runner.run()
 
 
+@pytest.mark.skipif(
+    not not HAS_REQUIRED_TORCH_VERSION, reason="Need PyTorch version higher than 1.8.1!"
+)
 @pytest.mark.skipif(not torch.cuda.is_available(), reason="CUDA is not available!")
 def test_profiler_on_cuda():
     _run_custom_runner("cuda:0")
