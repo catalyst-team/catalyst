@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List
 from collections import OrderedDict
 from copy import deepcopy
 import logging
@@ -176,10 +176,32 @@ class HydraRunner(IRunner):
 
         return loggers
 
-    def get_dataset_from_params(self, params: DictConfig) -> "Dataset":
+    def _get_transform_from_params(self, params: DictConfig) -> Callable:
+        transform: Callable = hydra.utils.instantiate(params)
+        return transform
+
+    def get_transform(self, params: DictConfig) -> Callable:
+        """
+        Returns the data transforms for a dataset.
+
+        Args:
+            params: parameters of the transformation
+
+        Returns:
+            Data transformations to use
+        """
+        transform = self._get_transform_from_params(params)
+        return transform
+
+    def _get_dataset_from_params(self, params: DictConfig) -> "Dataset":
         """Creates dataset from ``**params`` parameters."""
-        dataset = hydra.utils.instantiate(params)
-        raise dataset
+        transform_params = params.pop("transform", None)
+        if transform_params:
+            transform = self.get_transform(transform_params)
+            dataset = hydra.utils.instantiate(params, transform=transform)
+        else:
+            dataset = hydra.utils.instantiate(params)
+        return dataset
 
     def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
         """
@@ -190,13 +212,12 @@ class HydraRunner(IRunner):
 
         Returns:
             Dict: datasets objects
-
         """
         datasets_params = self._config.stages[stage].loaders.datasets
         datasets_params = OmegaConf.to_container(datasets_params, resolve=True)
 
         datasets = {
-            key: self.get_dataset_from_params(params) for key, params in datasets_params.items()
+            key: self._get_dataset_from_params(params) for key, params in datasets_params.items()
         }
         return OrderedDict(datasets)
 

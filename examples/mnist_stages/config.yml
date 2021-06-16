@@ -57,12 +57,16 @@ stages:
           _target_: MNIST
           root: *dataset_root
           train: True
+          transform:
+            _target_: transform.ToTensor
           download: True
           num_samples_per_class: 320
         valid:
           _target_: MNIST
           root: *dataset_root
           train: False
+          transform:
+            _target_: transform.ToTensor
           download: True
 
     criterion:

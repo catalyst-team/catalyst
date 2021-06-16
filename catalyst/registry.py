@@ -12,7 +12,8 @@ Registry = REGISTRY.add
 def _transforms_loader(r: registry.Registry):
     from catalyst.data import transforms as t
 
-    r.add_from_module(t, prefix=["catalyst.", "C."])
+    # add `'transform.'` prefix to avoid nameing conflicts with other catalyst modules
+    r.add_from_module(t, prefix=["transform."])
 
 
 REGISTRY.late_add(_transforms_loader)

@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
   - `utils.ddp_sync_run` function for synchronous ddp run
   - CIFAR10 and CIFAR100 datasets from torchvision (no cv-based requirements)
   - [Catalyst Engines demo](https://github.com/catalyst-team/catalyst/tree/master/examples/engines)
+- `dataset_from_params` support in config API ([#1231](https://github.com/catalyst-team/catalyst/pull/1231))
+- transform from params support for config API added ([#1236](https://github.com/catalyst-team/catalyst/pull/1236))
 
 ### Changed
 
@@ -33,25 +35,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Engine hotfix for `predict_loader` ([#1235](https://github.com/catalyst-team/catalyst/pull/1235))
 - ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
   - Hydra hotfix due to `1.1.0` version changes
-
-
-## [21.06] - YYYY-MM-DD
-
-### Added
-
-- `dataset_from_params` support in config API ([#1231](https://github.com/catalyst-team/catalyst/pull/1231))
-
-### Changed
-
--
-
-### Removed
-
--
-
-### Fixed
-
-- batch overfit test fixed ([#1232](https://github.com/catalyst-team/catalyst/pull/1232/files))
+- `HuberLoss` name conflict for pytorch 1.9 hotfix ([#1239](https://github.com/catalyst-team/catalyst/pull/1239))
 
 
 ## [21.05] - 2021-05-31

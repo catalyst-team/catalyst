@@ -25,13 +25,10 @@ class IRunnerMixin(IRunner):
                 utils.set_requires_grad(layer, requires_grad=False)
         return model
 
-    def get_transform(self, stage: str = None, mode: str = None):
-        return ToTensor()
-
 
 class CustomSupervisedConfigRunner(IRunnerMixin, SupervisedConfigRunner):
-    def get_dataset_from_params(self, num_samples_per_class=320, **kwargs):
-        dataset = super().get_dataset_from_params(transform=self.get_transform(), **kwargs)
+    def _get_dataset_from_params(self, num_samples_per_class=320, **kwargs):
+        dataset = super()._get_dataset_from_params(**kwargs)
         if kwargs.get("train", True):
             dataset = {
                 "dataset": dataset,
@@ -47,10 +44,10 @@ if SETTINGS.hydra_required:
     from catalyst.dl import SupervisedHydraRunner
 
     class CustomSupervisedHydraRunner(IRunnerMixin, SupervisedHydraRunner):
-        def get_dataset_from_params(self, params):
-            num_samples_per_class = 320
+        def _get_dataset_from_params(self, params):
+            num_samples_per_class = params.pop("num_samples_per_class", 320)
 
-            dataset = hydra.utils.instantiate(params, transform=self.get_transform())
+            dataset = super()._get_dataset_from_params(params)
             if params["train"]:
                 dataset = {
                     "dataset": dataset,
