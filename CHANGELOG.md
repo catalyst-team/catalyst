@@ -35,6 +35,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Engine hotfix for `predict_loader` ([#1235](https://github.com/catalyst-team/catalyst/pull/1235))
 - ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
   - Hydra hotfix due to `1.1.0` version changes
+- `HuberLoss` name conflict for pytorch 1.9 hotfix ([#1239](https://github.com/catalyst-team/catalyst/pull/1239))
 
 
 ## [21.05] - 2021-05-31
