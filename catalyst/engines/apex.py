@@ -281,7 +281,7 @@ class APEXEngine(DeviceEngine):
             amp.load_state_dict(checkpoint["amp"])
 
 
-class DataParallelApexEngine(APEXEngine):
+class DataParallelAPEXEngine(APEXEngine):
     """Apex multi-gpu training device engine.
 
     Args:
@@ -365,7 +365,7 @@ class DataParallelApexEngine(APEXEngine):
         return model, criterion, optimizer, scheduler
 
 
-class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
+class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
     """Distributed Apex MultiGPU training device engine.
 
     Args:
@@ -574,4 +574,13 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             amp.load_state_dict(checkpoint["amp"])
 
 
-__all__ = ["APEXEngine", "DataParallelApexEngine", "DistributedDataParallelApexEngine"]
+DataParallelApexEngine = DataParallelAPEXEngine
+DistributedDataParallelApexEngine = DistributedDataParallelAPEXEngine
+
+__all__ = [
+    "APEXEngine",
+    "DataParallelAPEXEngine",
+    "DistributedDataParallelAPEXEngine",
+    "DataParallelApexEngine",
+    "DistributedDataParallelApexEngine",
+]

@@ -52,7 +52,7 @@ def test_optuna():
             valid_metric="accuracy01",
             minimize_valid_metric=False,
         )
-        return runner.callbacks["optuna"].best_score
+        return trial.best_score
 
     study = optuna.create_study(
         direction="maximize",

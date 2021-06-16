@@ -277,7 +277,6 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         self.scaler.step(optimizer)
         self.scaler.update()
 
-    # TODO: should be used with forward method? (similar to criterion)
     def autocast(self):
         """AMP context"""
         return amp.autocast()

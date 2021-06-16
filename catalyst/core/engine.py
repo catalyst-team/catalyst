@@ -73,6 +73,20 @@ class IEngine(ABC):
         """
         return False
 
+    def setup_process(self, rank: int = -1, world_size: int = 1):
+        """Initialize DDP variables and processes.
+
+        Args:
+            rank: process rank. Default is `-1`.
+            world_size: number of devices in netwok to expect for train.
+                Default is `1`.
+        """
+        pass
+
+    def cleanup_process(self):
+        """Clean DDP variables and processes."""
+        pass
+
     @abstractmethod
     def sync_device(self, tensor_or_module: Any) -> Any:
         """Moves ``tensor_or_module`` to Engine's device.
@@ -94,11 +108,10 @@ class IEngine(ABC):
         """Inits the runs components."""
         pass
 
+    # @TODO: create RunnerLike type for .model, .criterion, .optimizer, .scheduler
     @abstractmethod
-    def deinit_components(self):
-        """Deinits the runs components.
-        In distributed mode should destroy process group.
-        """
+    def deinit_components(self, runner=None):
+        """Deinits the runs components. In distributed mode should destroy process group."""
         pass
 
     @abstractmethod

@@ -17,7 +17,7 @@ from catalyst.runners.config import SupervisedConfigRunner
 from catalyst.settings import IS_CUDA_AVAILABLE, NUM_CUDA_DEVICES, SETTINGS
 
 if SETTINGS.apex_required:
-    from catalyst.engines.apex import DistributedDataParallelApexEngine
+    from catalyst.engines.apex import DistributedDataParallelAPEXEngine
 
 from .misc import (  # DistributedDataParallelTypeChecker,
     DummyDataset,
@@ -46,7 +46,7 @@ class CustomRunner(IRunner):
         self._port = port
 
     def get_engine(self):
-        return DistributedDataParallelApexEngine(
+        return DistributedDataParallelAPEXEngine(
             port=DDP_ADDRESS + random.randint(1, 100),
             process_group_kwargs={"backend": "nccl"},
             apex_kwargs=dict(opt_level=self._opt_level),

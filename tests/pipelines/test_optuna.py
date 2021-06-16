@@ -59,7 +59,7 @@ def train_experiment(device, engine=None):
                 },
                 num_epochs=2,
             )
-            score = runner.callbacks["optuna"].best_score
+            score = trial.best_score
             return score
 
         study = optuna.create_study(
@@ -156,7 +156,7 @@ def test_on_apex():
     reason="No CUDA>=2 or Apex found",
 )
 def test_on_apex_dp():
-    train_experiment(None, dl.DataParallelApexEngine())
+    train_experiment(None, dl.DataParallelAPEXEngine())
 
 
 # @mark.skipif(

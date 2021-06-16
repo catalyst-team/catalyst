@@ -91,6 +91,11 @@ def _optimizers_loader(r: registry.Registry):
 
     r.add_from_module(m)
 
+    if SETTINGS.fairscale_required:
+        from fairscale import optim as m2
+
+        r.add_from_module(m2, prefix=["fairscale."])
+
 
 REGISTRY.late_add(_optimizers_loader)
 
