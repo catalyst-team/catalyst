@@ -247,8 +247,7 @@ class Settings(FrozenClass):
         self.albu_required: bool = _get_optional_value(
             albu_required,
             _is_albumentations_available,
-            "catalyst[albu] is not available, to install it, "
-            "run `pip install catalyst[albu]`.",
+            "catalyst[albu] is not available, to install it, " "run `pip install catalyst[albu]`.",
         )
         self.hydra_required: bool = _get_optional_value(
             hydra_required,
