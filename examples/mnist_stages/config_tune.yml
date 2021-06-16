@@ -65,11 +65,19 @@ stages:
           _target_: MNIST
           root: *dataset_root
           train: True
+          transform: &transform
+            _target_: transform.Compose
+            transforms:
+              - _target_: transform.ToTensor
+              - _target_: transform.Normalize
+                mean: [0]
+                std: [1]
           download: True
         valid:
           _target_: MNIST
           root: *dataset_root
           train: False
+          transform: *transform
           download: True
 #
 #      samplers:

@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List
 from collections import OrderedDict
 from copy import deepcopy
 import logging
@@ -215,12 +215,44 @@ class ConfigRunner(IRunner):
 
         return loggers
 
-    def get_dataset_from_params(self, **params) -> "Dataset":
+    def _get_transform_from_params(self, **params) -> Callable:
+        """Creates transformation from ``**params`` parameters."""
+        recursion_keys = params.pop("_transforms_", ("transforms",))
+        for key in recursion_keys:
+            if key in params:
+                params[key] = [
+                    self._get_transform_from_params(**transform_params)
+                    for transform_params in params[key]
+                ]
+
+        transform = REGISTRY.get_from_params(**params)
+        return transform
+
+    def get_transform(self, **params) -> Callable:
+        """
+        Returns the data transforms for a given dataset.
+
+        Args:
+            **params: parameters of the transformation
+
+        Returns:
+            Data transformation to use
+        """
+        # make a copy of params since we don't want to modify config
+        params = deepcopy(params)
+
+        transform = self._get_transform_from_params(**params)
+        return transform
+
+    def _get_dataset_from_params(self, **params) -> "Dataset":
         """Creates dataset from ``**params`` parameters."""
         params = deepcopy(params)
 
-        dataset = REGISTRY.get_from_params(**params)
+        transform_params: dict = params.pop("transform", None)
+        if transform_params is not None:
+            params["transform"] = self.get_transform(**transform_params)
 
+        dataset = REGISTRY.get_from_params(**params)
         return dataset
 
     def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
@@ -232,12 +264,11 @@ class ConfigRunner(IRunner):
 
         Returns:
             Dict: datasets objects
-
         """
         params = deepcopy(self._stage_config[stage]["loaders"]["datasets"])
 
         datasets = [
-            (key, self.get_dataset_from_params(**dataset_params))
+            (key, self._get_dataset_from_params(**dataset_params))
             for key, dataset_params in params.items()
         ]
         return OrderedDict(datasets)
@@ -251,7 +282,6 @@ class ConfigRunner(IRunner):
 
         Returns:
             Dict: loaders objects
-
         """
         loaders_params = deepcopy(self._stage_config[stage]["loaders"])
         loaders_params.pop("datasets", None)
