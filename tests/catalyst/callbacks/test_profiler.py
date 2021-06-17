@@ -2,6 +2,7 @@
 
 from distutils.version import LooseVersion
 import logging
+import os
 from tempfile import TemporaryDirectory
 
 import pytest
@@ -64,10 +65,16 @@ class DummyModel(nn.Module):
 
 
 class CustomRunner(dl.IRunner):
-    def __init__(self, logdir, device):
+    def __init__(self, logdir, device, tb_logs=None, chrome_logs=None, stack_logs=None):
         super().__init__()
         self._logdir = logdir
         self._device = device
+        self.profiler_tb_logs = tb_logs
+        self.chrome_trace_logs = chrome_logs
+        self.stacks_logs = stack_logs
+        self._export_stacks_kwargs = (
+            dict(path=self.stacks_logs) if self.stacks_logs is not None else None
+        )
 
     def get_engine(self):
         return dl.DeviceEngine(self._device)
@@ -81,13 +88,17 @@ class CustomRunner(dl.IRunner):
             "profiler": ProfilerCallback(
                 loader_key="train",
                 epoch=1,
-                # schedule=torch.profiler.schedule(wait=2, warmup=3, active=6),
-                activities=[
-                    torch.profiler.ProfilerActivity.CPU,
-                    torch.profiler.ProfilerActivity.CUDA,
-                ],
-                with_stack=True,
-                with_flops=True,
+                profiler_kwargs=dict(
+                    activities=[
+                        torch.profiler.ProfilerActivity.CPU,
+                        torch.profiler.ProfilerActivity.CUDA,
+                    ],
+                    with_stack=True,
+                    with_flops=True,
+                ),
+                tensorboard_path=self.profiler_tb_logs,
+                export_chrome_trace_path=self.chrome_trace_logs,
+                export_stacks_kwargs=self._export_stacks_kwargs,
             ),
         }
 
@@ -130,8 +141,22 @@ class CustomRunner(dl.IRunner):
 
 def _run_custom_runner(device):
     with TemporaryDirectory() as tmp_dir:
-        runner = CustomRunner(tmp_dir, device)
+        tb_logs = os.path.join(tmp_dir, "profiler_tb_logs")
+        runner = CustomRunner(tmp_dir, device, tb_logs=tb_logs)
         runner.run()
+        assert os.path.isdir(tb_logs)
+
+    with TemporaryDirectory() as tmp_dir:
+        chrome_logs = os.path.join(tmp_dir, "chrome_trace.json")
+        runner = CustomRunner(tmp_dir, device, chrome_logs=chrome_logs)
+        runner.run()
+        assert os.path.isfile(chrome_logs)
+
+    with TemporaryDirectory() as tmp_dir:
+        stack_logs = os.path.join(tmp_dir, "flamegraph.txt")
+        runner = CustomRunner(tmp_dir, device, stack_logs=stack_logs)
+        runner.run()
+        assert os.path.isfile(stack_logs)
 
 
 @pytest.mark.skipif(

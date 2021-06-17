@@ -16,9 +16,22 @@ class ProfilerCallback(Callback):
         num_batches: number of batches to use in epoch to do a profiling.
             If `None` then will be used all batches in loader.
             Default is `None`.
-        **profiler_kwargs: arguments to pass to a profiler.
+        profiler_kwargs: arguments to pass to a profiler.
             To get more info about possible arguments please use PyTorch
             `profiler docs`_.
+        tensorboard_path: path where should be stored logs for tensorboard.
+            If `None` then will be ignored.
+            Default is `None`.
+        export_chrome_trace_path: path to export chrome trace.
+            If `None` then will be ignored exporting chrome trace to a file.
+            Default is `None`.
+        export_stacks_kwargs: arguments to pass to a `profiler.export_stacks` method.
+            If `None` then triggering `profiler.export_stacks` will be avoided.
+            Defalt is `None`.
+
+    .. note::
+        Export to tensorboard and chrome trace mutually exclusive and specifying both of
+        them will raise an error.
 
     Example:
         .. code-block:: python
@@ -53,13 +66,17 @@ class ProfilerCallback(Callback):
                 model=model,
                 callbacks=[dl.ProfilerCallback(
                     loader_key="train", epoch=3,
-                    # profiler arguments
-                    activities=[
-                        torch.profiler.ProfilerActivity.CPU,
-                        torch.profiler.ProfilerActivity.CUDA,
-                    ],
-                    with_stack=True,
-                    with_flops=True,
+                    profiler_kwargs=dict(
+                        activities=[
+                            torch.profiler.ProfilerActivity.CPU,
+                            torch.profiler.ProfilerActivity.CUDA,
+                        ],
+                        on_trace_ready=torch.profiler.tensorboard_trace_handler(
+                            "./logs/tb_profile"
+                        ),
+                        with_stack=True,
+                        with_flops=True,
+                    )
                 )],
                 loaders=loaders,
                 criterion=criterion,
@@ -73,7 +90,14 @@ class ProfilerCallback(Callback):
     """
 
     def __init__(
-        self, loader_key: str = None, epoch: int = 1, num_batches: int = None, **profiler_kwargs,
+        self,
+        loader_key: str = None,
+        epoch: int = 1,
+        num_batches: int = None,
+        profiler_kwargs: "Dict[str, Any]" = None,
+        tensorboard_path: str = None,
+        export_chrome_trace_path: str = None,
+        export_stacks_kwargs: "Dict[str, Any]" = None,
     ):
         super().__init__(order=CallbackOrder.Internal, node=CallbackNode.Master)
 
@@ -82,7 +106,13 @@ class ProfilerCallback(Callback):
         self.num_batches = num_batches
         self.batch_cnt = 0
 
-        self.profiler_kwargs = profiler_kwargs
+        self.profiler_kwargs = dict() if profiler_kwargs is None else profiler_kwargs
+        if tensorboard_path is not None and "on_trace_ready" not in profiler_kwargs:
+            self.profiler_kwargs["on_trace_ready"] = torch.profiler.tensorboard_trace_handler(
+                tensorboard_path
+            )
+        self.export_chrome_trace_path = export_chrome_trace_path
+        self.export_stacks_kwargs = export_stacks_kwargs
         self.profiler = None
         self.stats = None
 
@@ -117,6 +147,13 @@ class ProfilerCallback(Callback):
 
         if self.stats is None:
             self.profiler.__exit__(None, None, None)
+
+            if "on_trace_ready" not in self.profiler_kwargs and self.export_chrome_trace_path:
+                self.profiler.export_chrome_trace(self.export_chrome_trace_path)
+
+            if self.export_stacks_kwargs is not None:
+                self.profiler.export_stacks(**self.export_stacks_kwargs)
+
             self.stats = self.profiler.key_averages()
             # TODO: how to show table in other logers ?
             print(self.stats.table(sort_by="cpu_time_total", row_limit=100))
