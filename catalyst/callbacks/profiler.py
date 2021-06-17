@@ -73,11 +73,7 @@ class ProfilerCallback(Callback):
     """
 
     def __init__(
-        self,
-        loader_key: str = None,
-        epoch: int = 1,
-        num_batches: int = None,
-        **profiler_kwargs,
+        self, loader_key: str = None, epoch: int = 1, num_batches: int = None, **profiler_kwargs,
     ):
         super().__init__(order=CallbackOrder.Internal, node=CallbackNode.Master)
 
