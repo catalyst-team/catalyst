@@ -9,25 +9,27 @@ class ProfilerCallback(Callback):
 
     Args:
         loader_key: name of the loader to use for profiling.
-            If `None` then will be used first loader from experiment.
-            Default is `None`.
+            If ``None`` then will be used first loader from experiment.
         epoch: epoch number to use for profiling.
-            Default is `1`.
         num_batches: number of batches to use in epoch to do a profiling.
-            If `None` then will be used all batches in loader.
-            Default is `None`.
+            If ``None`` then will be used all batches in loader.
         profiler_kwargs: arguments to pass to a profiler.
             To get more info about possible arguments please use PyTorch
             `profiler docs`_.
         tensorboard_path: path where should be stored logs for tensorboard.
-            If `None` then will be ignored.
-            Default is `None`.
+            If ``None`` then will be ignored.
         export_chrome_trace_path: path to export chrome trace.
-            If `None` then will be ignored exporting chrome trace to a file.
-            Default is `None`.
-        export_stacks_kwargs: arguments to pass to a `profiler.export_stacks` method.
-            If `None` then triggering `profiler.export_stacks` will be avoided.
-            Defalt is `None`.
+            If ``None`` then will be ignored exporting chrome trace to a file.
+        export_stacks_kwargs: arguments to pass to a ``profiler.export_stacks`` method.
+            If ``None`` then triggering ``profiler.export_stacks`` will be avoided.
+
+            Example of using **FlameGraph** tool:
+
+            .. code-block:: bash
+
+                git clone https://github.com/brendangregg/FlameGraph
+                cd FlameGraph
+                ./flamegraph.pl –title “CPU time” –countname “us.” profiler.stacks > perf_viz.svg
 
     .. note::
         Export to tensorboard and chrome trace mutually exclusive and specifying both of
