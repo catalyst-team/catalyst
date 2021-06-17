@@ -23,6 +23,7 @@ from catalyst.typing import (
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
+    Sampler,
     Scheduler,
 )
 from catalyst.utils.distributed import ddp_sync_run
@@ -361,9 +362,19 @@ class IRunner(ICallback, ILogger, ABC):
         """
         raise NotImplementedError
 
-    # def get_samplers(self, stage: str = None):
-    #     raise NotImplementedError
-    #
+    def get_samplers(self, stage: str = None) -> "OrderedDict[str, Sampler]":
+        """Returns samplers for a given stage.  # noqa: DAR401
+
+        Args:
+            stage: stage name of interest, like "pretrain" / "train" / "finetune" / etc
+
+        Returns:  # noqa: DAR201, DAR202
+            OrderedDict[str, Sampler]: Ordered dictionary
+                with samplers for current stage and epoch.
+
+        """
+        raise NotImplementedError
+
     # def get_transforms(self, stage: str = None):
     #     """Returns the data transforms for a given stage and dataset.
     #
