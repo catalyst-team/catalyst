@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any, Callable, List
 from collections import OrderedDict
 import os
 import pickle
@@ -8,7 +8,6 @@ import subprocess
 
 import torch
 from torch import nn
-import torch.distributed
 import torch.distributed as dist
 
 from catalyst.settings import SETTINGS
@@ -16,7 +15,7 @@ from catalyst.settings import SETTINGS
 
 def _is_torch_distributed_initialized() -> bool:
     """Checks if torch.distributed is available and initialized."""
-    return torch.distributed.is_available() and torch.distributed.is_initialized()
+    return dist.is_available() and dist.is_initialized()
 
 
 def _is_slurm_available():
@@ -34,6 +33,16 @@ def _is_ddp_wrapped(model: nn.Module) -> bool:
         from apex.parallel import DistributedDataParallel as apex_DDP
 
         parallel_wrappers = parallel_wrappers + (apex_DDP,)
+
+    if SETTINGS.fairscale_required:
+        from fairscale.nn.data_parallel import FullyShardedDataParallel, ShardedDataParallel
+
+        parallel_wrappers = parallel_wrappers + (ShardedDataParallel, FullyShardedDataParallel)
+
+    if SETTINGS.deepspeed_required:
+        from deepspeed import DeepSpeedEngine, PipelineEngine
+
+        parallel_wrappers = parallel_wrappers + (DeepSpeedEngine, PipelineEngine)
 
     return isinstance(model, parallel_wrappers)
 
@@ -63,7 +72,7 @@ def get_rank() -> int:
         int: ``rank`` if torch.distributed is initialized, otherwise ``-1``
     """
     if _is_torch_distributed_initialized():
-        return torch.distributed.get_rank()
+        return dist.get_rank()
     else:
         return -1
 
@@ -207,6 +216,20 @@ def all_gather(data: Any) -> List[Any]:
     return data_list
 
 
+def ddp_sync_run(function: Callable):
+    """Runs function in a synchronous way: 0-rank first and all other processes after.
+
+    Args:
+        function: callable function
+    """
+    rank = get_rank()
+    if rank > 0:
+        dist.barrier()
+    function()
+    if rank == 0:
+        dist.barrier()
+
+
 __all__ = [
     "get_rank",
     "get_distributed_params",
@@ -214,4 +237,5 @@ __all__ = [
     "sum_reduce",
     "mean_reduce",
     "all_gather",
+    "ddp_sync_run",
 ]

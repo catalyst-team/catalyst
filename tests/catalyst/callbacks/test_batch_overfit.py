@@ -22,7 +22,7 @@ def _prepare_experiment():
     num_samples, num_features = int(32e1), int(1e1)
     X, y = torch.rand(num_samples, num_features), torch.rand(num_samples)
     dataset = TensorDataset(X, y)
-    loader = DataLoader(dataset, batch_size=32, num_workers=1)
+    loader = DataLoader(dataset, batch_size=32, num_workers=0)
     loaders = {"train": loader, "valid": loader}
 
     # model, criterion, optimizer, scheduler

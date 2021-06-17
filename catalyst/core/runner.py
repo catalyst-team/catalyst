@@ -14,7 +14,6 @@ from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import filter_callbacks_by_node, sort_callbacks_by_order, validate_loaders
 from catalyst.core.trial import ITrial
-from catalyst.engines.torch import DistributedDataParallelEngine
 from catalyst.typing import (
     Criterion,
     Device,
@@ -26,6 +25,7 @@ from catalyst.typing import (
     RunnerScheduler,
     Scheduler,
 )
+from catalyst.utils.distributed import ddp_sync_run
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
 LOGGER = logging.getLogger(__name__)
@@ -247,6 +247,8 @@ class IRunner(ICallback, ILogger, ABC):
         # extra
         self.exception: Exception = None
         self.need_early_stop: bool = False
+        self._stage_rank: int = -1
+        self._stage_world_size: int = -1
 
     # @TODO: remove hotfix
     @property
@@ -486,12 +488,16 @@ class IRunner(ICallback, ILogger, ABC):
         self.criterion = self.get_criterion(stage=self.stage_key)
         return self.criterion
 
-    def _get_optimizer(self) -> Optimizer:
-        assert self.model is not None, "You need to setup model first"
+    def _get_optimizer(self, model: Model = None) -> Optimizer:
+        if model is not None:
+            self.model = model
+        # assert self.model is not None, "You need to setup model first"
         self.optimizer = self.get_optimizer(stage=self.stage_key, model=self.model)
         return self.optimizer
 
-    def _get_scheduler(self) -> Scheduler:
+    def _get_scheduler(self, optimizer: Optimizer = None) -> Scheduler:
+        if optimizer is not None:
+            self.optimizer = optimizer
         # assert self.optimizer is not None, "You need to setup optimizer first"
         self.scheduler = self.get_scheduler(stage=self.stage_key, optimizer=self.optimizer)
         return self.scheduler
@@ -648,7 +654,14 @@ class IRunner(ICallback, ILogger, ABC):
         self.stage_epoch_step: int = 0
         self.stage_batch_step: int = 0
         self.stage_sample_step: int = 0
-        self._setup_loaders()
+
+        if self.engine.is_ddp:
+            self.engine.setup_process(rank=self._stage_rank, world_size=self._stage_world_size)
+            if not self.engine.is_master_process:
+                del self.loggers
+                self.loggers = {}
+
+        ddp_sync_run(self._setup_loaders)
         self._setup_components()
         self._setup_callbacks()
         self.log_hparams(hparams=self.hparams, scope="stage")
@@ -712,10 +725,11 @@ class IRunner(ICallback, ILogger, ABC):
         # as far as we could `backward` anything from `batch_metrics` on the nodes during training,
         # they could not be synced before, so we have to sync them in the end of the batch
         # @TODO: could be done better
-        self.batch_metrics = {
-            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-            for k, v in self.batch_metrics.items()
-        }
+        if self.engine.is_ddp:
+            self.batch_metrics = {
+                k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+                for k, v in self.batch_metrics.items()
+            }
         self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
@@ -732,10 +746,22 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_stage_end(self, runner: "IRunner"):
         """Event handler."""
-        self.engine.deinit_components()
+        del self.callbacks
+        self.callbacks = {}
+        del self.loaders
+        self.loaders = {}
+        self.engine.deinit_components(runner=self)
+
+        # due to multiprocessing setup we have to close current loggers
+        # to prevent EOF-like errors
+        if self.engine.is_ddp:
+            self.flush_log()
+            self.close_log()
+            self.engine.cleanup_process()
 
     def on_experiment_end(self, runner: "IRunner"):
         """Event handler."""
+        self.flush_log()
         self.close_log()
 
     def on_exception(self, runner: "IRunner"):
@@ -757,14 +783,14 @@ class IRunner(ICallback, ILogger, ABC):
         Used to make a train/valid/infer stage during Experiment run.
 
         Args:
-            batch (Mapping[str, Any]): dictionary with data batches
-                from DataLoader.
+            batch (Mapping[str, Any]): dictionary with data batches from DataLoader.
         """
         pass
 
     def _run_batch(self) -> None:
         self._run_event("on_batch_start")
         self.handle_batch(batch=self.batch)
+        self.batch = self.engine.sync_device(self.batch)
         self._run_event("on_batch_end")
 
     def _run_loader(self) -> None:
@@ -788,11 +814,7 @@ class IRunner(ICallback, ILogger, ABC):
         self._run_event("on_epoch_end")
 
     def _run_stage(self, rank: int = -1, world_size: int = 1) -> None:
-        if isinstance(self.engine, DistributedDataParallelEngine):
-            self.engine.setup_process(rank=rank, world_size=world_size)
-            if not self.engine.is_master_process:
-                self.loggers = {}
-
+        self._stage_rank, self._stage_world_size = rank, world_size
         self._run_event("on_stage_start")
         while self.stage_epoch_step < self.stage_epoch_len:
             self._run_epoch()
@@ -804,7 +826,7 @@ class IRunner(ICallback, ILogger, ABC):
     def _run_experiment(self) -> None:
         self._run_event("on_experiment_start")
         for self.stage_key in self.stages:
-            if isinstance(self.engine, DistributedDataParallelEngine):
+            if self.engine.is_ddp:
                 # ddp-device branch
                 world_size = self.engine.world_size
                 torch.multiprocessing.spawn(

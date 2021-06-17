@@ -96,6 +96,9 @@ extras = {
     "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
     "mlflow": load_requirements("requirements/requirements-mlflow.txt"),
     "neptune": load_requirements("requirements/requirements-neptune.txt"),
+    "wandb": load_requirements("requirements/requirements-wandb.txt"),
+    "fairscale": load_requirements("requirements/requirements-fairscale.txt"),
+    "deepspeed": load_requirements("requirements/requirements-deepspeed.txt"),
 }
 extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
 # Meta dependency groups.
@@ -142,6 +145,7 @@ setup(
         "bin/scripts/catalyst-parallel-run",
         "bin/scripts/download-gdrive",
         "bin/scripts/extract-archive",
+        "bin/scripts/install-apex",
     ],
     install_requires=load_requirements("requirements/requirements.txt"),
     extras_require=extras,

@@ -137,7 +137,7 @@ def test_on_apex():
     reason="No CUDA>=2 or Apex found",
 )
 def test_on_apex_dp():
-    train_experiment(None, dl.DataParallelApexEngine())
+    train_experiment(None, dl.DataParallelAPEXEngine())
 
 
 @mark.skipif(
@@ -145,4 +145,4 @@ def test_on_apex_dp():
     reason="No CUDA>=2 or Apex found",
 )
 def test_on_apex_ddp():
-    train_experiment(None, dl.DistributedDataParallelApexEngine())
+    train_experiment(None, dl.DistributedDataParallelAPEXEngine())
