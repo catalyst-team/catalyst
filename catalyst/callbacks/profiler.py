@@ -5,10 +5,79 @@ from catalyst.core.runner import IRunner
 
 
 class ProfilerCallback(Callback):
-    """Performs the profiler step for the PyTorch:1.8 profiler"""
+    """Profile specified epoch or some fixed number of batches.
+
+    Args:
+        loader_key: name of the loader to use for profiling.
+            If `None` then will be used first loader from experiment.
+            Default is `None`.
+        epoch: epoch number to use for profiling.
+            Default is `1`.
+        num_batches: number of batches to use in epoch to do a profiling.
+            If `None` then will be used all batches in loader.
+            Default is `None`.
+        **profiler_kwargs: arguments to pass to a profiler.
+            To get more info about possible arguments please use PyTorch
+            `profiler docs`_.
+
+    Example:
+        .. code-block:: python
+
+            import os
+
+            import torch
+            from torch import nn
+            from torch.utils.data import DataLoader
+
+            from catalyst import dl
+            from catalyst.data import ToTensor
+            from catalyst.contrib.datasets import MNIST
+            from catalyst.contrib.nn.modules import Flatten
+
+            loaders = {
+                "train": DataLoader(
+                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                    batch_size=32,
+                ),
+                "valid": DataLoader(
+                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                    batch_size=32,
+                ),
+            }
+
+            model = nn.Sequential(Flatten(), nn.Linear(784, 512), nn.ReLU(), nn.Linear(512, 10))
+            criterion = nn.CrossEntropyLoss()
+            optimizer = torch.optim.Adam(model.parameters(), lr=1e-2)
+            runner = dl.SupervisedRunner()
+            runner.train(
+                model=model,
+                callbacks=[dl.ProfilerCallback(
+                    loader_key="train", epoch=3,
+                    # profiler arguments
+                    activities=[
+                        torch.profiler.ProfilerActivity.CPU,
+                        torch.profiler.ProfilerActivity.CUDA,
+                    ],
+                    with_stack=True,
+                    with_flops=True,
+                )],
+                loaders=loaders,
+                criterion=criterion,
+                optimizer=optimizer,
+                num_epochs=5,
+                logdir="./logs",
+            )
+
+    .. _profiler docs: https://pytorch.org/docs/stable/profiler.html
+
+    """
 
     def __init__(
-        self, loader_key: str = None, epoch: int = 1, num_batches: int = None, **profiler_kwargs,
+        self,
+        loader_key: str = None,
+        epoch: int = 1,
+        num_batches: int = None,
+        **profiler_kwargs,
     ):
         super().__init__(order=CallbackOrder.Internal, node=CallbackNode.Master)
 
