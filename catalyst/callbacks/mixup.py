@@ -1,5 +1,3 @@
-from typing import List
-
 import numpy as np
 import torch
 
@@ -9,16 +7,12 @@ from catalyst.core import Callback, CallbackOrder, IRunner
 class MixupCallback(Callback):
     """Callback to do mixup augmentation.
 
-    More details about mixin can be found in the paper `mixup: Beyond Empirical Risk Minimization`.
-
-    Note:
-        1) Callback can only be used with an even batch size
-        2) With running this callback, many metrics (for example, accuracy) become undefined.
+    More details about mixin can be found in the paper `mixup: Beyond Empirical Risk Minimization.
 
     Examples:
 
     .. code-block:: python
-        
+
         import os
         import torch
         from torch import nn
@@ -34,7 +28,8 @@ class MixupCallback(Callback):
 
             def __init__(self, in_channels, in_hw, out_features):
                 super().__init__()
-                self.encoder = nn.Sequential(nn.Conv2d(in_channels, in_channels, 3, 1, 1), nn.Tanh())
+                self.encoder = nn.Sequential(nn.Conv2d(in_channels,
+                                                       in_channels, 3, 1, 1), nn.Tanh())
                 self.clf = nn.Linear(in_channels * in_hw * in_hw, out_features)
 
             def forward(self, x):
@@ -98,6 +93,10 @@ class MixupCallback(Callback):
                 "optimizer": dl.OptimizerCallback(metric_key="loss"),
             },
         )
+        
+    .. note::
+        1) Callback can only be used with an even batch size
+        2) With running this callback, many metrics (for example, accuracy) become undefined.
     """
 
     def __init__(
@@ -105,9 +104,9 @@ class MixupCallback(Callback):
         input_key: str = "targets",
         output_key: str = "logits",
         alpha=0.2,
-        mode='replace',
+        mode="replace",
         on_train_only=True,
-        **kwargs
+        **kwargs,
     ):
         """
 
@@ -127,7 +126,7 @@ class MixupCallback(Callback):
         """
         assert isinstance(input_key, str) and isinstance(output_key, str)
         assert alpha >= 0, "alpha must be>=0"
-        assert mode in ['add', 'replace'], f"mode must be in 'add', 'replace', get: {mode}"
+        assert mode in ["add", "replace"], f"mode must be in 'add', 'replace', get: {mode}"
         super().__init__(order=CallbackOrder.Internal)
         self.input_key = input_key
         self.output_key = output_key
@@ -148,25 +147,27 @@ class MixupCallback(Callback):
 
         batch_size = features.shape[0]
         assert batch_size % 2 == 0
-        l = np.random.beta(self.alpha, self.alpha, batch_size // 2).astype(np.float32)
+        beta = np.random.beta(self.alpha, self.alpha, batch_size // 2).astype(np.float32)
 
         # It is need in order to word with different dimensions
         features_shape = [batch_size // 2] + [1] * len(features.shape[1:])
         targets_shape = [batch_size // 2] + [1] * len(targets.shape[1:])
 
-        features_l = l.reshape(features_shape)
-        targets_l = l.reshape(targets_shape)
+        features_beta = beta.reshape(features_shape)
+        beta = beta.reshape(targets_shape)
 
         indexes = np.array(list(range(batch_size)))
         np.random.shuffle(indexes)
 
-        features = features[indexes[:batch_size // 2]] * features_l + \
-                   features[indexes[batch_size // 2:]] * (1 - features_l)
+        features = features[indexes[: batch_size // 2]] * features_beta + features[
+            indexes[batch_size // 2 :]
+        ] * (1 - features_beta)
 
-        targets = targets[indexes[:batch_size // 2]] * targets_l + \
-                  targets[indexes[batch_size // 2:]] * (1 - targets_l)
+        targets = targets[indexes[: batch_size // 2]] * beta + targets[
+            indexes[batch_size // 2 :]
+        ] * (1 - beta)
 
-        if self.mode == 'replace':
+        if self.mode == "replace":
             runner.batch[self.input_key] = features
             runner.batch[self.output_key] = targets
         else:
@@ -175,7 +176,8 @@ class MixupCallback(Callback):
             runner.batch[self.output_key] = torch.cat([runner.batch[self.output_key], targets])
 
     def on_loader_start(self, runner: "IRunner") -> None:
-        """Loader start hook.
+        """
+        Loader start hook.
 
         Args:
             runner: current runner
@@ -183,7 +185,9 @@ class MixupCallback(Callback):
         self.is_needed = not self.on_train_only or runner.is_train_loader
 
     def on_batch_start(self, runner: "IRunner") -> None:
-        """On batch start action.
+        """
+        On batch start action.
+
         Args:
             runner: runner for the experiment.
         """
