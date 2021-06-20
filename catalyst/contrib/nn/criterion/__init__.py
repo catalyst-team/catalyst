@@ -1,5 +1,6 @@
 # flake8: noqa
 
+import torch
 from torch.nn.modules.loss import *
 
 from catalyst.contrib.nn.criterion.ce import (
@@ -22,7 +23,10 @@ from catalyst.contrib.nn.criterion.gan import (
     GradientPenaltyLoss,
     MeanOutputLoss,
 )
-from catalyst.contrib.nn.criterion.huber import HuberLoss
+
+if torch.__version__ < "1.9":
+    from catalyst.contrib.nn.criterion.huber import HuberLoss
+
 from catalyst.contrib.nn.criterion.iou import IoULoss
 from catalyst.contrib.nn.criterion.trevsky import TrevskyLoss, FocalTrevskyLoss
 from catalyst.contrib.nn.criterion.lovasz import (

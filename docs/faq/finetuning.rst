@@ -19,7 +19,7 @@ it's quite easy to create such complex pipeline with a few line of code:
     from torch.utils.data import DataLoader
     from catalyst import dl, utils
     from catalyst.contrib.datasets import MNIST
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
 
 
     class CustomRunner(dl.IRunner):
@@ -144,7 +144,7 @@ Due to multiprocessing setup during distrubuted training, the multistage runs lo
     from torch.utils.data import DataLoader, DistributedSampler
     from catalyst import dl, utils
     from catalyst.contrib.datasets import MNIST
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
 
 
     class CustomRunner(dl.IRunner):

@@ -19,3 +19,9 @@ For tensorboard visualization use
 ```bash
 CUDA_VISIBLE_DEVICE="" tensorboard --logdir=./logs
 ```
+
+### To change number of epochs for train or tune stages you can use command-line
+
+```bash
+catalyst-dl run --config config.yml --stages/train/num_epochs=10:int --stages/tune/num_epochs=10:int
+```

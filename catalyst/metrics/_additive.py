@@ -1,8 +1,22 @@
-from typing import Tuple
+from typing import Any, Callable, Tuple, Union
+import functools
 
 import numpy as np
+import torch
 
 from catalyst.metrics._metric import IMetric
+from catalyst.utils.torch import detach_tensor
+
+
+def _to_numpy_wrapper(metric_fn: Callable) -> Callable:
+    @functools.wraps(metric_fn)
+    def _wrapper(value: torch.Tensor, *args: Any, **kwargs: Any) -> Union[float, np.ndarray]:
+        np_tensor = detach_tensor(value)
+        value = metric_fn(np_tensor, *args, **kwargs)
+
+        return value
+
+    return _wrapper
 
 
 class AdditiveValueMetric(IMetric):
@@ -10,6 +24,10 @@ class AdditiveValueMetric(IMetric):
 
     Args:
         compute_on_call: if True, computes and returns metric value during metric call
+        mode: expected dtype returned by the metric, ``"numpy"`` or ``"torch"``
+
+    Raises:
+        ValueError: if mode is not supported
 
     Examples:
 
@@ -35,7 +53,7 @@ class AdditiveValueMetric(IMetric):
         from torch.nn import functional as F
         from torch.utils.data import DataLoader
         from catalyst import dl, metrics
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
 
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -111,7 +129,7 @@ class AdditiveValueMetric(IMetric):
         .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
-    def __init__(self, compute_on_call: bool = True):
+    def __init__(self, compute_on_call: bool = True, mode: str = "numpy"):
         """Init AdditiveValueMetric"""
         super().__init__(compute_on_call=compute_on_call)
         self.n = 0
@@ -121,6 +139,12 @@ class AdditiveValueMetric(IMetric):
         self.m_s = 0.0
         self.std = np.nan
         self.num_samples = 0
+
+        valid_modes = {"numpy", "torch"}
+        if mode not in valid_modes:
+            raise ValueError(f"mode must be one of {valid_modes}, but got mode={mode}")
+        elif mode == "torch":
+            self.update = _to_numpy_wrapper(self.update)
 
     def reset(self) -> None:
         """Reset all fields"""

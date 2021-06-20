@@ -1,4 +1,4 @@
-from typing import Any, Dict, Generator, Iterable, List, Mapping, Union
+from typing import Any, Dict, Generator, Iterable, List, Mapping, Optional, Union
 from collections import OrderedDict
 import os
 
@@ -16,7 +16,7 @@ from catalyst.callbacks.scheduler import ISchedulerCallback, SchedulerCallback
 from catalyst.core.callback import Callback
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import callback_isinstance, sort_callbacks_by_order
-from catalyst.core.runner import IRunner
+from catalyst.core.runner import IRunner, RunnerException
 from catalyst.core.trial import ITrial
 from catalyst.data.loader import ILoaderWrapper
 from catalyst.engines import IEngine
@@ -84,7 +84,7 @@ class Runner(IRunner):
         from torch.nn import functional as F
         from torch.utils.data import DataLoader
         from catalyst import dl, metrics
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
 
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -407,7 +407,7 @@ class Runner(IRunner):
             from torch.nn import functional as F
             from torch.utils.data import DataLoader
             from catalyst import dl, metrics
-            from catalyst.data.transforms import ToTensor
+            from catalyst.data import ToTensor
             from catalyst.contrib.datasets import MNIST
 
             model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -577,7 +577,7 @@ class Runner(IRunner):
             from torch.nn import functional as F
             from torch.utils.data import DataLoader
             from catalyst import dl, metrics
-            from catalyst.data.transforms import ToTensor
+            from catalyst.data import ToTensor
             from catalyst.contrib.datasets import MNIST
 
             model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
@@ -653,7 +653,7 @@ class Runner(IRunner):
             for logits in runner.predict_loader(loader=loaders["valid"]):
                 assert logits.detach().cpu().numpy().shape[-1] == 10
         """
-        self._engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
+        self.engine = engine or get_available_engine(fp16=fp16, ddp=ddp, amp=amp, apex=apex)
 
         if model is not None:
             self.model = model
@@ -669,6 +669,57 @@ class Runner(IRunner):
         set_global_seed(seed)
         for batch in loader:
             yield self.predict_batch(batch)
+
+    def evaluate_loader(
+        self,
+        loader: DataLoader,
+        callbacks: "Union[List[Callback], OrderedDict[str, Callback]]" = None,
+        model: Optional[Model] = None,
+        seed: int = 42,
+        verbose: bool = False,
+    ) -> Dict:
+        """
+        Evaluates data from loader with given model and returns obtained metrics. # noqa: DAR401
+
+        Args:
+            loader: loader to predict
+            callbacks: list or dictionary with catalyst callbacks
+            model: model, compatible with current runner.
+                If `None` simply takes current model from runner.
+            seed: random seed to use before prediction
+            verbose: if `True`, it displays the status of the evaluation to the console.
+
+        Returns:
+            Dict with metrics counted on the loader.
+        """
+        if isinstance(callbacks, List):
+            for callback in callbacks:
+                if isinstance(callback, CheckpointCallback):
+                    raise RunnerException(
+                        "CheckpointCallback isn`t allowed for evaluation loader method"
+                    )
+        else:
+            for callback in callbacks.values():
+                if isinstance(callback, CheckpointCallback):
+                    raise RunnerException(
+                        "CheckpointCallback isn`t allowed for evaluation loader method"
+                    )
+
+        if model is None:
+            model = self.model
+        assert self.model is not None
+
+        self.train(
+            model=model,
+            loaders=OrderedDict([("valid", loader)]),
+            num_epochs=1,
+            verbose=verbose,
+            callbacks=callbacks,
+            valid_loader="valid",
+            seed=seed,
+        )
+
+        return self.loader_metrics
 
 
 class SupervisedRunner(ISupervisedRunner, Runner):
@@ -695,7 +746,7 @@ class SupervisedRunner(ISupervisedRunner, Runner):
         from torch import nn, optim
         from torch.utils.data import DataLoader
         from catalyst import dl, utils
-        from catalyst.data.transforms import ToTensor
+        from catalyst.data import ToTensor
         from catalyst.contrib.datasets import MNIST
 
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))

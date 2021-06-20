@@ -111,7 +111,7 @@ class DeviceEngine(IEngine):
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
-    def deinit_components(self):
+    def deinit_components(self, runner=None):
         """Deinits the runs components."""
         # remove backend
         pass
@@ -415,6 +415,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         """
         return self._rank > 0
 
+    # TODO: merge with init_components?
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes.
 
@@ -438,8 +439,10 @@ class DistributedDataParallelEngine(DeviceEngine):
         if "device_ids" not in self.ddp_kwargs:
             self.ddp_kwargs["device_ids"] = [self.device]
 
+    # TODO: merge with deinit_components?
     def cleanup_process(self):
         """Clean DDP variables and processes."""
+        dist.barrier()
         dist.destroy_process_group()
 
     # @TODO: add all_gather
@@ -489,10 +492,10 @@ class DistributedDataParallelEngine(DeviceEngine):
         dist.barrier()
         return model, criterion, optimizer, scheduler
 
-    def deinit_components(self):
+    def deinit_components(self, runner=None):
         """Deinits the runs components."""
-        dist.barrier()
-        self.cleanup_process()
+        pass
+        # self.cleanup_process()
 
     def zero_grad(self, loss, model, optimizer) -> None:
         """Abstraction over ``model.zero_grad()`` step."""

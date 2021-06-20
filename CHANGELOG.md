@@ -8,11 +8,50 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
+  - FairScale support
+  - DeepSpeed support
+  - `utils.ddp_sync_run` function for synchronous ddp run
+  - CIFAR10 and CIFAR100 datasets from torchvision (no cv-based requirements)
+  - [Catalyst Engines demo](https://github.com/catalyst-team/catalyst/tree/master/examples/engines)
 
 ### Changed
 
+- ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
+  - loaders creation now wrapper with `utils.ddp_sync_run` for `utils.ddp_sync_run` data preparation
+  - runner support stage cleanup: loaders and callbacks will be deleted on the stage end
+  - Apex-based engines now support both APEXEngine and ApexEngine registry names
+
+### Removed
+
 -
+
+### Fixed
+
+- multiprocessing in minimal tests hotfix ([#1232](https://github.com/catalyst-team/catalyst/pull/1232))
+- Tracing callback hotfix ([#1234](https://github.com/catalyst-team/catalyst/pull/1234))
+- Engine hotfix for `predict_loader` ([#1235](https://github.com/catalyst-team/catalyst/pull/1235))
+- ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
+  - Hydra hotfix due to `1.1.0` version changes
+- `HuberLoss` name conflict for pytorch 1.9 hotfix ([#1239](https://github.com/catalyst-team/catalyst/pull/1239))
+
+
+## [21.05] - YYYY-MM-DD
+
+### Added
+
+- Reinforcement learning tutorials ([#1205](https://github.com/catalyst-team/catalyst/pull/1205))
+- customization demo ([#1207](https://github.com/catalyst-team/catalyst/pull/1207))
+- FAQ docs: multiple input and output keys, engine tutorial ([#1202](https://github.com/catalyst-team/catalyst/pull/1202))
+- minimal Config API example ([#1215](https://github.com/catalyst-team/catalyst/pull/1215))
+- Distributed RL example (Catalyst.RL 2.0 concepts) ([#1224](https://github.com/catalyst-team/catalyst/pull/1224))
+- SklearnCallback as integration of sklearn metrics ([#1198](https://github.com/catalyst-team/catalyst/pull/1198))
+
+### Changed
+
+- tests moved to `tests` folder ([#1208](https://github.com/catalyst-team/catalyst/pull/1208))
+- pipeline tests moved to `tests/pipelines` ([#1215](https://github.com/catalyst-team/catalyst/pull/1215))
+- updated NeptuneLogger docstrings ([#1223](https://github.com/catalyst-team/catalyst/pull/1223))
 
 ### Removed
 
@@ -21,6 +60,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Fixed
 
 - customizing what happens in `train()` notebook ([#1203](https://github.com/catalyst-team/catalyst/pull/1203))
+- transforms imports under catalyst.data ([#1211](https://github.com/catalyst-team/catalyst/pull/1211))
+- change layerwise to layerwise_params ([#1210](https://github.com/catalyst-team/catalyst/pull/1210))
+- add torch metrics support ([#1195](https://github.com/catalyst-team/catalyst/issues/1195))
+- add Config API support for BatchTransformCallback ([#1209](https://github.com/catalyst-team/catalyst/issues/1209))
 
 
 ## [21.04.2] - 2021-04-30
