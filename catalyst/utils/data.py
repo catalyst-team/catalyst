@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import DataLoader, Dataset, DistributedSampler
 from torch.utils.data.dataloader import default_collate as default_collate_fn
 
-from catalyst.registry import REGISTRY
+from catalyst.typing import Sampler
 from catalyst.utils.distributed import get_distributed_params, get_rank
 from catalyst.utils.misc import merge_dicts, set_global_seed
 
@@ -81,7 +81,7 @@ def get_loaders_from_params(
     drop_last: bool = False,
     per_gpu_scaling: bool = False,
     loaders_params: Dict[str, Any] = None,
-    samplers: Dict[str, Any] = None,
+    samplers: "OrderedDict[str, Sampler]" = None,
     datasets: "OrderedDict[str, Union[Dataset, dict]]" = None,
     initial_seed: int = 42,
 ) -> "OrderedDict[str, DataLoader]":
@@ -136,16 +136,10 @@ def get_loaders_from_params(
         loader_params = loaders_params.pop(name, {})
         assert isinstance(loader_params, dict), f"{loader_params} should be Dict"
 
-        sampler_params = samplers.pop(name, None)
-        if sampler_params is None:
-            if isinstance(datasource, dict) and "sampler" in datasource:
-                sampler = datasource.pop("sampler", None)
-            else:
-                sampler = None
-        else:
-            sampler = REGISTRY.get_from_params(**sampler_params)
-            if isinstance(datasource, dict) and "sampler" in datasource:
-                datasource.pop("sampler", None)
+        sampler: Sampler = None
+        if isinstance(datasource, dict) and "sampler" in datasource:
+            sampler = datasource.pop("sampler", None)
+        sampler = samplers.pop(name, sampler)
 
         batch_size = loader_params.pop("batch_size", default_batch_size)
         num_workers = loader_params.pop("num_workers", default_num_workers)

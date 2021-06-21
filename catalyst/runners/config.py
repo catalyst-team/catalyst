@@ -27,6 +27,7 @@ from catalyst.typing import (
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
+    Sampler,
     Scheduler,
 )
 from catalyst.utils.data import get_loaders_from_params
@@ -273,6 +274,34 @@ class ConfigRunner(IRunner):
         ]
         return OrderedDict(datasets)
 
+    def _get_sampler_from_params(self, **params) -> Sampler:
+        """Creates sampler from ``**params`` parameters."""
+        recursion_keys = params.pop("_samplers_", ("sampler", "base_sampler"))
+        for key in recursion_keys:
+            if key in params:
+                params[key] = self._get_sampler_from_params(**params[key])
+
+        sampler = REGISTRY.get_from_params(**params)
+        return sampler
+
+    def get_samplers(self, stage: str) -> "OrderedDict[str, Sampler]":
+        """
+        Returns samplers for a given stage.
+
+        Args:
+            stage: stage name
+
+        Returns:
+            Dict of samplers
+        """
+        params = deepcopy(self._stage_config[stage]["loaders"].get("samplers", {}))
+
+        samplers = [
+            (key, self._get_sampler_from_params(**sampler_params))
+            for key, sampler_params in params.items()
+        ]
+        return OrderedDict(samplers)
+
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """
         Returns loaders for a given stage.
@@ -284,10 +313,16 @@ class ConfigRunner(IRunner):
             Dict: loaders objects
         """
         loaders_params = deepcopy(self._stage_config[stage]["loaders"])
+
+        #  config parsed manyally in `get_datasets` and `get_samplers` methods
         loaders_params.pop("datasets", None)
+        loaders_params.pop("samplers", None)
 
         loaders = get_loaders_from_params(
-            datasets=self.get_datasets(stage=stage), initial_seed=self.seed, **loaders_params,
+            datasets=self.get_datasets(stage=stage),
+            samplers=self.get_samplers(stage=stage),
+            initial_seed=self.seed,
+            **loaders_params,
         )
         return loaders
 

@@ -30,6 +30,7 @@ from catalyst.typing import (
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
+    Sampler,
     Scheduler,
 )
 from catalyst.utils.data import get_loaders_from_params
@@ -194,7 +195,6 @@ class HydraRunner(IRunner):
         return transform
 
     def _get_dataset_from_params(self, params: DictConfig) -> "Dataset":
-        """Creates dataset from ``**params`` parameters."""
         transform_params = params.pop("transform", None)
         if transform_params:
             transform = self.get_transform(transform_params)
@@ -220,6 +220,28 @@ class HydraRunner(IRunner):
             key: self._get_dataset_from_params(params) for key, params in datasets_params.items()
         }
         return OrderedDict(datasets)
+
+    def _get_sampler_from_params(self, **params) -> Sampler:
+        sampler: Sampler = hydra.utils.instantiate(params)
+        return sampler
+
+    def get_samplers(self, stage: str) -> "OrderedDict[str, Sampler]":
+        """
+        Returns samplers for a given stage.
+
+        Args:
+            stage: stage name
+
+        Returns:
+            Dict of samplers
+        """
+        samplers_params = self._config.stages[stage].loaders.get("samplers", {})
+        samplers_params = OmegaConf.to_container(samplers_params, resolve=True)
+
+        samplers: Dict[str, Sampler] = {
+            key: self._get_sampler_from_params(params) for key, params in samplers_params.items()
+        }
+        return samplers
 
     def get_loaders(self, stage: str) -> Dict[str, DataLoader]:
         """
