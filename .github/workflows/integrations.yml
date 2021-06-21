@@ -81,7 +81,15 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements-cv.txt') }} -${{ hashFiles('./requirements/requirements-hydra.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }} -${{ hashFiles('./requirements/requirements-nifti.txt') }} -${{ hashFiles('./requirements/requirements-neptune.txt') }} -${{ hashFiles('./requirements/requirements-albu.txt') }}
+          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements-cv.txt') }} -${{ hashFiles('./requirements/requirements-hydra.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }} -${{ hashFiles('./requirements/requirements-nifti.txt') }} -${{ hashFiles('./requirements/requirements-neptune.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
+
+      - name: cache pip contrib [2]
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.pip-cache.outputs.dir }}
+          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements-albu.txt') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
 
