@@ -79,7 +79,7 @@ stages:
           train: False
           transform: *transform
           download: True
-#
+
 #      samplers:
 #        train:
 #          _target_: MiniEpochSampler
@@ -88,11 +88,6 @@ stages:
 #          drop_last: True
 #          shuffle: per_epoch
 #
-#      transforms:
-#        _target_: albumentations.Compose
-#        transforms:
-#          - _target_: albumentations.Normalize
-#          - _target_: catalyst.ImageToTensor
 
     criterion:
       _target_: CrossEntropyLoss

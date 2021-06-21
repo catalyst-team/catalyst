@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `dataset_from_params` support in config API ([#1231](https://github.com/catalyst-team/catalyst/pull/1231))
 - transform from params support for config API added ([#1236](https://github.com/catalyst-team/catalyst/pull/1236))
 - samplers from params support for config API added ([#1240](https://github.com/catalyst-team/catalyst/pull/1240))
+- recursive registry.get_from_params added ([#1241](https://github.com/catalyst-team/catalyst/pull/1241))
 
 ### Changed
 
