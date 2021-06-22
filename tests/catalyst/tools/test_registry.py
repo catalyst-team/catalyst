@@ -102,6 +102,37 @@ def test_from_config():
     assert res is None
 
 
+def test_name_key():
+    """@TODO: Docs. Contribution is welcome."""
+    r = Registry(name_key="_key_")
+
+    r.add(foo)
+
+    res = r.get_from_params(**{"_key_": "foo", "a": 1, "b": 2})()
+    assert res == {"a": 1, "b": 2}
+
+    res = r.get_from_params(**{"_target_": "foo", "a": 1, "b": 2})
+    assert res is None
+
+
+def test_recursive_get_from_config():
+    def meta_factory(factory, args, kwargs):
+        return factory(*args, **kwargs)
+
+    r = Registry(default_meta_factory=meta_factory)
+
+    r.add(foo)
+
+    res = r.get_from_params(
+        **{
+            "_target_": "foo",
+            "a": {"_target_": "foo", "a": {"_target_": "foo", "a": 1, "b": 2}, "b": 2},
+            "b": [{"_target_": "foo", "a": 1, "b": 2}, {"_target_": "foo", "a": 1, "b": 2}],
+        }
+    )
+    assert res == {"a": {"a": {"a": 1, "b": 2}, "b": 2}, "b": [{"a": 1, "b": 2}, {"a": 1, "b": 2}]}
+
+
 def test_meta_factory():
     """@TODO: Docs. Contribution is welcome."""  # noqa: D202
 
