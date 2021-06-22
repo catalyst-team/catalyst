@@ -839,7 +839,7 @@ Default autocast context does not scale anything.</p>
 
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.backward_loss">
-<em class="property">abstract </em><code class="sig-name descname">backward_loss</code><span class="sig-paren">(</span><em class="sig-param">loss</em>, <em class="sig-param">model</em>, <em class="sig-param">optimizer</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.backward_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.backward_loss" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">backward_loss</code><span class="sig-paren">(</span><em class="sig-param">loss: torch.Tensor</em>, <em class="sig-param">model: torch.nn.modules.module.Module</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.backward_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.backward_loss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstraction over <code class="docutils literal notranslate"><span class="pre">loss.backward()</span></code> step.
 Should be overloaded in cases when required loss scaling.
 Examples - APEX and AMP.</p>
@@ -867,8 +867,14 @@ Examples - APEX and AMP.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.core.engine.IEngine.device">
+<em class="property">abstract property </em><code class="sig-name descname">device</code><a class="headerlink" href="#catalyst.core.engine.IEngine.device" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pytorch device.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.core.engine.IEngine.init_components">
-<em class="property">abstract </em><code class="sig-name descname">init_components</code><span class="sig-paren">(</span><em class="sig-param">model_fn=None</em>, <em class="sig-param">criterion_fn=None</em>, <em class="sig-param">optimizer_fn=None</em>, <em class="sig-param">scheduler_fn=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.init_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.init_components" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">init_components</code><span class="sig-paren">(</span><em class="sig-param">model_fn: Callable = None</em>, <em class="sig-param">criterion_fn: Callable = None</em>, <em class="sig-param">optimizer_fn: Callable = None</em>, <em class="sig-param">scheduler_fn: Callable = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.init_components"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.init_components" title="Permalink to this definition">¶</a></dt>
 <dd><p>Inits the runs components.</p>
 </dd></dl>
 
@@ -917,7 +923,7 @@ For non distributed training should always return <cite>False</cite>.</p>
 
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.optimizer_step">
-<em class="property">abstract </em><code class="sig-name descname">optimizer_step</code><span class="sig-paren">(</span><em class="sig-param">loss</em>, <em class="sig-param">model</em>, <em class="sig-param">optimizer</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.optimizer_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.optimizer_step" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">optimizer_step</code><span class="sig-paren">(</span><em class="sig-param">loss: torch.Tensor</em>, <em class="sig-param">model: torch.nn.modules.module.Module</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.optimizer_step"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.optimizer_step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstraction over <code class="docutils literal notranslate"><span class="pre">optimizer.step()</span></code> step.
 Should be overloaded in cases when required gradient scaling.
 Example - AMP.</p>
@@ -987,7 +993,7 @@ Default is <cite>1</cite>.</p></li>
 
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.sync_device">
-<em class="property">abstract </em><code class="sig-name descname">sync_device</code><span class="sig-paren">(</span><em class="sig-param">tensor_or_module: Any</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.sync_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.sync_device" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">sync_device</code><span class="sig-paren">(</span><em class="sig-param">tensor_or_module: Union[Dict, List, Tuple, numpy.ndarray, torch.Tensor, torch.nn.modules.module.Module]</em><span class="sig-paren">)</span> &#x2192; Union[Dict, List, Tuple, torch.Tensor, torch.nn.modules.module.Module]<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.sync_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.sync_device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Moves <code class="docutils literal notranslate"><span class="pre">tensor_or_module</span></code> to Engine’s device.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -998,7 +1004,7 @@ Default is <cite>1</cite>.</p></li>
 
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.sync_tensor">
-<em class="property">abstract </em><code class="sig-name descname">sync_tensor</code><span class="sig-paren">(</span><em class="sig-param">tensor: Any</em>, <em class="sig-param">mode: str</em><span class="sig-paren">)</span> &#x2192; Any<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.sync_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.sync_tensor" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">sync_tensor</code><span class="sig-paren">(</span><em class="sig-param">tensor: torch.Tensor</em>, <em class="sig-param">mode: str</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.sync_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.sync_tensor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Syncs <code class="docutils literal notranslate"><span class="pre">tensor</span></code> over <code class="docutils literal notranslate"><span class="pre">world_size</span></code> in distributed mode.</p>
 </dd></dl>
 
@@ -1030,7 +1036,7 @@ scheduler (if not None).</p>
 
 <dl class="method">
 <dt id="catalyst.core.engine.IEngine.zero_grad">
-<em class="property">abstract </em><code class="sig-name descname">zero_grad</code><span class="sig-paren">(</span><em class="sig-param">loss</em>, <em class="sig-param">model</em>, <em class="sig-param">optimizer</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.zero_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.zero_grad" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">zero_grad</code><span class="sig-paren">(</span><em class="sig-param">loss: torch.Tensor</em>, <em class="sig-param">model: torch.nn.modules.module.Module</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.zero_grad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.zero_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstraction over <code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code> step.
 Should be overloaded in cases when required to set arguments
 for <code class="docutils literal notranslate"><span class="pre">model.zero_grad()</span></code> like <cite>set_to_none=True</cite> or

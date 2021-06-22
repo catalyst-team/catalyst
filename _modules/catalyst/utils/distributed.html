@@ -527,6 +527,30 @@
     <span class="k">return</span> <span class="n">data_list</span></div>
 
 
+<div class="viewcode-block" id="ddp_reduce"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.ddp_reduce">[docs]</a><span class="k">def</span> <span class="nf">ddp_reduce</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Syncs ``tensor`` over ``world_size`` in distributed mode.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tensor: tensor to sync across the processes.</span>
+<span class="sd">        mode: tensor synchronization type, should be one of &#39;sum&#39;, &#39;mean&#39; or &#39;all&#39;.</span>
+<span class="sd">        world_size: world size</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        torch.Tensor with synchronized values.</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if mode is out of ``sum``, ``mean``, ``all``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;all&quot;</span><span class="p">}:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown sync_type &#39;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">sum_reduce</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;mean&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mean_reduce</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">world_size</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">all_gather</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="ddp_sync_run"><a class="viewcode-back" href="../../../api/utils.html#catalyst.utils.distributed.ddp_sync_run">[docs]</a><span class="k">def</span> <span class="nf">ddp_sync_run</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Runs function in a synchronous way: 0-rank first and all other processes after.</span>
 
@@ -548,6 +572,7 @@
     <span class="s2">&quot;sum_reduce&quot;</span><span class="p">,</span>
     <span class="s2">&quot;mean_reduce&quot;</span><span class="p">,</span>
     <span class="s2">&quot;all_gather&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;ddp_reduce&quot;</span><span class="p">,</span>
     <span class="s2">&quot;ddp_sync_run&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 </pre></div>

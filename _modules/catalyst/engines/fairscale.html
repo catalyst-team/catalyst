@@ -322,7 +322,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.engines.torch</span> <span class="kn">import</span> <span class="n">DeviceEngine</span>
 <span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">RunnerCriterion</span><span class="p">,</span> <span class="n">RunnerModel</span><span class="p">,</span> <span class="n">RunnerOptimizer</span><span class="p">,</span> <span class="n">RunnerScheduler</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">mean_reduce</span><span class="p">,</span> <span class="n">sum_reduce</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">ddp_reduce</span>
 
 <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">fairscale_required</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">fairscale.nn</span> <span class="kn">import</span> <span class="n">Pipe</span>
@@ -438,6 +438,7 @@
 
     <span class="k">def</span> <span class="nf">deinit_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Deinits the runs components. In distributed mode should destroy process group.&quot;&quot;&quot;</span>
+        <span class="c1"># For some reasons FairScale requires to delete the Pipe model</span>
         <span class="k">del</span> <span class="n">runner</span><span class="o">.</span><span class="n">model</span>
 
     <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -528,7 +529,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">address</span> <span class="ow">or</span> <span class="s2">&quot;localhost&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span> <span class="ow">or</span> <span class="mi">12345</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">ddp_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ddp_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
@@ -565,26 +566,6 @@
         <span class="sd">&quot;&quot;&quot;Process world size  for distributed training.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span>
 
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_master_process</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Checks if a process is master process.</span>
-<span class="sd">        Should be implemented only for DDP setup in other cases should always return True.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            `True` if current process is a master process, otherwise `False`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">==</span> <span class="mi">0</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">is_worker_process</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Checks if a process is worker process.</span>
-<span class="sd">        Should be implemented only for DDP setup in other cases should always return False.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            `True` if current process is a worker process, otherwise `False`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">&gt;</span> <span class="mi">0</span>
-
     <span class="k">def</span> <span class="nf">setup_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize DDP variables and processes.</span>
 
@@ -595,6 +576,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">=</span> <span class="n">rank</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span> <span class="o">=</span> <span class="n">world_size</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">set_device</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">[</span><span class="s2">&quot;world_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">world_size</span>
@@ -603,16 +586,12 @@
 
         <span class="n">dist</span><span class="o">.</span><span class="n">init_process_group</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">)</span>
 
-        <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">set_device</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">device</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-
     <span class="k">def</span> <span class="nf">cleanup_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Clean DDP variables and processes.&quot;&quot;&quot;</span>
         <span class="n">dist</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
         <span class="n">dist</span><span class="o">.</span><span class="n">destroy_process_group</span><span class="p">()</span>
 
-    <span class="c1"># @TODO: add all_gather</span>
-    <span class="k">def</span> <span class="nf">sync_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">sync_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Syncs ``tensor`` over ``world_size`` in distributed mode.</span>
 
 <span class="sd">        Args:</span>
@@ -623,16 +602,8 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            torch.Tensor with synchronized values.</span>
-
-<span class="sd">        Raises:</span>
-<span class="sd">            ValueError: if mode is out of ``sum`` or ``mean``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;sum&quot;</span><span class="p">,</span> <span class="s2">&quot;mean&quot;</span><span class="p">}:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown sync_type &#39;</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;sum&quot;</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">sum_reduce</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">mean_reduce</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">world_size</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ddp_reduce</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">world_size</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -653,11 +624,6 @@
         <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
         <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">scheduler</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span>
-
-    <span class="k">def</span> <span class="nf">deinit_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Deinits the runs components.&quot;&quot;&quot;</span>
-        <span class="k">pass</span>
-        <span class="c1"># self.cleanup_process()</span>
 
     <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Abstraction over ``model.zero_grad()`` step.&quot;&quot;&quot;</span>
@@ -695,6 +661,7 @@
 <span class="sd">            ``criterion_state_dict``, ``optimizer_state_dict``,</span>
 <span class="sd">            ``scheduler_state_dict`` keys.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># for some reasons FairScale could not consolidate the optimizer step at 0.3.4 version</span>
         <span class="c1"># optimizer.consolidate_state_dict(recipient_rank=0)</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">pack_checkpoint</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler</span><span class="o">=</span><span class="n">scheduler</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
@@ -871,19 +838,6 @@
 <span class="sd">            ...</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">port</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ddp_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">process_group_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
-            <span class="n">address</span><span class="o">=</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">,</span> <span class="n">ddp_kwargs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">process_group_kwargs</span><span class="o">=</span><span class="n">process_group_kwargs</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span> <span class="o">=</span> <span class="n">ddp_kwargs</span> <span class="ow">or</span> <span class="p">{}</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>

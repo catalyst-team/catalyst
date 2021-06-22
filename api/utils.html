@@ -593,6 +593,27 @@ Source: <a class="reference external" href="https://github.com/facebookresearch/
 </dd></dl>
 
 <dl class="function">
+<dt id="catalyst.utils.distributed.ddp_reduce">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">ddp_reduce</code><span class="sig-paren">(</span><em class="sig-param">tensor: torch.Tensor</em>, <em class="sig-param">mode: str</em>, <em class="sig-param">world_size: int</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#ddp_reduce"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.ddp_reduce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Syncs <code class="docutils literal notranslate"><span class="pre">tensor</span></code> over <code class="docutils literal notranslate"><span class="pre">world_size</span></code> in distributed mode.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tensor</strong> – tensor to sync across the processes.</p></li>
+<li><p><strong>mode</strong> – tensor synchronization type, should be one of ‘sum’, ‘mean’ or ‘all’.</p></li>
+<li><p><strong>world_size</strong> – world size</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>torch.Tensor with synchronized values.</p>
+</dd>
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if mode is out of <code class="docutils literal notranslate"><span class="pre">sum</span></code>, <code class="docutils literal notranslate"><span class="pre">mean</span></code>, <code class="docutils literal notranslate"><span class="pre">all</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.utils.distributed.ddp_sync_run">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">ddp_sync_run</code><span class="sig-paren">(</span><em class="sig-param">function: Callable</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/distributed.html#ddp_sync_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.ddp_sync_run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Runs function in a synchronous way: 0-rank first and all other processes after.</p>
@@ -1392,7 +1413,7 @@ default is 0</p></li>
 
 <dl class="function">
 <dt id="catalyst.utils.torch.any2device">
-<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">any2device</code><span class="sig-paren">(</span><em class="sig-param">value, device: Union[str, torch.device]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#any2device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.any2device" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">any2device</code><span class="sig-paren">(</span><em class="sig-param">value: Union[Dict, List, Tuple, numpy.ndarray, torch.Tensor, torch.nn.modules.module.Module], device: Union[str, torch.device]</em><span class="sig-paren">)</span> &#x2192; Union[Dict, List, Tuple, torch.Tensor, torch.nn.modules.module.Module]<a class="reference internal" href="../_modules/catalyst/utils/torch.html#any2device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.any2device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Move tensor, list of tensors, list of list of tensors,
 dict of tensors, tuple of tensors to target device.</p>
 <dl class="field-list simple">
