@@ -8,7 +8,7 @@ import torch.distributed as dist
 
 from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import SETTINGS
-from catalyst.typing import RunnerModel, RunnerOptimizer
+from catalyst.typing import Model, Optimizer, RunnerModel, RunnerOptimizer
 from catalyst.utils.misc import get_fn_default_params
 
 if SETTINGS.apex_required:
@@ -182,7 +182,7 @@ class APEXEngine(DeviceEngine):
         self.apex_kwargs = apex_kwargs or {}
 
     def __repr__(self) -> str:  # noqa: D105
-        args_list = [f"device='{self.device}'", f"apex_kwargs={self.apex_kwargs}"]
+        args_list = [f"device='{self._device}'", f"apex_kwargs={self.apex_kwargs}"]
         return f"{self.__class__.__name__}(" + ",".join(args_list) + ")"
 
     def init_components(
@@ -211,7 +211,7 @@ class APEXEngine(DeviceEngine):
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
-    def backward_loss(self, loss, model, optimizer) -> None:
+    def backward_loss(self, loss: torch.Tensor, model: Model, optimizer: Optimizer) -> None:
         """Abstraction over ``loss.backward()`` step."""
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
@@ -338,7 +338,9 @@ class DataParallelAPEXEngine(APEXEngine):
         self.device_count = torch.cuda.device_count()
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"{self.__class__.__name__}(device='{self.device}', apex_kwargs={self.apex_kwargs})"
+        return (
+            f"{self.__class__.__name__}(device='{self._device}', apex_kwargs={self.apex_kwargs})"
+        )
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -482,7 +484,7 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
         dist.init_process_group(**self.process_group_kwargs)
 
         torch.cuda.set_device(int(self._rank))
-        self.device = f"cuda:{int(self._rank)}"
+        self._device = f"cuda:{int(self._rank)}"
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -504,7 +506,7 @@ class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
-    def backward_loss(self, loss, model, optimizer) -> None:
+    def backward_loss(self, loss: torch.Tensor, model: Model, optimizer: Optimizer) -> None:
         """Abstraction over ``loss.backward()`` step."""
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()

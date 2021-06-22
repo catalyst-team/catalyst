@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, Iterable, List, Mapping, TYPE_CHECKING, Union
+from typing import Any, Callable, Dict, Iterable, List, Mapping, Tuple, TYPE_CHECKING, Union
 import collections
 import os
 import re
@@ -294,7 +294,9 @@ def get_available_gpus():
     return result
 
 
-def any2device(value, device: Device):
+def any2device(
+    value: Union[Dict, List, Tuple, np.ndarray, torch.Tensor, nn.Module], device: Device
+) -> Union[Dict, List, Tuple, torch.Tensor, nn.Module]:
     """
     Move tensor, list of tensors, list of list of tensors,
     dict of tensors, tuple of tensors to target device.
