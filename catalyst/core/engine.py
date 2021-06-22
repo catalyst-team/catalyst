@@ -36,6 +36,7 @@ class IEngine(ABC):
     @property
     @abstractmethod
     def device(self) -> Device:
+        """Pytorch device."""
         pass
 
     @property
@@ -64,7 +65,9 @@ class IEngine(ABC):
         Returns:
             `True` if current process is a master process in other cases return `False`.
         """
-        return self.rank == 0
+        # -1 for non-distributed setup
+        # 0 for distributed setup
+        return self.rank <= 0
 
     @property
     def is_worker_process(self) -> bool:

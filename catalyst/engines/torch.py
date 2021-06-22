@@ -18,7 +18,7 @@ from catalyst.typing import (
     RunnerOptimizer,
     RunnerScheduler,
 )
-from catalyst.utils.distributed import ddp_reduce, mean_reduce, sum_reduce
+from catalyst.utils.distributed import ddp_reduce
 from catalyst.utils.torch import (
     any2device,
     load_checkpoint,
@@ -84,6 +84,7 @@ class DeviceEngine(IEngine):
 
     @property
     def device(self) -> Device:
+        """Pytorch device."""
         return self._device
 
     @property

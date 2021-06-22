@@ -288,25 +288,25 @@ class IRunner(ICallback, ILogger, ABC):
 
     @property
     def _log_defaults(self) -> Dict:
-        return dict(
+        return {
             # experiment info
-            run_key=self.run_key,
-            global_sample_step=self.global_sample_step,
-            global_batch_step=self.global_batch_step,
-            global_epoch_step=self.global_epoch_step,
+            "run_key": self.run_key,
+            "global_sample_step": self.global_sample_step,
+            "global_batch_step": self.global_batch_step,
+            "global_epoch_step": self.global_epoch_step,
             # stage info
-            stage_key=self.stage_key,
-            stage_epoch_len=self.stage_epoch_len,
-            stage_epoch_step=self.stage_epoch_step,
-            stage_batch_step=self.stage_batch_step,
-            stage_sample_step=self.stage_sample_step,
+            "stage_key": self.stage_key,
+            "stage_epoch_len": self.stage_epoch_len,
+            "stage_epoch_step": self.stage_epoch_step,
+            "stage_batch_step": self.stage_batch_step,
+            "stage_sample_step": self.stage_sample_step,
             # loader info
-            loader_key=self.loader_key,
-            loader_batch_len=self.loader_batch_len,
-            loader_sample_len=self.loader_sample_len,
-            loader_batch_step=self.loader_batch_step,
-            loader_sample_step=self.loader_sample_step,
-        )
+            "loader_key": self.loader_key,
+            "loader_batch_len": self.loader_batch_len,
+            "loader_sample_len": self.loader_sample_len,
+            "loader_batch_step": self.loader_batch_step,
+            "loader_sample_step": self.loader_sample_step,
+        }
 
     @property
     @abstractmethod

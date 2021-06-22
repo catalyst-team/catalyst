@@ -11,7 +11,7 @@ import torch.distributed as dist
 from catalyst.engines.torch import DeviceEngine
 from catalyst.settings import SETTINGS
 from catalyst.typing import RunnerCriterion, RunnerModel, RunnerOptimizer, RunnerScheduler
-from catalyst.utils.distributed import ddp_reduce, mean_reduce, sum_reduce
+from catalyst.utils.distributed import ddp_reduce
 
 if SETTINGS.fairscale_required:
     from fairscale.nn import Pipe

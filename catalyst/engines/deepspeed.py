@@ -7,7 +7,7 @@ import torch.distributed as dist
 
 from catalyst.engines.torch import DeviceEngine
 from catalyst.settings import SETTINGS
-from catalyst.utils.distributed import ddp_reduce, mean_reduce, sum_reduce
+from catalyst.utils.distributed import ddp_reduce
 
 if SETTINGS.deepspeed_required:
     import deepspeed
