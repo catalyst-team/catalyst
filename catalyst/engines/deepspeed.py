@@ -7,13 +7,12 @@ import torch.distributed as dist
 
 from catalyst.engines.torch import DeviceEngine
 from catalyst.settings import SETTINGS
-from catalyst.utils.distributed import mean_reduce, sum_reduce
+from catalyst.utils.distributed import ddp_reduce, mean_reduce, sum_reduce
 
 if SETTINGS.deepspeed_required:
     import deepspeed
 
 
-# @TODO: create distributed abstraction?
 class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
     """Distributed DeepSpeed MultiGPU training device engine.
 
@@ -89,7 +88,7 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         self.address = address or "localhost"
         self.port = port or 12345
         self._rank = 0
-        self.device = None
+        self._device = None
 
         if process_group_kwargs is None:
             process_group_kwargs = {}
@@ -122,26 +121,6 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         """Process world size  for distributed training."""
         return self._world_size
 
-    @property
-    def is_master_process(self) -> bool:
-        """Checks if a process is master process.
-        Should be implemented only for DDP setup in other cases should always return True.
-
-        Returns:
-            `True` if current process is a master process, otherwise `False`.
-        """
-        return self._rank == 0
-
-    @property
-    def is_worker_process(self) -> bool:
-        """Checks if a process is worker process.
-        Should be implemented only for DDP setup in other cases should always return False.
-
-        Returns:
-            `True` if current process is a worker process, otherwise `False`.
-        """
-        return self._rank > 0
-
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes.
 
@@ -152,6 +131,8 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         """
         self._rank = rank
         self._world_size = world_size
+        torch.cuda.set_device(int(self._rank))
+        self._device = f"cuda:{int(self._rank)}"
 
         os.environ["RANK"] = str(rank)
         os.environ["LOCAL_RANK"] = str(rank)
@@ -160,16 +141,13 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         os.environ["MASTER_PORT"] = str(self.port)
         deepspeed.init_distributed(**self.process_group_kwargs)
 
-        torch.cuda.set_device(int(self._rank))
-        self.device = f"cuda:{int(self._rank)}"
-
     def cleanup_process(self):
         """Clean DDP variables and processes."""
         dist.barrier()
         dist.destroy_process_group()
 
     # @TODO: add all_gather
-    def sync_tensor(self, tensor: torch.Tensor, mode: str):
+    def sync_tensor(self, tensor: torch.Tensor, mode: str) -> torch.Tensor:
         """Syncs ``tensor`` over ``world_size`` in distributed mode.
 
         Args:
@@ -180,16 +158,8 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
 
         Returns:
             torch.Tensor with synchronized values.
-
-        Raises:
-            ValueError: if mode is out of ``sum`` or ``mean``
         """
-        if mode not in {"sum", "mean"}:
-            raise ValueError(f"Unknown sync_type '{mode}'")
-        if mode == "sum":
-            return sum_reduce(tensor)
-        else:
-            return mean_reduce(tensor, self.world_size)
+        return ddp_reduce(tensor, mode, self.world_size)
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -212,11 +182,6 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         )
 
         return model, criterion, optimizer, scheduler
-
-    def deinit_components(self, runner=None):
-        """Deinits the runs components."""
-        pass
-        # self.cleanup_process()
 
     def zero_grad(self, loss, model, optimizer) -> None:
         """Abstraction over ``model.zero_grad()`` step."""

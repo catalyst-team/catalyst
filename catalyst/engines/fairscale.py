@@ -11,7 +11,7 @@ import torch.distributed as dist
 from catalyst.engines.torch import DeviceEngine
 from catalyst.settings import SETTINGS
 from catalyst.typing import RunnerCriterion, RunnerModel, RunnerOptimizer, RunnerScheduler
-from catalyst.utils.distributed import mean_reduce, sum_reduce
+from catalyst.utils.distributed import ddp_reduce, mean_reduce, sum_reduce
 
 if SETTINGS.fairscale_required:
     from fairscale.nn import Pipe
@@ -127,6 +127,7 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
 
     def deinit_components(self, runner):
         """Deinits the runs components. In distributed mode should destroy process group."""
+        # For some reasons FairScale requires to delete the Pipe model
         del runner.model
 
     def zero_grad(self, loss, model, optimizer) -> None:
@@ -217,7 +218,7 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
         self.address = address or "localhost"
         self.port = port or 12345
         self._rank = 0
-        self.device = None
+        self._device = None
 
         if ddp_kwargs is None:
             ddp_kwargs = {}
@@ -254,26 +255,6 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
         """Process world size  for distributed training."""
         return self._world_size
 
-    @property
-    def is_master_process(self) -> bool:
-        """Checks if a process is master process.
-        Should be implemented only for DDP setup in other cases should always return True.
-
-        Returns:
-            `True` if current process is a master process, otherwise `False`.
-        """
-        return self._rank == 0
-
-    @property
-    def is_worker_process(self) -> bool:
-        """Checks if a process is worker process.
-        Should be implemented only for DDP setup in other cases should always return False.
-
-        Returns:
-            `True` if current process is a worker process, otherwise `False`.
-        """
-        return self._rank > 0
-
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes.
 
@@ -284,6 +265,8 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
         """
         self._rank = rank
         self._world_size = world_size
+        torch.cuda.set_device(int(self._rank))
+        self._device = f"cuda:{int(self._rank)}"
 
         self.process_group_kwargs["rank"] = rank
         self.process_group_kwargs["world_size"] = world_size
@@ -292,16 +275,12 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
 
         dist.init_process_group(**self.process_group_kwargs)
 
-        torch.cuda.set_device(int(self._rank))
-        self.device = f"cuda:{int(self._rank)}"
-
     def cleanup_process(self):
         """Clean DDP variables and processes."""
         dist.barrier()
         dist.destroy_process_group()
 
-    # @TODO: add all_gather
-    def sync_tensor(self, tensor: torch.Tensor, mode: str):
+    def sync_tensor(self, tensor: torch.Tensor, mode: str) -> torch.Tensor:
         """Syncs ``tensor`` over ``world_size`` in distributed mode.
 
         Args:
@@ -312,16 +291,8 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
 
         Returns:
             torch.Tensor with synchronized values.
-
-        Raises:
-            ValueError: if mode is out of ``sum`` or ``mean``
         """
-        if mode not in {"sum", "mean"}:
-            raise ValueError(f"Unknown sync_type '{mode}'")
-        if mode == "sum":
-            return sum_reduce(tensor)
-        else:
-            return mean_reduce(tensor, self.world_size)
+        return ddp_reduce(tensor, mode, self.world_size)
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -342,11 +313,6 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
         scheduler = scheduler_fn(optimizer)
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
-
-    def deinit_components(self, runner=None):
-        """Deinits the runs components."""
-        pass
-        # self.cleanup_process()
 
     def zero_grad(self, loss, model, optimizer) -> None:
         """Abstraction over ``model.zero_grad()`` step."""
@@ -384,6 +350,7 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
             ``criterion_state_dict``, ``optimizer_state_dict``,
             ``scheduler_state_dict`` keys.
         """
+        # for some reasons FairScale could not consolidate the optimizer step at 0.3.4 version
         # optimizer.consolidate_state_dict(recipient_rank=0)
         return super().pack_checkpoint(
             model=model, criterion=criterion, optimizer=None, scheduler=scheduler, **kwargs
@@ -560,19 +527,6 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
             ...
 
     """
-
-    def __init__(
-        self,
-        address: str = None,
-        port: Union[str, int] = None,
-        ddp_kwargs: Dict[str, Any] = None,
-        process_group_kwargs: Dict[str, Any] = None,
-    ):
-        """Init."""
-        super().__init__(
-            address=address, port=port, ddp_kwargs=None, process_group_kwargs=process_group_kwargs
-        )
-        self.ddp_kwargs = ddp_kwargs or {}
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,

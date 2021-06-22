@@ -5,6 +5,7 @@ from torch import nn
 import torch.cuda.amp as amp
 
 from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
+from catalyst.typing import Model, Optimizer
 
 
 class AMPEngine(DeviceEngine):
@@ -66,15 +67,15 @@ class AMPEngine(DeviceEngine):
 
     def __repr__(self) -> str:  # noqa: D105
         return (
-            f"{self.__class__.__name__}(device='{self.device}', "
+            f"{self.__class__.__name__}(device='{self._device}', "
             f"scaler_kwargs={self.scaler_kwargs})"
         )
 
-    def backward_loss(self, loss, model, optimizer) -> None:
+    def backward_loss(self, loss: torch.Tensor, model: Model, optimizer: Optimizer) -> None:
         """Abstraction over ``loss.backward()`` step."""
         self.scaler.scale(loss).backward()
 
-    def optimizer_step(self, loss, model, optimizer) -> None:
+    def optimizer_step(self, loss: torch.Tensor, model: Model, optimizer: Optimizer) -> None:
         """Abstraction over ``optimizer.step()`` step."""
         self.scaler.step(optimizer)
         self.scaler.update()
@@ -139,7 +140,7 @@ class DataParallelAMPEngine(AMPEngine):
 
     def __repr__(self) -> str:  # noqa: D105
         return (
-            f"{self.__class__.__name__}(device='{self.device}', "
+            f"{self.__class__.__name__}(device='{self._device}', "
             f"scaler_kwargs={self.scaler_kwargs})"
         )
 
@@ -268,11 +269,11 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
             f"scaler_kwargs={self.scaler_kwargs})"
         )
 
-    def backward_loss(self, loss, model, optimizer) -> None:
+    def backward_loss(self, loss: torch.Tensor, model: Model, optimizer: Optimizer) -> None:
         """Abstraction over ``loss.backward()`` step."""
         self.scaler.scale(loss).backward()
 
-    def optimizer_step(self, loss, model, optimizer) -> None:
+    def optimizer_step(self, loss: torch.Tensor, model: Model, optimizer: Optimizer) -> None:
         """Abstraction over ``optimizer.step()`` step."""
         self.scaler.step(optimizer)
         self.scaler.update()
