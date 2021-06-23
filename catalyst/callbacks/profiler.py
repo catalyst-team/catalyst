@@ -1,8 +1,11 @@
-from typing import Any, Dict
+from typing import Any, Dict, Sequence
+import os
+from tempfile import TemporaryDirectory
 
 import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
+from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
 
 
@@ -145,11 +148,15 @@ class ProfilerCallback(Callback):
             self.profiler = torch.profiler.profile(**self.profiler_kwargs)
             self.profiler.__enter__()
 
-    def _exit_profiler(self, loader_key: str, epoch: int) -> None:
+    def _exit_profiler(
+        self, loader_key: str, epoch: int, loggers: Sequence[ILogger] = None
+    ) -> None:
         if not self._should_use_profiler(loader_key, epoch) or self.profiler is None:
             return
 
         if self.stats is None:
+            loggers_ = [] if loggers is None else loggers
+
             self.profiler.__exit__(None, None, None)
 
             if "on_trace_ready" not in self.profiler_kwargs and self.export_chrome_trace_path:
@@ -159,8 +166,18 @@ class ProfilerCallback(Callback):
                 self.profiler.export_stacks(**self.export_stacks_kwargs)
 
             self.stats = self.profiler.key_averages()
-            # TODO: how to show table in other logers ?
-            print(self.stats.table(sort_by="cpu_time_total", row_limit=100))
+            table_txt = self.stats.table(sort_by="cpu_time_total", row_limit=100)
+
+            with TemporaryDirectory() as tmp_dir:
+                artifact_path = os.path.join(tmp_dir, "profiler_table.txt")
+                with open(artifact_path, "w") as f:
+                    f.write(table_txt)
+                for logger in loggers_:
+                    logger.log_artifact(
+                        tag="profiler", artifact="profiler.txt", path_to_artifact=artifact_path,
+                    )
+
+            print(table_txt)
 
     def on_loader_start(self, runner: IRunner) -> None:
         """
