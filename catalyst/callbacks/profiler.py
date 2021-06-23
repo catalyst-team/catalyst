@@ -174,7 +174,9 @@ class ProfilerCallback(Callback):
                     f.write(table_txt)
                 for logger in loggers_:
                     logger.log_artifact(
-                        tag="profiler", artifact="profiler.txt", path_to_artifact=artifact_path,
+                        tag="profiler",
+                        artifact="profiler.txt",
+                        path_to_artifact=artifact_path,
                     )
 
             print(table_txt)
@@ -195,7 +197,7 @@ class ProfilerCallback(Callback):
         Args:
             runner: current runner
         """
-        self._exit_profiler(runner.loader_key, runner.stage_epoch_step)
+        self._exit_profiler(runner.loader_key, runner.stage_epoch_step, runner.get_loggers.values())
 
     def on_batch_start(self, runner: IRunner) -> None:
         """
@@ -221,4 +223,4 @@ class ProfilerCallback(Callback):
             self.profiler.step()
             self.batch_cnt += 1
 
-        self._exit_profiler(runner.loader_key, runner.stage_epoch_step)
+        self._exit_profiler(runner.loader_key, runner.stage_epoch_step, runner.get_loggers.values())
