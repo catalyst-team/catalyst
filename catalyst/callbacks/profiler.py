@@ -155,7 +155,7 @@ class ProfilerCallback(Callback):
             return
 
         if self.stats is None:
-            loggers_ = [] if loggers is None else loggers
+            loggers_ = [] if loggers is None else loggers  # noqa: WPS120
 
             self.profiler.__exit__(None, None, None)
 
