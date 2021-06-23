@@ -287,11 +287,10 @@ class Registry(collections.MutableMapping):
         Returns:
             result of calling ``instantiate_fn(factory, **config)``
         """
-        if self.name_key in kwargs:
-            instance = self._recursive_get_from_params(
-                params=kwargs, shared_params=shared_params, meta_factory=meta_factory
-            )
-            return instance
+        instance = self._recursive_get_from_params(
+            params=kwargs, shared_params=shared_params, meta_factory=meta_factory
+        )
+        return instance
 
     def all(self) -> List[str]:
         """
