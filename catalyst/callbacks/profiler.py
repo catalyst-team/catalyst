@@ -1,3 +1,5 @@
+from typing import Any, Dict
+
 import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
@@ -96,10 +98,10 @@ class ProfilerCallback(Callback):
         loader_key: str = None,
         epoch: int = 1,
         num_batches: int = None,
-        profiler_kwargs: "Dict[str, Any]" = None,
+        profiler_kwargs: Dict[str, Any] = None,
         tensorboard_path: str = None,
         export_chrome_trace_path: str = None,
-        export_stacks_kwargs: "Dict[str, Any]" = None,
+        export_stacks_kwargs: Dict[str, Any] = None,
     ):
         super().__init__(order=CallbackOrder.Internal, node=CallbackNode.Master)
 
@@ -108,7 +110,7 @@ class ProfilerCallback(Callback):
         self.num_batches = num_batches
         self.batch_cnt = 0
 
-        self.profiler_kwargs = dict() if profiler_kwargs is None else profiler_kwargs
+        self.profiler_kwargs = {} if profiler_kwargs is None else profiler_kwargs
         if tensorboard_path is not None and "on_trace_ready" not in profiler_kwargs:
             self.profiler_kwargs["on_trace_ready"] = torch.profiler.tensorboard_trace_handler(
                 tensorboard_path
