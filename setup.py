@@ -99,6 +99,7 @@ extras = {
     "wandb": load_requirements("requirements/requirements-wandb.txt"),
     "fairscale": load_requirements("requirements/requirements-fairscale.txt"),
     "deepspeed": load_requirements("requirements/requirements-deepspeed.txt"),
+    "albu": load_requirements("requirements/requirements-albu.txt"),
 }
 extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
 # Meta dependency groups.
