@@ -60,6 +60,7 @@ jobs:
           python -c "req = open('./requirements/requirements-optuna.txt').read().replace('>', '=') ; open('./requirements/requirements-optuna.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-nifti.txt').read().replace('>', '=') ; open('./requirements/requirements-nifti.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-neptune.txt').read().replace('>', '=') ; open('./requirements/requirements-neptune.txt', 'w').write(req)"
+          python -c "req = open('./requirements/requirements-albu.txt').read().replace('>', '=') ; open('./requirements/requirements-albu.txt', 'w').write(req)"
 
       # https://github.com/actions/cache/blob/master/examples.md
       # Note: This uses an internal pip API and may not always work
@@ -96,7 +97,7 @@ jobs:
       - name: install dependencies
         run: |
           # python -m pip install --upgrade --user pip
-          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-neptune.txt
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-neptune.txt  -r ./requirements/requirements-albu.txt
           python --version
           pip --version
           pip list
