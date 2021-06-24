@@ -3,6 +3,7 @@ import collections
 import copy
 import functools
 import inspect
+import pydoc
 import warnings
 
 Factory = Union[Type, Callable[..., Any]]
@@ -38,13 +39,11 @@ class Registry(collections.MutableMapping):
             that calls factory. Optional. Default just calls factory.
     """
 
-    def __init__(
-        self,
-        default_meta_factory: MetaFactory = _default_meta_factory,
-        name_key: str = "_target_",
-    ):
+    def __init__(self, default_meta_factory: MetaFactory = None, name_key: str = "_target_"):
         """Init."""
-        self.meta_factory = default_meta_factory
+        self.meta_factory = (
+            default_meta_factory if default_meta_factory is not None else _default_meta_factory
+        )
         self._factories: Dict[str, Factory] = {}
         self._late_add_callbacks: List[LateAddCallbak] = []
         self.name_key = name_key
@@ -182,7 +181,7 @@ class Registry(collections.MutableMapping):
         if name is None:
             return None
 
-        res = self._factories.get(name, None)
+        res = self._factories.get(name, pydoc.locate(name))
 
         if not res:
             raise RegistryException(f"No factory with name '{name}' was registered")
@@ -197,7 +196,7 @@ class Registry(collections.MutableMapping):
             return self.get(obj)
         return obj
 
-    def get_instance(self, name: str, *args, meta_factory=None, **kwargs):
+    def get_instance(self, name: str, *args, meta_factory: Optional[MetaFactory] = None, **kwargs):
         """
         Creates instance by calling specified factory
         with ``instantiate_fn``.
@@ -231,22 +230,26 @@ class Registry(collections.MutableMapping):
         self,
         params: Union[Dict[str, Any], Any],
         shared_params: Optional[Dict[str, Any]] = None,
-        meta_factory=None,
-    ) -> Union[Any, Tuple[Any, Mapping[str, Any]]]:
-        if not (isinstance(params, dict) and self.name_key in params):
-            return params
+        meta_factory: Optional[MetaFactory] = None,
+    ) -> Any:
+        mapping_types = (dict,)
+        # check for `list` but not all iterables to skip processing of generators
+        iterable_types = (list,)
 
-        shared_params = shared_params or {}
+        if not isinstance(params, (*mapping_types, *iterable_types)):
+            return params
 
         # make a copy of params since we don't want to modify them directly
         params = copy.deepcopy(params)
-        for key, param in params.items():
-            if isinstance(param, dict):
+
+        params_iter = params.items() if isinstance(params, mapping_types) else enumerate(params)
+        for key, param in params_iter:
+            # note: it is assumed that `params` is mutable
+            if isinstance(param, mapping_types):
                 params[key] = self._recursive_get_from_params(
                     params=param, meta_factory=meta_factory, shared_params=shared_params
                 )
-            # limit to `list` and `tuple` only to avoid processing of generators
-            elif isinstance(param, (list, tuple)):
+            elif isinstance(param, iterable_types):
                 params[key] = [
                     self._recursive_get_from_params(
                         params=value, meta_factory=meta_factory, shared_params=shared_params
@@ -254,12 +257,22 @@ class Registry(collections.MutableMapping):
                     for value in param
                 ]
 
-        name = params.pop(self.name_key)
-        instance = self.get_instance(name, meta_factory=meta_factory, **shared_params, **params)
-        return instance
+        if isinstance(params, mapping_types) and self.name_key in params:
+            name = params.pop(self.name_key)
+            shared_params = shared_params or {}
+
+            # use additional dict to handle 'multiple values for keyword argument'
+            kwargs = {**shared_params, **params}
+            instance = self.get_instance(name=name, meta_factory=meta_factory, **kwargs)
+            return instance
+        return params
 
     def get_from_params(
-        self, *, meta_factory=None, shared_params: Optional[Dict[str, Any]] = None, **kwargs,
+        self,
+        *,
+        meta_factory: Optional[MetaFactory] = None,
+        shared_params: Optional[Dict[str, Any]] = None,
+        **kwargs,
     ) -> Union[Any, Tuple[Any, Mapping[str, Any]]]:
         """
         Creates instance based in configuration dict with ``instantiation_fn``.
@@ -274,11 +287,10 @@ class Registry(collections.MutableMapping):
         Returns:
             result of calling ``instantiate_fn(factory, **config)``
         """
-        if self.name_key in kwargs:
-            instance = self._recursive_get_from_params(
-                params=kwargs, shared_params=shared_params, meta_factory=meta_factory
-            )
-            return instance
+        instance = self._recursive_get_from_params(
+            params=kwargs, shared_params=shared_params, meta_factory=meta_factory
+        )
+        return instance
 
     def all(self) -> List[str]:
         """

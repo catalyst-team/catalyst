@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from collections import OrderedDict
 from copy import deepcopy
 import logging
@@ -198,9 +198,7 @@ class ConfigRunner(IRunner):
     def get_loggers(self) -> Dict[str, ILogger]:
         """Returns the loggers for the run."""
         loggers_params = self._config.get("loggers", {})
-        loggers = {
-            key: REGISTRY.get_from_params(**params) for key, params in loggers_params.items()
-        }
+        loggers = REGISTRY.get_from_params(**loggers_params)
 
         is_logger_exists = lambda logger_fn: any(
             isinstance(x, logger_fn) for x in loggers.values()
@@ -226,12 +224,8 @@ class ConfigRunner(IRunner):
         Returns:
             Dict: datasets objects
         """
-        params = self._stage_config[stage]["loaders"]["datasets"]
-
-        datasets = [
-            (key, REGISTRY.get_from_params(**dataset_params))
-            for key, dataset_params in params.items()
-        ]
+        datasets_params = self._stage_config[stage]["loaders"]["datasets"]
+        datasets = REGISTRY.get_from_params(**datasets_params)
         return OrderedDict(datasets)
 
     def get_samplers(self, stage: str) -> "OrderedDict[str, Sampler]":
@@ -244,13 +238,14 @@ class ConfigRunner(IRunner):
         Returns:
             Dict of samplers
         """
-        params = get_by_keys(self._stage_config, stage, "loaders", "samplers", default={})
-
-        samplers = [
-            (key, REGISTRY.get_from_params(**sampler_params))
-            for key, sampler_params in params.items()
-        ]
+        samplers_params = get_by_keys(self._stage_config, stage, "loaders", "samplers", default={})
+        samplers = REGISTRY.get_from_params(**samplers_params)
         return OrderedDict(samplers)
+
+    def _get_loaders_from_params(self, **params) -> "Optional[OrderedDict[str, DataLoader]]":
+        """Creates dataloaders from ``**params`` parameters."""
+        loaders = dict(REGISTRY.get_from_params(**params))
+        return loaders if all(isinstance(dl, DataLoader) for dl in loaders.values()) else None
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """
@@ -263,17 +258,18 @@ class ConfigRunner(IRunner):
             Dict: loaders objects
         """
         loaders_params = deepcopy(self._stage_config[stage]["loaders"])
+        loaders = self._get_loaders_from_params(**loaders_params)
+        if loaders is None:
+            #  config is parsed manyally in `get_datasets` and `get_samplers` methods
+            loaders_params.pop("datasets", None)
+            loaders_params.pop("samplers", None)
 
-        #  config is parsed manyally in `get_datasets` and `get_samplers` methods
-        loaders_params.pop("datasets", None)
-        loaders_params.pop("samplers", None)
-
-        loaders = get_loaders_from_params(
-            datasets=self.get_datasets(stage=stage),
-            samplers=self.get_samplers(stage=stage),
-            initial_seed=self.seed,
-            **loaders_params,
-        )
+            loaders = get_loaders_from_params(
+                datasets=self.get_datasets(stage=stage),
+                samplers=self.get_samplers(stage=stage),
+                initial_seed=self.seed,
+                **loaders_params,
+            )
         return loaders
 
     @staticmethod
@@ -298,27 +294,11 @@ class ConfigRunner(IRunner):
         model: RunnerModel = self._get_model_from_params(**model_params)
         return model
 
-    @staticmethod
-    def _get_criterion_from_params(**params) -> RunnerCriterion:
-        params = deepcopy(params)
-        key_value_flag = params.pop("_key_value", False)
-
-        if key_value_flag:
-            criterion = {
-                key: ConfigRunner._get_criterion_from_params(**key_params)  # noqa: WPS437
-                for key, key_params in params.items()
-            }
-        else:
-            criterion = REGISTRY.get_from_params(**params)
-        return criterion
-
     def get_criterion(self, stage: str) -> RunnerCriterion:
         """Returns the criterion for a given stage."""
-        if "criterion" not in self._stage_config[stage]:
-            return None
         criterion_params = get_by_keys(self._stage_config, stage, "criterion", default={})
-        criterion = self._get_criterion_from_params(**criterion_params)
-        return criterion
+        criterion = REGISTRY.get_from_params(**criterion_params)
+        return criterion or None
 
     def _get_optimizer_from_params(
         self, model: RunnerModel, stage: str, **params
@@ -417,13 +397,7 @@ class ConfigRunner(IRunner):
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage."""
         callbacks_params = get_by_keys(self._stage_config, stage, "callbacks", default={})
-
-        callbacks = OrderedDict(
-            [
-                (key, REGISTRY.get_from_params(**callback_params))
-                for key, callback_params in callbacks_params.items()
-            ]
-        )
+        callbacks = OrderedDict(REGISTRY.get_from_params(**callbacks_params))
 
         is_callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()

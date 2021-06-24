@@ -88,6 +88,9 @@ def test_instantiations():
     res = r.get_instance("foo", a=1, b=2)()
     assert res == {"a": 1, "b": 2}
 
+    res = r.get_instance("tests.catalyst.tools.registery_foo.foo", a=1, b=2)()
+    assert res == {"a": 1, "b": 2}
+
 
 def test_from_config():
     """@TODO: Docs. Contribution is welcome."""
@@ -99,7 +102,7 @@ def test_from_config():
     assert res == {"a": 1, "b": 2}
 
     res = r.get_from_params(**{})
-    assert res is None
+    assert res == {}
 
 
 def test_name_key():
@@ -112,7 +115,7 @@ def test_name_key():
     assert res == {"a": 1, "b": 2}
 
     res = r.get_from_params(**{"_target_": "foo", "a": 1, "b": 2})
-    assert res is None
+    assert res == {"_target_": "foo", "a": 1, "b": 2}
 
 
 def test_recursive_get_from_config():
@@ -123,6 +126,9 @@ def test_recursive_get_from_config():
 
     r.add(foo)
 
+    res = r.get_from_params(**{"_target_": "foo", "a": 1, "b": 2})
+    assert res == {"a": 1, "b": 2}
+
     res = r.get_from_params(
         **{
             "_target_": "foo",
@@ -131,6 +137,33 @@ def test_recursive_get_from_config():
         }
     )
     assert res == {"a": {"a": {"a": 1, "b": 2}, "b": 2}, "b": [{"a": 1, "b": 2}, {"a": 1, "b": 2}]}
+
+    res = r.get_from_params(
+        **{"a": {"_target_": "foo", "a": 1, "b": 2}, "b": {"_target_": "foo", "a": 1, "b": 2}}
+    )
+    assert res == {"a": {"a": 1, "b": 2}, "b": {"a": 1, "b": 2}}
+
+    # check nested dicts support
+    res = r.get_from_params(
+        **{"_target_": "foo", "a": {"c": {"_target_": "foo", "a": 1, "b": 2}}, "b": 2}
+    )
+    assert res == {"a": {"c": {"a": 1, "b": 2}}, "b": 2}
+
+    # check nested lists support
+    res = r.get_from_params(
+        **{
+            "_target_": "foo",
+            "a": [[[{"_target_": "foo", "a": 1, "b": 2}]]],
+            "b": {"c": 3, "d": {"e": 4}},
+        }
+    )
+    assert res == {"a": [[[{"a": 1, "b": 2}]]], "b": {"c": 3, "d": {"e": 4}}}
+
+    # check shared_params
+    res = r.get_from_params(
+        **{"_target_": "foo", "a": {"_target_": "foo", "a": 1, "b": 3}}, shared_params={"b": 2}
+    )
+    assert res == {"a": {"a": 1, "b": 3}, "b": 2}
 
 
 def test_meta_factory():

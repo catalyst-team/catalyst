@@ -173,4 +173,13 @@ def _datasets_loader(r: registry.Registry):
 REGISTRY.late_add(_datasets_loader)
 
 
+def _dataloaders_loader(r: registry.Registry):
+    from torch.utils.data import DataLoader  # noqa: WPS347
+
+    r.add(DataLoader)
+
+
+REGISTRY.late_add(_dataloaders_loader)
+
+
 __all__ = ["REGISTRY"]
