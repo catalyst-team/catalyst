@@ -1,4 +1,4 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from collections import OrderedDict
 from copy import deepcopy
 import logging
@@ -238,9 +238,14 @@ class ConfigRunner(IRunner):
         Returns:
             Dict of samplers
         """
-        samplers = get_by_keys(self._stage_config, stage, "loaders", "samplers", default={})
-        samplers = REGISTRY.get_from_params(**samplers)
+        samplers_params = get_by_keys(self._stage_config, stage, "loaders", "samplers", default={})
+        samplers = REGISTRY.get_from_params(**samplers_params)
         return OrderedDict(samplers)
+
+    def _get_loaders_from_params(self, **params) -> "Optional[OrderedDict[str, DataLoader]]":
+        """Creates dataloaders from ``**params`` parameters."""
+        loaders = dict(REGISTRY.get_from_params(**params))
+        return loaders if all(isinstance(dl, DataLoader) for dl in loaders.values()) else None
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """
@@ -253,17 +258,18 @@ class ConfigRunner(IRunner):
             Dict: loaders objects
         """
         loaders_params = deepcopy(self._stage_config[stage]["loaders"])
+        loaders = self._get_loaders_from_params(**loaders_params)
+        if loaders is None:
+            #  config is parsed manyally in `get_datasets` and `get_samplers` methods
+            loaders_params.pop("datasets", None)
+            loaders_params.pop("samplers", None)
 
-        #  config is parsed manyally in `get_datasets` and `get_samplers` methods
-        loaders_params.pop("datasets", None)
-        loaders_params.pop("samplers", None)
-
-        loaders = get_loaders_from_params(
-            datasets=self.get_datasets(stage=stage),
-            samplers=self.get_samplers(stage=stage),
-            initial_seed=self.seed,
-            **loaders_params,
-        )
+            loaders = get_loaders_from_params(
+                datasets=self.get_datasets(stage=stage),
+                samplers=self.get_samplers(stage=stage),
+                initial_seed=self.seed,
+                **loaders_params,
+            )
         return loaders
 
     @staticmethod

@@ -57,11 +57,9 @@ stages:
     num_epochs: 4
 
     loaders: &loaders
-      batch_size: 32
-      num_workers: 1
-
-      datasets:
-        train:
+      train:
+        _target_: torch.utils.data.DataLoader
+        dataset:
           _target_: MNIST
           root: *dataset_root
           train: True
@@ -73,21 +71,26 @@ stages:
                 mean: [0]
                 std: [1]
           download: True
-        valid:
+        batch_size: &batch_size 32
+        sampler:
+          _target_: MiniEpochSampler
+          data_len: 50000
+          mini_epoch_len: 35000
+          drop_last: true
+          shuffle: per_epoch
+        num_workers: 1
+      valid:
+        _target_: DataLoader
+        dataset:
           _target_: MNIST
           root: *dataset_root
           train: False
           transform: *transform
           download: True
-
-#      samplers:
-#        train:
-#          _target_: MiniEpochSampler
-#          data_len: 50000
-#          mini_epoch_len: 35000
-#          drop_last: True
-#          shuffle: per_epoch
-#
+        batch_size: *batch_size
+        shuffle: false
+        num_workers: 1
+        drop_last: false
 
     criterion:
       _target_: CrossEntropyLoss
