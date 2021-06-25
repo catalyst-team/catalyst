@@ -1,4 +1,4 @@
-from typing import Any, Dict, Sequence
+from typing import Any, Dict
 import os
 from tempfile import TemporaryDirectory
 
