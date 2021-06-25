@@ -61,8 +61,6 @@ def _mlflow_log_dict(dictionary: Dict[str, Any], prefix: str = "", log_type: Opt
                 mlflow.log_param(name, value)
             except mlflow.exceptions.MlflowException:
                 continue
-        elif isinstance(value, (Directory, File)) or log_type == "artifact":
-            mlflow.log_artifact(value)
         elif isinstance(value, Number):
             mlflow.log_metric(name, value)
         else:
@@ -263,11 +261,36 @@ class MLflowLogger(ILogger):
                 exp_params = hparams.get(key, {})
                 _mlflow_log_dict(exp_params, log_type="param")
 
-    def close_log(self) -> None:
+    def log_artifact(
+        self,
+        tag: str,
+        artifact: object = None,
+        path_to_artifact: str = None,
+        scope: str = None,
+        # experiment info
+        run_key: str = None,
+        global_epoch_step: int = 0,
+        global_batch_step: int = 0,
+        global_sample_step: int = 0,
+        # stage info
+        stage_key: str = None,
+        stage_epoch_len: int = 0,
+        stage_epoch_step: int = 0,
+        stage_batch_step: int = 0,
+        stage_sample_step: int = 0,
+        # loader info
+        loader_key: str = None,
+        loader_batch_len: int = 0,
+        loader_sample_len: int = 0,
+        loader_batch_step: int = 0,
+        loader_sample_step: int = 0,
+    ) -> None:
+        """Logs a local file or directory as an artifact to the logger."""
+        mlflow.log_artifact(artifact, path_to_artifact)
+
+    def close_log(self, scope: str = None) -> None:
         """Finds all **running** runs and ends them."""
-        all_runs = mlflow.search_runs()
-        for _ in all_runs[all_runs.status == "RUNNING"]:
-            mlflow.end_run()
+        mlflow.end_run()
 
 
 __all__ = ["MLflowLogger"]

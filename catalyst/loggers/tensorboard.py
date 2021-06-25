@@ -170,8 +170,10 @@ class TensorboardLogger(ILogger):
         for logger in self.loggers.values():
             logger.flush()
 
-    def close_log(self) -> None:
+    def close_log(self, scope: str = None) -> None:
         """Closes the loggers."""
+        if scope is not None or scope != "experiment":
+            return
         for logger in self.loggers.values():
             logger.close()
 

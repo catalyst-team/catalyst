@@ -143,8 +143,10 @@ class CSVLogger(ILogger):
         for logger in self.loggers.values():
             logger.flush()
 
-    def close_log(self) -> None:
+    def close_log(self, scope: str = None) -> None:
         """@TODO: docs."""
+        if scope is not None or scope != "experiment":
+            return
         for logger in self.loggers.values():
             logger.close()
 
