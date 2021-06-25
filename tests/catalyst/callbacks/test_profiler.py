@@ -13,6 +13,7 @@ from torch.utils.data import DataLoader, Dataset
 HAS_REQUIRED_TORCH_VERSION = LooseVersion(torch.__version__) >= LooseVersion("1.8.1")
 
 from catalyst import dl  # noqa: E402
+from catalyst.settings import SETTINGS  # noqa: E402
 
 if HAS_REQUIRED_TORCH_VERSION:
     from catalyst.callbacks import ProfilerCallback
@@ -130,7 +131,25 @@ class CustomRunner(dl.IRunner):
         return None
 
     def get_loggers(self):
-        return {"console": dl.ConsoleLogger(), "csv": dl.CSVLogger(logdir=self._logdir)}
+        loggers = {
+            "console": dl.ConsoleLogger(),
+            "csv": dl.CSVLogger(logdir=self._logdir),
+            "tensorboard": dl.TensorboardLogger(logdir=self._logdir),
+        }
+        if SETTINGS.mlflow_required:
+            loggers["mlflow"] = dl.MLflowLogger(experiment=self._name)
+
+        if SETTINGS.wandb_required:
+            loggers["wandb"] = dl.WandbLogger(project="catalyst_test", name=self._name)
+
+        if SETTINGS.neptune_required:
+            loggers["neptune"] = dl.NeptuneLogger(
+                base_namespace="catalyst-tests",
+                api_token="ANONYMOUS",
+                project="common/catalyst-integration",
+            )
+
+        return loggers
 
     def handle_batch(self, batch):
         x, y = batch
