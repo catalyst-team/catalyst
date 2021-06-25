@@ -5,7 +5,6 @@ from tempfile import TemporaryDirectory
 import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
-from catalyst.core.logger import ILogger
 from catalyst.core.runner import IRunner
 
 
@@ -140,7 +139,10 @@ class ProfilerCallback(Callback):
             return True
         return False
 
-    def _enter_profiler(self, loader_key: str, epoch: int) -> None:
+    def _enter_profiler(self, runner: IRunner) -> None:
+        loader_key = runner.loader_key
+        epoch = runner.stage_epoch_step
+
         if not self._should_use_profiler(loader_key, epoch):
             return
 
@@ -148,15 +150,14 @@ class ProfilerCallback(Callback):
             self.profiler = torch.profiler.profile(**self.profiler_kwargs)
             self.profiler.__enter__()
 
-    def _exit_profiler(
-        self, loader_key: str, epoch: int, loggers: Sequence[ILogger] = None
-    ) -> None:
+    def _exit_profiler(self, runner: IRunner) -> None:
+        loader_key = runner.loader_key
+        epoch = runner.stage_epoch_step
+
         if not self._should_use_profiler(loader_key, epoch) or self.profiler is None:
             return
 
         if self.stats is None:
-            loggers_ = [] if loggers is None else loggers  # noqa: WPS120
-
             self.profiler.__exit__(None, None, None)
 
             if "on_trace_ready" not in self.profiler_kwargs and self.export_chrome_trace_path:
@@ -166,16 +167,15 @@ class ProfilerCallback(Callback):
                 self.profiler.export_stacks(**self.export_stacks_kwargs)
 
             self.stats = self.profiler.key_averages()
-            table_txt = self.stats.table(sort_by="cpu_time_total", row_limit=100)
+            table_txt = self.stats.table(sort_by="cpu_time_total")  # , row_limit=100)
 
             with TemporaryDirectory() as tmp_dir:
                 artifact_path = os.path.join(tmp_dir, "profiler_table.txt")
                 with open(artifact_path, "w") as f:
                     f.write(table_txt)
-                for logger in loggers_:
-                    logger.log_artifact(
-                        tag="profiler", artifact="profiler.txt", path_to_artifact=artifact_path,
-                    )
+                runner.log_artifact(
+                    tag="profiler", artifact="profiler.txt", path_to_artifact=artifact_path,
+                )
 
             print(table_txt)
 
@@ -186,7 +186,7 @@ class ProfilerCallback(Callback):
         Args:
             runner: current runner
         """
-        self._enter_profiler(runner.loader_key, runner.stage_epoch_step)
+        self._enter_profiler(runner)
 
     def on_loader_end(self, runner: IRunner) -> None:
         """
@@ -195,9 +195,7 @@ class ProfilerCallback(Callback):
         Args:
             runner: current runner
         """
-        self._exit_profiler(
-            runner.loader_key, runner.stage_epoch_step, runner.get_loggers.values()
-        )
+        self._exit_profiler(runner)
 
     def on_batch_start(self, runner: IRunner) -> None:
         """
@@ -206,7 +204,7 @@ class ProfilerCallback(Callback):
         Args:
             runner: current runner
         """
-        self._enter_profiler(runner.loader_key, runner.stage_epoch_step)
+        self._enter_profiler(runner)
 
     def on_batch_end(self, runner: IRunner) -> None:
         """
@@ -223,6 +221,4 @@ class ProfilerCallback(Callback):
             self.profiler.step()
             self.batch_cnt += 1
 
-        self._exit_profiler(
-            runner.loader_key, runner.stage_epoch_step, runner.get_loggers.values()
-        )
+        self._exit_profiler(runner)
