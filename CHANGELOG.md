@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
   - `utils.ddp_sync_run` function for synchronous ddp run
   - CIFAR10 and CIFAR100 datasets from torchvision (no cv-based requirements)
   - [Catalyst Engines demo](https://github.com/catalyst-team/catalyst/tree/master/examples/engines)
+  - albumentations integration ([#1238](https://github.com/catalyst-team/catalyst/pull/1238))
 
 ### Changed
 
