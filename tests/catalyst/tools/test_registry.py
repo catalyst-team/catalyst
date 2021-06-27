@@ -138,12 +138,12 @@ def test_recursive_get_from_config():
     )
     assert res == {"a": {"a": {"a": 1, "b": 2}, "b": 2}, "b": [{"a": 1, "b": 2}, {"a": 1, "b": 2}]}
 
-    res = r.get_from_params(
+    # check nested dicts support
+        res = r.get_from_params(
         **{"a": {"_target_": "foo", "a": 1, "b": 2}, "b": {"_target_": "foo", "a": 1, "b": 2}}
     )
     assert res == {"a": {"a": 1, "b": 2}, "b": {"a": 1, "b": 2}}
 
-    # check nested dicts support
     res = r.get_from_params(
         **{"_target_": "foo", "a": {"c": {"_target_": "foo", "a": 1, "b": 2}}, "b": 2}
     )
