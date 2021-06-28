@@ -12,7 +12,8 @@ Registry = REGISTRY.add
 def _transforms_loader(r: registry.Registry):
     from catalyst.data import transforms as t
 
-    r.add_from_module(t, prefix=["catalyst.", "C."])
+    # add `'transform.'` prefix to avoid nameing conflicts with other catalyst modules
+    r.add_from_module(t, prefix=["transform."])
 
     if SETTINGS.albu_required:
         import albumentations as m
@@ -166,6 +167,28 @@ def _torch_functional_loader(r: registry.Registry):
 
 
 REGISTRY.late_add(_torch_functional_loader)
+
+
+def _datasets_loader(r: registry.Registry):
+    from catalyst.data import dataset as m  # noqa: WPS347
+
+    r.add_from_module(m)
+
+    from catalyst.contrib import datasets as m_contrib  # noqa: WPS347
+
+    r.add_from_module(m_contrib)
+
+
+REGISTRY.late_add(_datasets_loader)
+
+
+def _dataloaders_loader(r: registry.Registry):
+    from torch.utils.data import DataLoader  # noqa: WPS347
+
+    r.add(DataLoader)
+
+
+REGISTRY.late_add(_dataloaders_loader)
 
 
 __all__ = ["REGISTRY"]

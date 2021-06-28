@@ -1,5 +1,7 @@
 # flake8: noqa
 
+import collections
+from copy import deepcopy
 from tempfile import TemporaryDirectory
 
 from pytest import mark
@@ -14,9 +16,14 @@ NUM_SAMPLES, NUM_FEATURES, NUM_CLASSES = int(1e4), int(1e1), 4
 
 class CustomConfigRunner(dl.SupervisedConfigRunner):
     def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
+        params = deepcopy(self._stage_config[stage]["loaders"]["datasets"])
+        num_samples = params.get("num_samples", NUM_SAMPLES)
+        num_features = params.get("num_features", NUM_FEATURES)
+        num_classes = params.get("num_classes", NUM_CLASSES)
+
         # sample data
-        X = torch.rand(NUM_SAMPLES, NUM_FEATURES)
-        y = (torch.rand(NUM_SAMPLES,) * NUM_CLASSES).to(torch.int64)
+        X = torch.rand(num_samples, num_features)
+        y = (torch.rand(num_samples,) * num_classes).to(torch.int64)
 
         # pytorch dataset
         dataset = TensorDataset(X, y)
@@ -57,7 +64,15 @@ def train_experiment(engine):
                         "criterion": {"_target_": "CrossEntropyLoss"},
                         "optimizer": {"_target_": "Adam", "lr": 1e-3},
                         "scheduler": {"_target_": "MultiStepLR", "milestones": [2]},
-                        "loaders": {"batch_size": 32, "num_workers": 1},
+                        "loaders": {
+                            "batch_size": 32,
+                            "num_workers": 1,
+                            "datasets": {
+                                "num_samples": NUM_SAMPLES,
+                                "num_features": NUM_FEATURES,
+                                "num_classes": NUM_CLASSES,
+                            },
+                        },
                         "callbacks": {
                             "accuracy": {
                                 "_target_": "AccuracyCallback",

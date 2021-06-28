@@ -14,8 +14,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
   - `utils.ddp_sync_run` function for synchronous ddp run
   - CIFAR10 and CIFAR100 datasets from torchvision (no cv-based requirements)
   - [Catalyst Engines demo](https://github.com/catalyst-team/catalyst/tree/master/examples/engines)
-  - albumentations integration ([#1238](https://github.com/catalyst-team/catalyst/pull/1238))
-  - Profiler callback ([#1226](https://github.com/catalyst-team/catalyst/pull/1226))
+- `dataset_from_params` support in config API ([#1231](https://github.com/catalyst-team/catalyst/pull/1231))
+- transform from params support for config API added ([#1236](https://github.com/catalyst-team/catalyst/pull/1236))
+- samplers from params support for config API added ([#1240](https://github.com/catalyst-team/catalyst/pull/1240))
+- recursive registry.get_from_params added ([#1241](https://github.com/catalyst-team/catalyst/pull/1241))
+- albumentations integration ([#1238](https://github.com/catalyst-team/catalyst/pull/1238))
+- Profiler callback ([#1226](https://github.com/catalyst-team/catalyst/pull/1226))
 
 ### Changed
 
@@ -38,7 +42,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `HuberLoss` name conflict for pytorch 1.9 hotfix ([#1239](https://github.com/catalyst-team/catalyst/pull/1239))
 
 
-## [21.05] - YYYY-MM-DD
+## [21.05] - 2021-05-31
 
 ### Added
 

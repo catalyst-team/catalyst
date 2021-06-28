@@ -1,13 +1,12 @@
-from typing import Any, Dict, List
+from typing import Any, Callable, Dict, List
 from collections import OrderedDict
 from copy import deepcopy
-from functools import partial
 import logging
 import os
 
 import hydra
 from omegaconf import DictConfig, OmegaConf
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
@@ -31,6 +30,7 @@ from catalyst.typing import (
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
+    Sampler,
     Scheduler,
 )
 from catalyst.utils.data import get_loaders_from_params
@@ -177,6 +177,72 @@ class HydraRunner(IRunner):
 
         return loggers
 
+    def _get_transform_from_params(self, params: DictConfig) -> Callable:
+        transform: Callable = hydra.utils.instantiate(params)
+        return transform
+
+    def get_transform(self, params: DictConfig) -> Callable:
+        """
+        Returns the data transforms for a dataset.
+
+        Args:
+            params: parameters of the transformation
+
+        Returns:
+            Data transformations to use
+        """
+        transform = self._get_transform_from_params(params)
+        return transform
+
+    def _get_dataset_from_params(self, params: DictConfig) -> "Dataset":
+        transform_params = params.pop("transform", None)
+        if transform_params:
+            transform = self.get_transform(transform_params)
+            dataset = hydra.utils.instantiate(params, transform=transform)
+        else:
+            dataset = hydra.utils.instantiate(params)
+        return dataset
+
+    def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
+        """
+        Returns datasets for a given stage.
+
+        Args:
+            stage: stage name
+
+        Returns:
+            Dict: datasets objects
+        """
+        datasets_params = self._config.stages[stage].loaders.datasets
+        datasets_params = OmegaConf.to_container(datasets_params, resolve=True)
+
+        datasets = {
+            key: self._get_dataset_from_params(params) for key, params in datasets_params.items()
+        }
+        return OrderedDict(datasets)
+
+    def _get_sampler_from_params(self, **params) -> Sampler:
+        sampler: Sampler = hydra.utils.instantiate(params)
+        return sampler
+
+    def get_samplers(self, stage: str) -> "OrderedDict[str, Sampler]":
+        """
+        Returns samplers for a given stage.
+
+        Args:
+            stage: stage name
+
+        Returns:
+            Dict of samplers
+        """
+        samplers_params = self._config.stages[stage].loaders.get("samplers", {})
+        samplers_params = OmegaConf.to_container(samplers_params, resolve=True)
+
+        samplers: Dict[str, Sampler] = {
+            key: self._get_sampler_from_params(params) for key, params in samplers_params.items()
+        }
+        return samplers
+
     def get_loaders(self, stage: str) -> Dict[str, DataLoader]:
         """
         Returns loaders for a given stage.
@@ -190,11 +256,10 @@ class HydraRunner(IRunner):
         """
         loaders_params = self._config.stages[stage].loaders
         loaders_params = OmegaConf.to_container(loaders_params, resolve=True)
+        loaders_params.pop("datasets", None)
+
         loaders = get_loaders_from_params(
-            datasets_fn=partial(self.get_datasets, stage=stage),
-            initial_seed=self.seed,
-            stage=stage,
-            **loaders_params,
+            datasets=self.get_datasets(stage=stage), initial_seed=self.seed, **loaders_params,
         )
         return loaders
 
