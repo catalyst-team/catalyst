@@ -1156,6 +1156,23 @@ Used for Catalyst Config API.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.runners.config.ConfigRunner.get_datasets">
+<code class="sig-name descname">get_datasets</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Dataset]<a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns datasets for a given stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – stage name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>datasets objects</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.runners.config.ConfigRunner.get_engine">
 <code class="sig-name descname">get_engine</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; catalyst.core.engine.IEngine<a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_engine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the engine for the run.</p>
@@ -1203,6 +1220,20 @@ Used for Catalyst Config API.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>optimizer for selected stage and epoch</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.config.ConfigRunner.get_samplers">
+<code class="sig-name descname">get_samplers</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Sampler]<a class="reference internal" href="../_modules/catalyst/runners/config.html#ConfigRunner.get_samplers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.config.ConfigRunner.get_samplers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns samplers for a given stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – stage name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dict of samplers</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1364,6 +1395,23 @@ Used for Catalyst Config API.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_datasets">
+<code class="sig-name descname">get_datasets</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Dataset]<a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_datasets"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_datasets" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns datasets for a given stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – stage name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>datasets objects</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.runners.hydra.HydraRunner.get_engine">
 <code class="sig-name descname">get_engine</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; catalyst.core.engine.IEngine<a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_engine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_engine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the engine for the run.</p>
@@ -1416,6 +1464,20 @@ Used for Catalyst Config API.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_samplers">
+<code class="sig-name descname">get_samplers</code><span class="sig-paren">(</span><em class="sig-param">stage: str</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, Sampler]<a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_samplers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_samplers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns samplers for a given stage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>stage</strong> – stage name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dict of samplers</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.runners.hydra.HydraRunner.get_scheduler">
 <code class="sig-name descname">get_scheduler</code><span class="sig-paren">(</span><em class="sig-param">optimizer: Union[torch.optim.optimizer.Optimizer, Dict[str, torch.optim.optimizer.Optimizer]], stage: str</em><span class="sig-paren">)</span> &#x2192; Union[torch.optim.lr_scheduler._LRScheduler, Dict[str, torch.optim.lr_scheduler._LRScheduler]]<a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_scheduler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_scheduler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the schedulers for a given stage.</p>
@@ -1438,6 +1500,20 @@ Used for Catalyst Config API.</p>
 <span class="go">3</span>
 </pre></div>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.runners.hydra.HydraRunner.get_transform">
+<code class="sig-name descname">get_transform</code><span class="sig-paren">(</span><em class="sig-param">params: omegaconf.dictconfig.DictConfig</em><span class="sig-paren">)</span> &#x2192; Callable<a class="reference internal" href="../_modules/catalyst/runners/hydra.html#HydraRunner.get_transform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.hydra.HydraRunner.get_transform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the data transforms for a dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> – parameters of the transformation</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Data transformations to use</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">

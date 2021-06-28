@@ -454,7 +454,7 @@ will be smaller. (default: <code class="docutils literal notranslate"><span clas
 
 <dl class="function">
 <dt id="catalyst.utils.data.get_loaders_from_params">
-<code class="sig-prename descclassname">catalyst.utils.data.</code><code class="sig-name descname">get_loaders_from_params</code><span class="sig-paren">(</span><em class="sig-param">batch_size: int = 1</em>, <em class="sig-param">num_workers: int = 0</em>, <em class="sig-param">drop_last: bool = False</em>, <em class="sig-param">per_gpu_scaling: bool = False</em>, <em class="sig-param">loaders_params: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">samplers_params: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">initial_seed: int = 42</em>, <em class="sig-param">datasets_fn: Callable = None</em>, <em class="sig-param">**data_params</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/utils/data.html#get_loaders_from_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.get_loaders_from_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">catalyst.utils.data.</code><code class="sig-name descname">get_loaders_from_params</code><span class="sig-paren">(</span><em class="sig-param">batch_size: int = 1</em>, <em class="sig-param">num_workers: int = 0</em>, <em class="sig-param">drop_last: bool = False</em>, <em class="sig-param">per_gpu_scaling: bool = False</em>, <em class="sig-param">loaders_params: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">samplers: OrderedDict[str</em>, <em class="sig-param">Sampler] = None</em>, <em class="sig-param">datasets: OrderedDict[str</em>, <em class="sig-param">Union[Dataset</em>, <em class="sig-param">dict]] = None</em>, <em class="sig-param">initial_seed: int = 42</em><span class="sig-paren">)</span> &#x2192; OrderedDict[str, DataLoader]<a class="reference internal" href="../_modules/catalyst/utils/data.html#get_loaders_from_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.data.get_loaders_from_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates pytorch dataloaders from datasets and additional parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -467,15 +467,11 @@ from <code class="docutils literal notranslate"><span class="pre">torch.utils.da
 from <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code></p></li>
 <li><p><strong>per_gpu_scaling</strong> – boolean flag,
 if <code class="docutils literal notranslate"><span class="pre">True</span></code>, scales batch_size in proportion to the number of GPUs</p></li>
-<li><p><strong>loaders_params</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – additional loaders parameters</p></li>
-<li><p><strong>samplers_params</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – additional sampler parameters</p></li>
+<li><p><strong>loaders_params</strong> – additional loaders parameters</p></li>
+<li><p><strong>samplers</strong> – additional sampler parameters</p></li>
 <li><p><strong>initial_seed</strong> – initial seed for <code class="docutils literal notranslate"><span class="pre">torch.utils.data.DataLoader</span></code>
 workers</p></li>
-<li><p><strong>datasets_fn</strong> (<em>Callable</em>) – callable function to get dictionary with
-<code class="docutils literal notranslate"><span class="pre">torch.utils.data.Datasets</span></code></p></li>
-<li><p><strong>**data_params</strong> – additional data parameters
-or dictionary with <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Datasets</span></code> to use for
-pytorch dataloaders creation</p></li>
+<li><p><strong>datasets</strong> – ordered dictionary with <code class="docutils literal notranslate"><span class="pre">torch.utils.data.Dataset</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -490,7 +486,7 @@ pytorch dataloaders creation</p></li>
 </dd>
 <dt class="field-even">Raises</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>NotImplementedError</strong> – if datasource is out of <cite>Dataset</cite> or dict</p></li>
+<li><p><strong>NotImplementedError</strong> – if datasource is out of <code class="docutils literal notranslate"><span class="pre">Dataset</span></code> or dict</p></li>
 <li><p><strong>ValueError</strong> – if batch_sampler option is mutually
     exclusive with distributed</p></li>
 </ul>

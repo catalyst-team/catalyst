@@ -311,8 +311,10 @@
   <h1>Source code for catalyst.tools.registry</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">import</span> <span class="nn">collections</span>
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">functools</span>
 <span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">pydoc</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="n">Factory</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">Type</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
@@ -320,10 +322,55 @@
 <span class="n">MetaFactory</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Factory</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">],</span> <span class="n">Any</span><span class="p">]</span>
 
 
-<span class="k">def</span> <span class="nf">_default_meta_factory</span><span class="p">(</span><span class="n">factory</span><span class="p">:</span> <span class="n">Factory</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">factory</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">call_meta_factory</span><span class="p">(</span><span class="n">factory</span><span class="p">:</span> <span class="n">Factory</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a new instance from ``factory``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        factory: factory to create instance from.</span>
+<span class="sd">        args: args to pass to the factory.</span>
+<span class="sd">        kwargs: kwargs to pass to the factory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Instance.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">factory</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">partial_meta_factory</span><span class="p">(</span><span class="n">factory</span><span class="p">:</span> <span class="n">Factory</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return a new partial object which when called will behave like func called</span>
+<span class="sd">    with the positional arguments ``args`` and keyword arguments ``kwargs``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        factory: factory to create instance from.</span>
+<span class="sd">        args: args to merge into the factory.</span>
+<span class="sd">        kwargs: kwargs to merge into the factory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Partial object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">default_meta_factory</span><span class="p">(</span><span class="n">factory</span><span class="p">:</span> <span class="n">Factory</span><span class="p">,</span> <span class="n">args</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a new instance from ``factory``.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        factory: factory to create instance from.</span>
+<span class="sd">        args: args to pass to the factory.</span>
+<span class="sd">        kwargs: kwargs to pass to the factory.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Instance.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">factory</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">partial_meta_factory</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">call_meta_factory</span><span class="p">(</span><span class="n">factory</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
 
 
 <span class="k">class</span> <span class="nc">RegistryException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
@@ -344,15 +391,16 @@
 <span class="sd">    Universal class allowing to add and access various factories by name.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        default_meta_factory: default object</span>
-<span class="sd">            that calls factory. Optional. Default just calls factory.</span>
+<span class="sd">        meta_factory: default object that calls factory.</span>
+<span class="sd">            Optional. Default just calls factory.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">default_meta_factory</span><span class="p">:</span> <span class="n">MetaFactory</span> <span class="o">=</span> <span class="n">_default_meta_factory</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta_factory</span><span class="p">:</span> <span class="n">MetaFactory</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">name_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;_target_&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">meta_factory</span> <span class="o">=</span> <span class="n">default_meta_factory</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">meta_factory</span> <span class="o">=</span> <span class="n">meta_factory</span> <span class="k">if</span> <span class="n">meta_factory</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">default_meta_factory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_factories</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Factory</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_late_add_callbacks</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">LateAddCallbak</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name_key</span> <span class="o">=</span> <span class="n">name_key</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_factory_name</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">provided_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
@@ -487,7 +535,7 @@
         <span class="k">if</span> <span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_factories</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pydoc</span><span class="o">.</span><span class="n">locate</span><span class="p">(</span><span class="n">name</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">res</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">RegistryException</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No factory with name &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; was registered&quot;</span><span class="p">)</span>
@@ -502,7 +550,7 @@
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">obj</span></div>
 
-<div class="viewcode-block" id="Registry.get_instance"><a class="viewcode-back" href="../../../api/tools.html#catalyst.tools.registry.Registry.get_instance">[docs]</a>    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">meta_factory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Registry.get_instance"><a class="viewcode-back" href="../../../api/tools.html#catalyst.tools.registry.Registry.get_instance">[docs]</a>    <span class="k">def</span> <span class="nf">get_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">meta_factory</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">MetaFactory</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates instance by calling specified factory</span>
 <span class="sd">        with ``instantiate_fn``.</span>
@@ -532,24 +580,57 @@
                 <span class="sa">f</span><span class="s2">&quot;Factory &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; call failed: args=</span><span class="si">{</span><span class="n">args</span><span class="si">}</span><span class="s2"> kwargs=</span><span class="si">{</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span> <span class="kn">from</span> <span class="nn">e</span></div>
 
+    <span class="k">def</span> <span class="nf">_recursive_get_from_params</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span> <span class="n">shared_params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+        <span class="n">mapping_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,)</span>
+        <span class="c1"># check for `list` but not all iterables to skip processing of generators</span>
+        <span class="n">iterable_types</span> <span class="o">=</span> <span class="p">(</span><span class="nb">list</span><span class="p">,)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="p">(</span><span class="o">*</span><span class="n">mapping_types</span><span class="p">,</span> <span class="o">*</span><span class="n">iterable_types</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">params</span>
+
+        <span class="c1"># make a copy of params since we don&#39;t want to modify them directly</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="n">params_iter</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">mapping_types</span><span class="p">)</span> <span class="k">else</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">params_iter</span><span class="p">:</span>
+            <span class="c1"># note: it is assumed that `params` is mutable</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">mapping_types</span><span class="p">):</span>
+                <span class="n">params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recursive_get_from_params</span><span class="p">(</span>
+                    <span class="n">params</span><span class="o">=</span><span class="n">param</span><span class="p">,</span> <span class="n">shared_params</span><span class="o">=</span><span class="n">shared_params</span>
+                <span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="n">iterable_types</span><span class="p">):</span>
+                <span class="n">params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_recursive_get_from_params</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">value</span><span class="p">,</span> <span class="n">shared_params</span><span class="o">=</span><span class="n">shared_params</span><span class="p">)</span>
+                    <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">param</span>
+                <span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">mapping_types</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_key</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name_key</span><span class="p">)</span>
+            <span class="n">shared_params</span> <span class="o">=</span> <span class="n">shared_params</span> <span class="ow">or</span> <span class="p">{}</span>
+
+            <span class="c1"># use additional dict to handle &#39;multiple values for keyword argument&#39;</span>
+            <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="o">**</span><span class="n">shared_params</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">})</span>
+            <span class="k">return</span> <span class="n">instance</span>
+        <span class="k">return</span> <span class="n">params</span>
+
 <div class="viewcode-block" id="Registry.get_from_params"><a class="viewcode-back" href="../../../api/tools.html#catalyst.tools.registry.Registry.get_from_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_from_params</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">meta_factory</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">shared_params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates instance based in configuration dict with ``instantiation_fn``.</span>
 <span class="sd">        If ``config[name_key]`` is None, None is returned.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            meta_factory: Function that calls factory the right way.</span>
-<span class="sd">                If not provided, default is used.</span>
+<span class="sd">            shared_params: params to pass on all levels in case of recursive creation</span>
 <span class="sd">            **kwargs: additional kwargs for factory</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            result of calling ``instantiate_fn(factory, **config)``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">name</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_target_&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">name</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_instance</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">meta_factory</span><span class="o">=</span><span class="n">meta_factory</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="n">instance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_recursive_get_from_params</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">shared_params</span><span class="o">=</span><span class="n">shared_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">instance</span></div>
 
 <div class="viewcode-block" id="Registry.all"><a class="viewcode-back" href="../../../api/tools.html#catalyst.tools.registry.Registry.all">[docs]</a>    <span class="k">def</span> <span class="nf">all</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>

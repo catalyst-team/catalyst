@@ -309,16 +309,15 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.runners.hydra</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">hydra</span>
 <span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">OmegaConf</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.callbacks</span> <span class="kn">import</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">ICheckpointCallback</span>
 <span class="kn">from</span> <span class="nn">catalyst.callbacks.batch_overfit</span> <span class="kn">import</span> <span class="n">BatchOverfitCallback</span>
@@ -342,6 +341,7 @@
     <span class="n">RunnerModel</span><span class="p">,</span>
     <span class="n">RunnerOptimizer</span><span class="p">,</span>
     <span class="n">RunnerScheduler</span><span class="p">,</span>
+    <span class="n">Sampler</span><span class="p">,</span>
     <span class="n">Scheduler</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.data</span> <span class="kn">import</span> <span class="n">get_loaders_from_params</span>
@@ -488,6 +488,72 @@
 
         <span class="k">return</span> <span class="n">loggers</span></div>
 
+    <span class="k">def</span> <span class="nf">_get_transform_from_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+        <span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">transform</span>
+
+<div class="viewcode-block" id="HydraRunner.get_transform"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_transform">[docs]</a>    <span class="k">def</span> <span class="nf">get_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the data transforms for a dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            params: parameters of the transformation</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Data transformations to use</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_transform_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">transform</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_dataset_from_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span>
+        <span class="n">transform_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">transform_params</span><span class="p">:</span>
+            <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transform</span><span class="p">(</span><span class="n">transform_params</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dataset</span>
+
+<div class="viewcode-block" id="HydraRunner.get_datasets"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">get_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Dataset]&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns datasets for a given stage.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stage: stage name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict: datasets objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">datasets_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">datasets</span>
+        <span class="n">datasets_params</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_container</span><span class="p">(</span><span class="n">datasets_params</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">datasets</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dataset_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">datasets_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_sampler_from_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sampler</span><span class="p">:</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">Sampler</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sampler</span>
+
+<div class="viewcode-block" id="HydraRunner.get_samplers"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_samplers">[docs]</a>    <span class="k">def</span> <span class="nf">get_samplers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Sampler]&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns samplers for a given stage.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stage: stage name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict of samplers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">samplers_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;samplers&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">samplers_params</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_container</span><span class="p">(</span><span class="n">samplers_params</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">samplers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sampler</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sampler_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">samplers_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">samplers</span></div>
+
 <div class="viewcode-block" id="HydraRunner.get_loaders"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_loaders">[docs]</a>    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns loaders for a given stage.</span>
@@ -501,11 +567,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">loaders_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">loaders</span>
         <span class="n">loaders_params</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_container</span><span class="p">(</span><span class="n">loaders_params</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">loaders_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;datasets&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
         <span class="n">loaders</span> <span class="o">=</span> <span class="n">get_loaders_from_params</span><span class="p">(</span>
-            <span class="n">datasets_fn</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_datasets</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">),</span>
-            <span class="n">initial_seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span>
-            <span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">,</span>
-            <span class="o">**</span><span class="n">loaders_params</span><span class="p">,</span>
+            <span class="n">datasets</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_datasets</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">),</span> <span class="n">initial_seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">loaders_params</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">loaders</span></div>
 

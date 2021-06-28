@@ -309,7 +309,7 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.utils.data</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Union</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
@@ -318,7 +318,7 @@
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span><span class="p">,</span> <span class="n">DistributedSampler</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data.dataloader</span> <span class="kn">import</span> <span class="n">default_collate</span> <span class="k">as</span> <span class="n">default_collate_fn</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.registry</span> <span class="kn">import</span> <span class="n">REGISTRY</span>
+<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Sampler</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">get_distributed_params</span><span class="p">,</span> <span class="n">get_rank</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">merge_dicts</span><span class="p">,</span> <span class="n">set_global_seed</span>
 
@@ -392,10 +392,9 @@
     <span class="n">drop_last</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">per_gpu_scaling</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">loaders_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">samplers_params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">samplers</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, Sampler]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">datasets</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, Union[Dataset, dict]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">initial_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
-    <span class="n">datasets_fn</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="o">**</span><span class="n">data_params</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates pytorch dataloaders from datasets and additional parameters.</span>
@@ -409,22 +408,18 @@
 <span class="sd">            from ``torch.utils.data.DataLoader``</span>
 <span class="sd">        per_gpu_scaling: boolean flag,</span>
 <span class="sd">            if ``True``, scales batch_size in proportion to the number of GPUs</span>
-<span class="sd">        loaders_params (Dict[str, Any]): additional loaders parameters</span>
-<span class="sd">        samplers_params (Dict[str, Any]): additional sampler parameters</span>
+<span class="sd">        loaders_params: additional loaders parameters</span>
+<span class="sd">        samplers: additional sampler parameters</span>
 <span class="sd">        initial_seed: initial seed for ``torch.utils.data.DataLoader``</span>
 <span class="sd">            workers</span>
-<span class="sd">        datasets_fn(Callable): callable function to get dictionary with</span>
-<span class="sd">            ``torch.utils.data.Datasets``</span>
-<span class="sd">        **data_params: additional data parameters</span>
-<span class="sd">            or dictionary with ``torch.utils.data.Datasets`` to use for</span>
-<span class="sd">            pytorch dataloaders creation</span>
+<span class="sd">        datasets: ordered dictionary with ``torch.utils.data.Dataset``</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        OrderedDict[str, DataLoader]: dictionary with</span>
 <span class="sd">            ``torch.utils.data.DataLoader``</span>
 
 <span class="sd">    Raises:</span>
-<span class="sd">        NotImplementedError: if datasource is out of `Dataset` or dict</span>
+<span class="sd">        NotImplementedError: if datasource is out of ``Dataset`` or dict</span>
 <span class="sd">        ValueError: if batch_sampler option is mutually</span>
 <span class="sd">            exclusive with distributed</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -436,18 +431,12 @@
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loaders_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;`loaders_params` should be a Dict. &quot;</span> <span class="sa">f</span><span class="s2">&quot;Got: </span><span class="si">{</span><span class="n">loaders_params</span><span class="si">}</span><span class="s2">&quot;</span>
     <span class="p">)</span>
-    <span class="n">samplers_params</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">samplers_params</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
-        <span class="n">samplers_params</span><span class="p">,</span> <span class="nb">dict</span>
-    <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`samplers_params` should be a Dict. Got: </span><span class="si">{</span><span class="n">samplers_params</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">samplers</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">samplers</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">samplers</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;`samplers` should be a Dict. Got: </span><span class="si">{</span><span class="n">samplers</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="n">datasets</span> <span class="o">=</span> <span class="n">datasets</span> <span class="k">if</span> <span class="n">datasets</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
 
     <span class="n">distributed_rank</span> <span class="o">=</span> <span class="n">get_rank</span><span class="p">()</span>
     <span class="n">distributed</span> <span class="o">=</span> <span class="n">distributed_rank</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
-
-    <span class="k">if</span> <span class="n">datasets_fn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">datasets</span> <span class="o">=</span> <span class="n">datasets_fn</span><span class="p">(</span><span class="o">**</span><span class="n">data_params</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">datasets</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">**</span><span class="n">data_params</span><span class="p">)</span>
 
     <span class="n">loaders</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">datasource</span> <span class="ow">in</span> <span class="n">datasets</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>  <span class="c1"># noqa: WPS426</span>
@@ -458,16 +447,10 @@
         <span class="n">loader_params</span> <span class="o">=</span> <span class="n">loaders_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="p">{})</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loader_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">loader_params</span><span class="si">}</span><span class="s2"> should be Dict&quot;</span>
 
-        <span class="n">sampler_params</span> <span class="o">=</span> <span class="n">samplers_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">sampler_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasource</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;sampler&quot;</span> <span class="ow">in</span> <span class="n">datasource</span><span class="p">:</span>
-                <span class="n">sampler</span> <span class="o">=</span> <span class="n">datasource</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">sampler</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">sampler</span> <span class="o">=</span> <span class="n">REGISTRY</span><span class="o">.</span><span class="n">get_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">sampler_params</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasource</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;sampler&quot;</span> <span class="ow">in</span> <span class="n">datasource</span><span class="p">:</span>
-                <span class="n">datasource</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">Sampler</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">datasource</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;sampler&quot;</span> <span class="ow">in</span> <span class="n">datasource</span><span class="p">:</span>
+            <span class="n">sampler</span> <span class="o">=</span> <span class="n">datasource</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;sampler&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">sampler</span> <span class="o">=</span> <span class="n">samplers</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">sampler</span><span class="p">)</span>
 
         <span class="n">batch_size</span> <span class="o">=</span> <span class="n">loader_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="n">default_batch_size</span><span class="p">)</span>
         <span class="n">num_workers</span> <span class="o">=</span> <span class="n">loader_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;num_workers&quot;</span><span class="p">,</span> <span class="n">default_num_workers</span><span class="p">)</span>
