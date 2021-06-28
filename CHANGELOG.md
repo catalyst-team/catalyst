@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+-
+
+### Changed
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+
+## [21.06] - 2021-06-29
+
+### Added
+
 - ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
   - FairScale support
   - DeepSpeed support

@@ -39,6 +39,8 @@ CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=fs-fddp
 ## DeepSpeed
 > *Tested under `docker pull deepspeed/deepspeed:v031_torch17_cuda11`.*
 ```bash
+# docker pull deepspeed/deepspeed:v031_torch17_cuda11
+# docker run --rm -it -v $(pwd):/workspace deepspeed/deepspeed:v031_torch17_cuda11 /bin/bash
 pip install catalyst[deepspeed]
 CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=ds-ddp
 ```
