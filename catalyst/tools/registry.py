@@ -11,10 +11,55 @@ LateAddCallbak = Callable[["Registry"], None]
 MetaFactory = Callable[[Factory, Tuple, Mapping], Any]
 
 
-def _default_meta_factory(factory: Factory, args: Tuple, kwargs: Mapping):
-    if inspect.isfunction(factory):
-        return functools.partial(factory, *args, **kwargs)
+def call_meta_factory(factory: Factory, args: Tuple, kwargs: Mapping):
+    """
+    Create a new instance from ``factory``.
+
+    Args:
+        factory: factory to create instance from.
+        args: args to pass to the factory.
+        kwargs: kwargs to pass to the factory.
+
+    Returns:
+        Instance.
+
+    """
     return factory(*args, **kwargs)
+
+
+def partial_meta_factory(factory: Factory, args: Tuple, kwargs: Mapping):
+    """
+    Return a new partial object which when called will behave like func called
+    with the positional arguments ``args`` and keyword arguments ``kwargs``.
+
+    Args:
+        factory: factory to create instance from.
+        args: args to merge into the factory.
+        kwargs: kwargs to merge into the factory.
+
+    Returns:
+        Partial object.
+
+    """
+    return functools.partial(factory, *args, **kwargs)
+
+
+def default_meta_factory(factory: Factory, args: Tuple, kwargs: Mapping):
+    """
+    Create a new instance from ``factory``.
+
+    Args:
+        factory: factory to create instance from.
+        args: args to pass to the factory.
+        kwargs: kwargs to pass to the factory.
+
+    Returns:
+        Instance.
+
+    """
+    if inspect.isfunction(factory):
+        return partial_meta_factory(factory, args, kwargs)
+    return call_meta_factory(factory, args, kwargs)
 
 
 class RegistryException(Exception):
@@ -35,15 +80,13 @@ class Registry(collections.MutableMapping):
     Universal class allowing to add and access various factories by name.
 
     Args:
-        default_meta_factory: default object
-            that calls factory. Optional. Default just calls factory.
+        meta_factory: default object that calls factory.
+            Optional. Default just calls factory.
     """
 
-    def __init__(self, default_meta_factory: MetaFactory = None, name_key: str = "_target_"):
+    def __init__(self, meta_factory: MetaFactory = None, name_key: str = "_target_"):
         """Init."""
-        self.meta_factory = (
-            default_meta_factory if default_meta_factory is not None else _default_meta_factory
-        )
+        self.meta_factory = meta_factory if meta_factory is not None else default_meta_factory
         self._factories: Dict[str, Factory] = {}
         self._late_add_callbacks: List[LateAddCallbak] = []
         self.name_key = name_key
@@ -227,10 +270,7 @@ class Registry(collections.MutableMapping):
             ) from e
 
     def _recursive_get_from_params(
-        self,
-        params: Union[Dict[str, Any], Any],
-        shared_params: Optional[Dict[str, Any]] = None,
-        meta_factory: Optional[MetaFactory] = None,
+        self, params: Union[Dict[str, Any], Any], shared_params: Optional[Dict[str, Any]] = None
     ) -> Any:
         mapping_types = (dict,)
         # check for `list` but not all iterables to skip processing of generators
@@ -247,13 +287,11 @@ class Registry(collections.MutableMapping):
             # note: it is assumed that `params` is mutable
             if isinstance(param, mapping_types):
                 params[key] = self._recursive_get_from_params(
-                    params=param, meta_factory=meta_factory, shared_params=shared_params
+                    params=param, shared_params=shared_params
                 )
             elif isinstance(param, iterable_types):
                 params[key] = [
-                    self._recursive_get_from_params(
-                        params=value, meta_factory=meta_factory, shared_params=shared_params
-                    )
+                    self._recursive_get_from_params(params=value, shared_params=shared_params)
                     for value in param
                 ]
 
@@ -262,34 +300,25 @@ class Registry(collections.MutableMapping):
             shared_params = shared_params or {}
 
             # use additional dict to handle 'multiple values for keyword argument'
-            kwargs = {**shared_params, **params}
-            instance = self.get_instance(name=name, meta_factory=meta_factory, **kwargs)
+            instance = self.get_instance(name=name, **{**shared_params, **params})
             return instance
         return params
 
     def get_from_params(
-        self,
-        *,
-        meta_factory: Optional[MetaFactory] = None,
-        shared_params: Optional[Dict[str, Any]] = None,
-        **kwargs,
+        self, *, shared_params: Optional[Dict[str, Any]] = None, **kwargs,
     ) -> Union[Any, Tuple[Any, Mapping[str, Any]]]:
         """
         Creates instance based in configuration dict with ``instantiation_fn``.
         If ``config[name_key]`` is None, None is returned.
 
         Args:
-            meta_factory: Function that calls factory the right way.
-                If not provided, default is used.
             shared_params: params to pass on all levels in case of recursive creation
             **kwargs: additional kwargs for factory
 
         Returns:
             result of calling ``instantiate_fn(factory, **config)``
         """
-        instance = self._recursive_get_from_params(
-            params=kwargs, shared_params=shared_params, meta_factory=meta_factory
-        )
+        instance = self._recursive_get_from_params(params=kwargs, shared_params=shared_params)
         return instance
 
     def all(self) -> List[str]:

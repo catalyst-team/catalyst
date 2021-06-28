@@ -122,7 +122,7 @@ def test_recursive_get_from_config():
     def meta_factory(factory, args, kwargs):
         return factory(*args, **kwargs)
 
-    r = Registry(default_meta_factory=meta_factory)
+    r = Registry(meta_factory=meta_factory)
 
     r.add(foo)
 
@@ -144,6 +144,11 @@ def test_recursive_get_from_config():
     assert res == {"a": {"a": 1, "b": 2}, "b": {"a": 1, "b": 2}}
 
     # check nested dicts support
+    res = r.get_from_params(
+        **{"a": {"_target_": "foo", "a": 1, "b": 2}, "b": {"_target_": "foo", "a": 1, "b": 2}}
+    )
+    assert res == {"a": {"a": 1, "b": 2}, "b": {"a": 1, "b": 2}}
+
     res = r.get_from_params(
         **{"_target_": "foo", "a": {"c": {"_target_": "foo", "a": 1, "b": 2}}, "b": 2}
     )
