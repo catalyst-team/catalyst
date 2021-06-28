@@ -15,6 +15,15 @@ def _transforms_loader(r: registry.Registry):
     # add `'transform.'` prefix to avoid nameing conflicts with other catalyst modules
     r.add_from_module(t, prefix=["transform."])
 
+    if SETTINGS.albu_required:
+        import albumentations as m
+
+        r.add_from_module(m, prefix=["A.", "albu.", "albumentations."])
+
+        from albumentations import pytorch as p
+
+        r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
+
 
 REGISTRY.late_add(_transforms_loader)
 
