@@ -1,0 +1,1338 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>catalyst.runners.runner &mdash; Catalyst 21.06 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Alchemy</span>
+                  <p>Experiments logging & visualization</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
+                  <span class=dropdown-title>Catalyst</span>
+                  <p>Accelerated deep learning R&D</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Reaction</span>
+                  <p>Convenient deep learning models serving</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
+                  <span class=dropdown-title>Codestyle</span>
+                  <p>Joint R&D codestyle</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Classification</span>
+                  <p>Image classification pipeline with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
+                  <span class=dropdown-title>Detection</span>
+                  <p>Object detection pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Segmentation</span>
+                  <p>Image semantic segmentation pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.06</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/engine.html">Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/logger.html">Logger</a></li>
+</ul>
+<p class="caption"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multiple_keys.html">Multiple input and output keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/finetuning.html">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../../../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../index.html">Module code</a> &gt;</li>
+        
+      <li>catalyst.runners.runner</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <h1>Source code for catalyst.runners.runner</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Mapping</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
+<span class="kn">from</span> <span class="nn">torch.optim.lr_scheduler</span> <span class="kn">import</span> <span class="n">ReduceLROnPlateau</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.batch_overfit</span> <span class="kn">import</span> <span class="n">BatchOverfitCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.checkpoint</span> <span class="kn">import</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">ICheckpointCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.criterion</span> <span class="kn">import</span> <span class="n">CriterionCallback</span><span class="p">,</span> <span class="n">ICriterionCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.misc</span> <span class="kn">import</span> <span class="n">CheckRunCallback</span><span class="p">,</span> <span class="n">TimerCallback</span><span class="p">,</span> <span class="n">TqdmCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.optimizer</span> <span class="kn">import</span> <span class="n">IOptimizerCallback</span><span class="p">,</span> <span class="n">OptimizerCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.scheduler</span> <span class="kn">import</span> <span class="n">ISchedulerCallback</span><span class="p">,</span> <span class="n">SchedulerCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.logger</span> <span class="kn">import</span> <span class="n">ILogger</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.misc</span> <span class="kn">import</span> <span class="n">callback_isinstance</span><span class="p">,</span> <span class="n">sort_callbacks_by_order</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span><span class="p">,</span> <span class="n">RunnerException</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.trial</span> <span class="kn">import</span> <span class="n">ITrial</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.loader</span> <span class="kn">import</span> <span class="n">ILoaderWrapper</span>
+<span class="kn">from</span> <span class="nn">catalyst.engines</span> <span class="kn">import</span> <span class="n">IEngine</span>
+<span class="kn">from</span> <span class="nn">catalyst.loggers.console</span> <span class="kn">import</span> <span class="n">ConsoleLogger</span>
+<span class="kn">from</span> <span class="nn">catalyst.loggers.csv</span> <span class="kn">import</span> <span class="n">CSVLogger</span>
+<span class="kn">from</span> <span class="nn">catalyst.loggers.tensorboard</span> <span class="kn">import</span> <span class="n">TensorboardLogger</span>
+<span class="kn">from</span> <span class="nn">catalyst.runners.supervised</span> <span class="kn">import</span> <span class="n">ISupervisedRunner</span>
+<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Criterion</span><span class="p">,</span>
+    <span class="n">Model</span><span class="p">,</span>
+    <span class="n">Optimizer</span><span class="p">,</span>
+    <span class="n">RunnerCriterion</span><span class="p">,</span>
+    <span class="n">RunnerModel</span><span class="p">,</span>
+    <span class="n">RunnerOptimizer</span><span class="p">,</span>
+    <span class="n">RunnerScheduler</span><span class="p">,</span>
+    <span class="n">Scheduler</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.data</span> <span class="kn">import</span> <span class="n">get_loaders_from_params</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">maybe_recursive_call</span><span class="p">,</span> <span class="n">set_global_seed</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_available_engine</span>
+
+
+<span class="k">def</span> <span class="nf">_process_loaders</span><span class="p">(</span>
+    <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">,</span> <span class="n">initial_seed</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">loaders</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]],</span> <span class="p">(</span><span class="n">DataLoader</span><span class="p">,</span> <span class="n">ILoaderWrapper</span><span class="p">)):</span>
+        <span class="n">loaders</span> <span class="o">=</span> <span class="n">get_loaders_from_params</span><span class="p">(</span><span class="n">initial_seed</span><span class="o">=</span><span class="n">initial_seed</span><span class="p">,</span> <span class="o">**</span><span class="n">loaders</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">loaders</span>
+
+
+<div class="viewcode-block" id="Runner"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner">[docs]</a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Single-stage deep learning Runner with user-friendly API.</span>
+
+<span class="sd">    Runner supports the logic for deep learning pipeline configuration with pure python code.</span>
+<span class="sd">    Please check the examples for intuition.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *args: `IRunner` args (model, engine)</span>
+<span class="sd">        **kwargs: `IRunner` kwargs (model, engine)</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        IRunner supports only base user-friendly callbacks, like</span>
+<span class="sd">        TqdmCallback, TimerCallback, CheckRunCallback, BatchOverfitCallback,</span>
+<span class="sd">        and CheckpointCallback.</span>
+
+<span class="sd">        It does not automatically add Criterion, Optimizer or Scheduler callbacks.</span>
+
+<span class="sd">        That means, that you have do optimization step by yourself during ``handle_batch`` method</span>
+<span class="sd">        or specify the required callbacks in ``.train`` or ``get_callbacks`` methods.</span>
+
+<span class="sd">        For more easy-to-go supervised use case please follow</span>
+<span class="sd">        :py:mod:`catalyst.runners.runner.SupervisedRunner`.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        from torch import nn, optim</span>
+<span class="sd">        from torch.nn import functional as F</span>
+<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">        from catalyst import dl, metrics</span>
+<span class="sd">        from catalyst.data import ToTensor</span>
+<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
+
+<span class="sd">        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
+<span class="sd">        optimizer = optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">        loaders = {</span>
+<span class="sd">            &quot;train&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">            &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">        }</span>
+
+<span class="sd">        class CustomRunner(dl.Runner):</span>
+<span class="sd">            def predict_batch(self, batch):</span>
+<span class="sd">                # model inference step</span>
+<span class="sd">                return self.model(batch[0].to(self.device))</span>
+
+<span class="sd">            def on_loader_start(self, runner):</span>
+<span class="sd">                super().on_loader_start(runner)</span>
+<span class="sd">                self.meters = {</span>
+<span class="sd">                    key: metrics.AdditiveValueMetric(compute_on_call=False)</span>
+<span class="sd">                    for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]</span>
+<span class="sd">                }</span>
+
+<span class="sd">            def handle_batch(self, batch):</span>
+<span class="sd">                # model train/valid step</span>
+<span class="sd">                # unpack the batch</span>
+<span class="sd">                x, y = batch</span>
+<span class="sd">                # run model forward pass</span>
+<span class="sd">                logits = self.model(x)</span>
+<span class="sd">                # compute the loss</span>
+<span class="sd">                loss = F.cross_entropy(logits, y)</span>
+<span class="sd">                # compute other metrics of interest</span>
+<span class="sd">                accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))</span>
+<span class="sd">                # log metrics</span>
+<span class="sd">                self.batch_metrics.update(</span>
+<span class="sd">                    {&quot;loss&quot;: loss, &quot;accuracy01&quot;: accuracy01, &quot;accuracy03&quot;: accuracy03}</span>
+<span class="sd">                )</span>
+<span class="sd">                for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                    self.meters[key].update(self.batch_metrics[key].item(), self.batch_size)</span>
+<span class="sd">                # run model backward pass</span>
+<span class="sd">                if self.is_train_loader:</span>
+<span class="sd">                    loss.backward()</span>
+<span class="sd">                    self.optimizer.step()</span>
+<span class="sd">                    self.optimizer.zero_grad()</span>
+
+<span class="sd">            def on_loader_end(self, runner):</span>
+<span class="sd">                for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                    self.loader_metrics[key] = self.meters[key].compute()[0]</span>
+<span class="sd">                super().on_loader_end(runner)</span>
+
+<span class="sd">        runner = CustomRunner()</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            logdir=&quot;./logs&quot;,</span>
+<span class="sd">            num_epochs=5,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            valid_loader=&quot;valid&quot;,</span>
+<span class="sd">            valid_metric=&quot;loss&quot;,</span>
+<span class="sd">            minimize_valid_metric=True,</span>
+<span class="sd">        )</span>
+<span class="sd">        # model inference</span>
+<span class="sd">        for logits in runner.predict_loader(loader=loaders[&quot;valid&quot;]):</span>
+<span class="sd">            assert logits.detach().cpu().numpy().shape[-1] == 10</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Runner.__init__"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># the core</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span><span class="p">:</span> <span class="n">ITrial</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span><span class="p">:</span> <span class="n">IEngine</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="c1"># the data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># the components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span><span class="p">:</span> <span class="n">RunnerCriterion</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">:</span> <span class="n">RunnerOptimizer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">:</span> <span class="n">RunnerScheduler</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># the callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callback</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># the loggers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loggers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ILogger</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c1"># extra</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="mi">42</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hparams</span><span class="p">:</span> <span class="n">Dict</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stage</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;stage&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="c1"># model selection</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_loader</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_metric</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimize_valid_metric</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># extras</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timeit</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_overfit</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_best_on_end</span> <span class="o">=</span> <span class="kc">False</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Experiment&#39;s initial seed value.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns run name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;experiment&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">&quot;experiment_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_trial</span><span class="o">.</span><span class="n">number</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns hyperparameters.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hparams</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hparams</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span><span class="o">.</span><span class="n">params</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Experiment&#39;s stage names (array with one value).&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_stage</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Runner.get_stage_len"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.get_stage_len">[docs]</a>    <span class="k">def</span> <span class="nf">get_stage_len</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the stage length in epochs for a given stage.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_epochs</span></div>
+
+<div class="viewcode-block" id="Runner.get_trial"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.get_trial">[docs]</a>    <span class="k">def</span> <span class="nf">get_trial</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ITrial</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the trial for a run.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span></div>
+
+<div class="viewcode-block" id="Runner.get_engine"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.get_engine">[docs]</a>    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IEngine</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the engine for a run.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="ow">or</span> <span class="n">get_available_engine</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Runner.get_loggers"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.get_loggers">[docs]</a>    <span class="k">def</span> <span class="nf">get_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ILogger</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the logger for a run.&quot;&quot;&quot;</span>
+        <span class="n">loggers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loggers</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">is_logger_exists</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">logger_fn</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">logger_fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">ConsoleLogger</span><span class="p">):</span>
+            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_console&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConsoleLogger</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">CSVLogger</span><span class="p">):</span>
+            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_csv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CSVLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="n">use_logdir_postfix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">TensorboardLogger</span><span class="p">):</span>
+            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_tensorboard&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TensorboardLogger</span><span class="p">(</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="n">use_logdir_postfix</span><span class="o">=</span><span class="kc">True</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">loggers</span></div>
+
+<div class="viewcode-block" id="Runner.get_loaders"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.get_loaders">[docs]</a>    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the loaders for a given stage.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span> <span class="o">=</span> <span class="n">_process_loaders</span><span class="p">(</span><span class="n">loaders</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span><span class="p">,</span> <span class="n">initial_seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span></div>
+
+<div class="viewcode-block" id="Runner.get_model"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Model</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the model for a given stage.&quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span></div>
+
+<div class="viewcode-block" id="Runner.get_criterion"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.get_criterion">[docs]</a>    <span class="k">def</span> <span class="nf">get_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Criterion</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the criterion for a given stage.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">)</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Runner.get_optimizer"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.get_optimizer">[docs]</a>    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optimizer</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the optimizer for a given stage.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="n">optim</span><span class="o">.</span><span class="n">Optimizer</span><span class="p">)</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Runner.get_scheduler"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.get_scheduler">[docs]</a>    <span class="k">def</span> <span class="nf">get_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Scheduler</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the scheduler for a given stage.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">ReduceLROnPlateau</span><span class="p">,</span> <span class="n">optim</span><span class="o">.</span><span class="n">lr_scheduler</span><span class="o">.</span><span class="n">_LRScheduler</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Runner.get_callbacks"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the callbacks for a given stage.&quot;&quot;&quot;</span>
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="n">sort_callbacks_by_order</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">)</span>
+        <span class="n">is_callback_exists</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">callback_fn</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">callback_isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">TqdmCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_verbose&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TqdmCallback</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeit</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">TimerCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_timer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TimerCallback</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">CheckRunCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_check&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CheckRunCallback</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overfit</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">BatchOverfitCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_overfit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">BatchOverfitCallback</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">ICheckpointCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_checkpoint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CheckpointCallback</span><span class="p">(</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="s2">&quot;checkpoints&quot;</span><span class="p">),</span>
+                <span class="n">loader_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_loader</span><span class="p">,</span>
+                <span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_metric</span><span class="p">,</span>
+                <span class="n">minimize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_minimize_valid_metric</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">callbacks</span></div>
+
+<div class="viewcode-block" id="Runner.train"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="c1"># the data</span>
+        <span class="n">loaders</span><span class="p">:</span> <span class="s2">&quot;OrderedDict[str, DataLoader]&quot;</span><span class="p">,</span>
+        <span class="c1"># the core</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span>
+        <span class="n">engine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;IEngine&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">trial</span><span class="p">:</span> <span class="n">ITrial</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># the components</span>
+        <span class="n">criterion</span><span class="p">:</span> <span class="n">Criterion</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scheduler</span><span class="p">:</span> <span class="n">Scheduler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># the callbacks</span>
+        <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;Union[List[Callback], OrderedDict[str, Callback]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># the loggers</span>
+        <span class="n">loggers</span><span class="p">:</span> <span class="s2">&quot;Dict[str, ILogger]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># experiment info</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="n">hparams</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># stage info</span>
+        <span class="n">num_epochs</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="c1"># extra info (callbacks info)</span>
+        <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">valid_loader</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">valid_metric</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">minimize_valid_metric</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">timeit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">overfit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">load_best_on_end</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="c1"># engine extra params,</span>
+        <span class="n">fp16</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">amp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">apex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ddp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts the train stage of the model.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loaders: dictionary with one or several ``torch.utils.data.DataLoader``</span>
+<span class="sd">                for training, validation or inference</span>
+<span class="sd">            model: model to train</span>
+<span class="sd">            engine: engine to use for model training</span>
+<span class="sd">            trial: trial to use during model training</span>
+<span class="sd">            criterion: criterion function for training</span>
+<span class="sd">            optimizer: optimizer for training</span>
+<span class="sd">            scheduler: scheduler for training</span>
+<span class="sd">            callbacks: list or dictionary with Catalyst callbacks</span>
+<span class="sd">            loggers: dictionary with Catalyst loggers</span>
+<span class="sd">            seed: experiment&#39;s initial seed value</span>
+<span class="sd">            hparams: hyperparameters for the run</span>
+<span class="sd">            num_epochs: number of training epochs</span>
+<span class="sd">            logdir: path to output directory</span>
+<span class="sd">            valid_loader: loader name used to calculate</span>
+<span class="sd">                the metrics and save the checkpoints. For example,</span>
+<span class="sd">                you can pass `train` and then</span>
+<span class="sd">                the metrics will be taken from `train` loader.</span>
+<span class="sd">            valid_metric: the key to the name of the metric</span>
+<span class="sd">                by which the checkpoints will be selected.</span>
+<span class="sd">            minimize_valid_metric: flag to indicate whether</span>
+<span class="sd">                the ``valid_metric`` should be minimized or not (default: True).</span>
+<span class="sd">            verbose: if `True`, it displays the status of the training to the console.</span>
+<span class="sd">            timeit: if True, computes the execution time</span>
+<span class="sd">                of training process and displays it to the console.</span>
+<span class="sd">            check: if True, then only checks that pipeline is working</span>
+<span class="sd">                (3 epochs only with 3 batches per loader)</span>
+<span class="sd">            overfit: if True, then takes only one batch per loader</span>
+<span class="sd">                for model overfitting, for advance usage please check</span>
+<span class="sd">                ``BatchOverfitCallback``</span>
+<span class="sd">            load_best_on_end: if True, Runner will load</span>
+<span class="sd">                best checkpoint state (model, optimizer, etc)</span>
+<span class="sd">                according to validation metrics. Requires specified ``logdir``.</span>
+<span class="sd">            fp16: boolean flag to use half-precision training (AMP &gt; APEX)</span>
+<span class="sd">            amp: boolean flag to use amp half-precision</span>
+<span class="sd">            apex: boolean flag to use apex half-precision</span>
+<span class="sd">            ddp: if `True` will start training in distributed mode.</span>
+<span class="sd">                Note: Works only with python scripts. No jupyter support.</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            import os</span>
+<span class="sd">            from torch import nn, optim</span>
+<span class="sd">            from torch.nn import functional as F</span>
+<span class="sd">            from torch.utils.data import DataLoader</span>
+<span class="sd">            from catalyst import dl, metrics</span>
+<span class="sd">            from catalyst.data import ToTensor</span>
+<span class="sd">            from catalyst.contrib.datasets import MNIST</span>
+
+<span class="sd">            model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
+<span class="sd">            optimizer = optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">            loaders = {</span>
+<span class="sd">                &quot;train&quot;: DataLoader(</span>
+<span class="sd">                    MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                    batch_size=32</span>
+<span class="sd">                ),</span>
+<span class="sd">                &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                    batch_size=32</span>
+<span class="sd">                ),</span>
+<span class="sd">            }</span>
+
+<span class="sd">            class CustomRunner(dl.Runner):</span>
+<span class="sd">                def predict_batch(self, batch):</span>
+<span class="sd">                    # model inference step</span>
+<span class="sd">                    return self.model(batch[0].to(self.device))</span>
+
+<span class="sd">                def on_loader_start(self, runner):</span>
+<span class="sd">                    super().on_loader_start(runner)</span>
+<span class="sd">                    self.meters = {</span>
+<span class="sd">                        key: metrics.AdditiveValueMetric(compute_on_call=False)</span>
+<span class="sd">                        for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]</span>
+<span class="sd">                    }</span>
+
+<span class="sd">                def handle_batch(self, batch):</span>
+<span class="sd">                    # model train/valid step</span>
+<span class="sd">                    # unpack the batch</span>
+<span class="sd">                    x, y = batch</span>
+<span class="sd">                    # run model forward pass</span>
+<span class="sd">                    logits = self.model(x)</span>
+<span class="sd">                    # compute the loss</span>
+<span class="sd">                    loss = F.cross_entropy(logits, y)</span>
+<span class="sd">                    # compute other metrics of interest</span>
+<span class="sd">                    accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))</span>
+<span class="sd">                    # log metrics</span>
+<span class="sd">                    self.batch_metrics.update(</span>
+<span class="sd">                        {&quot;loss&quot;: loss, &quot;accuracy01&quot;: accuracy01, &quot;accuracy03&quot;: accuracy03}</span>
+<span class="sd">                    )</span>
+<span class="sd">                    for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                        self.meters[key].update(</span>
+<span class="sd">                            self.batch_metrics[key].item(),</span>
+<span class="sd">                            self.batch_size</span>
+<span class="sd">                        )</span>
+<span class="sd">                    # run model backward pass</span>
+<span class="sd">                    if self.is_train_loader:</span>
+<span class="sd">                        loss.backward()</span>
+<span class="sd">                        self.optimizer.step()</span>
+<span class="sd">                        self.optimizer.zero_grad()</span>
+
+<span class="sd">                def on_loader_end(self, runner):</span>
+<span class="sd">                    for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                        self.loader_metrics[key] = self.meters[key].compute()[0]</span>
+<span class="sd">                    super().on_loader_end(runner)</span>
+
+<span class="sd">            runner = CustomRunner()</span>
+<span class="sd">            # model training</span>
+<span class="sd">            runner.train(</span>
+<span class="sd">                model=model,</span>
+<span class="sd">                optimizer=optimizer,</span>
+<span class="sd">                loaders=loaders,</span>
+<span class="sd">                logdir=&quot;./logs&quot;,</span>
+<span class="sd">                num_epochs=5,</span>
+<span class="sd">                verbose=True,</span>
+<span class="sd">                valid_loader=&quot;valid&quot;,</span>
+<span class="sd">                valid_metric=&quot;loss&quot;,</span>
+<span class="sd">                minimize_valid_metric=True,</span>
+<span class="sd">            )</span>
+<span class="sd">            # model inference</span>
+<span class="sd">            for logits in runner.predict_loader(loader=loaders[&quot;valid&quot;]):</span>
+<span class="sd">                assert logits.detach().cpu().numpy().shape[-1] == 10</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># experiment setup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_engine</span> <span class="o">=</span> <span class="n">engine</span> <span class="ow">or</span> <span class="n">get_available_engine</span><span class="p">(</span><span class="n">fp16</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span> <span class="n">ddp</span><span class="o">=</span><span class="n">ddp</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span> <span class="n">apex</span><span class="o">=</span><span class="n">apex</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span> <span class="o">=</span> <span class="n">trial</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loggers</span> <span class="o">=</span> <span class="n">loggers</span>
+        <span class="c1"># the data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_loaders</span> <span class="o">=</span> <span class="n">loaders</span>
+        <span class="c1"># the components</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span> <span class="o">=</span> <span class="n">criterion</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span> <span class="o">=</span> <span class="n">optimizer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span> <span class="o">=</span> <span class="n">scheduler</span>
+        <span class="c1"># the callbacks</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callbacks</span> <span class="o">=</span> <span class="n">callbacks</span>
+        <span class="c1"># extra</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stage</span> <span class="o">=</span> <span class="s2">&quot;train&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span> <span class="o">=</span> <span class="n">seed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hparams</span> <span class="o">=</span> <span class="n">hparams</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_epochs</span> <span class="o">=</span> <span class="n">num_epochs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="o">=</span> <span class="n">logdir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_loader</span> <span class="o">=</span> <span class="n">valid_loader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid_metric</span> <span class="o">=</span> <span class="n">valid_metric</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimize_valid_metric</span> <span class="o">=</span> <span class="n">minimize_valid_metric</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timeit</span> <span class="o">=</span> <span class="n">timeit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check</span> <span class="o">=</span> <span class="n">check</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_overfit</span> <span class="o">=</span> <span class="n">overfit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_best_on_end</span> <span class="o">=</span> <span class="n">load_best_on_end</span>
+        <span class="c1"># run</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Runner.predict_batch"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.predict_batch">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run model inference on specified data batch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch: dictionary with data batches from DataLoader.</span>
+<span class="sd">            **kwargs: additional kwargs to pass to the model</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Mapping: model output dictionary</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: if not implemented yet</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;Please implement `runner.predict_batch` method&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># noqa: WPS427</span></div>
+
+<div class="viewcode-block" id="Runner.predict_loader"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.predict_loader">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">predict_loader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">engine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="s2">&quot;IEngine&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="c1"># engine extra params,</span>
+        <span class="n">fp16</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">amp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">apex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">ddp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs model inference on PyTorch DataLoader and returns</span>
+<span class="sd">        python generator with model predictions from `runner.predict_batch`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loader: loader to predict</span>
+<span class="sd">            model: model to use for prediction</span>
+<span class="sd">            engine: engine to use for prediction</span>
+<span class="sd">            seed: random seed to use before prediction</span>
+<span class="sd">            fp16: boolean flag to use half-precision training (AMP &gt; APEX)</span>
+<span class="sd">            amp: boolean flag to use amp half-precision</span>
+<span class="sd">            apex: boolean flag to use apex half-precision</span>
+<span class="sd">            ddp: if `True` will start training in distributed mode.</span>
+<span class="sd">                Note: Works only with python scripts. No jupyter support.</span>
+
+<span class="sd">        Yields:</span>
+<span class="sd">            bathes with model predictions</span>
+
+<span class="sd">        .. note::</span>
+<span class="sd">            Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">            .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">        Examples:</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            import os</span>
+<span class="sd">            from torch import nn, optim</span>
+<span class="sd">            from torch.nn import functional as F</span>
+<span class="sd">            from torch.utils.data import DataLoader</span>
+<span class="sd">            from catalyst import dl, metrics</span>
+<span class="sd">            from catalyst.data import ToTensor</span>
+<span class="sd">            from catalyst.contrib.datasets import MNIST</span>
+
+<span class="sd">            model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
+<span class="sd">            optimizer = optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">            loaders = {</span>
+<span class="sd">                &quot;train&quot;: DataLoader(</span>
+<span class="sd">                    MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                    batch_size=32</span>
+<span class="sd">                ),</span>
+<span class="sd">                &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                    MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                    batch_size=32</span>
+<span class="sd">                ),</span>
+<span class="sd">            }</span>
+
+<span class="sd">            class CustomRunner(dl.Runner):</span>
+<span class="sd">                def predict_batch(self, batch):</span>
+<span class="sd">                    # model inference step</span>
+<span class="sd">                    return self.model(batch[0].to(self.device))</span>
+
+<span class="sd">                def on_loader_start(self, runner):</span>
+<span class="sd">                    super().on_loader_start(runner)</span>
+<span class="sd">                    self.meters = {</span>
+<span class="sd">                        key: metrics.AdditiveValueMetric(compute_on_call=False)</span>
+<span class="sd">                        for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]</span>
+<span class="sd">                    }</span>
+
+<span class="sd">                def handle_batch(self, batch):</span>
+<span class="sd">                    # model train/valid step</span>
+<span class="sd">                    # unpack the batch</span>
+<span class="sd">                    x, y = batch</span>
+<span class="sd">                    # run model forward pass</span>
+<span class="sd">                    logits = self.model(x)</span>
+<span class="sd">                    # compute the loss</span>
+<span class="sd">                    loss = F.cross_entropy(logits, y)</span>
+<span class="sd">                    # compute other metrics of interest</span>
+<span class="sd">                    accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))</span>
+<span class="sd">                    # log metrics</span>
+<span class="sd">                    self.batch_metrics.update(</span>
+<span class="sd">                        {&quot;loss&quot;: loss, &quot;accuracy01&quot;: accuracy01, &quot;accuracy03&quot;: accuracy03}</span>
+<span class="sd">                    )</span>
+<span class="sd">                    for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                        self.meters[key].update(</span>
+<span class="sd">                            self.batch_metrics[key].item(),</span>
+<span class="sd">                            self.batch_size</span>
+<span class="sd">                        )</span>
+<span class="sd">                    # run model backward pass</span>
+<span class="sd">                    if self.is_train_loader:</span>
+<span class="sd">                        loss.backward()</span>
+<span class="sd">                        self.optimizer.step()</span>
+<span class="sd">                        self.optimizer.zero_grad()</span>
+
+<span class="sd">                def on_loader_end(self, runner):</span>
+<span class="sd">                    for key in [&quot;loss&quot;, &quot;accuracy01&quot;, &quot;accuracy03&quot;]:</span>
+<span class="sd">                        self.loader_metrics[key] = self.meters[key].compute()[0]</span>
+<span class="sd">                    super().on_loader_end(runner)</span>
+
+<span class="sd">            runner = CustomRunner()</span>
+<span class="sd">            # model training</span>
+<span class="sd">            runner.train(</span>
+<span class="sd">                model=model,</span>
+<span class="sd">                optimizer=optimizer,</span>
+<span class="sd">                loaders=loaders,</span>
+<span class="sd">                logdir=&quot;./logs&quot;,</span>
+<span class="sd">                num_epochs=5,</span>
+<span class="sd">                verbose=True,</span>
+<span class="sd">                valid_loader=&quot;valid&quot;,</span>
+<span class="sd">                valid_metric=&quot;loss&quot;,</span>
+<span class="sd">                minimize_valid_metric=True,</span>
+<span class="sd">            )</span>
+<span class="sd">            # model inference</span>
+<span class="sd">            for logits in runner.predict_loader(loader=loaders[&quot;valid&quot;]):</span>
+<span class="sd">                assert logits.detach().cpu().numpy().shape[-1] == 10</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">engine</span> <span class="o">=</span> <span class="n">engine</span> <span class="ow">or</span> <span class="n">get_available_engine</span><span class="p">(</span><span class="n">fp16</span><span class="o">=</span><span class="n">fp16</span><span class="p">,</span> <span class="n">ddp</span><span class="o">=</span><span class="n">ddp</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="n">amp</span><span class="p">,</span> <span class="n">apex</span><span class="o">=</span><span class="n">apex</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="c1"># if resume is not None:</span>
+        <span class="c1">#     checkpoint = load_checkpoint(resume)</span>
+        <span class="c1">#     unpack_checkpoint(checkpoint, model=self.model)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
+        <span class="n">maybe_recursive_call</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="s2">&quot;train&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">set_global_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">loader</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Runner.evaluate_loader"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.Runner.evaluate_loader">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_loader</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">,</span>
+        <span class="n">callbacks</span><span class="p">:</span> <span class="s2">&quot;Union[List[Callback], OrderedDict[str, Callback]]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Model</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">42</span><span class="p">,</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates data from loader with given model and returns obtained metrics. # noqa: DAR401</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            loader: loader to predict</span>
+<span class="sd">            callbacks: list or dictionary with catalyst callbacks</span>
+<span class="sd">            model: model, compatible with current runner.</span>
+<span class="sd">                If `None` simply takes current model from runner.</span>
+<span class="sd">            seed: random seed to use before prediction</span>
+<span class="sd">            verbose: if `True`, it displays the status of the evaluation to the console.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict with metrics counted on the loader.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callbacks</span><span class="p">,</span> <span class="n">List</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">RunnerException</span><span class="p">(</span>
+                        <span class="s2">&quot;CheckpointCallback isn`t allowed for evaluation loader method&quot;</span>
+                    <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">callback</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">CheckpointCallback</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">RunnerException</span><span class="p">(</span>
+                        <span class="s2">&quot;CheckpointCallback isn`t allowed for evaluation loader method&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">loaders</span><span class="o">=</span><span class="n">OrderedDict</span><span class="p">([(</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span> <span class="n">loader</span><span class="p">)]),</span>
+            <span class="n">num_epochs</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
+            <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+            <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_metrics</span></div></div>
+
+
+<div class="viewcode-block" id="SupervisedRunner"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.SupervisedRunner">[docs]</a><span class="k">class</span> <span class="nc">SupervisedRunner</span><span class="p">(</span><span class="n">ISupervisedRunner</span><span class="p">,</span> <span class="n">Runner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runner for experiments with supervised model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model: Torch model instance</span>
+<span class="sd">        engine: IEngine instance</span>
+<span class="sd">        input_key: key in ``runner.batch`` dict mapping for model input</span>
+<span class="sd">        output_key: key for ``runner.batch`` to store model output</span>
+<span class="sd">        target_key: key in ``runner.batch`` dict mapping for target</span>
+<span class="sd">        loss_key: key for ``runner.batch_metrics`` to store criterion loss output</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+
+<span class="sd">    Examples:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import os</span>
+<span class="sd">        from torch import nn, optim</span>
+<span class="sd">        from torch.utils.data import DataLoader</span>
+<span class="sd">        from catalyst import dl, utils</span>
+<span class="sd">        from catalyst.data import ToTensor</span>
+<span class="sd">        from catalyst.contrib.datasets import MNIST</span>
+
+<span class="sd">        model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))</span>
+<span class="sd">        criterion = nn.CrossEntropyLoss()</span>
+<span class="sd">        optimizer = optim.Adam(model.parameters(), lr=0.02)</span>
+
+<span class="sd">        loaders = {</span>
+<span class="sd">            &quot;train&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">            &quot;valid&quot;: DataLoader(</span>
+<span class="sd">                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),</span>
+<span class="sd">                batch_size=32</span>
+<span class="sd">            ),</span>
+<span class="sd">        }</span>
+
+<span class="sd">        runner = dl.SupervisedRunner(</span>
+<span class="sd">            input_key=&quot;features&quot;, output_key=&quot;logits&quot;, target_key=&quot;targets&quot;, loss_key=&quot;loss&quot;</span>
+<span class="sd">        )</span>
+<span class="sd">        # model training</span>
+<span class="sd">        runner.train(</span>
+<span class="sd">            model=model,</span>
+<span class="sd">            criterion=criterion,</span>
+<span class="sd">            optimizer=optimizer,</span>
+<span class="sd">            loaders=loaders,</span>
+<span class="sd">            num_epochs=1,</span>
+<span class="sd">            callbacks=[</span>
+<span class="sd">                dl.AccuracyCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, topk_args=(1, 3)),</span>
+<span class="sd">                dl.PrecisionRecallF1SupportCallback(</span>
+<span class="sd">                    input_key=&quot;logits&quot;, target_key=&quot;targets&quot;, num_classes=10</span>
+<span class="sd">                ),</span>
+<span class="sd">                dl.AUCCallback(input_key=&quot;logits&quot;, target_key=&quot;targets&quot;),</span>
+<span class="sd">            ],</span>
+<span class="sd">            logdir=&quot;./logs&quot;,</span>
+<span class="sd">            valid_loader=&quot;valid&quot;,</span>
+<span class="sd">            valid_metric=&quot;loss&quot;,</span>
+<span class="sd">            minimize_valid_metric=True,</span>
+<span class="sd">            verbose=True,</span>
+<span class="sd">            load_best_on_end=True,</span>
+<span class="sd">        )</span>
+<span class="sd">        # model inference</span>
+<span class="sd">        for prediction in runner.predict_loader(loader=loaders[&quot;valid&quot;]):</span>
+<span class="sd">            assert prediction[&quot;logits&quot;].detach().cpu().numpy().shape[-1] == 10</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SupervisedRunner.__init__"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.SupervisedRunner.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">engine</span><span class="p">:</span> <span class="n">IEngine</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
+        <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
+        <span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="n">ISupervisedRunner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
+            <span class="n">output_key</span><span class="o">=</span><span class="n">output_key</span><span class="p">,</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
+            <span class="n">loss_key</span><span class="o">=</span><span class="n">loss_key</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">Runner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">engine</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SupervisedRunner.predict_batch"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.SupervisedRunner.predict_batch">[docs]</a>    <span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">predict_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">:</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Mapping</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Run model inference on specified data batch.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            You should not override this method. If you need specific model</span>
+<span class="sd">            call, override forward() method</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            batch: dictionary with data batch from DataLoader.</span>
+<span class="sd">            **kwargs: additional kwargs to pass to the model</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Mapping[str, Any]: model output dictionary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">batch</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">tensor_or_module</span><span class="o">=</span><span class="n">batch</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">output</span></div>
+
+<div class="viewcode-block" id="SupervisedRunner.get_callbacks"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.runner.SupervisedRunner.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Prepares the callbacks for selected stage.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stage: stage name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            dictionary with stage callbacks</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">callbacks</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_callbacks</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">)</span>
+        <span class="n">is_callback_exists</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">callback_fn</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">callback_isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_criterion</span><span class="p">,</span> <span class="n">Criterion</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">ICriterionCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_criterion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CriterionCallback</span><span class="p">(</span>
+                <span class="n">input_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_key</span><span class="p">,</span> <span class="n">target_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_target_key</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_key</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_optimizer</span><span class="p">,</span> <span class="n">Optimizer</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">IOptimizerCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_optimizer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">OptimizerCallback</span><span class="p">(</span><span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_loss_key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_scheduler</span><span class="p">,</span> <span class="p">(</span><span class="n">Scheduler</span><span class="p">,</span> <span class="n">ReduceLROnPlateau</span><span class="p">))</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span>
+            <span class="n">ISchedulerCallback</span>
+        <span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_scheduler&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SchedulerCallback</span><span class="p">(</span>
+                <span class="n">loader_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_loader</span><span class="p">,</span> <span class="n">metric_key</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_valid_metric</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">callbacks</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Runner&quot;</span><span class="p">,</span> <span class="s2">&quot;SupervisedRunner&quot;</span><span class="p">]</span>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+         <script src="../../../_static/jquery.js"></script>
+         <script src="../../../_static/underscore.js"></script>
+         <script src="../../../_static/doctools.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
