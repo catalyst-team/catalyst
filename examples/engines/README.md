@@ -28,6 +28,7 @@ CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=apex-ddp
 ```
 
 ## FairScale
+> *Tested under `pip install -U torch==1.8.1 fairscale==0.3.7 catalyst==21.06`*
 ```bash
 pip install torch>=1.8.0 catalyst[fairscale]
 CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=fs-pp
@@ -37,7 +38,7 @@ CUDA_VISIBLE_DEVICES="0,1" python multi_gpu.py --engine=fs-fddp
 ```
 
 ## DeepSpeed
-> *Tested under `docker pull deepspeed/deepspeed:v031_torch17_cuda11`.*
+> *Tested under `docker pull deepspeed/deepspeed:v031_torch17_cuda11 and pip install -U torch==1.7.0 deepspeed==0.4.1 catalyst==21.06`.*
 ```bash
 # docker pull deepspeed/deepspeed:v031_torch17_cuda11
 # docker run --rm -it -v $(pwd):/workspace deepspeed/deepspeed:v031_torch17_cuda11 /bin/bash
