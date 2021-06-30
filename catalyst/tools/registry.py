@@ -186,7 +186,8 @@ class Registry(collections.MutableMapping):
             TypeError: if prefix is not a list or a string
         """
         factories = {
-            k: v for k, v in module.__dict__.items()
+            k: v
+            for k, v in module.__dict__.items()
             if inspect.isclass(v) or inspect.isfunction(v) or inspect.isbuiltin(v)
         }
 
