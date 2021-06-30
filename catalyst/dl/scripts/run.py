@@ -29,7 +29,7 @@ def build_args(parser: ArgumentParser):
         dest="configs",
         required=False,
     )
-    parser.add_argument("--expdir", type=str, default=None)
+    parser.add_argument("--expdir", type=Path, default=None)
     parser.add_argument("--logdir", type=str, default=None)
     parser.add_argument("--baselogdir", type=str, default=None)
     # parser.add_argument(
@@ -97,7 +97,7 @@ def config_main(args, unknown_args):
     set_global_seed(args.seed)
     prepare_cudnn(args.deterministic, args.benchmark)
 
-    runner: ConfigRunner = get_config_runner(expdir=Path(args.expdir), config=config)
+    runner: ConfigRunner = get_config_runner(expdir=args.expdir, config=config)
 
     if get_rank() <= 0:
         dump_environment(logdir=runner.logdir, config=config, configs_path=args.configs)
