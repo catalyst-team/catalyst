@@ -220,15 +220,3 @@ def test_kwargs():
     r.add(bar=foo)
 
     r.get("bar")
-
-
-def test_add_module():
-    """@TODO: Docs. Contribution is welcome."""
-    r = Registry()
-
-    r.add_from_module(module)
-
-    r.get("foo")
-
-    with pytest.raises(RegistryException):
-        r.get_instance("bar")
