@@ -186,11 +186,9 @@ class Registry(collections.MutableMapping):
             TypeError: if prefix is not a list or a string
         """
         factories = {
-            k: v for k, v in module.__dict__.items() if inspect.isclass(v) or inspect.isfunction(v)
+            k: v for k, v in module.__dict__.items()
+            if inspect.isclass(v) or inspect.isfunction(v) or inspect.isbuiltin(v)
         }
-
-        # Filter by __all__ if present
-        names_to_add = getattr(module, "__all__", list(factories.keys()))
 
         if prefix is None:
             prefix = [""]
@@ -202,7 +200,7 @@ class Registry(collections.MutableMapping):
         else:
             raise TypeError(f"Prefix must be a list or a string, got {type(prefix)}.")
 
-        to_add = {f"{p}{name}": factories[name] for p in prefix for name in names_to_add}
+        to_add = {f"{p}{name}": factories[name] for p in prefix for name in factories.keys()}
         self.add(**to_add)
 
     def get(self, name: str) -> Optional[Factory]:
