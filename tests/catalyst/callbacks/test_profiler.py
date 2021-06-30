@@ -137,10 +137,10 @@ class CustomRunner(dl.IRunner):
             "tensorboard": dl.TensorboardLogger(logdir=self._logdir),
         }
         if SETTINGS.mlflow_required:
-            loggers["mlflow"] = dl.MLflowLogger(experiment=self._name)
+            loggers["mlflow"] = dl.MLflowLogger(experiment=self.name)
 
         if SETTINGS.wandb_required:
-            loggers["wandb"] = dl.WandbLogger(project="catalyst_test", name=self._name)
+            loggers["wandb"] = dl.WandbLogger(project="catalyst_test", name=self.name)
 
         if SETTINGS.neptune_required:
             loggers["neptune"] = dl.NeptuneLogger(
