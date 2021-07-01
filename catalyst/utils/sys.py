@@ -59,10 +59,10 @@ def get_config_runner(expdir: Path, config: Dict):
         ConfigRunner instance
     """
     config_copy = copy.deepcopy(config)
-    if not isinstance(expdir, Path):
-        expdir = Path(expdir)
-    dir_module = import_module(expdir)  # noqa: F841
-    # runner_fn = getattr(m, "Runner", None)
+
+    if expdir is not None:
+        dir_module = import_module(expdir)  # noqa: F841
+        # runner_fn = getattr(dir_module, "Runner", None)
 
     runner_params = config_copy.get("runner", {})
     runner_from_config = runner_params.pop("_target_", None)

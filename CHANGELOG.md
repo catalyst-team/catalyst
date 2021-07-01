@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
+- make `expdir` in `catalyst-dl run` optional ([#1249](https://github.com/catalyst-team/catalyst/pull/1249))
 
 
 ## [21.06] - 2021-06-29
