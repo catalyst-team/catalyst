@@ -370,10 +370,10 @@
 <span class="sd">        ConfigRunner instance</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">config_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expdir</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
-        <span class="n">expdir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>
-    <span class="n">dir_module</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>  <span class="c1"># noqa: F841</span>
-    <span class="c1"># runner_fn = getattr(m, &quot;Runner&quot;, None)</span>
+
+    <span class="k">if</span> <span class="n">expdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dir_module</span> <span class="o">=</span> <span class="n">import_module</span><span class="p">(</span><span class="n">expdir</span><span class="p">)</span>  <span class="c1"># noqa: F841</span>
+        <span class="c1"># runner_fn = getattr(dir_module, &quot;Runner&quot;, None)</span>
 
     <span class="n">runner_params</span> <span class="o">=</span> <span class="n">config_copy</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;runner&quot;</span><span class="p">,</span> <span class="p">{})</span>
     <span class="n">runner_from_config</span> <span class="o">=</span> <span class="n">runner_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_target_&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
