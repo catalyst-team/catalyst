@@ -171,7 +171,9 @@ class Registry(collections.MutableMapping):
         """
         self._late_add_callbacks.append(cb)
 
-    def add_from_module(self, module, prefix: Union[str, List[str]] = None) -> None:
+    def add_from_module(
+        self, module, prefix: Union[str, List[str]] = None, ignore_all: bool = False
+    ) -> None:
         """
         Adds all factories present in module.
         If ``__all__`` attribute is present, takes ony what mentioned in it.
@@ -181,15 +183,20 @@ class Registry(collections.MutableMapping):
             prefix (Union[str, List[str]]): prefix string for all the module's
                 factories. If prefix is a list, all values will be treated
                 as aliases.
+            ignore_all: flag, ignore `__all__` or not
 
         Raises:
             TypeError: if prefix is not a list or a string
         """
         factories = {
-            k: v
-            for k, v in module.__dict__.items()
-            if inspect.isclass(v) or inspect.isfunction(v) or inspect.isbuiltin(v)
+            k: v for k, v in module.__dict__.items() if inspect.isclass(v) or inspect.isfunction(v)
         }
+
+        if ignore_all:
+            names_to_add = list(factories.keys())
+        else:
+            # Filter by __all__ if present
+            names_to_add = getattr(module, "__all__", list(factories.keys()))
 
         if prefix is None:
             prefix = [""]
@@ -201,7 +208,7 @@ class Registry(collections.MutableMapping):
         else:
             raise TypeError(f"Prefix must be a list or a string, got {type(prefix)}.")
 
-        to_add = {f"{p}{name}": factories[name] for p in prefix for name in factories.keys()}
+        to_add = {f"{p}{name}": factories[name] for p in prefix for name in names_to_add}
         self.add(**to_add)
 
     def get(self, name: str) -> Optional[Factory]:

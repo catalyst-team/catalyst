@@ -172,7 +172,7 @@ REGISTRY.late_add(_torch_functional_loader)
 def _torch_loader(r: registry.Registry):
     import torch as m
 
-    r.add_from_module(m, ["torch."])
+    r.add_from_module(m, ["torch."], ignore_all=True)
 
 
 REGISTRY.late_add(_torch_loader)
