@@ -440,7 +440,7 @@ single instance.</p></li>
 
 <dl class="method">
 <dt id="catalyst.tools.registry.Registry.add_from_module">
-<code class="sig-name descname">add_from_module</code><span class="sig-paren">(</span><em class="sig-param">module</em>, <em class="sig-param">prefix: Union[str</em>, <em class="sig-param">List[str]] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add_from_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add_from_module" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_from_module</code><span class="sig-paren">(</span><em class="sig-param">module</em>, <em class="sig-param">prefix: Union[str</em>, <em class="sig-param">List[str]] = None</em>, <em class="sig-param">ignore_all: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add_from_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add_from_module" title="Permalink to this definition">¶</a></dt>
 <dd><p>Adds all factories present in module.
 If <code class="docutils literal notranslate"><span class="pre">__all__</span></code> attribute is present, takes ony what mentioned in it.</p>
 <dl class="field-list simple">
@@ -450,6 +450,7 @@ If <code class="docutils literal notranslate"><span class="pre">__all__</span></
 <li><p><strong>prefix</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – prefix string for all the module’s
 factories. If prefix is a list, all values will be treated
 as aliases.</p></li>
+<li><p><strong>ignore_all</strong> – flag, ignore <cite>__all__</cite> or not</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>

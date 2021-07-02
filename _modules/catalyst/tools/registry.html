@@ -482,7 +482,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_late_add_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cb</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Registry.add_from_module"><a class="viewcode-back" href="../../../api/tools.html#catalyst.tools.registry.Registry.add_from_module">[docs]</a>    <span class="k">def</span> <span class="nf">add_from_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Registry.add_from_module"><a class="viewcode-back" href="../../../api/tools.html#catalyst.tools.registry.Registry.add_from_module">[docs]</a>    <span class="k">def</span> <span class="nf">add_from_module</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">ignore_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds all factories present in module.</span>
 <span class="sd">        If ``__all__`` attribute is present, takes ony what mentioned in it.</span>
@@ -492,6 +494,7 @@
 <span class="sd">            prefix (Union[str, List[str]]): prefix string for all the module&#39;s</span>
 <span class="sd">                factories. If prefix is a list, all values will be treated</span>
 <span class="sd">                as aliases.</span>
+<span class="sd">            ignore_all: flag, ignore `__all__` or not</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            TypeError: if prefix is not a list or a string</span>
@@ -500,8 +503,11 @@
             <span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">module</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isclass</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="ow">or</span> <span class="n">inspect</span><span class="o">.</span><span class="n">isfunction</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
         <span class="p">}</span>
 
-        <span class="c1"># Filter by __all__ if present</span>
-        <span class="n">names_to_add</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;__all__&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">factories</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="n">ignore_all</span><span class="p">:</span>
+            <span class="n">names_to_add</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">factories</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Filter by __all__ if present</span>
+            <span class="n">names_to_add</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="s2">&quot;__all__&quot;</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">factories</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
 
         <span class="k">if</span> <span class="n">prefix</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">prefix</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
