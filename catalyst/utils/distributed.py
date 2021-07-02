@@ -216,6 +216,30 @@ def all_gather(data: Any) -> List[Any]:
     return data_list
 
 
+def ddp_reduce(tensor: torch.Tensor, mode: str, world_size: int):
+    """Syncs ``tensor`` over ``world_size`` in distributed mode.
+
+    Args:
+        tensor: tensor to sync across the processes.
+        mode: tensor synchronization type, should be one of 'sum', 'mean' or 'all'.
+        world_size: world size
+
+    Returns:
+        torch.Tensor with synchronized values.
+
+    Raises:
+        ValueError: if mode is out of ``sum``, ``mean``, ``all``.
+    """
+    if mode not in {"sum", "mean", "all"}:
+        raise ValueError(f"Unknown sync_type '{mode}'")
+    if mode == "sum":
+        return sum_reduce(tensor)
+    elif mode == "mean":
+        return mean_reduce(tensor, world_size)
+    else:
+        return all_gather(tensor)
+
+
 def ddp_sync_run(function: Callable):
     """Runs function in a synchronous way: 0-rank first and all other processes after.
 
@@ -237,5 +261,6 @@ __all__ = [
     "sum_reduce",
     "mean_reduce",
     "all_gather",
+    "ddp_reduce",
     "ddp_sync_run",
 ]

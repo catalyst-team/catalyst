@@ -11,6 +11,7 @@ function clean_requirements() {
   pip uninstall -r requirements/requirements-optuna.txt -y
   pip uninstall -r requirements/requirements-mlflow.txt -y
   pip uninstall -r requirements/requirements-neptune.txt -y
+  pip uninstall -r requirements/requirements-albu.txt -y
   pip install -r requirements/requirements.txt --quiet \
   --find-links https://download.pytorch.org/whl/cpu/torch_stable.html \
   --upgrade-strategy only-if-needed
@@ -28,6 +29,7 @@ hydra_required = false
 optuna_required = false
 mlflow_required = false
 neptune_required = false
+albu_required = false
 ")"
   for REQUIRED in "$@"
   do
@@ -48,6 +50,7 @@ ml_required = false
 hydra_required = false
 optuna_required = false
 mlflow_required = false
+albu_required = false
 EOT
 
 python -c """
@@ -172,6 +175,7 @@ ml_required = true
 hydra_required = false
 mlflow_required = false
 neptune_required = false
+albu_required = false
 EOT
 
 python -c """

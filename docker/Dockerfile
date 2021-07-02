@@ -44,6 +44,7 @@ RUN pip install -U catalyst --no-cache-dir
 RUN if [ "$CATALYST_DEV" = "1" ] ; then pip install -U catalyst[dev] --no-cache-dir ; else echo "catalyst[dev] is not required" ; fi
 RUN if [ "$CATALYST_CV" = "1" ] ; then pip install -U catalyst[cv] --no-cache-dir ; else echo "catalyst[cv] is not required" ; fi
 RUN if [ "$CATALYST_ML" = "1" ] ; then pip install -U catalyst[ml] --no-cache-dir ; else echo "catalyst[ml] is not required" ; fi
+RUN if [ "$CATALYST_ALBU" = "1" ] ; then pip install -U catalyst[albu] --no-cache-dir ; else echo "catalyst[albu] is not required" ; fi
 RUN if [ "$CATALYST_HYDRA" = "1" ] ; then pip install -U catalyst[hydra] --no-cache-dir ; else echo "catalyst[hydra] is not required" ; fi
 RUN if [ "$CATALYST_OPTUNA" = "1" ] ; then pip install -U catalyst[optuna] --no-cache-dir ; else echo "catalyst[optuna] is not required" ; fi
 RUN if [ "$CATALYST_ONNX" = "1" ] ; then pip install -U catalyst[onnx] --no-cache-dir ; else echo "catalyst[onnx] is not required" ; fi
