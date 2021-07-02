@@ -174,9 +174,8 @@ class WandbLogger(ILogger):
 
     def close_log(self, scope: str = None) -> None:
         """Closes the logger."""
-        if scope is not None or scope != "experiment":
-            return
-        self.run.finish()
+        if scope is None or scope == "experiment":
+            self.run.finish()
 
 
 __all__ = ["WandbLogger"]

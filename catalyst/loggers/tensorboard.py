@@ -172,10 +172,9 @@ class TensorboardLogger(ILogger):
 
     def close_log(self, scope: str = None) -> None:
         """Closes the loggers."""
-        if scope is not None or scope != "experiment":
-            return
-        for logger in self.loggers.values():
-            logger.close()
+        if scope is None or scope == "experiment":
+            for logger in self.loggers.values():
+                logger.close()
 
 
 __all__ = ["TensorboardLogger"]
