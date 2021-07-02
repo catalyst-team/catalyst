@@ -9,37 +9,38 @@ from catalyst.core import Callback, CallbackOrder, IRunner
 class MixupCallback(Callback):
     """
     Callback to do mixup augmentation. More details about mixin can be found in the paper
-    `mixup: Beyond Empirical Risk Minimization.
+    `mixup: Beyond Empirical Risk Minimization`: https://arxiv.org/abs/1710.09412 .
 
     Examples:
 
     .. code-block:: python
 
+        from typing import Any, Dict
         import os
+
         import numpy as np
         import torch
         from torch import nn
         from torch.utils.data import DataLoader
+
         from catalyst import dl
         from catalyst.callbacks import MixupCallback
-        from catalyst.data.transforms import ToTensor
         from catalyst.contrib.datasets import MNIST
-        from typing import Dict, Any
+        from catalyst.data.transforms import ToTensor
 
 
         class SimpleNet(nn.Module):
-
             def __init__(self, in_channels, in_hw, out_features):
                 super().__init__()
-                self.encoder = nn.Sequential(nn.Conv2d(in_channels, in_channels, 3, 1, 1),
-                                             nn.Tanh())
+                self.encoder = nn.Sequential(nn.Conv2d(in_channels,
+                                                       in_channels, 3, 1, 1), nn.Tanh())
                 self.clf = nn.Linear(in_channels * in_hw * in_hw, out_features)
 
             def forward(self, x):
-                z = self.encoder(x)
-                z_ = z.view(z.size(0), -1)
-                y_hat = self.clf(z_)
-                return y_hat
+                features = self.encoder(x)
+                features = features.view(features.size(0), -1)
+                logits = self.clf(features)
+                return logits
 
 
         class SimpleDataset(torch.utils.data.Dataset):
@@ -53,9 +54,9 @@ class MixupCallback(Callback):
                 x, y = self.mnist.__getitem__(idx)
                 y_one_hot = np.zeros(10)
                 y_one_hot[y] = 1
-                return {'image': x,
-                        'clf_targets': y,
-                        'clf_targets_one_hot': torch.Tensor(y_one_hot)}
+                return {"image": x,
+                        "clf_targets": y,
+                        "clf_targets_one_hot": torch.Tensor(y_one_hot)}
 
 
         model = SimpleNet(1, 28, 10)
@@ -69,11 +70,10 @@ class MixupCallback(Callback):
 
 
         class CustomRunner(dl.Runner):
-
             def handle_batch(self, batch):
-                image = batch['image']
+                image = batch["image"]
                 clf_logits = self.model(image)
-                self.batch['clf_logits'] = clf_logits
+                self.batch["clf_logits"] = clf_logits
 
 
         runner = CustomRunner()
@@ -89,28 +89,23 @@ class MixupCallback(Callback):
             valid_metric="loss",
             minimize_valid_metric=True,
             callbacks={
-                "mixup": MixupCallback(keys=['image', 'clf_targets_one_hot']),
+                "mixup": MixupCallback(keys=["image", "clf_targets_one_hot"]),
                 "criterion": dl.CriterionCallback(
-                    metric_key="loss",
-                    input_key="clf_logits",
-                    target_key="clf_targets_one_hot",
+                    metric_key="loss", input_key="clf_logits", target_key="clf_targets_one_hot",
                 ),
                 "optimizer": dl.OptimizerCallback(metric_key="loss"),
                 "classification": dl.ControlFlowCallback(
-                    dl.PrecisionRecallF1SupportCallback(input_key="clf_logits",
-                                                        target_key="clf_targets",
-                                                        num_classes=10, ),
-                    ignore_loaders='train',
+                    dl.PrecisionRecallF1SupportCallback(
+                        input_key="clf_logits", target_key="clf_targets", num_classes=10,
+                    ),
+                    ignore_loaders="train",
                 ),
-
             },
         )
 
     .. note::
-        Callback can only be used with an even batch size
         With running this callback, many metrics (for example, accuracy) become undefined, so
         use ControlFlowCallback in order to evaluate model(see example)
-
     """
 
     def __init__(
@@ -121,14 +116,14 @@ class MixupCallback(Callback):
         Args:
             keys: batch keys to which you want to apply augmentation
             alpha: beta distribution a=b parameters. Must be >=0. The more alpha closer to zero the
-            less effect of the mixup.
+                less effect of the mixup.
             mode: mode determines the method of use. Must be in ["replace", "add"]. If "replace"
-            then replaces the batch with a mixed one, while the batch size is not changed
-            If "add", concatenates mixed examples to the current ones, the batch size increases by
-            s times.
+                then replaces the batch with a mixed one, while the batch size is not changed
+                If "add", concatenates mixed examples to the current ones, the batch size increases
+                by 2 times.
             on_train_only: apply to train only. As the mixup use the proxy inputs, the targets are
-            also proxy. We are not interested in them, are we? So, if on_train_only is True, use a
-            standard output/metric for validation.
+                also proxy. We are not interested in them, are we? So, if on_train_only is True,
+                use a standard output/metric for validation.
             **kwargs:
         """
         assert isinstance(keys, (str, list)), f"keys must be str of list[str], get: {type(keys)}"
@@ -141,7 +136,7 @@ class MixupCallback(Callback):
         self.on_train_only = on_train_only
         self.alpha = alpha
         self.mode = mode
-        self.is_needed = True
+        self.required = True
 
     def _handle_batch(self, runner: "IRunner") -> None:
         """
@@ -174,7 +169,7 @@ class MixupCallback(Callback):
         Args:
             runner: current runner
         """
-        self.is_needed = not self.on_train_only or runner.is_train_loader
+        self.required = not self.on_train_only or runner.is_train_loader
 
     def on_batch_start(self, runner: "IRunner") -> None:
         """
@@ -183,7 +178,7 @@ class MixupCallback(Callback):
         Args:
             runner: runner for the experiment.
         """
-        if self.is_needed:
+        if self.required:
             self._handle_batch(runner)
 
 
