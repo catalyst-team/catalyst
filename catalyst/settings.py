@@ -33,9 +33,36 @@ def _is_amp_available():
         return False
 
 
+def _is_albumentations_available():
+    try:
+        import albumentations as albu  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
 def _is_xla_available():
     try:
         import torch_xla.core.xla_model as xm  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _is_fairscale_available():
+    try:
+        import fairscale  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
+def _is_deepspeed_available():
+    try:
+        import deepspeed  # noqa: F401
 
         return True
     except ModuleNotFoundError:
@@ -131,6 +158,24 @@ def _is_mlflow_available():
         return False
 
 
+def _is_wandb_available():
+    try:
+        import wandb  # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
+def _is_neptune_available():
+    try:
+        import neptune.new as neptune  # noqa: F401
+
+        return True
+    except ModuleNotFoundError:
+        return False
+
+
 def _get_optional_value(
     is_required: Optional[bool], is_available_fn: Callable, assert_msg: str
 ) -> bool:
@@ -153,6 +198,7 @@ class Settings(FrozenClass):
         nifti_required: Optional[bool] = None,
         ml_required: Optional[bool] = None,
         # [integrations]
+        albu_required: Optional[bool] = None,
         hydra_required: Optional[bool] = None,
         # nmslib_required: Optional[bool] = False,
         optuna_required: Optional[bool] = None,
@@ -160,15 +206,17 @@ class Settings(FrozenClass):
         amp_required: Optional[bool] = None,
         apex_required: Optional[bool] = None,
         xla_required: Optional[bool] = None,
+        fairscale_required: Optional[bool] = None,
+        deepspeed_required: Optional[bool] = None,
         # [dl-extras]
         onnx_required: Optional[bool] = None,
         pruning_required: Optional[bool] = None,
         quantization_required: Optional[bool] = None,
         # [logging]
         # alchemy_required: Optional[bool] = None,
-        # neptune_required: Optional[bool] = None,
+        neptune_required: Optional[bool] = None,
         mlflow_required: Optional[bool] = None,
-        # wandb_required: Optional[bool] = None,
+        wandb_required: Optional[bool] = None,
         # [extras]
         use_lz4: Optional[bool] = None,
         use_pyarrow: Optional[bool] = None,
@@ -196,6 +244,11 @@ class Settings(FrozenClass):
         )
 
         # [integrations]
+        self.albu_required: bool = _get_optional_value(
+            albu_required,
+            _is_albumentations_available,
+            "catalyst[albu] is not available, to install it, " "run `pip install catalyst[albu]`.",
+        )
         self.hydra_required: bool = _get_optional_value(
             hydra_required,
             _is_hydra_available,
@@ -225,6 +278,18 @@ class Settings(FrozenClass):
             _is_xla_available,
             "catalyst[xla] is not available, to install it, run `pip install catalyst[xla]`.",
         )
+        self.fairscale_required: bool = _get_optional_value(
+            fairscale_required,
+            _is_fairscale_available,
+            "catalyst[fairscale] is not available, "
+            "to install it, run `pip install catalyst[fairscale]`.",
+        )
+        self.deepspeed_required: bool = _get_optional_value(
+            deepspeed_required,
+            _is_deepspeed_available,
+            "catalyst[deepspeed] is not available, "
+            "to install it, run `pip install catalyst[deepspeed]`.",
+        )
 
         # [dl-extras]
         self.onnx_required: bool = _get_optional_value(
@@ -248,13 +313,24 @@ class Settings(FrozenClass):
 
         # [logging]
         # self.alchemy_required: bool = alchemy_required
-        # self.neptune_required: bool = neptune_required
+        self.neptune_required: bool = _get_optional_value(
+            neptune_required,
+            _is_neptune_available,
+            "neptune is not available, to install it, run `pip install neptune-client`.",
+        )
         self.mlflow_required: bool = _get_optional_value(
             mlflow_required,
             _is_mlflow_available,
             "catalyst[mlflow] is not available, to install it, "
             "run `pip install catalyst[mlflow]`.",
         )
+
+        self.wandb_required: bool = _get_optional_value(
+            wandb_required,
+            _is_wandb_available,
+            "wandb is not available, to install it, " "run `pip install wandb`.",
+        )
+
         # self.wandb_required: bool = wandb_required
 
         # [extras]

@@ -10,7 +10,7 @@ from catalyst.callbacks.metrics.classification import (
     MultilabelPrecisionRecallF1SupportCallback,
 )
 
-from catalyst.callbacks.metrics.cmc_score import CMCScoreCallback
+from catalyst.callbacks.metrics.cmc_score import CMCScoreCallback, ReidCMCScoreCallback
 
 if SETTINGS.ml_required:
     from catalyst.callbacks.metrics.confusion_matrix import ConfusionMatrixCallback
@@ -29,3 +29,6 @@ from catalyst.callbacks.metrics.segmentation import (
     IOUCallback,
     TrevskyCallback,
 )
+
+if SETTINGS.ml_required:
+    from catalyst.callbacks.metrics.scikit_learn import SklearnBatchCallback, SklearnLoaderCallback

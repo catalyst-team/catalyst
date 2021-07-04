@@ -9,6 +9,7 @@ import torch
 from torch import nn, optim
 from torch.optim import lr_scheduler
 from torch.utils import data
+from torch.utils.data import sampler
 
 Directory = Path
 File = Path
@@ -19,6 +20,7 @@ Optimizer = optim.Optimizer
 # @TODO: how to fix PyTorch? Union["lr_scheduler._LRScheduler", "lr_scheduler.ReduceLROnPlateau"]
 Scheduler = lr_scheduler._LRScheduler  # noqa: WPS437
 Dataset = data.Dataset
+Sampler = sampler.Sampler
 Device = Union[str, torch.device]
 
 RunnerModel = Union[Model, Dict[str, Model]]
@@ -35,6 +37,7 @@ __all__ = [
     "Optimizer",
     "Scheduler",
     "Dataset",
+    "Sampler",
     "Device",
     "RunnerModel",
     "RunnerCriterion",

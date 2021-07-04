@@ -12,6 +12,8 @@ from catalyst.utils.distributed import (
     sum_reduce,
     mean_reduce,
     all_gather,
+    ddp_reduce,
+    ddp_sync_run,
 )
 
 from catalyst.utils.misc import (

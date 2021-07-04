@@ -1,5 +1,6 @@
 import logging
 
+from catalyst.settings import SETTINGS
 from catalyst.tools import registry
 
 logger = logging.getLogger(__name__)
@@ -11,7 +12,17 @@ Registry = REGISTRY.add
 def _transforms_loader(r: registry.Registry):
     from catalyst.data import transforms as t
 
-    r.add_from_module(t, prefix=["catalyst.", "C."])
+    # add `'transform.'` prefix to avoid nameing conflicts with other catalyst modules
+    r.add_from_module(t, prefix=["transform."])
+
+    if SETTINGS.albu_required:
+        import albumentations as m
+
+        r.add_from_module(m, prefix=["A.", "albu.", "albumentations."])
+
+        from albumentations import pytorch as p
+
+        r.add_from_module(p, prefix=["A.", "albu.", "albumentations."])
 
 
 REGISTRY.late_add(_transforms_loader)
@@ -81,6 +92,11 @@ def _optimizers_loader(r: registry.Registry):
 
     r.add_from_module(m)
 
+    if SETTINGS.fairscale_required:
+        from fairscale import optim as m2
+
+        r.add_from_module(m2, prefix=["fairscale."])
+
 
 REGISTRY.late_add(_optimizers_loader)
 
@@ -142,6 +158,46 @@ def _loggers_loader(r: registry.Registry):
 
 
 REGISTRY.late_add(_loggers_loader)
+
+
+def _torch_functional_loader(r: registry.Registry):
+    import torch.nn.functional as F
+
+    r.add_from_module(F, ["F."])
+
+
+REGISTRY.late_add(_torch_functional_loader)
+
+
+def _torch_loader(r: registry.Registry):
+    import torch as m
+
+    r.add_from_module(m, ["torch."], ignore_all=True)
+
+
+REGISTRY.late_add(_torch_loader)
+
+
+def _datasets_loader(r: registry.Registry):
+    from catalyst.data import dataset as m  # noqa: WPS347
+
+    r.add_from_module(m)
+
+    from catalyst.contrib import datasets as m_contrib  # noqa: WPS347
+
+    r.add_from_module(m_contrib)
+
+
+REGISTRY.late_add(_datasets_loader)
+
+
+def _dataloaders_loader(r: registry.Registry):
+    from torch.utils.data import DataLoader  # noqa: WPS347
+
+    r.add(DataLoader)
+
+
+REGISTRY.late_add(_dataloaders_loader)
 
 
 __all__ = ["REGISTRY"]

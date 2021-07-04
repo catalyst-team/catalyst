@@ -28,6 +28,12 @@ class RegionBasedMetric(ICallbackBatchMetric):
             Used for per-batch logging. default: True
         prefix: metric prefix
         suffix: metric suffix
+
+    Interface, please check out implementations for more details:
+
+        - :py:mod:`catalyst.metrics._segmentation.IOUMetric`
+        - :py:mod:`catalyst.metrics._segmentation.DiceMetric`
+        - :py:mod:`catalyst.metrics._segmentation.TrevskyMetric`
     """
 
     def __init__(
@@ -103,6 +109,11 @@ class RegionBasedMetric(ICallbackBatchMetric):
                 self.statistics[idx]["fp"] = fp_class
                 self.statistics[idx]["fn"] = fn_class
 
+        # need only one time
+        if not self._checked_params:
+            self._check_parameters()
+            self._checked_params = True
+
         metrics_per_class = self.metric_fn(tp, fp, fn)
         return metrics_per_class
 
@@ -120,10 +131,6 @@ class RegionBasedMetric(ICallbackBatchMetric):
         """
         metrics_per_class = self.update(outputs, targets)
         macro_metric = torch.mean(metrics_per_class)
-        # need only one time
-        if not self._checked_params:
-            self._check_parameters()
-            self._checked_params = True
         metrics = {
             f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[idx]}": value
             for idx, value in enumerate(metrics_per_class)
@@ -133,23 +140,21 @@ class RegionBasedMetric(ICallbackBatchMetric):
             weighted_metric = 0
             for idx, value in enumerate(metrics_per_class):
                 weighted_metric += value * self.weights[idx]
-            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/weighted"] = weighted_metric
-        # convert torch.Tensor to float
-        # metrics = {k: float(v) for k, v in metrics.items()}
+            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
         return metrics
 
-    def compute_key_value(self) -> Dict[str, torch.Tensor]:
+    def compute(self):
         """
-        Compute segmentation metric for all data and return results in key-value format
+        Compute metrics with accumulated statistics
 
         Returns:
-             dict of metrics, including micro, macro and weighted (if weights were given) metrics
+            tuple of metrics: per_class, micro_metric, macro_metric, weighted_metric(None if
+                weights is None)
         """
-        metrics = {}
+        per_class = []
         total_statistics = {}
         macro_metric = 0
         weighted_metric = 0
-
         # @TODO: ddp hotfix, could be done better
         if self._is_ddp:
             for _, statistics in self.statistics.items():
@@ -161,28 +166,41 @@ class RegionBasedMetric(ICallbackBatchMetric):
 
         for class_idx, statistics in self.statistics.items():
             value = self.metric_fn(**statistics)
+            per_class.append(value)
             macro_metric += value
             if self.weights is not None:
                 weighted_metric += value * self.weights[class_idx]
+            for stats_name, value in statistics.items():
+                total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
+
+        macro_metric /= len(self.statistics)
+        micro_metric = self.metric_fn(**total_statistics)
+
+        if self.weights is None:
+            weighted_metric = None
+        return per_class, micro_metric, macro_metric, weighted_metric
+
+    def compute_key_value(self) -> Dict[str, torch.Tensor]:
+        """
+        Compute segmentation metric for all data and return results in key-value format
+
+        Returns:
+             dict of metrics, including micro, macro and weighted (if weights were given) metrics
+        """
+        per_class, micro_metric, macro_metric, weighted_metric = self.compute()
+
+        metrics = {}
+        for class_idx, value in enumerate(per_class):
             metrics[
                 f"{self.prefix}{self.metric_name}{self.suffix}/{self.class_names[class_idx]}"
             ] = value
-            for stats_name, value in statistics.items():
-                total_statistics[stats_name] = total_statistics.get(stats_name, 0) + value
-        macro_metric /= len(self.statistics)
-        micro_metric = self.metric_fn(**total_statistics)
-        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/micro"] = micro_metric
-        metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
-        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/macro"] = macro_metric
-        if self.weights is not None:
-            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/weighted"] = weighted_metric
-        # convert torch.Tensor to float
-        # metrics = {k: float(v) for k, v in metrics.items()}
-        return metrics
 
-    def compute(self):
-        """@TODO: Docs."""
-        return self.compute_key_value()
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_micro"] = micro_metric
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}"] = macro_metric
+        metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_macro"] = macro_metric
+        if self.weights is not None:
+            metrics[f"{self.prefix}{self.metric_name}{self.suffix}/_weighted"] = weighted_metric
+        return metrics
 
 
 class IOUMetric(RegionBasedMetric):
@@ -201,6 +219,95 @@ class IOUMetric(RegionBasedMetric):
             Used for per-batch logging. default: True
         prefix: metric prefix
         suffix: metric suffix
+
+    Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        outputs = torch.tensor([[[[0.8, 0.1, 0], [0, 0.4, 0.3], [0, 0, 1]]]])
+        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])
+        metric = metrics.IOUMetric()
+        metric.reset()
+
+        metric.compute()
+        # per_class, micro, macro, weighted
+        # ([tensor(0.2222)], tensor(0.2222), tensor(0.2222), None)
+
+        metric.update_key_value(outputs, targets)
+        metric.compute_key_value()
+        # {
+        #     'iou': tensor(0.2222),
+        #     'iou/_macro': tensor(0.2222),
+        #     'iou/_micro': tensor(0.2222),
+        #     'iou/class_00': tensor(0.2222),
+        # }
+
+    .. code-block:: python
+
+        import os
+        import torch
+        from torch import nn
+        from torch.utils.data import DataLoader
+        from catalyst import dl
+        from catalyst.data import ToTensor
+        from catalyst.contrib.datasets import MNIST
+        from catalyst.contrib.nn import IoULoss
+
+
+        model = nn.Sequential(
+            nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
+            nn.Conv2d(1, 1, 3, 1, 1), nn.Sigmoid(),
+        )
+        criterion = IoULoss()
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+
+        loaders = {
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                batch_size=32
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                batch_size=32
+            ),
+        }
+
+        class CustomRunner(dl.SupervisedRunner):
+            def handle_batch(self, batch):
+                x = batch[self._input_key]
+                x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
+                x_ = self.model(x_noise)
+                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
+
+        runner = CustomRunner(
+            input_key="features", output_key="scores", target_key="targets", loss_key="loss"
+        )
+        # model training
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            num_epochs=1,
+            callbacks=[
+                dl.IOUCallback(input_key="scores", target_key="targets"),
+                dl.DiceCallback(input_key="scores", target_key="targets"),
+                dl.TrevskyCallback(input_key="scores", target_key="targets", alpha=0.2),
+            ],
+            logdir="./logdir",
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            verbose=True,
+        )
+
+    .. note::
+        Please follow the `minimal examples`_ sections for more use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(
@@ -245,6 +352,95 @@ class DiceMetric(RegionBasedMetric):
             Used for per-batch logging. default: True
         prefix: metric prefix
         suffix: metric suffix
+
+    Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        outputs = torch.tensor([[[[0.8, 0.1, 0], [0, 0.4, 0.3], [0, 0, 1]]]])
+        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])
+        metric = metrics.DiceMetric()
+        metric.reset()
+
+        metric.compute()
+        # per_class, micro, macro, weighted
+        # ([tensor(0.3636)], tensor(0.3636), tensor(0.3636), None)
+
+        metric.update_key_value(outputs, targets)
+        metric.compute_key_value()
+        # {
+        #     'dice': tensor(0.3636),
+        #     'dice/_macro': tensor(0.3636),
+        #     'dice/_micro': tensor(0.3636),
+        #     'dice/class_00': tensor(0.3636),
+        # }
+
+    .. code-block:: python
+
+        import os
+        import torch
+        from torch import nn
+        from torch.utils.data import DataLoader
+        from catalyst import dl
+        from catalyst.data import ToTensor
+        from catalyst.contrib.datasets import MNIST
+        from catalyst.contrib.nn import IoULoss
+
+
+        model = nn.Sequential(
+            nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
+            nn.Conv2d(1, 1, 3, 1, 1), nn.Sigmoid(),
+        )
+        criterion = IoULoss()
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+
+        loaders = {
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                batch_size=32
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                batch_size=32
+            ),
+        }
+
+        class CustomRunner(dl.SupervisedRunner):
+            def handle_batch(self, batch):
+                x = batch[self._input_key]
+                x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
+                x_ = self.model(x_noise)
+                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
+
+        runner = CustomRunner(
+            input_key="features", output_key="scores", target_key="targets", loss_key="loss"
+        )
+        # model training
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            num_epochs=1,
+            callbacks=[
+                dl.IOUCallback(input_key="scores", target_key="targets"),
+                dl.DiceCallback(input_key="scores", target_key="targets"),
+                dl.TrevskyCallback(input_key="scores", target_key="targets", alpha=0.2),
+            ],
+            logdir="./logdir",
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            verbose=True,
+        )
+
+    .. note::
+        Please follow the `minimal examples`_ sections for more use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(
@@ -293,6 +489,95 @@ class TrevskyMetric(RegionBasedMetric):
             Used for per-batch logging. default: True
         prefix: metric prefix
         suffix: metric suffix
+
+    Examples:
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+
+        outputs = torch.tensor([[[[0.8, 0.1, 0], [0, 0.4, 0.3], [0, 0, 1]]]])
+        targets = torch.tensor([[[[1.0, 0, 0], [0, 1, 0], [1, 1, 0]]]])
+        metric = metrics.TrevskyMetric(alpha=0.2)
+        metric.reset()
+
+        metric.compute()
+        # per_class, micro, macro, weighted
+        # ([tensor(0.4167)], tensor(0.4167), tensor(0.4167), None)
+
+        metric.update_key_value(outputs, targets)
+        metric.compute_key_value()
+        # {
+        #     'trevsky': tensor(0.4167),
+        #     'trevsky/_macro': tensor(0.4167)
+        #     'trevsky/_micro': tensor(0.4167),
+        #     'trevsky/class_00': tensor(0.4167),
+        # }
+
+    .. code-block:: python
+
+        import os
+        import torch
+        from torch import nn
+        from torch.utils.data import DataLoader
+        from catalyst import dl
+        from catalyst.data import ToTensor
+        from catalyst.contrib.datasets import MNIST
+        from catalyst.contrib.nn import IoULoss
+
+
+        model = nn.Sequential(
+            nn.Conv2d(1, 1, 3, 1, 1), nn.ReLU(),
+            nn.Conv2d(1, 1, 3, 1, 1), nn.Sigmoid(),
+        )
+        criterion = IoULoss()
+        optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
+
+        loaders = {
+            "train": DataLoader(
+                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()),
+                batch_size=32
+            ),
+            "valid": DataLoader(
+                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()),
+                batch_size=32
+            ),
+        }
+
+        class CustomRunner(dl.SupervisedRunner):
+            def handle_batch(self, batch):
+                x = batch[self._input_key]
+                x_noise = (x + torch.rand_like(x)).clamp_(0, 1)
+                x_ = self.model(x_noise)
+                self.batch = {self._input_key: x, self._output_key: x_, self._target_key: x}
+
+        runner = CustomRunner(
+            input_key="features", output_key="scores", target_key="targets", loss_key="loss"
+        )
+        # model training
+        runner.train(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            loaders=loaders,
+            num_epochs=1,
+            callbacks=[
+                dl.IOUCallback(input_key="scores", target_key="targets"),
+                dl.DiceCallback(input_key="scores", target_key="targets"),
+                dl.TrevskyCallback(input_key="scores", target_key="targets", alpha=0.2),
+            ],
+            logdir="./logdir",
+            valid_loader="valid",
+            valid_metric="loss",
+            minimize_valid_metric=True,
+            verbose=True,
+        )
+
+    .. note::
+        Please follow the `minimal examples`_ sections for more use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
     """
 
     def __init__(

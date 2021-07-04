@@ -15,3 +15,4 @@ from catalyst.contrib.datasets.cv.imagewoof import (
     Imagewoof160,
     Imagewoof320,
 )
+from catalyst.contrib.datasets.cv.imagecar import CarvanaOneCarDataset

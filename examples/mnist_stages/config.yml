@@ -51,8 +51,27 @@ stages:
       # default kwargs for `runner.get_loaders`:
       batch_size: 32
       num_workers: 1
+<<<<<<< HEAD
       # kwargs for `runner.get_datasets`:
       num_samples_per_class: 320
+=======
+
+      datasets:
+        train:
+          _target_: MNIST
+          root: *dataset_root
+          train: True
+          transform:
+            _target_: transform.ToTensor
+          download: True
+        valid:
+          _target_: MNIST
+          root: *dataset_root
+          train: False
+          transform:
+            _target_: transform.ToTensor
+          download: True
+>>>>>>> upstream/master
 
     criterion:
       _target_: CrossEntropyLoss
@@ -93,8 +112,8 @@ stages:
         metric_key: *valid_metric
         minimize: *minimize_valid_metric
         use_logdir_postfix: True
-      verbose:
-        _target_: TqdmCallback
+#      verbose:
+#        _target_: TqdmCallback
 
   tune:
     num_epochs: 4

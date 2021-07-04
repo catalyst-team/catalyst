@@ -21,7 +21,7 @@ jobs:
       matrix:
         os: [ubuntu-18.04, ubuntu-20.04, macOS-10.15]  # windows-2019,
         python-version: [3.6, 3.7, 3.8]
-        requirements: ['minimal', 'latest']
+        requirements: ['latest']
         exclude:
           # pickle problems
           - python-version: 3.8
@@ -29,6 +29,7 @@ jobs:
           - python-version: 3.6
             os: macOS-10.15
           # github CI problems
+<<<<<<< HEAD
           - python-version: 3.8
             os: ubuntu-18.04
             requirements: minimal
@@ -44,8 +45,25 @@ jobs:
           - python-version: 3.6
             os: ubuntu-20.04
             requirements: minimal
+=======
+#          - python-version: 3.8
+#            os: ubuntu-18.04
+#            requirements: minimal
+#          - python-version: 3.8
+#            os: ubuntu-20.04
+#            requirements: minimal
+#          - python-version: 3.7
+#            os: ubuntu-18.04
+#            requirements: minimal
+#          - python-version: 3.7
+#            os: ubuntu-20.04
+#            requirements: minimal
+#          - python-version: 3.7
+#            os: macOS-10.15
+#            requirements: minimal
+>>>>>>> upstream/master
 
-    timeout-minutes: 120
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v2
 
@@ -67,14 +85,20 @@ jobs:
           python -c "req = open('./requirements/requirements.txt').read().replace('>', '=') ; open('./requirements/requirements.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-cv.txt').read().replace('>', '=') ; open('./requirements/requirements-cv.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-ml.txt').read().replace('>', '=') ; open('./requirements/requirements-ml.txt', 'w').write(req)"
+<<<<<<< HEAD
           python -c "req = open('./requirements/requirements-nifti.txt').read().replace('>', '=') ; open('./requirements/requirements-nifti.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-hydra.txt').read().replace('>', '=') ; open('./requirements/requirements-hydra.txt', 'w').write(req)"
           python -c "req = open('./requirements/requirements-optuna.txt').read().replace('>', '=') ; open('./requirements/requirements-optuna.txt', 'w').write(req)"
 
+=======
+          python -c "req = open('./requirements/requirements-neptune.txt').read().replace('>', '=') ; open('./requirements/requirements-neptune.txt', 'w').write(req)"
+          python -c "req = open('./requirements/requirements-albu.txt').read().replace('>', '=') ; open('./requirements/requirements-albu.txt', 'w').write(req)"
+>>>>>>> upstream/master
 
       # https://github.com/actions/cache/blob/master/examples.md
       # Note: This uses an internal pip API and may not always work
       # https://github.com/actions/cache/blob/master/examples.md#multiple-oss-in-a-workflow
+<<<<<<< HEAD
       - name: get pip cache dir
         id: pip-cache
         run: |
@@ -100,6 +124,33 @@ jobs:
         run: |
           # python -m pip install --upgrade --user pip
           pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-nifti.txt
+=======
+#      - name: get pip cache dir
+#        id: pip-cache
+#        run: |
+#          python -c "from pip._internal.locations import USER_CACHE_DIR; print('::set-output name=dir::' + USER_CACHE_DIR)"
+#
+#      - name: cache pip
+#        uses: actions/cache@v2
+#        with:
+#          path: ${{ steps.pip-cache.outputs.dir }}
+#          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements.txt') }} -${{ hashFiles('./requirements/requirements-dev.txt') }}
+#          restore-keys: |
+#            ${{ runner.os }}-${{ matrix.python-version }}-pip-
+#
+#      - name: cache pip contrib
+#        uses: actions/cache@v2
+#        with:
+#          path: ${{ steps.pip-cache.outputs.dir }}
+#          key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements-cv.txt') }} -${{ hashFiles('./requirements/requirements-hydra.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }} -${{ hashFiles('./requirements/requirements-nifti.txt') }}
+#          restore-keys: |
+#            ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
+#
+      - name: install dependencies
+        run: |
+          # python -m pip install --upgrade --user pip
+          pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-nifti.txt -r ./requirements/requirements-neptune.txt -r ./requirements/requirements-albu.txt
+>>>>>>> upstream/master
           python --version
           pip --version
           pip list
@@ -109,9 +160,11 @@ jobs:
       - name: check examples
         env:
           REQUIREMENTS: ${{ matrix.requirements }}
+          OMP_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
         run: |
-          pytest .
+          OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" pytest .
           pip install -e .
-          cd examples && bash mnist_stages/run_config.sh && cd ..
-          cd examples && bash mnist_stages/run_hydra.sh && cd ..
-          cd examples && bash mnist_stages/run_tune.sh && cd ..
+          OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_config.sh && cd ..
+          OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_hydra.sh && cd ..
+          OMP_NUM_THREADS="1" MKL_NUM_THREADS="1" cd examples && bash mnist_stages/run_tune.sh && cd ..

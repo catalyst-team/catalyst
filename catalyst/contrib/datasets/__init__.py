@@ -2,11 +2,19 @@
 
 from catalyst.settings import SETTINGS
 
+if SETTINGS.cv_required:  # we need imread function here
+    from catalyst.contrib.datasets.market1501 import (
+        Market1501MLDataset,
+        Market1501QGDataset,
+    )
+
 from catalyst.contrib.datasets.mnist import (
     MnistMLDataset,
     MnistQGDataset,
     MNIST,
 )
+
+from catalyst.contrib.datasets.cifar import CIFAR10, CIFAR100
 
 if SETTINGS.ml_required:
     from catalyst.contrib.datasets.movielens import MovieLens

@@ -90,32 +90,42 @@ def precision_recall_fbeta_support(
         tuple of precision_val, recall, fbeta_score
 
     Examples:
-        >>> precision_recall_fbeta_support(
-        >>>     outputs=torch.tensor([
-        >>>         [1, 0, 0],
-        >>>         [0, 1, 0],
-        >>>         [0, 0, 1],
-        >>>     ]),
-        >>>     targets=torch.tensor([0, 1, 2]),
-        >>>     beta=1,
-        >>> )
-        (
-            tensor([1., 1., 1.]),  # precision_val per class
-            tensor([1., 1., 1.]),  # recall per class
-            tensor([1., 1., 1.]),  # fbeta per class
-            tensor([1., 1., 1.]),  # support per class
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.precision_recall_fbeta_support(
+            outputs=torch.tensor([
+                [1, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1],
+            ]),
+            targets=torch.tensor([0, 1, 2]),
+            beta=1,
         )
-        >>> precision_recall_fbeta_support(
-        >>>     outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),
-        >>>     targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),
-        >>>     beta=1,
-        >>> )
-        (
-            tensor([0.5000, 0.5000]),  # precision per class
-            tensor([0.5000, 0.5000]),  # recall per class
-            tensor([0.5000, 0.5000]),  # fbeta per class
-            tensor([4., 4.]),          # support per class
+        # (
+        #     tensor([1., 1., 1.]),  # per class precision
+        #     tensor([1., 1., 1.]),  # per class recall
+        #     tensor([1., 1., 1.]),  # per class fbeta
+        #     tensor([1., 1., 1.]),  # per class support
+        # )
+
+    .. code-block:: python
+
+        import torch
+        from catalyst import metrics
+        metrics.precision_recall_fbeta_support(
+            outputs=torch.tensor([[0, 0, 1, 1, 0, 1, 0, 1]]),
+            targets=torch.tensor([[0, 1, 0, 1, 0, 0, 1, 1]]),
+            beta=1,
         )
+        # (
+        #     tensor([0.5000, 0.5000]),  # per class precision
+        #     tensor([0.5000, 0.5000]),  # per class recall
+        #     tensor([0.5000, 0.5000]),  # per class fbeta
+        #     tensor([4., 4.]),          # per class support
+        # )
     """
     tn, fp, fn, tp, support = get_multiclass_statistics(
         outputs=outputs, targets=targets, argmax_dim=argmax_dim, num_classes=num_classes,

@@ -21,7 +21,7 @@ Catalyst supports a variety of metrics storages during the experiment
         runner.epoch_metrics = {
             "train": {"loss": ..., "accuracy": ..., "auc": ...},
             "valid: {"loss": ..., "accuracy": ..., "auc": ...}
-            "_epoc_": {"lr": ..., "momentum": ...,}
+            "_epoch_": {"lr": ..., "momentum": ...,}
         }
 
 You could log any new metric in a straightforward way:
@@ -32,12 +32,11 @@ You could log any new metric in a straightforward way:
     from torch import nn, optim
     from torch.nn import functional as F
     from torch.utils.data import DataLoader
-    from catalyst import dl, metrics, utils
-    from catalyst.data.transforms import ToTensor
+    from catalyst import dl, metrics
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
     model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
-    criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.02)
 
     loaders = {
@@ -69,7 +68,7 @@ You could log any new metric in a straightforward way:
             # run model forward pass
             logits = self.model(x)
             # compute the loss
-            loss = self.criterion(logits, y)
+            loss = F.cross_entropy(logits, y)
             # compute other metrics of interest
             accuracy01, accuracy03 = metrics.accuracy(logits, y, topk=(1, 3))
             # log metrics
@@ -93,7 +92,6 @@ You could log any new metric in a straightforward way:
     # model training
     runner.train(
         model=model,
-        criterion=criterion,
         optimizer=optimizer,
         loaders=loaders,
         logdir="./logs",
@@ -116,6 +114,7 @@ You could log any new metric in a straightforward way:
 - csv
 - Tensorboard
 - Mlflow
+- Neptune
 
 If you haven't found the answer for your question, feel free to `join our slack`_ for the discussion.
 

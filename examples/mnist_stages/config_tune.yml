@@ -57,34 +57,40 @@ stages:
     num_epochs: 4
 
     loaders: &loaders
-      batch_size: 32
-      num_workers: 1
-
-#      datasets:
-#        train:
-#          _target_: MNIST
-#          root: *dataset_root
-#          train: True
-#          download: True
-#        valid:
-#          _target_: MNIST
-#          root: *dataset_root
-#          train: False
-#          download: True
-#
-#      samplers:
-#        train:
-#          _target_: MiniEpochSampler
-#          data_len: 50000
-#          mini_epoch_len: 35000
-#          drop_last: True
-#          shuffle: per_epoch
-#
-#      transforms:
-#        _target_: albumentations.Compose
-#        transforms:
-#          - _target_: albumentations.Normalize
-#          - _target_: catalyst.ImageToTensor
+      train:
+        _target_: torch.utils.data.DataLoader
+        dataset:
+          _target_: MNIST
+          root: *dataset_root
+          train: True
+          transform: &transform
+            _target_: transform.Compose
+            transforms:
+              - _target_: transform.ToTensor
+              - _target_: transform.Normalize
+                mean: [0]
+                std: [1]
+          download: True
+        batch_size: &batch_size 32
+        sampler:
+          _target_: MiniEpochSampler
+          data_len: 50000
+          mini_epoch_len: 35000
+          drop_last: true
+          shuffle: per_epoch
+        num_workers: 1
+      valid:
+        _target_: DataLoader
+        dataset:
+          _target_: MNIST
+          root: *dataset_root
+          train: False
+          transform: *transform
+          download: True
+        batch_size: *batch_size
+        shuffle: false
+        num_workers: 1
+        drop_last: false
 
     criterion:
       _target_: CrossEntropyLoss
@@ -123,8 +129,8 @@ stages:
         minimize: *minimize_valid_metric
         use_logdir_postfix: True
         use_runner_logdir: True
-      verbose:
-        _target_: TqdmCallback
+#      verbose:
+#        _target_: TqdmCallback
       optuna:
         _target_: OptunaPruningCallback
         loader_key: *valid_loader

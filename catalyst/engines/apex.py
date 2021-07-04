@@ -1,12 +1,14 @@
-from typing import Dict, Union
+from typing import Any, Dict, Union
 from collections import OrderedDict
+import os
 
 import torch
 from torch import nn
+import torch.distributed as dist
 
 from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import SETTINGS
-from catalyst.typing import RunnerModel, RunnerOptimizer
+from catalyst.typing import Model, Optimizer, RunnerModel, RunnerOptimizer
 from catalyst.utils.misc import get_fn_default_params
 
 if SETTINGS.apex_required:
@@ -116,7 +118,7 @@ def _wrap_into_data_parallel_with_apex(
         model = {k: nn.DataParallel(v[0]) for k, v in model.items()}
         model = {k: _patch_forward(v) for k, v in model.items()}
     else:
-        raise NotImplementedError()
+        raise ValueError("Model should be ``nn.Module`` or ``dict``")
 
     return model, optimizer
 
@@ -126,6 +128,7 @@ class APEXEngine(DeviceEngine):
 
     Args:
         device: use device, default is `"cuda"`.
+<<<<<<< HEAD
         opt_level: optimization level, should be one of ``"O0"``,
             ``"O1"``, ``"O2"`` or ``"O3"``.
 
@@ -145,8 +148,31 @@ class APEXEngine(DeviceEngine):
             If loss_scale is the string "dynamic",
             adaptively adjust the loss scale over time.
             Dynamic loss scale adjustments are performed by Amp automatically.
+=======
+        apex_kwargs: parameters for `apex.amp.initialize`
+            except models and optimizers (they will be forwared automatically).
+
+            Docs for `apex.amp.initialize`:
+            https://nvidia.github.io/apex/amp.html#apex.amp.initialize
+>>>>>>> upstream/master
 
     Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+<<<<<<< HEAD
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.APEXEngine(opt_level="O1", keep_batchnorm_fp32=False)
+=======
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.APEXEngine(apex_kwargs=dict(opt_level="O1", keep_batchnorm_fp32=False)),
+            ...
+        )
 
     .. code-block:: python
 
@@ -155,7 +181,8 @@ class APEXEngine(DeviceEngine):
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
-                return dl.APEXEngine(opt_level="O1", keep_batchnorm_fp32=False)
+                return dl.APEXEngine(apex_kwargs=dict(opt_level="O1", keep_batchnorm_fp32=False))
+>>>>>>> upstream/master
             # ...
 
     .. code-block:: yaml
@@ -169,29 +196,28 @@ class APEXEngine(DeviceEngine):
 
         engine:
             _target_: APEXEngine
+<<<<<<< HEAD
             opt_level: O1
             keep_batchnorm_fp32: false
+=======
+            apex_kwargs:
+                opt_level: O1
+                keep_batchnorm_fp32: false
+>>>>>>> upstream/master
 
         stages:
             ...
 
     """
 
-    def __init__(
-        self,
-        device: str = "cuda",
-        opt_level: str = "O1",
-        keep_batchnorm_fp32: bool = None,
-        loss_scale: Union[float, str] = None,
-    ):
+    def __init__(self, device: str = "cuda", apex_kwargs: Dict[str, Any] = None):
         """Init."""
         super().__init__(device)
-        self.opt_level = opt_level
-        self.keep_batchnorm_fp32 = keep_batchnorm_fp32
-        self.loss_scale = loss_scale
+        self.apex_kwargs = apex_kwargs or {}
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"{self.__class__.__name__}(device='{self.device}',opt_level='{self.opt_level}')"
+        args_list = [f"device='{self._device}'", f"apex_kwargs={self.apex_kwargs}"]
+        return f"{self.__class__.__name__}(" + ",".join(args_list) + ")"
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -212,20 +238,14 @@ class APEXEngine(DeviceEngine):
 
         # from official docs:
         #   https://nvidia.github.io/apex/amp.html#opt-levels-and-properties
-        model, optimizer = _initialize_apex(
-            model,
-            optimizer,
-            opt_level=self.opt_level,
-            keep_batchnorm_fp32=self.keep_batchnorm_fp32,
-            loss_scale=self.loss_scale,
-        )
+        model, optimizer = _initialize_apex(model, optimizer, **self.apex_kwargs)
 
         # scheduler
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
-    def backward_loss(self, loss, model, optimizer) -> None:
+    def backward_loss(self, loss: torch.Tensor, model: Model, optimizer: Optimizer) -> None:
         """Abstraction over ``loss.backward()`` step."""
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
@@ -295,6 +315,7 @@ class APEXEngine(DeviceEngine):
             amp.load_state_dict(checkpoint["amp"])
 
 
+<<<<<<< HEAD
 class DataParallelApexEngine(APEXEngine):
     """Apex multi-gpu training device engine.
 
@@ -309,8 +330,35 @@ class DataParallelApexEngine(APEXEngine):
 
             Details about levels can be found here:
             https://nvidia.github.io/apex/amp.html#opt-levels
+=======
+class DataParallelAPEXEngine(APEXEngine):
+    """Apex multi-gpu training device engine.
+
+    Args:
+        apex_kwargs: parameters for `apex.amp.initialize`
+            except models and optimizers (they will be forwared automatically).
+
+            Docs for `apex.amp.initialize`:
+            https://nvidia.github.io/apex/amp.html#apex.amp.initialize
+>>>>>>> upstream/master
 
     Examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+<<<<<<< HEAD
+        class MyRunner(dl.IRunner):
+            # ...
+            def get_engine(self):
+                return dl.DataParallelApexEngine(opt_level="O1")
+=======
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.DataParallelApexEngine(apex_kwargs=dict(opt_level="O1")),
+            ...
+        )
 
     .. code-block:: python
 
@@ -319,7 +367,8 @@ class DataParallelApexEngine(APEXEngine):
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
-                return dl.DataParallelApexEngine(opt_level="O1")
+                return dl.DataParallelApexEngine(apex_kwargs=dict(opt_level="O1"))
+>>>>>>> upstream/master
             # ...
 
     .. code-block:: yaml
@@ -330,6 +379,7 @@ class DataParallelApexEngine(APEXEngine):
         model:
             _target_: ...
             ...
+<<<<<<< HEAD
 
         engine:
             _target_: DataParallelApexEngine
@@ -339,14 +389,28 @@ class DataParallelApexEngine(APEXEngine):
             ...
 
     """
+=======
+>>>>>>> upstream/master
 
-    def __init__(self, opt_level: str = "O1"):
+        engine:
+            _target_: DataParallelApexEngine
+            apex_kwargs:
+                opt_level: O1
+
+        stages:
+            ...
+
+    """
+
+    def __init__(self, apex_kwargs: Dict[str, Any] = None):
         """Init."""
-        super().__init__(f"cuda:{torch.cuda.current_device()}", opt_level)
+        super().__init__(f"cuda:{torch.cuda.current_device()}", apex_kwargs)
         self.device_count = torch.cuda.device_count()
 
     def __repr__(self) -> str:  # noqa: D105
-        return f"{self.__class__.__name__}(device='{self.device}',opt_level='{self.opt_level}')"
+        return (
+            f"{self.__class__.__name__}(device='{self._device}', apex_kwargs={self.apex_kwargs})"
+        )
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -364,7 +428,7 @@ class DataParallelApexEngine(APEXEngine):
         optimizer = self.sync_device(optimizer)
 
         model, optimizer = _wrap_into_data_parallel_with_apex(
-            model, optimizer, distributed_params={"opt_level": self.opt_level}
+            model, optimizer, distributed_params=self.apex_kwargs
         )
 
         # scheduler
@@ -373,10 +437,11 @@ class DataParallelApexEngine(APEXEngine):
         return model, criterion, optimizer, scheduler
 
 
-class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
+class DistributedDataParallelAPEXEngine(DistributedDataParallelEngine):
     """Distributed Apex MultiGPU training device engine.
 
     Args:
+<<<<<<< HEAD
         address: process address to use
             (required for PyTorch backend), default is `"localhost"`.
         port: process port to listen
@@ -406,6 +471,21 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             Dynamic loss scale adjustments are performed by Amp automatically.
         delay_all_reduce (bool): boolean flag for delayed all reduce,
             default is `True`.
+=======
+        address: address to use for backend.
+        port: port to use for backend.
+        ddp_kwargs: parameters for `apex.parallel.DistributedDataParallel`.
+            More info here:
+            https://nvidia.github.io/apex/parallel.html#apex.parallel.DistributedDataParallel
+        process_group_kwargs: parameters for `torch.distributed.init_process_group`.
+            More info here:
+            https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
+        apex_kwargs: parameters for `apex.amp.initialize`
+            except models and optimizers (they will be forwared automatically).
+
+            Docs for `apex.amp.initialize`:
+            https://nvidia.github.io/apex/amp.html#apex.amp.initialize
+>>>>>>> upstream/master
 
     Examples:
 
@@ -413,12 +493,37 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
 
         from catalyst import dl
 
+<<<<<<< HEAD
+=======
+        runner = dl.SupervisedRunner()
+        runner.train(
+            engine=dl.DistributedDataParallelApexEngine(
+                ddp_kwargs={"allreduce_always_fp32": True},
+                process_group_kwargs={"backend": "nccl"},
+                apex_kwargs={"opt_level": "O1"},
+            ),
+            ...
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+>>>>>>> upstream/master
         class MyRunner(dl.IRunner):
             # ...
             def get_engine(self):
                 return dl.DistributedDataParallelApexEngine(
+<<<<<<< HEAD
                     port=12345,
                     opt_level="O1"
+=======
+                    address="0.0.0.0",
+                    port=23234,
+                    ddp_kwargs={"allreduce_always_fp32": True},
+                    process_group_kwargs={"backend": "nccl"},
+                    apex_kwargs={"opt_level": "O1"},
+>>>>>>> upstream/master
                 )
             # ...
 
@@ -433,8 +538,19 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
 
         engine:
             _target_: DistributedDataParallelApexEngine
+<<<<<<< HEAD
             port: 12345
             opt_level: O1
+=======
+            address: 0.0.0.0
+            port: 23234
+            ddp_kwargs:
+                allreduce_always_fp32: true
+            process_group_kwargs:
+                backend: nccl
+            apex_kwargs:
+                opt_level: O1
+>>>>>>> upstream/master
 
         stages:
             ...
@@ -442,35 +558,48 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
 
     def __init__(
         self,
-        address: str = "localhost",
-        port: str = "12345",
-        backend: str = "nccl",
-        world_size: int = None,
-        opt_level: str = "O1",
-        keep_batchnorm_fp32: bool = None,
-        loss_scale: Union[float, str] = None,
-        delay_all_reduce: bool = True,
+        address: str = None,
+        port: Union[str, int] = None,
+        ddp_kwargs: Dict[str, Any] = None,
+        process_group_kwargs: Dict[str, Any] = None,
+        apex_kwargs: Dict[str, Any] = None,
     ):
         """Init."""
-        super().__init__()
-        self.address = address
-        self.port = port
-        self.backend = backend
-        self._rank = 0
-        self._world_size = world_size or torch.cuda.device_count()
-        self.device = None
-        self.opt_level = opt_level
-        self.delay_all_reduce = delay_all_reduce
-        self.keep_batchnorm_fp32 = keep_batchnorm_fp32
-        self.loss_scale = loss_scale
+        super().__init__(
+            address=address, port=port, ddp_kwargs=None, process_group_kwargs=process_group_kwargs
+        )
+        self.ddp_kwargs = ddp_kwargs or {}
+        self.apex_kwargs = apex_kwargs or {}
 
     def __repr__(self):  # noqa: D105
         return (
             f"{self.__class__.__name__}(address={self.address}, "
-            f"port={self.port}, backend='{self.backend}', "
-            f"rank={self._rank}, world_size={self._world_size}, "
-            f"opt_level='{self.opt_level}')"
+            f"port={self.port}, "
+            f"ddp_kwargs={self.ddp_kwargs}, "
+            f"process_group_kwargs={self.process_group_kwargs}, "
+            f"apex_kwargs={self.apex_kwargs})"
         )
+
+    def setup_process(self, rank: int = -1, world_size: int = 1):
+        """Initialize DDP variables and processes.
+
+        Args:
+            rank: process rank. Default is `-1`.
+            world_size: number of devices in netwok to expect for train.
+                Default is `1`.
+        """
+        self._rank = rank
+        self._world_size = world_size
+
+        self.process_group_kwargs["rank"] = rank
+        self.process_group_kwargs["world_size"] = world_size
+        os.environ["MASTER_ADDR"] = str(self.address)
+        os.environ["MASTER_PORT"] = str(self.port)
+
+        dist.init_process_group(**self.process_group_kwargs)
+
+        torch.cuda.set_device(int(self._rank))
+        self._device = f"cuda:{int(self._rank)}"
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -485,6 +614,7 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
         optimizer = optimizer_fn()
         optimizer = self.sync_device(optimizer)
 
+<<<<<<< HEAD
         model, optimizer = amp.initialize(
             model,
             optimizer,
@@ -493,12 +623,16 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             loss_scale=self.loss_scale,
         )
         model = ApexDistributedDataParallel(model, delay_allreduce=self.delay_all_reduce)
+=======
+        model, optimizer = amp.initialize(model, optimizer, **self.apex_kwargs)
+        model = ApexDistributedDataParallel(model, **self.ddp_kwargs)
+>>>>>>> upstream/master
 
         scheduler = scheduler_fn()
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
 
-    def backward_loss(self, loss, model, optimizer) -> None:
+    def backward_loss(self, loss: torch.Tensor, model: Model, optimizer: Optimizer) -> None:
         """Abstraction over ``loss.backward()`` step."""
         with amp.scale_loss(loss, optimizer) as scaled_loss:
             scaled_loss.backward()
@@ -568,4 +702,13 @@ class DistributedDataParallelApexEngine(DistributedDataParallelEngine):
             amp.load_state_dict(checkpoint["amp"])
 
 
-__all__ = ["APEXEngine", "DataParallelApexEngine", "DistributedDataParallelApexEngine"]
+DataParallelApexEngine = DataParallelAPEXEngine
+DistributedDataParallelApexEngine = DistributedDataParallelAPEXEngine
+
+__all__ = [
+    "APEXEngine",
+    "DataParallelAPEXEngine",
+    "DistributedDataParallelAPEXEngine",
+    "DataParallelApexEngine",
+    "DistributedDataParallelApexEngine",
+]

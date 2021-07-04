@@ -1,12 +1,11 @@
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 from collections import OrderedDict
 from copy import deepcopy
-from functools import partial
 import logging
 import os
 
 from torch import nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 
 from catalyst.callbacks import CheckpointCallback, ICheckpointCallback
 from catalyst.callbacks.batch_overfit import BatchOverfitCallback
@@ -28,6 +27,7 @@ from catalyst.typing import (
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
+    Sampler,
     Scheduler,
 )
 from catalyst.utils.data import get_loaders_from_params
@@ -39,9 +39,53 @@ logger = logging.getLogger(__name__)
 
 class ConfigRunner(IRunner):
     """Runner created from a dictionary configuration file.
+    Used for Catalyst Config API.
 
     Args:
         config: dictionary with parameters
+
+    .. note::
+        Please follow the `minimal examples`_ sections for use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+
+    Examples:
+
+    .. code-block:: python
+
+        dataset = SomeDataset()
+        runner = SupervisedConfigRunner(
+            config={
+                "args": {"logdir": logdir},
+                "model": {"_target_": "SomeModel", "in_features": 4, "out_features": 2},
+                "engine": {"_target_": "DeviceEngine", "device": device},
+                "stages": {
+                    "stage1": {
+                        "num_epochs": 10,
+                        "criterion": {"_target_": "MSELoss"},
+                        "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "callbacks": {
+                            "criterion": {
+                                "_target_": "CriterionCallback",
+                                "metric_key": "loss",
+                                "input_key": "logits",
+                                "target_key": "targets",
+                            },
+                            "optimizer": {
+                                "_target_": "OptimizerCallback",
+                                "metric_key": "loss"
+                            },
+                        },
+                    },
+                },
+            }
+        )
+        runner.get_datasets = lambda *args, **kwargs: {
+            "train": dataset,
+            "valid": dataset,
+        }
+        runner.run()
     """
 
     def __init__(self, config: Dict):
@@ -96,7 +140,7 @@ class ConfigRunner(IRunner):
 
     @property
     def logdir(self) -> str:
-        """@TODO: docs."""
+        """Experiment's logdir for artefacts and logging."""
         return self._logdir
 
     @property
@@ -154,9 +198,7 @@ class ConfigRunner(IRunner):
     def get_loggers(self) -> Dict[str, ILogger]:
         """Returns the loggers for the run."""
         loggers_params = self._config.get("loggers", {})
-        loggers = {
-            key: REGISTRY.get_from_params(**params) for key, params in loggers_params.items()
-        }
+        loggers = REGISTRY.get_from_params(**loggers_params)
 
         is_logger_exists = lambda logger_fn: any(
             isinstance(x, logger_fn) for x in loggers.values()
@@ -164,13 +206,46 @@ class ConfigRunner(IRunner):
         if not is_logger_exists(ConsoleLogger):
             loggers["_console"] = ConsoleLogger()
         if self._logdir is not None and not is_logger_exists(CSVLogger):
-            loggers["_csv"] = CSVLogger(logdir=self._logdir)
+            loggers["_csv"] = CSVLogger(logdir=self._logdir, use_logdir_postfix=True)
         if self._logdir is not None and not is_logger_exists(TensorboardLogger):
             loggers["_tensorboard"] = TensorboardLogger(
-                logdir=os.path.join(self._logdir, "tensorboard")
+                logdir=self._logdir, use_logdir_postfix=True,
             )
 
         return loggers
+
+    def get_datasets(self, stage: str) -> "OrderedDict[str, Dataset]":
+        """
+        Returns datasets for a given stage.
+
+        Args:
+            stage: stage name
+
+        Returns:
+            Dict: datasets objects
+        """
+        datasets_params = self._stage_config[stage]["loaders"]["datasets"]
+        datasets = REGISTRY.get_from_params(**datasets_params)
+        return OrderedDict(datasets)
+
+    def get_samplers(self, stage: str) -> "OrderedDict[str, Sampler]":
+        """
+        Returns samplers for a given stage.
+
+        Args:
+            stage: stage name
+
+        Returns:
+            Dict of samplers
+        """
+        samplers_params = get_by_keys(self._stage_config, stage, "loaders", "samplers", default={})
+        samplers = REGISTRY.get_from_params(**samplers_params)
+        return OrderedDict(samplers)
+
+    def _get_loaders_from_params(self, **params) -> "Optional[OrderedDict[str, DataLoader]]":
+        """Creates dataloaders from ``**params`` parameters."""
+        loaders = dict(REGISTRY.get_from_params(**params))
+        return loaders if all(isinstance(dl, DataLoader) for dl in loaders.values()) else None
 
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
         """
@@ -181,15 +256,20 @@ class ConfigRunner(IRunner):
 
         Returns:
             Dict: loaders objects
-
         """
-        loaders_params = dict(self._stage_config[stage]["loaders"])
-        loaders = get_loaders_from_params(
-            datasets_fn=partial(self.get_datasets, stage=stage),
-            initial_seed=self.seed,
-            stage=stage,
-            **loaders_params,
-        )
+        loaders_params = deepcopy(self._stage_config[stage]["loaders"])
+        loaders = self._get_loaders_from_params(**loaders_params)
+        if loaders is None:
+            #  config is parsed manyally in `get_datasets` and `get_samplers` methods
+            loaders_params.pop("datasets", None)
+            loaders_params.pop("samplers", None)
+
+            loaders = get_loaders_from_params(
+                datasets=self.get_datasets(stage=stage),
+                samplers=self.get_samplers(stage=stage),
+                initial_seed=self.seed,
+                **loaders_params,
+            )
         return loaders
 
     @staticmethod
@@ -214,27 +294,11 @@ class ConfigRunner(IRunner):
         model: RunnerModel = self._get_model_from_params(**model_params)
         return model
 
-    @staticmethod
-    def _get_criterion_from_params(**params) -> RunnerCriterion:
-        params = deepcopy(params)
-        key_value_flag = params.pop("_key_value", False)
-
-        if key_value_flag:
-            criterion = {
-                key: ConfigRunner._get_criterion_from_params(**key_params)  # noqa: WPS437
-                for key, key_params in params.items()
-            }
-        else:
-            criterion = REGISTRY.get_from_params(**params)
-        return criterion
-
     def get_criterion(self, stage: str) -> RunnerCriterion:
         """Returns the criterion for a given stage."""
-        if "criterion" not in self._stage_config[stage]:
-            return None
         criterion_params = get_by_keys(self._stage_config, stage, "criterion", default={})
-        criterion = self._get_criterion_from_params(**criterion_params)
-        return criterion
+        criterion = REGISTRY.get_from_params(**criterion_params)
+        return criterion or None
 
     def _get_optimizer_from_params(
         self, model: RunnerModel, stage: str, **params
@@ -265,8 +329,10 @@ class ConfigRunner(IRunner):
             no_bias_weight_decay=no_bias_weight_decay,
             lr_scaling=lr_scaling,
         )
+
         # instantiate optimizer
-        optimizer = REGISTRY.get_from_params(**params, params=model_params)
+        # use `shared_params` to pass model params to the nested optimizers
+        optimizer = REGISTRY.get_from_params(**params, shared_params={"params": model_params})
         return optimizer
 
     def get_optimizer(self, model: RunnerModel, stage: str) -> RunnerOptimizer:
@@ -328,26 +394,10 @@ class ConfigRunner(IRunner):
         scheduler = self._get_scheduler_from_params(optimizer=optimizer, **scheduler_params)
         return scheduler
 
-    @staticmethod
-    def _get_callback_from_params(**params):
-        params = deepcopy(params)
-        wrapper_params = params.pop("_wrapper", None)
-        callback = REGISTRY.get_from_params(**params)
-        if wrapper_params is not None:
-            wrapper_params["base_callback"] = callback
-            callback = ConfigRunner._get_callback_from_params(**wrapper_params)  # noqa: WPS437
-        return callback
-
     def get_callbacks(self, stage: str) -> "OrderedDict[str, Callback]":
         """Returns the callbacks for a given stage."""
         callbacks_params = get_by_keys(self._stage_config, stage, "callbacks", default={})
-
-        callbacks = OrderedDict(
-            [
-                (key, self._get_callback_from_params(**callback_params))
-                for key, callback_params in callbacks_params.items()
-            ]
-        )
+        callbacks = OrderedDict(REGISTRY.get_from_params(**callbacks_params))
 
         is_callback_exists = lambda callback_fn: any(
             callback_isinstance(x, callback_fn) for x in callbacks.values()
@@ -378,6 +428,49 @@ class SupervisedConfigRunner(ISupervisedRunner, ConfigRunner):
         output_key: key for ``runner.batch`` to store model output
         target_key: key in ``runner.batch`` dict mapping for target
         loss_key: key for ``runner.batch_metrics`` to store criterion loss output
+
+    .. note::
+        Please follow the `minimal examples`_ sections for use cases.
+
+        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples
+
+    Examples:
+
+    .. code-block:: python
+
+        dataset = SomeDataset()
+        runner = SupervisedConfigRunner(
+            config={
+                "args": {"logdir": logdir},
+                "model": {"_target_": "SomeModel", "in_features": 4, "out_features": 2},
+                "engine": {"_target_": "DeviceEngine", "device": device},
+                "stages": {
+                    "stage1": {
+                        "num_epochs": 10,
+                        "criterion": {"_target_": "MSELoss"},
+                        "optimizer": {"_target_": "Adam", "lr": 1e-3},
+                        "loaders": {"batch_size": 4, "num_workers": 0},
+                        "callbacks": {
+                            "criterion": {
+                                "_target_": "CriterionCallback",
+                                "metric_key": "loss",
+                                "input_key": "logits",
+                                "target_key": "targets",
+                            },
+                            "optimizer": {
+                                "_target_": "OptimizerCallback",
+                                "metric_key": "loss"
+                            },
+                        },
+                    },
+                },
+            }
+        )
+        runner.get_datasets = lambda *args, **kwargs: {
+            "train": dataset,
+            "valid": dataset,
+        }
+        runner.run()
     """
 
     def __init__(

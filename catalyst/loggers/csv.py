@@ -6,10 +6,72 @@ from catalyst.utils.config import save_config
 
 
 class CSVLogger(ILogger):
-    """@TODO: docs."""
+    """CSV logger for the metrics storing under ``.csv`` file.
+
+    Args:
+        logdir: path to logdir for the logger
+        use_logdir_postfix: boolean flag to use extra ``logs`` prefix in the logdir
+
+    .. note::
+        This logger is used by default by ``dl.Runner`` and ``dl.SupervisedRunner`` in case of
+        specified logdir during ``runner.train(..., logdir=/path/to/logdir)``.
+
+    .. note::
+        This logger is used by default by ``dl.ConfigRunner`` and ``dl.HydraRunner`` in case of
+        specified logdir in config ``args``.
+
+    Notebook API examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            ...,
+            loggers={"csv": dl.CSVLogger(logdir="./logdir/logs"}
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class CustomRunner(dl.IRunner):
+            # ...
+
+            def get_loggers(self):
+                return {
+                    "console": dl.ConsoleLogger(),
+                    "csv": dl.CSVLogger(logdir="./logdir/logs")
+                }
+
+            # ...
+
+        runner = CustomRunner().run()
+
+    Config API example:
+
+    .. code-block:: yaml
+
+        loggers:
+            csv:
+                _target_: CSVLogger
+                logdir: ./logdir/logs
+        ...
+
+    Hydra API example:
+
+    .. code-block:: yaml
+
+        loggers:
+            csv:
+                _target_: catalyst.dl.CSVLogger
+                logdir: ./logdir/logs
+        ...
+    """
 
     def __init__(self, logdir: str, use_logdir_postfix: bool = False):
-        """@TODO: docs."""
+        """Init."""
         if use_logdir_postfix:
             logdir = os.path.join(logdir, "logs")
         self.logdir = logdir

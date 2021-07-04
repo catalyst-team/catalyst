@@ -14,6 +14,63 @@ class TensorboardLogger(ILogger):
     Args:
         logdir: path to logdir for tensorboard
         use_logdir_postfix: boolean flag to use extra ``tensorboard`` prefix in the logdir
+
+    .. note::
+        This logger is used by default by ``dl.Runner`` and ``dl.SupervisedRunner`` in case of
+        specified logdir during ``runner.train(..., logdir=/path/to/logdir)``.
+
+    .. note::
+        This logger is used by default by ``dl.ConfigRunner`` and ``dl.HydraRunner`` in case of
+        specified logdir in config ``args``.
+
+    Notebook API examples:
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        runner = dl.SupervisedRunner()
+        runner.train(
+            ...,
+            loggers={"tensorboard": dl.TensorboardLogger(logdir="./logdir/tensorboard"}
+        )
+
+    .. code-block:: python
+
+        from catalyst import dl
+
+        class CustomRunner(dl.IRunner):
+            # ...
+
+            def get_loggers(self):
+                return {
+                    "console": dl.ConsoleLogger(),
+                    "tensorboard": dl.TensorboardLogger(logdir="./logdir/tensorboard")
+                }
+
+            # ...
+
+        runner = CustomRunner().run()
+
+    Config API example:
+
+    .. code-block:: yaml
+
+        loggers:
+            tensorboard:
+                _target_: TensorboardLogger
+                logdir: ./logdir/tensorboard
+        ...
+
+    Hydra API example:
+
+    .. code-block:: yaml
+
+        loggers:
+            tensorboard:
+                _target_: catalyst.dl.TensorboardLogger
+                logdir: ./logdir/tensorboard
+        ...
     """
 
     def __init__(self, logdir: str, use_logdir_postfix: bool = False):
@@ -31,7 +88,7 @@ class TensorboardLogger(ILogger):
 
     def _log_metrics(self, metrics: Dict[str, float], step: int, loader_key: str, suffix=""):
         for key, value in metrics.items():
-            self.loggers[loader_key].add_scalar(f"{key}{suffix}", value, step)
+            self.loggers[loader_key].add_scalar(f"{key}{suffix}", float(value), step)
 
     def log_metrics(
         self,
@@ -58,19 +115,26 @@ class TensorboardLogger(ILogger):
         """Logs batch and epoch metrics to Tensorboard."""
         if scope == "batch":
             self._check_loader_key(loader_key=loader_key)
-            metrics = {k: float(v) for k, v in metrics.items()}
+            # metrics = {k: float(v) for k, v in metrics.items()}
             self._log_metrics(
-                metrics=metrics, step=global_batch_step, loader_key=loader_key, suffix="/batch"
+                metrics=metrics, step=global_sample_step, loader_key=loader_key, suffix="/batch"
+            )
+        elif scope == "loader":
+            self._check_loader_key(loader_key=loader_key)
+            self._log_metrics(
+                metrics=metrics, step=global_epoch_step, loader_key=loader_key, suffix="/epoch",
             )
         elif scope == "epoch":
-            for loader_key, per_loader_metrics in metrics.items():
-                self._check_loader_key(loader_key=loader_key)
-                self._log_metrics(
-                    metrics=per_loader_metrics,
-                    step=global_epoch_step,
-                    loader_key=loader_key,
-                    suffix="/epoch",
-                )
+            # @TODO: remove naming magic
+            loader_key = "_epoch_"
+            per_loader_metrics = metrics[loader_key]
+            self._check_loader_key(loader_key=loader_key)
+            self._log_metrics(
+                metrics=per_loader_metrics,
+                step=global_epoch_step,
+                loader_key=loader_key,
+                suffix="/epoch",
+            )
 
     def log_image(
         self,

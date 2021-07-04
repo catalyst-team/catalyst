@@ -9,8 +9,7 @@
 from typing import List, TypeVar, Union
 from multiprocessing.pool import Pool
 
-# from tqdm import tqdm
-from torch.utils.model_zoo import tqdm
+from tqdm import tqdm
 
 T = TypeVar("T")
 

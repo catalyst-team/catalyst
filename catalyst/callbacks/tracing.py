@@ -4,7 +4,6 @@ from pathlib import Path
 import torch
 
 from catalyst.core import Callback, CallbackNode, CallbackOrder
-from catalyst.utils.torch import any2device
 from catalyst.utils.tracing import trace_model
 
 if TYPE_CHECKING:
@@ -32,7 +31,11 @@ class TracingCallback(Callback):
             from torch.utils.data import DataLoader
 
             from catalyst import dl
+<<<<<<< HEAD
             from catalyst.data.transforms import ToTensor
+=======
+            from catalyst.data import ToTensor
+>>>>>>> upstream/master
             from catalyst.contrib.datasets import MNIST
             from catalyst.contrib.nn.modules import Flatten
 
@@ -94,7 +97,11 @@ class TracingCallback(Callback):
                 from torch.utils.data import DataLoader
 
                 from catalyst import dl
+<<<<<<< HEAD
                 from catalyst.data.transforms import ToTensor
+=======
+                from catalyst.data import ToTensor
+>>>>>>> upstream/master
                 from catalyst.contrib.datasets import MNIST
                 from catalyst.contrib.nn.modules import Flatten
 
@@ -145,9 +152,15 @@ class TracingCallback(Callback):
         Args:
             runner: runner for experiment
         """
+<<<<<<< HEAD
         model = runner.model
         batch = tuple(runner.batch[key] for key in self.input_key)
         batch = any2device(batch, "cpu")
+=======
+        model = runner.engine.sync_device(runner.model)
+        batch = tuple(runner.batch[key] for key in self.input_key)
+        batch = runner.engine.sync_device(batch)
+>>>>>>> upstream/master
         traced_model = trace_model(model=model, batch=batch, method_name=self.method_name)
         torch.jit.save(traced_model, self.filename)
 

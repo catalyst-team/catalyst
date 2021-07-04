@@ -8,12 +8,23 @@ def _format_metrics(dct: Dict):
 
 
 class ConsoleLogger(ILogger):
+<<<<<<< HEAD
     """Console logger for parameters and metrics. Used by default during all runs.
+=======
+    """Console logger for parameters and metrics.
+    Output the metric into the console during experiment.
+>>>>>>> upstream/master
 
     Args:
         log_hparams: boolean flag to print all hparams to the console (default: False)
         log_loader_metrics: boolean flag to print loader metrics to the console (default: True)
         log_epoch_metrics: boolean flag to print epoch metrics to the console (default: True)
+<<<<<<< HEAD
+=======
+
+    .. note::
+        This logger is used by default by all Runners.
+>>>>>>> upstream/master
     """
 
     def __init__(

@@ -14,7 +14,7 @@ You can easily use Optuna for hyperparameters optimization:
     from torch import nn
     from torch.utils.data import DataLoader
     from catalyst import dl
-    from catalyst.data.transforms import ToTensor
+    from catalyst.data import ToTensor
     from catalyst.contrib.datasets import MNIST
 
 
@@ -54,7 +54,7 @@ You can easily use Optuna for hyperparameters optimization:
             },
             num_epochs=3,
         )
-        score = runner.callbacks["optuna"].best_score
+        score = trial.best_score
         return score
 
     study = optuna.create_study(
