@@ -1,35 +1,36 @@
 pull_request_rules:
+  # removes reviews done by collaborators when the pull request is updated
   - name: remove outdated reviews
-    conditions: []
+    conditions:
+      - base=master
     actions:
-      dismiss_reviews: {}
+      dismiss_reviews:
+
+  # automatic merge for master when required CI passes
   - name: automatic merge for master when CI passes and 2 review
     conditions:
       - "#approved-reviews-by>=2"
-      - approved-reviews-by!=github-actions
-      - status-success=codestyle (ubuntu-18.04, 3.6)
-      - status-success=dl-cpu (ubuntu-18.04, 3.6, minimal)
-      - status-success=dl-cpu (ubuntu-18.04, 3.6, latest)
       - label!=WIP
     actions:
       merge:
         method: squash
-  - name: automatic merge for master when CI passes and 2 review
-    conditions:
-      - "#approved-reviews-by>=3"
-      - approved-reviews-by=github-actions
-      - status-success=codestyle (ubuntu-18.04, 3.6)
-      - status-success=dl-cpu (ubuntu-18.04, 3.6, minimal)
-      - status-success=dl-cpu (ubuntu-18.04, 3.6, latest)
-      - label!=WIP
-    actions:
-      merge:
-        method: squash
+  # - name: automatic merge for master when CI passes and 2 review
+  #   conditions:
+  #     - "#approved-reviews-by>=3"
+  #     - approved-reviews-by=github-actions
+  #     - label!=WIP
+  #   actions:
+  #     merge:
+  #       method: squash
+
+  # deletes the head branch of the pull request, that is the branch which hosts the commits
   - name: delete head branch after merge
     conditions:
       - merged
     actions:
       delete_head_branch: {}
+
+  # ask author of PR to resolve conflict
   - name: ask to resolve conflict
     conditions:
       - conflict
