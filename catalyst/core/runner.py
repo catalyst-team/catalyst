@@ -23,6 +23,7 @@ from catalyst.typing import (
     RunnerModel,
     RunnerOptimizer,
     RunnerScheduler,
+    Sampler,
     Scheduler,
 )
 from catalyst.utils.distributed import ddp_sync_run
@@ -287,6 +288,28 @@ class IRunner(ICallback, ILogger, ABC):
         return {}
 
     @property
+    def _log_defaults(self) -> Dict:
+        return {
+            # experiment info
+            "run_key": self.run_key,
+            "global_sample_step": self.global_sample_step,
+            "global_batch_step": self.global_batch_step,
+            "global_epoch_step": self.global_epoch_step,
+            # stage info
+            "stage_key": self.stage_key,
+            "stage_epoch_len": self.stage_epoch_len,
+            "stage_epoch_step": self.stage_epoch_step,
+            "stage_batch_step": self.stage_batch_step,
+            "stage_sample_step": self.stage_sample_step,
+            # loader info
+            "loader_key": self.loader_key,
+            "loader_batch_len": self.loader_batch_len,
+            "loader_sample_len": self.loader_sample_len,
+            "loader_batch_step": self.loader_batch_step,
+            "loader_sample_step": self.loader_sample_step,
+        }
+
+    @property
     @abstractmethod
     def stages(self) -> Iterable[str]:
         """Run's stage names.
@@ -361,9 +384,19 @@ class IRunner(ICallback, ILogger, ABC):
         """
         raise NotImplementedError
 
-    # def get_samplers(self, stage: str = None):
-    #     raise NotImplementedError
-    #
+    def get_samplers(self, stage: str = None) -> "OrderedDict[str, Sampler]":
+        """Returns samplers for a given stage.  # noqa: DAR401
+
+        Args:
+            stage: stage name of interest, like "pretrain" / "train" / "finetune" / etc
+
+        Returns:  # noqa: DAR201, DAR202
+            OrderedDict[str, Sampler]: Ordered dictionary
+                with samplers for current stage and epoch.
+
+        """
+        raise NotImplementedError
+
     # def get_transforms(self, stage: str = None):
     #     """Returns the data transforms for a given stage and dataset.
     #
@@ -514,56 +547,6 @@ class IRunner(ICallback, ILogger, ABC):
         """
         return {}
 
-    def log_metrics(self, *args, **kwargs) -> None:
-        """Logs batch, loader and epoch metrics to available loggers."""
-        for logger in self.loggers.values():
-            logger.log_metrics(
-                *args,
-                **kwargs,
-                # experiment info
-                run_key=self.run_key,
-                global_sample_step=self.global_sample_step,
-                global_batch_step=self.global_batch_step,
-                global_epoch_step=self.global_epoch_step,
-                # stage info
-                stage_key=self.stage_key,
-                stage_epoch_len=self.stage_epoch_len,
-                stage_epoch_step=self.stage_epoch_step,
-                stage_batch_step=self.stage_batch_step,
-                stage_sample_step=self.stage_sample_step,
-                # loader info
-                loader_key=self.loader_key,
-                loader_batch_len=self.loader_batch_len,
-                loader_sample_len=self.loader_sample_len,
-                loader_batch_step=self.loader_batch_step,
-                loader_sample_step=self.loader_sample_step,
-            )
-
-    def log_image(self, *args, **kwargs) -> None:
-        """Logs image to available loggers."""
-        for logger in self.loggers.values():
-            logger.log_image(
-                *args,
-                **kwargs,
-                # experiment info
-                run_key=self.run_key,
-                global_sample_step=self.global_sample_step,
-                global_batch_step=self.global_batch_step,
-                global_epoch_step=self.global_epoch_step,
-                # stage info
-                stage_key=self.stage_key,
-                stage_epoch_len=self.stage_epoch_len,
-                stage_epoch_step=self.stage_epoch_step,
-                stage_batch_step=self.stage_batch_step,
-                stage_sample_step=self.stage_sample_step,
-                # loader info
-                loader_key=self.loader_key,
-                loader_batch_len=self.loader_batch_len,
-                loader_sample_len=self.loader_sample_len,
-                loader_batch_step=self.loader_batch_step,
-                loader_sample_step=self.loader_sample_step,
-            )
-
     def log_hparams(self, *args, **kwargs) -> None:
         """Logs hyperparameters to available loggers."""
         for logger in self.loggers.values():
@@ -575,30 +558,20 @@ class IRunner(ICallback, ILogger, ABC):
                 stage_key=self.stage_key,
             )
 
+    def log_metrics(self, *args, **kwargs) -> None:
+        """Logs batch, loader and epoch metrics to available loggers."""
+        for logger in self.loggers.values():
+            logger.log_metrics(*args, **kwargs, **self._log_defaults)
+
+    def log_image(self, *args, **kwargs) -> None:
+        """Logs image to available loggers."""
+        for logger in self.loggers.values():
+            logger.log_image(*args, **kwargs, **self._log_defaults)
+
     def log_artifact(self, *args, **kwargs) -> None:
         """Logs artifact (file like audio, video, csv, etc.) to available loggers."""
         for logger in self.loggers.values():
-            logger.log_artifact(
-                *args,
-                **kwargs,
-                # experiment info
-                run_key=self.run_key,
-                global_sample_step=self.global_sample_step,
-                global_batch_step=self.global_batch_step,
-                global_epoch_step=self.global_epoch_step,
-                # stage info
-                stage_key=self.stage_key,
-                stage_epoch_len=self.stage_epoch_len,
-                stage_epoch_step=self.stage_epoch_step,
-                stage_batch_step=self.stage_batch_step,
-                stage_sample_step=self.stage_sample_step,
-                # loader info
-                loader_key=self.loader_key,
-                loader_batch_len=self.loader_batch_len,
-                loader_sample_len=self.loader_sample_len,
-                loader_batch_step=self.loader_batch_step,
-                loader_sample_step=self.loader_sample_step,
-            )
+            logger.log_artifact(*args, **kwargs, **self._log_defaults)
 
     def flush_log(self) -> None:
         """Flushes the loggers."""
