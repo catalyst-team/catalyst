@@ -152,8 +152,9 @@ class MixupCallback(Callback):
         indexes_2 = (indexes + 1) % batch_size
         for key in self.keys:
             targets = runner.batch[key]
+            device = targets.device
             targets_shape = [batch_size] + [1] * len(targets.shape[1:])
-            key_beta = torch.Tensor(beta.reshape(targets_shape))
+            key_beta = torch.Tensor(beta.reshape(targets_shape)).to(device)
             targets = targets * key_beta + targets[indexes_2] * (1 - key_beta)
 
             if self.mode == "replace":
