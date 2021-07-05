@@ -4,6 +4,7 @@ import numpy as np
 import torch
 
 from catalyst.core import Callback, CallbackOrder, IRunner
+from catalyst.utils import mixup_batch
 
 
 class MixupCallback(Callback):
@@ -145,23 +146,7 @@ class MixupCallback(Callback):
         Args:
             runner: runner for the experiment.
         """
-        batch_size = runner.batch[self.keys[0]].shape[0]
-        beta = np.random.beta(self.alpha, self.alpha, batch_size).astype(np.float32)
-        indexes = np.array(list(range(batch_size)))
-        # index shift by 1
-        indexes_2 = (indexes + 1) % batch_size
-        for key in self.keys:
-            targets = runner.batch[key]
-            device = targets.device
-            targets_shape = [batch_size] + [1] * len(targets.shape[1:])
-            key_beta = torch.Tensor(beta.reshape(targets_shape)).to(device)
-            targets = targets * key_beta + targets[indexes_2] * (1 - key_beta)
-
-            if self.mode == "replace":
-                runner.batch[key] = targets
-            else:
-                # self.mode == 'add'
-                runner.batch[key] = torch.cat([runner.batch[key], targets])
+        runner.batch = mixup_batch(runner.batch, self.keys, alpha=self.alpha, mode=self.mode)
 
     def on_loader_start(self, runner: "IRunner") -> None:
         """
