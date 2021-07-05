@@ -1,7 +1,8 @@
 from typing import List, Union
 
-from catalyst.core import Callback, CallbackOrder, IRunner
-from catalyst.utils import mixup_batch
+from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.core.runner import IRunner
+from catalyst.utils.mixup import mixup_batch
 
 
 class MixupCallback(Callback):
