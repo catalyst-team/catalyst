@@ -1,8 +1,5 @@
 from typing import List, Union
 
-import numpy as np
-import torch
-
 from catalyst.core import Callback, CallbackOrder, IRunner
 from catalyst.utils import mixup_batch
 
