@@ -1,4 +1,5 @@
 from typing import Tuple
+import pytest
 
 import torch
 from torch import nn, Tensor
@@ -6,6 +7,7 @@ from torch.utils.data import DataLoader, Dataset
 
 from catalyst.core.runner import RunnerException
 from catalyst.dl import SupervisedRunner
+from catalyst import dl
 
 
 class DummyDataset(Dataset):
@@ -58,3 +60,55 @@ def test_cathing_empty_loader() -> None:
         run_train_with_empty_loader()
     except RunnerException:
         pass
+
+
+def test_evaluation_loader_metrics() -> None:
+    """
+    Test if metrics in evaluate loader works properly.
+    """
+    dataset = DummyDataset()
+    model = nn.Linear(in_features=dataset.features_dim, out_features=dataset.out_dim)
+    loader = DataLoader(dataset=dataset, batch_size=1)
+    callbacks = [dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,))]
+    runner = SupervisedRunner()
+    runner.train(
+        loaders={"train": loader, "valid": loader},
+        model=model,
+        num_epochs=1,
+        criterion=nn.BCEWithLogitsLoss(),
+        callbacks=callbacks,
+    )
+    runner_internal_metrics = runner.loader_metrics
+
+    evaluate_loader_metrics = runner.evaluate_loader(loader=loader, callbacks=callbacks)
+    assert runner_internal_metrics['accuracy'] == evaluate_loader_metrics['accuracy']
+
+
+def test_evaluation_loader_empty_model() -> None:
+    """
+    Test if there is no model was given, assertion raises.
+    """
+    with pytest.raises(AssertionError) as record:
+        dataset = DummyDataset()
+        loader = DataLoader(dataset=dataset, batch_size=1)
+        callbacks = [dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,))]
+        runner = SupervisedRunner()
+        _ = runner.evaluate_loader(loader=loader,
+                                   callbacks=callbacks,
+                                   model=None)
+        if not record:
+            pytest.fail("Expected assertion bacuase model is empty!")
+
+
+def test_evaluation_loader_custom_model() -> None:
+    """
+    Test if evaluate loader works with custom model.
+    """
+    dataset = DummyDataset()
+    model = nn.Linear(in_features=dataset.features_dim, out_features=dataset.out_dim)
+    loader = DataLoader(dataset=dataset, batch_size=1)
+    callbacks = [dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,))]
+    runner = SupervisedRunner()
+    _ = runner.evaluate_loader(loader=loader,
+                               callbacks=callbacks,
+                               model=model)
