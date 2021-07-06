@@ -49,7 +49,7 @@ class ListWiseLoss(nn.Module):
         pass
 
 
-class BPR(PairwiseLoss):
+class BPRLoss(PairwiseLoss):
     """"
     BPRLoss, based on Bayesian Personalized Ranking
     https://arxiv.org/pdf/1205.2618
@@ -80,7 +80,7 @@ class BPR(PairwiseLoss):
             negative_predictions: torch.LongTensor
                 Tensor containing predictions for sampled negative items.
         """
-        loss = -nn.functional.logsigmoid(positive_score - negative_score)
+        loss = -torch.log(self.gamma + torch.sigmoid(positive_score - negative_score))
         return loss.mean()
 
 
@@ -92,9 +92,8 @@ class WARPLoss(PairwiseLoss):
      WARP loss randomly sample output labels of a model, until it finds a pair which it knows are wrongly labelled 
      and will then only apply an update to these two incorrectly labelled examples.
     """
-    def __init__(self, gamma=1e-10) -> None:
+    def __init__(self) -> None:
         super().__init__()
-        self.gamma = gamma
     
     def forward(self, positive_score:torch.Tensor, negative_score:torch.Tensor)->torch.Tensor:
         """
