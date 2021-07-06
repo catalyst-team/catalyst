@@ -1,6 +1,8 @@
 # flake8: noqa
 import torch
 from torch import nn
+from typing import Optional
+from torch.autograd import Function, Variable
 
 
 class Pointwise(nn.Module):
@@ -30,6 +32,12 @@ class PairwiseLoss(nn.Module):
     Input space: pairs of documents (d1, d2)
     Output space: preferences (yes/no) for a given doc.pair
     """
+
+    @staticmethod
+    def _assert_equal_size(positive_score: torch.Tensor, negative_score: torch.Tensor)->None:
+        if positive_score.size() != negative_score.size():
+            raise ValueError(f'Shape mismatch: {positive_score.size()}, {negative_score.size()}')
+
 
     def __init__(self) -> None:
         super().__init__()
@@ -89,35 +97,9 @@ class BPRLoss(PairwiseLoss):
             negative_predictions: torch.Tensor
                 Tensor containing predictions for sampled negative items.
         """
+        self._assert_equal_size(positive_score, negative_score)
+
         loss = -torch.log(self.gamma + torch.sigmoid(positive_score - negative_score))
-        return loss.mean()
-
-
-class WARPLoss(PairwiseLoss):
-    """
-    Weighted Approximate-Rank Pairwise (WARP) loss function for implicit feedback. 
-    https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/37180.pdf
-
-     WARP loss randomly sample output labels of a model, until it finds a pair which it knows are wrongly labelled 
-     and will then only apply an update to these two incorrectly labelled examples.
-    """
-
-    def __init__(self) -> None:
-        super().__init__()
-
-    def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
-        """
-        Args
-            positive_predictions: torch.Tensor
-                Tensor containing predictions for known positive items.
-            negative_predictions: torch.Tensor
-                Tensor containing predictions for sampled negative items.
-        """
-
-        highest_negative_score = torch.max(negative_score).squeeze()
-
-        loss = torch.clamp(highest_negative_score - positive_score + 1.0, 0.0)
-
         return loss.mean()
 
 
@@ -137,6 +119,7 @@ class LogisticLoss(PairwiseLoss):
             negative_predictions: torch.Tensor
                 Tensor containing predictions for sampled negative items.
         """
+        self._assert_equal_size(positive_score, negative_score)
 
         positives_loss = 1.0 - torch.sigmoid(positive_score)
         negatives_loss = torch.sigmoid(negative_score)
@@ -162,7 +145,106 @@ class HingeLoss(PairwiseLoss):
             negative_predictions: torch.Tensor
                 Tensor containing predictions for sampled negative items.
         """
+        self._assert_equal_size(positive_score, negative_score)
 
-        loss = nn.ReLU()(1.0 - (positive_score - negative_score))
+        loss = torch.clamp(1.0 - (positive_score - negative_score), min=0.0)
         return loss.mean()
 
+
+class WARP(Function):
+    """
+    autograd function of WARP loss
+    """
+
+    @staticmethod
+    def forward(
+        ctx: nn.Module,
+        input: torch.Tensor,
+        target: torch.Tensor,
+        max_num_trials: Optional[int] = None,
+    ):
+
+        batch_size = target.size()[0]
+        if max_num_trials is None:
+            max_num_trials = target.size()[1] - 1
+
+        positive_indices = torch.zeros(input.size())
+        negative_indices = torch.zeros(input.size())
+        L = torch.zeros(input.size()[0])
+
+        all_labels_idx = torch.arange(target.size()[1])
+
+        Y = float(target.size()[1])
+        J = torch.nonzero(target)
+
+        for i in range(batch_size):
+
+            msk = torch.ones(target.size()[1], dtype=bool)
+
+            # Find the positive label for this example
+            j = J[i, 1]
+            positive_indices[i, j] = 1
+            msk[j] = False
+
+            # initialize the sample_score_margin
+            sample_score_margin = -1
+            num_trials = 0
+
+            neg_labels_idx = all_labels_idx[msk]
+
+            while (sample_score_margin < 0) and (num_trials < max_num_trials):  # type: ignore
+
+                # randomly sample a negative label, example from here: https://github.com/pytorch/pytorch/issues/16897
+                neg_idx = neg_labels_idx[torch.randint(0, neg_labels_idx.size(0), (1,))]
+                msk[neg_idx] = False
+                neg_labels_idx = all_labels_idx[msk]
+
+                num_trials += 1
+                # calculate the score margin
+                sample_score_margin = 1 + input[i, neg_idx] - input[i, j]
+
+            if sample_score_margin < 0:
+                # checks if no violating examples have been found
+                continue
+            else:
+                loss_weight = np.log(np.floor((Y - 1) / (num_trials)))
+                L[i] = loss_weight
+                negative_indices[i, neg_idx] = 1  # type: ignore
+
+        loss = L * (
+            1
+            - torch.sum(positive_indices * input, dim=1)
+            + torch.sum(negative_indices * input, dim=1)
+        )
+
+        ctx.save_for_backward(input, target)
+        ctx.L = L
+        ctx.positive_indices = positive_indices
+        ctx.negative_indices = negative_indices
+
+        return torch.sum(loss, dim=0, keepdim=True)
+
+    # This function has only a single output, so it gets only one gradient
+    @staticmethod
+    def backward(ctx, grad_output):
+        input, target = ctx.saved_variables
+        L = Variable(torch.unsqueeze(ctx.L, 1), requires_grad=False)
+
+        positive_indices = Variable(ctx.positive_indices, requires_grad=False)
+        negative_indices = Variable(ctx.negative_indices, requires_grad=False)
+        grad_input = grad_output * L * (negative_indices - positive_indices)
+
+        return grad_input, None, None
+
+
+class WARPLoss(nn.Module):
+    """ Implementation of 
+    WARP (WEIGHTED APPROXIMATE RANK PAIRWISE LOSS)
+    """
+
+    def __init__(self, max_num_trials: Optional[int] = None):
+        super(WARPLoss, self).__init__()
+        self.max_num_trials = max_num_trials
+
+    def forward(self, input_: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        return WARP.apply(input_, target, self.max_num_trials)
