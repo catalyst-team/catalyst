@@ -19,7 +19,7 @@ class Pointwise(nn.Module):
         super().__init__()
 
     def forward(self, score: torch.Tensor):
-        pass
+        raise NotImplementedError()
 
 
 class PairwiseLoss(nn.Module):
@@ -43,7 +43,7 @@ class PairwiseLoss(nn.Module):
         super().__init__()
 
     def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor):
-        pass
+        raise NotImplementedError()
 
 
 class ListWiseLoss(nn.Module):
@@ -55,11 +55,16 @@ class ListWiseLoss(nn.Module):
     Output space: permutations - ranking of documents 
     """
 
+    @staticmethod
+    def _assert_equal_size(input_: torch.Tensor, target: torch.Tensor)->None:
+        if input_.size() != target.size():
+            raise ValueError(f'Shape mismatch: {input_.size()}, {target.size()}')
+
     def __init__(self) -> None:
         super().__init__()
 
-    def forward(self, score_list: torch.Tensor):
-        pass
+    def forward(self, input_: torch.Tensor, target: torch.Tensor):
+        raise NotImplementedError()
 
 
 class BPRLoss(PairwiseLoss):
@@ -159,7 +164,7 @@ class WARP(Function):
     @staticmethod
     def forward(
         ctx: nn.Module,
-        input: torch.Tensor,
+        input_: torch.Tensor,
         target: torch.Tensor,
         max_num_trials: Optional[int] = None,
     ):
@@ -168,9 +173,9 @@ class WARP(Function):
         if max_num_trials is None:
             max_num_trials = target.size()[1] - 1
 
-        positive_indices = torch.zeros(input.size())
-        negative_indices = torch.zeros(input.size())
-        L = torch.zeros(input.size()[0])
+        positive_indices = torch.zeros(input_.size())
+        negative_indices = torch.zeros(input_.size())
+        L = torch.zeros(input_.size()[0])
 
         all_labels_idx = torch.arange(target.size()[1])
 
@@ -201,7 +206,7 @@ class WARP(Function):
 
                 num_trials += 1
                 # calculate the score margin
-                sample_score_margin = 1 + input[i, neg_idx] - input[i, j]
+                sample_score_margin = 1 + input_[i, neg_idx] - input_[i, j]
 
             if sample_score_margin < 0:
                 # checks if no violating examples have been found
@@ -213,11 +218,11 @@ class WARP(Function):
 
         loss = L * (
             1
-            - torch.sum(positive_indices * input, dim=1)
-            + torch.sum(negative_indices * input, dim=1)
+            - torch.sum(positive_indices * input_, dim=1)
+            + torch.sum(negative_indices * input_, dim=1)
         )
 
-        ctx.save_for_backward(input, target)
+        ctx.save_for_backward(input_, target)
         ctx.L = L
         ctx.positive_indices = positive_indices
         ctx.negative_indices = negative_indices
@@ -227,7 +232,7 @@ class WARP(Function):
     # This function has only a single output, so it gets only one gradient
     @staticmethod
     def backward(ctx, grad_output):
-        input, target = ctx.saved_variables
+        input_, target = ctx.saved_variables
         L = Variable(torch.unsqueeze(ctx.L, 1), requires_grad=False)
 
         positive_indices = Variable(ctx.positive_indices, requires_grad=False)
@@ -237,9 +242,16 @@ class WARP(Function):
         return grad_input, None, None
 
 
-class WARPLoss(nn.Module):
+class WARPLoss(ListWiseLoss):
     """ Implementation of 
-    WARP (WEIGHTED APPROXIMATE RANK PAIRWISE LOSS)
+    Weighted Approximate-Rank Pairwise (WARP) loss function for implicit feedback,
+    based on paper `WSABIE: Scaling Up To Large Vocabulary Image Annotation`_
+    
+    .. _WSABIE: Scaling Up To Large Vocabulary Image Annotation:
+        https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/37180.pdf
+    
+    WARP loss randomly sample output labels of a model, until it finds a pair which it knows are wrongly labelled 
+     and will then only apply an update to these two incorrectly labelled examples.
     """
 
     def __init__(self, max_num_trials: Optional[int] = None):
@@ -247,4 +259,5 @@ class WARPLoss(nn.Module):
         self.max_num_trials = max_num_trials
 
     def forward(self, input_: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        self._assert_equal_size(input_, target)
         return WARP.apply(input_, target, self.max_num_trials)
