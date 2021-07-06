@@ -55,9 +55,12 @@ class ListWiseLoss(nn.Module):
 
 
 class BPRLoss(PairwiseLoss):
-    """"
-    BPRLoss, based on Bayesian Personalized Ranking
-    https://arxiv.org/pdf/1205.2618
+    """ Implementation of 
+    `BPRLoss, based on Bayesian Personalized Ranking`_ paper.
+
+
+    .. _BPRLoss: Bayesian Personalized Ranking from Implicit Feedback:
+        https://arxiv.org/pdf/1205.2618.pdf
 
     Args:
         - gamma(float): Small value to avoid division by zero
@@ -81,9 +84,9 @@ class BPRLoss(PairwiseLoss):
     def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
         """
         Args
-            positive_predictions: torch.LongTensor
+            positive_predictions: torch.Tensor
                 Tensor containing predictions for known positive items.
-            negative_predictions: torch.LongTensor
+            negative_predictions: torch.Tensor
                 Tensor containing predictions for sampled negative items.
         """
         loss = -torch.log(self.gamma + torch.sigmoid(positive_score - negative_score))
@@ -105,13 +108,13 @@ class WARPLoss(PairwiseLoss):
     def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
         """
         Args
-            positive_predictions: torch.LongTensor
+            positive_predictions: torch.Tensor
                 Tensor containing predictions for known positive items.
-            negative_predictions: torch.LongTensor
+            negative_predictions: torch.Tensor
                 Tensor containing predictions for sampled negative items.
         """
 
-        highest_negative_score, _ = torch.max(negative_score, 0).squezee()
+        highest_negative_score = torch.max(negative_score).squeeze()
 
         loss = torch.clamp(highest_negative_score - positive_score + 1.0, 0.0)
 
@@ -126,12 +129,12 @@ class LogisticLoss(PairwiseLoss):
     def __init__(self,) -> None:
         super().__init__()
 
-    def forward(self, positive_score, negative_score):
+    def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
         """
         Args
-            positive_predictions: torch.LongTensor
+            positive_predictions: torch.Tensor
                 Tensor containing predictions for known positive items.
-            negative_predictions: torch.LongTensor
+            negative_predictions: torch.Tensor
                 Tensor containing predictions for sampled negative items.
         """
 
@@ -141,3 +144,25 @@ class LogisticLoss(PairwiseLoss):
         loss = positives_loss + negatives_loss
 
         return loss.mean()
+
+
+class HingeLoss(PairwiseLoss):
+    """
+    Hinge loss
+    """
+
+    def __init__(self,) -> None:
+        super().__init__()
+
+    def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
+        """
+        Args
+            positive_predictions: torch.Tensor
+                Tensor containing predictions for known positive items.
+            negative_predictions: torch.Tensor
+                Tensor containing predictions for sampled negative items.
+        """
+
+        loss = nn.ReLU()(1.0 - (positive_score - negative_score))
+        return loss.mean()
+

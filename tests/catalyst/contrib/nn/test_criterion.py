@@ -28,7 +28,6 @@ def test_criterion_init():
 def test_BPRLoss():
     """Testing for Bayesian Personalized Ranking"""
     from catalyst.contrib.nn.criterion.recsys import BPRLoss
-
     loss = BPRLoss()
 
     rand = torch.rand(1000, dtype=torch.float)
@@ -48,3 +47,17 @@ def test_WARPLoss():
 
 def testLogisticLoss():
     pass
+
+
+def testHingeLoss():
+    from catalyst.contrib.nn.criterion.recsys import HingeLoss
+    loss = HingeLoss()
+
+    rand = torch.rand(1000)
+    assert float(loss.forward(rand, rand)) == pytest.approx(1, 0.001)  # neg relu of 1
+
+    pos, neg = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
+    assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)  # relu of large negative
+
+    neg, pos = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
+    assert float(loss.forward(pos, neg)) == pytest.approx(1001, 0.001)  # nerelu of large positive
