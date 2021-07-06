@@ -79,7 +79,6 @@ def test_evaluation_loader_metrics() -> None:
         callbacks=callbacks,
     )
     runner_internal_metrics = runner.loader_metrics
-
     evaluate_loader_metrics = runner.evaluate_loader(loader=loader, callbacks=callbacks)
     assert runner_internal_metrics["accuracy"] == evaluate_loader_metrics["accuracy"]
 
@@ -93,7 +92,7 @@ def test_evaluation_loader_empty_model() -> None:
         loader = DataLoader(dataset=dataset, batch_size=1)
         callbacks = [dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,))]
         runner = SupervisedRunner()
-        _ = runner.evaluate_loader(loader=loader, callbacks=callbacks, model=None)
+        runner.evaluate_loader(loader=loader, callbacks=callbacks, model=None)
         if not record:
             pytest.fail("Expected assertion bacuase model is empty!")
 
@@ -107,4 +106,5 @@ def test_evaluation_loader_custom_model() -> None:
     loader = DataLoader(dataset=dataset, batch_size=1)
     callbacks = [dl.AccuracyCallback(input_key="logits", target_key="targets", topk_args=(1,))]
     runner = SupervisedRunner()
+
     runner.evaluate_loader(loader=loader, callbacks=callbacks, model=model)
