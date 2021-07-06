@@ -15,7 +15,7 @@ class Pointwise(nn.Module):
     def __init__(self) -> None:
         super().__init__()
     
-    def forward(self):
+    def forward(self, score:torch.Tensor):
         pass
 
 class PairwiseLoss(nn.Module):
@@ -31,7 +31,7 @@ class PairwiseLoss(nn.Module):
     def __init__(self) -> None:
         super().__init__()
     
-    def forward(self):
+    def forward(self, positive_score:torch.Tensor, negative_score:torch.Tensor):
         pass
 
 class ListWiseLoss(nn.Module):
@@ -45,8 +45,9 @@ class ListWiseLoss(nn.Module):
     def __init__(self) -> None:
         super().__init__()
     
-    def forward(self):
+    def forward(self, score_list:torch.Tensor):
         pass
+
 
 class BPR(PairwiseLoss):
     """"
@@ -55,12 +56,23 @@ class BPR(PairwiseLoss):
 
     Args:
         - gamma(float): Small value to avoid division by zero
+    
+    Example:
+    .. code-block:: python
+        import torch
+        from torch.contrib import recsys
+        
+        pos_score = torch.randn(3, requires_grad=True)
+        neg_score = torch.randn(3, requires_grad=True)
+        
+        output = recsys.BPRLoss()(pos_score, neg_score)
+        output.backward()
     """
     def __init__(self, gamma=1e-10) -> None:
         super().__init__()
         self.gamma = gamma
     
-    def forward(self, positive_score, negative_score):
+    def forward(self, positive_score:torch.Tensor, negative_score:torch.Tensor)->torch.Tensor:
         """
         Args
             positive_predictions: torch.LongTensor
@@ -68,11 +80,9 @@ class BPR(PairwiseLoss):
             negative_predictions: torch.LongTensor
                 Tensor containing predictions for sampled negative items.
         """
-        loss = -torch.log(self.gamma + torch.sigmoid(positive_score - negative_score))
+        loss = -nn.functional.logsigmoid(positive_score - negative_score)
         return loss.mean()
 
-
-    pass
 
 class WARPLoss(PairwiseLoss):
     """
@@ -86,7 +96,7 @@ class WARPLoss(PairwiseLoss):
         super().__init__()
         self.gamma = gamma
     
-    def forward(self, positive_score, negative_score):
+    def forward(self, positive_score:torch.Tensor, negative_score:torch.Tensor)->torch.Tensor:
         """
         Args
             positive_predictions: torch.LongTensor
@@ -109,9 +119,8 @@ class LogisticLoss(Pointwise):
     Logistic loss
     """
 
-    def __init__(self, gamma=1e-10) -> None:
+    def __init__(self, ) -> None:
         super().__init__()
-        self.gamma = gamma
     
     def forward(self, positive_score, negative_score):
         """
@@ -128,5 +137,3 @@ class LogisticLoss(Pointwise):
         loss = (positives_loss + negatives_loss)
 
         return loss.mean()
-
-
