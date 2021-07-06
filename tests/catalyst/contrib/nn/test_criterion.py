@@ -46,7 +46,17 @@ def test_WARPLoss():
 
 
 def testLogisticLoss():
-    pass
+    from catalyst.contrib.nn.criterion.recsys import LogisticLoss
+    loss = LogisticLoss()
+
+    rand = torch.rand(1000)
+    assert float(loss.forward(rand, rand)) == pytest.approx(1, 0.001)  # neg relu of 1
+
+    pos, neg = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
+    assert float(loss.forward(pos, neg)) == pytest.approx(0.5, 0.001)  # relu of large negative
+
+    neg, pos = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
+    assert float(loss.forward(pos, neg)) == pytest.approx(1.5, 0.001)  # nerelu of large positive
 
 
 def testHingeLoss():
@@ -54,7 +64,10 @@ def testHingeLoss():
     loss = HingeLoss()
 
     rand = torch.rand(1000)
-    assert float(loss.forward(rand, rand)) == pytest.approx(1, 0.001)  # neg relu of 1
+    assert float(loss.forward(rand, rand)) == pytest.approx(1, 0.001)  #  relu of 0
+    
+    pos, neg = torch.Tensor([1, 1, 1, 1,]), torch.Tensor([0, 0, 0, 0,])
+    assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)   # relu of 1
 
     pos, neg = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
     assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)  # relu of large negative
