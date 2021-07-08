@@ -36,7 +36,7 @@ def mixup_batch(
         targets = batch[key]
         device = targets.device
         targets_shape = [batch_size] + [1] * len(targets.shape[1:])
-        key_beta = torch.Tensor(beta.reshape(targets_shape)).to(device)
+        key_beta = torch.as_tensor(beta.reshape(targets_shape), device=device)
         targets = targets * key_beta + targets[indexes_2] * (1 - key_beta)
 
         if mode == "replace":
