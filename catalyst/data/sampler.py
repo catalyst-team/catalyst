@@ -121,7 +121,7 @@ class BalanceBatchSampler(Sampler):
             n > 1 for n in Counter(labels).values()
         ), "Each class shoud contain at least 2 instances to fit (1)"
 
-        self._labels = labels
+        self._labels = np.array(labels)
         self._p = p
         self._k = k
 
