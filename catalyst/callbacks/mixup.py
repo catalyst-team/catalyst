@@ -121,7 +121,7 @@ class MixupCallback(Callback):
                 If "add", concatenates mixed examples to the current ones, the batch size increases
                 by 2 times.
             on_train_only: apply to train only. As the mixup use the proxy inputs, the targets are
-                also proxy. We are not interested in them, are we? So, if on_train_only is True,
+                also proxy. We are not interested in them, are we? So, if ``on_train_only`` is ``True``,
                 use a standard output/metric for validation.
             **kwargs:
         """
