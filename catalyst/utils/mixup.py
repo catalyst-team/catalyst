@@ -14,7 +14,7 @@ def mixup_batch(
         keys: batch keys to which you want to apply augmentation
         alpha: beta distribution a=b parameters. Must be >=0. The closer alpha to zero the
             less effect of the mixup.
-        mode: mode determines the method of use. Must be in ["replace", "add"]. If "replace"
+        mode: algorithm used for muxup: ``"replace"`` | ``"add"``. If "replace"
             then replaces the batch with a mixed one, while the batch size is not changed
             If "add", concatenates mixed examples to the current ones, the batch size increases
             by 2 times.
