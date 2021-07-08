@@ -29,7 +29,7 @@ def mixup_batch(
 
     batch_size = batch[keys[0]].shape[0]
     beta = np.random.beta(alpha, alpha, batch_size).astype(np.float32)
-    indexes = np.array(list(range(batch_size)))
+    indexes = np.arange(batch_size)
     # index shift by 1
     indexes_2 = (indexes + 1) % batch_size
     for key in keys:
