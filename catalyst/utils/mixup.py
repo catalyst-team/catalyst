@@ -1,11 +1,11 @@
-from typing import Dict, List
+from typing import Dict, Iterable
 
 import numpy as np
 import torch
 
 
 def mixup_batch(
-    batch: Dict[str, torch.Tensor], keys: List[str], alpha: float = 0.2, mode: str = "replace"
+    batch: Dict[str, torch.Tensor], keys: Iterable[str], alpha: float = 0.2, mode: str = "replace"
 ) -> Dict[str, torch.Tensor]:
     """
 
@@ -23,9 +23,9 @@ def mixup_batch(
         augmented batch
 
     """
-    assert isinstance(keys, list), f"keys must be list[str], get: {type(keys)}"
+    assert isinstance(keys, (list, tuple)), f"keys must be list or tuple, get: {type(keys)}"
     assert alpha >= 0, "alpha must be>=0"
-    assert mode in ["add", "replace"], f"mode must be in 'add', 'replace', get: {mode}"
+    assert mode in ("add", "replace"), f"mode must be in 'add', 'replace', get: {mode}"
 
     batch_size = batch[keys[0]].shape[0]
     beta = np.random.beta(alpha, alpha, batch_size).astype(np.float32)

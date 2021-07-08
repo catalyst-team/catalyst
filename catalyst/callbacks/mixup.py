@@ -125,9 +125,10 @@ class MixupCallback(Callback):
                 use a standard output/metric for validation.
             **kwargs:
         """
-        assert isinstance(keys, (str, list)), f"keys must be str of list[str], get: {type(keys)}"
+        assert isinstance(keys, (str, list, tuple)), f"keys must be str of list[str]," \
+                                                     f" get: {type(keys)}"
         assert alpha >= 0, "alpha must be>=0"
-        assert mode in ["add", "replace"], f"mode must be in 'add', 'replace', get: {mode}"
+        assert mode in ("add", "replace"), f"mode must be in 'add', 'replace', get: {mode}"
         super().__init__(order=CallbackOrder.Internal)
         if isinstance(keys, str):
             keys = [keys]
@@ -136,15 +137,6 @@ class MixupCallback(Callback):
         self.alpha = alpha
         self.mode = mode
         self.required = True
-
-    def _handle_batch(self, runner: "IRunner") -> None:
-        """
-        Applies mixup augmentation for a batch
-
-        Args:
-            runner: runner for the experiment.
-        """
-        runner.batch = mixup_batch(runner.batch, self.keys, alpha=self.alpha, mode=self.mode)
 
     def on_loader_start(self, runner: "IRunner") -> None:
         """
@@ -163,7 +155,7 @@ class MixupCallback(Callback):
             runner: runner for the experiment.
         """
         if self.required:
-            self._handle_batch(runner)
+            runner.batch = mixup_batch(runner.batch, self.keys, alpha=self.alpha, mode=self.mode)
 
 
 __all__ = ["MixupCallback"]
