@@ -102,7 +102,7 @@ class MixupCallback(Callback):
             },
         )
 
-    .. note::
+    .. By running::
         With running this callback, many metrics (for example, accuracy) become undefined, so
         use ControlFlowCallback in order to evaluate model(see example)
     """
@@ -121,12 +121,13 @@ class MixupCallback(Callback):
                 If "add", concatenates mixed examples to the current ones, the batch size increases
                 by 2 times.
             on_train_only: apply to train only. As the mixup use the proxy inputs, the targets are
-                also proxy. We are not interested in them, are we? So, if ``on_train_only`` is ``True``,
-                use a standard output/metric for validation.
+                also proxy. We are not interested in them, are we? So, if ``on_train_only``
+                is ``True`` use a standard output/metric for validation.
             **kwargs:
         """
-        assert isinstance(keys, (str, list, tuple)), f"keys must be str of list[str]," \
-                                                     f" get: {type(keys)}"
+        assert isinstance(keys, (str, list, tuple)), (
+            f"keys must be str of list[str]," f" get: {type(keys)}"
+        )
         assert alpha >= 0, "alpha must be>=0"
         assert mode in ("add", "replace"), f"mode must be in 'add', 'replace', get: {mode}"
         super().__init__(order=CallbackOrder.Internal)
