@@ -6,74 +6,161 @@ on:
 
 jobs:
 
- # build-pypi:
- #   runs-on: ubuntu-latest
+  # build-pypi:
+  #   runs-on: ubuntu-latest
 
- #   steps:
- #     - uses: actions/checkout@v2
+  #   steps:
+  #     - uses: actions/checkout@v2
 
- #     - name: set up Python 3.6
- #       uses: actions/setup-python@v1
- #       with:
- #         python-version: 3.6
+  #     - name: set up Python 3.6
+  #       uses: actions/setup-python@v1
+  #       with:
+  #         python-version: 3.6
 
- #     - name: Generating distribution archives
- #       run: |
- #         pip install --upgrade setuptools wheel
- #         python setup.py sdist bdist_wheel --universal
+  #     - name: Generating distribution archives
+  #       run: |
+  #         pip install --upgrade setuptools wheel
+  #         python setup.py sdist bdist_wheel --universal
 
- #     - name: Publish a Python distribution to PyPI
- #       uses: pypa/gh-action-pypi-publish@master
- #       with:
- #         user: __token__
- #         password: ${{ secrets.PYPI_PASSWORD }}
+  #     - name: Publish a Python distribution to PyPI
+  #       uses: pypa/gh-action-pypi-publish@master
+  #       with:
+  #         user: __token__
+  #         password: ${{ secrets.PYPI_PASSWORD }}
 
- build-docker:
-   runs-on: ubuntu-latest
-   strategy:
-     matrix:
-        docker: ["", "-dev"]
+  build-docker:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        catalyst_requirements: ["", all]
+        pytorch:
+          # - "1.9.0-cuda11.1-cudnn8-runtime"
+          - "1.9.0-cuda11.1-cudnn8-devel"
+          # - "1.8-cuda10.1-cudnn7-runtime"
+          - "1.8.1-cuda11.1-cudnn8-devel"
+          # - "1.7.0-cuda11.0-cudnn8-runtime"
+          - "1.7.0-cuda11.0-cudnn8-devel"
+          # - "1.3-cuda10.1-cudnn7-runtime"
+          - "1.3-cuda10.1-cudnn7-devel"
 
-   steps:
-     - uses: actions/checkout@v2
+    steps:
+      - uses: actions/checkout@v2
 
-     - name: Publish Docker to Docker Hub
-       uses: elgohr/Publish-Docker-Github-Action@master
-       with:
-         name: catalystteam/catalyst
-         username: ${{ secrets.DOCKER_USERNAME }}
-         password: ${{ secrets.DOCKER_PASSWORD }}
-         dockerfile: docker/Dockerfile${{ matrix.docker }}
-         tags: "latest,${{ github.event.release.tag_name }}${{ matrix.docker }}"
+      - name: Publish Docker to Docker Hub (base)
+        if: matrix.catalyst_requirements == ""
+        uses: elgohr/Publish-Docker-Github-Action@master
+        env:
+          PYTORCH_TAG: "${{ matrix.pytorch }}"
+        with:
+          name: catalystteam/catalyst
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          dockerfile: docker/Dockerfile
+          tags: "${{ github.event.release.tag_name }}-pytorch-${{ matrix.pytorch }}"
 
-  # build-docker-full:
-  #  runs-on: ubuntu-latest
-  #  strategy:
-  #    matrix:
-  #       docker: ["", "-dev"]
+      - name: Publish Docker to Docker Hub ([all])
+        if: matrix.catalyst_requirements == "all"
+        uses: elgohr/Publish-Docker-Github-Action@master
+        env:
+          PYTORCH_TAG: "${{ matrix.pytorch }}"
+          CATALYST_ALL: "1"
+        with:
+          name: catalystteam/catalyst
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          dockerfile: docker/Dockerfile
+          tags: "${{ github.event.release.tag_name }}-all-pytorch-${{ matrix.pytorch }}"
 
-  #  steps:
-  #    - uses: actions/checkout@v2
+#   build-docs:
+#     name: build-docs
+#     runs-on: ${{ matrix.os }}
+#     strategy:
+#       fail-fast: false
+#       max-parallel: 4
+#       matrix:
+#         os: [ubuntu-18.04] # , windows-2019, macOS-10.15]
+#         python-version: [3.6] #, 3.7, 3.8]
+#         requires: ['latest']
+# #        exclude:
+# #          # excludes node 4 on macOS
+# #          - python-version: 3.8
+# #            requires: 'minimal'
+#     # Timeout: 4
+#     timeout-minutes: 30
+#     steps:
+#       - uses: actions/checkout@v2
 
-  #    - name: Get release version
-  #      id: get_version
-  #      run: echo "RELEASE_VERSION=$(echo ${GITHUB_REF:10})" >> ${GITHUB_ENV}
+#       - name: set up Python ${{ matrix.python-version }}
+#         uses: actions/setup-python@v2
+#         with:
+#           python-version: ${{ matrix.python-version }}
 
-  #    - name: Publish Docker to Docker Hub
-  #      uses: elgohr/Publish-Docker-Github-Action@master
-  #      with:
-  #        name: catalystteam/catalyst
-  #        username: ${{ secrets.DOCKER_USERNAME }}
-  #        password: ${{ secrets.DOCKER_PASSWORD }}
-  #        dockerfile: docker/Dockerfile${{ matrix.docker }}
-  #        tags: "latest,${{ github.event.release.tag_name }}${{ matrix.docker }}"
+#       - name: setup ubuntu
+#         run: |
+#           python -c "from pip._internal.locations import USER_CACHE_DIR; print('::set-output name=dir::' + USER_CACHE_DIR)"
 
- # build-docs:
- #   runs-on: ubuntu-latest
+#       # https://github.com/actions/cache/blob/master/examples.md
+#       # Note: This uses an internal pip API and may not always work
+#       # https://github.com/actions/cache/blob/master/examples.md#multiple-oss-in-a-workflow
+#       - name: get pip cache dir
+#         id: pip-cache
+#         run: |
+#           python -c "from pip._internal.locations import USER_CACHE_DIR; print('::set-output name=dir::' + USER_CACHE_DIR)"
 
- #   steps:
- #     - uses: actions/checkout@v2
+#       - name: cache pip
+#         uses: actions/cache@v2
+#         with:
+#           path: ${{ steps.pip-cache.outputs.dir }}
+#           key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements.txt') }} -${{ hashFiles('./requirements/requirements-dev.txt') }}
+#           restore-keys: |
+#             ${{ runner.os }}-${{ matrix.python-version }}-pip-
 
- #     - name: Get release version
- #       id: get_version
- #       run: echo ::set-env name=RELEASE_VERSION::$(echo ${GITHUB_REF:10})
+#       - name: cache pip contrib
+#         uses: actions/cache@v2
+#         with:
+#           path: ${{ steps.pip-cache.outputs.dir }}
+#           key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{hashFiles('./requirements/requirements-cv.txt') }} -${{hashFiles('./requirements/requirements-nifti.txt') }} -${{ hashFiles('./requirements/requirements-hydra.txt') }} -${{ hashFiles('./requirements/requirements-ml.txt') }} -${{ hashFiles('./requirements/requirements-optuna.txt') }} -${{ hashFiles('./requirements/requirements-mlflow.txt') }} -${{ hashFiles('./requirements/requirements-neptune.txt') }}
+#           restore-keys: |
+#             ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
+
+#       - name: cache pip contrib [2]
+#         uses: actions/cache@v2
+#         with:
+#           path: ${{ steps.pip-cache.outputs.dir }}
+#           key: ${{ runner.os }}-${{ matrix.python-version }}-pip -${{ hashFiles('./requirements/requirements-albu.txt') }}
+#           restore-keys: |
+#             ${{ runner.os }}-${{ matrix.python-version }}-pip-contrib
+
+#       - name: install dependencies
+#         run: |
+#           # python -m pip install --upgrade --user pip
+#           pip install -r ./requirements/requirements.txt -r ./requirements/requirements-cv.txt -r ./requirements/requirements-dev.txt -r ./requirements/requirements-hydra.txt -r ./requirements/requirements-ml.txt -r ./requirements/requirements-nifti.txt -r ./requirements/requirements-optuna.txt -r ./requirements/requirements-mlflow.txt -r ./requirements/requirements-neptune.txt -r ./requirements/requirements-albu.txt
+#           python --version
+#           pip --version
+#           pip list
+#         shell: bash
+
+#       - name: make docs
+#         run: |
+#           REMOVE_BUILDS=0 make check-docs
+
+#       - name: commit documentation changes
+#         run: |
+#           git clone https://github.com/catalyst-team/catalyst.git --branch gh-pages --single-branch gh-pages
+#           cd gh-pages
+#           # Remove master docs, do not touch the past versions
+#           find . -maxdepth 1  ! -name 'versions.html' ! -name ".buildinfo" ! -name ".nojekyll" -type f -exec rm -f {} + || true
+#           rm -rf .doctrees _modules _sources _static api info
+#           cp -a ../builds/* .
+#           # commit changes
+#           git config --local user.email "action@ithub.com"
+#           git config --local user.name "GitHub Action"
+#           git add .
+#           git commit -m "$(git log -1 --pretty=%B)" || true
+
+#       - name: push changes
+#         uses: ad-m/github-push-action@master
+#         with:
+#           branch: gh-pages
+#           directory: gh-pages
+#           github_token: ${{ secrets.GITHUB_TOKEN }}
