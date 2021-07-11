@@ -1,0 +1,4 @@
+-   repo: https://github.com/Casyfill/codestyle
+    rev: '982233638ee63e70ff40999a1314ae7c9067aa13'  # pick a git hash / tag to point to
+    hooks:
+    - id: catalyst-make-codestyle

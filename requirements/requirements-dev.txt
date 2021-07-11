@@ -7,3 +7,4 @@ mock==3.0.5
 catalyst-codestyle==21.03rc2
 catalyst-sphinx-theme==1.1.2
 toml==0.10.0
+pre-commit==2.13.0
