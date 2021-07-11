@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # flake8: noqa
 from argparse import ArgumentParser, RawTextHelpFormatter
+from functools import partial
 import os
 
 from torch import nn, optim
@@ -32,7 +33,10 @@ if SETTINGS.fairscale_required:
             "fs-pp": dl.PipelineParallelFairScaleEngine,
             "fs-ddp": dl.SharedDataParallelFairScaleEngine,
             "fs-ddp-amp": dl.SharedDataParallelFairScaleAMPEngine,
-            "fs-fddp": dl.FullySharedDataParallelFairScaleEngine,
+            # for some reason we could catch a bug with FairScale flatten wrapper here, so...
+            "fs-fddp": partial(
+                dl.FullySharedDataParallelFairScaleEngine, ddp_kwargs={"flatten_parameters": False}
+            ),
         }
     )
 
