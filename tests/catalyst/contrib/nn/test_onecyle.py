@@ -10,6 +10,7 @@ class LRCheckerCallback(Callback):
     def __init__(self, init_lr_value: float, final_lr_value: float):
         super().__init__(CallbackOrder.Internal)
         self.init_lr = init_lr_value
+
         self.final_lr = final_lr_value
 
     # Check initial LR
