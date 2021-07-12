@@ -141,24 +141,32 @@ utils.onnx_export(model=runner.model, batch=features_batch, file="./logs/mnist.o
 
 
 ## Table of Contents
+- [Getting started](#getting-started)
+  - [Step-by-step Guide](#step-by-step-guide)
+- [Table of Contents](#table-of-contents)
 - [Overview](#overview)
-  * [Installation](#installation)
-  * [Minimal examples](#minimal-examples)
-  * [Features](#features)
-  * [Tests](#tests)
+  - [Installation](#installation)
+  - [Minimal Examples](#minimal-examples)
+  - [Features](#features)
+  - [Tests](#tests)
 - [Catalyst](#catalyst)
-  * [Documentation](#documentation)
-  * [Notebooks](#notebooks)
-  * [Blog Posts](#notable-blog-posts)
-  * [Talks](#talks)
-  * [Projects](#projects)
+  - [Documentation](#documentation)
+  - [Notebooks](#notebooks)
+  - [Notable Blog Posts](#notable-blog-posts)
+  - [Talks](#talks)
+  - [Projects](#projects)
+    - [Examples, Notebooks, and Starter Kits](#examples-notebooks-and-starter-kits)
+    - [Competitions](#competitions)
+    - [Research Papers](#research-papers)
+    - [Toolkits](#toolkits)
 - [Community](#community)
-  * [Contribution Guide](#contribution-guide)
-  * [User Feedback](#user-feedback)
-  * [Acknowledgments](#acknowledgments)
-  * [Trusted by](#trusted-by)
-  * [Supported by](#supported-by)
-  * [Citation](#citation)
+  - [Contribution Guide](#contribution-guide)
+  - [User Feedback](#user-feedback)
+  - [Acknowledgments](#acknowledgments)
+    - [Catalyst.Team](#catalystteam)
+    - [Catalyst.Contributors](#catalystcontributors)
+  - [Trusted by](#trusted-by)
+  - [Citation](#citation)
 
 
 ## Overview
@@ -1559,7 +1567,7 @@ runner.run()
 
 ### Tests
 All Catalyst code, features, and pipelines [are fully tested](./catalyst/tests).
-We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle).
+We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle) and a corresponding pre-commit hook.
 
 During testing, we train a variety of different models: image classification,
 image segmentation, text classification, GANs, and much more.

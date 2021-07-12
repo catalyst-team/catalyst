@@ -115,25 +115,22 @@ Please use it as a collaborative platform, if you have any issues during the PR.
 ### Codestyle
 
 We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle) 
-package to help with code formatting issues. 
+package to help with code formatting issues, and a corresponding pre-commit hook installed.
 
-You could check the codestyle manually for your PR with:
-
+To set the hook, please run (this requires `pre-commit` package, pinned in the `requirements-dev.txt`):
 ```bash
-catalyst-make-codestyle && catalyst-check-codestyle
+pre-commit install
 ```
-
-Alternatively, this repository has a pre-commit hook that checks and formats the code on commit, automatically. Instead of installing the `codestyle` and running it manually, you can run the pre-commit hook via CLI:
+Once the installation is done, all the files that are changed will be formatted automatically (and commit halted if something goes wrong, e.g there is a syntactic error). You can also run the formatting manually:
 ```bash
 pre-commit run
 ```
-Pre-commit will automatically run the formatting on commit, and halt the commit on any error. For more information, read the [pre-commit documentation](https://pre-commit.com/).
 
-If for some reason you want to turn the hook off temporarily, you can do that with:
+If for some reason you'll want to turn the hook off temporarily, you can do that with:
 ```bash
 SKIP=catalyst-make-codestyle git commit -m "foo"
 ```
-Or you can uninstall it completely (that will affect everyone on PR):
+Or you can uninstall it completely with:
 ```bash
 pre-commit uninstall
 ```
@@ -142,6 +139,8 @@ Once again, make sure that your python packages complied with `requirements/requ
 ```bash
 pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
 ```
+
+For more information on pre-commit, please refer to  [pre-commit documentation](https://pre-commit.com/).
 
 ### Documentation
 
