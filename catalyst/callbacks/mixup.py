@@ -156,7 +156,10 @@ class MixupCallback(Callback):
             runner: runner for the experiment.
         """
         if self.required:
-            runner.batch = mixup_batch(runner.batch, self.keys, alpha=self.alpha, mode=self.mode)
+            mixuped_batch = [runner.batch[key] for key in self.keys]
+            mixuped_batch = mixup_batch(mixuped_batch, alpha=self.alpha, mode=self.mode)
+            for key, mixuped_value in zip(self.keys, mixuped_batch):
+                runner.batch[key] = mixuped_value
 
 
 __all__ = ["MixupCallback"]
