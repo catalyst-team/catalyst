@@ -677,7 +677,7 @@ class Runner(IRunner):
         model: Optional[Model] = None,
         seed: int = 42,
         verbose: bool = False,
-    ) -> Dict:
+    ) -> Dict[str, Any]:
         """
         Evaluates data from loader with given model and returns obtained metrics. # noqa: DAR401
 
@@ -707,7 +707,7 @@ class Runner(IRunner):
 
         if model is None:
             model = self.model
-        assert self.model is not None
+        assert model is not None
 
         self.train(
             model=model,

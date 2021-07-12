@@ -8,12 +8,39 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+-
+
+### Changed
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+- make `expdir` in `catalyst-dl run` optional ([#1249](https://github.com/catalyst-team/catalyst/pull/1249))
+- Bump neptune-client from 0.9.5 to 0.9.8 in `requirements-neptune.txt` ([#1251](https://github.com/catalyst-team/catalyst/pull/1251))
+- automatic merge for master (with [Mergify](https://mergify.io/)) fixed ([#1250](https://github.com/catalyst-team/catalyst/pull/1250))
+- Evaluate loader custom model bug was fixed [#1254](https://github.com/catalyst-team/catalyst/pull/1254)
+
+## [21.06] - 2021-06-29
+
+### Added
+
 - ([#1230](https://github.com/catalyst-team/catalyst/pull/1230))
   - FairScale support
   - DeepSpeed support
   - `utils.ddp_sync_run` function for synchronous ddp run
   - CIFAR10 and CIFAR100 datasets from torchvision (no cv-based requirements)
   - [Catalyst Engines demo](https://github.com/catalyst-team/catalyst/tree/master/examples/engines)
+- `dataset_from_params` support in config API ([#1231](https://github.com/catalyst-team/catalyst/pull/1231))
+- transform from params support for config API added ([#1236](https://github.com/catalyst-team/catalyst/pull/1236))
+- samplers from params support for config API added ([#1240](https://github.com/catalyst-team/catalyst/pull/1240))
+- recursive registry.get_from_params added ([#1241](https://github.com/catalyst-team/catalyst/pull/1241))
+- albumentations integration ([#1238](https://github.com/catalyst-team/catalyst/pull/1238))
+- Profiler callback ([#1226](https://github.com/catalyst-team/catalyst/pull/1226))
 
 ### Changed
 
@@ -36,7 +63,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - `HuberLoss` name conflict for pytorch 1.9 hotfix ([#1239](https://github.com/catalyst-team/catalyst/pull/1239))
 
 
-## [21.05] - YYYY-MM-DD
+## [21.05] - 2021-05-31
 
 ### Added
 
