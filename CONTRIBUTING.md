@@ -96,7 +96,7 @@ It's much harder to merge in a large change with a lot of disjoint features.
 3. Submit the update as a GitHub pull request against the `master` branch.
 4. Make sure that you provide docstrings for all your new methods and classes.
 5. Add new unit tests for your code ([PR examples](#pr-examples)).
-6. Check the [codestyle](#codestyle)
+6. (Optional) Check the [codestyle](#codestyle). We use a pre-commit hook that runs the formatting on commit, so you don't have to. 
 7. Make sure that your code [passes the Github CI](#github-ci)
 
 
@@ -115,15 +115,30 @@ Please use it as a collaborative platform, if you have any issues during the PR.
 ### Codestyle
 
 We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle) 
-package to help with code formatting issues.
+package to help with code formatting issues. 
 
-You could check the codestyle for your PR with:
+You could check the codestyle manually for your PR with:
 
 ```bash
 catalyst-make-codestyle && catalyst-check-codestyle
 ```
 
-Once again, make sure that your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean:
+Alternatively, this repository has a pre-commit hook that checks and formats the code on commit, automatically. Instead of installing the `codestyle` and running it manually, you can run the pre-commit hook via CLI:
+```bash
+pre-commit run
+```
+Pre-commit will automatically run the formatting on commit, and halt the commit on any error. For more information, read the [pre-commit documentation](https://pre-commit.com/).
+
+If for some reason you want to turn the hook off temporarily, you can do that with:
+```bash
+SKIP=catalyst-make-codestyle git commit -m "foo"
+```
+Or you can uninstall it completely (that will affect everyone on PR):
+```bash
+pre-commit uninstall
+```
+
+Once again, make sure that your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle and pre-commit run clean:
 ```bash
 pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
 ```
