@@ -4,7 +4,7 @@ import numpy as np
 
 from catalyst.core.logger import ILogger
 from catalyst.settings import SETTINGS
-from catalyst.typing import Directory, File, Number
+from catalyst.typing import Directory, File, Number, Union
 
 if SETTINGS.mlflow_required:
     import mlflow
@@ -264,7 +264,7 @@ class MLflowLogger(ILogger):
     def log_artifact(
         self,
         tag: str,
-        artifact: object = None,
+        artifact: Union[Directory, File] = None,
         path_to_artifact: str = None,
         scope: str = None,
         # experiment info
