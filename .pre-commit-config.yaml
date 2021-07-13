@@ -1,5 +1,5 @@
 repos:
--   repo: https://github.com/Casyfill/codestyle
-    rev: '982233638ee63e70ff40999a1314ae7c9067aa13'  # pick a git hash / tag to point to
+-   repo: https://github.com/catalyst-team/codestyle
+    rev: '965435e3a2d3f03303b9c1b00fd1abdf6749fd75'  # TODO: update to a tag once released
     hooks:
     - id: catalyst-make-codestyle
