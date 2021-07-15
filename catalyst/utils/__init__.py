@@ -37,6 +37,7 @@ from catalyst.utils.misc import (
     get_by_keys,
     convert_labels2list,
 )
+from catalyst.utils.mixup import mixup_batch
 from catalyst.utils.numpy import get_one_hot
 
 from catalyst.utils.onnx import onnx_export

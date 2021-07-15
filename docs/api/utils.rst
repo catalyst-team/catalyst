@@ -42,6 +42,13 @@ Misc
     :undoc-members:
     :show-inheritance:
 
+MixUp
+~~~~~~~~~~~~~~~~~~~~~~
+.. automodule:: catalyst.utils.mixup
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 Numpy
 ~~~~~~~~~~~~~~~~~~~~~~
 .. automodule:: catalyst.utils.numpy
