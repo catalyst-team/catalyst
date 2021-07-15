@@ -325,25 +325,26 @@
 <li><p><a class="reference internal" href="#module-catalyst.utils.data" id="id3">Data</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.utils.distributed" id="id4">Distributed</a></p></li>
 <li><p><a class="reference internal" href="#module-catalyst.utils.misc" id="id5">Misc</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.numpy" id="id6">Numpy</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.onnx" id="id7">Onnx</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.pruning" id="id8">Pruning</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.quantization" id="id9">Quantization</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.swa" id="id10">Stochastic Weights Averaging (SWA)</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.sys" id="id11">Sys</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.torch" id="id12">Torch</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.utils.tracing" id="id13">Tracing</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.mixup" id="id6">MixUp</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.numpy" id="id7">Numpy</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.onnx" id="id8">Onnx</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.pruning" id="id9">Pruning</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.quantization" id="id10">Quantization</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.swa" id="id11">Stochastic Weights Averaging (SWA)</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.sys" id="id12">Sys</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.torch" id="id13">Torch</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.utils.tracing" id="id14">Tracing</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils" id="id14">Contrib</a></p>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils" id="id15">Contrib</a></p>
 <ul>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.compression" id="id15">Compression</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.image" id="id16">Image</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.pandas" id="id17">Pandas</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.parallel" id="id18">Parallel</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.serialization" id="id19">Serialization</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.thresholds" id="id20">Thresholds</a></p></li>
-<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.visualization" id="id21">Visualization</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.compression" id="id16">Compression</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.image" id="id17">Image</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.pandas" id="id18">Pandas</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.parallel" id="id19">Parallel</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.serialization" id="id20">Serialization</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.thresholds" id="id21">Thresholds</a></p></li>
+<li><p><a class="reference internal" href="#module-catalyst.contrib.utils.visualization" id="id22">Visualization</a></p></li>
 </ul>
 </li>
 </ul>
@@ -979,8 +980,32 @@ using a integer tensor and a list of indices.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-catalyst.utils.mixup">
+<span id="mixup"></span><h3><a class="toc-backref" href="#id6">MixUp</a><a class="headerlink" href="#module-catalyst.utils.mixup" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="catalyst.utils.mixup.mixup_batch">
+<code class="sig-prename descclassname">catalyst.utils.mixup.</code><code class="sig-name descname">mixup_batch</code><span class="sig-paren">(</span><em class="sig-param">batch: List[torch.Tensor], alpha: float = 0.2, mode: str = 'replace'</em><span class="sig-paren">)</span> &#x2192; List[torch.Tensor]<a class="reference internal" href="../_modules/catalyst/utils/mixup.html#mixup_batch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.mixup.mixup_batch" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch</strong> – batch to which you want to apply augmentation</p></li>
+<li><p><strong>alpha</strong> – beta distribution a=b parameters. Must be &gt;=0. The closer alpha to zero the
+less effect of the mixup.</p></li>
+<li><p><strong>mode</strong> – algorithm used for muxup: <code class="docutils literal notranslate"><span class="pre">&quot;replace&quot;</span></code> | <code class="docutils literal notranslate"><span class="pre">&quot;add&quot;</span></code>. If “replace”
+then replaces the batch with a mixed one, while the batch size is not changed
+If “add”, concatenates mixed examples to the current ones, the batch size increases
+by 2 times.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>augmented batch</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 <div class="section" id="module-catalyst.utils.numpy">
-<span id="numpy"></span><h3><a class="toc-backref" href="#id6">Numpy</a><a class="headerlink" href="#module-catalyst.utils.numpy" title="Permalink to this headline">¶</a></h3>
+<span id="numpy"></span><h3><a class="toc-backref" href="#id7">Numpy</a><a class="headerlink" href="#module-catalyst.utils.numpy" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.utils.numpy.get_one_hot">
 <code class="sig-prename descclassname">catalyst.utils.numpy.</code><code class="sig-name descname">get_one_hot</code><span class="sig-paren">(</span><em class="sig-param">label: int</em>, <em class="sig-param">num_classes: int</em>, <em class="sig-param">smoothing: float = None</em><span class="sig-paren">)</span> &#x2192; numpy.ndarray<a class="reference internal" href="../_modules/catalyst/utils/numpy.html#get_one_hot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.numpy.get_one_hot" title="Permalink to this definition">¶</a></dt>
@@ -1008,7 +1033,7 @@ from <code class="docutils literal notranslate"><span class="pre">Bag</span> <sp
 
 </div>
 <div class="section" id="module-catalyst.utils.onnx">
-<span id="onnx"></span><h3><a class="toc-backref" href="#id7">Onnx</a><a class="headerlink" href="#module-catalyst.utils.onnx" title="Permalink to this headline">¶</a></h3>
+<span id="onnx"></span><h3><a class="toc-backref" href="#id8">Onnx</a><a class="headerlink" href="#module-catalyst.utils.onnx" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.utils.onnx.onnx_export">
 <code class="sig-prename descclassname">catalyst.utils.onnx.</code><code class="sig-name descname">onnx_export</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, batch: torch.Tensor, file: str, method_name: str = 'forward', input_names: Iterable = None, output_names: List[str] = None, dynamic_axes: Union[Dict[str, int], Dict[str, Dict[str, int]]] = None, opset_version: int = 9, do_constant_folding: bool = False, return_model: bool = False, verbose: bool = False</em><span class="sig-paren">)</span> &#x2192; Union[None, onnx]<a class="reference internal" href="../_modules/catalyst/utils/onnx.html#onnx_export"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.onnx.onnx_export" title="Permalink to this definition">¶</a></dt>
@@ -1093,7 +1118,7 @@ and after quantization. Defaults to False.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.utils.pruning">
-<span id="pruning"></span><h3><a class="toc-backref" href="#id8">Pruning</a><a class="headerlink" href="#module-catalyst.utils.pruning" title="Permalink to this headline">¶</a></h3>
+<span id="pruning"></span><h3><a class="toc-backref" href="#id9">Pruning</a><a class="headerlink" href="#module-catalyst.utils.pruning" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.utils.pruning.prune_model">
 <code class="sig-prename descclassname">catalyst.utils.pruning.</code><code class="sig-name descname">prune_model</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, pruning_fn: Union[Callable, str], amount: Union[float, int], keys_to_prune: Optional[List[str]] = None, layers_to_prune: Optional[List[str]] = None, dim: int = None, l_norm: int = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/pruning.html#prune_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.pruning.prune_model" title="Permalink to this definition">¶</a></dt>
@@ -1184,7 +1209,7 @@ Defaults to None.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.utils.quantization">
-<span id="quantization"></span><h3><a class="toc-backref" href="#id9">Quantization</a><a class="headerlink" href="#module-catalyst.utils.quantization" title="Permalink to this headline">¶</a></h3>
+<span id="quantization"></span><h3><a class="toc-backref" href="#id10">Quantization</a><a class="headerlink" href="#module-catalyst.utils.quantization" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.utils.quantization.quantize_model">
 <code class="sig-prename descclassname">catalyst.utils.quantization.</code><code class="sig-name descname">quantize_model</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module</em>, <em class="sig-param">qconfig_spec: Dict = None</em>, <em class="sig-param">dtype: Union[str</em>, <em class="sig-param">torch.dtype</em>, <em class="sig-param">None] = 'qint8'</em><span class="sig-paren">)</span> &#x2192; torch.nn.modules.module.Module<a class="reference internal" href="../_modules/catalyst/utils/quantization.html#quantize_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.quantization.quantize_model" title="Permalink to this definition">¶</a></dt>
@@ -1209,7 +1234,7 @@ Defaults to “qint8”.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.utils.swa">
-<span id="stochastic-weights-averaging-swa"></span><h3><a class="toc-backref" href="#id10">Stochastic Weights Averaging (SWA)</a><a class="headerlink" href="#module-catalyst.utils.swa" title="Permalink to this headline">¶</a></h3>
+<span id="stochastic-weights-averaging-swa"></span><h3><a class="toc-backref" href="#id11">Stochastic Weights Averaging (SWA)</a><a class="headerlink" href="#module-catalyst.utils.swa" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.utils.swa.average_weights">
 <code class="sig-prename descclassname">catalyst.utils.swa.</code><code class="sig-name descname">average_weights</code><span class="sig-paren">(</span><em class="sig-param">state_dicts: List[dict]</em><span class="sig-paren">)</span> &#x2192; collections.OrderedDict<a class="reference internal" href="../_modules/catalyst/utils/swa.html#average_weights"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.swa.average_weights" title="Permalink to this definition">¶</a></dt>
@@ -1246,7 +1271,7 @@ Defaults to “qint8”.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.utils.sys">
-<span id="sys"></span><h3><a class="toc-backref" href="#id11">Sys</a><a class="headerlink" href="#module-catalyst.utils.sys" title="Permalink to this headline">¶</a></h3>
+<span id="sys"></span><h3><a class="toc-backref" href="#id12">Sys</a><a class="headerlink" href="#module-catalyst.utils.sys" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.utils.sys.dump_environment">
 <code class="sig-prename descclassname">catalyst.utils.sys.</code><code class="sig-name descname">dump_environment</code><span class="sig-paren">(</span><em class="sig-param">logdir: str</em>, <em class="sig-param">config: Any = None</em>, <em class="sig-param">configs_path: List[str] = None</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/utils/sys.html#dump_environment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.sys.dump_environment" title="Permalink to this definition">¶</a></dt>
@@ -1309,7 +1334,7 @@ Defaults to “qint8”.</p></li>
 
 </div>
 <div class="section" id="module-catalyst.utils.torch">
-<span id="torch"></span><h3><a class="toc-backref" href="#id12">Torch</a><a class="headerlink" href="#module-catalyst.utils.torch" title="Permalink to this headline">¶</a></h3>
+<span id="torch"></span><h3><a class="toc-backref" href="#id13">Torch</a><a class="headerlink" href="#module-catalyst.utils.torch" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.utils.torch.get_optimizable_params">
 <code class="sig-prename descclassname">catalyst.utils.torch.</code><code class="sig-name descname">get_optimizable_params</code><span class="sig-paren">(</span><em class="sig-param">model_or_params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/utils/torch.html#get_optimizable_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.torch.get_optimizable_params" title="Permalink to this definition">¶</a></dt>
@@ -1717,7 +1742,7 @@ scheduler (if not None).</p>
 
 </div>
 <div class="section" id="module-catalyst.utils.tracing">
-<span id="tracing"></span><h3><a class="toc-backref" href="#id13">Tracing</a><a class="headerlink" href="#module-catalyst.utils.tracing" title="Permalink to this headline">¶</a></h3>
+<span id="tracing"></span><h3><a class="toc-backref" href="#id14">Tracing</a><a class="headerlink" href="#module-catalyst.utils.tracing" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.utils.tracing.trace_model">
 <code class="sig-prename descclassname">catalyst.utils.tracing.</code><code class="sig-name descname">trace_model</code><span class="sig-paren">(</span><em class="sig-param">model: torch.nn.modules.module.Module, batch: Union[Tuple[torch.Tensor], torch.Tensor], method_name: str = 'forward'</em><span class="sig-paren">)</span> &#x2192; torch.jit._script.ScriptModule<a class="reference internal" href="../_modules/catalyst/utils/tracing.html#trace_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.tracing.trace_model" title="Permalink to this definition">¶</a></dt>
@@ -1768,9 +1793,9 @@ used as entrypoint during tracing</p></li>
 </div>
 </div>
 <div class="section" id="module-catalyst.contrib.utils">
-<span id="contrib"></span><h2><a class="toc-backref" href="#id14">Contrib</a><a class="headerlink" href="#module-catalyst.contrib.utils" title="Permalink to this headline">¶</a></h2>
+<span id="contrib"></span><h2><a class="toc-backref" href="#id15">Contrib</a><a class="headerlink" href="#module-catalyst.contrib.utils" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-catalyst.contrib.utils.compression">
-<span id="compression"></span><h3><a class="toc-backref" href="#id15">Compression</a><a class="headerlink" href="#module-catalyst.contrib.utils.compression" title="Permalink to this headline">¶</a></h3>
+<span id="compression"></span><h3><a class="toc-backref" href="#id16">Compression</a><a class="headerlink" href="#module-catalyst.contrib.utils.compression" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.compression.pack">
 <code class="sig-prename descclassname">catalyst.contrib.utils.compression.</code><code class="sig-name descname">pack</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.compression.pack" title="Permalink to this definition">¶</a></dt>
@@ -1829,7 +1854,7 @@ used as entrypoint during tracing</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.image">
-<span id="image"></span><h3><a class="toc-backref" href="#id16">Image</a><a class="headerlink" href="#module-catalyst.contrib.utils.image" title="Permalink to this headline">¶</a></h3>
+<span id="image"></span><h3><a class="toc-backref" href="#id17">Image</a><a class="headerlink" href="#module-catalyst.contrib.utils.image" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.image.has_image_extension">
 <code class="sig-prename descclassname">catalyst.contrib.utils.image.</code><code class="sig-name descname">has_image_extension</code><span class="sig-paren">(</span><em class="sig-param">uri</em><span class="sig-paren">)</span> &#x2192; bool<a class="reference internal" href="../_modules/catalyst/contrib/utils/image.html#has_image_extension"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.image.has_image_extension" title="Permalink to this definition">¶</a></dt>
@@ -1938,7 +1963,7 @@ rootpath (Union[str, pathlib.Path]): path to the resource with image
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.pandas">
-<span id="pandas"></span><h3><a class="toc-backref" href="#id17">Pandas</a><a class="headerlink" href="#module-catalyst.contrib.utils.pandas" title="Permalink to this headline">¶</a></h3>
+<span id="pandas"></span><h3><a class="toc-backref" href="#id18">Pandas</a><a class="headerlink" href="#module-catalyst.contrib.utils.pandas" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.pandas.dataframe_to_list">
 <code class="sig-prename descclassname">catalyst.contrib.utils.pandas.</code><code class="sig-name descname">dataframe_to_list</code><span class="sig-paren">(</span><em class="sig-param">dataframe: pandas.core.frame.DataFrame</em><span class="sig-paren">)</span> &#x2192; List[dict]<a class="reference internal" href="../_modules/catalyst/contrib/utils/pandas.html#dataframe_to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.pandas.dataframe_to_list" title="Permalink to this definition">¶</a></dt>
@@ -2326,7 +2351,7 @@ using this as the class labels.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.parallel">
-<span id="parallel"></span><h3><a class="toc-backref" href="#id18">Parallel</a><a class="headerlink" href="#module-catalyst.contrib.utils.parallel" title="Permalink to this headline">¶</a></h3>
+<span id="parallel"></span><h3><a class="toc-backref" href="#id19">Parallel</a><a class="headerlink" href="#module-catalyst.contrib.utils.parallel" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.parallel.parallel_imap">
 <code class="sig-prename descclassname">catalyst.contrib.utils.parallel.</code><code class="sig-name descname">parallel_imap</code><span class="sig-paren">(</span><em class="sig-param">func, args, pool: Union[multiprocessing.pool.Pool, catalyst.contrib.utils.parallel.DumbPool]</em><span class="sig-paren">)</span> &#x2192; List[T]<a class="reference internal" href="../_modules/catalyst/contrib/utils/parallel.html#parallel_imap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.parallel.parallel_imap" title="Permalink to this definition">¶</a></dt>
@@ -2347,7 +2372,7 @@ using this as the class labels.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.serialization">
-<span id="serialization"></span><h3><a class="toc-backref" href="#id19">Serialization</a><a class="headerlink" href="#module-catalyst.contrib.utils.serialization" title="Permalink to this headline">¶</a></h3>
+<span id="serialization"></span><h3><a class="toc-backref" href="#id20">Serialization</a><a class="headerlink" href="#module-catalyst.contrib.utils.serialization" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.serialization.serialize">
 <code class="sig-prename descclassname">catalyst.contrib.utils.serialization.</code><code class="sig-name descname">serialize</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#catalyst.contrib.utils.serialization.serialize" title="Permalink to this definition">¶</a></dt>
@@ -2378,7 +2403,7 @@ using this as the class labels.</p>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.thresholds">
-<span id="thresholds"></span><h3><a class="toc-backref" href="#id20">Thresholds</a><a class="headerlink" href="#module-catalyst.contrib.utils.thresholds" title="Permalink to this headline">¶</a></h3>
+<span id="thresholds"></span><h3><a class="toc-backref" href="#id21">Thresholds</a><a class="headerlink" href="#module-catalyst.contrib.utils.thresholds" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.thresholds.get_baseline_thresholds">
 <code class="sig-prename descclassname">catalyst.contrib.utils.thresholds.</code><code class="sig-name descname">get_baseline_thresholds</code><span class="sig-paren">(</span><em class="sig-param">scores: numpy.ndarray, labels: numpy.ndarray, objective: Callable[[numpy.ndarray, numpy.ndarray], float]</em><span class="sig-paren">)</span> &#x2192; Tuple[float, List[float]]<a class="reference internal" href="../_modules/catalyst/contrib/utils/thresholds.html#get_baseline_thresholds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.thresholds.get_baseline_thresholds" title="Permalink to this definition">¶</a></dt>
@@ -2610,7 +2635,7 @@ numpy array with shape [num_examples, num_classes]</p></li>
 
 </div>
 <div class="section" id="module-catalyst.contrib.utils.visualization">
-<span id="visualization"></span><h3><a class="toc-backref" href="#id21">Visualization</a><a class="headerlink" href="#module-catalyst.contrib.utils.visualization" title="Permalink to this headline">¶</a></h3>
+<span id="visualization"></span><h3><a class="toc-backref" href="#id22">Visualization</a><a class="headerlink" href="#module-catalyst.contrib.utils.visualization" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.contrib.utils.visualization.plot_confusion_matrix">
 <code class="sig-prename descclassname">catalyst.contrib.utils.visualization.</code><code class="sig-name descname">plot_confusion_matrix</code><span class="sig-paren">(</span><em class="sig-param">cm: numpy.ndarray</em>, <em class="sig-param">class_names=None</em>, <em class="sig-param">normalize=False</em>, <em class="sig-param">title='confusion matrix'</em>, <em class="sig-param">fname=None</em>, <em class="sig-param">show=True</em>, <em class="sig-param">figsize=12</em>, <em class="sig-param">fontsize=32</em>, <em class="sig-param">colormap='Blues'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/contrib/utils/visualization.html#plot_confusion_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.contrib.utils.visualization.plot_confusion_matrix" title="Permalink to this definition">¶</a></dt>
@@ -2689,6 +2714,7 @@ Normalization can be applied by setting <cite>normalize=True</cite>.</p>
 <li><a class="reference internal" href="#module-catalyst.utils.data">Data</a></li>
 <li><a class="reference internal" href="#module-catalyst.utils.distributed">Distributed</a></li>
 <li><a class="reference internal" href="#module-catalyst.utils.misc">Misc</a></li>
+<li><a class="reference internal" href="#module-catalyst.utils.mixup">MixUp</a></li>
 <li><a class="reference internal" href="#module-catalyst.utils.numpy">Numpy</a></li>
 <li><a class="reference internal" href="#module-catalyst.utils.onnx">Onnx</a></li>
 <li><a class="reference internal" href="#module-catalyst.utils.pruning">Pruning</a></li>
