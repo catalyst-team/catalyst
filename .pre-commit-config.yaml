@@ -1,0 +1,5 @@
+repos:
+-   repo: https://github.com/catalyst-team/codestyle
+    rev: 'v21.06rc1'
+    hooks:
+    - id: catalyst-make-codestyle
