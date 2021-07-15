@@ -1,5 +1,5 @@
 repos:
 -   repo: https://github.com/catalyst-team/codestyle
-    rev: '965435e3a2d3f03303b9c1b00fd1abdf6749fd75'  # TODO: update to a tag once released
+    rev: 'v21.06rc1'
     hooks:
     - id: catalyst-make-codestyle
