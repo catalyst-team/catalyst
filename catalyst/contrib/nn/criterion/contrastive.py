@@ -135,8 +135,64 @@ class ContrastivePairwiseEmbeddingLoss(nn.Module):
         return loss
 
 
+class BarlowTwinsLoss(nn.Module):
+    """The Contrastive embedding loss.
+
+    It has been proposed in `Barlow Twins:
+    Self-Supervised Learning via Redundancy Reduction`_.
+
+    .. _Barlow Twins: Self-Supervised Learning via Redundancy Reduction:
+        https://arxiv.org/abs/2103.03230
+    """
+
+    def __init__(self, lmbda=1.0):
+        """
+        Args:
+            lmbda: trade-off parameter
+        """
+        super().__init__()
+        self.lmbda = lmbda
+
+    def forward(
+        self, embeddings_left: torch.Tensor, embeddings_right: torch.Tensor,
+    ) -> torch.Tensor:
+        """Forward propagation method for the contrastive loss.
+
+        Args:
+            embeddings_left: left objects embeddings [batch_size, features_dim]
+            embeddings_right: right objects embeddings [batch_size, features_dim]
+
+        Returns:
+            torch.Tensor: loss
+        """
+        # normalization
+        z_left = (embeddings_left - embeddings_left.mean(dim=0)) / embeddings_left.std(dim=0)
+        z_right = (embeddings_right - embeddings_right.mean(dim=0)) / embeddings_right.std(dim=0)
+
+        # cross-correlation matrix
+        batch_size = z_left.shape[0]
+        feature_dim = z_right.shape[1]
+        cross_correlation = torch.matmul(z_left.T, z_right) / batch_size
+
+        # selection of diagonal elements and off diagonal elements
+        on_diag = torch.diagonal(cross_correlation)
+        off_diag = (
+            cross_correlation.flatten()[:-1]
+            .view(feature_dim - 1, feature_dim + 1)[:, 1:]
+            .flatten()
+        )
+
+        # the loss described in the original Barlow Twin's paper
+        # encouraging off_diag to be zero and on_diag to be one
+        on_diag_loss = on_diag.add_(-1).pow_(2).sum()
+        off_diag_loss = off_diag.pow_(2).sum()
+        loss = on_diag_loss + self.lmbda * off_diag_loss
+        return loss
+
+
 __all__ = [
     "ContrastiveEmbeddingLoss",
     "ContrastiveDistanceLoss",
     "ContrastivePairwiseEmbeddingLoss",
+    "BarlowTwinsLoss",
 ]
