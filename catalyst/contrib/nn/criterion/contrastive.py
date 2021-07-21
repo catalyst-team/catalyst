@@ -183,16 +183,11 @@ class BarlowTwinsLoss(nn.Module):
 
         # cross-correlation matrix
         batch_size = z_left.shape[0]
-        feature_dim = z_right.shape[1]
         cross_correlation = torch.matmul(z_left.T, z_right) / batch_size
 
         # selection of diagonal elements and off diagonal elements
         on_diag = torch.diagonal(cross_correlation)
-        off_diag = (
-            cross_correlation.flatten()[:-1]
-            .view(feature_dim - 1, feature_dim + 1)[:, 1:]
-            .flatten()
-        )
+        off_diag = cross_correlation.clone().fill_diagonal_(0)
 
         # the loss described in the original Barlow Twin's paper
         # encouraging off_diag to be zero and on_diag to be one
