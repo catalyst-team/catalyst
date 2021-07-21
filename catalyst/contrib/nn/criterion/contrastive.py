@@ -157,13 +157,15 @@ class BarlowTwinsLoss(nn.Module):
         https://arxiv.org/abs/2103.03230
     """
 
-    def __init__(self, lmbda=1.0):
+    def __init__(self, lmbda=1.0, eps=1e-12):
         """
         Args:
             lmbda: trade-off parameter
+            eps: shift for the varience (var + eps)
         """
         super().__init__()
         self.lmbda = lmbda
+        self.eps = eps
 
     def forward(
         self, embeddings_left: torch.Tensor, embeddings_right: torch.Tensor,
@@ -178,8 +180,12 @@ class BarlowTwinsLoss(nn.Module):
             torch.Tensor: loss
         """
         # normalization
-        z_left = (embeddings_left - embeddings_left.mean(dim=0)) / embeddings_left.std(dim=0)
-        z_right = (embeddings_right - embeddings_right.mean(dim=0)) / embeddings_right.std(dim=0)
+        z_left = (embeddings_left - embeddings_left.mean(dim=0)) / (
+            embeddings_left.var(dim=0) + self.eps
+        ).pow(1 / 2)
+        z_right = (embeddings_right - embeddings_right.mean(dim=0)) / (
+            embeddings_right.std(dim=0) + self.eps
+        ).pow(1 / 2)
 
         # cross-correlation matrix
         batch_size = z_left.shape[0]
