@@ -160,7 +160,7 @@ class BarlowTwinsLoss(nn.Module):
         https://arxiv.org/abs/2103.03230
     """
 
-    def __init__(self, lmbda=1.0, eps=1e-12):
+    def __init__(self, lambda=1.0, eps=1e-12):
         """
         Args:
             lmbda: trade-off parameter
