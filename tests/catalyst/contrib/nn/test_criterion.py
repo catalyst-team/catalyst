@@ -102,7 +102,7 @@ def test_barlow_twins_loss(
         embeddings_right: right objects embeddings [batch_size, features_dim]
         lmbda: trade off parametr
         eps: zero varience handler (var + eps)
-        true_value: expected loss value 
+        true_value: expected loss value
     """
     value = BarlowTwinsLoss(lmbda=lmbda, eps=eps)(embeddings_left, embeddings_right).item()
     assert np.isclose(value, true_value)
