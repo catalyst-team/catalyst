@@ -1,0 +1,1329 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Engines &mdash; Catalyst 21.06 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Loggers" href="loggers.html" />
+    <link rel="prev" title="Data" href="data.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Alchemy</span>
+                  <p>Experiments logging & visualization</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
+                  <span class=dropdown-title>Catalyst</span>
+                  <p>Accelerated deep learning R&D</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Reaction</span>
+                  <p>Convenient deep learning models serving</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
+                  <span class=dropdown-title>Codestyle</span>
+                  <p>Joint R&D codestyle</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Classification</span>
+                  <p>Image classification pipeline with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
+                  <span class=dropdown-title>Detection</span>
+                  <p>Object detection pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Segmentation</span>
+                  <p>Image semantic segmentation pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.06</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
+</ul>
+<p class="caption"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/multiple_keys.html">Multiple input and output keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">Data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+      <li>Engines</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/catalyst-team/catalyst/blob/master/docs/api/engines.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <div class="section" id="engines">
+<h1>Engines<a class="headerlink" href="#engines" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#amp" id="id1">AMP</a></p>
+<ul>
+<li><p><a class="reference internal" href="#ampengine" id="id2">AMPEngine</a></p></li>
+<li><p><a class="reference internal" href="#dataparallelampengine" id="id3">DataParallelAMPEngine</a></p></li>
+<li><p><a class="reference internal" href="#distributeddataparallelampengine" id="id4">DistributedDataParallelAMPEngine</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#apex" id="id5">Apex</a></p>
+<ul>
+<li><p><a class="reference internal" href="#apexengine" id="id6">APEXEngine</a></p></li>
+<li><p><a class="reference internal" href="#dataparallelapexengine" id="id7">DataParallelApexEngine</a></p></li>
+<li><p><a class="reference internal" href="#distributeddataparallelapexengine" id="id8">DistributedDataParallelApexEngine</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#deepspeed" id="id9">DeepSpeed</a></p>
+<ul>
+<li><p><a class="reference internal" href="#distributeddataparalleldeepspeedengine" id="id10">DistributedDataParallelDeepSpeedEngine</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#fairscale" id="id11">FairScale</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pipelineparallelfairscaleengine" id="id12">PipelineParallelFairScaleEngine</a></p></li>
+<li><p><a class="reference internal" href="#shareddataparallelfairscaleengine" id="id13">SharedDataParallelFairScaleEngine</a></p></li>
+<li><p><a class="reference internal" href="#shareddataparallelfairscaleampengine" id="id14">SharedDataParallelFairScaleAMPEngine</a></p></li>
+<li><p><a class="reference internal" href="#fullyshareddataparallelfairscaleengine" id="id15">FullySharedDataParallelFairScaleEngine</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#torch" id="id16">Torch</a></p>
+<ul>
+<li><p><a class="reference internal" href="#deviceengine" id="id17">DeviceEngine</a></p></li>
+<li><p><a class="reference internal" href="#dataparallelengine" id="id18">DataParallelEngine</a></p></li>
+<li><p><a class="reference internal" href="#distributeddataparallelengine" id="id19">DistributedDataParallelEngine</a></p></li>
+</ul>
+</li>
+</ul>
+</div>
+<p>You could check engines overview under <a class="reference external" href="https://github.com/catalyst-team/catalyst/tree/master/examples/engines">examples/engines</a> section.</p>
+<div class="section" id="amp">
+<h2><a class="toc-backref" href="#id1">AMP</a><a class="headerlink" href="#amp" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="ampengine">
+<h3><a class="toc-backref" href="#id2">AMPEngine</a><a class="headerlink" href="#ampengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.amp.AMPEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">AMPEngine</code><span class="sig-paren">(</span><em class="sig-param">device: str = 'cuda'</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#AMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.AMPEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
+<p>Pytorch.AMP single training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device</strong> – used device, default is <cite>“cuda”</cite>.</p></li>
+<li><p><strong>scaler_kwargs</strong> – parameters for <cite>torch.cuda.amp.GradScaler</cite>.
+Possible parameters:
+<a class="reference external" href="https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler">https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler</a></p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">AMPEngine</span><span class="p">(</span><span class="s2">&quot;cuda:1&quot;</span><span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">AMPEngine</span><span class="p">(</span><span class="s2">&quot;cuda:1&quot;</span><span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">AMPEngine</span>
+    <span class="nt">device</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cuda:1</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="dataparallelampengine">
+<h3><a class="toc-backref" href="#id3">DataParallelAMPEngine</a><a class="headerlink" href="#dataparallelampengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.amp.DataParallelAMPEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DataParallelAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.amp.AMPEngine" title="catalyst.engines.amp.AMPEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.amp.AMPEngine</span></code></a></p>
+<p>AMP multi-gpu training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>scaler_kwargs</strong> – parameters for <cite>torch.cuda.amp.GradScaler</cite>.
+Possible parameters:
+<a class="reference external" href="https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler">https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler</a></p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DataParallelAMPEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DataParallelAMPEngine</span><span class="p">()</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DataParallelAMPEngine</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="distributeddataparallelampengine">
+<h3><a class="toc-backref" href="#id4">DistributedDataParallelAMPEngine</a><a class="headerlink" href="#distributeddataparallelampengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.amp.DistributedDataParallelAMPEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DistributedDataParallelAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DistributedDataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DistributedDataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="catalyst.engines.torch.DistributedDataParallelEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DistributedDataParallelEngine</span></code></a></p>
+<p>Distributed AMP multi-gpu training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>address</strong> – address to use for backend.</p></li>
+<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>ddp_kwargs</strong> – parameters for <cite>torch.nn.parallel.DistributedDataParallel</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel">https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel</a></p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
+<li><p><strong>scaler_kwargs</strong> – parameters for <cite>torch.cuda.amp.GradScaler</cite>.
+Possible parameters:
+<a class="reference external" href="https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler">https://pytorch.org/docs/stable/amp.html#torch.cuda.amp.GradScaler</a></p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelAMPEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelAMPEngine</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="mi">23234</span><span class="p">,</span>
+            <span class="n">ddp_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;find_unused_parameters&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="mi">12345</span><span class="p">},</span>
+            <span class="n">scaler_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;growth_factor&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">}</span>
+        <span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DistributedDataParallelAMPEngine</span>
+    <span class="nt">address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">23234</span>
+    <span class="nt">ddp_kwargs</span><span class="p">:</span>
+        <span class="nt">find_unused_parameters</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+    <span class="nt">process_group_kwargs</span><span class="p">:</span>
+        <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
+    <span class="nt">scaler_kwargs</span><span class="p">:</span>
+        <span class="nt">growth_factor</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1.5</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="apex">
+<h2><a class="toc-backref" href="#id5">Apex</a><a class="headerlink" href="#apex" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="apexengine">
+<h3><a class="toc-backref" href="#id6">APEXEngine</a><a class="headerlink" href="#apexengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.apex.APEXEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">APEXEngine</code><span class="sig-paren">(</span><em class="sig-param">device: str = 'cuda'</em>, <em class="sig-param">apex_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/apex.html#APEXEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.apex.APEXEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
+<p>Apex single training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>device</strong> – use device, default is <cite>“cuda”</cite>.</p></li>
+<li><p><strong>apex_kwargs</strong> – <p>parameters for <cite>apex.amp.initialize</cite>
+except models and optimizers (they will be forwared automatically).</p>
+<p>Docs for <cite>apex.amp.initialize</cite>:
+<a class="reference external" href="https://nvidia.github.io/apex/amp.html#apex.amp.initialize">https://nvidia.github.io/apex/amp.html#apex.amp.initialize</a></p>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">APEXEngine</span><span class="p">(</span><span class="n">apex_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span><span class="p">,</span> <span class="n">keep_batchnorm_fp32</span><span class="o">=</span><span class="kc">False</span><span class="p">)),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">APEXEngine</span><span class="p">(</span><span class="n">apex_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">opt_level</span><span class="o">=</span><span class="s2">&quot;O1&quot;</span><span class="p">,</span> <span class="n">keep_batchnorm_fp32</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">APEXEngine</span>
+    <span class="nt">apex_kwargs</span><span class="p">:</span>
+        <span class="nt">opt_level</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">O1</span>
+        <span class="nt">keep_batchnorm_fp32</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="dataparallelapexengine">
+<h3><a class="toc-backref" href="#id7">DataParallelApexEngine</a><a class="headerlink" href="#dataparallelapexengine" title="Permalink to this headline">¶</a></h3>
+<dl class="attribute">
+<dt id="catalyst.engines.apex.DataParallelApexEngine">
+<code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">DataParallelApexEngine</code><a class="headerlink" href="#catalyst.engines.apex.DataParallelApexEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.apex.DataParallelAPEXEngine</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="distributeddataparallelapexengine">
+<h3><a class="toc-backref" href="#id8">DistributedDataParallelApexEngine</a><a class="headerlink" href="#distributeddataparallelapexengine" title="Permalink to this headline">¶</a></h3>
+<dl class="attribute">
+<dt id="catalyst.engines.apex.DistributedDataParallelApexEngine">
+<code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">DistributedDataParallelApexEngine</code><a class="headerlink" href="#catalyst.engines.apex.DistributedDataParallelApexEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.apex.DistributedDataParallelAPEXEngine</span></code></p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="deepspeed">
+<h2><a class="toc-backref" href="#id9">DeepSpeed</a><a class="headerlink" href="#deepspeed" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="distributeddataparalleldeepspeedengine">
+<h3><a class="toc-backref" href="#id10">DistributedDataParallelDeepSpeedEngine</a><a class="headerlink" href="#distributeddataparalleldeepspeedengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.deepspeed.DistributedDataParallelDeepSpeedEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.deepspeed.</code><code class="sig-name descname">DistributedDataParallelDeepSpeedEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">deepspeed_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/deepspeed.html#DistributedDataParallelDeepSpeedEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.deepspeed.DistributedDataParallelDeepSpeedEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
+<p>Distributed DeepSpeed MultiGPU training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>address</strong> – address to use for backend.</p></li>
+<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
+<li><p><strong>deepspeed_kwargs</strong> – parameters for <cite>deepspeed.initialize</cite>.
+More info here: <a class="reference external" href="https://deepspeed.readthedocs.io/en/latest/initialize.html">https://deepspeed.readthedocs.io/en/latest/initialize.html</a></p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelDeepSpeedEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelDeepSpeedEngine</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="mi">23234</span><span class="p">,</span>
+            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="mi">12345</span><span class="p">},</span>
+            <span class="n">deepspeed_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">}</span>
+        <span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DistributedDataParallelDeepSpeedEngine</span>
+    <span class="nt">address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">23234</span>
+    <span class="nt">process_group_kwargs</span><span class="p">:</span>
+        <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
+    <span class="nt">deepspeed_kwargs</span><span class="p">:</span>
+        <span class="nt">config</span><span class="p">:</span>
+            <span class="nt">train_batch_size</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">64</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="fairscale">
+<h2><a class="toc-backref" href="#id11">FairScale</a><a class="headerlink" href="#fairscale" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="pipelineparallelfairscaleengine">
+<h3><a class="toc-backref" href="#id12">PipelineParallelFairScaleEngine</a><a class="headerlink" href="#pipelineparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.fairscale.PipelineParallelFairScaleEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">PipelineParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">pipe_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#PipelineParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.PipelineParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
+<p>FairScale multi-gpu training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pipe_kwargs</strong> – parameters for <cite>fairscale.nn.Pipe</cite>.
+Docs for <cite>fairscale.nn.Pipe</cite>:
+<a class="reference external" href="https://fairscale.readthedocs.io/en/latest/api/nn/pipe.html">https://fairscale.readthedocs.io/en/latest/api/nn/pipe.html</a></p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">PipelineParallelFairScaleEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">PipelineParallelFairScaleEngine</span><span class="p">(</span>
+            <span class="n">pipe_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;balance&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span>
+        <span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">PipelineParallelFairScaleEngine</span>
+    <span class="nt">pipe_kwargs</span><span class="p">:</span>
+        <span class="nt">balance</span><span class="p">:</span> <span class="p p-Indicator">[</span><span class="nv">3</span><span class="p p-Indicator">,</span> <span class="nv">1</span><span class="p p-Indicator">]</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="shareddataparallelfairscaleengine">
+<h3><a class="toc-backref" href="#id13">SharedDataParallelFairScaleEngine</a><a class="headerlink" href="#shareddataparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.fairscale.SharedDataParallelFairScaleEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">SharedDataParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#SharedDataParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
+<p>Distributed FairScale MultiGPU training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>address</strong> – address to use for backend.</p></li>
+<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>ddp_kwargs</strong> – parameters for <cite>fairscale.nn.data_parallel.ShardedDataParallel</cite>.
+More info here:
+<a class="reference external" href="https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html">https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html</a></p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">SharedDataParallelFairScaleEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">SharedDataParallelFairScaleEngine</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="mi">23234</span><span class="p">,</span>
+            <span class="n">ddp_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;find_unused_parameters&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="mi">12345</span><span class="p">},</span>
+        <span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SharedDataParallelFairScaleEngine</span>
+    <span class="nt">address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">23234</span>
+    <span class="nt">ddp_kwargs</span><span class="p">:</span>
+        <span class="nt">find_unused_parameters</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+    <span class="nt">process_group_kwargs</span><span class="p">:</span>
+        <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="shareddataparallelfairscaleampengine">
+<h3><a class="toc-backref" href="#id14">SharedDataParallelFairScaleAMPEngine</a><a class="headerlink" href="#shareddataparallelfairscaleampengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">SharedDataParallelFairScaleAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#SharedDataParallelFairScaleAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine" title="catalyst.engines.fairscale.SharedDataParallelFairScaleEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.fairscale.SharedDataParallelFairScaleEngine</span></code></a></p>
+<p>Distributed FairScale MultiGPU training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>address</strong> – address to use for backend.</p></li>
+<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>ddp_kwargs</strong> – parameters for <cite>fairscale.nn.data_parallel.ShardedDataParallel</cite>.
+Docs for <cite>fairscale.nn.ShardedDataParallel</cite>:
+<a class="reference external" href="https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html">https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html</a></p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
+<li><p><strong>scaler_kwargs</strong> – parameters for <cite>fairscale.optim.grad_scaler.ShardedGradScaler</cite>.
+Possible parameters:
+<a class="reference external" href="https://fairscale.readthedocs.io/en/latest/api/index.html">https://fairscale.readthedocs.io/en/latest/api/index.html</a></p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">SharedDataParallelFairScaleAMPEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">SharedDataParallelFairScaleAMPEngine</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="mi">23234</span><span class="p">,</span>
+            <span class="n">ddp_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;find_unused_parameters&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="mi">12345</span><span class="p">},</span>
+            <span class="n">scaler_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;growth_factor&quot;</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">}</span>
+        <span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">SharedDataParallelFairScaleAMPEngine</span>
+    <span class="nt">address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">23234</span>
+    <span class="nt">ddp_kwargs</span><span class="p">:</span>
+        <span class="nt">find_unused_parameters</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+    <span class="nt">process_group_kwargs</span><span class="p">:</span>
+        <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
+    <span class="nt">scaler_kwargs</span><span class="p">:</span>
+        <span class="nt">growth_factor</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">1.5</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="fullyshareddataparallelfairscaleengine">
+<h3><a class="toc-backref" href="#id15">FullySharedDataParallelFairScaleEngine</a><a class="headerlink" href="#fullyshareddataparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">FullySharedDataParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#FullySharedDataParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine" title="catalyst.engines.fairscale.SharedDataParallelFairScaleEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.fairscale.SharedDataParallelFairScaleEngine</span></code></a></p>
+<p>Distributed FairScale MultiGPU training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>address</strong> – address to use for backend.</p></li>
+<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>ddp_kwargs</strong> – parameters for <cite>fairscale.nn.data_parallel.FullyShardedDataParallel</cite>.
+Docs for <cite>fairscale.nn.FullyShardedDataParallel</cite>:
+<a class="reference external" href="https://fairscale.readthedocs.io/en/latest/api/nn/fsdp.html">https://fairscale.readthedocs.io/en/latest/api/nn/fsdp.html</a></p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">FullySharedDataParallelFairScaleEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">FullySharedDataParallelFairScaleEngine</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="mi">23234</span><span class="p">,</span>
+            <span class="n">ddp_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;find_unused_parameters&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="mi">12345</span><span class="p">},</span>
+        <span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">FullySharedDataParallelFairScaleEngine</span>
+    <span class="nt">address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">23234</span>
+    <span class="nt">ddp_kwargs</span><span class="p">:</span>
+        <span class="nt">find_unused_parameters</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+    <span class="nt">process_group_kwargs</span><span class="p">:</span>
+        <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">12345</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="torch">
+<h2><a class="toc-backref" href="#id16">Torch</a><a class="headerlink" href="#torch" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="deviceengine">
+<h3><a class="toc-backref" href="#id17">DeviceEngine</a><a class="headerlink" href="#deviceengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.torch.DeviceEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DeviceEngine</code><span class="sig-paren">(</span><em class="sig-param">device: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DeviceEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DeviceEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.engine.IEngine" title="catalyst.core.engine.IEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.engine.IEngine</span></code></a></p>
+<p>Single training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>device</strong> – use device, default is <cite>“cpu”</cite>.</p>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DeviceEngine</span><span class="p">(</span><span class="s2">&quot;cuda:1&quot;</span><span class="p">),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DeviceEngine</span><span class="p">(</span><span class="s2">&quot;cuda:1&quot;</span><span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DeviceEngine</span>
+    <span class="nt">device</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">cuda:1</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="dataparallelengine">
+<h3><a class="toc-backref" href="#id18">DataParallelEngine</a><a class="headerlink" href="#dataparallelengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.torch.DataParallelEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DataParallelEngine</code><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DataParallelEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
+<p>MultiGPU training device engine.</p>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DataParallelEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DataParallelEngine</span><span class="p">()</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DataParallelEngine</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="section" id="distributeddataparallelengine">
+<h3><a class="toc-backref" href="#id19">DistributedDataParallelEngine</a><a class="headerlink" href="#distributeddataparallelengine" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.engines.torch.DistributedDataParallelEngine">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedDataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedDataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
+<p>Distributed MultiGPU training device engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>address</strong> – address to use for backend.</p></li>
+<li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>ddp_kwargs</strong> – parameters for <cite>torch.nn.parallel.DistributedDataParallel</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel">https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel</a></p></li>
+<li><p><strong>process_group_kwargs</strong> – parameters for <cite>torch.distributed.init_process_group</cite>.
+More info here:
+<a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
+</ul>
+</dd>
+</dl>
+<p>Examples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">()</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">engine</span><span class="o">=</span><span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelEngine</span><span class="p">(),</span>
+    <span class="o">...</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">dl</span>
+
+<span class="k">class</span> <span class="nc">MyRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="c1"># ...</span>
+    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">dl</span><span class="o">.</span><span class="n">DistributedDataParallelEngine</span><span class="p">(</span>
+            <span class="n">address</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
+            <span class="n">port</span><span class="o">=</span><span class="mi">23234</span><span class="p">,</span>
+            <span class="n">ddp_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;find_unused_parameters&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">},</span>
+            <span class="n">process_group_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;backend&quot;</span><span class="p">:</span> <span class="s2">&quot;nccl&quot;</span><span class="p">},</span>
+        <span class="p">)</span>
+    <span class="c1"># ...</span>
+</pre></div>
+</div>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">args</span><span class="p">:</span>
+    <span class="nt">logs</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">model</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">...</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+
+<span class="nt">engine</span><span class="p">:</span>
+    <span class="nt">_target_</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">DistributedDataParallelEngine</span>
+    <span class="nt">address</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0.0.0.0</span>
+    <span class="nt">port</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">23234</span>
+    <span class="nt">ddp_kwargs</span><span class="p">:</span>
+        <span class="nt">find_unused_parameters</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">false</span>
+    <span class="nt">process_group_kwargs</span><span class="p">:</span>
+        <span class="nt">backend</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">nccl</span>
+
+<span class="nt">stages</span><span class="p">:</span>
+    <span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+             </article>
+             
+            </div>
+            <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="loggers.html" class="btn btn-neutral float-right" title="Loggers" accesskey="n" rel="next">Next <img src="../_static/images/chevron-right-orange.svg" class="next-page"></a>
+      
+      
+        <a href="data.html" class="btn btn-neutral" title="Data" accesskey="p" rel="prev"><img src="../_static/images/chevron-right-orange.svg" class="previous-page"> Previous</a>
+      
+    </div>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              <ul>
+<li><a class="reference internal" href="#">Engines</a><ul>
+<li><a class="reference internal" href="#amp">AMP</a><ul>
+<li><a class="reference internal" href="#ampengine">AMPEngine</a></li>
+<li><a class="reference internal" href="#dataparallelampengine">DataParallelAMPEngine</a></li>
+<li><a class="reference internal" href="#distributeddataparallelampengine">DistributedDataParallelAMPEngine</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#apex">Apex</a><ul>
+<li><a class="reference internal" href="#apexengine">APEXEngine</a></li>
+<li><a class="reference internal" href="#dataparallelapexengine">DataParallelApexEngine</a></li>
+<li><a class="reference internal" href="#distributeddataparallelapexengine">DistributedDataParallelApexEngine</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deepspeed">DeepSpeed</a><ul>
+<li><a class="reference internal" href="#distributeddataparalleldeepspeedengine">DistributedDataParallelDeepSpeedEngine</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#fairscale">FairScale</a><ul>
+<li><a class="reference internal" href="#pipelineparallelfairscaleengine">PipelineParallelFairScaleEngine</a></li>
+<li><a class="reference internal" href="#shareddataparallelfairscaleengine">SharedDataParallelFairScaleEngine</a></li>
+<li><a class="reference internal" href="#shareddataparallelfairscaleampengine">SharedDataParallelFairScaleAMPEngine</a></li>
+<li><a class="reference internal" href="#fullyshareddataparallelfairscaleengine">FullySharedDataParallelFairScaleEngine</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#torch">Torch</a><ul>
+<li><a class="reference internal" href="#deviceengine">DeviceEngine</a></li>
+<li><a class="reference internal" href="#dataparallelengine">DataParallelEngine</a></li>
+<li><a class="reference internal" href="#distributeddataparallelengine">DistributedDataParallelEngine</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+         <script type="text/javascript" src="../_static/jquery.js"></script>
+         <script type="text/javascript" src="../_static/underscore.js"></script>
+         <script type="text/javascript" src="../_static/doctools.js"></script>
+         <script type="text/javascript" src="../_static/language_data.js"></script>
+         <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
