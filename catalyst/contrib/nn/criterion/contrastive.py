@@ -160,17 +160,15 @@ class BarlowTwinsLoss(nn.Module):
         https://arxiv.org/abs/2103.03230
     """
 
-    def __init__(self, lmbda=1.0, eps=1e-12, unbiased=False):
+    def __init__(self, lmbda=1.0, eps=1e-12):
         """
         Args:
             lmbda: trade-off parameter
             eps: shift for the varience (var + eps)
-            unbiased: If unbiased is True, Bessel’s correction for the varience will be used.
         """
         super().__init__()
         self.lmbda = lmbda
         self.eps = eps
-        self.unbiased = unbiased
 
     def forward(
         self, embeddings_left: torch.Tensor, embeddings_right: torch.Tensor,
@@ -186,10 +184,10 @@ class BarlowTwinsLoss(nn.Module):
         """
         # normalization
         z_left = (embeddings_left - embeddings_left.mean(dim=0)) / (
-            embeddings_left.var(dim=0, unbiased=self.unbiased) + self.eps
+            embeddings_left.var(dim=0) + self.eps
         ).pow(1 / 2)
         z_right = (embeddings_right - embeddings_right.mean(dim=0)) / (
-            embeddings_right.var(dim=0, unbiased=self.unbiased) + self.eps
+            embeddings_right.var(dim=0) + self.eps
         ).pow(1 / 2)
 
         # cross-correlation matrix
