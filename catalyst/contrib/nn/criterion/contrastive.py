@@ -160,14 +160,14 @@ class BarlowTwinsLoss(nn.Module):
         https://arxiv.org/abs/2103.03230
     """
 
-    def __init__(self, lambda=1.0, eps=1e-12):
+    def __init__(self, offdiag_lambda=1.0, eps=1e-12):
         """
         Args:
-            lmbda: trade-off parameter
+            offdiag_lambda: trade-off parameter
             eps: shift for the varience (var + eps)
         """
         super().__init__()
-        self.lmbda = lmbda
+        self.offdiag_lambda = offdiag_lambda
         self.eps = eps
 
     def forward(
@@ -202,7 +202,7 @@ class BarlowTwinsLoss(nn.Module):
         # encouraging off_diag to be zero and on_diag to be one
         on_diag_loss = on_diag.add_(-1).pow_(2).sum()
         off_diag_loss = off_diag.pow_(2).sum()
-        loss = on_diag_loss + self.lmbda * off_diag_loss
+        loss = on_diag_loss + self.offdiag_lambda * off_diag_loss
         return loss
 
 
