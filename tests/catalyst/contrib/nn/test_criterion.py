@@ -1,4 +1,7 @@
 # flake8: noqa
+import numpy as np
+import pytest
+import torch
 
 from catalyst.contrib.nn import criterion as module
 from catalyst.contrib.nn.criterion import CircleLoss, TripletMarginLossWithSampler
@@ -24,3 +27,35 @@ def test_criterion_init():
                     print(module_class)
                     instance = 1
             assert instance is not None
+
+
+@pytest.mark.parametrize(
+    "embeddings_left,embeddings_right,lmbda,eps,true_value",
+    (
+        (
+            torch.tensor([[1.0, 0.0], [0.0, 1.0]]),
+            torch.tensor([[1.0, 0.0], [0.0, 1.0]]),
+            1,
+            1e-12,
+            1,
+        ),
+    ),
+)
+def test_barlow_twins_loss(
+    embeddings_left: torch.Tensor,
+    embeddings_right: torch.Tensor,
+    lmbda: float,
+    eps: float,
+    true_value: float,
+):
+    """
+    Test Barlow Twins loss
+    Args:
+        embeddings_left: left objects embeddings [batch_size, features_dim]
+        embeddings_right: right objects embeddings [batch_size, features_dim]
+        lmbda: trade off parametr
+        eps: zero varience handler (var + eps)
+        true_value: expected loss value 
+    """
+    value = BarlowTwinsLoss(lmbda=lmbda, eps=eps)(embeddings_left, embeddings_right).item()
+    assert np.isclose(value, true_value)
