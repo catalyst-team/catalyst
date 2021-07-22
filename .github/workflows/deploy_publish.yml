@@ -47,7 +47,7 @@ jobs:
   #     - uses: actions/checkout@v2
 
   #     - name: Publish Docker to Docker Hub (base)
-  #       if: matrix.catalyst_requirements == "base"
+  #       if: ${{ matrix.catalyst_requirements == "base" }}
   #       uses: elgohr/Publish-Docker-Github-Action@master
   #       env:
   #         PYTORCH_TAG: "${{ matrix.pytorch }}"
@@ -59,7 +59,7 @@ jobs:
   #         tags: "${{ github.event.release.tag_name }}-pytorch-${{ matrix.pytorch }}"
 
   #     - name: Publish Docker to Docker Hub ([all])
-  #       if: matrix.catalyst_requirements == "all"
+  #       if: ${{ matrix.catalyst_requirements == "all" }}
   #       uses: elgohr/Publish-Docker-Github-Action@master
   #       env:
   #         PYTORCH_TAG: "${{ matrix.pytorch }}"
@@ -145,12 +145,16 @@ jobs:
           REMOVE_BUILDS=0 make check-docs
 
       - name: commit documentation changes
+        env:
+          TAG: "${{ github.event.release.tag_name }}"
         run: |
           git clone https://github.com/catalyst-team/catalyst.git --branch gh-pages --single-branch gh-pages
           cd gh-pages
           cp -a ../builds "${{ github.event.release.tag_name }}"
-          # TODO: update `versions.html`
-          # ...
+          # add link to new version into `versions.html`
+          master_version_link='<li class="toctree-l1"><a class="reference internal" href="index.html">master<\/a><\/li>'
+          new_version_link="\        <li class=\"toctree-l1\"><a class=\"reference internal\" href=\"${TAG}/index.html\">${TAG}<\/a><\/li>"
+          sed -i "/${master_version_link}/a ${new_version_link}" versions.html
           # commit changes
           git config --local user.email "action@ithub.com"
           git config --local user.name "GitHub Action"
