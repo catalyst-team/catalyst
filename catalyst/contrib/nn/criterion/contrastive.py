@@ -151,7 +151,7 @@ class BarlowTwinsLoss(nn.Module):
 
         embeddings_left = F.normalize(torch.rand(256, 64, requires_grad=True))
         embeddings_right = F.normalize(torch.rand(256, 64, requires_grad=True))
-        criterion = BarlowTwinsLoss(lmbda = 1)
+        criterion = BarlowTwinsLoss(offdiag_lambda = 1)
         criterion(embeddings_left, embeddings_right)
 
     .. _`Barlow Twins: Self-Supervised Learning via Redundancy Reduction`:
