@@ -149,12 +149,10 @@ class BarlowTwinsLoss(nn.Module):
         from torch.nn import functional as F
         from catalyst.contrib.nn import BarlowTwinsLoss
 
-        embeddings_left = torch.tensor([[1., 0.0],[0.0, 1.0]], requires_grad=True)
-        embeddings_right = torch.tensor([[1., 0.0],[0.0, 1.0]], requires_grad=True)
+        embeddings_left = F.normalize(torch.rand(256, 64, requires_grad=True))
+        embeddings_right = F.normalize(torch.rand(256, 64, requires_grad=True))
         criterion = BarlowTwinsLoss(lmbda = 1)
-        criterion_val = criterion(embeddings_left, embeddings_right).item()
-        abs(1 - criterion_val) < 1e-6
-        # True
+        criterion(embeddings_left, embeddings_right)
 
     .. _`Barlow Twins: Self-Supervised Learning via Redundancy Reduction`:
         https://arxiv.org/abs/2103.03230
