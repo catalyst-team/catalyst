@@ -179,9 +179,27 @@ class BarlowTwinsLoss(nn.Module):
             embeddings_left: left objects embeddings [batch_size, features_dim]
             embeddings_right: right objects embeddings [batch_size, features_dim]
 
+        Raises:
+            ValueError: if the batch size is 1
+            ValueError: if embeddings_left and embeddings_right shapes are different
+            ValueError: if embeddings shapes are not in a form (batch_size, features_dim)
+
         Returns:
             torch.Tensor: loss
         """
+        shape_left, shape_right = embeddings_left.shape, embeddings_right.shape
+        if len(shape_left) != 2:
+            raise ValueError(
+                f"Left shape should be (batch_size, feature_dim), but got - {shape_left}!"
+            )
+        elif len(shape_right) != 2:
+            raise ValueError(
+                f"Right shape should be (batch_size, feature_dim), but got - {shape_right}!"
+            )
+        if shape_left[0] == 1:
+            raise ValueError(f"Batch size should be >= 2, but got - {shape_left[0]}!")
+        if shape_left != shape_right:
+            raise ValueError(f"Shapes should be equall, but got - {shape_left} and {shape_right}!")
         # normalization
         z_left = (embeddings_left - embeddings_left.mean(dim=0)) / (
             embeddings_left.var(dim=0) + self.eps
