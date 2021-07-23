@@ -9,11 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - added `pre-commit` hook to run codestyle checker on commit ([#1257](https://github.com/catalyst-team/catalyst/pull/1257))
-<<<<<<< HEAD
-- Barlow twins loss ([#1259](https://github.com/catalyst-team/catalyst/pull/1259))
-=======
 - `on publish` github action for docker and docs added [#1260](https://github.com/catalyst-team/catalyst/pull/1260)
->>>>>>> ede122d8 (`on deploy` action update (#1260))
+- Barlow twins loss ([#1259](https://github.com/catalyst-team/catalyst/pull/1259))
 
 ### Changed
 

@@ -149,25 +149,23 @@ class BarlowTwinsLoss(nn.Module):
         from torch.nn import functional as F
         from catalyst.contrib.nn import BarlowTwinsLoss
 
-        embeddings_left = torch.tensor([[1., 0.0],[0.0, 1.0]], requires_grad=True)
-        embeddings_right = torch.tensor([[1., 0.0],[0.0, 1.0]], requires_grad=True)
+        embeddings_left = F.normalize(torch.rand(256, 64, requires_grad=True))
+        embeddings_right = F.normalize(torch.rand(256, 64, requires_grad=True))
         criterion = BarlowTwinsLoss(lmbda = 1)
-        criterion_val = criterion(embeddings_left, embeddings_right).item()
-        abs(1 - criterion_val) < 1e-6
-        # True
+        criterion(embeddings_left, embeddings_right)
 
     .. _`Barlow Twins: Self-Supervised Learning via Redundancy Reduction`:
         https://arxiv.org/abs/2103.03230
     """
 
-    def __init__(self, lmbda=1.0, eps=1e-12):
+    def __init__(self, offdiag_lambda=1.0, eps=1e-12):
         """
         Args:
-            lmbda: trade-off parameter
+            offdiag_lambda: trade-off parameter
             eps: shift for the varience (var + eps)
         """
         super().__init__()
-        self.lmbda = lmbda
+        self.offdiag_lambda = offdiag_lambda
         self.eps = eps
 
     def forward(
@@ -179,9 +177,27 @@ class BarlowTwinsLoss(nn.Module):
             embeddings_left: left objects embeddings [batch_size, features_dim]
             embeddings_right: right objects embeddings [batch_size, features_dim]
 
+        Raises:
+            ValueError: if the batch size is 1
+            ValueError: if embeddings_left and embeddings_right shapes are different
+            ValueError: if embeddings shapes are not in a form (batch_size, features_dim)
+
         Returns:
             torch.Tensor: loss
         """
+        shape_left, shape_right = embeddings_left.shape, embeddings_right.shape
+        if len(shape_left) != 2:
+            raise ValueError(
+                f"Left shape should be (batch_size, feature_dim), but got - {shape_left}!"
+            )
+        elif len(shape_right) != 2:
+            raise ValueError(
+                f"Right shape should be (batch_size, feature_dim), but got - {shape_right}!"
+            )
+        if shape_left[0] == 1:
+            raise ValueError(f"Batch size should be >= 2, but got - {shape_left[0]}!")
+        if shape_left != shape_right:
+            raise ValueError(f"Shapes should be equall, but got - {shape_left} and {shape_right}!")
         # normalization
         z_left = (embeddings_left - embeddings_left.mean(dim=0)) / (
             embeddings_left.var(dim=0) + self.eps
@@ -202,7 +218,7 @@ class BarlowTwinsLoss(nn.Module):
         # encouraging off_diag to be zero and on_diag to be one
         on_diag_loss = on_diag.add_(-1).pow_(2).sum()
         off_diag_loss = off_diag.pow_(2).sum()
-        loss = on_diag_loss + self.lmbda * off_diag_loss
+        loss = on_diag_loss + self.offdiag_lambda * off_diag_loss
         return loss
 
 

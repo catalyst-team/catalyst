@@ -18,7 +18,7 @@ def test_criterion_init():
             elif module_class == TripletMarginLossWithSampler:
                 instance = module_class(margin=1.0, sampler_inbatch=AllTripletsSampler())
             elif module_class == BarlowTwinsLoss:
-                instance = module_class(lmbda=1, eps=1e-12)
+                instance = module_class(offdiag_lambda=1, eps=1e-12)
             else:
                 # @TODO: very dirty trick
                 try:
@@ -30,7 +30,7 @@ def test_criterion_init():
 
 
 @pytest.mark.parametrize(
-    "embeddings_left,embeddings_right,lmbda,eps,true_value",
+    "embeddings_left,embeddings_right,offdiag_lambda,eps,true_value",
     (
         (
             torch.tensor([[1.0, 0.0], [0.0, 1.0]]),
@@ -91,7 +91,7 @@ def test_criterion_init():
 def test_barlow_twins_loss(
     embeddings_left: torch.Tensor,
     embeddings_right: torch.Tensor,
-    lmbda: float,
+    offdiag_lambda: float,
     eps: float,
     true_value: float,
 ):
@@ -100,9 +100,11 @@ def test_barlow_twins_loss(
     Args:
         embeddings_left: left objects embeddings [batch_size, features_dim]
         embeddings_right: right objects embeddings [batch_size, features_dim]
-        lmbda: trade off parametr
+        offdiag_lambda: trade off parametr
         eps: zero varience handler (var + eps)
         true_value: expected loss value
     """
-    value = BarlowTwinsLoss(lmbda=lmbda, eps=eps)(embeddings_left, embeddings_right).item()
+    value = BarlowTwinsLoss(offdiag_lambda=offdiag_lambda, eps=eps)(
+        embeddings_left, embeddings_right
+    ).item()
     assert np.isclose(value, true_value)
