@@ -8,7 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
--
+- added `pre-commit` hook to run codestyle checker on commit ([#1257](https://github.com/catalyst-team/catalyst/pull/1257))
+- `on publish` github action for docker and docs added [#1260](https://github.com/catalyst-team/catalyst/pull/1260)
+- Barlow twins loss ([#1259](https://github.com/catalyst-team/catalyst/pull/1259))
 
 ### Changed
 
@@ -23,7 +25,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - make `expdir` in `catalyst-dl run` optional ([#1249](https://github.com/catalyst-team/catalyst/pull/1249))
 - Bump neptune-client from 0.9.5 to 0.9.8 in `requirements-neptune.txt` ([#1251](https://github.com/catalyst-team/catalyst/pull/1251))
 - automatic merge for master (with [Mergify](https://mergify.io/)) fixed ([#1250](https://github.com/catalyst-team/catalyst/pull/1250))
-
+- Evaluate loader custom model bug was fixed [#1254](https://github.com/catalyst-team/catalyst/pull/1254)
 
 ## [21.06] - 2021-06-29
 
