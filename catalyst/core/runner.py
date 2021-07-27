@@ -42,6 +42,20 @@ def _has_str_intersections(origin_string: str, strings: Tuple):
     return any(x in origin_string for x in strings)
 
 
+def _get_batch_size(loader: DataLoader):
+    batch_size = loader.batch_size
+    if batch_size is not None:
+        return batch_size
+
+    batch_size = loader.batch_sampler.batch_size
+    if batch_size is not None:
+        return batch_size
+    raise NotImplementedError(
+        "No `batch_size` found,"
+        "please specity it throught `loader.batch_size`, or `loader.batch_sampler.batch_size`"
+    )
+
+
 class RunnerException(Exception):
     """Exception class for all runner errors."""
 
@@ -209,7 +223,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.loggers: Dict[str, ILogger] = {}
 
         # the dataflow - model input/output and other batch tensors
-        self.batch: [Dict, torch.Tensor] = None
+        self.batch: Dict[str, torch.Tensor] = None
 
         # metrics flow - batch, loader and epoch metrics
         self.batch_metrics: BATCH_METRICS = defaultdict(None)
@@ -660,7 +674,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.is_valid_loader: bool = self.loader_key.startswith("valid")
         self.is_infer_loader: bool = self.loader_key.startswith("infer")
         assert self.is_train_loader or self.is_valid_loader or self.is_infer_loader
-        self.loader_batch_size: int = self.loader.batch_size
+        self.loader_batch_size: int = _get_batch_size(self.loader)
         self.loader_batch_len: int = len(self.loader)
         self.loader_sample_len: int = len(self.loader.dataset)
         self.loader_batch_step: int = 0
