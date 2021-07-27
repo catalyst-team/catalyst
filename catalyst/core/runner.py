@@ -578,10 +578,10 @@ class IRunner(ICallback, ILogger, ABC):
         for logger in self.loggers.values():
             logger.flush_log()
 
-    def close_log(self) -> None:
+    def close_log(self, *args, **kwargs) -> None:
         """Closes the loggers."""
         for logger in self.loggers.values():
-            logger.close_log()
+            logger.close_log(*args, **kwargs)
 
     def _setup_loaders(self) -> None:
         set_global_seed(self.seed + self.engine.rank + self.global_epoch_step)
@@ -724,6 +724,7 @@ class IRunner(ICallback, ILogger, ABC):
         del self.loaders
         self.loaders = {}
         self.engine.deinit_components(runner=self)
+        self.close_log(scope="stage")
 
         # due to multiprocessing setup we have to close current loggers
         # to prevent EOF-like errors
@@ -735,7 +736,7 @@ class IRunner(ICallback, ILogger, ABC):
     def on_experiment_end(self, runner: "IRunner"):
         """Event handler."""
         self.flush_log()
-        self.close_log()
+        self.close_log(scope="experiment")
 
     def on_exception(self, runner: "IRunner"):
         """Event handler."""
