@@ -17,6 +17,7 @@ from catalyst.data.loader import (
 from catalyst.data.sampler import (
     BalanceClassSampler,
     BalanceBatchSampler,
+    BatchBalanceClassSampler,
     DistributedSamplerWrapper,
     DynamicLenBatchSampler,
     DynamicBalanceClassSampler,
