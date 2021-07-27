@@ -650,9 +650,10 @@
         <span class="sd">&quot;&quot;&quot;Flushes the loggers.&quot;&quot;&quot;</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">close_log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">close_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Closes the loggers.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="n">scope</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;experiment&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NeptuneLogger&quot;</span><span class="p">]</span>

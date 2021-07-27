@@ -315,7 +315,7 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.core.logger</span> <span class="kn">import</span> <span class="n">ILogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
-<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Directory</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Number</span>
+<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Directory</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">mlflow_required</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">mlflow</span>
@@ -372,8 +372,6 @@
                 <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">MlflowException</span><span class="p">:</span>
                 <span class="k">continue</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="n">Directory</span><span class="p">,</span> <span class="n">File</span><span class="p">))</span> <span class="ow">or</span> <span class="n">log_type</span> <span class="o">==</span> <span class="s2">&quot;artifact&quot;</span><span class="p">:</span>
-            <span class="n">mlflow</span><span class="o">.</span><span class="n">log_artifact</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
             <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -574,11 +572,36 @@
                 <span class="n">exp_params</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})</span>
                 <span class="n">_mlflow_log_dict</span><span class="p">(</span><span class="n">exp_params</span><span class="p">,</span> <span class="n">log_type</span><span class="o">=</span><span class="s2">&quot;param&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">close_log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">log_artifact</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">artifact</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Directory</span><span class="p">,</span> <span class="n">File</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">path_to_artifact</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="c1"># experiment info</span>
+        <span class="n">run_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">global_epoch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">global_batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">global_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="c1"># stage info</span>
+        <span class="n">stage_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">stage_epoch_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">stage_epoch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">stage_batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">stage_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="c1"># loader info</span>
+        <span class="n">loader_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">loader_batch_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">loader_sample_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">loader_batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">loader_sample_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Logs a local file or directory as an artifact to the logger.&quot;&quot;&quot;</span>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">log_artifact</span><span class="p">(</span><span class="n">artifact</span><span class="p">,</span> <span class="n">path_to_artifact</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">close_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Finds all **running** runs and ends them.&quot;&quot;&quot;</span>
-        <span class="n">all_runs</span> <span class="o">=</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">search_runs</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">all_runs</span><span class="p">[</span><span class="n">all_runs</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;RUNNING&quot;</span><span class="p">]:</span>
-            <span class="n">mlflow</span><span class="o">.</span><span class="n">end_run</span><span class="p">()</span></div>
+        <span class="n">mlflow</span><span class="o">.</span><span class="n">end_run</span><span class="p">()</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MLflowLogger&quot;</span><span class="p">]</span>

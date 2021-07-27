@@ -889,10 +889,10 @@
         <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">flush_log</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">close_log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">close_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Closes the loggers.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">logger</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">close_log</span><span class="p">()</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">close_log</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_setup_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">set_global_seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">rank</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_epoch_step</span><span class="p">)</span>
@@ -1035,6 +1035,7 @@
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loaders</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">engine</span><span class="o">.</span><span class="n">deinit_components</span><span class="p">(</span><span class="n">runner</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close_log</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;stage&quot;</span><span class="p">)</span>
 
         <span class="c1"># due to multiprocessing setup we have to close current loggers</span>
         <span class="c1"># to prevent EOF-like errors</span>
@@ -1046,7 +1047,7 @@
     <span class="k">def</span> <span class="nf">on_experiment_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flush_log</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">close_log</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close_log</span><span class="p">(</span><span class="n">scope</span><span class="o">=</span><span class="s2">&quot;experiment&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">on_exception</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Event handler.&quot;&quot;&quot;</span>
