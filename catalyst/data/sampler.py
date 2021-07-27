@@ -20,7 +20,7 @@ class BalanceClassSampler(Sampler):
         labels: list of class label for each elem in the dataset
         mode: Strategy to balance classes.
             Must be one of [downsampling, upsampling]
-    
+
     Python API examples:
 
     .. code-block:: python
@@ -41,7 +41,7 @@ class BalanceClassSampler(Sampler):
             "train": DataLoader(train_data, sampler=train_sampler, batch_size=32),
             "valid": DataLoader(valid_data, batch_size=32),
         }
-        
+
         model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(model.parameters(), lr=0.02)
@@ -247,12 +247,12 @@ class BatchBalanceClassSampler(Sampler):
         labels: list of classes labeles for each elem in the dataset
         num_classes: number of classes in a batch, should be > 1
         num_samples: number of instances of each class in a batch, should be > 1
-        num_batches: number of batches in epoch 
+        num_batches: number of batches in epoch
             (default = len(labels) // (num_classes * num_samples))
 
     .. _In Defense of the Triplet Loss for Person Re-Identification:
         https://arxiv.org/abs/1703.07737
-    
+
     Python API examples:
 
     .. code-block:: python
