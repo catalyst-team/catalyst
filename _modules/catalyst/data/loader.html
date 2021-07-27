@@ -345,14 +345,16 @@
 <span class="sd">            attribute value</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            NotImplementedError: if could not find attribute in ``origin``</span>
-<span class="sd">                or ``wrapper``</span>
+<span class="sd">            NotImplementedError: if could not find attribute in ``origin`` or ``wrapper``</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">some_default_value</span> <span class="o">=</span> <span class="s2">&quot;_no_attr_found_&quot;</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">some_default_value</span><span class="p">)</span>
+        <span class="c1"># value = getattr(self.origin, key, None)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">some_default_value</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">value</span>
-        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">some_default_value</span><span class="p">)</span>
+        <span class="c1"># value = getattr(self, key, None)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">!=</span> <span class="n">some_default_value</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">value</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
 

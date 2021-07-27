@@ -353,6 +353,20 @@
     <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="n">x</span> <span class="ow">in</span> <span class="n">origin_string</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">strings</span><span class="p">)</span>
 
 
+<span class="k">def</span> <span class="nf">_get_batch_size</span><span class="p">(</span><span class="n">loader</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">):</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">batch_size</span>
+    <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">batch_size</span>
+
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">batch_sampler</span><span class="o">.</span><span class="n">batch_size</span>
+    <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">batch_size</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+        <span class="s2">&quot;No `batch_size` found,&quot;</span>
+        <span class="s2">&quot;please specity it throught `loader.batch_size`, or `loader.batch_sampler.batch_size`&quot;</span>
+    <span class="p">)</span>
+
+
 <div class="viewcode-block" id="RunnerException"><a class="viewcode-back" href="../../../api/core.html#catalyst.core.runner.RunnerException">[docs]</a><span class="k">class</span> <span class="nc">RunnerException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Exception class for all runner errors.&quot;&quot;&quot;</span>
 
@@ -520,7 +534,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">loggers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ILogger</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
 
         <span class="c1"># the dataflow - model input/output and other batch tensors</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="p">:</span> <span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="c1"># metrics flow - batch, loader and epoch metrics</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">batch_metrics</span><span class="p">:</span> <span class="n">BATCH_METRICS</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
@@ -971,7 +985,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;valid&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_loader</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader_key</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;infer&quot;</span><span class="p">)</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_train_loader</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_valid_loader</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_infer_loader</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">batch_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">_get_batch_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_sample_len</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loader_batch_step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
