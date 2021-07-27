@@ -1,5 +1,5 @@
-import re
 from typing import Any, Dict, List, Optional
+import re
 
 import numpy as np
 
@@ -23,7 +23,10 @@ def _get_or_start_run(run_name):
 
 
 def _mlflow_log_params_dict(
-    dictionary: Dict[str, Any], prefix: Optional[str] = None, log_type: Optional[str] = None, exclude: Optional[List[str]] = None
+    dictionary: Dict[str, Any],
+    prefix: Optional[str] = None,
+    log_type: Optional[str] = None,
+    exclude: Optional[List[str]] = None,
 ):
     """The function of MLflow. Logs any value by its type from dictionary recursively.
 
@@ -46,13 +49,13 @@ def _mlflow_log_params_dict(
 
         if log_type == "dict":
             mlflow.log_dict(dictionary, name)
-        elif isinstance(value, dict):
-            _mlflow_log_params_dict(value, name, log_type)
         elif log_type == "param":
             try:
                 mlflow.log_param(name, value)
             except mlflow.exceptions.MlflowException:
                 continue
+        elif isinstance(value, dict):
+            _mlflow_log_params_dict(value, name, log_type)
 
 
 class MLflowLogger(ILogger):
@@ -219,9 +222,9 @@ class MLflowLogger(ILogger):
         If there in experiment more than one stage, creates nested runs.
 
         Note:
-            If the scope is "experiment", it does nothing, since overwriting parameters in 
-            MLflow is prohibited. Thus, first, the parameters of the stage are recorded,
-            and only then the experiment.
+            If the scope is "experiment", it does nothing, since overwriting parameters
+            in MLflow is prohibited. Thus, first, the parameters of the stage
+            are recorded, and only then the experiment.
 
         Args:
             hparams: Parameters to log.
@@ -274,7 +277,7 @@ class MLflowLogger(ILogger):
         mlflow.log_artifact(artifact, path_to_artifact)
 
     def close_log(self, scope: str = None) -> None:
-        """Finds all **running** runs and ends them."""
+        """End an active MLflow run (if there is one)."""
         mlflow.end_run()
 
 
