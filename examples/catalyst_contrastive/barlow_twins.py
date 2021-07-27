@@ -1,3 +1,6 @@
+from itertools import islice
+
+from callbacks import FeatureAccumulatorCallback
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -69,52 +72,42 @@ class Model(nn.Module):
 
 
 class CustomRunner(dl.Runner):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def handle_batch(self, batch) -> None:
         (pos_1, pos_2), targets = batch
         feature_1, out_1 = self.model(pos_1)
         _, out_2 = self.model(pos_2)
-        self.batch = {
-            "embeddings": feature_1,
-            "out_1": out_1,
-            "out_2": out_2,
-            "targets": targets,
-            "is_query": torch.zeros_like(targets).bool(),
-        }
+        self.batch = {"embeddings": feature_1, "out_1": out_1, "out_2": out_2, "targets": targets}
 
-
-# hyperparams
-
-feature_dim, temperature, k = 128, 0.5, 200
-batch_size, epochs, num_workers = 32, 10, 2
-
-# data
-train_data = torchvision.datasets.CIFAR10(
-    root="data", train=True, transform=CifarPairTransform(train_transform=True), download=True
-)
-
-train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, pin_memory=True)
-
-callbacks = [
-    dl.CriterionCallback(input_key="out_1", target_key="out_2", metric_key="loss"),
-    dl.OptimizerCallback(metric_key="loss"),
-    dl.CMCScoreCallback(
-        embeddings_key="embeddings",
-        labels_key="targets",
-        is_query_key="is_query",
-        topk_args=(1, 3, 5),
-    ),
-]
-
-model = Model(feature_dim).cuda()
-criterion = BarlowTwinsLoss()
-optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
-
-runner = CustomRunner()
 
 if __name__ == "__main__":
+
+    # hyperparams
+
+    feature_dim, temperature, k = 128, 0.5, 200
+    batch_size, epochs, num_workers = 32, 10, 2
+    save_path = ""
+
+    # data
+    train_data = torchvision.datasets.CIFAR10(
+        root="data", train=True, transform=CifarPairTransform(train_transform=True), download=True
+    )
+
+    train_data = list(islice(train_data, 100))
+    train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, pin_memory=True)
+
+    callbacks = [
+        dl.CriterionCallback(input_key="out_1", target_key="out_2", metric_key="loss"),
+        FeatureAccumulatorCallback(
+            save_path=save_path, input_key="embeddings", target_key="targets"
+        ),
+        dl.OptimizerCallback(metric_key="loss"),
+    ]
+
+    model = Model(feature_dim).cuda()
+    criterion = BarlowTwinsLoss()
+    optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
+
+    runner = CustomRunner()
 
     runner.train(
         model=model,
