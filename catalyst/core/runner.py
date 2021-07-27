@@ -223,7 +223,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.loggers: Dict[str, ILogger] = {}
 
         # the dataflow - model input/output and other batch tensors
-        self.batch: [Dict, torch.Tensor] = None
+        self.batch: Dict[str, torch.Tensor] = None
 
         # metrics flow - batch, loader and epoch metrics
         self.batch_metrics: BATCH_METRICS = defaultdict(None)
