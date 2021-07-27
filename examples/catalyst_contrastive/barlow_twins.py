@@ -81,7 +81,7 @@ class CustomRunner(dl.Runner):
             "out_1": out_1,
             "out_2": out_2,
             "targets": targets,
-            "is_query": torch.ones_like(targets).bool(),
+            "is_query": torch.zeros_like(targets).bool(),
         }
 
 
@@ -108,7 +108,7 @@ callbacks = [
     ),
 ]
 
-model = Model(feature_dim)
+model = Model(feature_dim).cuda()
 criterion = BarlowTwinsLoss()
 optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
 
