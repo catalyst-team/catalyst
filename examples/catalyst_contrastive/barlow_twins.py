@@ -97,11 +97,6 @@ train_data = torchvision.datasets.CIFAR10(
 
 train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, pin_memory=True)
 
-model = Model(feature_dim)
-
-
-optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
-
 callbacks = [
     dl.CriterionCallback(input_key="out_1", target_key="out_2", metric_key="loss"),
     dl.OptimizerCallback(metric_key="loss"),
@@ -113,19 +108,23 @@ callbacks = [
     ),
 ]
 
+model = Model(feature_dim)
+criterion = BarlowTwinsLoss()
+optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
 
 runner = CustomRunner()
-criterion = BarlowTwinsLoss()
 
-runner.train(
-    model=model,
-    criterion=criterion,
-    optimizer=optimizer,
-    callbacks=callbacks,
-    loaders={"train": train_loader},
-    verbose=True,
-    num_epochs=epochs,
-    valid_loader="train",
-    valid_metric="loss",
-    minimize_valid_metric=True,
-)
+if __name__ == "__main__":
+
+    runner.train(
+        model=model,
+        criterion=criterion,
+        optimizer=optimizer,
+        callbacks=callbacks,
+        loaders={"train": train_loader},
+        verbose=True,
+        num_epochs=epochs,
+        valid_loader="train",
+        valid_metric="loss",
+        minimize_valid_metric=True,
+    )
