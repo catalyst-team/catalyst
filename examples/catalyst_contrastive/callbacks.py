@@ -12,7 +12,7 @@ class FeatureAccumulator(ICallbackLoaderMetric):
     """Feature bank,
     Args:
         prefix: embeddings accumulator prefix
-        suffix: embedding saccumulator suffix
+        suffix: embeddings accumulator suffix
     """
 
     def __init__(self, save_path, prefix: str = None, suffix: str = None):
