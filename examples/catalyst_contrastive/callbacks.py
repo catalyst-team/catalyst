@@ -61,11 +61,10 @@ class FeatureAccumulator(ICallbackLoaderMetric):
 class FeatureAccumulatorCallback(LoaderMetricCallback):
     """Feature accumulator callback.
     Args:
-        input_key: input key to use for auc calculation, specifies our ``features``.
-        target_key: output key to use for auc calculation, specifies our ``y_pred``.
+        input_key: input key to use for features, specifies our ``features``.
+        target_key: output key to use for targets, specifies our ``y_true``.
         prefix: accumulator prefix
         suffix: accumulator suffix
-    Examples:
     """
 
     def __init__(
