@@ -49,13 +49,13 @@ def _mlflow_log_params_dict(
 
         if log_type == "dict":
             mlflow.log_dict(dictionary, name)
+        elif isinstance(value, dict):
+            _mlflow_log_params_dict(value, name, log_type)
         elif log_type == "param":
             try:
                 mlflow.log_param(name, value)
             except mlflow.exceptions.MlflowException:
                 continue
-        elif isinstance(value, dict):
-            _mlflow_log_params_dict(value, name, log_type)
 
 
 class MLflowLogger(ILogger):
