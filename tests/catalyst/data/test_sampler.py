@@ -44,6 +44,7 @@ def generate_valid_labels(num: int) -> TLabelsPK:
 
 
 def test_balance_class_sampler():
+    """BalanceClassSampler test."""
     bs = 32
     data = MNIST(os.getcwd(), train=False, download=True)
     for mode in ["downsampling", "upsampling", 100, 200, 500]:
@@ -64,6 +65,7 @@ def test_balance_class_sampler():
 
 
 def test_batch_balance_class_sampler():
+    """BatchBalanceClassSampler test."""
     data = MNIST(os.getcwd(), train=False, download=True)
     for num_classes in [2, 3, 5, 10]:
         for num_samples in [2, 5, 10, 50]:
