@@ -5,10 +5,10 @@ import pickle
 import torch
 
 from catalyst.callbacks.metric import LoaderMetricCallback
-from catalyst.metrics._metric import ICallbackLoaderMetric
+from catalyst.metrics._metric import ICallbackLoaderMetric, AccumulationMetric
 
 
-class FeatureAccumulator(ICallbackLoaderMetric):
+class FeatureAccumulator(AccumulationMetric):
     """Feature bank,
     Args:
         prefix: embeddings accumulator prefix
