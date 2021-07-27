@@ -1,0 +1,131 @@
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from torch.utils.data import DataLoader
+import torchvision
+from torchvision import transforms
+from torchvision.models.resnet import resnet50
+
+from catalyst import dl
+from catalyst.contrib.nn import BarlowTwinsLoss
+
+
+class CifarPairTransform:
+    def __init__(self, train_transform=True, pair_transform=True):
+        if train_transform is True:
+            self.transform = transforms.Compose(
+                [
+                    transforms.RandomResizedCrop(32),
+                    transforms.RandomHorizontalFlip(p=0.5),
+                    transforms.RandomApply([transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)], p=0.8),
+                    transforms.RandomGrayscale(p=0.2),
+                    transforms.ToTensor(),
+                    transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
+                ]
+            )
+        else:
+            self.transform = transforms.Compose(
+                [
+                    transforms.ToTensor(),
+                    transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
+                ]
+            )
+        self.pair_transform = pair_transform
+
+    def __call__(self, x):
+        if self.pair_transform is True:
+            y1 = self.transform(x)
+            y2 = self.transform(x)
+            return y1, y2
+        else:
+            return self.transform(x)
+
+
+class Model(nn.Module):
+    def __init__(self, feature_dim=128):
+        super(Model, self).__init__()
+
+        self.f = []
+        for _, module in resnet50().named_children():
+            if not isinstance(module, nn.Linear) and not isinstance(module, nn.MaxPool2d):
+                self.f.append(module)
+
+        # encoder
+        self.f = nn.Sequential(*self.f)
+        # projection head
+        self.g = nn.Sequential(
+            nn.Linear(2048, 512, bias=False),
+            nn.BatchNorm1d(512),
+            nn.ReLU(inplace=True),
+            nn.Linear(512, feature_dim, bias=True),
+        )
+
+    def forward(self, x):
+        x = self.f(x)
+        feature = torch.flatten(x, start_dim=1)
+        out = self.g(feature)
+        return F.normalize(feature, dim=-1), F.normalize(out, dim=-1)
+
+
+class CustomRunner(dl.Runner):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def handle_batch(self, batch) -> None:
+        (pos_1, pos_2), targets = batch
+        feature_1, out_1 = self.model(pos_1)
+        _, out_2 = self.model(pos_2)
+        self.batch = {
+            "embeddings": feature_1,
+            "out_1": out_1,
+            "out_2": out_2,
+            "targets": targets,
+            "is_query": torch.ones_like(targets).bool(),
+        }
+
+
+# hyperparams
+
+feature_dim, temperature, k = 128, 0.5, 200
+batch_size, epochs, num_workers = 32, 10, 2
+
+# data
+train_data = torchvision.datasets.CIFAR10(
+    root="data", train=True, transform=CifarPairTransform(train_transform=True), download=True
+)
+
+train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, pin_memory=True)
+
+model = Model(feature_dim)
+
+
+optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
+
+callbacks = [
+    dl.CriterionCallback(input_key="out_1", target_key="out_2", metric_key="loss"),
+    dl.OptimizerCallback(metric_key="loss"),
+    dl.CMCScoreCallback(
+        embeddings_key="embeddings",
+        labels_key="targets",
+        is_query_key="is_query",
+        topk_args=(1, 3, 5),
+    ),
+]
+
+
+runner = CustomRunner()
+criterion = BarlowTwinsLoss()
+
+runner.train(
+    model=model,
+    criterion=criterion,
+    optimizer=optimizer,
+    callbacks=callbacks,
+    loaders={"train": train_loader},
+    verbose=True,
+    num_epochs=epochs,
+    valid_loader="train",
+    valid_metric="loss",
+    minimize_valid_metric=True,
+)
