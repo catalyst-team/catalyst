@@ -73,10 +73,20 @@ class Model(nn.Module):
 
 class CustomRunner(dl.Runner):
     def handle_batch(self, batch) -> None:
-        (pos_1, pos_2), targets = batch
-        feature_1, out_1 = self.model(pos_1)
-        _, out_2 = self.model(pos_2)
-        self.batch = {"embeddings": feature_1, "out_1": out_1, "out_2": out_2, "targets": targets}
+        if self.is_train_loader:
+            (pos_1, pos_2), targets = batch
+            feature_1, out_1 = self.model(pos_1)
+            _, out_2 = self.model(pos_2)
+            self.batch = {
+                "embeddings": feature_1,
+                "out_1": out_1,
+                "out_2": out_2,
+                "targets": targets,
+            }
+        else:
+            images, targets = batch
+            feature, _ = self.model(images)
+            self.batch = {"embeddings": feature.detach().cpu(), "targets": targets.detach().cpu()}
 
 
 if __name__ == "__main__":
@@ -84,19 +94,29 @@ if __name__ == "__main__":
     # hyperparams
 
     feature_dim, temperature, k = 128, 0.5, 200
-    batch_size, epochs, num_workers = 32, 10, 2
+    batch_size, epochs, num_workers = 32, 2, 2
     save_path = ""
 
     # data
     train_data = torchvision.datasets.CIFAR10(
         root="data", train=True, transform=CifarPairTransform(train_transform=True), download=True
     )
+    test_data = torchvision.datasets.CIFAR10(
+        root="data",
+        train=False,
+        transform=CifarPairTransform(train_transform=False, pair_transform=False),
+        download=True,
+    )
 
     train_data = list(islice(train_data, 100))
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, pin_memory=True)
+    valid_loader = DataLoader(test_data, batch_size=batch_size, pin_memory=True)
 
     callbacks = [
-        dl.CriterionCallback(input_key="out_1", target_key="out_2", metric_key="loss"),
+        dl.ControlFlowCallback(
+            dl.CriterionCallback(input_key="out_1", target_key="out_2", metric_key="loss"),
+            loaders="train",
+        ),
         FeatureAccumulatorCallback(
             save_path=save_path, input_key="embeddings", target_key="targets"
         ),
@@ -114,7 +134,7 @@ if __name__ == "__main__":
         criterion=criterion,
         optimizer=optimizer,
         callbacks=callbacks,
-        loaders={"train": train_loader},
+        loaders={"train": train_loader, "valid": valid_loader},
         verbose=True,
         num_epochs=epochs,
         valid_loader="train",

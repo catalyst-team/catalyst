@@ -1,11 +1,16 @@
-from typing import Dict, Tuple
+from typing import Any, Callable, Dict, List, Tuple, Union
+from collections import Counter
+from functools import partial
 from pathlib import Path
 import pickle
 
+from sklearn.linear_model import LogisticRegression
 import torch
 
 from catalyst.callbacks.metric import LoaderMetricCallback
-from catalyst.metrics._metric import ICallbackLoaderMetric, AccumulationMetric
+from catalyst.core import Callback, CallbackOrder, IRunner
+from catalyst.metrics._metric import AccumulationMetric, ICallbackLoaderMetric
+from catalyst.registry import REGISTRY
 
 
 class FeatureAccumulator(AccumulationMetric):
@@ -84,3 +89,104 @@ class FeatureAccumulatorCallback(LoaderMetricCallback):
             runner: current runner
         """
         self.metric.reset(loader_name=runner.loader_key, epoch=runner.global_epoch_step)
+
+
+class KNNClassiferCallback(Callback):
+    """
+    Classify your batch with weighted KNN classifier.
+    Args:
+        input_key str: KNN classifier features key in a batch
+        output_key str: Keys for output (probs).
+    Raises:
+        TypeError: When keys is not str or a list.
+    """
+
+    def __init__(
+        self,
+        feature_bank_path: str,
+        input_key: str,
+        output_key: Union[List[str], str] = None,
+        k: int = 200,
+        temperature: float = 0.5,
+        device: str = "cuda",
+    ):
+        """
+        Preprocess your batch with specified function.
+        Args:
+            input_key str: Keys in batch dict to features for classification.
+            output_key str: Keys for output (logits).
+            k int: Top k most similar images used to predict the label.
+            temperatire float: Temperature used in softmax.
+        Raises:
+            TypeError: When keys is not str or a list.
+        """
+        super().__init__(order=CallbackOrder.Internal)
+
+        if not isinstance(feature_bank_path, str):
+            raise TypeError("feature bank path should be str.")
+
+        if not isinstance(input_key, str):
+            raise TypeError("input key should be str.")
+        self._handle_batch = self._handle_value
+
+        if not isinstance(output_key, str):
+            raise TypeError("output key should be str.")
+
+        self.input_key = input_key
+        self.output_key = output_key
+        self.feature_bank_path = feature_bank_path
+        self.k = k
+        self.temperature = temperature
+        self.device = device
+
+    def on_loader_start(self, runner: "IRunner") -> None:
+        with open(self.feature_bank_path, "rb") as handle:
+            self.feature_bank = pickle.load(handle)
+        self.feature_bank["feature"] = self.feature_bank["feature"].to(
+            self.device, non_blocking=True
+        )
+        # self.feature_bank['targets'] = self.feature_bank['targets'].to(self.device, non_blocking=True)
+
+    def _handle_value(self, runner):
+        batch_in = runner.batch[self.input_key]
+        batch_in = batch_in.to(self.device)
+
+        feature, feature_bank = batch_in, self.feature_bank["feature"]
+        feature_labels = self.feature_bank["targets"]
+
+        number_of_classes = len(Counter(self.feature_bank["targets"]))
+
+        sim_matrix = torch.mm(feature, feature_bank.t()).detach().cpu()
+        # [B, K]
+        # not enough cuda memory maybe can be fixed (calculations on cpu now)
+        sim_weight, sim_indices = sim_matrix.topk(k=self.k, dim=-1)
+        # [B, K]
+        sim_labels = torch.gather(
+            feature_labels.expand(batch_in.size(0), -1), dim=-1, index=sim_indices
+        )
+        sim_weight = (sim_weight / self.temperature).exp()
+
+        # counts for each class
+        one_hot_label = torch.zeros(
+            batch_in.size(0) * self.k, number_of_classes, device=sim_labels.device
+        )
+        # [B*K, C]
+
+        # the memory isshue is here
+        one_hot_label = one_hot_label.scatter(dim=-1, index=sim_labels.view(-1, 1), value=1.0)
+        # weighted score ---> [B, C]
+        pred_scores = torch.sum(
+            one_hot_label.view(batch_in.size(0), -1, number_of_classes)
+            * sim_weight.unsqueeze(dim=-1),
+            dim=1,
+        )
+        pred_scores = pred_scores / pred_scores.sum(dim=1).unsqueeze(-1)
+
+        runner.batch.update(**{self.output_key: pred_scores})
+
+    def on_batch_end(self, runner: "IRunner") -> None:
+        """On batch end action.
+        Args:
+            runner: runner for the experiment.
+        """
+        self._handle_batch(runner)
