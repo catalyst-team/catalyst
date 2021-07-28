@@ -1,6 +1,8 @@
 from itertools import islice
 
-from callbacks import FeatureAccumulatorCallback
+from callbacks import SklearnClassifierCallback
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import top_k_accuracy_score
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -10,6 +12,7 @@ import torchvision
 from torchvision import transforms
 from torchvision.models.resnet import resnet50
 
+import catalyst
 from catalyst import dl
 from catalyst.contrib.nn import BarlowTwinsLoss
 
@@ -117,8 +120,13 @@ if __name__ == "__main__":
             dl.CriterionCallback(input_key="out_1", target_key="out_2", metric_key="loss"),
             loaders="train",
         ),
-        FeatureAccumulatorCallback(
-            save_path=save_path, input_key="embeddings", target_key="targets"
+        SklearnClassifierCallback(
+            feautres_key="embeddings",
+            targets_key="targets",
+            train_loader="train",
+            valid_loader="valid",
+            sklearn_classifier_fn=LogisticRegression,
+            sklearn_metric_fn=top_k_accuracy_score,
         ),
         dl.OptimizerCallback(metric_key="loss"),
     ]
