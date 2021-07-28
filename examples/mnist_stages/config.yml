@@ -42,9 +42,6 @@ loggers:
     _target_: TensorboardLogger
     logdir: *logdir
     use_logdir_postfix: True
-  mlflow:
-    _target_: MLflowLogger
-    experiment: mnist_stages
 
 stages:
   train:
