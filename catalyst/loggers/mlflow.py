@@ -233,6 +233,7 @@ class MLflowLogger(ILogger):
             stage_key: Stage info.
         """
         stages = hparams.get("stages")
+        print(stages.keys())
         multistage = len(stages) > 1
 
         if scope == "experiment":
