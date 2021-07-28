@@ -34,14 +34,16 @@ class ILoaderWrapper:
             attribute value
 
         Raises:
-            NotImplementedError: if could not find attribute in ``origin``
-                or ``wrapper``
+            NotImplementedError: if could not find attribute in ``origin`` or ``wrapper``
         """
-        value = getattr(self.origin, key, None)
-        if value is not None:
+        some_default_value = "_no_attr_found_"
+        value = self.origin.__dict__.get(key, some_default_value)
+        # value = getattr(self.origin, key, None)
+        if value != some_default_value:
             return value
-        value = getattr(self, key, None)
-        if value is not None:
+        value = self.__dict__.get(key, some_default_value)
+        # value = getattr(self, key, None)
+        if value != some_default_value:
             return value
         raise NotImplementedError()
 
