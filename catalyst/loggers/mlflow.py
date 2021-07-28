@@ -56,6 +56,8 @@ def _mlflow_log_params_dict(
                 mlflow.log_param(name, value)
             except mlflow.exceptions.MlflowException:
                 continue
+        else:
+             raise ValueError(f"Unknown type of logging value: type({value})={type(value)}")
 
 
 class MLflowLogger(ILogger):
@@ -232,8 +234,7 @@ class MLflowLogger(ILogger):
             run_key: Experiment info.
             stage_key: Stage info.
         """
-        stages = hparams.get("stages")
-        print(stages.keys())
+        stages = hparams.get("stages", {})
         multistage = len(stages) > 1
 
         if scope == "experiment":
@@ -248,7 +249,7 @@ class MLflowLogger(ILogger):
             _mlflow_log_params_dict(stage_params, log_type="param", exclude=self.exclude)
 
             experiment_params = {key: value for key, value in hparams.items() if key != "stages"}
-            _mlflow_log_params_dict(experiment_params, "param", self.exclude)
+            _mlflow_log_params_dict(experiment_params, log_type="param", exclude=self.exclude)
 
     def log_artifact(
         self,
