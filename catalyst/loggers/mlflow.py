@@ -278,7 +278,7 @@ class MLflowLogger(ILogger):
         loader_sample_step: int = 0,
     ) -> None:
         """Logs a local file or directory as an artifact to the logger."""
-        mlflow.log_artifact(artifact)
+        mlflow.log_artifact(path_to_artifact)
 
     def close_log(self, scope: str = None) -> None:
         """End an active MLflow run."""
