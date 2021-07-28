@@ -57,7 +57,7 @@ def _mlflow_log_params_dict(
             except mlflow.exceptions.MlflowException:
                 continue
         else:
-             raise ValueError(f"Unknown type of logging value: type({value})={type(value)}")
+            raise ValueError(f"Unknown type of logging value: type({value})={type(value)}")
 
 
 class MLflowLogger(ILogger):
