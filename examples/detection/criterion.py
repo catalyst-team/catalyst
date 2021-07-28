@@ -2,7 +2,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class Criterion(nn.Module):
+class SSDCriterion(nn.Module):
     def __init__(self, num_classes, ignore_class=0):
         super().__init__()
         self.num_classes = num_classes

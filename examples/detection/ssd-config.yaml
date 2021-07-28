@@ -1,0 +1,42 @@
+
+
+runner:
+  _target_: SSDDetectionRunner
+
+engine:
+  _target_: DeviceEngine
+
+model:
+  _target_: SingleShotDetector
+  num_classes: &num_classes 5
+
+loggers:
+  console:
+    _target_: ConsoleLogger
+
+stages:
+  initial_training:
+    num_epochs: 5
+
+    loaders: &loaders
+      batch_size: 32
+      num_workers: 4
+
+    criterion:
+      _target_: SSDCriterion
+      num_classes: 6  # +1 class (background)
+      ignore_class: 0
+
+    optimizer:
+      _target_: AdamW
+      lr: 0.001
+
+    callbacks: &callbacks
+      mAP:
+        _target_: DetectionMeanAveragePrecision
+        num_classes: *num_classes
+        output_type: ssd
+
+      optimizer:
+        _target_: OptimizerCallback
+        metric_key: loss

@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader
 
 from catalyst import dl
 
-from .criterion import Criterion
+from .criterion import SSDCriterion
 from .dataset import DetectionDataset
 from .model import SingleShotDetector
 
@@ -41,7 +41,7 @@ loaders = {
 model = SingleShotDetector(
     backbone="resnet18", num_classes=loaders["train"].dataset.num_classes - 1,
 )
-criterion = Criterion(
+criterion = SSDCriterion(
     num_classes=loaders["train"].dataset.num_classes - 1,
     ignore_class=loaders["train"].dataset.background_class,
 )

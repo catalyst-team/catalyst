@@ -5,6 +5,7 @@ import os
 
 import cv2
 import numpy as np
+import torch
 from torch.utils.data import Dataset
 
 
@@ -97,10 +98,18 @@ def pixels_to_absolute(box, width, height):
 
 
 class DetectionDataset(Dataset):
-    def __init__(self, coco_json_path, images_dir=None, transforms=None, background_id=None):
+    def __init__(
+        self,
+        coco_json_path,
+        images_dir=None,
+        transforms=None,
+        background_id=None,
+        num_anchors=8732,
+    ):
         self.file = coco_json_path
         self.images_dir = images_dir
         self.transforms = transforms
+        self.num_anchors = num_anchors
 
         self.images, self.category_id2category_name = load_coco_json(self.file)
         self.images_list = sorted(self.images.keys())
@@ -173,13 +182,15 @@ class DetectionDataset(Dataset):
         else:
             image = torch.from_numpy((image / 255.0).astype(np.float32)).permute(2, 0, 1)
 
-        bboxes, labels = [], []
-        for x1, y1, x2, y2, label in boxes:
+        bboxes = torch.zeros(size=(self.num_anchors, 4), dtype=torch.float)
+        labels = torch.zeros(size=(self.num_anchors,), dtype=torch.long)
+        for i, (x1, y1, x2, y2, label) in enumerate(boxes):
             w, h = x2 - x1, y2 - y1
-            bboxes.append([x1 + w / 2, y1 + h / 2, w, h])  # (x_center, y_center, w, h)
-            labels.append(int(label))
+            # (x_center, y_center, w, h)
+            bboxes[i, 0] = x1 + w / 2
+            bboxes[i, 1] = y1 + h / 2
+            bboxes[i, 2] = w
+            bboxes[i, 3] = h
+            labels[i] = int(label)
 
         return {"image": image, "bboxes": bboxes, "labels": labels}
-
-
-# TODO: write collate_fn
