@@ -1,24 +1,14 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
+import re
 
 import numpy as np
 
 from catalyst.core.logger import ILogger
 from catalyst.settings import SETTINGS
-from catalyst.typing import Directory, File, Number, Union
+from catalyst.typing import Directory, File, Union
 
 if SETTINGS.mlflow_required:
     import mlflow
-
-EXPERIMENT_PARAMS = (
-    "shared",
-    "args",
-    "runner",
-    "engine",
-    "model",
-    "stages",
-)
-STAGE_PARAMS = ("data", "criterion", "optimizer", "scheduler", "stage")
-EXCLUDE_PARAMS = ("loggers", "transform", "callbacks")
 
 
 def _get_or_start_run(run_name):
@@ -32,39 +22,42 @@ def _get_or_start_run(run_name):
     return mlflow.start_run(run_name=run_name)
 
 
-def _mlflow_log_dict(dictionary: Dict[str, Any], prefix: str = "", log_type: Optional[str] = None):
+def _mlflow_log_params_dict(
+    dictionary: Dict[str, Any],
+    prefix: Optional[str] = None,
+    log_type: Optional[str] = None,
+    exclude: Optional[List[str]] = None,
+):
     """The function of MLflow. Logs any value by its type from dictionary recursively.
 
     Args:
         dictionary: Values to log as dictionary.
         prefix: Prefix for parameter name (if the parameter is composite).
         log_type: The entity of logging (param, metric, artifact, image, etc.).
+        exclude: Keys in the dictionary to exclude from logging.
 
     Raises:
         ValueError: If meets unknown type or log_type for logging in MLflow
             (add new case if needed).
     """
     for name, value in dictionary.items():
-        if name in EXCLUDE_PARAMS:
+        if exclude is not None and name in exclude:
             continue
 
-        name = name.replace("*", "")
-        if prefix not in STAGE_PARAMS and prefix:
-            name = f"{prefix}/{name}"
+        name = re.sub(r"\W", "", name)
+        name = f"{prefix}/{name}" if prefix else name
 
         if log_type == "dict":
             mlflow.log_dict(dictionary, name)
         elif isinstance(value, dict):
-            _mlflow_log_dict(value, name, log_type)
+            _mlflow_log_params_dict(value, name, log_type, exclude)
         elif log_type == "param":
             try:
                 mlflow.log_param(name, value)
             except mlflow.exceptions.MlflowException:
                 continue
-        elif isinstance(value, Number):
-            mlflow.log_metric(name, value)
         else:
-            raise ValueError(f"Unknown type of logging value: {type(value)}")
+            raise ValueError(f"Unknown type of logging value: type({value})={type(value)}")
 
 
 class MLflowLogger(ILogger):
@@ -77,6 +70,7 @@ class MLflowLogger(ILogger):
         run: Name of the run in Mlflow to log to.
         tracking_uri: URI of tracking server against which to log run information related.
         registry_uri: Address of local or remote model registry server.
+        exclude: Name of  to exclude from logging.
 
     Python API examples:
 
@@ -136,11 +130,13 @@ class MLflowLogger(ILogger):
         run: Optional[str] = None,
         tracking_uri: Optional[str] = None,
         registry_uri: Optional[str] = None,
+        exclude: Optional[List[str]] = None,
     ) -> None:
         self.experiment = experiment
         self.run = run
         self.tracking_uri = tracking_uri
         self.registry_uri = registry_uri
+        self.exclude = exclude
 
         self._multistage = False
 
@@ -229,9 +225,10 @@ class MLflowLogger(ILogger):
 
         If there in experiment more than one stage, creates nested runs.
 
-        If the scope is "experiment", it does nothing, since overwriting parameters in
-        MLflow is prohibited. Thus, first, the parameters of the stage are recorded,
-        and only then the experiment.
+        Note:
+            If the scope is "experiment", it does nothing, since overwriting parameters
+            in MLflow is prohibited. Thus, first, the parameters of the stage
+            are recorded, and only then the experiment.
 
         Args:
             hparams: Parameters to log.
@@ -239,27 +236,22 @@ class MLflowLogger(ILogger):
             run_key: Experiment info.
             stage_key: Stage info.
         """
-        stages = set(hparams.get("stages", {})) - set(STAGE_PARAMS) - set(EXCLUDE_PARAMS)
+        stages = hparams.get("stages", {})
         self._multistage = len(stages) > 1
 
         if scope == "experiment":
-            if self._multistage:
+            if not self.run:
                 mlflow.set_tag("mlflow.runName", run_key)
 
         if scope == "stage":
             if self._multistage:
                 mlflow.start_run(run_name=stage_key, nested=True)
 
-            scope_params = hparams.get("stages", {}).get(run_key, {})
-            _mlflow_log_dict(scope_params, log_type="param")
+            stage_params = hparams.get("stages", {}).get(stage_key, {})
+            _mlflow_log_params_dict(stage_params, log_type="param", exclude=self.exclude)
 
-            for key in STAGE_PARAMS:
-                stage_params = hparams.get("stages", {}).get(key, {})
-                _mlflow_log_dict(stage_params, log_type="param")
-
-            for key in EXPERIMENT_PARAMS:
-                exp_params = hparams.get(key, {})
-                _mlflow_log_dict(exp_params, log_type="param")
+            experiment_params = {key: value for key, value in hparams.items() if key != "stages"}
+            _mlflow_log_params_dict(experiment_params, log_type="param", exclude=self.exclude)
 
     def log_artifact(
         self,
@@ -289,8 +281,11 @@ class MLflowLogger(ILogger):
         mlflow.log_artifact(artifact, path_to_artifact)
 
     def close_log(self, scope: str = None) -> None:
-        """Finds all **running** runs and ends them."""
-        mlflow.end_run()
+        """End an active MLflow run."""
+        if scope == "stage" and self._multistage:
+            mlflow.end_run()
+        if scope == "experiment":
+            mlflow.end_run()
 
 
 __all__ = ["MLflowLogger"]
