@@ -309,27 +309,17 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.loggers.mlflow</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span> <span class="nn">re</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.core.logger</span> <span class="kn">import</span> <span class="n">ILogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
-<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Directory</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Number</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">Directory</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">mlflow_required</span><span class="p">:</span>
     <span class="kn">import</span> <span class="nn">mlflow</span>
-
-<span class="n">EXPERIMENT_PARAMS</span> <span class="o">=</span> <span class="p">(</span>
-    <span class="s2">&quot;shared&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;args&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;runner&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;engine&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;model&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;stages&quot;</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">STAGE_PARAMS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;criterion&quot;</span><span class="p">,</span> <span class="s2">&quot;optimizer&quot;</span><span class="p">,</span> <span class="s2">&quot;scheduler&quot;</span><span class="p">,</span> <span class="s2">&quot;stage&quot;</span><span class="p">)</span>
-<span class="n">EXCLUDE_PARAMS</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;loggers&quot;</span><span class="p">,</span> <span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="s2">&quot;callbacks&quot;</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_get_or_start_run</span><span class="p">(</span><span class="n">run_name</span><span class="p">):</span>
@@ -343,39 +333,42 @@
     <span class="k">return</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">(</span><span class="n">run_name</span><span class="o">=</span><span class="n">run_name</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_mlflow_log_dict</span><span class="p">(</span><span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">log_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_mlflow_log_params_dict</span><span class="p">(</span>
+    <span class="n">dictionary</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>
+    <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">log_type</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">exclude</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;The function of MLflow. Logs any value by its type from dictionary recursively.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dictionary: Values to log as dictionary.</span>
 <span class="sd">        prefix: Prefix for parameter name (if the parameter is composite).</span>
 <span class="sd">        log_type: The entity of logging (param, metric, artifact, image, etc.).</span>
+<span class="sd">        exclude: Keys in the dictionary to exclude from logging.</span>
 
 <span class="sd">    Raises:</span>
 <span class="sd">        ValueError: If meets unknown type or log_type for logging in MLflow</span>
 <span class="sd">            (add new case if needed).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dictionary</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">EXCLUDE_PARAMS</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">exclude</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">:</span>
             <span class="k">continue</span>
 
-        <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;*&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">prefix</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">STAGE_PARAMS</span> <span class="ow">and</span> <span class="n">prefix</span><span class="p">:</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;\W&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">prefix</span> <span class="k">else</span> <span class="n">name</span>
 
         <span class="k">if</span> <span class="n">log_type</span> <span class="o">==</span> <span class="s2">&quot;dict&quot;</span><span class="p">:</span>
             <span class="n">mlflow</span><span class="o">.</span><span class="n">log_dict</span><span class="p">(</span><span class="n">dictionary</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="n">_mlflow_log_dict</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">log_type</span><span class="p">)</span>
+            <span class="n">_mlflow_log_params_dict</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">log_type</span><span class="p">,</span> <span class="n">exclude</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">log_type</span> <span class="o">==</span> <span class="s2">&quot;param&quot;</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">mlflow</span><span class="o">.</span><span class="n">log_param</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
             <span class="k">except</span> <span class="n">mlflow</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">MlflowException</span><span class="p">:</span>
                 <span class="k">continue</span>
-        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
-            <span class="n">mlflow</span><span class="o">.</span><span class="n">log_metric</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown type of logging value: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown type of logging value: type(</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">)=</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="MLflowLogger"><a class="viewcode-back" href="../../../api/loggers.html#catalyst.loggers.mlflow.MLflowLogger">[docs]</a><span class="k">class</span> <span class="nc">MLflowLogger</span><span class="p">(</span><span class="n">ILogger</span><span class="p">):</span>
@@ -388,6 +381,7 @@
 <span class="sd">        run: Name of the run in Mlflow to log to.</span>
 <span class="sd">        tracking_uri: URI of tracking server against which to log run information related.</span>
 <span class="sd">        registry_uri: Address of local or remote model registry server.</span>
+<span class="sd">        exclude: Name of  to exclude from logging.</span>
 
 <span class="sd">    Python API examples:</span>
 
@@ -447,11 +441,13 @@
         <span class="n">run</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tracking_uri</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">registry_uri</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">exclude</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">experiment</span> <span class="o">=</span> <span class="n">experiment</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run</span> <span class="o">=</span> <span class="n">run</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tracking_uri</span> <span class="o">=</span> <span class="n">tracking_uri</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">registry_uri</span> <span class="o">=</span> <span class="n">registry_uri</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exclude</span> <span class="o">=</span> <span class="n">exclude</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_multistage</span> <span class="o">=</span> <span class="kc">False</span>
 
@@ -540,9 +536,10 @@
 
 <span class="sd">        If there in experiment more than one stage, creates nested runs.</span>
 
-<span class="sd">        If the scope is &quot;experiment&quot;, it does nothing, since overwriting parameters in</span>
-<span class="sd">        MLflow is prohibited. Thus, first, the parameters of the stage are recorded,</span>
-<span class="sd">        and only then the experiment.</span>
+<span class="sd">        Note:</span>
+<span class="sd">            If the scope is &quot;experiment&quot;, it does nothing, since overwriting parameters</span>
+<span class="sd">            in MLflow is prohibited. Thus, first, the parameters of the stage</span>
+<span class="sd">            are recorded, and only then the experiment.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            hparams: Parameters to log.</span>
@@ -550,27 +547,22 @@
 <span class="sd">            run_key: Experiment info.</span>
 <span class="sd">            stage_key: Stage info.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">stages</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stages&quot;</span><span class="p">,</span> <span class="p">{}))</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">STAGE_PARAMS</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">EXCLUDE_PARAMS</span><span class="p">)</span>
+        <span class="n">stages</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stages&quot;</span><span class="p">,</span> <span class="p">{})</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_multistage</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">stages</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
 
         <span class="k">if</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;experiment&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_multistage</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">:</span>
                 <span class="n">mlflow</span><span class="o">.</span><span class="n">set_tag</span><span class="p">(</span><span class="s2">&quot;mlflow.runName&quot;</span><span class="p">,</span> <span class="n">run_key</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;stage&quot;</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_multistage</span><span class="p">:</span>
                 <span class="n">mlflow</span><span class="o">.</span><span class="n">start_run</span><span class="p">(</span><span class="n">run_name</span><span class="o">=</span><span class="n">stage_key</span><span class="p">,</span> <span class="n">nested</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-            <span class="n">scope_params</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stages&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">run_key</span><span class="p">,</span> <span class="p">{})</span>
-            <span class="n">_mlflow_log_dict</span><span class="p">(</span><span class="n">scope_params</span><span class="p">,</span> <span class="n">log_type</span><span class="o">=</span><span class="s2">&quot;param&quot;</span><span class="p">)</span>
+            <span class="n">stage_params</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stages&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">stage_key</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">_mlflow_log_params_dict</span><span class="p">(</span><span class="n">stage_params</span><span class="p">,</span> <span class="n">log_type</span><span class="o">=</span><span class="s2">&quot;param&quot;</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">exclude</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">STAGE_PARAMS</span><span class="p">:</span>
-                <span class="n">stage_params</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;stages&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})</span>
-                <span class="n">_mlflow_log_dict</span><span class="p">(</span><span class="n">stage_params</span><span class="p">,</span> <span class="n">log_type</span><span class="o">=</span><span class="s2">&quot;param&quot;</span><span class="p">)</span>
-
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">EXPERIMENT_PARAMS</span><span class="p">:</span>
-                <span class="n">exp_params</span> <span class="o">=</span> <span class="n">hparams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">{})</span>
-                <span class="n">_mlflow_log_dict</span><span class="p">(</span><span class="n">exp_params</span><span class="p">,</span> <span class="n">log_type</span><span class="o">=</span><span class="s2">&quot;param&quot;</span><span class="p">)</span>
+            <span class="n">experiment_params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">hparams</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;stages&quot;</span><span class="p">}</span>
+            <span class="n">_mlflow_log_params_dict</span><span class="p">(</span><span class="n">experiment_params</span><span class="p">,</span> <span class="n">log_type</span><span class="o">=</span><span class="s2">&quot;param&quot;</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">exclude</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">log_artifact</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -600,8 +592,11 @@
         <span class="n">mlflow</span><span class="o">.</span><span class="n">log_artifact</span><span class="p">(</span><span class="n">artifact</span><span class="p">,</span> <span class="n">path_to_artifact</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">close_log</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Finds all **running** runs and ends them.&quot;&quot;&quot;</span>
-        <span class="n">mlflow</span><span class="o">.</span><span class="n">end_run</span><span class="p">()</span></div>
+        <span class="sd">&quot;&quot;&quot;End an active MLflow run.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;stage&quot;</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_multistage</span><span class="p">:</span>
+            <span class="n">mlflow</span><span class="o">.</span><span class="n">end_run</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">scope</span> <span class="o">==</span> <span class="s2">&quot;experiment&quot;</span><span class="p">:</span>
+            <span class="n">mlflow</span><span class="o">.</span><span class="n">end_run</span><span class="p">()</span></div>
 
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;MLflowLogger&quot;</span><span class="p">]</span>
