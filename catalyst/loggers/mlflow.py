@@ -138,6 +138,8 @@ class MLflowLogger(ILogger):
         self.registry_uri = registry_uri
         self.exclude = exclude
 
+        self._multistage = False
+
         mlflow.set_tracking_uri(self.tracking_uri)
         mlflow.set_registry_uri(self.registry_uri)
         mlflow.set_experiment(self.experiment)
@@ -235,14 +237,14 @@ class MLflowLogger(ILogger):
             stage_key: Stage info.
         """
         stages = hparams.get("stages", {})
-        multistage = len(stages) > 1
+        self._multistage = len(stages) > 1
 
         if scope == "experiment":
-            if multistage:
+            if not self.run:
                 mlflow.set_tag("mlflow.runName", run_key)
 
         if scope == "stage":
-            if multistage:
+            if self._multistage:
                 mlflow.start_run(run_name=stage_key, nested=True)
 
             stage_params = hparams.get("stages", {}).get(stage_key, {})
@@ -279,8 +281,11 @@ class MLflowLogger(ILogger):
         mlflow.log_artifact(artifact, path_to_artifact)
 
     def close_log(self, scope: str = None) -> None:
-        """End an active MLflow run (if there is one)."""
-        mlflow.end_run()
+        """End an active MLflow run."""
+        if scope == "stage" and self._multistage:
+            mlflow.end_run()
+        if scope == "experiment":
+            mlflow.end_run()
 
 
 __all__ = ["MLflowLogger"]

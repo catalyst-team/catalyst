@@ -27,9 +27,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - make `expdir` in `catalyst-dl run` optional ([#1249](https://github.com/catalyst-team/catalyst/pull/1249))
 - Bump neptune-client from 0.9.5 to 0.9.8 in `requirements-neptune.txt` ([#1251](https://github.com/catalyst-team/catalyst/pull/1251))
 - automatic merge for master (with [Mergify](https://mergify.io/)) fixed ([#1250](https://github.com/catalyst-team/catalyst/pull/1250))
-- Evaluate loader custom model bug was fixed [#1254](https://github.com/catalyst-team/catalyst/pull/1254)
+- Evaluate loader custom model bug was fixed ([#1254](https://github.com/catalyst-team/catalyst/pull/1254))
 - `BatchPrefetchLoaderWrapper` issue with batch-based PyTorch samplers ([#1262](https://github.com/catalyst-team/catalyst/pull/1262))
-- Adapted MlflowLogger for new config hierarchy [#1263](https://github.com/catalyst-team/catalyst/pull/1263)
+- Adapted MlflowLogger for new config hierarchy ([#1263](https://github.com/catalyst-team/catalyst/pull/1263))
 
 
 ## [21.06] - 2021-06-29
