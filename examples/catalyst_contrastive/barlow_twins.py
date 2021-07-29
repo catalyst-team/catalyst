@@ -1,3 +1,4 @@
+from functools import partial
 from itertools import islice
 
 from callbacks import SklearnClassifierCallback
@@ -126,7 +127,7 @@ if __name__ == "__main__":
             train_loader="train",
             valid_loader="valid",
             sklearn_classifier_fn=LogisticRegression,
-            sklearn_metric_fn=top_k_accuracy_score,
+            sklearn_metric_fn=partial(top_k_accuracy_score, **{"k": 1}),
         ),
         dl.OptimizerCallback(metric_key="loss"),
     ]

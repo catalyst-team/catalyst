@@ -55,6 +55,11 @@ class SklearnClassifierCallback(ICallback):
                 num_batches=runner.loader_batch_len,
             )
 
+    def on_batch_end(self, runner: "IRunner") -> None:
+        if runner.loader_key in self.storage:
+            loader_storage = self.storage[runner.loader_key]
+            loader_storage.update(**runner.batch)
+
     def on_loader_end(self, runner: "IRunner") -> None:
         if runner.loader_key == self._train_loader:
             data = self.storage[self._train_loader].compute_key_value()
@@ -66,11 +71,6 @@ class SklearnClassifierCallback(ICallback):
             data = self.storage[self._train_loader].compute_key_value()
             X, y = data[self.feature_key], data[self.target_key]
             y_pred = self.classfier.predict_proba(data[self.feature_key])
-            metric_val = self.metric_fn(y, y_pred, k=1)
+            metric_val = self.metric_fn(y, y_pred)
             runner.loader_metrics.update({"sklear_classifier_metric": metric_val})
             return metric_val
-
-    def on_batch_end(self, runner: "IRunner") -> None:
-        if runner.loader_key in self.storage:
-            loader_storage = self.storage[runner.loader_key]
-            loader_storage.update(**runner.batch)
