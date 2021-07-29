@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
+-
+
+### Changed
+
+-
+
+### Removed
+
+-
+
+### Fixed
+
+-
+
+
+## [21.07] - 2021-07-29
+
+### Added
+
 - added `pre-commit` hook to run codestyle checker on commit ([#1257](https://github.com/catalyst-team/catalyst/pull/1257))
 - `on publish` github action for docker and docs added ([#1260](https://github.com/catalyst-team/catalyst/pull/1260))
 - MixupCallback and `utils.mixup_batch` ([#1241](https://github.com/catalyst-team/catalyst/pull/1241))
