@@ -148,5 +148,6 @@ if __name__ == "__main__":
         num_epochs=epochs,
         valid_loader="train",
         valid_metric="loss",
+        logdir="./logdir",
         minimize_valid_metric=True,
     )
