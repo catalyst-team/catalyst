@@ -16,11 +16,44 @@ loggers:
 
 stages:
   initial_training:
-    num_epochs: 5
+    num_epochs: 100
 
     loaders: &loaders
       batch_size: 32
       num_workers: 4
+      
+      datasets:
+        train:
+          _target_: DetectionDataset
+          coco_json_path: path/to/coco.json
+          images_dir: path/to/images
+          transforms:
+            _target_: albumentations.Compose
+            transforms:
+              - _target_: albu.Resize
+                height: 300
+                width: 300
+              - _target_: albu.Normalize
+              - _target_: albu.ToTensorV2
+            bbox_params:
+              _target_: albu.BboxParams
+              format: albumentations
+
+        valid:
+          _target_: DetectionDataset
+          coco_json_path: path/to/coco.json
+          images_dir: path/to/images
+          transforms:
+            _target_: albumentations.Compose
+            transforms:
+              - _target_: albu.Resize
+                height: 300
+                width: 300
+              - _target_: albu.Normalize
+              - _target_: albu.ToTensorV2
+            bbox_params:
+              _target_: albu.BboxParams
+              format: albumentations
 
     criterion:
       _target_: SSDCriterion
@@ -32,6 +65,13 @@ stages:
       lr: 0.001
 
     callbacks: &callbacks
+      periodic_validation:
+        _target_: PeriodicLoaderCallback
+        valid_loader_key: valid
+        valid_metric_key: mAP
+        minimize: False
+        valid: 10
+
       mAP:
         _target_: DetectionMeanAveragePrecision
         num_classes: *num_classes
