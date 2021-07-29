@@ -7,8 +7,8 @@ from catalyst.metrics._metric import AccumulationMetric
 class SklearnClassifierCallback(ICallback):
     def __init__(
         self,
-        feautres_key: str,
-        targets_key: str,
+        feature_key : str,
+        target_key: str,
         train_loader: str,
         valid_loader: str,
         sklearn_classifier_fn: Callable,
@@ -20,14 +20,14 @@ class SklearnClassifierCallback(ICallback):
         self._valid_loader = valid_loader
         self.classifier_fabric = sklearn_classifier_fn
         self.metric_fn = sklearn_metric_fn
-        self.feature_key = feautres_key
-        self.target_key = targets_key
+        self.feature_key = feature_key 
+        self.target_key = target_key
         self.storage = {
             self._train_loader: AccumulationMetric(
-                accumulative_fields=[feautres_key, targets_key]
+                accumulative_fields=[feature_key, target_key]
             ),
             self._valid_loader: AccumulationMetric(
-                accumulative_fields=[feautres_key, targets_key]
+                accumulative_fields=[feature_key, target_key]
             ),
         }
         self.classifier = None
@@ -50,13 +50,15 @@ class SklearnClassifierCallback(ICallback):
             data = self.storage[self._train_loader].compute_key_value()
             # classifier fit
             X, y = data[self.feature_key].numpy(), data[self.target_key].numpy()
-            self.classfier = self.classifier_fabric()
-            self.classfier.fit(X, y)
+            self.classifier = self.classifier_fabric()
+            self.classifier.fit(X, y)
         if runner.loader_key == self._valid_loader:
+            assert self.classifier != None, "The train loader have to be processed first"
             data = self.storage[self._train_loader].compute_key_value()
             features, y_true = data[self.feature_key], data[self.target_key]
             # classifier predict
-            y_pred = self.classfier.predict_proba(features)
+            y_pred = self.classifier.predict_proba(features)
             metric_val = self.metric_fn(y_true, y_pred)
             runner.loader_metrics.update({"sklear_classifier_metric": metric_val})
-            
+            # delete classifier
+            self.classifier = None
