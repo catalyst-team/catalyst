@@ -97,6 +97,7 @@ if __name__ == "__main__":
     # hyperparams
 
     feature_dim, temperature, k = 128, 0.5, 200
+    offdig_lambda = 1/feature_dim
     batch_size, epochs, num_workers = 32, 2, 2
     save_path = ""
 
@@ -132,7 +133,7 @@ if __name__ == "__main__":
     ]
 
     model = Model(feature_dim).cuda()
-    criterion = BarlowTwinsLoss()
+    criterion = BarlowTwinsLoss(offdiag_lambda=offdig_lambda)
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
 
     runner = CustomRunner()
