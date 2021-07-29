@@ -44,13 +44,8 @@ class SklearnClassifierCallback(ICallback):
 
     def on_loader_start(self, runner: "IRunner") -> None:
         super().on_loader_start(runner)
-        if runner.loader_key == self._train_loader:
-            self.storage[self._train_loader].reset(
-                num_samples=runner.loader_batch_size * runner.loader_batch_len,
-                num_batches=runner.loader_batch_len,
-            )
-        if runner.loader_key == self._valid_loader:
-            self.storage[self._valid_loader].reset(
+        if runner.loader_key in [self._train_loader,  self._valid_loader]:
+            self.storage[runner.loader_key].reset(
                 num_samples=runner.loader_batch_size * runner.loader_batch_len,
                 num_batches=runner.loader_batch_len,
             )
