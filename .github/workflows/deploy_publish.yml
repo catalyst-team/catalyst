@@ -28,49 +28,6 @@ jobs:
   #         user: __token__
   #         password: ${{ secrets.PYPI_PASSWORD }}
 
-  build-docker:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        catalyst_requirements: ["base", all]
-        pytorch:
-          # - "1.9.0-cuda11.1-cudnn8-runtime"
-          - "1.9.0-cuda11.1-cudnn8-devel"
-          # - "1.8-cuda10.1-cudnn7-runtime"
-          - "1.8.1-cuda11.1-cudnn8-devel"
-          # - "1.7.0-cuda11.0-cudnn8-runtime"
-          - "1.7.0-cuda11.0-cudnn8-devel"
-          # - "1.3-cuda10.1-cudnn7-runtime"
-          - "1.3-cuda10.1-cudnn7-devel"
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Publish Docker to Docker Hub (base)
-        if: ${{ matrix.catalyst_requirements == "base" }}
-        uses: elgohr/Publish-Docker-Github-Action@master
-        env:
-          PYTORCH_TAG: "${{ matrix.pytorch }}"
-        with:
-          name: catalystteam/catalyst
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          dockerfile: docker/Dockerfile
-          tags: "${{ github.event.release.tag_name }}-pytorch-${{ matrix.pytorch }}"
-
-      - name: Publish Docker to Docker Hub ([all])
-        if: ${{ matrix.catalyst_requirements == "all" }}
-        uses: elgohr/Publish-Docker-Github-Action@master
-        env:
-          PYTORCH_TAG: "${{ matrix.pytorch }}"
-          CATALYST_ALL: "1"
-        with:
-          name: catalystteam/catalyst
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-          dockerfile: docker/Dockerfile
-          tags: "${{ github.event.release.tag_name }}-all-pytorch-${{ matrix.pytorch }}"
-
   build-docs:
     name: build-docs
     runs-on: ${{ matrix.os }}
@@ -159,7 +116,7 @@ jobs:
           git config --local user.email "action@ithub.com"
           git config --local user.name "GitHub Action"
           git add .
-          git commit -m "$(git log -1 --pretty=%B)" || true
+          git commit -m "${TAG:=update docs}" || true
 
       - name: push changes
         uses: ad-m/github-push-action@master
@@ -167,3 +124,46 @@ jobs:
           branch: gh-pages
           directory: gh-pages
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+  build-docker:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        catalyst_requirements: ["base", "all"]
+        pytorch:
+          # - "1.9.0-cuda11.1-cudnn8-runtime"
+          - "1.9.0-cuda11.1-cudnn8-devel"
+          # - "1.8-cuda10.1-cudnn7-runtime"
+          - "1.8.1-cuda11.1-cudnn8-devel"
+          # - "1.7.0-cuda11.0-cudnn8-runtime"
+          - "1.7.0-cuda11.0-cudnn8-devel"
+          # - "1.3-cuda10.1-cudnn7-runtime"
+          - "1.3-cuda10.1-cudnn7-devel"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Publish Docker to Docker Hub (base)
+        if: matrix.catalyst_requirements == "base"
+        uses: elgohr/Publish-Docker-Github-Action@master
+        env:
+          PYTORCH_TAG: "${{ matrix.pytorch }}"
+        with:
+          name: catalystteam/catalyst
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          dockerfile: docker/Dockerfile
+          tags: "${{ github.event.release.tag_name }}-pytorch-${{ matrix.pytorch }}"
+
+      - name: Publish Docker to Docker Hub ([all])
+        if: matrix.catalyst_requirements == "all"
+        uses: elgohr/Publish-Docker-Github-Action@master
+        env:
+          PYTORCH_TAG: "${{ matrix.pytorch }}"
+          CATALYST_ALL: "1"
+        with:
+          name: catalystteam/catalyst
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          dockerfile: docker/Dockerfile
+          tags: "${{ github.event.release.tag_name }}-"${{ matrix.catalyst_requirements }}-pytorch-${{ matrix.pytorch }}"
