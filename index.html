@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Catalyst &mdash; Catalyst 21.06 documentation</title>
+  <title>Catalyst &mdash; Catalyst 21.07 documentation</title>
   
 
   
@@ -156,7 +156,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.06</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
                 </div>
               
             
@@ -345,13 +345,11 @@ Break the cycle - use the <a class="reference external" href="https://github.com
 <span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">()</span>
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
 
+<span class="n">train_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">())</span>
+<span class="n">valid_data</span> <span class="o">=</span> <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">())</span>
 <span class="n">loaders</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
-        <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
-    <span class="p">),</span>
-    <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span>
-        <span class="n">MNIST</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ToTensor</span><span class="p">()),</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span>
-    <span class="p">),</span>
+    <span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
+    <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">valid_data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">32</span><span class="p">),</span>
 <span class="p">}</span>
 
 <span class="n">runner</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">(</span>
