@@ -1,18 +1,8 @@
 from typing import Any, Callable, Dict, List, Tuple, Union
-from collections import Counter
-from functools import partial
-from pathlib import Path
-import pickle
 
-import torch
-
-from catalyst.callbacks.metric import LoaderMetricCallback
-from catalyst.contrib.nn.modules import se
-from catalyst.core import Callback, CallbackOrder, IRunner
+from catalyst.core import CallbackOrder, IRunner
 from catalyst.core.callback import ICallback
-from catalyst.metrics._metric import AccumulationMetric, ICallbackLoaderMetric
-from catalyst.registry import REGISTRY
-
+from catalyst.metrics._metric import AccumulationMetric
 
 class SklearnClassifierCallback(ICallback):
     def __init__(
@@ -44,7 +34,7 @@ class SklearnClassifierCallback(ICallback):
 
     def on_loader_start(self, runner: "IRunner") -> None:
         super().on_loader_start(runner)
-        if runner.loader_key in [self._train_loader,  self._valid_loader]:
+        if runner.loader_key in [self._train_loader, self._valid_loader]:
             self.storage[runner.loader_key].reset(
                 num_samples=runner.loader_batch_size * runner.loader_batch_len,
                 num_batches=runner.loader_batch_len,
@@ -64,8 +54,9 @@ class SklearnClassifierCallback(ICallback):
             self.classfier.fit(X, y)
         if runner.loader_key == self._valid_loader:
             data = self.storage[self._train_loader].compute_key_value()
-            X, y = data[self.feature_key], data[self.target_key]
-            y_pred = self.classfier.predict_proba(data[self.feature_key])
-            metric_val = self.metric_fn(y, y_pred)
+            features, y_true = data[self.feature_key], data[self.target_key]
+            # classifier predict
+            y_pred = self.classfier.predict_proba(features)
+            metric_val = self.metric_fn(y_true, y_pred)
             runner.loader_metrics.update({"sklear_classifier_metric": metric_val})
-            return metric_val
+            

@@ -13,7 +13,6 @@ import torchvision
 from torchvision import transforms
 from torchvision.models.resnet import resnet50
 
-import catalyst
 from catalyst import dl
 from catalyst.contrib.nn import BarlowTwinsLoss
 
