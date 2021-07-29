@@ -98,7 +98,7 @@ if __name__ == "__main__":
 
     feature_dim, temperature, k = 128, 0.5, 200
     offdig_lambda = 1/feature_dim
-    batch_size, epochs, num_workers = 32, 2, 2
+    batch_size, epochs, num_workers = 32, 100, 2
     save_path = ""
 
     # data
