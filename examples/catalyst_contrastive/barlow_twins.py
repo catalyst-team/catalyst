@@ -88,8 +88,8 @@ class CustomRunner(dl.Runner):
             }
         else:
             images, targets = batch
-            feature, _ = self.model(images)
-            self.batch = {"embeddings": feature.detach().cpu(), "targets": targets.detach().cpu()}
+            features, _ = self.model(images)
+            self.batch = {"embeddings": features, "targets": targets}
 
 
 if __name__ == "__main__":
@@ -121,8 +121,8 @@ if __name__ == "__main__":
             loaders="train",
         ),
         SklearnClassifierCallback(
-            feautres_key="embeddings",
-            targets_key="targets",
+            feature_key="embeddings",
+            target_key="targets",
             train_loader="train",
             valid_loader="valid",
             sklearn_classifier_fn=LogisticRegression,

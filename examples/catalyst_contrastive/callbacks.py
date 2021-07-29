@@ -7,7 +7,7 @@ from catalyst.metrics._metric import AccumulationMetric
 class SklearnClassifierCallback(ICallback):
     def __init__(
         self,
-        feature_key : str,
+        feature_key: str,
         target_key: str,
         train_loader: str,
         valid_loader: str,
@@ -49,9 +49,9 @@ class SklearnClassifierCallback(ICallback):
         if runner.loader_key == self._train_loader:
             data = self.storage[self._train_loader].compute_key_value()
             # classifier fit
-            X, y = data[self.feature_key].numpy(), data[self.target_key].numpy()
+            features, targets = data[self.feature_key].numpy(), data[self.target_key].numpy()
             self.classifier = self.classifier_fabric()
-            self.classifier.fit(X, y)
+            self.classifier.fit(features, targets)
         if runner.loader_key == self._valid_loader:
             assert self.classifier != None, "The train loader have to be processed first"
             data = self.storage[self._train_loader].compute_key_value()
