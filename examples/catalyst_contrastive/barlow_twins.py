@@ -112,7 +112,6 @@ if __name__ == "__main__":
         download=True,
     )
 
-    train_data = list(islice(train_data, 100))
     train_loader = DataLoader(train_data, batch_size=batch_size, shuffle=True, pin_memory=True)
     valid_loader = DataLoader(test_data, batch_size=batch_size, pin_memory=True)
 
