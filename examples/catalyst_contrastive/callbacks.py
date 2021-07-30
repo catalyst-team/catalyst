@@ -39,6 +39,8 @@ class SklearnClassifierCallback(ICallback):
                 num_samples=runner.loader_batch_size * runner.loader_batch_len,
                 num_batches=runner.loader_batch_len,
             )
+        if runner.loader_key == self._valid_loader:
+            assert self.classifier != None, "The train loader has to be processed first!"
 
     def on_batch_end(self, runner: "IRunner") -> None:
         if runner.loader_key in self.storage:
@@ -53,7 +55,6 @@ class SklearnClassifierCallback(ICallback):
             self.classifier = self.classifier_fabric()
             self.classifier.fit(features, targets)
         if runner.loader_key == self._valid_loader:
-            assert self.classifier != None, "The train loader have to be processed first"
             data = self.storage[self._train_loader].compute_key_value()
             features, y_true = data[self.feature_key], data[self.target_key]
             # classifier predict
