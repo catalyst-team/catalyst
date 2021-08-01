@@ -9,8 +9,8 @@ from torch.autograd import Function, Variable
 class Pointwise(nn.Module):
     """
     Pointwise approaches look at a single document at a time in the loss function. 
-    For a single documetns predict it relevance to the query in time. 
-    The score is independeent for the order of the docuemtns that are in the query's resluts
+    For a single documents predict it relevance to the query in time.
+    The score is independent for the order of the documents that are in the query's results.
 
     Input space: single document d1
     Output space: scores or relevant classes
@@ -158,7 +158,7 @@ class HingeLoss(PairwiseLoss):
 
 class WARP(Function):
     """
-    autograd function of WARP loss
+    Autograd function of WARP loss
     """
 
     @staticmethod
