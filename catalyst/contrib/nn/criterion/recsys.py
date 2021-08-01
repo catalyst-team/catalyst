@@ -1,7 +1,8 @@
 # flake8: noqa
+from typing import Optional
+
 import torch
 from torch import nn
-from typing import Optional
 from torch.autograd import Function, Variable
 
 
@@ -34,10 +35,9 @@ class PairwiseLoss(nn.Module):
     """
 
     @staticmethod
-    def _assert_equal_size(positive_score: torch.Tensor, negative_score: torch.Tensor)->None:
+    def _assert_equal_size(positive_score: torch.Tensor, negative_score: torch.Tensor) -> None:
         if positive_score.size() != negative_score.size():
-            raise ValueError(f'Shape mismatch: {positive_score.size()}, {negative_score.size()}')
-
+            raise ValueError(f"Shape mismatch: {positive_score.size()}, {negative_score.size()}")
 
     def __init__(self) -> None:
         super().__init__()
@@ -56,9 +56,9 @@ class ListWiseLoss(nn.Module):
     """
 
     @staticmethod
-    def _assert_equal_size(input_: torch.Tensor, target: torch.Tensor)->None:
+    def _assert_equal_size(input_: torch.Tensor, target: torch.Tensor) -> None:
         if input_.size() != target.size():
-            raise ValueError(f'Shape mismatch: {input_.size()}, {target.size()}')
+            raise ValueError(f"Shape mismatch: {input_.size()}, {target.size()}")
 
     def __init__(self) -> None:
         super().__init__()
