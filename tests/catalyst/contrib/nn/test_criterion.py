@@ -25,7 +25,7 @@ def test_criterion_init():
             assert instance is not None
 
 
-def test_BPRLoss():
+def test_bpr_loss():
     """Testing for Bayesian Personalized Ranking"""
     from catalyst.contrib.nn.criterion.recsys import BPRLoss
 
@@ -42,11 +42,11 @@ def test_BPRLoss():
     assert float(loss.forward(pos, neg)) == pytest.approx(-log_gamma, 0.001)  # log of 0 with gamma
 
 
-def test_WARPLoss():
+def test_warp_loss():
     pass
 
 
-def testLogisticLoss():
+def test_logistic_loss():
     from catalyst.contrib.nn.criterion.recsys import LogisticLoss
 
     loss = LogisticLoss()
@@ -61,7 +61,7 @@ def testLogisticLoss():
     assert float(loss.forward(pos, neg)) == pytest.approx(1.5, 0.001)  # nerelu of large positive
 
 
-def testHingeLoss():
+def test_hinge_loss():
     from catalyst.contrib.nn.criterion.recsys import HingeLoss
 
     loss = HingeLoss()
