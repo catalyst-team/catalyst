@@ -9,7 +9,7 @@ from torch.autograd import Function, Variable
 
 class Pointwise(nn.Module):
     """
-    Pointwise approaches look at a single document at a time in the loss function. 
+    Pointwise approaches look at a single document at a time in the loss function.
     For a single documents predict it relevance to the query in time.
     The score is independent for the order of the documents that are in the query's results.
 
@@ -27,9 +27,9 @@ class Pointwise(nn.Module):
 class PairwiseLoss(nn.Module):
     """
     Pairwise approached looks at a pair of documents at a time in the loss function.
-    Given a pair of documents the algorithm try to come up with the optimal ordering 
-    For that pair and compare it with the ground truth. The goal for the ranker is to 
-    minimize the number of inversions in ranker. 
+    Given a pair of documents the algorithm try to come up with the optimal ordering
+    For that pair and compare it with the ground truth. The goal for the ranker is to
+    minimize the number of inversions in ranker.
 
     Input space: pairs of documents (d1, d2)
     Output space: preferences (yes/no) for a given doc.pair
@@ -50,10 +50,10 @@ class PairwiseLoss(nn.Module):
 class ListWiseLoss(nn.Module):
     """
     Listwise approach directly looks at the entire list of documents and comes up with an
-    optimal ordering for it. 
+    optimal ordering for it.
 
     Input space: document set
-    Output space: permutations - ranking of documents 
+    Output space: permutations - ranking of documents
     """
 
     @staticmethod
@@ -69,7 +69,7 @@ class ListWiseLoss(nn.Module):
 
 
 class BPRLoss(PairwiseLoss):
-    """ Implementation of 
+    """ Implementation of
     `BPRLoss, based on Bayesian Personalized Ranking`_ paper.
 
 
@@ -78,15 +78,15 @@ class BPRLoss(PairwiseLoss):
 
     Args:
         - gamma(float): Small value to avoid division by zero
-    
+
     Example:
     .. code-block:: python
         import torch
         from torch.contrib import recsys
-        
+
         pos_score = torch.randn(3, requires_grad=True)
         neg_score = torch.randn(3, requires_grad=True)
-        
+
         output = recsys.BPRLoss()(pos_score, neg_score)
         output.backward()
     """
@@ -228,7 +228,8 @@ class WARP(Function):
 
             while (sample_score_margin < 0) and (num_trials < max_num_trials):  # type: ignore
 
-                # randomly sample a negative label, example from here: https://github.com/pytorch/pytorch/issues/16897
+                # randomly sample a negative label, example from here:
+                # https://github.com/pytorch/pytorch/issues/16897
                 neg_idx = neg_labels_idx[torch.randint(0, neg_labels_idx.size(0), (1,))]
                 msk[neg_idx] = False
                 neg_labels_idx = all_labels_idx[msk]
@@ -272,15 +273,16 @@ class WARP(Function):
 
 
 class WARPLoss(ListWiseLoss):
-    """ Implementation of 
+    """ Implementation of
     Weighted Approximate-Rank Pairwise (WARP) loss function for implicit feedback,
     based on paper `WSABIE: Scaling Up To Large Vocabulary Image Annotation`_
-    
+
     .. _WSABIE: Scaling Up To Large Vocabulary Image Annotation:
         https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/37180.pdf
-    
-    WARP loss randomly sample output labels of a model, until it finds a pair which it knows are wrongly labelled 
-     and will then only apply an update to these two incorrectly labelled examples.
+
+    WARP loss randomly sample output labels of a model, until it finds a pair
+    which it knows are wrongly labelled and will then only apply an update to
+    these two incorrectly labelled examples.
     """
 
     def __init__(self, max_num_trials: Optional[int] = None):

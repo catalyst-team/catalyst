@@ -34,11 +34,11 @@ def test_bpr_loss():
     rand = torch.rand(1000, dtype=torch.float)
     assert float(loss.forward(rand, rand)) == pytest.approx(0.6931, 0.001)  # log of 0.5
 
-    pos, neg = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
+    pos, neg = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0])
     assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)  # log of 1
 
-    neg, pos = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
-    log_gamma = float(torch.log(torch.Tensor([loss.gamma,])))
+    neg, pos = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0])
+    log_gamma = float(torch.log(torch.Tensor([loss.gamma])))
     assert float(loss.forward(pos, neg)) == pytest.approx(-log_gamma, 0.001)  # log of 0 with gamma
 
 
@@ -54,10 +54,10 @@ def test_logistic_loss():
     rand = torch.rand(1000)
     assert float(loss.forward(rand, rand)) == pytest.approx(1, 0.001)  # neg relu of 1
 
-    pos, neg = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
+    pos, neg = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0])
     assert float(loss.forward(pos, neg)) == pytest.approx(0.5, 0.001)  # relu of large negative
 
-    neg, pos = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
+    neg, pos = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0])
     assert float(loss.forward(pos, neg)) == pytest.approx(1.5, 0.001)  # nerelu of large positive
 
 
@@ -69,13 +69,13 @@ def test_hinge_loss():
     rand = torch.rand(1000)
     assert float(loss.forward(rand, rand)) == pytest.approx(1, 0.001)  # relu of 0
 
-    pos, neg = torch.Tensor([1, 1, 1, 1,]), torch.Tensor([0, 0, 0, 0,])
+    pos, neg = torch.Tensor([1, 1, 1, 1]), torch.Tensor([0, 0, 0, 0])
     assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)  # relu of 1
 
-    pos, neg = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
+    pos, neg = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0])
     assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)  # relu of large negative
 
-    neg, pos = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
+    neg, pos = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0])
     assert float(loss.forward(pos, neg)) == pytest.approx(1001, 0.001)  # nerelu of large positive
 
 
