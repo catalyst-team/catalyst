@@ -77,3 +77,24 @@ def test_hinge_loss():
 
     neg, pos = torch.Tensor([1000, 1000, 1000, 1000,]), torch.Tensor([0, 0, 0, 0,])
     assert float(loss.forward(pos, neg)) == pytest.approx(1001, 0.001)  # nerelu of large positive
+
+
+def test_adaptive_hinge_loss():
+    from catalyst.contrib.nn.criterion.recsys import AdaptiveHingeLoss
+
+    loss = AdaptiveHingeLoss()
+
+    rand = torch.rand(1000)
+    ones = torch.ones(1000)
+    assert float(loss.forward(rand, rand.unsqueeze(0))) == pytest.approx(1, 0.001)  # relu of 0
+    assert float(loss.forward(rand, torch.stack((rand, rand)))) == pytest.approx(1, 0.001)
+    assert float(loss.forward(ones, torch.stack((rand, ones)))) == pytest.approx(1, 0.001)
+
+    pos, neg = torch.Tensor([1, 1, 1, 1]), torch.Tensor([0, 0, 0, 0]).unsqueeze(0)
+    assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)  # relu of 1
+
+    pos, neg = torch.Tensor([1000, 1000, 1000, 1000]), torch.Tensor([0, 0, 0, 0]).unsqueeze(0)
+    assert float(loss.forward(pos, neg)) == pytest.approx(0, 0.001)  # relu of large negative
+
+    pos, neg = torch.Tensor([0, 0, 0, 0]), torch.Tensor([1000, 1000, 1000, 1000]).unsqueeze(0)
+    assert float(loss.forward(pos, neg)) == pytest.approx(1001, 0.001)  # nerelu of large positive

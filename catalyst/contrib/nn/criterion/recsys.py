@@ -1,6 +1,7 @@
 # flake8: noqa
 from typing import Optional
 
+import numpy as np
 import torch
 from torch import nn
 from torch.autograd import Function, Variable
@@ -154,6 +155,34 @@ class HingeLoss(PairwiseLoss):
 
         loss = torch.clamp(1.0 - (positive_score - negative_score), min=0.0)
         return loss.mean()
+
+
+class AdaptiveHingeLoss(PairwiseLoss):
+    """
+    Adaptive hinge pairwise loss function. Takes a set of predictions
+    for implicitly negative items, and selects those that are highest,
+    thus sampling those negatives that are closes to violating the
+    ranking implicit in the pattern of user interactions.
+    """
+
+    def __init__(self) -> None:
+        super().__init__()
+
+    def forward(self, positive_score: torch.Tensor, negative_scores: torch.Tensor) -> torch.Tensor:
+        """
+        Args
+            positive_score: torch.Tensor
+                Tensor containing predictions for known positive items.
+            negative_scores: torch.Tensor
+                Iterable of tensors containing predictions for sampled negative items.
+                More tensors increase the likelihood of finding ranking-violating
+                pairs, but risk overfitting.
+        """
+        self._assert_equal_size(positive_score, negative_scores[0])
+
+        highest_negative_score, _ = torch.max(negative_scores, 0)
+
+        return HingeLoss().forward(positive_score, highest_negative_score.squeeze())
 
 
 class WARP(Function):
