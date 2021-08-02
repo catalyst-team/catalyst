@@ -1,7 +1,7 @@
 from functools import partial
 from itertools import islice
 
-from callbacks import SklearnClassifierCallback
+from catalyst.callbacks import SklearnClassifierCallback
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import top_k_accuracy_score
 import torch
@@ -97,8 +97,8 @@ if __name__ == "__main__":
     # hyperparams
 
     feature_dim, temperature, k = 128, 0.5, 200
-    offdig_lambda = 1/feature_dim
-    batch_size, epochs, num_workers = 32, 100, 2
+    offdig_lambda = 1 / feature_dim
+    batch_size, epochs, num_workers = 32, 2, 2
     save_path = ""
 
     # data
@@ -147,6 +147,6 @@ if __name__ == "__main__":
         num_epochs=epochs,
         valid_loader="train",
         valid_metric="loss",
-        logdir="./logdir",
+        logdir="./logdir_test",
         minimize_valid_metric=True,
     )
