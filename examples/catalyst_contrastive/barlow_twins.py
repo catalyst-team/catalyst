@@ -120,7 +120,7 @@ if __name__ == "__main__":
             dl.CriterionCallback(input_key="out_1", target_key="out_2", metric_key="loss"),
             loaders="train",
         ),
-        SklearnClassifierCallback(
+        dl.SklearnClassifierCallback(
             feature_key="embeddings",
             target_key="targets",
             train_loader="train",
