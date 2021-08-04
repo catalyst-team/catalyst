@@ -41,7 +41,8 @@ class SSDCriterion(nn.Module):
             loc_targets: (torch.Tensor) encoded target locations.
                 Expected shapes - [B, M, 4] where B - batch, M - anchors.
             cls_preds: (torch.Tensor) predicted class confidences.
-                Expected shapes - [B, M, CLASS] where B - batch, M - anchors, CLASS - number of classes.
+                Expected shapes - [B, M, CLASS]
+                where B - batch, M - anchors, CLASS - number of classes.
             cls_targets: (torch.LongTensor) encoded target labels.
                 Expected shapes - [B, M] where B - batch, M - anchors.
 

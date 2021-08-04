@@ -151,9 +151,12 @@ class SingleShotDetector(nn.Module):
         """
         Args:
             x (torch.Tensor): batch of data, expected shapes [B, 3, H, W]
+
         Returns:
-            bbox locations (torch.Tensor) with shapes [B, A, 4], where B - batch size, A - num anchors
-            class confidence logits (torch.Tensor) with shapes [B, A, N_CLASSES], where B - batch size, A - num anchors
+            bbox locations (torch.Tensor) with shapes [B, A, 4],
+                where B - batch size, A - num anchors
+            class confidence logits (torch.Tensor) with shapes [B, A, N_CLASSES],
+                where B - batch size, A - num anchors
         """
         x = self.feature_extractor(x)
 
