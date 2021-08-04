@@ -1,9 +1,7 @@
 import itertools
 
-import matplotlib
 import numpy as np
 
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
 # def tensor_to_ndimage(
