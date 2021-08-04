@@ -97,7 +97,11 @@ def pixels_to_absolute(box, width, height):
     return [x / width, y / height, (x + w) / width, (y + h) / height]
 
 
-class DetectionDataset(Dataset):
+def clip(values, min_value=0.0, max_value=1.0):
+    return [min(max(num, min_value), max_value) for num in values]
+
+
+class SSDDataset(Dataset):
     def __init__(
         self,
         coco_json_path,
@@ -170,9 +174,7 @@ class DetectionDataset(Dataset):
             xyxy = pixels_to_absolute(
                 annotation["bbox"], img_record["width"], img_record["height"]
             )
-            assert all(
-                0 <= num <= 1 for num in xyxy
-            ), f"All numbers should be in range [0, 1], but got {xyxy}!"
+            xyxy = clip(xyxy, 0.0, 1.0)
             bbox_class = str(self.category_id2class[annotation["category_id"]])
             boxes.append(xyxy + [str(bbox_class)])
 
@@ -194,3 +196,146 @@ class DetectionDataset(Dataset):
             labels[i] = int(label)
 
         return {"image": image, "bboxes": bboxes, "labels": labels}
+
+
+def draw_msra_gaussian(heatmap, channel, center, sigma=2):
+    """Draw a gaussian on heatmap channel (inplace function).
+
+    Args:
+        heatmap (np.ndarray): heatmap matrix, expected shapes [C, W, H].
+        channel (int): channel to use for drawing a gaussian.
+        center (Tuple[int, int]): gaussian center coordinates.
+        sigma (float): gaussian size. Default is ``2``.
+    """
+    tmp_size = sigma * 6
+    mu_x = int(center[0] + 0.5)
+    mu_y = int(center[1] + 0.5)
+    _, w, h = heatmap.shape
+    ul = [int(mu_x - tmp_size), int(mu_y - tmp_size)]
+    br = [int(mu_x + tmp_size + 1), int(mu_y + tmp_size + 1)]
+    if ul[0] >= h or ul[1] >= w or br[0] < 0 or br[1] < 0:
+        return heatmap
+    size = 2 * tmp_size + 1
+    x = np.arange(0, size, 1, np.float32)
+    y = x[:, np.newaxis]
+    x0 = y0 = size // 2
+    g = np.exp(-((x - x0) ** 2 + (y - y0) ** 2) / (2 * sigma ** 2))
+    g_x = (max(0, -ul[0]), min(br[0], h) - ul[0])
+    g_y = (max(0, -ul[1]), min(br[1], w) - ul[1])
+    img_x = (max(0, ul[0]), min(br[0], h))
+    img_y = (max(0, ul[1]), min(br[1], w))
+    # fmt: off
+    heatmap[channel, img_y[0]:img_y[1], img_x[0]:img_x[1]] = np.maximum(
+        heatmap[channel, img_y[0]:img_y[1], img_x[0]:img_x[1]],
+        g[g_y[0]:g_y[1], g_x[0]:g_x[1]],
+    )
+    # fmt: on
+
+
+class CenterNetDataset(Dataset):
+    def __init__(self, coco_json_path, images_dir=None, transforms=None, down_ratio=4):
+        self.file = coco_json_path
+        self.img_dir = images_dir
+        self.transforms = transforms
+        self.down_ratio = down_ratio
+
+        self.images, self.categories = load_coco_json(coco_json_path)
+        self.images_list = sorted(self.images.keys())
+
+        self.class_to_cid = {
+            cls_idx: cat_id for cls_idx, cat_id in enumerate(sorted(self.categories.keys()))
+        }
+        self.cid_to_class = {v: k for k, v in self.class_to_cid.items()}
+        self.num_classes = len(self.class_to_cid)
+        self.class_labels = [
+            self.categories[self.class_to_cid[cls_idx]]
+            for cls_idx in range(len(self.class_to_cid))
+        ]
+
+    def __len__(self):
+        return len(self.images_list)
+
+    def __getitem__(self, index):
+        img_id = self.images_list[index]
+        img_record = self.images[img_id]
+
+        path = img_record["file_name"]
+        if self.img_dir is not None:
+            path = os.path.join(self.img_dir, path)
+        image = read_image(path)
+        original_size = [image.shape[0], image.shape[1]]  # height, width
+
+        boxes = []  # each element is a tuple of (x1, y1, x2, y2, "class")
+        for annotation in img_record["annotations"]:
+            pixel_xywh = annotation["bbox"]
+            # skip bounding boxes with 0 height or 0 width
+            if pixel_xywh[2] == 0 or pixel_xywh[3] == 0:
+                continue
+            xyxy = pixels_to_absolute(
+                pixel_xywh, width=img_record["width"], height=img_record["height"]
+            )
+            xyxy = clip(xyxy, 0.0, 1.0)
+            bbox_class = str(self.cid_to_class[annotation["category_id"]])
+            boxes.append(xyxy + [str(bbox_class)])
+
+        if self.transforms is not None:
+            transformed = self.transforms(image=image, bboxes=boxes)
+            image, boxes = transformed["image"], transformed["bboxes"]
+        else:
+            image = torch.from_numpy((image / 255.0).astype(np.float32)).permute(2, 0, 1)
+
+        labels = np.array([int(items[4]) for items in boxes])
+        boxes = np.array([items[:4] for items in boxes], dtype=np.float32)
+        # boxes = change_box_order(boxes, "xyxy2xywh")  # (x1, y1, x2, y2) -> (cx, cy, w, h)
+
+        heatmap_height = image.shape[1] // self.down_ratio
+        heatmap_width = image.shape[2] // self.down_ratio
+        # draw class centers
+        heatmap = np.zeros((self.num_classes, heatmap_height, heatmap_width), dtype=np.float32)
+        for (x1, y1, x2, y2), cls_channel in zip(boxes, labels):
+            w, h = abs(x2 - x1), abs(y2 - y1)
+            xc, yc = x1 + w // 2, y1 + h // 2
+            scaled_xc = int(xc * heatmap_width)
+            scaled_yc = int(yc * heatmap_height)
+            draw_msra_gaussian(
+                heatmap, cls_channel, (scaled_xc, scaled_yc), sigma=np.clip(w * h, 2, 4)
+            )
+        # draw regression squares
+        wh_regr = np.zeros((2, heatmap_height, heatmap_width), dtype=np.float32)
+        regrs = boxes[:, 2:] - boxes[:, :2]  # width, height
+        for r, (x1, y1, x2, y2) in zip(regrs, boxes):
+            w, h = abs(x2 - x1), abs(y2 - y1)
+            xc, yc = x1 + w // 2, y1 + h // 2
+            scaled_xc = int(xc * heatmap_width)
+            scaled_yc = int(yc * heatmap_height)
+            for i in range(-2, 2 + 1):
+                for j in range(-2, 2 + 1):
+                    try:
+                        a = max(scaled_xc + i, 0)
+                        b = min(scaled_yc + j, heatmap_height)
+                        wh_regr[:, a, b] = r
+                    except:  # noqa: E722
+                        pass
+        wh_regr[0] = wh_regr[0].T
+        wh_regr[1] = wh_regr[1].T
+
+        return {
+            "image": image,
+            "original_size": original_size,
+            "size": [image.size(1), image.size(2)],
+            "heatmap": torch.from_numpy(heatmap),
+            "wh_regr": torch.from_numpy(wh_regr),
+            "bboxes": boxes,
+            "labels": labels,
+        }
+
+    @staticmethod
+    def collate_fn(batch):
+        keys = list(batch[0].keys())
+        packed_batch = {k: [] for k in keys}
+        for element in batch:
+            for k in keys:
+                packed_batch[k].append(element[k])
+        for k in ("image", "heatmap", "wh_regr"):
+            packed_batch[k] = torch.stack(packed_batch[k], 0)
+        return packed_batch
