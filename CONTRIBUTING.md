@@ -109,7 +109,7 @@ We are using the Github CI for our test cases validation:
 - [unit tests](https://github.com/catalyst-team/catalyst/blob/master/.github/workflows/dl_cpu.yml#L113)
 - [integrations tests](https://github.com/catalyst-team/catalyst/blob/master/.github/workflows/dl_cpu.yml#L114#L117)
 
-We also have a [colab minimal CI/CD](https://colab.research.google.com/drive/1JCGTVvWlrIsLXMPRRRSWiAstSLic4nbA) as an independent step-by-step handmade tests option.
+We also have a [colab minimal CI/CD](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/colab_ci_cd.ipynb) as an independent step-by-step handmade tests option.
 Please use it as a collaborative platform, if you have any issues during the PR.
 
 ### Codestyle
