@@ -32,9 +32,13 @@ def load_coco_json(path):
     if not len(content["categories"]):
         raise RuntimeError(f"There is no categories in '{path}' file!")
 
-    images = (
-        {}
-    )  # image_id -> {file_name, height, width, annotations([{id, iscrowd, category_id, bbox}, ...])}
+    # image_id -> {
+    #   file_name,
+    #   height,
+    #   width,
+    #   annotations([{id, iscrowd, category_id, bbox}, ...])
+    # }
+    images = {}
     for record in content["images"]:
         images[record["id"]] = {
             "file_name": record["file_name"],
