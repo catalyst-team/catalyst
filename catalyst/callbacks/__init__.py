@@ -63,7 +63,7 @@ from catalyst.callbacks.scheduler import (
     LRFinder,
 )
 
-# from catalyst.callbacks.classifier_callback import SklearnClassifierCallback
+from catalyst.callbacks.sklearn_classifier import SklearnClassifierCallback
 
 from catalyst.callbacks.tracing import TracingCallback
 
