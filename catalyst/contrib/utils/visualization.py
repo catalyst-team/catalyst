@@ -1,8 +1,9 @@
 import itertools
 
+import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np
 
-import matplotlib.pyplot as plt  # noqa: E402
+
 
 # def tensor_to_ndimage(
 #     images: torch.Tensor,
