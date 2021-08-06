@@ -2,14 +2,18 @@
 from functools import partial
 import os
 
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import top_k_accuracy_score
+from pytest import mark
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
 from catalyst.data.transforms import Compose, Normalize, ToTensor
+from catalyst.settings import SETTINGS, Settings
+
+if SETTINGS.ml_required:
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import top_k_accuracy_score
 
 
 def train_experiment():
@@ -74,5 +78,6 @@ def train_experiment():
     )
 
 
+@mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] in not required")
 def test_on_cpu():
     train_experiment()
