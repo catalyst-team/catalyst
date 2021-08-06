@@ -1,12 +1,20 @@
 from typing import List, Tuple
 from collections import Counter
 from operator import itemgetter
+import os
 from random import randint, shuffle
 
 import numpy as np
 import pytest
+from torch.utils.data import DataLoader
 
-from catalyst.data.sampler import BalanceBatchSampler, DynamicBalanceClassSampler
+from catalyst.contrib.datasets import MNIST
+from catalyst.data.sampler import (
+    BalanceBatchSampler,
+    BalanceClassSampler,
+    BatchBalanceClassSampler,
+    DynamicBalanceClassSampler,
+)
 
 TLabelsPK = List[Tuple[List[int], int, int]]
 
@@ -33,6 +41,46 @@ def generate_valid_labels(num: int) -> TLabelsPK:
         labels_pk.append((labels, p, k))
 
     return labels_pk
+
+
+def test_balance_class_sampler():
+    """Test for BalanceClassSampler."""
+    bs = 32
+    data = MNIST(os.getcwd(), train=False, download=True)
+    for mode in ["downsampling", "upsampling", 100, 200, 500]:
+        sampler = BalanceClassSampler(data.targets.cpu().numpy().tolist(), mode=mode)
+        loader = DataLoader(data, sampler=sampler, batch_size=bs)
+        y_list = []
+        for _, y in loader:
+            # assert len(x) == len(y) == bs
+            y_list.extend(y.cpu().numpy().tolist())
+        # prior
+        if mode == "downsampling":
+            mode = 892
+        if mode == "upsampling":
+            mode = 1135
+        assert all(
+            n == mode for n in Counter(y_list).values()
+        ), f"Each class shoud contain {mode} instances"
+
+
+def test_batch_balance_class_sampler():
+    """Test for BatchBalanceClassSampler."""
+    data = MNIST(os.getcwd(), train=False, download=True)
+    for num_classes in [2, 3, 5, 10]:
+        for num_samples in [2, 5, 10, 50]:
+            sampler = BatchBalanceClassSampler(
+                data.targets.cpu().numpy().tolist(),
+                num_classes=num_classes,
+                num_samples=num_samples,
+            )
+            loader = DataLoader(data, batch_sampler=sampler)
+            for _, y in loader:
+                stats = Counter(y.cpu().numpy().tolist())
+                assert len(stats) == num_classes, f"Each batch shoud contain {num_classes} classes"
+                assert all(
+                    n == num_samples for n in stats.values()
+                ), f"Each class shoud contain {num_samples} instances"
 
 
 @pytest.fixture()

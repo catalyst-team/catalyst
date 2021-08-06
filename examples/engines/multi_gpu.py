@@ -13,6 +13,7 @@ from catalyst.contrib.nn import ResidualBlock
 from catalyst.data import transforms
 
 E2E = {
+    "de": dl.DeviceEngine,
     "dp": dl.DataParallelEngine,
     "ddp": dl.DistributedDataParallelEngine,
 }
@@ -97,14 +98,11 @@ class CustomRunner(dl.IRunner):
         transform = transforms.Compose(
             [transforms.ToTensor(), transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
         )
+        train_data = CIFAR10(os.getcwd(), train=True, download=True, transform=transform)
+        valid_data = CIFAR10(os.getcwd(), train=False, download=True, transform=transform)
         return {
-            "train": DataLoader(
-                CIFAR10(os.getcwd(), train=True, download=True, transform=transform), batch_size=32
-            ),
-            "valid": DataLoader(
-                CIFAR10(os.getcwd(), train=False, download=True, transform=transform),
-                batch_size=32,
-            ),
+            "train": DataLoader(train_data, batch_size=32),
+            "valid": DataLoader(valid_data, batch_size=32),
         }
 
     def get_model(self, stage: str):
