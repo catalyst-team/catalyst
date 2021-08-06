@@ -78,6 +78,6 @@ def train_experiment():
     )
 
 
-@mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] in not required")
+@mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] is not required")
 def test_on_cpu():
     train_experiment()
