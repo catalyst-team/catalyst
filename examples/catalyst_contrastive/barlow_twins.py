@@ -1,7 +1,7 @@
+# flake8: noqa
+import argparse
 from functools import partial
-from itertools import islice
 
-from catalyst.callbacks import SklearnClassifierCallback
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import top_k_accuracy_score
 import torch
@@ -92,14 +92,36 @@ class CustomRunner(dl.Runner):
             self.batch = {"embeddings": features, "targets": targets}
 
 
+parser = argparse.ArgumentParser(description="Train Barlow Twins on cifar-10")
+parser.add_argument("--feature_dim", default=128, type=int, help="Feature dim for latent vector")
+parser.add_argument("--temperature", default=0.5, type=float, help="Temperature used in softmax")
+parser.add_argument(
+    "--batch_size", default=512, type=int, help="Number of images in each mini-batch"
+)
+parser.add_argument(
+    "--epochs", default=1000, type=int, help="Number of sweeps over the dataset to train"
+)
+parser.add_argument(
+    "--num_workers", default=8, type=float, help="Number of workers to process a dataloader"
+)
+parser.add_argument(
+    "--offdig_lambda",
+    default=0.005,
+    type=float,
+    help="Lambda that controls the on- and off-diagonal terms",
+)
+parser.add_argument(
+    "--logdir", default="./logdir", type=str, help="Logs directory (tensorboard, weights, etc)",
+)
 if __name__ == "__main__":
 
-    # hyperparams
+    # args parse
+    args = parser.parse_args()
 
-    feature_dim, temperature, k = 128, 0.5, 200
-    offdig_lambda = 1 / feature_dim
-    batch_size, epochs, num_workers = 32, 2, 2
-    save_path = ""
+    # hyperparams
+    feature_dim, temperature = args.feature_dim, args.temperature
+    offdig_lambda = args.offdig_lambda
+    batch_size, epochs, num_workers = args.batch_size, args.epochs, args.num_workers
 
     # data
     train_data = torchvision.datasets.CIFAR10(
@@ -147,6 +169,6 @@ if __name__ == "__main__":
         num_epochs=epochs,
         valid_loader="train",
         valid_metric="loss",
-        logdir="./logdir_test",
+        logdir=parser.logdir,
         minimize_valid_metric=True,
     )
