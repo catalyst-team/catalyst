@@ -13,7 +13,7 @@ from catalyst.settings import SETTINGS, Settings
 
 if SETTINGS.ml_required:
     from sklearn.linear_model import LogisticRegression
-    from sklearn.metrics import accuracy_score, log_loss, top_k_accuracy_score
+    from sklearn.metrics import log_loss
 
 
 def train_experiment():
