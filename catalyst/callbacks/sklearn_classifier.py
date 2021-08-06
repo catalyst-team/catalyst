@@ -97,7 +97,7 @@ class SklearnClassifierCallback(ICallback):
                 verbose=False,
                 logdir="./logs",
                 valid_loader="valid",
-                valid_metric="sklear_classifier_metric",
+                valid_metric="sklearn_classifier_metric",
                 minimize_valid_metric=False,
                 num_epochs=100,
             )
@@ -171,7 +171,7 @@ class SklearnClassifierCallback(ICallback):
             # classifier predict
             y_pred = self.classifier.predict_proba(features)
             metric_val = self.metric_fn(y_true, y_pred)
-            runner.loader_metrics.update({"sklear_classifier_metric": metric_val})
+            runner.loader_metrics.update({"sklearn_classifier_metric": metric_val})
             # delete classifier
             self.classifier = None
 
