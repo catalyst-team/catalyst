@@ -107,7 +107,7 @@ class ILogger:
         """Flushes the logger."""
         pass
 
-    def close_log(self) -> None:
+    def close_log(self, scope: str = None) -> None:
         """Closes the logger."""
         pass
 

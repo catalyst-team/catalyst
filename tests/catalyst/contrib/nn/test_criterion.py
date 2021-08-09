@@ -1,9 +1,13 @@
 # flake8: noqa
+
 import pytest
+
 import torch
+import numpy as np
 
 from catalyst.contrib.nn import criterion as module
 from catalyst.contrib.nn.criterion import CircleLoss, TripletMarginLossWithSampler
+from catalyst.contrib.nn.criterion.contrastive import BarlowTwinsLoss
 from catalyst.data import AllTripletsSampler
 
 
@@ -15,6 +19,8 @@ def test_criterion_init():
                 instance = module_class(margin=0.25, gamma=256)
             elif module_class == TripletMarginLossWithSampler:
                 instance = module_class(margin=1.0, sampler_inbatch=AllTripletsSampler())
+            elif module_class == BarlowTwinsLoss:
+                instance = module_class(offdiag_lambda=1, eps=1e-12)
             else:
                 # @TODO: very dirty trick
                 try:
@@ -125,3 +131,84 @@ def test_adaptive_hinge_loss():
 
     pos, neg = torch.Tensor([0, 0, 0, 0]), torch.Tensor([1000, 1000, 1000, 1000]).unsqueeze(0)
     assert float(loss.forward(pos, neg)) == pytest.approx(1001, 0.001)  # nerelu of large positive
+
+
+@pytest.mark.parametrize(
+    "embeddings_left,embeddings_right,offdiag_lambda,eps,true_value",
+    (
+        (
+            torch.tensor([[1.0, 0.0], [0.0, 1.0]]),
+            torch.tensor([[1.0, 0.0], [0.0, 1.0]]),
+            1,
+            1e-12,
+            1,
+        ),
+        (
+            torch.tensor([[1.0, 0.0], [0.0, 1.0]]),
+            torch.tensor([[1.0, 0.0], [0.0, 1.0]]),
+            0,
+            1e-12,
+            0.5,
+        ),
+        (
+            torch.tensor([[1.0, 0.0], [0.0, 1.0]]),
+            torch.tensor([[1.0, 0.0], [0.0, 1.0]]),
+            2,
+            1e-12,
+            1.5,
+        ),
+        (
+            torch.tensor(
+                [
+                    [-0.31887834],
+                    [1.3980029],
+                    [0.30775256],
+                    [0.29397671],
+                    [-1.47968253],
+                    [-0.72796992],
+                    [-0.30937596],
+                    [1.16363952],
+                    [-2.15524895],
+                    [-0.0440765],
+                ]
+            ),
+            torch.tensor(
+                [
+                    [-0.31887834],
+                    [1.3980029],
+                    [0.30775256],
+                    [0.29397671],
+                    [-1.47968253],
+                    [-0.72796992],
+                    [-0.30937596],
+                    [1.16363952],
+                    [-2.15524895],
+                    [-0.0440765],
+                ]
+            ),
+            1,
+            1e-12,
+            0.01,
+        ),
+    ),
+)
+def test_barlow_twins_loss(
+    embeddings_left: torch.Tensor,
+    embeddings_right: torch.Tensor,
+    offdiag_lambda: float,
+    eps: float,
+    true_value: float,
+):
+    """
+    Test Barlow Twins loss
+    Args:
+        embeddings_left: left objects embeddings [batch_size, features_dim]
+        embeddings_right: right objects embeddings [batch_size, features_dim]
+        offdiag_lambda: trade off parametr
+        eps: zero varience handler (var + eps)
+        true_value: expected loss value
+    """
+    value = BarlowTwinsLoss(offdiag_lambda=offdiag_lambda, eps=eps)(
+        embeddings_left, embeddings_right
+    ).item()
+    assert np.isclose(value, true_value)

@@ -96,7 +96,7 @@ It's much harder to merge in a large change with a lot of disjoint features.
 3. Submit the update as a GitHub pull request against the `master` branch.
 4. Make sure that you provide docstrings for all your new methods and classes.
 5. Add new unit tests for your code ([PR examples](#pr-examples)).
-6. Check the [codestyle](#codestyle)
+6. (Optional) Check the [codestyle](#codestyle). We use a pre-commit hook that runs the formatting on commit, so you don't have to. 
 7. Make sure that your code [passes the Github CI](#github-ci)
 
 
@@ -109,24 +109,38 @@ We are using the Github CI for our test cases validation:
 - [unit tests](https://github.com/catalyst-team/catalyst/blob/master/.github/workflows/dl_cpu.yml#L113)
 - [integrations tests](https://github.com/catalyst-team/catalyst/blob/master/.github/workflows/dl_cpu.yml#L114#L117)
 
-We also have a [colab minimal CI/CD](https://colab.research.google.com/drive/1JCGTVvWlrIsLXMPRRRSWiAstSLic4nbA) as an independent step-by-step handmade tests option.
+We also have a [colab minimal CI/CD](https://colab.research.google.com/github/catalyst-team/catalyst/blob/master/examples/notebooks/colab_ci_cd.ipynb) as an independent step-by-step handmade tests option.
 Please use it as a collaborative platform, if you have any issues during the PR.
 
 ### Codestyle
 
 We also have our own [catalyst-codestyle](https://github.com/catalyst-team/codestyle) 
-package to help with code formatting issues.
+package to help with code formatting issues, and a corresponding pre-commit hook installed.
 
-You could check the codestyle for your PR with:
-
+To set the hook, please run (this requires `pre-commit` package, pinned in the `requirements-dev.txt`):
 ```bash
-catalyst-make-codestyle && catalyst-check-codestyle
+pre-commit install
+```
+Once the installation is done, all the files that are changed will be formatted automatically (and commit halted if something goes wrong, e.g there is a syntactic error). You can also run the formatting manually:
+```bash
+pre-commit run
 ```
 
-Once again, make sure that your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle run clean:
+If for some reason you'll want to turn the hook off temporarily, you can do that with:
+```bash
+SKIP=catalyst-make-codestyle git commit -m "foo"
+```
+Or you can uninstall it completely with:
+```bash
+pre-commit uninstall
+```
+
+Once again, make sure that your python packages complied with `requirements/requirements.txt` and `requirements/requirements-dev.txt` to get codestyle and pre-commit run clean:
 ```bash
 pip install -r requirements/requirements.txt -r requirements/requirements-dev.txt
 ```
+
+For more information on pre-commit, please refer to  [pre-commit documentation](https://pre-commit.com/).
 
 ### Documentation
 

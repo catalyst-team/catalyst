@@ -36,6 +36,7 @@ from catalyst.callbacks.misc import (
     IEpochMetricHandlerCallback,
     EarlyStoppingCallback,
 )
+from catalyst.callbacks.mixup import MixupCallback
 from catalyst.callbacks.optimizer import IOptimizerCallback, OptimizerCallback
 
 if SETTINGS.onnx_required:
