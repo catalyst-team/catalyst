@@ -2,9 +2,8 @@ from typing import Sequence
 
 import torch
 
-def r2_score(
-    outputs: torch.Tensor, targets: torch.Tensor,
-) -> Sequence[torch.Tensor]:
+
+def r2_score(outputs: torch.Tensor, targets: torch.Tensor,) -> Sequence[torch.Tensor]:
     """
     Computes regression r2 score.
     Args:
@@ -32,7 +31,9 @@ def r2_score(
         )
         # tensor([0.9486])
     """
-    total_sum_of_squares = torch.sum(torch.square(targets.float() - torch.mean(targets.float()))).view(-1)
+    total_sum_of_squares = torch.sum(
+        torch.square(targets.float() - torch.mean(targets.float()))
+    ).view(-1)
     residual_sum_of_squares = torch.sum(torch.square(targets.float() - outputs.float())).view(-1)
     output = 1 - residual_sum_of_squares / total_sum_of_squares
     return output
