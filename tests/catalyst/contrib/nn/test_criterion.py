@@ -1,9 +1,8 @@
 # flake8: noqa
 
-import pytest
-
-import torch
 import numpy as np
+import pytest
+import torch
 
 from catalyst.contrib.nn import criterion as module
 from catalyst.contrib.nn.criterion import CircleLoss, TripletMarginLossWithSampler
