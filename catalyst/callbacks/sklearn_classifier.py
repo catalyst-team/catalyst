@@ -1,5 +1,7 @@
 from typing import Callable
 
+import torch
+
 from catalyst.core import CallbackOrder, IRunner
 from catalyst.core.callback import Callback
 from catalyst.metrics._metric import AccumulationMetric
@@ -14,8 +16,9 @@ class SklearnClassifierCallback(Callback):
         target_key: keys of tensors that should be used as targets in the classifier calculations
         train_loader: train loader name
         valid_loader: valid loader name
-        sklearn_classifier: fabric to produce objects with .fit and .predict_proba methods
-        sklearn_metric_fn: metric to calculate in callback at the valid loader end
+        sklearn_classifier: fabric to produce objects with .fit and predict method
+        predict_method: predict method name for the classifier
+        predict_key: key to store computed classifier predicts in ``runner.batch`` dictionary
 
     Examples:
         code-block:: python
@@ -83,8 +86,15 @@ class SklearnClassifierCallback(Callback):
                     train_loader="train",
                     valid_loader="valid",
                     sklearn_classifier_fn=LogisticRegression,
-                    sklearn_metric_fn=partial(top_k_accuracy_score, **{"k": 1}),
+                    predict_method="predict_proba",
+                    predict_key="sklearn_predict"
                 ),
+                dl.ControlFlowCallback(
+                    dl.AccuracyCallback(
+                        target_key="targets", input_key="sklearn_predict", topk_args=(1, 3)
+                    ),
+                    loaders="valid"
+                )
             ]
 
             runner = CustomRunner(input_key="features", output_key="embeddings")
@@ -110,19 +120,21 @@ class SklearnClassifierCallback(Callback):
         train_loader: str,
         valid_loader: str,
         sklearn_classifier_fn: Callable,
-        sklearn_metric_fn: Callable,
+        predict_method: str = "predict",
+        predict_key: str = "sklearn_predict",
     ) -> None:
         super().__init__(order=CallbackOrder.Metric)
+        assert hasattr(
+            sklearn_classifier_fn(), predict_method
+        ), "The classifier must have the predict method!"
         self._train_loader = train_loader
         self._valid_loader = valid_loader
         self.classifier_fabric = sklearn_classifier_fn
-        self.metric_fn = sklearn_metric_fn
         self.feature_key = feature_key
         self.target_key = target_key
-        self.storage = {
-            self._train_loader: AccumulationMetric(accumulative_fields=[feature_key, target_key]),
-            self._valid_loader: AccumulationMetric(accumulative_fields=[feature_key, target_key]),
-        }
+        self.predict_method = predict_method
+        self.predict_key = predict_key
+        self.storage = AccumulationMetric(accumulative_fields=[feature_key, target_key])
         self.classifier = None
 
     def on_loader_start(self, runner: "IRunner") -> None:
@@ -133,8 +145,8 @@ class SklearnClassifierCallback(Callback):
             runner: current runner
         """
         super().on_loader_start(runner)
-        if runner.loader_key in [self._train_loader, self._valid_loader]:
-            self.storage[runner.loader_key].reset(
+        if runner.loader_key == self._train_loader:
+            self.storage.reset(
                 num_samples=runner.loader_batch_size * runner.loader_batch_len,
                 num_batches=runner.loader_batch_len,
             )
@@ -147,9 +159,15 @@ class SklearnClassifierCallback(Callback):
         Args:
             runner: runner for the experiment.
         """
-        if runner.loader_key in self.storage:
-            loader_storage = self.storage[runner.loader_key]
-            loader_storage.update(**runner.batch)
+        if runner.loader_key == self._train_loader:
+            self.storage.update(**runner.batch)
+        if runner.loader_key == self._valid_loader:
+            features = runner.batch[self.feature_key].detach().cpu().numpy()
+            # classifier predict
+            classifier_predict = getattr(self.classifier, self.predict_method)
+            runner.batch[self.predict_key] = torch.Tensor(classifier_predict(features)).to(
+                runner.engine.device
+            )
 
     def on_loader_end(self, runner: "IRunner") -> None:
         """
@@ -159,19 +177,12 @@ class SklearnClassifierCallback(Callback):
             runner: current runner
         """
         if runner.loader_key == self._train_loader:
-            data = self.storage[self._train_loader].compute_key_value()
+            data = self.storage.compute_key_value()
             # classifier fit
             features, targets = data[self.feature_key].numpy(), data[self.target_key].numpy()
             self.classifier = self.classifier_fabric()
             self.classifier.fit(features, targets)
-        if runner.loader_key == self._valid_loader:
-            data = self.storage[self._train_loader].compute_key_value()
-            features, y_true = data[self.feature_key], data[self.target_key]
-            # classifier predict
-            y_pred = self.classifier.predict_proba(features)
-            metric_val = self.metric_fn(y_true, y_pred)
-            runner.loader_metrics.update({"sklearn_classifier_metric": metric_val})
-            # delete classifier
+        if runner.loader == self._valid_loader:
             self.classifier = None
 
 

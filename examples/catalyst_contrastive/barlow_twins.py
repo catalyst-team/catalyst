@@ -140,9 +140,15 @@ if __name__ == "__main__":
             train_loader="train",
             valid_loader="valid",
             sklearn_classifier_fn=LogisticRegression,
-            sklearn_metric_fn=partial(top_k_accuracy_score, **{"k": 1}),
+            predict_key="sklearn_predict",
         ),
         dl.OptimizerCallback(metric_key="loss"),
+        dl.ControlFlowCallback(
+            dl.AccuracyCallback(
+                target_key="targets", input_key="sklearn_predict", topk_args=(1, 3)
+            ),
+            loaders="valid",
+        ),
     ]
 
     model = Model(feature_dim, arch="resnet50").cuda()
@@ -163,4 +169,5 @@ if __name__ == "__main__":
         valid_metric="loss",
         logdir=args.logdir,
         minimize_valid_metric=True,
+        overfit=True,
     )
