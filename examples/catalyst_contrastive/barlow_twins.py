@@ -53,7 +53,7 @@ class Model(nn.Module):
     def __init__(self, feature_dim=128, **resnet_kwargs):
         super(Model, self).__init__()
         # encoder
-        self.f = ResnetEncoder(**resnet_kwargs)
+        self.encoder = nn.Sequential(ResnetEncoder(**resnet_kwargs), nn.Flatten())
         # projection head
         self.g = nn.Sequential(
             nn.Linear(2048, 512, bias=False),
@@ -63,8 +63,7 @@ class Model(nn.Module):
         )
 
     def forward(self, x):
-        x = self.f(x)
-        feature = torch.flatten(x, start_dim=1)
+        feature = self.encoder(x)
         out = self.g(feature)
         return F.normalize(feature, dim=-1), F.normalize(out, dim=-1)
 
