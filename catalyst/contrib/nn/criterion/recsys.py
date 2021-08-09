@@ -348,3 +348,12 @@ class WARPLoss(ListwiseLoss):
         """
         self._assert_equal_size(input_, target)
         return WARP.apply(input_, target, self.max_num_trials)
+
+
+__all__ = [
+    "LogisticLoss",
+    "HingeLoss",
+    "AdaptiveHingeLoss",
+    "BPRLoss",
+    "WARPLoss",
+]
