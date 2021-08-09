@@ -4,14 +4,12 @@ from functools import partial
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import top_k_accuracy_score
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils.data import DataLoader
 import torchvision
 from torchvision import transforms
-from torchvision.models.resnet import resnet50
 
 from catalyst import dl
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
