@@ -3,8 +3,6 @@ import itertools
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np
 
-
-
 # def tensor_to_ndimage(
 #     images: torch.Tensor,
 #     denormalize: bool = True,
