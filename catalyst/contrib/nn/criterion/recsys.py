@@ -49,7 +49,7 @@ class PairwiseLoss(nn.Module):
         raise NotImplementedError()
 
 
-class ListWiseLoss(nn.Module):
+class ListwiseLoss(nn.Module):
     """Base class for listwise loss functions.
 
     Listwise approach directly looks at the entire list of documents and comes up with
@@ -207,6 +207,7 @@ class AdaptiveHingeLoss(PairwiseLoss):
 
     def __init__(self) -> None:
         super().__init__()
+        self._hingeloss = HingeLoss()
 
     def forward(self, positive_score: torch.Tensor, negative_scores: torch.Tensor) -> torch.Tensor:
         """Forward propagation method for the adaptive hinge loss.
@@ -224,7 +225,7 @@ class AdaptiveHingeLoss(PairwiseLoss):
 
         highest_negative_score, _ = torch.max(negative_scores, 0)
 
-        return HingeLoss().forward(positive_score, highest_negative_score.squeeze())
+        return self._hingeloss.forward(positive_score, highest_negative_score.squeeze())
 
 
 class WARP(Function):
@@ -312,7 +313,7 @@ class WARP(Function):
         return grad_input, None, None
 
 
-class WARPLoss(ListWiseLoss):
+class WARPLoss(ListwiseLoss):
     """Weighted Approximate-Rank Pairwise (WARP) loss function.
 
     It has been proposed in `WSABIE\: Scaling Up To Large Vocabulary Image Annotation`_ paper.
@@ -341,7 +342,7 @@ class WARPLoss(ListWiseLoss):
     """
 
     def __init__(self, max_num_trials: Optional[int] = None):
-        super(WARPLoss, self).__init__()
+        super().__init__()
         self.max_num_trials = max_num_trials
 
     def forward(self, input_: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
