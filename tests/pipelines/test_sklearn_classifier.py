@@ -9,11 +9,10 @@ from torch.utils.data import DataLoader
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
 from catalyst.data.transforms import Compose, Normalize, ToTensor
-from catalyst.settings import SETTINGS, Settings
+from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
     from sklearn.linear_model import LogisticRegression
-    from sklearn.metrics import log_loss
 
 
 def train_experiment():
@@ -58,7 +57,14 @@ def train_experiment():
             train_loader="train",
             valid_loader="valid",
             sklearn_classifier_fn=LogisticRegression,
-            sklearn_metric_fn=log_loss,
+            predict_method="predict_proba",
+            predict_key="sklearn_predict",
+        ),
+        dl.ControlFlowCallback(
+            dl.AccuracyCallback(
+                target_key="targets", input_key="sklearn_predict", topk_args=(1, 3)
+            ),
+            loaders="valid",
         ),
     ]
 
@@ -70,11 +76,11 @@ def train_experiment():
         callbacks=callbacks,
         loaders={"train": train_loader, "valid": valid_loader},
         verbose=False,
+        logdir="./logs",
         valid_loader="valid",
-        valid_metric="sklearn_classifier_metric",
+        valid_metric="accuracy",
         minimize_valid_metric=False,
-        num_epochs=2,
-        overfit=True,
+        num_epochs=100,
     )
 
 
