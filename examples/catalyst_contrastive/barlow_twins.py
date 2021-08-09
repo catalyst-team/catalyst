@@ -14,6 +14,7 @@ from torchvision import transforms
 from torchvision.models.resnet import resnet50
 
 from catalyst import dl
+from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn import BarlowTwinsLoss
 
 
@@ -49,16 +50,10 @@ class CifarPairTransform:
 
 
 class Model(nn.Module):
-    def __init__(self, feature_dim=128):
+    def __init__(self, feature_dim=128, **resnet_kwargs):
         super(Model, self).__init__()
-
-        self.f = []
-        for _, module in resnet50().named_children():
-            if not isinstance(module, nn.Linear) and not isinstance(module, nn.MaxPool2d):
-                self.f.append(module)
-
         # encoder
-        self.f = nn.Sequential(*self.f)
+        self.f = ResnetEncoder(**resnet_kwargs)
         # projection head
         self.g = nn.Sequential(
             nn.Linear(2048, 512, bias=False),
@@ -153,7 +148,7 @@ if __name__ == "__main__":
         dl.OptimizerCallback(metric_key="loss"),
     ]
 
-    model = Model(feature_dim).cuda()
+    model = Model(feature_dim, arch="resnet50").cuda()
     criterion = BarlowTwinsLoss(offdiag_lambda=offdig_lambda)
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
 
@@ -169,6 +164,6 @@ if __name__ == "__main__":
         num_epochs=epochs,
         valid_loader="train",
         valid_metric="loss",
-        logdir=parser.logdir,
+        logdir=args.logdir,
         minimize_valid_metric=True,
     )
