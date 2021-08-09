@@ -1,11 +1,11 @@
 from typing import Callable
 
 from catalyst.core import CallbackOrder, IRunner
-from catalyst.core.callback import ICallback
+from catalyst.core.callback import Callback
 from catalyst.metrics._metric import AccumulationMetric
 
 
-class SklearnClassifierCallback(ICallback):
+class SklearnClassifierCallback(Callback):
     """Callback to train a classifier on the train loader and
     give a metric score on the valid loader.
 
@@ -112,8 +112,7 @@ class SklearnClassifierCallback(ICallback):
         sklearn_classifier_fn: Callable,
         sklearn_metric_fn: Callable,
     ) -> None:
-        super().__init__()
-        self.order = CallbackOrder.Internal
+        super().__init__(order=CallbackOrder.Metric)
         self._train_loader = train_loader
         self._valid_loader = valid_loader
         self.classifier_fabric = sklearn_classifier_fn
