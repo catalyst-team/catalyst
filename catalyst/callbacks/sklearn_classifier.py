@@ -107,7 +107,7 @@ class SklearnClassifierCallback(Callback):
                 verbose=False,
                 logdir="./logs",
                 valid_loader="valid",
-                valid_metric="sklearn_classifier_metric",
+                valid_metric="accuracy",
                 minimize_valid_metric=False,
                 num_epochs=100,
             )
