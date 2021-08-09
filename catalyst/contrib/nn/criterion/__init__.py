@@ -38,9 +38,9 @@ from catalyst.contrib.nn.criterion.triplet import (
 )
 from catalyst.contrib.nn.criterion.wing import WingLoss
 from catalyst.contrib.nn.criterion.recsys import (
-    LogisticLoss,
-    HingeLoss,
     AdaptiveHingeLoss,
     BPRLoss,
+    HingeLoss,
+    LogisticLoss,
     WARPLoss,
 )

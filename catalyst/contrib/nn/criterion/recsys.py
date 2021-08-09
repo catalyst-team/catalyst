@@ -71,10 +71,12 @@ class BPRLoss(PairwiseLoss):
         https://arxiv.org/pdf/1205.2618.pdf
 
     Args:
-        gamma (float): Small value to avoid division by zero.
+        gamma (float): Small value to avoid division by zero. Default: ``1e-10``.
 
     Example:
+
     .. code-block:: python
+
         import torch
         from catalyst.contrib.nn.criterion import recsys
 
@@ -109,7 +111,9 @@ class LogisticLoss(PairwiseLoss):
     """Logistic loss function.
 
     Example:
+
     .. code-block:: python
+
         import torch
         from catalyst.contrib.nn.criterion import recsys
 
@@ -147,7 +151,9 @@ class HingeLoss(PairwiseLoss):
     """Hinge loss function.
 
     Example:
+
     .. code-block:: python
+
         import torch
         from catalyst.contrib.nn.criterion import recsys
 
@@ -185,7 +191,9 @@ class AdaptiveHingeLoss(PairwiseLoss):
     the ranking implicit in the pattern of user interactions.
 
     Example:
+
     .. code-block:: python
+
         import torch
         from catalyst.contrib.nn.criterion import recsys
 
@@ -316,12 +324,17 @@ class WARPLoss(ListwiseLoss):
     which it knows are wrongly labelled and will then only apply an update to
     these two incorrectly labelled examples.
 
+    Adapted from:
+    https://github.com/gabrieltseng/datascience-projects/blob/master/misc/warp.py
+
     Args:
         max_num_trials: Number of attempts allowed to find a violating negative example.
             In practice it means that we optimize for ranks 1 to max_num_trials-1.
 
     Example:
+
     .. code-block:: python
+
         import torch
         from catalyst.contrib.nn.criterion import recsys
 
@@ -351,9 +364,9 @@ class WARPLoss(ListwiseLoss):
 
 
 __all__ = [
-    "LogisticLoss",
-    "HingeLoss",
     "AdaptiveHingeLoss",
     "BPRLoss",
+    "HingeLoss",
+    "LogisticLoss",
     "WARPLoss",
 ]
