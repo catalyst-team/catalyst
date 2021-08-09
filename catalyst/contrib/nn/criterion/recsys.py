@@ -18,9 +18,6 @@ class Pointwise(nn.Module):
     Output space: scores or relevant classes
     """
 
-    def __init__(self) -> None:
-        super().__init__()
-
     def forward(self, score: torch.Tensor):
         raise NotImplementedError()
 
@@ -42,9 +39,6 @@ class PairwiseLoss(nn.Module):
         if positive_score.size() != negative_score.size():
             raise ValueError(f"Shape mismatch: {positive_score.size()}, {negative_score.size()}")
 
-    def __init__(self) -> None:
-        super().__init__()
-
     def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor):
         raise NotImplementedError()
 
@@ -63,9 +57,6 @@ class ListwiseLoss(nn.Module):
     def _assert_equal_size(input_: torch.Tensor, target: torch.Tensor) -> None:
         if input_.size() != target.size():
             raise ValueError(f"Shape mismatch: {input_.size()}, {target.size()}")
-
-    def __init__(self) -> None:
-        super().__init__()
 
     def forward(self, input_: torch.Tensor, target: torch.Tensor):
         raise NotImplementedError()
