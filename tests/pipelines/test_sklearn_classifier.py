@@ -80,7 +80,7 @@ def train_experiment():
         valid_loader="valid",
         valid_metric="accuracy",
         minimize_valid_metric=False,
-        num_epochs=100,
+        num_epochs=10,
     )
 
 
