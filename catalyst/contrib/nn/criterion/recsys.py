@@ -8,7 +8,8 @@ from torch.autograd import Function, Variable
 
 
 class Pointwise(nn.Module):
-    """
+    """Base class for pointwise loss functions.
+
     Pointwise approaches look at a single document at a time in the loss function.
     For a single documents predict it relevance to the query in time.
     The score is independent for the order of the documents that are in the query's results.
@@ -25,14 +26,15 @@ class Pointwise(nn.Module):
 
 
 class PairwiseLoss(nn.Module):
-    """
+    """Base class for pairwise loss functions.
+
     Pairwise approached looks at a pair of documents at a time in the loss function.
     Given a pair of documents the algorithm try to come up with the optimal ordering
     For that pair and compare it with the ground truth. The goal for the ranker is to
     minimize the number of inversions in ranker.
 
     Input space: pairs of documents (d1, d2)
-    Output space: preferences (yes/no) for a given doc.pair
+    Output space: preferences (yes/no) for a given doc. pair
     """
 
     @staticmethod
@@ -48,9 +50,10 @@ class PairwiseLoss(nn.Module):
 
 
 class ListWiseLoss(nn.Module):
-    """
-    Listwise approach directly looks at the entire list of documents and comes up with an
-    optimal ordering for it.
+    """Base class for listwise loss functions.
+
+    Listwise approach directly looks at the entire list of documents and comes up with
+    an optimal ordering for it.
 
     Input space: document set
     Output space: permutations - ranking of documents
@@ -69,20 +72,20 @@ class ListWiseLoss(nn.Module):
 
 
 class BPRLoss(PairwiseLoss):
-    """ Implementation of
-    `BPRLoss, based on Bayesian Personalized Ranking`_ paper.
+    """Bayesian Personalised Ranking loss function.
 
+    It has been proposed in `BPRLoss\: Bayesian Personalized Ranking from Implicit Feedback`_.
 
-    .. _BPRLoss: Bayesian Personalized Ranking from Implicit Feedback:
+    .. _BPRLoss\: Bayesian Personalized Ranking from Implicit Feedback:
         https://arxiv.org/pdf/1205.2618.pdf
 
     Args:
-        - gamma(float): Small value to avoid division by zero
+        gamma (float): Small value to avoid division by zero.
 
     Example:
     .. code-block:: python
         import torch
-        from torch.contrib import recsys
+        from catalyst.contrib.nn.criterion import recsys
 
         pos_score = torch.randn(3, requires_grad=True)
         neg_score = torch.randn(3, requires_grad=True)
@@ -96,12 +99,14 @@ class BPRLoss(PairwiseLoss):
         self.gamma = gamma
 
     def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
-        """
-        Args
-            positive_predictions: torch.Tensor
-                Tensor containing predictions for known positive items.
-            negative_predictions: torch.Tensor
-                Tensor containing predictions for sampled negative items.
+        """Forward propagation method for the BPR loss.
+
+        Args:
+            positive_score: Tensor containing predictions for known positive items.
+            negative_score: Tensor containing predictions for sampled negative items.
+
+        Returns:
+            computed loss
         """
         self._assert_equal_size(positive_score, negative_score)
 
@@ -110,20 +115,32 @@ class BPRLoss(PairwiseLoss):
 
 
 class LogisticLoss(PairwiseLoss):
-    """
-    Logistic loss
+    """Logistic loss function.
+
+    Example:
+    .. code-block:: python
+        import torch
+        from catalyst.contrib.nn.criterion import recsys
+
+        pos_score = torch.randn(3, requires_grad=True)
+        neg_score = torch.randn(3, requires_grad=True)
+
+        output = recsys.LogisticLoss()(pos_score, neg_score)
+        output.backward()
     """
 
     def __init__(self,) -> None:
         super().__init__()
 
     def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
-        """
-        Args
-            positive_predictions: torch.Tensor
-                Tensor containing predictions for known positive items.
-            negative_predictions: torch.Tensor
-                Tensor containing predictions for sampled negative items.
+        """Forward propagation method for the logistic loss.
+
+        Args:
+            positive_score: Tensor containing predictions for known positive items.
+            negative_score: Tensor containing predictions for sampled negative items.
+
+        Returns:
+            computed loss
         """
         self._assert_equal_size(positive_score, negative_score)
 
@@ -136,20 +153,32 @@ class LogisticLoss(PairwiseLoss):
 
 
 class HingeLoss(PairwiseLoss):
-    """
-    Hinge loss
+    """Hinge loss function.
+
+    Example:
+    .. code-block:: python
+        import torch
+        from catalyst.contrib.nn.criterion import recsys
+
+        pos_score = torch.randn(3, requires_grad=True)
+        neg_score = torch.randn(3, requires_grad=True)
+
+        output = recsys.HingeLoss()(pos_score, neg_score)
+        output.backward()
     """
 
     def __init__(self,) -> None:
         super().__init__()
 
     def forward(self, positive_score: torch.Tensor, negative_score: torch.Tensor) -> torch.Tensor:
-        """
-        Args
-            positive_predictions: torch.Tensor
-                Tensor containing predictions for known positive items.
-            negative_predictions: torch.Tensor
-                Tensor containing predictions for sampled negative items.
+        """Forward propagation method for the hinge loss.
+
+        Args:
+            positive_score: Tensor containing predictions for known positive items.
+            negative_score: Tensor containing predictions for sampled negative items.
+
+        Returns:
+            computed loss
         """
         self._assert_equal_size(positive_score, negative_score)
 
@@ -158,25 +187,38 @@ class HingeLoss(PairwiseLoss):
 
 
 class AdaptiveHingeLoss(PairwiseLoss):
-    """
-    Adaptive hinge pairwise loss function. Takes a set of predictions
-    for implicitly negative items, and selects those that are highest,
-    thus sampling those negatives that are closes to violating the
-    ranking implicit in the pattern of user interactions.
+    """Adaptive hinge loss function.
+
+    Takes a set of predictions for implicitly negative items, and selects those
+    that are highest, thus sampling those negatives that are closes to violating
+    the ranking implicit in the pattern of user interactions.
+
+    Example:
+    .. code-block:: python
+        import torch
+        from catalyst.contrib.nn.criterion import recsys
+
+        pos_score = torch.randn(3, requires_grad=True)
+        neg_scores = torch.randn(5, 3, requires_grad=True)
+
+        output = recsys.AdaptiveHingeLoss()(pos_score, neg_scores)
+        output.backward()
     """
 
     def __init__(self) -> None:
         super().__init__()
 
     def forward(self, positive_score: torch.Tensor, negative_scores: torch.Tensor) -> torch.Tensor:
-        """
-        Args
-            positive_score: torch.Tensor
-                Tensor containing predictions for known positive items.
-            negative_scores: torch.Tensor
-                Iterable of tensors containing predictions for sampled negative items.
-                More tensors increase the likelihood of finding ranking-violating
-                pairs, but risk overfitting.
+        """Forward propagation method for the adaptive hinge loss.
+
+        Args:
+            positive_score: Tensor containing predictions for known positive items.
+            negative_scores: Iterable of tensors containing predictions for sampled negative items.
+                More tensors increase the likelihood of finding ranking-violating pairs,
+                but risk overfitting.
+
+        Returns:
+            computed loss
         """
         self._assert_equal_size(positive_score, negative_scores[0])
 
@@ -186,9 +228,7 @@ class AdaptiveHingeLoss(PairwiseLoss):
 
 
 class WARP(Function):
-    """
-    Autograd function of WARP loss
-    """
+    """Autograd function of WARP loss."""
 
     @staticmethod
     def forward(
@@ -273,16 +313,31 @@ class WARP(Function):
 
 
 class WARPLoss(ListWiseLoss):
-    """ Implementation of
-    Weighted Approximate-Rank Pairwise (WARP) loss function for implicit feedback,
-    based on paper `WSABIE: Scaling Up To Large Vocabulary Image Annotation`_
+    """Weighted Approximate-Rank Pairwise (WARP) loss function.
 
-    .. _WSABIE: Scaling Up To Large Vocabulary Image Annotation:
+    It has been proposed in `WSABIE\: Scaling Up To Large Vocabulary Image Annotation`_ paper.
+
+    .. _WSABIE\: Scaling Up To Large Vocabulary Image Annotation:
         https://static.googleusercontent.com/media/research.google.com/en//pubs/archive/37180.pdf
 
     WARP loss randomly sample output labels of a model, until it finds a pair
     which it knows are wrongly labelled and will then only apply an update to
     these two incorrectly labelled examples.
+
+    Args:
+        max_num_trials: Number of attempts allowed to find a violating negative example.
+            In practice it means that we optimize for ranks 1 to max_num_trials-1.
+
+    Example:
+    .. code-block:: python
+        import torch
+        from catalyst.contrib.nn.criterion import recsys
+
+        input_ = torch.randn(5, 3, requires_grad=True)
+        target = torch.randn(5, 3, requires_grad=True)
+
+        output = recsys.WARPLoss()(input_, target)
+        output.backward()
     """
 
     def __init__(self, max_num_trials: Optional[int] = None):
@@ -290,5 +345,14 @@ class WARPLoss(ListWiseLoss):
         self.max_num_trials = max_num_trials
 
     def forward(self, input_: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        """Forward propagation method for the WARP loss.
+
+        Args:
+            input_: Iterable of tensors containing predictions for all items.
+            target: Iterable of tensors containing true labels for all items.
+
+        Returns:
+            computed loss
+        """
         self._assert_equal_size(input_, target)
         return WARP.apply(input_, target, self.max_num_trials)
