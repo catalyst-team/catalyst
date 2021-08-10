@@ -34,7 +34,7 @@ def train_experiment():
     test_loader = DataLoader(dataset=test_dataset, batch_size=1024)
 
     # 2. model and optimizer
-    model = models.MnistSimpleNet(out_features=16)
+    model = models.MnistSimpleNet(out_features=16, normalize=True)
     optimizer = Adam(model.parameters(), lr=0.001)
 
     # 3. criterion with triplets sampling
@@ -64,6 +64,8 @@ def train_experiment():
             sklearn_classifier_fn=RandomForestClassifier,
             predict_method="predict_proba",
             predict_key="sklearn_predict",
+            n_jobs=10,
+            n_estimators=500,
         ),
         dl.ControlFlowCallback(
             dl.AccuracyCallback(
@@ -85,7 +87,7 @@ def train_experiment():
         valid_loader="infer",
         valid_metric="accuracy",
         minimize_valid_metric=False,
-        num_epochs=3,
+        num_epochs=2,
     )
 
     assert runner.loader_metrics["accuracy"] > 0.7

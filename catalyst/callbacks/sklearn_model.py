@@ -1,6 +1,6 @@
 from typing import Callable
+from functools import partial
 
-import partial
 import torch
 
 from catalyst.core import CallbackOrder, IRunner
