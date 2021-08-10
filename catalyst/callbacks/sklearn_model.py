@@ -9,7 +9,7 @@ from catalyst.metrics._metric import AccumulationMetric
 
 class SklearnModelCallback(Callback):
     """Callback to train a classifier on the train loader and
-    give a metric score on the valid loader.
+    give predictions on the valid loader.
 
     Args:
         feature_key: keys of tensors that should be used as features in the classifier calculations
