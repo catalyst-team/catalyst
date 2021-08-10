@@ -27,11 +27,9 @@ class SklearnModelCallback(Callback):
 
     .. code-block:: python
 
-        from functools import partial
         import os
 
         from sklearn.linear_model import LogisticRegression
-        from sklearn.metrics import top_k_accuracy_score
         from torch.optim import Adam
         from torch.utils.data import DataLoader
 
