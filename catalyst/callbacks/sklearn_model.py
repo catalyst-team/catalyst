@@ -24,7 +24,9 @@ class SklearnModelCallback(Callback):
         catalyst[ml] required for this callback
 
     Examples:
+
     .. code-block:: python
+
         from functools import partial
         import os
 
