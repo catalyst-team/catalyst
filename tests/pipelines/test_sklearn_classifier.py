@@ -27,10 +27,14 @@ def train_experiment():
         dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
     )
 
-    valid_dataset = datasets.MNIST(root=os.getcwd(), transform=transforms, train=True)
+    valid_dataset = datasets.MNIST(
+        root=os.getcwd(), transform=transforms, train=True, download=True
+    )
     valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
 
-    test_dataset = datasets.MNIST(root=os.getcwd(), transform=transforms, train=False)
+    test_dataset = datasets.MNIST(
+        root=os.getcwd(), transform=transforms, train=False, download=True
+    )
     test_loader = DataLoader(dataset=test_dataset, batch_size=1024)
 
     # 2. model and optimizer
@@ -90,7 +94,7 @@ def train_experiment():
         num_epochs=2,
     )
 
-    assert runner.loader_metrics["accuracy"] > 0.7
+    assert runner.loader_metrics["accuracy"].item() > 0.7
 
 
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
