@@ -85,7 +85,7 @@ class SklearnModelCallback(Callback):
                     metric_key="loss"),
                 loaders="train",
             ),
-            dl.SklearnClassifierCallback(
+            dl.SklearnModelCallback(
                 feature_key="embeddings",
                 target_key="targets",
                 train_loader="train",
