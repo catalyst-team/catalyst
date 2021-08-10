@@ -7,7 +7,7 @@ from catalyst.core.callback import Callback
 from catalyst.metrics._metric import AccumulationMetric
 
 
-class SklearnClassifierCallback(Callback):
+class SklearnModelCallback(Callback):
     """Callback to train a classifier on the train loader and
     give a metric score on the valid loader.
 
@@ -186,4 +186,4 @@ class SklearnClassifierCallback(Callback):
             self.classifier = None
 
 
-__all__ = ["SklearnClassifierCallback"]
+__all__ = ["SklearnModelCallback"]

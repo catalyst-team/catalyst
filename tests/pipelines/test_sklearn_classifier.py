@@ -51,7 +51,7 @@ def train_experiment():
             dl.CriterionCallback(input_key="embeddings", target_key="targets", metric_key="loss"),
             loaders="train",
         ),
-        dl.SklearnClassifierCallback(
+        dl.SklearnModelCallback(
             feature_key="embeddings",
             target_key="targets",
             train_loader="train",
