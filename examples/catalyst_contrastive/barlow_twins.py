@@ -150,7 +150,7 @@ if __name__ == "__main__":
         ),
     ]
 
-    model = Model(feature_dim, arch="resnet50").cuda()
+    model = Model(feature_dim, arch="resnet50")
     criterion = BarlowTwinsLoss(offdiag_lambda=offdig_lambda)
     optimizer = optim.Adam(model.parameters(), lr=1e-2, weight_decay=1e-6)
 
