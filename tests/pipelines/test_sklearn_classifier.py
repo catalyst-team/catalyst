@@ -1,5 +1,7 @@
 # flake8: noqa
-from functools import partial
+from catalyst import utils
+
+utils.set_global_seed(42)
 import os
 
 from pytest import mark
@@ -12,11 +14,11 @@ from catalyst.data.transforms import Compose, Normalize, ToTensor
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
-    from sklearn.linear_model import LogisticRegression
+    from sklearn.ensemble import RandomForestClassifier
 
 
 def train_experiment():
-    # 1. train and valid loaders
+    # 1. train, valid and test loaders
     transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
     train_dataset = datasets.MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
@@ -25,8 +27,11 @@ def train_experiment():
         dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
     )
 
-    valid_dataset = datasets.MNIST(root=os.getcwd(), transform=transforms, train=False)
+    valid_dataset = datasets.MNIST(root=os.getcwd(), transform=transforms, train=True)
     valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
+
+    test_dataset = datasets.MNIST(root=os.getcwd(), transform=transforms, train=False)
+    test_loader = DataLoader(dataset=test_dataset, batch_size=1024)
 
     # 2. model and optimizer
     model = models.MnistSimpleNet(out_features=16)
@@ -54,9 +59,9 @@ def train_experiment():
         dl.SklearnModelCallback(
             feature_key="embeddings",
             target_key="targets",
-            train_loader="train",
-            valid_loader="valid",
-            sklearn_classifier_fn=LogisticRegression,
+            train_loader="valid",
+            valid_loader="infer",
+            sklearn_classifier_fn=RandomForestClassifier,
             predict_method="predict_proba",
             predict_key="sklearn_predict",
         ),
@@ -64,7 +69,7 @@ def train_experiment():
             dl.AccuracyCallback(
                 target_key="targets", input_key="sklearn_predict", topk_args=(1, 3)
             ),
-            loaders="valid",
+            loaders="infer",
         ),
     ]
 
@@ -74,14 +79,16 @@ def train_experiment():
         criterion=criterion,
         optimizer=optimizer,
         callbacks=callbacks,
-        loaders={"train": train_loader, "valid": valid_loader},
+        loaders={"train": train_loader, "valid": valid_loader, "infer": test_loader},
         verbose=False,
         logdir="./logs",
-        valid_loader="valid",
+        valid_loader="infer",
         valid_metric="accuracy",
         minimize_valid_metric=False,
-        num_epochs=10,
+        num_epochs=3,
     )
+
+    assert runner.loader_metrics["accuracy"] > 0.7
 
 
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
