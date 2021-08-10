@@ -20,6 +20,9 @@ class SklearnModelCallback(Callback):
         predict_method: predict method name for the classifier
         predict_key: key to store computed classifier predicts in ``runner.batch`` dictionary
 
+    .. note::
+        catalyst[ml] required for this callback
+
     Examples:
     .. code-block:: python
         from functools import partial
