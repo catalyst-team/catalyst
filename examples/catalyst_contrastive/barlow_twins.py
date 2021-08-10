@@ -1,9 +1,7 @@
 # flake8: noqa
 import argparse
-from functools import partial
 
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import top_k_accuracy_score
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
@@ -141,6 +139,7 @@ if __name__ == "__main__":
             valid_loader="valid",
             sklearn_classifier_fn=LogisticRegression,
             predict_key="sklearn_predict",
+            predict_method="predict_proba",
         ),
         dl.OptimizerCallback(metric_key="loss"),
         dl.ControlFlowCallback(
