@@ -73,7 +73,7 @@ def train_experiment(device, engine=None):
                 sklearn_classifier_fn=RandomForestClassifier,
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
-                n_estimators=10,
+                n_estimators=100,
             ),
             filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
         ),
@@ -107,6 +107,3 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
-
-
-train_experiment("cpu")
