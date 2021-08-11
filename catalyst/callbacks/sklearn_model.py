@@ -1,5 +1,6 @@
-from typing import Callable
+from typing import Callable, Union
 from functools import partial
+import importlib
 
 import torch
 
@@ -124,15 +125,22 @@ class SklearnModelCallback(Callback):
         target_key: str,
         train_loader: str,
         valid_loader: str,
-        sklearn_classifier_fn: Callable,
+        sklearn_classifier_fn: Union[Callable, str],
         predict_method: str = "predict",
         predict_key: str = "sklearn_predict",
-        **classifier_kwargs
+        **classifier_kwargs,
     ) -> None:
         super().__init__(order=CallbackOrder.Metric)
+
+        if isinstance(sklearn_classifier_fn, str):
+            base, clf = sklearn_classifier_fn.split(".")
+            base = f"sklearn.{base}"
+            sklearn_classifier_fn = getattr(importlib.import_module(base), clf)
+
         assert hasattr(
             sklearn_classifier_fn(), predict_method
         ), "The classifier must have the predict method!"
+
         self._train_loader = train_loader
         self._valid_loader = valid_loader
         self.classifier_fabric = partial(sklearn_classifier_fn, **classifier_kwargs)
