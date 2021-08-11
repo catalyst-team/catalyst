@@ -15,6 +15,10 @@ from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
+    from sklearn.linear_model import LogisticRegression
+
+TRAIN_EPOCH = 20
+LR = 0.0001
 
 
 def train_experiment(device, engine=None):
@@ -38,8 +42,8 @@ def train_experiment(device, engine=None):
     test_loader = DataLoader(dataset=test_dataset, batch_size=1024)
 
     # 2. model and optimizer
-    model = models.MnistSimpleNet(out_features=16, normalize=True)
-    optimizer = Adam(model.parameters(), lr=0.001)
+    model = models.MnistSimpleNet(out_features=32, normalize=True)
+    optimizer = Adam(model.parameters(), lr=LR)
 
     # 3. criterion with triplets sampling
     sampler_inbatch = data.HardTripletsSampler(norm_required=False)
@@ -69,16 +73,15 @@ def train_experiment(device, engine=None):
                 sklearn_classifier_fn=RandomForestClassifier,
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
-                n_jobs=10,
-                n_estimators=500,
+                n_estimators=10,
             ),
-            filter_fn=lambda s, e, l: e > 4,
+            filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
         ),
         dl.ControlFlowCallback(
             dl.AccuracyCallback(
                 target_key="targets", input_key="sklearn_predict", topk_args=(1, 3)
             ),
-            filter_fn=lambda s, e, l: l == "infer" and e > 4,
+            filter_fn=lambda s, e, l: l == "infer" and e > TRAIN_EPOCH,
         ),
     ]
 
@@ -94,13 +97,16 @@ def train_experiment(device, engine=None):
         logdir="./logs",
         valid_loader="train",
         valid_metric="loss",
-        minimize_valid_metric=False,
-        num_epochs=5,
+        minimize_valid_metric=True,
+        num_epochs=TRAIN_EPOCH + 1,
     )
-
+    print(runner.loader_metrics["accuracy"].item())
     assert runner.loader_metrics["accuracy"].item() > 0.7
 
 
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
+
+
+train_experiment("cpu")
