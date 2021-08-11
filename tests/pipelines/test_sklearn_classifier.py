@@ -60,22 +60,25 @@ def train_experiment(device, engine=None):
             dl.CriterionCallback(input_key="embeddings", target_key="targets", metric_key="loss"),
             loaders="train",
         ),
-        dl.SklearnModelCallback(
-            feature_key="embeddings",
-            target_key="targets",
-            train_loader="valid",
-            valid_loader="infer",
-            sklearn_classifier_fn=RandomForestClassifier,
-            predict_method="predict_proba",
-            predict_key="sklearn_predict",
-            n_jobs=10,
-            n_estimators=500,
+        dl.ControlFlowCallback(
+            dl.SklearnModelCallback(
+                feature_key="embeddings",
+                target_key="targets",
+                train_loader="valid",
+                valid_loader="infer",
+                sklearn_classifier_fn=RandomForestClassifier,
+                predict_method="predict_proba",
+                predict_key="sklearn_predict",
+                n_jobs=10,
+                n_estimators=500,
+            ),
+            filter_fn=lambda s, e, l: e > 4,
         ),
         dl.ControlFlowCallback(
             dl.AccuracyCallback(
                 target_key="targets", input_key="sklearn_predict", topk_args=(1, 3)
             ),
-            loaders="infer",
+            filter_fn=lambda s, e, l: l == "infer" and e > 4,
         ),
     ]
 
@@ -89,10 +92,10 @@ def train_experiment(device, engine=None):
         loaders={"train": train_loader, "valid": valid_loader, "infer": test_loader},
         verbose=False,
         logdir="./logs",
-        valid_loader="infer",
-        valid_metric="accuracy",
+        valid_loader="train",
+        valid_metric="loss",
         minimize_valid_metric=False,
-        num_epochs=2,
+        num_epochs=5,
     )
 
     assert runner.loader_metrics["accuracy"].item() > 0.7
