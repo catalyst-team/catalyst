@@ -17,7 +17,7 @@ if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
 
 
-def train_experiment():
+def train_experiment(device, engine=None):
     # 1. train, valid and test loaders
     transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
@@ -81,6 +81,7 @@ def train_experiment():
 
     runner = CustomRunner(input_key="features", output_key="embeddings")
     runner.train(
+        engine=engine or dl.DeviceEngine(device),
         model=model,
         criterion=criterion,
         optimizer=optimizer,
@@ -99,4 +100,4 @@ def train_experiment():
 
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
-    train_experiment()
+    train_experiment("cpu")
