@@ -6,7 +6,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Quickstart 101 &mdash; Catalyst 21.07 documentation</title>
@@ -185,7 +186,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart 101</a></li>
@@ -193,11 +194,11 @@
 <li class="toctree-l1"><a class="reference internal" href="migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
@@ -205,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
@@ -224,7 +225,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
@@ -237,7 +238,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -314,10 +315,10 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="quickstart-101">
+  <section id="quickstart-101">
 <h1>Quickstart 101<a class="headerlink" href="#quickstart-101" title="Permalink to this headline">¶</a></h1>
 <p><strong>In this quickstart, we’ll show you how to organize your PyTorch code with Catalyst.</strong></p>
-<div class="section" id="catalyst-goals">
+<section id="catalyst-goals">
 <h2>Catalyst goals<a class="headerlink" href="#catalyst-goals" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p>flexibility, keeping the PyTorch simplicity, but removing the boilerplate code.</p></li>
@@ -326,15 +327,15 @@
 <li><p>scalability to any hardware without code changes.</p></li>
 <li><p>extensibility for pipeline customization.</p></li>
 </ul>
-</div>
-<div class="section" id="step-1-install-packages">
+</section>
+<section id="step-1-install-packages">
 <h2>Step 1 - Install packages<a class="headerlink" href="#step-1-install-packages" title="Permalink to this headline">¶</a></h2>
 <p>You can install using <a class="reference external" href="https://pypi.org/project/catalyst/">pip package</a>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -U catalyst
 </pre></div>
 </div>
-</div>
-<div class="section" id="step-2-make-python-imports">
+</section>
+<section id="step-2-make-python-imports">
 <h2>Step 2 - Make python imports<a class="headerlink" href="#step-2-make-python-imports" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
@@ -344,8 +345,8 @@
 <span class="kn">from</span> <span class="nn">catalyst.contrib.datasets</span> <span class="kn">import</span> <span class="n">MNIST</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="step-3-write-pytorch-code">
+</section>
+<section id="step-3-write-pytorch-code">
 <h2>Step 3 - Write PyTorch code<a class="headerlink" href="#step-3-write-pytorch-code" title="Permalink to this headline">¶</a></h2>
 <p>Let’s define <strong>what</strong> we would like to run:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Flatten</span><span class="p">(),</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span> <span class="o">*</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
@@ -362,8 +363,8 @@
 <span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="step-4-accelerate-it-with-catalyst">
+</section>
+<section id="step-4-accelerate-it-with-catalyst">
 <h2>Step 4 - Accelerate it with Catalyst<a class="headerlink" href="#step-4-accelerate-it-with-catalyst" title="Permalink to this headline">¶</a></h2>
 <p>Let’s define <strong>how</strong> we would like to handle the data (in pure PyTorch):</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">Runner</span><span class="p">):</span>
@@ -379,8 +380,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;features&quot;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s2">&quot;logits&quot;</span><span class="p">:</span> <span class="n">logits</span><span class="p">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="step-5-train-the-model">
+</section>
+<section id="step-5-train-the-model">
 <h2>Step 5 - Train the model<a class="headerlink" href="#step-5-train-the-model" title="Permalink to this headline">¶</a></h2>
 <p>Let’s <strong>train</strong> and <strong>evaluate</strong> your model (<a class="reference external" href="https://catalyst-team.github.io/catalyst/api/metrics.html">supported metrics</a>) with a few lines of code.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">()</span>
@@ -408,8 +409,8 @@
 <span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="step-6-make-predictions">
+</section>
+<section id="step-6-make-predictions">
 <h2>Step 6 - Make predictions<a class="headerlink" href="#step-6-make-predictions" title="Permalink to this headline">¶</a></h2>
 <p>You could easily use your custom logic for model inference on batch or loader thanks to <code class="docutils literal notranslate"><span class="pre">runner.predict_batch</span></code> method.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># model batch inference</span>
@@ -420,8 +421,8 @@
     <span class="k">assert</span> <span class="n">prediction</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">10</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="step-7-prepare-for-development-stage">
+</section>
+<section id="step-7-prepare-for-development-stage">
 <h2>Step 7 - Prepare for development stage<a class="headerlink" href="#step-7-prepare-for-development-stage" title="Permalink to this headline">¶</a></h2>
 <p>Finally, you could use a large number of model post-processing utils for production use cases.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">features_batch</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">loaders</span><span class="p">[</span><span class="s2">&quot;valid&quot;</span><span class="p">]))[</span><span class="mi">0</span><span class="p">]</span>
@@ -441,8 +442,8 @@
 <span class="p">)</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
              </article>

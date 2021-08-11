@@ -6,7 +6,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Model debugging &mdash; Catalyst 21.07 documentation</title>
@@ -185,7 +186,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
@@ -193,11 +194,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
@@ -205,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Dataflow</a></li>
@@ -224,7 +225,7 @@
 <li class="toctree-l1"><a class="reference internal" href="finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
@@ -237,7 +238,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -314,9 +315,9 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="model-debugging">
+  <section id="model-debugging">
 <h1>Model debugging<a class="headerlink" href="#model-debugging" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="pipeline-debugging">
+<section id="pipeline-debugging">
 <h2>Pipeline debugging<a class="headerlink" href="#pipeline-debugging" title="Permalink to this headline">¶</a></h2>
 <p>To check pipeline correctness, that everything is working correctly
 and does not throws any error, we suggest to use <code class="docutils literal notranslate"><span class="pre">CheckRunCallback</span></code>.
@@ -324,8 +325,8 @@ You could find more information about it here &lt;../early_stopping.rst&gt;.</p>
 <p>To check model convergence withing pipeline,
 we suggest to use <code class="docutils literal notranslate"><span class="pre">BatchOverfitCallback</span></code>.
 You could find more information about it here &lt;../data.rst&gt;.</p>
-</div>
-<div class="section" id="python-debugging">
+</section>
+<section id="python-debugging">
 <h2>Python debugging<a class="headerlink" href="#python-debugging" title="Permalink to this headline">¶</a></h2>
 <p>For python debugging we suggest to use <code class="docutils literal notranslate"><span class="pre">ipdb</span></code>. You could install it with:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install ipdb
@@ -392,8 +393,8 @@ You could find more information about it here &lt;../data.rst&gt;.</p>
 </pre></div>
 </div>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
-</div>
-</div>
+</section>
+</section>
 
 
              </article>

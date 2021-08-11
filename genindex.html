@@ -184,7 +184,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started/quickstart.html">Quickstart 101</a></li>
@@ -192,11 +192,11 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core/engine.html">Engine</a></li>
@@ -204,7 +204,7 @@
 <li class="toctree-l1"><a class="reference internal" href="core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core/logger.html">Logger</a></li>
 </ul>
-<p class="caption"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/data.html">Dataflow</a></li>
@@ -223,7 +223,7 @@
 <li class="toctree-l1"><a class="reference internal" href="faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a></li>
@@ -236,7 +236,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api/tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utilities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -492,6 +492,8 @@
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.optimizers.adamp.AdamP">AdamP (class in catalyst.contrib.nn.optimizers.adamp)</a>
 </li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.AdaptiveHingeLoss">AdaptiveHingeLoss (class in catalyst.contrib.nn.criterion.recsys)</a>
+</li>
       <li><a href="api/tools.html#catalyst.tools.registry.Registry.add">add() (catalyst.tools.registry.Registry method)</a>
 </li>
       <li><a href="api/tools.html#catalyst.tools.registry.Registry.add_from_module">add_from_module() (catalyst.tools.registry.Registry method)</a>
@@ -575,6 +577,8 @@
       <li><a href="api/metrics.html#catalyst.metrics._classification.BinaryPrecisionRecallF1Metric">BinaryPrecisionRecallF1Metric (class in catalyst.metrics._classification)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.misc.boolean_flag">boolean_flag() (in module catalyst.utils.misc)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.BPRLoss">BPRLoss (class in catalyst.contrib.nn.criterion.recsys)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -882,9 +886,19 @@
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.pandas.folds_to_list">folds_to_list() (in module catalyst.contrib.utils.pandas)</a>
 </li>
-      <li><a href="api/contrib.html#catalyst.contrib.nn.modules.arcface.ArcFace.forward">forward() (catalyst.contrib.nn.modules.arcface.ArcFace method)</a>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.AdaptiveHingeLoss.forward">forward() (catalyst.contrib.nn.criterion.recsys.AdaptiveHingeLoss method)</a>
 
       <ul>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.BPRLoss.forward">(catalyst.contrib.nn.criterion.recsys.BPRLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.HingeLoss.forward">(catalyst.contrib.nn.criterion.recsys.HingeLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.LogisticLoss.forward">(catalyst.contrib.nn.criterion.recsys.LogisticLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.WARPLoss.forward">(catalyst.contrib.nn.criterion.recsys.WARPLoss method)</a>
+</li>
+        <li><a href="api/contrib.html#catalyst.contrib.nn.modules.arcface.ArcFace.forward">(catalyst.contrib.nn.modules.arcface.ArcFace method)</a>
+</li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.arcface.SubCenterArcFace.forward">(catalyst.contrib.nn.modules.arcface.SubCenterArcFace method)</a>
 </li>
         <li><a href="api/contrib.html#catalyst.contrib.nn.modules.arcmargin.ArcMarginProduct.forward">(catalyst.contrib.nn.modules.arcmargin.ArcMarginProduct method)</a>
@@ -1166,6 +1180,8 @@
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.image.has_image_extension">has_image_extension() (in module catalyst.contrib.utils.image)</a>
 </li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.HingeLoss">HingeLoss (class in catalyst.contrib.nn.criterion.recsys)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/metrics.html#catalyst.metrics.functional._hitrate.hitrate">hitrate() (in module catalyst.metrics.functional._hitrate)</a>
@@ -1324,6 +1340,8 @@
         <li><a href="api/runners.html#catalyst.runners.hydra.HydraRunner.logdir">(catalyst.runners.hydra.HydraRunner property)</a>
 </li>
       </ul></li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.LogisticLoss">LogisticLoss (class in catalyst.contrib.nn.criterion.recsys)</a>
+</li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.optimizers.lookahead.Lookahead">Lookahead (class in catalyst.contrib.nn.optimizers.lookahead)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.scheduler.LRFinder">LRFinder (class in catalyst.callbacks.scheduler)</a>
@@ -1873,6 +1891,8 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/loggers.html#catalyst.loggers.wandb.WandbLogger">WandbLogger (class in catalyst.loggers.wandb)</a>
+</li>
+      <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.recsys.WARPLoss">WARPLoss (class in catalyst.contrib.nn.criterion.recsys)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.criterion.wing.WingLoss">WingLoss (class in catalyst.contrib.nn.criterion.wing)</a>
 </li>

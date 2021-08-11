@@ -6,7 +6,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Metrics &mdash; Catalyst 21.07 documentation</title>
@@ -185,7 +186,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
@@ -193,11 +194,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
@@ -205,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
@@ -224,7 +225,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
@@ -237,7 +238,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -314,7 +315,7 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="metrics">
+  <section id="metrics">
 <h1>Metrics<a class="headerlink" href="#metrics" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
@@ -376,9 +377,9 @@
 </li>
 </ul>
 </div>
-<span class="target" id="module-catalyst.metrics"></span><div class="section" id="metric-api">
+<span class="target" id="module-catalyst.metrics"></span><section id="metric-api">
 <h2><a class="toc-backref" href="#id15">Metric API</a><a class="headerlink" href="#metric-api" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="imetric">
+<section id="imetric">
 <h3><a class="toc-backref" href="#id16">IMetric</a><a class="headerlink" href="#imetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._metric.IMetric">
@@ -435,8 +436,8 @@ it’s better to return key-value</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="icallbackbatchmetric">
+</section>
+<section id="icallbackbatchmetric">
 <h3><a class="toc-backref" href="#id17">ICallbackBatchMetric</a><a class="headerlink" href="#icallbackbatchmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._metric.ICallbackBatchMetric">
@@ -483,8 +484,8 @@ it’s better to return key-value</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="icallbackloadermetric">
+</section>
+<section id="icallbackloadermetric">
 <h3><a class="toc-backref" href="#id18">ICallbackLoaderMetric</a><a class="headerlink" href="#icallbackloadermetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._metric.ICallbackLoaderMetric">
@@ -552,8 +553,8 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 
 </dd></dl>
 
-</div>
-<div class="section" id="accumulationmetric">
+</section>
+<section id="accumulationmetric">
 <h3><a class="toc-backref" href="#id19">AccumulationMetric</a><a class="headerlink" href="#accumulationmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._metric.AccumulationMetric">
@@ -619,11 +620,11 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="general-metrics">
+</section>
+</section>
+<section id="general-metrics">
 <h2><a class="toc-backref" href="#id20">General Metrics</a><a class="headerlink" href="#general-metrics" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="additivevaluemetric">
+<section id="additivevaluemetric">
 <h3><a class="toc-backref" href="#id21">AdditiveValueMetric</a><a class="headerlink" href="#additivevaluemetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._additive.AdditiveValueMetric">
@@ -772,8 +773,8 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 
 </dd></dl>
 
-</div>
-<div class="section" id="confusionmatrixmetric">
+</section>
+<section id="confusionmatrixmetric">
 <h3><a class="toc-backref" href="#id22">ConfusionMatrixMetric</a><a class="headerlink" href="#confusionmatrixmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._confusion_matrix.ConfusionMatrixMetric">
@@ -848,8 +849,8 @@ default: True</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="functionalbatchmetric">
+</section>
+<section id="functionalbatchmetric">
 <h3><a class="toc-backref" href="#id23">FunctionalBatchMetric</a><a class="headerlink" href="#functionalbatchmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._functional_metric.FunctionalBatchMetric">
@@ -896,8 +897,8 @@ Used for per-batch logging. default: True</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="functionalloadermetric">
+</section>
+<section id="functionalloadermetric">
 <h3><a class="toc-backref" href="#id24">FunctionalLoaderMetric</a><a class="headerlink" href="#functionalloadermetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._functional_metric.FunctionalLoaderMetric">
@@ -949,11 +950,11 @@ Used for per-batch logging. default: True</p></li>
 </div>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="runner-metrics">
+</section>
+</section>
+<section id="runner-metrics">
 <h2><a class="toc-backref" href="#id25">Runner Metrics</a><a class="headerlink" href="#runner-metrics" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="accuracy-accuracymetric">
+<section id="accuracy-accuracymetric">
 <h3><a class="toc-backref" href="#id26">Accuracy - AccuracyMetric</a><a class="headerlink" href="#accuracy-accuracymetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._accuracy.AccuracyMetric">
@@ -1066,8 +1067,8 @@ It computes mean value of accuracy and it’s approximate std value
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="accuracy-multilabelaccuracymetric">
+</section>
+<section id="accuracy-multilabelaccuracymetric">
 <h3><a class="toc-backref" href="#id27">Accuracy - MultilabelAccuracyMetric</a><a class="headerlink" href="#accuracy-multilabelaccuracymetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._accuracy.MultilabelAccuracyMetric">
@@ -1171,8 +1172,8 @@ It computes mean value of accuracy and it’s approximate std value
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="aucmetric">
+</section>
+<section id="aucmetric">
 <h3><a class="toc-backref" href="#id28">AUCMetric</a><a class="headerlink" href="#aucmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._auc.AUCMetric">
@@ -1291,8 +1292,8 @@ It computes mean value of accuracy and it’s approximate std value
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="classification-binaryprecisionrecallf1metric">
+</section>
+<section id="classification-binaryprecisionrecallf1metric">
 <h3><a class="toc-backref" href="#id29">Classification – BinaryPrecisionRecallF1Metric</a><a class="headerlink" href="#classification-binaryprecisionrecallf1metric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._classification.BinaryPrecisionRecallF1Metric">
@@ -1312,8 +1313,8 @@ It computes mean value of accuracy and it’s approximate std value
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="classification-multiclassprecisionrecallf1supportmetric">
+</section>
+<section id="classification-multiclassprecisionrecallf1supportmetric">
 <h3><a class="toc-backref" href="#id30">Classification – MulticlassPrecisionRecallF1SupportMetric</a><a class="headerlink" href="#classification-multiclassprecisionrecallf1supportmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._classification.MulticlassPrecisionRecallF1SupportMetric">
@@ -1469,8 +1470,8 @@ Counts metrics with macro, micro and weighted average.</p>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="classification-multilabelprecisionrecallf1supportmetric">
+</section>
+<section id="classification-multilabelprecisionrecallf1supportmetric">
 <h3><a class="toc-backref" href="#id31">Classification – MultilabelPrecisionRecallF1SupportMetric</a><a class="headerlink" href="#classification-multilabelprecisionrecallf1supportmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._classification.MultilabelPrecisionRecallF1SupportMetric">
@@ -1641,8 +1642,8 @@ Counts metrics with macro, micro and weighted average.</p>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="cmcmetric">
+</section>
+<section id="cmcmetric">
 <h3><a class="toc-backref" href="#id32">CMCMetric</a><a class="headerlink" href="#cmcmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._cmc_score.CMCMetric">
@@ -1792,8 +1793,8 @@ Counts metrics with macro, micro and weighted average.</p>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="reidcmcmetric">
+</section>
+<section id="reidcmcmetric">
 <h3><a class="toc-backref" href="#id33">ReidCMCMetric</a><a class="headerlink" href="#reidcmcmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._cmc_score.ReidCMCMetric">
@@ -1855,8 +1856,8 @@ Counts metrics with macro, micro and weighted average.</p>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="recsys-hitratemetric">
+</section>
+<section id="recsys-hitratemetric">
 <h3><a class="toc-backref" href="#id34">RecSys – HitrateMetric</a><a class="headerlink" href="#recsys-hitratemetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._hitrate.HitrateMetric">
@@ -1976,8 +1977,8 @@ Counts metrics with macro, micro and weighted average.</p>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="recsys-mapmetric">
+</section>
+<section id="recsys-mapmetric">
 <h3><a class="toc-backref" href="#id35">RecSys – MAPMetric</a><a class="headerlink" href="#recsys-mapmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._map.MAPMetric">
@@ -2109,8 +2110,8 @@ Computes mean value of MAP and it’s approximate std value</p>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="recsys-mrrmetric">
+</section>
+<section id="recsys-mrrmetric">
 <h3><a class="toc-backref" href="#id36">RecSys – MRRMetric</a><a class="headerlink" href="#recsys-mrrmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._mrr.MRRMetric">
@@ -2228,8 +2229,8 @@ Computes mean value of map and it’s approximate std value</p>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="recsys-ndcgmetric">
+</section>
+<section id="recsys-ndcgmetric">
 <h3><a class="toc-backref" href="#id37">RecSys – NDCGMetric</a><a class="headerlink" href="#recsys-ndcgmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._ndcg.NDCGMetric">
@@ -2354,8 +2355,8 @@ Computes mean value of NDCG and it’s approximate std value</p>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="segmentation-regionbasedmetric">
+</section>
+<section id="segmentation-regionbasedmetric">
 <h3><a class="toc-backref" href="#id38">Segmentation – RegionBasedMetric</a><a class="headerlink" href="#segmentation-regionbasedmetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.RegionBasedMetric">
@@ -2389,8 +2390,8 @@ Used for per-batch logging. default: True</p></li>
 </div></blockquote>
 </dd></dl>
 
-</div>
-<div class="section" id="segmentation-dicemetric">
+</section>
+<section id="segmentation-dicemetric">
 <h3><a class="toc-backref" href="#id39">Segmentation – DiceMetric</a><a class="headerlink" href="#segmentation-dicemetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.DiceMetric">
@@ -2501,8 +2502,8 @@ Used for per-batch logging. default: True</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="segmentation-ioumetric">
+</section>
+<section id="segmentation-ioumetric">
 <h3><a class="toc-backref" href="#id40">Segmentation – IOUMetric</a><a class="headerlink" href="#segmentation-ioumetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.IOUMetric">
@@ -2613,8 +2614,8 @@ Used for per-batch logging. default: True</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="segmentation-trevskymetric">
+</section>
+<section id="segmentation-trevskymetric">
 <h3><a class="toc-backref" href="#id41">Segmentation – TrevskyMetric</a><a class="headerlink" href="#segmentation-trevskymetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.metrics._segmentation.TrevskyMetric">
@@ -2729,11 +2730,11 @@ Used for per-batch logging. default: True</p></li>
 </div>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="functional-api">
+</section>
+</section>
+<section id="functional-api">
 <h2><a class="toc-backref" href="#id42">Functional API</a><a class="headerlink" href="#functional-api" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="module-catalyst.metrics.functional._accuracy">
+<section id="module-catalyst.metrics.functional._accuracy">
 <span id="accuracy"></span><h3><a class="toc-backref" href="#id43">Accuracy</a><a class="headerlink" href="#module-catalyst.metrics.functional._accuracy" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._accuracy.accuracy">
@@ -2882,8 +2883,8 @@ associated with classes 2 and 4)</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._auc">
+</section>
+<section id="module-catalyst.metrics.functional._auc">
 <span id="auc"></span><h3><a class="toc-backref" href="#id44">AUC</a><a class="headerlink" href="#module-catalyst.metrics.functional._auc" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._auc.binary_auc">
@@ -3019,8 +3020,8 @@ associated with classes 2 and 4)</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._average_precision">
+</section>
+<section id="module-catalyst.metrics.functional._average_precision">
 <span id="average-precision"></span><h3><a class="toc-backref" href="#id45">Average Precision</a><a class="headerlink" href="#module-catalyst.metrics.functional._average_precision" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._average_precision.binary_average_precision">
@@ -3163,8 +3164,8 @@ size: [batch_size, 1]</p>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._classification">
+</section>
+<section id="module-catalyst.metrics.functional._classification">
 <span id="classification"></span><h3><a class="toc-backref" href="#id46">Classification</a><a class="headerlink" href="#module-catalyst.metrics.functional._classification" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._classification.f1score">
@@ -3329,8 +3330,8 @@ used for precision and recall computation</p></li>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._cmc_score">
+</section>
+<section id="module-catalyst.metrics.functional._cmc_score">
 <span id="cmc-score"></span><h3><a class="toc-backref" href="#id47">CMC Score</a><a class="headerlink" href="#module-catalyst.metrics.functional._cmc_score" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._cmc_score.cmc_score_count">
@@ -3468,8 +3469,8 @@ should be used while scoring i-th query one</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._f1_score">
+</section>
+<section id="module-catalyst.metrics.functional._f1_score">
 <span id="f1-score"></span><h3><a class="toc-backref" href="#id48">F1 score</a><a class="headerlink" href="#module-catalyst.metrics.functional._f1_score" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._f1_score.f1_score">
@@ -3552,8 +3553,8 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._focal">
+</section>
+<section id="module-catalyst.metrics.functional._focal">
 <span id="focal"></span><h3><a class="toc-backref" href="#id49">Focal</a><a class="headerlink" href="#module-catalyst.metrics.functional._focal" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._focal.sigmoid_focal_loss">
@@ -3618,8 +3619,8 @@ Default: “mean”</p></li>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._hitrate">
+</section>
+<section id="module-catalyst.metrics.functional._hitrate">
 <span id="hitrate"></span><h3><a class="toc-backref" href="#id50">Hitrate</a><a class="headerlink" href="#module-catalyst.metrics.functional._hitrate" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._hitrate.hitrate">
@@ -3669,8 +3670,8 @@ should be one of 0 or 1</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._mrr">
+</section>
+<section id="module-catalyst.metrics.functional._mrr">
 <span id="mrr"></span><h3><a class="toc-backref" href="#id51">MRR</a><a class="headerlink" href="#module-catalyst.metrics.functional._mrr" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._mrr.reciprocal_rank">
@@ -3778,8 +3779,8 @@ ground truth, labels</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._ndcg">
+</section>
+<section id="module-catalyst.metrics.functional._ndcg">
 <span id="ndcg"></span><h3><a class="toc-backref" href="#id52">NDCG</a><a class="headerlink" href="#module-catalyst.metrics.functional._ndcg" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._ndcg.dcg">
@@ -3935,8 +3936,8 @@ to emphasize on retrieving the relevant documents.</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._precision">
+</section>
+<section id="module-catalyst.metrics.functional._precision">
 <span id="precision"></span><h3><a class="toc-backref" href="#id53">Precision</a><a class="headerlink" href="#module-catalyst.metrics.functional._precision" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._precision.precision">
@@ -3987,8 +3988,8 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._recall">
+</section>
+<section id="module-catalyst.metrics.functional._recall">
 <span id="recall"></span><h3><a class="toc-backref" href="#id54">Recall</a><a class="headerlink" href="#module-catalyst.metrics.functional._recall" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._recall.recall">
@@ -4039,8 +4040,8 @@ in case of scores/probabilities in <code class="docutils literal notranslate"><s
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._segmentation">
+</section>
+<section id="module-catalyst.metrics.functional._segmentation">
 <span id="segmentation"></span><h3><a class="toc-backref" href="#id55">Segmentation</a><a class="headerlink" href="#module-catalyst.metrics.functional._segmentation" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._segmentation.iou">
@@ -4342,8 +4343,8 @@ classes are associated with the N-th input</p></li>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="module-catalyst.metrics.functional._misc">
+</section>
+<section id="module-catalyst.metrics.functional._misc">
 <span id="misc"></span><h3><a class="toc-backref" href="#id56">Misc</a><a class="headerlink" href="#module-catalyst.metrics.functional._misc" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
 <dt id="catalyst.metrics.functional._misc.check_consistent_length">
@@ -4580,9 +4581,9 @@ with shape [bs; …, 1]</p></li>
 </div>
 </dd></dl>
 
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
              </article>

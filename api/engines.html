@@ -6,7 +6,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Engines &mdash; Catalyst 21.07 documentation</title>
@@ -185,7 +186,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
@@ -193,11 +194,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
@@ -205,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
@@ -224,7 +225,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
@@ -237,7 +238,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -314,7 +315,7 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="engines">
+  <section id="engines">
 <h1>Engines<a class="headerlink" href="#engines" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
@@ -357,9 +358,9 @@
 </ul>
 </div>
 <p>You could check engines overview under <a class="reference external" href="https://github.com/catalyst-team/catalyst/tree/master/examples/engines">examples/engines</a> section.</p>
-<div class="section" id="amp">
+<section id="amp">
 <h2><a class="toc-backref" href="#id1">AMP</a><a class="headerlink" href="#amp" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="ampengine">
+<section id="ampengine">
 <h3><a class="toc-backref" href="#id2">AMPEngine</a><a class="headerlink" href="#ampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.amp.AMPEngine">
@@ -412,8 +413,8 @@ Possible parameters:
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="dataparallelampengine">
+</section>
+<section id="dataparallelampengine">
 <h3><a class="toc-backref" href="#id3">DataParallelAMPEngine</a><a class="headerlink" href="#dataparallelampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.amp.DataParallelAMPEngine">
@@ -462,8 +463,8 @@ Possible parameters:
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="distributeddataparallelampengine">
+</section>
+<section id="distributeddataparallelampengine">
 <h3><a class="toc-backref" href="#id4">DistributedDataParallelAMPEngine</a><a class="headerlink" href="#distributeddataparallelampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.amp.DistributedDataParallelAMPEngine">
@@ -536,11 +537,11 @@ Possible parameters:
 </div>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="apex">
+</section>
+</section>
+<section id="apex">
 <h2><a class="toc-backref" href="#id5">Apex</a><a class="headerlink" href="#apex" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="apexengine">
+<section id="apexengine">
 <h3><a class="toc-backref" href="#id6">APEXEngine</a><a class="headerlink" href="#apexengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.apex.APEXEngine">
@@ -597,8 +598,8 @@ except models and optimizers (they will be forwared automatically).</p>
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="dataparallelapexengine">
+</section>
+<section id="dataparallelapexengine">
 <h3><a class="toc-backref" href="#id7">DataParallelApexEngine</a><a class="headerlink" href="#dataparallelapexengine" title="Permalink to this headline">¶</a></h3>
 <dl class="attribute">
 <dt id="catalyst.engines.apex.DataParallelApexEngine">
@@ -606,8 +607,8 @@ except models and optimizers (they will be forwared automatically).</p>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.apex.DataParallelAPEXEngine</span></code></p>
 </dd></dl>
 
-</div>
-<div class="section" id="distributeddataparallelapexengine">
+</section>
+<section id="distributeddataparallelapexengine">
 <h3><a class="toc-backref" href="#id8">DistributedDataParallelApexEngine</a><a class="headerlink" href="#distributeddataparallelapexengine" title="Permalink to this headline">¶</a></h3>
 <dl class="attribute">
 <dt id="catalyst.engines.apex.DistributedDataParallelApexEngine">
@@ -615,11 +616,11 @@ except models and optimizers (they will be forwared automatically).</p>
 <dd><p>alias of <code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.apex.DistributedDataParallelAPEXEngine</span></code></p>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="deepspeed">
+</section>
+</section>
+<section id="deepspeed">
 <h2><a class="toc-backref" href="#id9">DeepSpeed</a><a class="headerlink" href="#deepspeed" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="distributeddataparalleldeepspeedengine">
+<section id="distributeddataparalleldeepspeedengine">
 <h3><a class="toc-backref" href="#id10">DistributedDataParallelDeepSpeedEngine</a><a class="headerlink" href="#distributeddataparalleldeepspeedengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.deepspeed.DistributedDataParallelDeepSpeedEngine">
@@ -686,11 +687,11 @@ More info here: <a class="reference external" href="https://deepspeed.readthedoc
 </div>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="fairscale">
+</section>
+</section>
+<section id="fairscale">
 <h2><a class="toc-backref" href="#id11">FairScale</a><a class="headerlink" href="#fairscale" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="pipelineparallelfairscaleengine">
+<section id="pipelineparallelfairscaleengine">
 <h3><a class="toc-backref" href="#id12">PipelineParallelFairScaleEngine</a><a class="headerlink" href="#pipelineparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.PipelineParallelFairScaleEngine">
@@ -743,8 +744,8 @@ Docs for <cite>fairscale.nn.Pipe</cite>:
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="shareddataparallelfairscaleengine">
+</section>
+<section id="shareddataparallelfairscaleengine">
 <h3><a class="toc-backref" href="#id13">SharedDataParallelFairScaleEngine</a><a class="headerlink" href="#shareddataparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.SharedDataParallelFairScaleEngine">
@@ -811,8 +812,8 @@ More info here:
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="shareddataparallelfairscaleampengine">
+</section>
+<section id="shareddataparallelfairscaleampengine">
 <h3><a class="toc-backref" href="#id14">SharedDataParallelFairScaleAMPEngine</a><a class="headerlink" href="#shareddataparallelfairscaleampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine">
@@ -885,8 +886,8 @@ Possible parameters:
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="fullyshareddataparallelfairscaleengine">
+</section>
+<section id="fullyshareddataparallelfairscaleengine">
 <h3><a class="toc-backref" href="#id15">FullySharedDataParallelFairScaleEngine</a><a class="headerlink" href="#fullyshareddataparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine">
@@ -953,11 +954,11 @@ More info here:
 </div>
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="torch">
+</section>
+</section>
+<section id="torch">
 <h2><a class="toc-backref" href="#id16">Torch</a><a class="headerlink" href="#torch" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="deviceengine">
+<section id="deviceengine">
 <h3><a class="toc-backref" href="#id17">DeviceEngine</a><a class="headerlink" href="#deviceengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.torch.DeviceEngine">
@@ -1005,8 +1006,8 @@ More info here:
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="dataparallelengine">
+</section>
+<section id="dataparallelengine">
 <h3><a class="toc-backref" href="#id18">DataParallelEngine</a><a class="headerlink" href="#dataparallelengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.torch.DataParallelEngine">
@@ -1048,8 +1049,8 @@ More info here:
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="distributeddataparallelengine">
+</section>
+<section id="distributeddataparallelengine">
 <h3><a class="toc-backref" href="#id19">DistributedDataParallelEngine</a><a class="headerlink" href="#distributeddataparallelengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.torch.DistributedDataParallelEngine">
@@ -1116,9 +1117,9 @@ More info here:
 </div>
 </dd></dl>
 
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
              </article>

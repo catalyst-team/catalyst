@@ -6,7 +6,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Dataflow &mdash; Catalyst 21.07 documentation</title>
@@ -185,7 +186,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
@@ -193,11 +194,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
@@ -205,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Dataflow</a></li>
@@ -224,7 +225,7 @@
 <li class="toctree-l1"><a class="reference internal" href="finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
@@ -237,7 +238,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -314,9 +315,9 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="dataflow">
+  <section id="dataflow">
 <h1>Dataflow<a class="headerlink" href="#dataflow" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="base-dataflow">
+<section id="base-dataflow">
 <h2>Base dataflow<a class="headerlink" href="#base-dataflow" title="Permalink to this headline">¶</a></h2>
 <p>Catalyst uses the “key-value is all you need” approach.
 In other words, the output of your Dataset/Dataloader should be a key-value (python <cite>dict</cite>).</p>
@@ -428,8 +429,8 @@ and only then will be evaluated on some <code class="docutils literal notranslat
 <li><p>if <code class="docutils literal notranslate"><span class="pre">loader_key</span></code> starts with “valid” - is’s validation datasoure, we need to run forward, but not the backward pass on it.</p></li>
 <li><p>if <code class="docutils literal notranslate"><span class="pre">loader_key</span></code> starts with “infer” - is’s inference datasoure, we need to run forward, but not the backward pass on it.</p></li>
 </ul>
-</div>
-<div class="section" id="multiple-datasources">
+</section>
+<section id="multiple-datasources">
 <h2>Multiple datasources<a class="headerlink" href="#multiple-datasources" title="Permalink to this headline">¶</a></h2>
 <p>Thanks to key-value approach,
 it’s possible to handle any number of datasets/loader
@@ -480,8 +481,8 @@ without code changes or tricks with Datasets concatenation, etc:</p>
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">loaders</span><span class="o">=</span><span class="n">loaders</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="loader-for-model-selection">
+</section>
+<section id="loader-for-model-selection">
 <h2>Loader for model selection<a class="headerlink" href="#loader-for-model-selection" title="Permalink to this headline">¶</a></h2>
 <p>In case of multiple loaders, you could select one of them for model selection
 with <code class="docutils literal notranslate"><span class="pre">valid_loader</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_metric</span></code> and <code class="docutils literal notranslate"><span class="pre">minimize_valid_metric</span></code> params in the <code class="docutils literal notranslate"><span class="pre">runner.train</span></code>.
@@ -518,8 +519,8 @@ model selection one you could do the following:</p>
 <code class="docutils literal notranslate"><span class="pre">valid_loader</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_metric</span></code> and <code class="docutils literal notranslate"><span class="pre">minimize_valid_metric</span></code>
 for model selection.</p>
 </div>
-</div>
-<div class="section" id="metric-for-model-selection">
+</section>
+<section id="metric-for-model-selection">
 <h2>Metric for model selection<a class="headerlink" href="#metric-for-model-selection" title="Permalink to this headline">¶</a></h2>
 <p>Suppose, you are using set of different metrics in your pipeline:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyRunner</span><span class="p">:</span>
@@ -583,8 +584,8 @@ For example, to use <code class="docutils literal notranslate"><span class="pre"
 <code class="docutils literal notranslate"><span class="pre">valid_loader</span></code>, <code class="docutils literal notranslate"><span class="pre">valid_metric</span></code> and <code class="docutils literal notranslate"><span class="pre">minimize_valid_metric</span></code>
 for model selection.</p>
 </div>
-</div>
-<div class="section" id="use-part-of-the-data">
+</section>
+<section id="use-part-of-the-data">
 <h2>Use part of the data<a class="headerlink" href="#use-part-of-the-data" title="Permalink to this headline">¶</a></h2>
 <p>If you would like to use only some part of your data from the loader
 (for example, you would like to overfit for one small portion of the data to check your pipeline),
@@ -624,8 +625,8 @@ you could use <code class="docutils literal notranslate"><span class="pre">Batch
 </div>
 <hr class="docutils" />
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
-</div>
-</div>
+</section>
+</section>
 
 
              </article>

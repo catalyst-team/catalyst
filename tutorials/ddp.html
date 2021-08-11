@@ -6,7 +6,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Distributed training tutorial &mdash; Catalyst 21.07 documentation</title>
@@ -185,7 +186,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
@@ -193,11 +194,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Distributed training tutorial</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
@@ -205,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
@@ -224,7 +225,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
@@ -237,7 +238,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -314,14 +315,14 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="distributed-training-tutorial">
+  <section id="distributed-training-tutorial">
 <h1>Distributed training tutorial<a class="headerlink" href="#distributed-training-tutorial" title="Permalink to this headline">¶</a></h1>
 <p>If you have multiple GPUs,
 the most reliable way to use all of them for training is to use the distributed package from pytorch.
 To help you, there is a distributed helpers in Catalyst to make it really easy.</p>
 <p>Note, that current distributed implementation requires you
 to run only training procedure in your python scripts.</p>
-<div class="section" id="prepare-your-script">
+<section id="prepare-your-script">
 <h2>Prepare your script<a class="headerlink" href="#prepare-your-script" title="Permalink to this headline">¶</a></h2>
 <p>Distributed training doesn’t work in a notebook, so prepare a script to run the training.
 For instance, here is a minimal script that trains a linear regression model.</p>
@@ -364,8 +365,8 @@ For instance, here is a minimal script that trains a linear regression model.</p
     <span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="stage-1-1-line-ddp">
+</section>
+<section id="stage-1-1-line-ddp">
 <h2>Stage 1 - 1 line ddp<a class="headerlink" href="#stage-1-1-line-ddp" title="Permalink to this headline">¶</a></h2>
 <p>In case you want to run it fast and ugly, with minimal changes,
 you can just pass <code class="docutils literal notranslate"><span class="pre">ddp=True</span></code> to <code class="docutils literal notranslate"><span class="pre">.train</span></code> call</p>
@@ -421,8 +422,8 @@ and will run experiment training.</p>
 </ul>
 </dd>
 </dl>
-</div>
-<div class="section" id="case-2-we-are-going-deeper">
+</section>
+<section id="case-2-we-are-going-deeper">
 <h2>Case 2 - We are going deeper<a class="headerlink" href="#case-2-we-are-going-deeper" title="Permalink to this headline">¶</a></h2>
 <p>Let’s make it more reusable:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
@@ -483,8 +484,8 @@ which could be complicated to understand</p></li>
 </dd>
 </dl>
 <p>Could we make everything precisely clear?</p>
-</div>
-<div class="section" id="case-3-best-practices-for-distributed-training">
+</section>
+<section id="case-3-best-practices-for-distributed-training">
 <h2>Case 3 - Best practices for distributed training<a class="headerlink" href="#case-3-best-practices-for-distributed-training" title="Permalink to this headline">¶</a></h2>
 <p>Yup, check this one, distributed training like a pro:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">torch</span>
@@ -544,8 +545,8 @@ which could be complicated to understand</p></li>
 </ul>
 </dd>
 </dl>
-</div>
-<div class="section" id="launch-your-training">
+</section>
+<section id="launch-your-training">
 <h2>Launch your training<a class="headerlink" href="#launch-your-training" title="Permalink to this headline">¶</a></h2>
 <p>In your terminal,
 type the following line (adapt <cite>script_name</cite> to your script name ending with .py).</p>
@@ -577,8 +578,8 @@ Then training continues with the next batch,
 until the number of desired iterations is done.</p>
 <p>During training Catalyst will automatically average all metrics
 and log them on <code class="docutils literal notranslate"><span class="pre">Master</span></code> node only. Same logic used for model checkpointing.</p>
-</div>
-<div class="section" id="slurm-support">
+</section>
+<section id="slurm-support">
 <h2>Slurm support<a class="headerlink" href="#slurm-support" title="Permalink to this headline">¶</a></h2>
 <p>Catalyst supports distributed training of neural networks on HPC under slurm control.
 Catalyst automatically allocates roles between nodes and syncs them.
@@ -598,8 +599,8 @@ Each node will be allocated 256G.
 Note that specific startup parameters using <code class="docutils literal notranslate"><span class="pre">srun</span></code>
 may change depending on the specific cluster and slurm settings.
 For more fine-tuning, we recommend reading the slurm documentation.</p>
-</div>
-</div>
+</section>
+</section>
 
 
              </article>

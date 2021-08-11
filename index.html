@@ -6,7 +6,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Catalyst &mdash; Catalyst 21.07 documentation</title>
@@ -184,7 +185,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started/quickstart.html">Quickstart 101</a></li>
@@ -192,11 +193,11 @@
 <li class="toctree-l1"><a class="reference internal" href="getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core/engine.html">Engine</a></li>
@@ -204,7 +205,7 @@
 <li class="toctree-l1"><a class="reference internal" href="core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="core/logger.html">Logger</a></li>
 </ul>
-<p class="caption"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/data.html">Dataflow</a></li>
@@ -223,7 +224,7 @@
 <li class="toctree-l1"><a class="reference internal" href="faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/contrib.html">Contrib</a></li>
@@ -236,7 +237,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api/tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/utils.html">Utilities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -313,10 +314,10 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="catalyst">
+  <section id="catalyst">
 <h1>Catalyst<a class="headerlink" href="#catalyst" title="Permalink to this headline">¶</a></h1>
 <a class="reference external image-reference" href="https://github.com/catalyst-team/catalyst"><img alt="Catalyst logo" src="https://raw.githubusercontent.com/catalyst-team/catalyst-pics/master/pics/catalyst_logo.png" /></a>
-<div class="section" id="pytorch-framework-for-deep-learning-r-d">
+<section id="pytorch-framework-for-deep-learning-r-d">
 <h2>PyTorch framework for Deep Learning R&amp;D.<a class="headerlink" href="#pytorch-framework-for-deep-learning-r-d" title="Permalink to this headline">¶</a></h2>
 <p>It focuses on reproducibility, rapid experimentation, and codebase reuse
 so you can <strong>create</strong> something new rather than write yet another train loop.
@@ -331,8 +332,8 @@ Break the cycle - use the <a class="reference external" href="https://github.com
 </dd>
 </dl>
 <p><a class="reference external" href="https://landscape.lfai.foundation/selected=catalyst">Catalyst at AI Landscape</a>.</p>
-</div>
-<div class="section" id="getting-started">
+</section>
+<section id="getting-started">
 <h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span><span class="p">,</span> <span class="n">optim</span>
@@ -401,7 +402,7 @@ Break the cycle - use the <a class="reference external" href="https://github.com
 <span class="n">utils</span><span class="o">.</span><span class="n">onnx_export</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">runner</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">batch</span><span class="o">=</span><span class="n">features_batch</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="s2">&quot;./logs/mnist.onnx&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="section" id="step-by-step-guide">
+<section id="step-by-step-guide">
 <h3>Step by step guide<a class="headerlink" href="#step-by-step-guide" title="Permalink to this headline">¶</a></h3>
 <ol class="arabic simple">
 <li><p>Start with <a class="reference external" href="https://medium.com/catalyst-team/catalyst-2021-accelerated-pytorch-2-0-850e9b575cb6?source=friends_link&amp;sk=865d3c472cfb10379864656fedcfe762">Catalyst 2021–Accelerated PyTorch 2.0</a> introduction.</p></li>
@@ -413,15 +414,15 @@ Break the cycle - use the <a class="reference external" href="https://github.com
 <li><p>If you want to support the project, feel free to donate on <a class="reference external" href="https://patreon.com/catalyst_team">patreon page</a> or <a class="reference external" href="https://github.com/catalyst-team/catalyst#user-feedback">write us</a> with your proposals.</p></li>
 <li><p>And do not forget to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for collaboration.</p></li>
 </ol>
-</div>
-</div>
-<div class="section" id="overview">
+</section>
+</section>
+<section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>Catalyst helps you write compact
 but full-featured Deep Learning pipelines in a few lines of code.
 You get a training loop with metrics, early-stopping, model checkpointing
 and other features without the boilerplate.</p>
-<div class="section" id="installation">
+<section id="installation">
 <h3>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h3>
 <p>Common installation:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -U catalyst
@@ -436,8 +437,8 @@ pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 </div>
 <p>Catalyst is compatible with: Python 3.6+. PyTorch 1.3+.</p>
 <p>Tested on Ubuntu 16.04/18.04/20.04, macOS 10.15, Windows 10 and Windows Subsystem for Linux.</p>
-</div>
-<div class="section" id="features">
+</section>
+<section id="features">
 <h3>Features<a class="headerlink" href="#features" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Universal train/inference loop.</p></li>
@@ -448,8 +449,8 @@ pip install git+https://github.com/catalyst-team/catalyst@master --upgrade
 <li><p>Deep Learning best practices - SWA, AdamW, Ranger optimizer, OneCycle, and more.</p></li>
 <li><p>Developments best practices - fp16 support, distributed training, slurm support.</p></li>
 </ul>
-</div>
-<div class="section" id="tests">
+</section>
+<section id="tests">
 <h3>Tests<a class="headerlink" href="#tests" title="Permalink to this headline">¶</a></h3>
 <p>All Catalyst code, features and pipelines <a class="reference external" href="https://github.com/catalyst-team/catalyst/tree/master/tests">are fully tested</a>
 with our own <a class="reference external" href="https://github.com/catalyst-team/codestyle">catalyst-codestyle</a>.</p>
@@ -460,9 +461,9 @@ During the tests, we compare their convergence metrics in order to verify
 the correctness of the training procedure and its reproducibility.</p>
 <p>As a result, Catalyst provides fully tested and reproducible
 best practices for your deep learning research.</p>
-</div>
-</div>
-<div class="section" id="indices-and-tables">
+</section>
+</section>
+<section id="indices-and-tables">
 <h2>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
@@ -478,7 +479,7 @@ best practices for your deep learning research.</p>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/callbacks.html">Callbacks</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api/callbacks.html#module-catalyst.callbacks">Run</a><ul>
@@ -560,6 +561,14 @@ best practices for your deep learning research.</p>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#focaltrevskyloss">FocalTrevskyLoss</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#tripletmarginlosswithsampler">TripletMarginLossWithSampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="api/contrib.html#wingloss">WingLoss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="api/contrib.html#recsys">RecSys</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#adaptivehingeloss">AdaptiveHingeLoss</a></li>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#bprloss">BPRLoss</a></li>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#hingeloss">HingeLoss</a></li>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#logisticloss">LogisticLoss</a></li>
+<li class="toctree-l5"><a class="reference internal" href="api/contrib.html#warploss">WARPLoss</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="api/contrib.html#modules">Modules</a><ul>
@@ -843,8 +852,8 @@ best practices for your deep learning research.</p>
 </div>
 <div class="toctree-wrapper compound">
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
              </article>

@@ -6,7 +6,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Data &mdash; Catalyst 21.07 documentation</title>
@@ -185,7 +186,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
@@ -193,11 +194,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
@@ -205,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../faq/intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/data.html">Dataflow</a></li>
@@ -224,7 +225,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../faq/finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../faq/config_api.html">Config API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contrib.html">Contrib</a></li>
@@ -237,7 +238,7 @@
 <li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils.html">Utilities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -314,7 +315,7 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="data">
+  <section id="data">
 <h1>Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h1>
 <p>Data subpackage has data preprocessers and dataloader abstractions.</p>
 <div class="toctree-wrapper compound">
@@ -408,12 +409,12 @@
 </li>
 </ul>
 </div>
-<div class="section" id="module-catalyst.data">
+<section id="module-catalyst.data">
 <span id="main"></span><h2><a class="toc-backref" href="#id2">Main</a><a class="headerlink" href="#module-catalyst.data" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="collate-functions">
+</section>
+<section id="collate-functions">
 <h2><a class="toc-backref" href="#id3">Collate Functions</a><a class="headerlink" href="#collate-functions" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="filteringcollatefn">
+<section id="filteringcollatefn">
 <h3><a class="toc-backref" href="#id4">FilteringCollateFn</a><a class="headerlink" href="#filteringcollatefn" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.collate_fn.FilteringCollateFn">
@@ -434,13 +435,13 @@ Supports only key-value format batches</p>
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="module-catalyst.data.dataset">
+</section>
+</section>
+<section id="module-catalyst.data.dataset">
 <span id="dataset"></span><h2><a class="toc-backref" href="#id5">Dataset</a><a class="headerlink" href="#module-catalyst.data.dataset" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="pytorch-extensions">
+<section id="pytorch-extensions">
 <h3><a class="toc-backref" href="#id6">PyTorch Extensions</a><a class="headerlink" href="#pytorch-extensions" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="datasetfromsampler">
+<section id="datasetfromsampler">
 <h4><a class="toc-backref" href="#id7">DatasetFromSampler</a><a class="headerlink" href="#datasetfromsampler" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.torch.DatasetFromSampler">
@@ -460,8 +461,8 @@ Supports only key-value format batches</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="listdataset">
+</section>
+<section id="listdataset">
 <h4><a class="toc-backref" href="#id8">ListDataset</a><a class="headerlink" href="#listdataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.torch.ListDataset">
@@ -490,8 +491,8 @@ transfer it to data, needed by your network
 
 </dd></dl>
 
-</div>
-<div class="section" id="mergedataset">
+</section>
+<section id="mergedataset">
 <h4><a class="toc-backref" href="#id9">MergeDataset</a><a class="headerlink" href="#mergedataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.torch.MergeDataset">
@@ -514,8 +515,8 @@ transfer it to data, needed by your network
 
 </dd></dl>
 
-</div>
-<div class="section" id="numpydataset">
+</section>
+<section id="numpydataset">
 <h4><a class="toc-backref" href="#id10">NumpyDataset</a><a class="headerlink" href="#numpydataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.torch.NumpyDataset">
@@ -541,8 +542,8 @@ transfer it to data, needed by your network
 
 </dd></dl>
 
-</div>
-<div class="section" id="pathsdataset">
+</section>
+<section id="pathsdataset">
 <h4><a class="toc-backref" href="#id11">PathsDataset</a><a class="headerlink" href="#pathsdataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.torch.PathsDataset">
@@ -587,11 +588,11 @@ parameters.</p></li>
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="metric-learning-datasets">
+</section>
+</section>
+<section id="metric-learning-datasets">
 <h3><a class="toc-backref" href="#id12">Metric Learning Datasets</a><a class="headerlink" href="#metric-learning-datasets" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="metriclearningtraindataset">
+<section id="metriclearningtraindataset">
 <h4><a class="toc-backref" href="#id13">MetricLearningTrainDataset</a><a class="headerlink" href="#metriclearningtraindataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.metric_learning.MetricLearningTrainDataset">
@@ -621,8 +622,8 @@ based on these labels.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="querygallerydataset">
+</section>
+<section id="querygallerydataset">
 <h4><a class="toc-backref" href="#id14">QueryGalleryDataset</a><a class="headerlink" href="#querygallerydataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.data.dataset.metric_learning.QueryGalleryDataset">
@@ -673,12 +674,12 @@ query size.</p>
 
 </dd></dl>
 
-</div>
-</div>
-</div>
-<div class="section" id="in-batch-samplers">
+</section>
+</section>
+</section>
+<section id="in-batch-samplers">
 <h2><a class="toc-backref" href="#id15">In-batch Samplers</a><a class="headerlink" href="#in-batch-samplers" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="iinbatchtripletsampler">
+<section id="iinbatchtripletsampler">
 <h3><a class="toc-backref" href="#id16">IInbatchTripletSampler</a><a class="headerlink" href="#iinbatchtripletsampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.IInbatchTripletSampler">
@@ -707,8 +708,8 @@ of shape (batch_size;)</p></li>
 
 </dd></dl>
 
-</div>
-<div class="section" id="inbatchtripletssampler">
+</section>
+<section id="inbatchtripletssampler">
 <h3><a class="toc-backref" href="#id17">InBatchTripletsSampler</a><a class="headerlink" href="#inbatchtripletssampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.InBatchTripletsSampler">
@@ -744,8 +745,8 @@ catalyst.data.sampler.BalanceBatchSampler</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="alltripletssampler">
+</section>
+<section id="alltripletssampler">
 <h3><a class="toc-backref" href="#id18">AllTripletsSampler</a><a class="headerlink" href="#alltripletssampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.AllTripletsSampler">
@@ -766,8 +767,8 @@ determined by this parameter.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="hardtripletssampler">
+</section>
+<section id="hardtripletssampler">
 <h3><a class="toc-backref" href="#id19">HardTripletsSampler</a><a class="headerlink" href="#hardtripletssampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.HardTripletsSampler">
@@ -791,8 +792,8 @@ the hardest negative sample has the minimal distance to the anchor sample.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="hardclustersampler">
+</section>
+<section id="hardclustersampler">
 <h3><a class="toc-backref" href="#id20">HardClusterSampler</a><a class="headerlink" href="#hardclustersampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.HardClusterSampler">
@@ -823,11 +824,11 @@ k samples for each of p classes</p></li>
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="loader">
+</section>
+</section>
+<section id="loader">
 <h2><a class="toc-backref" href="#id21">Loader</a><a class="headerlink" href="#loader" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="batchlimitloaderwrapper">
+<section id="batchlimitloaderwrapper">
 <h3><a class="toc-backref" href="#id22">BatchLimitLoaderWrapper</a><a class="headerlink" href="#batchlimitloaderwrapper" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.loader.BatchLimitLoaderWrapper">
@@ -880,8 +881,8 @@ or portion of iterator (float, should be in [0;1] range)</p></li>
 
 </dd></dl>
 
-</div>
-<div class="section" id="batchprefetchloaderwrapper">
+</section>
+<section id="batchprefetchloaderwrapper">
 <h3><a class="toc-backref" href="#id23">BatchPrefetchLoaderWrapper</a><a class="headerlink" href="#batchprefetchloaderwrapper" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.loader.BatchPrefetchLoaderWrapper">
@@ -982,11 +983,11 @@ or portion of iterator (float, should be in [0;1] range)</p></li>
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="samplers">
+</section>
+</section>
+<section id="samplers">
 <h2><a class="toc-backref" href="#id24">Samplers</a><a class="headerlink" href="#samplers" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="balancebatchsampler">
+<section id="balancebatchsampler">
 <h3><a class="toc-backref" href="#id25">BalanceBatchSampler</a><a class="headerlink" href="#balancebatchsampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.BalanceBatchSampler">
@@ -1032,8 +1033,8 @@ where P equals 32 and K equals 4:
 
 </dd></dl>
 
-</div>
-<div class="section" id="balanceclasssampler">
+</section>
+<section id="balanceclasssampler">
 <h3><a class="toc-backref" href="#id26">BalanceClassSampler</a><a class="headerlink" href="#balanceclasssampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.BalanceClassSampler">
@@ -1094,8 +1095,8 @@ Must be one of [downsampling, upsampling]</p></li>
 
 </dd></dl>
 
-</div>
-<div class="section" id="batchbalanceclasssampler">
+</section>
+<section id="batchbalanceclasssampler">
 <h3><a class="toc-backref" href="#id27">BatchBalanceClassSampler</a><a class="headerlink" href="#batchbalanceclasssampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.BatchBalanceClassSampler">
@@ -1171,8 +1172,8 @@ where P (<cite>num_classes</cite>) equals 32 and K (<cite>num_samples</cite>) eq
 
 </dd></dl>
 
-</div>
-<div class="section" id="distributedsamplerwrapper">
+</section>
+<section id="distributedsamplerwrapper">
 <h3><a class="toc-backref" href="#id28">DistributedSamplerWrapper</a><a class="headerlink" href="#distributedsamplerwrapper" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.DistributedSamplerWrapper">
@@ -1208,8 +1209,8 @@ sampler will shuffle the indices</p></li>
 
 </dd></dl>
 
-</div>
-<div class="section" id="dynamicbalanceclasssampler">
+</section>
+<section id="dynamicbalanceclasssampler">
 <h3><a class="toc-backref" href="#id29">DynamicBalanceClassSampler</a><a class="headerlink" href="#dynamicbalanceclasssampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.DynamicBalanceClassSampler">
@@ -1274,8 +1275,8 @@ ControlFlowCallback.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="dynamiclenbatchsampler">
+</section>
+<section id="dynamiclenbatchsampler">
 <h3><a class="toc-backref" href="#id30">DynamicLenBatchSampler</a><a class="headerlink" href="#dynamiclenbatchsampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.DynamicLenBatchSampler">
@@ -1323,8 +1324,8 @@ Should be used with <cite>catalyst.utils.trim_tensors</cite>.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="miniepochsampler">
+</section>
+<section id="miniepochsampler">
 <h3><a class="toc-backref" href="#id31">MiniEpochSampler</a><a class="headerlink" href="#miniepochsampler" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.sampler.MiniEpochSampler">
@@ -1361,11 +1362,11 @@ The sampler will shuffle indices
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="transforms">
+</section>
+</section>
+<section id="transforms">
 <h2><a class="toc-backref" href="#id32">Transforms</a><a class="headerlink" href="#transforms" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="compose">
+<section id="compose">
 <h3><a class="toc-backref" href="#id33">Compose</a><a class="headerlink" href="#compose" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.transforms.Compose">
@@ -1388,8 +1389,8 @@ The sampler will shuffle indices
 
 </dd></dl>
 
-</div>
-<div class="section" id="normalize">
+</section>
+<section id="normalize">
 <h3><a class="toc-backref" href="#id34">Normalize</a><a class="headerlink" href="#normalize" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.transforms.Normalize">
@@ -1423,8 +1424,8 @@ for <code class="docutils literal notranslate"><span class="pre">n</span></code>
 
 </dd></dl>
 
-</div>
-<div class="section" id="totensor">
+</section>
+<section id="totensor">
 <h3><a class="toc-backref" href="#id35">ToTensor</a><a class="headerlink" href="#totensor" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.data.transforms.ToTensor">
@@ -1443,13 +1444,13 @@ In the other cases, tensors are returned without scaling.</p>
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="module-catalyst.contrib.data">
+</section>
+</section>
+<section id="module-catalyst.contrib.data">
 <span id="contrib"></span><h2><a class="toc-backref" href="#id36">Contrib</a><a class="headerlink" href="#module-catalyst.contrib.data" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="augmentors">
+<section id="augmentors">
 <h3><a class="toc-backref" href="#id37">Augmentors</a><a class="headerlink" href="#augmentors" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="augmentor">
+<section id="augmentor">
 <h4><a class="toc-backref" href="#id38">Augmentor</a><a class="headerlink" href="#augmentor" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.augmentor.Augmentor">
@@ -1474,8 +1475,8 @@ In the other cases, tensors are returned without scaling.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="augmentorcompose">
+</section>
+<section id="augmentorcompose">
 <h4><a class="toc-backref" href="#id39">AugmentorCompose</a><a class="headerlink" href="#augmentorcompose" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.augmentor.AugmentorCompose">
@@ -1494,8 +1495,8 @@ to augmentation function to apply</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="augmentorkeys">
+</section>
+<section id="augmentorkeys">
 <h4><a class="toc-backref" href="#id40">AugmentorKeys</a><a class="headerlink" href="#augmentorkeys" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.augmentor.AugmentorKeys">
@@ -1518,13 +1519,13 @@ to augmentation function to apply</p>
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="readers">
+</section>
+</section>
+<section id="readers">
 <h3><a class="toc-backref" href="#id41">Readers</a><a class="headerlink" href="#readers" title="Permalink to this headline">¶</a></h3>
 <p>Readers are the abstraction for your dataset. They can open an elem from the dataset and transform it to data, needed by your network.
 For example open image by path, or read string and tokenize it.</p>
-<div class="section" id="ireader">
+<section id="ireader">
 <h4><a class="toc-backref" href="#id42">IReader</a><a class="headerlink" href="#ireader" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.reader.IReader">
@@ -1549,8 +1550,8 @@ default: <code class="docutils literal notranslate"><span class="pre">input_key<
 
 </dd></dl>
 
-</div>
-<div class="section" id="imagereader-cv">
+</section>
+<section id="imagereader-cv">
 <h4><a class="toc-backref" href="#id43">ImageReader (CV)</a><a class="headerlink" href="#imagereader-cv" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.cv.reader.ImageReader">
@@ -1577,8 +1578,8 @@ with grayscale images</p></li>
 
 </dd></dl>
 
-</div>
-<div class="section" id="lambdareader">
+</section>
+<section id="lambdareader">
 <h4><a class="toc-backref" href="#id44">LambdaReader</a><a class="headerlink" href="#lambdareader" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.reader.LambdaReader">
@@ -1603,8 +1604,8 @@ Can read an elem from dataset and apply <cite>encode_fn</cite> function to it.</
 
 </dd></dl>
 
-</div>
-<div class="section" id="maskreader-cv">
+</section>
+<section id="maskreader-cv">
 <h4><a class="toc-backref" href="#id45">MaskReader (CV)</a><a class="headerlink" href="#maskreader-cv" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.cv.reader.MaskReader">
@@ -1632,8 +1633,8 @@ to the interval edges</p></li>
 
 </dd></dl>
 
-</div>
-<div class="section" id="niftireader-nifti">
+</section>
+<section id="niftireader-nifti">
 <h4><a class="toc-backref" href="#id46">NiftiReader (Nifti)</a><a class="headerlink" href="#niftireader-nifti" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.nifti.reader.NiftiReader">
@@ -1658,8 +1659,8 @@ a <cite>csv</cite> dataset.</p>
 
 </dd></dl>
 
-</div>
-<div class="section" id="scalarreader">
+</section>
+<section id="scalarreader">
 <h4><a class="toc-backref" href="#id47">ScalarReader</a><a class="headerlink" href="#scalarreader" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.reader.ScalarReader">
@@ -1687,8 +1688,8 @@ to one_hot classes</p></li>
 
 </dd></dl>
 
-</div>
-<div class="section" id="readercompose">
+</section>
+<section id="readercompose">
 <h4><a class="toc-backref" href="#id48">ReaderCompose</a><a class="headerlink" href="#readercompose" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.reader.ReaderCompose">
@@ -1709,11 +1710,11 @@ to one_hot classes</p></li>
 
 </dd></dl>
 
-</div>
-</div>
-<div class="section" id="datasets-cv">
+</section>
+</section>
+<section id="datasets-cv">
 <h3><a class="toc-backref" href="#id49">Datasets (CV)</a><a class="headerlink" href="#datasets-cv" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="imagefolderdataset">
+<section id="imagefolderdataset">
 <h4><a class="toc-backref" href="#id50">ImageFolderDataset</a><a class="headerlink" href="#imagefolderdataset" title="Permalink to this headline">¶</a></h4>
 <dl class="class">
 <dt id="catalyst.contrib.data.cv.dataset.ImageFolderDataset">
@@ -1755,10 +1756,10 @@ to use on dict</p></li>
 
 </dd></dl>
 
-</div>
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
+</section>
 
 
              </article>

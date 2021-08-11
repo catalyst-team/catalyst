@@ -6,7 +6,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  
+  <meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
   <title>Model checkpointing &mdash; Catalyst 21.07 documentation</title>
@@ -185,7 +186,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <p><span class="caption-text">Getting started</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Catalyst</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart 101</a></li>
@@ -193,11 +194,11 @@
 <li class="toctree-l1"><a class="reference internal" href="../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Tutorials</span></p>
+<p><span class="caption-text">Tutorials</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tutorials/ddp.html">Distributed training tutorial</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Core</span></p>
+<p><span class="caption-text">Core</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../core/runner.html">Runner</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/engine.html">Engine</a></li>
@@ -205,7 +206,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../core/metric.html">Metric</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../core/logger.html">Logger</a></li>
 </ul>
-<p class="caption"><span class="caption-text">FAQ</span></p>
+<p><span class="caption-text">FAQ</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="intro.html">How to make X?</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data.html">Dataflow</a></li>
@@ -224,7 +225,7 @@
 <li class="toctree-l1"><a class="reference internal" href="finetuning.html">Finetuning (multistage runs)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="config_api.html">Config API</a></li>
 </ul>
-<p class="caption"><span class="caption-text">API</span></p>
+<p><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/callbacks.html">Callbacks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/contrib.html">Contrib</a></li>
@@ -237,7 +238,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/tools.html">Tools</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/utils.html">Utilities</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<p><span class="caption-text">Contribution guide</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
@@ -314,9 +315,9 @@
             <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
-  <div class="section" id="model-checkpointing">
+  <section id="model-checkpointing">
 <h1>Model checkpointing<a class="headerlink" href="#model-checkpointing" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="experiment-checkpoints">
+<section id="experiment-checkpoints">
 <h2>Experiment checkpoints<a class="headerlink" href="#experiment-checkpoints" title="Permalink to this headline">¶</a></h2>
 <p>With the help of <code class="docutils literal notranslate"><span class="pre">CheckpointCallback</span></code>
 Catalyst creates the following checkpoints structure under selected <code class="docutils literal notranslate"><span class="pre">logdir</span></code>:</p>
@@ -339,16 +340,16 @@ Catalyst creates the following checkpoints structure under selected <code class=
 <span class="o">}</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="full-checkpoints">
+</section>
+<section id="full-checkpoints">
 <h2>Full checkpoints<a class="headerlink" href="#full-checkpoints" title="Permalink to this headline">¶</a></h2>
 <p>Catalyst saves 2 types of checkpoints:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">{checkpoint}.pth</span></code> - stores only model state dict and could be easily used for deploying in the production.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">{checkpoint}_full.pth</span></code> - stores all state dicts for model(s), criterion(s), optimizer(s) and scheduler(s) and could be used for experiment analysis purposes.</p></li>
 </ul>
-</div>
-<div class="section" id="save-model">
+</section>
+<section id="save-model">
 <h2>Save model<a class="headerlink" href="#save-model" title="Permalink to this headline">¶</a></h2>
 <p>Catalyst has a user-friendly utils to save the model:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
@@ -359,8 +360,8 @@ Catalyst creates the following checkpoints structure under selected <code class=
 <span class="c1">#  now you could find your checkpoint under &quot;/path/to/logdir/my_checkpoint.pth&quot; location</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="load-model">
+</section>
+<section id="load-model">
 <h2>Load model<a class="headerlink" href="#load-model" title="Permalink to this headline">¶</a></h2>
 <p>With Catalyst utils it’s very easy to load models after experiment run:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">utils</span>
@@ -379,8 +380,8 @@ Catalyst creates the following checkpoints structure under selected <code class=
 </div>
 <p>In this case Catalyst would try to unpack requested state dicts from the checkpoint.</p>
 <p>If you haven’t found the answer for your question, feel free to <a class="reference external" href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw">join our slack</a> for the discussion.</p>
-</div>
-</div>
+</section>
+</section>
 
 
              </article>
