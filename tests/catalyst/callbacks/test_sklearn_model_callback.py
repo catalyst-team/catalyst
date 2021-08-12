@@ -2,8 +2,10 @@
 
 import pytest
 
-from catalyst.callbacks import SklearnModelCallback
 from catalyst.settings import SETTINGS
+
+if SETTINGS.ml_required:
+    from catalyst.callbacks import SklearnModelCallback
 
 
 @pytest.mark.skipif(
