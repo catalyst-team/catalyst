@@ -61,5 +61,6 @@ from catalyst.callbacks.scheduler import (
     LRFinder,
     SchedulerCallback,
 )
-from catalyst.callbacks.sklearn_model import SklearnModelCallback
+if SETTINGS.ml_required
+    from catalyst.callbacks.sklearn_model import SklearnModelCallback
 from catalyst.callbacks.tracing import TracingCallback
