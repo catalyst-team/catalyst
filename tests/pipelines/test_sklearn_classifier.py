@@ -61,15 +61,17 @@ def train_experiment(device, engine=None):
             }
 
     callbacks = [
-        dl.ControlFlowCallback(
-            dl.CriterionCallback(input_key="embeddings", target_key="targets", metric_key="loss"),
-            loaders="train",
-        ),
         dl.BatchTransformCallback(
             input_key="embeddings",
             output_key="truncated_embeddings",
             transform=partial(torch.clamp, max=1000, min=0.0001),
             scope="on_batch_end",
+        ),
+        dl.ControlFlowCallback(
+            dl.CriterionCallback(
+                input_key="truncated_embeddings", target_key="targets", metric_key="loss"
+            ),
+            loaders="train",
         ),
         dl.ControlFlowCallback(
             dl.SklearnModelCallback(
@@ -80,7 +82,9 @@ def train_experiment(device, engine=None):
                 sklearn_classifier_fn=RandomForestClassifier,
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
-                n_estimators=200,
+                n_estimators=111,
+                min_samples_split=200,
+                max_depth=4,
             ),
             filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
         ),
@@ -108,12 +112,9 @@ def train_experiment(device, engine=None):
         num_epochs=TRAIN_EPOCH + 1,
     )
 
-    assert runner.loader_metrics["accuracy"].item() > 0.7
+    assert runner.loader_metrics["accuracy"].item() > 0.5
 
 
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
-
-
-train_experiment("cpu")
