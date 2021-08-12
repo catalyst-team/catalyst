@@ -363,6 +363,114 @@ class WARPLoss(ListwiseLoss):
         return WARP.apply(input_, target, self.max_num_trials)
 
 
+class RocStarLoss(PairwiseLoss):
+    """Roc-star loss function.
+
+    Smooth approximation for ROC-AUC. It has been proposed in
+    `Roc-star\: An objective function for ROC-AUC that actually works`_.
+
+    .. _Roc-star\: An objective function for ROC-AUC that actually works:
+        https://github.com/iridiumblue/roc-star
+
+    Adapted from:
+    https://github.com/iridiumblue/roc-star/issues/2
+
+    Args:
+        delta: Param from the article. Default: ``1.0``.
+        sample_size: Number of examples to take for ROC AUC approximation. Default: ``10``.
+        sample_size_gamma: Number of examples to take for Gamma parameter approximation.
+            Default: ``10``.
+        update_gamma_each: Number of steps after which to recompute gamma value.
+            Default: ``10``.
+    """
+
+    def __init__(
+        self,
+        delta: float = 1.0,
+        sample_size: int = 10,
+        sample_size_gamma: int = 10,
+        update_gamma_each: int = 10,
+    ):
+        super().__init__()
+        self.delta = delta
+        self.sample_size = sample_size
+        self.sample_size_gamma = sample_size_gamma
+        self.update_gamma_each = update_gamma_each
+        self.steps = 0
+        self.gamma = None
+        size = max(sample_size, sample_size_gamma)
+
+        # Randomly init labels
+        self.input_history = torch.rand((size, 1))
+        self.target_history = torch.randint(2, (size, 1))
+
+    def forward(self, input_: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+        """Forward propagation method for the roc-star loss.
+
+        Args:
+            input_: Tensor of model predictions in [0, 1] range. Shape ``(B x 1)``.
+            target: Tensor of true labels in {0, 1}. Shape ``(B x 1)``.
+
+        Returns:
+            computed loss
+        """
+        self._assert_equal_size(input_, target)
+
+        if self.steps % self.update_gamma_each == 0:
+            self.update_gamma()
+        self.steps += 1
+
+        positive = input_[target > 0]
+        negative = input_[target < 1]
+
+        # Take last `sample_size` elements from history
+        input_history = self.input_history[-self.sample_size :]
+        target_history = self.target_history[-self.sample_size :]
+
+        positive_history = input_history[target_history > 0]
+        negative_history = input_history[target_history < 1]
+
+        if positive.size(0) > 0:
+            diff = negative_history.view(1, -1) + self.gamma - positive.view(-1, 1)
+            loss_positive = nn.functional.relu(diff ** 2).mean()
+        else:
+            loss_positive = 0
+
+        if negative.size(0) > 0:
+            diff = negative.view(1, -1) + self.gamma - positive_history.view(-1, 1)
+            loss_negative = nn.functional.relu(diff ** 2).mean()
+        else:
+            loss_negative = 0
+
+        loss = loss_negative + loss_positive
+
+        # Update FIFO queue
+        batch_size = input_.size(0)
+        self.input_history = torch.cat((self.input_history[batch_size:], input_))
+        self.target_history = torch.cat((self.target_history[batch_size:], target))
+
+        return loss
+
+    def update_gamma(self):
+        # Take last `sample_size_gamma` elements from history
+        input_ = self.input_history[-self.sample_size_gamma :]
+        target = self.target_history[-self.sample_size_gamma :]
+
+        positive = input_[target > 0]
+        negative = input_[target < 1]
+
+        # Create matrix of size sample_size_gamma x sample_size_gamma
+        diff = positive.view(-1, 1) - negative.view(1, -1)
+        AUC = (diff > 0).type(torch.float).mean()
+        num_wrong_ordered = (1 - AUC) * diff.flatten().size(0)
+
+        # Adjunct gamma, so that among correct ordered samples `delta * num_wrong_ordered`
+        # were considered ordered incorrectly with gamma added
+        correct_ordered = diff[diff > 0].flatten().sort().values
+        idx = min(int(num_wrong_ordered * self.delta), len(correct_ordered) - 1)
+        self.gamma = correct_ordered[idx]
+
+
 __all__ = [
     "AdaptiveHingeLoss",
     "BPRLoss",
