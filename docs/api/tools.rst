@@ -32,14 +32,6 @@ ModelForwardWrapper
     :undoc-members:
     :show-inheritance:
 
-Registry
-----------------------
-.. autoclass:: catalyst.tools.registry.Registry
-    :exclude-members: __init__
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 TimeManager
 ----------------------
 .. autoclass:: catalyst.tools.time_manager.TimeManager

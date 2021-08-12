@@ -166,4 +166,4 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: docker/Dockerfile
-          tags: "${{ github.event.release.tag_name }}-"${{ matrix.catalyst_requirements }}-pytorch-${{ matrix.pytorch }}"
+          tags: "${{ github.event.release.tag_name }}-${{ matrix.catalyst_requirements }}-pytorch-${{ matrix.pytorch }}"
