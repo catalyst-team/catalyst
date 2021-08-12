@@ -103,7 +103,7 @@ def neg_loss(pred, gt):
     Args:
         pred (torch.Tensor): predicted center heatmaps,
             should have shapes [batch, c, h, w]
-        gt_regr (torch.Tensor): ground truth center heatmaps,
+        gt (torch.Tensor): ground truth center heatmaps,
             should have shapes [batch, c, h, w]
 
     Returns:
