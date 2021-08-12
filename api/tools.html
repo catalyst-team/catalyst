@@ -324,8 +324,7 @@
 <li><p><a class="reference internal" href="#frozenclass" id="id1">FrozenClass</a></p></li>
 <li><p><a class="reference internal" href="#metrichandler" id="id2">MetricHandler</a></p></li>
 <li><p><a class="reference internal" href="#modelforwardwrapper" id="id3">ModelForwardWrapper</a></p></li>
-<li><p><a class="reference internal" href="#registry" id="id4">Registry</a></p></li>
-<li><p><a class="reference internal" href="#timemanager" id="id5">TimeManager</a></p></li>
+<li><p><a class="reference internal" href="#timemanager" id="id4">TimeManager</a></p></li>
 </ul>
 </div>
 <section id="frozenclass">
@@ -399,174 +398,8 @@
 </dd></dl>
 
 </section>
-<section id="registry">
-<h2><a class="toc-backref" href="#id4">Registry</a><a class="headerlink" href="#registry" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="catalyst.tools.registry.Registry">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.registry.</code><code class="sig-name descname">Registry</code><span class="sig-paren">(</span><em class="sig-param">meta_factory: Callable[[Union[Type, Callable[..., Any]], Tuple, Mapping], Any] = None, name_key: str = '_target_'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.MutableMapping</span></code></p>
-<p>Universal class allowing to add and access various factories by name.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>meta_factory</strong> – default object that calls factory.
-Optional. Default just calls factory.</p>
-</dd>
-</dl>
-<dl class="method">
-<dt id="catalyst.tools.registry.Registry.add">
-<code class="sig-name descname">add</code><span class="sig-paren">(</span><em class="sig-param">factory: Union[Type, Callable[..., Any]] = None, *factories: Union[Type, Callable[..., Any]], name: str = None, **named_factories: Union[Type, Callable[..., Any]]</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any]]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds factory to registry with it’s <code class="docutils literal notranslate"><span class="pre">__name__</span></code> attribute or provided
-name. Signature is flexible.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>factory</strong> – Factory instance</p></li>
-<li><p><strong>factories</strong> – More instances</p></li>
-<li><p><strong>name</strong> – Provided name for first instance. Use only when pass
-single instance.</p></li>
-<li><p><strong>named_factories</strong> – Factory and their names as kwargs</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>First factory passed</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Factory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>RegistryException</strong> – if factory with provided name is already present</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.registry.Registry.add_from_module">
-<code class="sig-name descname">add_from_module</code><span class="sig-paren">(</span><em class="sig-param">module</em>, <em class="sig-param">prefix: Union[str</em>, <em class="sig-param">List[str]] = None</em>, <em class="sig-param">ignore_all: bool = False</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.add_from_module"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.add_from_module" title="Permalink to this definition">¶</a></dt>
-<dd><p>Adds all factories present in module.
-If <code class="docutils literal notranslate"><span class="pre">__all__</span></code> attribute is present, takes ony what mentioned in it.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>module</strong> – module to scan</p></li>
-<li><p><strong>prefix</strong> (<em>Union</em><em>[</em><em>str</em><em>, </em><em>List</em><em>[</em><em>str</em><em>]</em><em>]</em>) – prefix string for all the module’s
-factories. If prefix is a list, all values will be treated
-as aliases.</p></li>
-<li><p><strong>ignore_all</strong> – flag, ignore <cite>__all__</cite> or not</p></li>
-</ul>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>TypeError</strong> – if prefix is not a list or a string</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.registry.Registry.all">
-<code class="sig-name descname">all</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; List[str]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.all" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>list of names of registered items</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.registry.Registry.get">
-<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">name: str</em><span class="sig-paren">)</span> &#x2192; Union[Type, Callable[..., Any], None]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieves factory, without creating any objects with it
-or raises error.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>name</strong> – factory name</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>factory by name</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Factory</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>RegistryException</strong> – if no factory with provided name was registered</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.registry.Registry.get_from_params">
-<code class="sig-name descname">get_from_params</code><span class="sig-paren">(</span><em class="sig-param">*</em>, <em class="sig-param">shared_params: Optional[Dict[str</em>, <em class="sig-param">Any]] = None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; Union[Any, Tuple[Any, Mapping[str, Any]]]<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_from_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_from_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates instance based in configuration dict with <code class="docutils literal notranslate"><span class="pre">instantiation_fn</span></code>.
-If <code class="docutils literal notranslate"><span class="pre">config[name_key]</span></code> is None, None is returned.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>shared_params</strong> – params to pass on all levels in case of recursive creation</p></li>
-<li><p><strong>**kwargs</strong> – additional kwargs for factory</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>result of calling <code class="docutils literal notranslate"><span class="pre">instantiate_fn(factory,</span> <span class="pre">**config)</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.registry.Registry.get_if_str">
-<code class="sig-name descname">get_if_str</code><span class="sig-paren">(</span><em class="sig-param">obj: Union[str, Type, Callable[..., Any]]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_if_str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_if_str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns object from the registry if <code class="docutils literal notranslate"><span class="pre">obj</span></code> type is string.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.registry.Registry.get_instance">
-<code class="sig-name descname">get_instance</code><span class="sig-paren">(</span><em class="sig-param">name: str, *args, meta_factory: Optional[Callable[[Union[Type, Callable[..., Any]], Tuple, Mapping], Any]] = None, **kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.get_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.get_instance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates instance by calling specified factory
-with <code class="docutils literal notranslate"><span class="pre">instantiate_fn</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> – factory name</p></li>
-<li><p><strong>meta_factory</strong> – Function that calls factory the right way.
-If not provided, default is used</p></li>
-<li><p><strong>args</strong> – args to pass to the factory</p></li>
-<li><p><strong>**kwargs</strong> – kwargs to pass to the factory</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>created instance</p>
-</dd>
-<dt class="field-odd">Raises</dt>
-<dd class="field-odd"><p><strong>RegistryException</strong> – if could not create object instance</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.registry.Registry.late_add">
-<code class="sig-name descname">late_add</code><span class="sig-paren">(</span><em class="sig-param">cb: Callable[Registry, None]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.late_add"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.late_add" title="Permalink to this definition">¶</a></dt>
-<dd><p>Allows to prevent cycle imports by delaying some imports till next
-registry query.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>cb</strong> – Callback receives registry and must call it’s methods to
-register factories</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="catalyst.tools.registry.Registry.len">
-<code class="sig-name descname">len</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/tools/registry.html#Registry.len"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.registry.Registry.len" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>length of registered items</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-</section>
 <section id="timemanager">
-<h2><a class="toc-backref" href="#id5">TimeManager</a><a class="headerlink" href="#timemanager" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id4">TimeManager</a><a class="headerlink" href="#timemanager" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="catalyst.tools.time_manager.TimeManager">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.tools.time_manager.</code><code class="sig-name descname">TimeManager</code><a class="reference internal" href="../_modules/catalyst/tools/time_manager.html#TimeManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.tools.time_manager.TimeManager" title="Permalink to this definition">¶</a></dt>
@@ -648,7 +481,6 @@ register factories</p>
 <li><a class="reference internal" href="#frozenclass">FrozenClass</a></li>
 <li><a class="reference internal" href="#metrichandler">MetricHandler</a></li>
 <li><a class="reference internal" href="#modelforwardwrapper">ModelForwardWrapper</a></li>
-<li><a class="reference internal" href="#registry">Registry</a></li>
 <li><a class="reference internal" href="#timemanager">TimeManager</a></li>
 </ul>
 </li>
