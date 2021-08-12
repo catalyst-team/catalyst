@@ -1,10 +1,9 @@
 pytest==5.3.1
-sphinx_rtd_theme
 sphinx==2.2.1
 # git+https://github.com/bitprophet/releases/#egg=releases
 # git+https://github.com/readthedocs/sphinx_rtd_theme
 mock==3.0.5
-catalyst-codestyle==21.03rc2
+catalyst-codestyle==21.07rc0
 catalyst-sphinx-theme==1.1.2
 toml==0.10.0
 pre-commit==2.13.0
