@@ -18,6 +18,29 @@ def process_ssd_output(
     ignore_class=0,
     iou_threshold=0.5,
 ):
+    """Generate bbox and classes from SSD model outputs.
+
+    Args:
+        predicted_bboxes (torch.Tensor): predicted bounding boxes,
+            expected shapes [batch, num anchors, 4].
+        predicted_scores (torch.Tensor): predicted class scores,
+            expected shapes [batch, num anchors, num classes + 1].
+        gt_bboxes (torch.Tensor): ground truth bounding boxes,
+            expected shapes [batch, num anchors, 4].
+        gt_labels (torch.Tensor): ground truth bounding box labels,
+            expected shape [batch, num anchors].
+        width (int): model input image width.
+            Default is ``300``.
+        height (int): model input image height.
+            Default is ``300``.
+        ignore_class (int): index of background class, this class should be ignored.
+            Default is ``0``.
+        iou_threshold (float): IoU threshold to use in NMS.
+            Default is ``0.5``.
+
+    Yields:
+        predicted sample (np.ndarray) and ground truth sample (np.ndarray)
+    """
     batch_size = predicted_bboxes.size(0)
 
     pred_boxes = predicted_bboxes.detach().cpu().numpy()
@@ -94,6 +117,24 @@ def process_centernet_output(
     confidence_threshold=0.5,
     iou_threshold=0.5,
 ):
+    """Generate bbox and classes from CenterNet model outputs.
+
+    Args:
+        predicted_heatmap (torch.Tensor): predicted center heatmap logits,
+            expected shapes [batch, height, width, num classes].
+        predicted_regression (torch.Tensor): predicted HW regression,
+            expected shapes [batch, height, width, 2].
+        gt_boxes (List[torch.Tensor]): list with sample bounding boxes.
+        gt_labels (List[torch.Tensor]): list with sample bounding box labels.
+        confidence_threshold (float): confidence threshold,
+            proposals with lover values than threshold will be ignored.
+            Default is ``0.5``.
+        iou_threshold (float): IoU threshold to use in NMS.
+            Default is ``0.5``.
+
+    Yields:
+        predicted sample (np.ndarray) and ground truth sample (np.ndarray)
+    """
     batch_size = predicted_heatmap.size(0)
 
     hm = predicted_heatmap.sigmoid()
@@ -159,7 +200,21 @@ class DetectionMeanAveragePrecision(Callback):
         iou_threshold=0.5,
         confidence_threshold=0.5,
     ):
-        super().__init__(order=CallbackOrder.Metric, node=CallbackNode.Master)
+        """
+        Args:
+            num_classes (int): Number of classes.
+                Default is ``1``.
+            metric_key (str): name of a metric.
+                Default is ``"mAP"``.
+            output_type (str): model output type. Valid values are ``"ssd"`` or ``"centernet"``.
+                Default is ``"ssd"``.
+            iou_threshold (float): IoU threshold to use in NMS.
+                Default is ``0.5``.
+            confidence_threshold (float): confidence threshold,
+                proposals with lover values than threshold will be ignored.
+                Default is ``0.5``.
+        """
+        super().__init__(order=CallbackOrder.Metric)
         assert output_type in ("ssd", "centernet")
 
         self.num_classes = num_classes
@@ -172,12 +227,12 @@ class DetectionMeanAveragePrecision(Callback):
             "map_2d", async_mode=False, num_classes=num_classes
         )
 
-    def on_loader_start(self, runner: "IRunner"):
+    def on_loader_start(self, runner: "IRunner"):  # noqa: D102, F821
         if not runner.is_valid_loader:
             return
         self.metric_fn.reset()
 
-    def on_batch_end(self, runner: "IRunner"):
+    def on_batch_end(self, runner: "IRunner"):  # noqa: D102, F821
         if not runner.is_valid_loader:
             return
 
@@ -205,7 +260,7 @@ class DetectionMeanAveragePrecision(Callback):
             ):
                 self.metric_fn.add(predicted_sample, ground_truth_sample)
 
-    def on_loader_end(self, runner: "IRunner"):
+    def on_loader_end(self, runner: "IRunner"):  # noqa: D102, F821
         if not runner.is_valid_loader:
             return
         map_value = self.metric_fn.value()["mAP"]

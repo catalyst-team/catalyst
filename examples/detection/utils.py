@@ -27,10 +27,11 @@ def change_box_order(boxes, order):
 
 def box_nms(bboxes, scores, threshold=0.5):
     """Non maximum suppression.
+
     Args:
-        bboxes: (np.ndarray) bounding boxes, sized [N,4].
-        scores: (np.ndarray) confidence scores, sized [N,].
-        threshold: (float) overlap threshold.
+        bboxes (np.ndarray): bounding boxes, sized [N,4].
+        scores (np.ndarray): confidence scores, sized [N,].
+        threshold (float): overlap threshold.
 
     Returns:
         keep: (np.ndarray) selected indices.
