@@ -18,7 +18,7 @@ from catalyst.settings import SETTINGS
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 4
+TRAIN_EPOCH = 2
 LR = 0.001
 
 
@@ -88,7 +88,7 @@ def train_experiment(device, engine=None):
             dl.AccuracyCallback(
                 target_key="targets", input_key="sklearn_predict", topk_args=(1, 3)
             ),
-            filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
+            filter_fn=lambda s, e, l: l == "infer" and e > TRAIN_EPOCH,
         ),
     ]
 
@@ -114,3 +114,6 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
+
+
+train_experiment("cpu")
