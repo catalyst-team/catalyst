@@ -88,7 +88,7 @@ def train_experiment(device, engine=None):
             dl.AccuracyCallback(
                 target_key="targets", input_key="sklearn_predict", topk_args=(1, 3)
             ),
-            filter_fn=lambda s, e, l: l == "infer" and e > TRAIN_EPOCH,
+            filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
         ),
     ]
 
