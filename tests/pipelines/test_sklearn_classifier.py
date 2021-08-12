@@ -2,9 +2,11 @@
 from catalyst import utils
 
 utils.set_global_seed(42)
+from functools import partial
 import os
 
 from pytest import mark
+import torch
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
@@ -15,10 +17,9 @@ from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
-    from sklearn.linear_model import LogisticRegression
 
-TRAIN_EPOCH = 20
-LR = 0.0001
+TRAIN_EPOCH = 4
+LR = 0.001
 
 
 def train_experiment(device, engine=None):
@@ -26,7 +27,7 @@ def train_experiment(device, engine=None):
     transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
     train_dataset = datasets.MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
-    sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=10)
+    sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=60)
     train_loader = DataLoader(
         dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
     )
@@ -34,15 +35,15 @@ def train_experiment(device, engine=None):
     valid_dataset = datasets.MNIST(
         root=os.getcwd(), transform=transforms, train=True, download=True
     )
-    valid_loader = DataLoader(dataset=valid_dataset, batch_size=1024)
+    valid_loader = DataLoader(dataset=valid_dataset, batch_size=512)
 
     test_dataset = datasets.MNIST(
         root=os.getcwd(), transform=transforms, train=False, download=True
     )
-    test_loader = DataLoader(dataset=test_dataset, batch_size=1024)
+    test_loader = DataLoader(dataset=test_dataset, batch_size=512)
 
     # 2. model and optimizer
-    model = models.MnistSimpleNet(out_features=32, normalize=True)
+    model = models.MnistSimpleNet(out_features=16, normalize=True)
     optimizer = Adam(model.parameters(), lr=LR)
 
     # 3. criterion with triplets sampling
@@ -64,16 +65,22 @@ def train_experiment(device, engine=None):
             dl.CriterionCallback(input_key="embeddings", target_key="targets", metric_key="loss"),
             loaders="train",
         ),
+        dl.BatchTransformCallback(
+            input_key="embeddings",
+            output_key="truncated_embeddings",
+            transform=partial(torch.clamp, max=1000, min=0.0001),
+            scope="on_batch_end",
+        ),
         dl.ControlFlowCallback(
             dl.SklearnModelCallback(
-                feature_key="embeddings",
+                feature_key="truncated_embeddings",
                 target_key="targets",
                 train_loader="valid",
                 valid_loader="infer",
                 sklearn_classifier_fn=RandomForestClassifier,
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
-                n_estimators=100,
+                n_estimators=200,
             ),
             filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
         ),
@@ -100,7 +107,7 @@ def train_experiment(device, engine=None):
         minimize_valid_metric=True,
         num_epochs=TRAIN_EPOCH + 1,
     )
-    print(runner.loader_metrics["accuracy"].item())
+
     assert runner.loader_metrics["accuracy"].item() > 0.7
 
 
