@@ -74,7 +74,7 @@ def nms_filter(bboxes, classes, confidences, iou_threshold=0.5):
     Args:
         bboxes (np.ndarray): array with bounding boxes, expected shape [N, 4].
         classes (np.ndarray): array with classes, expected shape [N,].
-        confidences (np.ndarray)): array with class confidence, expected shape [N,].
+        confidences (np.ndarray): array with class confidence, expected shape [N,].
         iou_threshold (float): IoU threshold to use for filtering.
             Default is ``0.5``.
 

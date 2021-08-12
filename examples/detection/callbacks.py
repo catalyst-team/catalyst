@@ -192,6 +192,8 @@ def process_centernet_output(
 
 
 class DetectionMeanAveragePrecision(Callback):
+    """Compute mAP for Object Detection task."""
+
     def __init__(
         self,
         num_classes=1,
