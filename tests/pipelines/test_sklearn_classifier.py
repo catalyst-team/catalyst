@@ -1,7 +1,4 @@
 # flake8: noqa
-from catalyst import utils
-
-utils.set_global_seed(42)
 from functools import partial
 import os
 
@@ -17,12 +14,17 @@ from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.svm import SVC
 
-TRAIN_EPOCH = 2
+TRAIN_EPOCH = 5
 LR = 0.001
 
 
 def train_experiment(device, engine=None):
+    from catalyst import utils
+
+    utils.set_global_seed(42)
     # 1. train, valid and test loaders
     transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
@@ -64,7 +66,7 @@ def train_experiment(device, engine=None):
         dl.BatchTransformCallback(
             input_key="embeddings",
             output_key="truncated_embeddings",
-            transform=partial(torch.clamp, max=1000, min=0.0001),
+            transform=partial(torch.clamp, max=1000, min=-1000),
             scope="on_batch_end",
         ),
         dl.ControlFlowCallback(
@@ -82,9 +84,8 @@ def train_experiment(device, engine=None):
                 sklearn_classifier_fn=RandomForestClassifier,
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
-                n_estimators=111,
-                min_samples_split=200,
-                max_depth=4,
+                n_estimators=200,
+                max_depth=8,
             ),
             filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
         ),
