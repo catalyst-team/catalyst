@@ -84,7 +84,7 @@ def train_experiment(device, engine=None):
                 sklearn_classifier_fn=RandomForestClassifier,
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
-                n_estimators=200,
+                n_estimators=500,
                 max_depth=8,
             ),
             filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
