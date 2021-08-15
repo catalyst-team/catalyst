@@ -1,0 +1,954 @@
+
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>catalyst.runners.hydra &mdash; Catalyst 21.07 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <!-- <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" /> -->
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-167094275-1"></script>
+  <script src="../../../_static/js/googleanalytics.min.js"></script>
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+  <!-- Preload the theme fonts -->
+
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-book.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-Medium.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/FreightSans/freight-sans-medium-italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="../../../_static/fonts/IBMPlexMono/IBMPlexMono-SemiBold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+
+<!-- Preload the katex fonts -->
+
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Math-Italic.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Main-Bold.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size1-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size4-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size2-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Size3-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/katex@0.10.0/dist/fonts/KaTeX_Caligraphic-Regular.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+</head>
+
+<div class="container-fluid header-holder tutorials-header" id="header-holder">
+  <div class="container">
+    <div class="header-container">
+      <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+
+      <div class="main-menu">
+        <ul>
+
+          <li>
+            <div class="ecosystem-dropdown">
+              <a id="dropdownMenuButtonEcosystem" data-toggle="ecosystem-dropdown">
+                Ecosystem
+              </a>
+              <div class="ecosystem-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://alchemy.host">
+                  <span class=dropdown-title>Alchemy</span>
+                  <p>Experiments logging & visualization</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">
+                  <span class=dropdown-title>Catalyst</span>
+                  <p>Accelerated deep learning R&D</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">
+                  <span class=dropdown-title>Reaction</span>
+                  <p>Convenient deep learning models serving</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <div class="projects-dropdown">
+              <a id="dropdownMenuButtonProjects" data-toggle="projects-dropdown">
+                Projects
+              </a>
+              <div class="projects-dropdown-menu">
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">
+                  <span class=dropdown-title>Codestyle</span>
+                  <p>Joint R&D codestyle</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">
+                  <span class=dropdown-title>Catalyst.Neuro</span>
+                  <p>Catalyst.Team and TReNDS collaborative project</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">
+                  <span class=dropdown-title>Classification</span>
+                  <p>Image classification pipeline with transfer learning</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">
+                  <span class=dropdown-title>Detection</span>
+                  <p>Object detection pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">
+                  <span class=dropdown-title>Segmentation</span>
+                  <p>Image semantic segmentation pipeline</p>
+                </a>
+                <a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">
+                  <span class=dropdown-title>Catalyst.GAN</span>
+                  <p>GAN pipelines</p>
+                </a>
+              </div>
+            </div>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/dl-course">Deep learning course</a>
+          </li>
+        </ul>
+      </div>
+
+      <a class="main-menu-open-button" href="#" data-behavior="open-mobile-menu"></a>
+    </div>
+
+  </div>
+</div>
+
+
+<body class="catalyst-body">
+
+   
+
+    
+
+    <div class="table-of-contents-link-wrapper">
+      <span>Table of Contents</span>
+      <a href="#" class="toggle-table-of-contents" data-behavior="toggle-table-of-contents"></a>
+    </div>
+
+    <nav data-toggle="wy-nav-shift" class="catalyst-left-menu" id="catalyst-left-menu">
+      <div class="catalyst-side-scroll">
+        <div class="catalyst-menu catalyst-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          <div class="catalyst-left-menu-search">
+            
+
+            
+              
+              
+                <div class="version">
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                </div>
+              
+            
+
+            
+
+
+  
+
+
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search Docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+            
+          </div>
+
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Catalyst</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quickstart.html">Quickstart 101</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#minimal-examples">Minimal examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/migrating_from_other.html">Migrating from other libraries</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&amp;sk=885b4409aecab505db0a63b06f19dcef">Catalyst — Accelerated Deep Learning R&amp;D</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials/ddp.html">Distributed training tutorial</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Core</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/runner.html">Runner</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/engine.html">Engine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/callback.html">Callback</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/metric.html">Metric</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../core/logger.html">Logger</a></li>
+</ul>
+<p class="caption"><span class="caption-text">FAQ</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/intro.html">How to make X?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/data.html">Dataflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/dp.html">DataParallel training (cpu, single/multi-gpu)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/amp.html">Mixed precision training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/ddp.html">Distributed training</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multi_components.html">Multiple components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/multiple_keys.html">Multiple input and output keys</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/early_stopping.html">Early stopping</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/checkpointing.html">Model checkpointing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/debugging.html">Model debugging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/logging.html">Logging</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/inference.html">Inference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/optuna.html">Optuna integration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/finetuning.html">Finetuning (multistage runs)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../faq/config_api.html">Config API</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/contrib.html">Contrib</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data.html">Data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/engines.html">Engines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/loggers.html">Loggers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/runners.html">Runners</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils.html">Utilities</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Contribution guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md">How to start</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/catalyst-team/catalyst#acknowledgments">Acknowledgments</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <div class="catalyst-container">
+      <div class="catalyst-page-level-bar" id="catalyst-page-level-bar">
+        <div class="catalyst-breadcrumbs-wrapper">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="catalyst-breadcrumbs">
+    
+      <li>
+        <a href="../../../index.html">
+          
+            Docs
+          
+        </a> &gt;
+      </li>
+
+        
+          <li><a href="../../index.html">Module code</a> &gt;</li>
+        
+      <li>catalyst.runners.hydra</li>
+    
+    
+      <li class="catalyst-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+</div>
+        </div>
+
+        <div class="catalyst-shortcuts-wrapper" id="catalyst-shortcuts-wrapper">
+          Shortcuts
+        </div>
+      </div>
+
+      <section data-toggle="wy-nav-shift" id="catalyst-content-wrap" class="catalyst-content-wrap">
+        <div class="catalyst-content-left">
+          
+          <div class="rst-content">
+          
+            <div role="main" class="main-content" itemscope="itemscope" itemtype="http://schema.org/Article">
+             <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
+              
+  <h1>Source code for catalyst.runners.hydra</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">hydra</span>
+<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">OmegaConf</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
+
+<span class="kn">from</span> <span class="nn">catalyst.callbacks</span> <span class="kn">import</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">ICheckpointCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.batch_overfit</span> <span class="kn">import</span> <span class="n">BatchOverfitCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.callbacks.misc</span> <span class="kn">import</span> <span class="n">CheckRunCallback</span><span class="p">,</span> <span class="n">TimerCallback</span><span class="p">,</span> <span class="n">TqdmCallback</span>
+<span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">Callback</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.logger</span> <span class="kn">import</span> <span class="n">ILogger</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.misc</span> <span class="kn">import</span> <span class="n">callback_isinstance</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.runner</span> <span class="kn">import</span> <span class="n">IRunner</span>
+<span class="kn">from</span> <span class="nn">catalyst.core.trial</span> <span class="kn">import</span> <span class="n">ITrial</span>
+<span class="kn">from</span> <span class="nn">catalyst.engines</span> <span class="kn">import</span> <span class="n">IEngine</span>
+<span class="kn">from</span> <span class="nn">catalyst.loggers.console</span> <span class="kn">import</span> <span class="n">ConsoleLogger</span>
+<span class="kn">from</span> <span class="nn">catalyst.loggers.csv</span> <span class="kn">import</span> <span class="n">CSVLogger</span>
+<span class="kn">from</span> <span class="nn">catalyst.loggers.tensorboard</span> <span class="kn">import</span> <span class="n">TensorboardLogger</span>
+<span class="kn">from</span> <span class="nn">catalyst.runners.misc</span> <span class="kn">import</span> <span class="n">do_lr_linear_scaling</span><span class="p">,</span> <span class="n">get_model_parameters</span>
+<span class="kn">from</span> <span class="nn">catalyst.runners.supervised</span> <span class="kn">import</span> <span class="n">ISupervisedRunner</span>
+<span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Criterion</span><span class="p">,</span>
+    <span class="n">Model</span><span class="p">,</span>
+    <span class="n">Optimizer</span><span class="p">,</span>
+    <span class="n">RunnerCriterion</span><span class="p">,</span>
+    <span class="n">RunnerModel</span><span class="p">,</span>
+    <span class="n">RunnerOptimizer</span><span class="p">,</span>
+    <span class="n">RunnerScheduler</span><span class="p">,</span>
+    <span class="n">Sampler</span><span class="p">,</span>
+    <span class="n">Scheduler</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.data</span> <span class="kn">import</span> <span class="n">get_loaders_from_params</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_short_hash</span><span class="p">,</span> <span class="n">get_utcnow_time</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_available_engine</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="HydraRunner"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner">[docs]</a><span class="k">class</span> <span class="nc">HydraRunner</span><span class="p">(</span><span class="n">IRunner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Runner created from a hydra configuration file.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cfg: Hydra dictionary with parameters</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="HydraRunner.__init__"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_apex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">apex</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_amp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">amp</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ddp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">ddp</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_fp16</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">fp16</span> <span class="ow">or</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">seed</span> <span class="ow">or</span> <span class="mi">42</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">verbose</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timeit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">timeit</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">check</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_overfit</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">overfit</span> <span class="ow">or</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_run_name</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_run_logdir</span><span class="p">()</span>
+
+        <span class="c1"># @TODO: hack for catalyst-dl tune, could be done better</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_run_name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">get_utcnow_time</span><span class="p">()</span>
+        <span class="n">config_hash</span> <span class="o">=</span> <span class="n">get_short_hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
+        <span class="n">default_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">config_hash</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">name</span> <span class="ow">or</span> <span class="n">default_name</span>
+        <span class="k">return</span> <span class="n">name</span>
+
+    <span class="k">def</span> <span class="nf">_get_logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">get_utcnow_time</span><span class="p">()</span>
+        <span class="n">config_hash</span> <span class="o">=</span> <span class="n">get_short_hash</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+        <span class="n">logdir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">config_hash</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">logdir</span>
+
+    <span class="k">def</span> <span class="nf">_get_run_logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># noqa: WPS112</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">exclude_tag</span> <span class="o">=</span> <span class="s2">&quot;none&quot;</span>
+
+        <span class="n">logdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">logdir</span>
+        <span class="n">baselogdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">baselogdir</span>
+
+        <span class="k">if</span> <span class="n">logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">logdir</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">exclude_tag</span><span class="p">:</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">logdir</span>
+        <span class="k">elif</span> <span class="n">baselogdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">baselogdir</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">exclude_tag</span><span class="p">:</span>
+            <span class="n">logdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_logdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">)</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">baselogdir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">logdir</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">output</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">logdir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Experiment&#39;s logdir for artefacts and logging.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">seed</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Experiment&#39;s seed for reproducibility.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_seed</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns run name for monitoring tools.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">hparams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OrderedDict</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Hyperparameters&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_container</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Experiment&#39;s stage names.&quot;&quot;&quot;</span>
+        <span class="n">stages_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">stages_keys</span>
+
+<div class="viewcode-block" id="HydraRunner.get_stage_len"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_stage_len">[docs]</a>    <span class="k">def</span> <span class="nf">get_stage_len</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns number of epochs for the selected stage.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stage: current stage</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            number of epochs in stage</span>
+
+<span class="sd">        Example::</span>
+
+<span class="sd">            &gt;&gt;&gt; runner.get_stage_len(&quot;pretraining&quot;)</span>
+<span class="sd">            3</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">num_epochs</span> <span class="ow">or</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="HydraRunner.get_trial"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_trial">[docs]</a>    <span class="k">def</span> <span class="nf">get_trial</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ITrial</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the trial for the run.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_trial</span></div>
+
+<div class="viewcode-block" id="HydraRunner.get_engine"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_engine">[docs]</a>    <span class="k">def</span> <span class="nf">get_engine</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">IEngine</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the engine for the run.&quot;&quot;&quot;</span>
+        <span class="n">engine_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">engine</span>
+        <span class="k">if</span> <span class="n">engine_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">engine</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">engine_params</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">engine</span> <span class="o">=</span> <span class="n">get_available_engine</span><span class="p">(</span>
+                <span class="n">fp16</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fp16</span><span class="p">,</span> <span class="n">ddp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_ddp</span><span class="p">,</span> <span class="n">amp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_amp</span><span class="p">,</span> <span class="n">apex</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_apex</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">engine</span></div>
+
+<div class="viewcode-block" id="HydraRunner.get_loggers"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_loggers">[docs]</a>    <span class="k">def</span> <span class="nf">get_loggers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">ILogger</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the loggers for the run.&quot;&quot;&quot;</span>
+        <span class="n">loggers_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">loggers</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="n">loggers</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">loggers_params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="n">is_logger_exists</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">logger_fn</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">logger_fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">loggers</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">ConsoleLogger</span><span class="p">):</span>
+            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_console&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ConsoleLogger</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">CSVLogger</span><span class="p">):</span>
+            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_csv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CSVLogger</span><span class="p">(</span><span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="n">use_logdir_postfix</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_logger_exists</span><span class="p">(</span><span class="n">TensorboardLogger</span><span class="p">):</span>
+            <span class="n">loggers</span><span class="p">[</span><span class="s2">&quot;_tensorboard&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TensorboardLogger</span><span class="p">(</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="n">use_logdir_postfix</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">loggers</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_transform_from_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+        <span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">transform</span>
+
+<div class="viewcode-block" id="HydraRunner.get_transform"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_transform">[docs]</a>    <span class="k">def</span> <span class="nf">get_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the data transforms for a dataset.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            params: parameters of the transformation</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Data transformations to use</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_transform_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">transform</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_dataset_from_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span>
+        <span class="n">transform_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">transform_params</span><span class="p">:</span>
+            <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transform</span><span class="p">(</span><span class="n">transform_params</span><span class="p">)</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">transform</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dataset</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dataset</span>
+
+<div class="viewcode-block" id="HydraRunner.get_datasets"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_datasets">[docs]</a>    <span class="k">def</span> <span class="nf">get_datasets</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Dataset]&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns datasets for a given stage.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stage: stage name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict: datasets objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">datasets_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">datasets</span>
+        <span class="n">datasets_params</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_container</span><span class="p">(</span><span class="n">datasets_params</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">datasets</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dataset_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">datasets_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">OrderedDict</span><span class="p">(</span><span class="n">datasets</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_sampler_from_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sampler</span><span class="p">:</span>
+        <span class="n">sampler</span><span class="p">:</span> <span class="n">Sampler</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sampler</span>
+
+<div class="viewcode-block" id="HydraRunner.get_samplers"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_samplers">[docs]</a>    <span class="k">def</span> <span class="nf">get_samplers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Sampler]&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns samplers for a given stage.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stage: stage name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict of samplers</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">samplers_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">loaders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;samplers&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">samplers_params</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_container</span><span class="p">(</span><span class="n">samplers_params</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">samplers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Sampler</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">key</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_sampler_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">samplers_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">samplers</span></div>
+
+<div class="viewcode-block" id="HydraRunner.get_loaders"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_loaders">[docs]</a>    <span class="k">def</span> <span class="nf">get_loaders</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">DataLoader</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns loaders for a given stage.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            stage: stage name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict: loaders objects</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loaders_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">loaders</span>
+        <span class="n">loaders_params</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_container</span><span class="p">(</span><span class="n">loaders_params</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">loaders_params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;datasets&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="n">loaders</span> <span class="o">=</span> <span class="n">get_loaders_from_params</span><span class="p">(</span>
+            <span class="n">datasets</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_datasets</span><span class="p">(</span><span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">),</span> <span class="n">initial_seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">,</span> <span class="o">**</span><span class="n">loaders_params</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">loaders</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_model_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerModel</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">is_key_value</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">_key_value</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">is_key_value</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">HydraRunner</span><span class="o">.</span><span class="n">_get_model_from_params</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>  <span class="c1"># noqa: WPS437</span>
+            <span class="p">}</span>
+            <span class="c1"># model = nn.ModuleDict(model)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span>
+
+<div class="viewcode-block" id="HydraRunner.get_model"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerModel</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the model for a given stage.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="s2">&quot;model&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="s2">&quot;config must contain &#39;model&#39; key&quot;</span>
+        <span class="n">model_params</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_from_params</span><span class="p">(</span><span class="n">model_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">model</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_criterion_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerCriterion</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">is_key_value</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">_key_value</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">is_key_value</span><span class="p">:</span>
+            <span class="n">criterion</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">key</span><span class="p">:</span> <span class="n">HydraRunner</span><span class="o">.</span><span class="n">_get_criterion_from_params</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># noqa: WPS437</span>
+                <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">criterion</span><span class="p">:</span> <span class="n">Criterion</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">criterion</span>
+
+<div class="viewcode-block" id="HydraRunner.get_criterion"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_criterion">[docs]</a>    <span class="k">def</span> <span class="nf">get_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerCriterion</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the criterion for a given stage.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;criterion&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">criterion_params</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">criterion</span>
+        <span class="n">criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_criterion_from_params</span><span class="p">(</span><span class="n">criterion_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">criterion</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_optimizer_from_params</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optimizer</span><span class="p">:</span>
+        <span class="c1"># @TODO 1: refactor; this method is too long</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="c1"># learning rate linear scaling</span>
+        <span class="n">lr_scaling_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;lr_linear_scaling&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lr_scaling_params</span><span class="p">:</span>
+            <span class="n">loaders_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">loaders</span>
+            <span class="n">lr</span><span class="p">,</span> <span class="n">lr_scaling</span> <span class="o">=</span> <span class="n">do_lr_linear_scaling</span><span class="p">(</span>
+                <span class="n">lr_scaling_params</span><span class="o">=</span><span class="n">lr_scaling_params</span><span class="p">,</span>
+                <span class="n">batch_size</span><span class="o">=</span><span class="n">loaders_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;batch_size&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                <span class="n">per_gpu_scaling</span><span class="o">=</span><span class="n">loaders_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;per_gpu_scaling&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;lr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lr</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lr_scaling</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="c1"># getting layer-wise parameters</span>
+        <span class="n">layerwise_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;layerwise_params&quot;</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">())</span>
+        <span class="n">no_bias_weight_decay</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;no_bias_weight_decay&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># getting model parameters</span>
+        <span class="n">model_key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_model&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">model_params</span> <span class="o">=</span> <span class="n">get_model_parameters</span><span class="p">(</span>
+            <span class="n">models</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">models_keys</span><span class="o">=</span><span class="n">model_key</span><span class="p">,</span>
+            <span class="n">layerwise_params</span><span class="o">=</span><span class="n">layerwise_params</span><span class="p">,</span>
+            <span class="n">no_bias_weight_decay</span><span class="o">=</span><span class="n">no_bias_weight_decay</span><span class="p">,</span>
+            <span class="n">lr_scaling</span><span class="o">=</span><span class="n">lr_scaling</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># instantiate optimizer</span>
+        <span class="n">optimizer</span><span class="p">:</span> <span class="n">Optimizer</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">model_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">optimizer</span>
+
+<div class="viewcode-block" id="HydraRunner.get_optimizer"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_optimizer">[docs]</a>    <span class="k">def</span> <span class="nf">get_optimizer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerOptimizer</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the optimizer for a given stage and epoch.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model: model or a dict of models</span>
+<span class="sd">            stage: current stage name</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            optimizer for selected stage and epoch</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;optimizer&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">optimizer_params</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">optimizer</span>
+        <span class="n">optimizer_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">optimizer_params</span><span class="p">)</span>
+        <span class="n">is_key_value</span> <span class="o">=</span> <span class="n">optimizer_params</span><span class="o">.</span><span class="n">_key_value</span> <span class="ow">or</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">is_key_value</span><span class="p">:</span>
+            <span class="n">optimizer</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">params</span> <span class="ow">in</span> <span class="n">optimizer_params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">optimizer</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_optimizer_from_params</span><span class="p">(</span>
+                    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">optimizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_optimizer_from_params</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">stage</span><span class="o">=</span><span class="n">stage</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">optimizer_params</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">optimizer</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_scheduler_from_params</span><span class="p">(</span>
+        <span class="o">*</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">RunnerOptimizer</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerScheduler</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">is_key_value</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">_key_value</span> <span class="ow">or</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">is_key_value</span><span class="p">:</span>
+            <span class="n">scheduler</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Scheduler</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">scheduler_params</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">scheduler_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">scheduler_params</span><span class="p">)</span>
+                <span class="n">optimizer_key</span> <span class="o">=</span> <span class="n">scheduler_params</span><span class="o">.</span><span class="n">_optimizer</span> <span class="ow">or</span> <span class="kc">None</span>
+                <span class="n">optim</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">[</span><span class="n">optimizer_key</span><span class="p">]</span> <span class="k">if</span> <span class="n">optimizer_key</span> <span class="k">else</span> <span class="n">optimizer</span>
+                <span class="n">scheduler</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">HydraRunner</span><span class="o">.</span><span class="n">_get_scheduler_from_params</span><span class="p">(</span>  <span class="c1"># noqa: WPS437</span>
+                    <span class="n">optimizer</span><span class="o">=</span><span class="n">optim</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">scheduler_params</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">optimizer_key</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">_optimizer</span> <span class="ow">or</span> <span class="kc">None</span>
+            <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer</span><span class="p">[</span><span class="n">optimizer_key</span><span class="p">]</span> <span class="k">if</span> <span class="n">optimizer_key</span> <span class="k">else</span> <span class="n">optimizer</span>
+            <span class="n">scheduler</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">scheduler</span>
+
+<div class="viewcode-block" id="HydraRunner.get_scheduler"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_scheduler">[docs]</a>    <span class="k">def</span> <span class="nf">get_scheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">RunnerOptimizer</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerScheduler</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the schedulers for a given stage.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;scheduler&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">scheduler_params</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">scheduler</span>
+        <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_scheduler_from_params</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">scheduler_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">scheduler</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_callback_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">wrapper_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_wrapper&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_target_&quot;</span><span class="p">)</span>
+        <span class="n">callback_class</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">get_class</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">OmegaConf</span><span class="o">.</span><span class="n">to_container</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">resolve</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">callback</span> <span class="o">=</span> <span class="n">callback_class</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">wrapper_params</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">wrapper_params</span><span class="p">[</span><span class="s2">&quot;base_callback&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">callback</span>
+            <span class="n">callback</span> <span class="o">=</span> <span class="n">HydraRunner</span><span class="o">.</span><span class="n">_get_callback_from_params</span><span class="p">(</span><span class="o">**</span><span class="n">wrapper_params</span><span class="p">)</span>  <span class="c1"># noqa: WPS437</span>
+        <span class="k">return</span> <span class="n">callback</span>
+
+<div class="viewcode-block" id="HydraRunner.get_callbacks"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_callbacks">[docs]</a>    <span class="k">def</span> <span class="nf">get_callbacks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OrderedDict[str, Callback]&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Returns the callbacks for a given stage.&quot;&quot;&quot;</span>
+        <span class="n">callbacks_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">callbacks</span> <span class="ow">or</span> <span class="p">{}</span>
+
+        <span class="n">callbacks</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callback</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">name</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_callback_from_params</span><span class="p">(</span><span class="n">callback_params</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">callback_params</span> <span class="ow">in</span> <span class="n">callbacks_params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+
+        <span class="n">is_callback_exists</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">callback_fn</span><span class="p">:</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">callback_isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">callback_fn</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">callbacks</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_verbose</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">TqdmCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_verbose&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TqdmCallback</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timeit</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">TimerCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_timer&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">TimerCallback</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">CheckRunCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_check&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CheckRunCallback</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_overfit</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">BatchOverfitCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_overfit&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">BatchOverfitCallback</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_callback_exists</span><span class="p">(</span><span class="n">ICheckpointCallback</span><span class="p">):</span>
+            <span class="n">callbacks</span><span class="p">[</span><span class="s2">&quot;_checkpoint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">CheckpointCallback</span><span class="p">(</span>
+                <span class="n">logdir</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_logdir</span><span class="p">,</span> <span class="s2">&quot;checkpoints&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">callbacks</span></div></div>
+
+
+<div class="viewcode-block" id="SupervisedHydraRunner"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.SupervisedHydraRunner">[docs]</a><span class="k">class</span> <span class="nc">SupervisedHydraRunner</span><span class="p">(</span><span class="n">ISupervisedRunner</span><span class="p">,</span> <span class="n">HydraRunner</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;HydraRunner for supervised tasks</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        cfg: Hydra dictionary with parameters</span>
+<span class="sd">        input_key: key in ``runner.batch`` dict mapping for model input</span>
+<span class="sd">        output_key: key for ``runner.batch`` to store model output</span>
+<span class="sd">        target_key: key in ``runner.batch`` dict mapping for target</span>
+<span class="sd">        loss_key: key for ``runner.batch_metrics`` to store criterion loss output</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        Please follow the `minimal examples`_ sections for use cases.</span>
+
+<span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SupervisedHydraRunner.__init__"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.SupervisedHydraRunner.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">cfg</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">input_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span>
+        <span class="n">output_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
+        <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>
+        <span class="n">loss_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;loss&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
+        <span class="n">ISupervisedRunner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="n">input_key</span><span class="p">,</span>
+            <span class="n">output_key</span><span class="o">=</span><span class="n">output_key</span><span class="p">,</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="n">target_key</span><span class="p">,</span>
+            <span class="n">loss_key</span><span class="o">=</span><span class="n">loss_key</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">HydraRunner</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="o">=</span><span class="n">cfg</span><span class="p">)</span></div></div>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;HydraRunner&quot;</span><span class="p">,</span> <span class="s2">&quot;SupervisedHydraRunner&quot;</span><span class="p">]</span>
+</pre></div>
+
+             </article>
+             
+            </div>
+            <footer>
+  
+
+  <hr>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2021, Scitator.
+
+    </p>
+  </div>
+    
+      <div>
+        Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+      </div>
+     
+
+</footer>
+
+          </div>
+        </div>
+
+        <div class="catalyst-content-right" id="catalyst-content-right">
+          <div class="catalyst-right-menu" id="catalyst-right-menu">
+            <div class="catalyst-side-scroll" id="catalyst-side-scroll-right">
+              
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  
+
+
+  
+
+     
+       <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+         <script src="../../../_static/jquery.js"></script>
+         <script src="../../../_static/underscore.js"></script>
+         <script src="../../../_static/doctools.js"></script>
+     
+
+  
+
+  <script type="text/javascript" src="../../../_static/js/vendor/popper.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/vendor/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+  <!-- Begin Footer -->
+
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-container">
+      <div class="footer-logo-wrapper">
+        <a href="https://catalyst-team.com/" class="footer-logo"></a>
+      </div>
+
+      <div class="footer-links-wrapper">
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Ecosystem</a></li>
+            <li><a class="nav-dropdown-item" href="https://alchemy.host">Alchemy</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/catalyst">Catalyst</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/reaction">Reaction</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://github.com/catalyst-team">Projects</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/codestyle">Codestyle</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/neuro">Catalyst.Neuro</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/classification">Classification</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/detection">Detection</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/segmentation">Segmentation</a></li>
+            <li><a class="nav-dropdown-item" href="https://github.com/catalyst-team/gan">Catalyst.GAN</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <ul>
+            <li class="list-title"><a href="https://catalyst-team.com/">Support</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/issues" target="_blank">Github Issues</a></li>
+            <li><a href="https://github.com/catalyst-team/catalyst/blob/master/CONTRIBUTING.md" target="_blank">Contributing</a></li>
+            <li><a href="https://www.patreon.com/catalyst_team" target="_blank">Patreon</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col follow-us-col">
+          <div class="footer-social-icons">
+            <a href="https://t.me/catalyst_team" target="_blank" class="telegram"></a>
+            <a href="https://twitter.com/catalyst_core" target="_blank" class="twitter"></a>
+            <a href="https://join.slack.com/t/catalyst-team-core/shared_invite/zt-d9miirnn-z86oKDzFMKlMG4fgFdZafw" target="_blank" class="ods"></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- End Footer -->
+
+  <!-- Begin Mobile Menu -->
+
+  <div class="mobile-main-menu">
+    <div class="container-fluid">
+      <div class="container">
+        <div class="mobile-main-menu-header-container">
+          <a class="header-logo" href="https://catalyst-team.com/" aria-label="Catalyst"></a>
+          <a class="main-menu-close-button" href="#" data-behavior="close-mobile-menu"></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-main-menu-links-container">
+      <div class="main-menu">
+        <ul>
+          <li>
+            <a href="">Get Started</a>
+          </li>
+
+          <li>
+            <a href="https://github.com/catalyst-team/catalyst">Github</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Mobile Menu -->
+
+  <script type="text/javascript" src="../../../_static/js/vendor/anchor.min.js"></script>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+      mobileMenu.bind();
+      mobileTOC.bind();
+      catalystAnchors.bind();
+      sideMenus.bind();
+      scrollToAnchor.bind();
+      highlightNavigation.bind();
+      mainMenuDropdown.bind();
+
+      // Add class to links that have code blocks, since we cannot create links in code blocks
+      $("article.catalyst-article a span.pre").each(function(e) {
+        $(this).closest("a").addClass("has-code");
+      });
+    })
+  </script>
+</body>
+</html>
