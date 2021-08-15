@@ -3,8 +3,12 @@ from typing import Any, List
 import numpy as np
 import torch
 
+from catalyst import SETTINGS
 from catalyst.metrics._metric import IMetric
 from catalyst.utils.distributed import all_gather, get_rank
+
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
 
 
 class ConfusionMatrixMetric(IMetric):
@@ -151,8 +155,11 @@ class ConfusionMatrixMetric(IMetric):
             targets.
         """
         if self._is_ddp:
-            value: List[np.ndarray] = all_gather(self.conf)
-            value: np.ndarray = np.sum(np.stack(value, axis=0), axis=0)
+            if not SETTINGS.xla_required:
+                value: List[np.ndarray] = all_gather(self.conf)
+                value: np.ndarray = np.sum(np.stack(value, axis=0), axis=0)
+            else:
+                value = xm.all_gather(self.conf).sum().cpu().numpy()
             self.conf = value
         if self.normalized:
             conf = self.conf.astype(np.float32)

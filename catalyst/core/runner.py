@@ -14,6 +14,7 @@ from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import filter_callbacks_by_node, sort_callbacks_by_order, validate_loaders
 from catalyst.core.trial import ITrial
+from catalyst.settings import SETTINGS
 from catalyst.typing import (
     Criterion,
     Device,
@@ -28,6 +29,10 @@ from catalyst.typing import (
 )
 from catalyst.utils.distributed import ddp_sync_run
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
+
+if SETTINGS.xla_required:
+    from torch_xla.distributed.parallel_loader import ParallelLoader
+    import torch_xla.distributed.xla_multiprocessing as xmp
 
 LOGGER = logging.getLogger(__name__)
 
@@ -265,7 +270,7 @@ class IRunner(ICallback, ILogger, ABC):
         self._stage_rank: int = -1
         self._stage_world_size: int = -1
 
-    # @TODO: remove hotfix
+    # @TODO: remove hotfix?
     @property
     def device(self) -> Device:
         """Returns the runner's device instance."""
@@ -787,7 +792,12 @@ class IRunner(ICallback, ILogger, ABC):
         # https://pytorch.org/docs/stable/notes/amp_examples.html#typical-mixed-precision-training
         self._run_event("on_loader_start")
         with torch.set_grad_enabled(self.is_train_loader):
-            for self.loader_batch_step, self.batch in enumerate(self.loader):
+            loader = (
+                ParallelLoader(self.loader, [self.device]).per_device_loader(self.device)
+                if self.engine.is_xla_ddp
+                else self.engine
+            )
+            for self.loader_batch_step, self.batch in enumerate(loader):
                 with self.engine.autocast():
                     self._run_batch()
                 if self.need_early_stop:
@@ -814,14 +824,20 @@ class IRunner(ICallback, ILogger, ABC):
     def _run_experiment(self) -> None:
         self._run_event("on_experiment_start")
         for self.stage_key in self.stages:
-            if self.engine.is_ddp:
+            if self.engine.is_xla_ddp:
+                # XLA ddp-device branch
+                world_size = self.engine.world_size
+                xmp.spawn(
+                    self._run_stage, args=(world_size,), nprocs=world_size, start_method="fork"
+                )
+            elif self.engine.is_ddp:
                 # ddp-device branch
                 world_size = self.engine.world_size
                 torch.multiprocessing.spawn(
                     self._run_stage, args=(world_size,), nprocs=world_size, join=True,
                 )
             else:
-                # single-device branch (cpu, gpu, dp)
+                # single-device branch (cpu, gpu, dp, xla)
                 self._run_stage()
         self._run_event("on_experiment_end")
 

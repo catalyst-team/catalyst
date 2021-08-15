@@ -12,6 +12,9 @@ import torch.distributed as dist
 
 from catalyst.settings import SETTINGS
 
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
+
 
 def _is_torch_distributed_initialized() -> bool:
     """Checks if torch.distributed is available and initialized."""
@@ -71,7 +74,9 @@ def get_rank() -> int:
     Returns:
         int: ``rank`` if torch.distributed is initialized, otherwise ``-1``
     """
-    if _is_torch_distributed_initialized():
+    if SETTINGS.xla_required:
+        return xm.get_ordinal()
+    elif _is_torch_distributed_initialized():
         return dist.get_rank()
     else:
         return -1

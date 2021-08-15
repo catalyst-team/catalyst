@@ -51,10 +51,16 @@ class IEngine(ABC):
         """Process world size for distributed training."""
         pass
 
+    # TODO: should we add ddp_type?
     @property
     def is_ddp(self) -> bool:
         """Boolean flag for distributed run."""
         return self.rank > -1
+
+    @property
+    def is_xla_ddp(self) -> bool:
+        """Boolean flag for XLA distributed run."""
+        return False
 
     @property
     def is_master_process(self) -> bool:

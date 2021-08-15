@@ -2,10 +2,14 @@ from typing import Dict, Tuple
 
 import torch
 
+from catalyst import SETTINGS
 from catalyst.metrics._metric import ICallbackLoaderMetric
 from catalyst.metrics.functional._auc import auc, binary_auc
 from catalyst.metrics.functional._misc import process_multilabel_components
 from catalyst.utils.distributed import all_gather, get_rank
+
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
 
 
 class AUCMetric(ICallbackLoaderMetric):
@@ -126,9 +130,10 @@ class AUCMetric(ICallbackLoaderMetric):
         """Init."""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_name = f"{self.prefix}auc{self.suffix}"
+        self._is_ddp = False
         self.scores = []
         self.targets = []
-        self._is_ddp = get_rank() > -1
+        self.reset(0, 0)
 
     def reset(self, num_batches, num_samples) -> None:
         """Resets all fields"""
@@ -153,8 +158,13 @@ class AUCMetric(ICallbackLoaderMetric):
 
         # @TODO: ddp hotfix, could be done better
         if self._is_ddp:
-            scores = torch.cat(all_gather(scores))
-            targets = torch.cat(all_gather(targets))
+            if not SETTINGS.xla_required:
+                # gpu-ddp variant
+                scores = torch.cat(all_gather(scores))
+                targets = torch.cat(all_gather(targets))
+            else:
+                scores = xm.all_gather(scores)
+                targets = xm.all_gather(targets)
 
         scores, targets, _ = process_multilabel_components(outputs=scores, targets=targets)
         per_class = auc(scores=scores, targets=targets)

@@ -3,6 +3,7 @@ from functools import partial
 
 import torch
 
+from catalyst import SETTINGS
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._segmentation import (
     _dice,
@@ -11,6 +12,9 @@ from catalyst.metrics.functional._segmentation import (
     get_segmentation_statistics,
 )
 from catalyst.utils.distributed import all_gather, get_rank
+
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
 
 
 class RegionBasedMetric(ICallbackBatchMetric):
@@ -159,10 +163,17 @@ class RegionBasedMetric(ICallbackBatchMetric):
         if self._is_ddp:
             for _, statistics in self.statistics.items():
                 for key in statistics:
-                    device = statistics[key].device
-                    value: List[torch.Tensor] = all_gather(statistics[key].cpu())
-                    value: torch.Tensor = torch.sum(torch.vstack(value), dim=0).to(device)
-                    statistics[key] = value
+                    if not SETTINGS.xla_required:
+                        device = statistics[key].device
+                        value: List[torch.Tensor] = all_gather(statistics[key].cpu())
+                        value: torch.Tensor = torch.sum(torch.vstack(value), dim=0).to(device)
+                        statistics[key] = value
+                    else:
+                        device = statistics[key].device
+                        value: torch.Tensor = xm.all_gather(self.statistics[key].cpu()).sum(
+                            dim=0
+                        ).to(device)
+                        statistics[key] = value
 
         for class_idx, statistics in self.statistics.items():
             value = self.metric_fn(**statistics)

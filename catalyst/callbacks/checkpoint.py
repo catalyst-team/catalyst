@@ -701,7 +701,11 @@ class CheckpointCallback(ICheckpointCallback):
         """
         if runner.is_infer_stage:
             return
-        if runner.engine.is_ddp and not runner.engine.is_master_process:
+        if (
+            runner.engine.is_ddp
+            and not runner.engine.is_xla_ddp
+            and not runner.engine.is_master_process
+        ):
             # worker sync
             dist.barrier()
             return
@@ -757,7 +761,11 @@ class CheckpointCallback(ICheckpointCallback):
             }
             _load_runner(logdir=self.logdir, runner=runner, mapping=to_load)
 
-        if runner.engine.is_ddp and runner.engine.is_master_process:
+        if (
+            runner.engine.is_ddp
+            and not runner.engine.is_xla_ddp
+            and runner.engine.is_master_process
+        ):
             # master sync
             dist.barrier()
 

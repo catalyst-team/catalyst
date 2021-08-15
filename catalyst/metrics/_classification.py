@@ -5,6 +5,7 @@ from functools import partial
 import numpy as np
 import torch
 
+from catalyst import SETTINGS
 from catalyst.metrics._metric import ICallbackBatchMetric
 from catalyst.metrics.functional._classification import get_aggregated_metrics, get_binary_metrics
 from catalyst.metrics.functional._misc import (
@@ -13,6 +14,9 @@ from catalyst.metrics.functional._misc import (
     get_multilabel_statistics,
 )
 from catalyst.utils.distributed import all_gather, get_rank
+
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
 
 
 class StatisticsMetric(ICallbackBatchMetric):
@@ -332,9 +336,14 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         # @TODO: ddp hotfix, could be done better
         if self._is_ddp:
             for key in self.statistics:
-                value: List[np.ndarray] = all_gather(self.statistics[key])
-                value: np.ndarray = np.sum(np.vstack(value), axis=0)
-                self.statistics[key] = value
+                if not SETTINGS.xla_required:
+                    value: List[np.ndarray] = all_gather(self.statistics[key])
+                    value: np.ndarray = np.sum(np.vstack(value), axis=0)
+                    self.statistics[key] = value
+                else:
+                    self.statistics[key] = (
+                        xm.all_gather(self.statistics[key]).sum(dim=0).cpu().numpy()
+                    )
 
         per_class, micro, macro, weighted = self.compute()
         metrics = self._convert_metrics_to_kv(
@@ -442,9 +451,12 @@ class BinaryPrecisionRecallF1Metric(StatisticsMetric):
         # @TODO: ddp hotfix, could be done better
         if self._is_ddp:
             for key in self.statistics:
-                value: List[float] = all_gather(self.statistics[key])
-                value: float = sum(value)
-                self.statistics[key] = value
+                if not SETTINGS.xla_required:
+                    value: List[float] = all_gather(self.statistics[key])
+                    value: float = sum(value)
+                    self.statistics[key] = value
+                else:
+                    self.statistics[key] = xm.all_gather(self.statistics[key]).sum().cpu().numpy()
 
         precision_value, recall_value, f1_value = get_binary_metrics(
             tp=self.statistics["tp"],
