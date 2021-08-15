@@ -1,5 +1,7 @@
 from typing import Callable
 
+import torch
+
 from catalyst.engines.torch import DeviceEngine
 from catalyst.settings import SETTINGS
 
@@ -57,10 +59,31 @@ class DistributedXLAEngine(DeviceEngine):
 
     def ddp_sync_run(self, function: Callable):
         if self.rank > 0:
-            xm.rendezvous("ddp_sync_run")
+            xm.rendezvous("barrier")
         function()
         if self.rank == 0:
-            xm.rendezvous("ddp_sync_run")
+            xm.rendezvous("barrier")
+        xm.rendezvous("barrier")
+
+    def sync_tensor(self, tensor: torch.Tensor, mode: str) -> torch.Tensor:
+        """Syncs ``tensor`` over ``world_size`` in distributed mode.
+
+        Args:
+            tensor: tensor to sync across the processes.
+            mode: tensor synchronization type,
+                should be one of 'sum' or 'mean'.
+                Default is 'mean'.
+
+        Returns:
+            torch.Tensor with synchronized values.
+        """
+        # return tensor
+        if mode not in {"sum", "mean"}:
+            raise ValueError(f"Unknown sync_type '{mode}'")
+        if mode == "sum":
+            return xm.all_reduce("sum", tensor)
+        elif mode == "mean":
+            return xm.all_reduce("sum", tensor, scale=1.0 / self.world_size)
 
     def optimizer_step(self, loss, model, optimizer) -> None:
         """Abstraction over ``optimizer.step()`` step."""

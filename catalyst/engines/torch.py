@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Mapping, Tuple, Union
+from typing import Any, Dict, List, Mapping, Tuple, Union
 import copy
 import os
 

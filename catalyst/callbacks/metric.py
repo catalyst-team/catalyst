@@ -1,12 +1,17 @@
 from typing import Dict, Iterable, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 
+import numpy as np
 import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.metrics._functional_metric import FunctionalBatchMetric
 from catalyst.metrics._metric import ICallbackBatchMetric, ICallbackLoaderMetric, IMetric
+from catalyst.settings import SETTINGS
+
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
 
 
 class IMetricCallback(Callback, ABC):
@@ -215,10 +220,16 @@ class BatchMetricCallback(MetricCallback):
             runner: current runner
         """
         metrics = self.metric.compute_key_value()
-        metrics = {
-            k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-            for k, v in metrics.items()
-        }
+        if runner.engine.is_xla_ddp:
+            metrics = {
+                k: xm.mesh_reduce(k, v.item() if isinstance(v, torch.Tensor) else v, np.mean)
+                for k, v in metrics.items()
+            }
+        elif runner.engine.is_ddp:
+            metrics = {
+                k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+                for k, v in metrics.items()
+            }
         runner.loader_metrics.update(metrics)
 
 

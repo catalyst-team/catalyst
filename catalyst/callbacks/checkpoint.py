@@ -8,8 +8,12 @@ import torch.distributed as dist
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
+from catalyst.settings import SETTINGS
 from catalyst.tools.metric_handler import MetricHandler
 from catalyst.utils.config import save_config
+
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
 
 
 def _save_checkpoint(
@@ -709,6 +713,14 @@ class CheckpointCallback(ICheckpointCallback):
             # worker sync
             dist.barrier()
             return
+        if (
+            runner.engine.is_ddp
+            and runner.engine.is_xla_ddp
+            and not runner.engine.is_master_process
+        ):
+            # worker sync
+            xm.rendezvous("checkpoint_on_stage_end")
+            return
 
         # let's log Top-N base metrics
         log_message = "Top best models:\n"
@@ -768,6 +780,9 @@ class CheckpointCallback(ICheckpointCallback):
         ):
             # master sync
             dist.barrier()
+        if runner.engine.is_ddp and runner.engine.is_xla_ddp and runner.engine.is_master_process:
+            # master sync
+            xm.rendezvous("checkpoint_on_stage_end")
 
 
 __all__ = ["ICheckpointCallback", "CheckpointCallback"]

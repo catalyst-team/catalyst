@@ -107,6 +107,8 @@ class IEngine(ABC):
         function()
         if self.rank == 0:
             dist.barrier()
+        if self.rank > -1:
+            dist.barrier()
 
     @abstractmethod
     def sync_device(

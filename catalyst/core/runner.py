@@ -4,6 +4,7 @@ from collections import defaultdict, OrderedDict
 from functools import lru_cache
 import logging
 
+import numpy as np
 import torch
 import torch.distributed
 import torch.multiprocessing
@@ -31,6 +32,7 @@ from catalyst.utils.distributed import ddp_sync_run
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
 
 if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
     from torch_xla.distributed.parallel_loader import ParallelLoader
     import torch_xla.distributed.xla_multiprocessing as xmp
 
@@ -635,11 +637,15 @@ class IRunner(ICallback, ILogger, ABC):
 
         self.trial = self.get_trial()
         self.engine = self.get_engine()
-        self.loggers = self.get_loggers()
-        self.log_hparams(hparams=self.hparams, scope="experiment")
+        # self.loggers = self.get_loggers()
+        # self.log_hparams(hparams=self.hparams, scope="experiment")
 
     def on_stage_start(self, runner: "IRunner"):
         """Event handler."""
+        if self.engine.is_master_process and len(self.loggers) == 0:
+            self.loggers = self.get_loggers()
+            self.log_hparams(hparams=self.hparams, scope="experiment")
+
         assert self.stage_key is not None
         self.is_infer_stage: bool = self.stage_key.startswith("infer")
         self.stage_epoch_len = self.get_stage_len(stage=self.stage_key)
@@ -717,7 +723,13 @@ class IRunner(ICallback, ILogger, ABC):
         # as far as we could `backward` anything from `batch_metrics` on the nodes during training,
         # they could not be synced before, so we have to sync them in the end of the batch
         # @TODO: could be done better
-        if self.engine.is_ddp:
+        # @TODO: stop every batch sync, as far as it's slow
+        if self.engine.is_xla_ddp:
+            self.batch_metrics = {
+                k: xm.mesh_reduce(k, v.item() if isinstance(v, torch.Tensor) else v, np.mean)
+                for k, v in self.batch_metrics.items()
+            }
+        elif self.engine.is_ddp:
             self.batch_metrics = {
                 k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
                 for k, v in self.batch_metrics.items()
