@@ -100,7 +100,7 @@ extras = {
     "onnx": load_requirements("requirements/requirements-onnx.txt"),
     "optuna": load_requirements("requirements/requirements-optuna.txt"),
     "wandb": load_requirements("requirements/requirements-wandb.txt"),
-    "xla": load_requirements("requirements/requirements-xla.txt"),
+    # "xla": load_requirements("requirements/requirements-xla.txt"),
 }
 extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
 # Meta dependency groups.

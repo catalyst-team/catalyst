@@ -65,4 +65,4 @@ if SETTINGS.fairscale_required:
 if SETTINGS.xla_required:
     from catalyst.engines.xla import XLAEngine, DistributedXLAEngine
 
-    __all__ += [XLAEngine, DistributedXLAEngine]
+    __all__ += ["XLAEngine", "DistributedXLAEngine"]

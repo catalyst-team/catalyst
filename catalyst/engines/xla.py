@@ -1,3 +1,5 @@
+from typing import Callable
+
 from catalyst.engines.torch import DeviceEngine
 from catalyst.settings import SETTINGS
 
@@ -10,6 +12,9 @@ class XLAEngine(DeviceEngine):
         """Init."""
         super().__init__()
         self._device = xm.xla_device()
+
+    def ddp_sync_run(self, function: Callable):
+        function()
 
     def optimizer_step(self, loss, model, optimizer) -> None:
         """Abstraction over ``optimizer.step()`` step."""
@@ -49,6 +54,13 @@ class DistributedXLAEngine(DeviceEngine):
         self._rank = rank
         self._world_size = world_size
         self._device = xm.xla_device()
+
+    def ddp_sync_run(self, function: Callable):
+        if self.rank > 0:
+            xm.rendezvous("ddp_sync_run")
+        function()
+        if self.rank == 0:
+            xm.rendezvous("ddp_sync_run")
 
     def optimizer_step(self, loss, model, optimizer) -> None:
         """Abstraction over ``optimizer.step()`` step."""

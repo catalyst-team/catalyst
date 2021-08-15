@@ -5,6 +5,7 @@ from contextlib import contextmanager
 import numpy as np
 import torch
 from torch import nn
+import torch.distributed as dist
 
 from catalyst.typing import Criterion, Device, Model, Optimizer, Scheduler
 
@@ -99,6 +100,13 @@ class IEngine(ABC):
     def cleanup_process(self):
         """Clean DDP variables and processes."""
         pass
+
+    def ddp_sync_run(self, function: Callable):
+        if self.rank > 0:
+            dist.barrier()
+        function()
+        if self.rank == 0:
+            dist.barrier()
 
     @abstractmethod
     def sync_device(

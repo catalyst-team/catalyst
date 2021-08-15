@@ -653,7 +653,7 @@ class IRunner(ICallback, ILogger, ABC):
                 del self.loggers
                 self.loggers = {}
 
-        ddp_sync_run(self._setup_loaders)
+        self.engine.ddp_sync_run(self._setup_loaders)
         self._setup_components()
         self._setup_callbacks()
         self.log_hparams(hparams=self.hparams, scope="stage")
@@ -795,7 +795,7 @@ class IRunner(ICallback, ILogger, ABC):
             loader = (
                 ParallelLoader(self.loader, [self.device]).per_device_loader(self.device)
                 if self.engine.is_xla_ddp
-                else self.engine
+                else self.loader
             )
             for self.loader_batch_step, self.batch in enumerate(loader):
                 with self.engine.autocast():

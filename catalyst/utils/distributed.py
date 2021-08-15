@@ -13,12 +13,17 @@ import torch.distributed as dist
 from catalyst.settings import SETTINGS
 
 if SETTINGS.xla_required:
+    import torch_xla.core.xla_env_vars as xenv
     import torch_xla.core.xla_model as xm
 
 
 def _is_torch_distributed_initialized() -> bool:
     """Checks if torch.distributed is available and initialized."""
     return dist.is_available() and dist.is_initialized()
+
+
+def _is_xla_distributed_initialized() -> bool:
+    return os.environ.get(xenv.TORCH_DIST_ROOT, None) is not None
 
 
 def _is_slurm_available():
@@ -74,7 +79,7 @@ def get_rank() -> int:
     Returns:
         int: ``rank`` if torch.distributed is initialized, otherwise ``-1``
     """
-    if SETTINGS.xla_required:
+    if SETTINGS.xla_required and _is_xla_distributed_initialized():
         return xm.get_ordinal()
     elif _is_torch_distributed_initialized():
         return dist.get_rank()
