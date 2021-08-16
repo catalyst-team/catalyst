@@ -227,7 +227,6 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
         else:
             kwargs["train"] = True
         super(MnistMLDataset, self).__init__(**kwargs)
-        self._split = split
         self._filter()
 
     def get_labels(self) -> List[int]:
