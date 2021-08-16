@@ -13,7 +13,7 @@ from catalyst.data.transforms import Compose, Normalize, ToTensor
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
-    from sklearn.linear_model import LogisticRegression
+    from sklearn.ensemble import RandomForestClassifier
 
 TRAIN_EPOCH = 3
 LR = 0.01
@@ -72,12 +72,11 @@ def train_experiment(device, engine=None):
                 target_key="targets",
                 train_loader="train",
                 valid_loader="valid",
-                sklearn_classifier_fn=LogisticRegression,
+                sklearn_classifier_fn=RandomForestClassifier,
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
                 random_state=RANDOM_STATE,
-                solver="sag",
-                max_iter=1000,
+                n_estimators=100,
             ),
             filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
         ),
