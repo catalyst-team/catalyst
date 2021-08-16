@@ -54,11 +54,11 @@ class ListwiseLoss(nn.Module):
     """
 
     @staticmethod
-    def _assert_equal_size(input_: torch.Tensor, target: torch.Tensor) -> None:
-        if input_.size() != target.size():
-            raise ValueError(f"Shape mismatch: {input_.size()}, {target.size()}")
+    def _assert_equal_size(outputs: torch.Tensor, targets: torch.Tensor) -> None:
+        if outputs.size() != targets.size():
+            raise ValueError(f"Shape mismatch: {outputs.size()}, {targets.size()}")
 
-    def forward(self, input_: torch.Tensor, target: torch.Tensor):
+    def forward(self, outputs: torch.Tensor, targets: torch.Tensor):
         raise NotImplementedError()
 
 
@@ -233,27 +233,27 @@ class WARP(Function):
     @staticmethod
     def forward(
         ctx: nn.Module,
-        input_: torch.Tensor,
-        target: torch.Tensor,
+        outputs: torch.Tensor,
+        targets: torch.Tensor,
         max_num_trials: Optional[int] = None,
     ):
 
-        batch_size = target.size()[0]
+        batch_size = targets.size()[0]
         if max_num_trials is None:
-            max_num_trials = target.size()[1] - 1
+            max_num_trials = targets.size()[1] - 1
 
-        positive_indices = torch.zeros(input_.size())
-        negative_indices = torch.zeros(input_.size())
-        L = torch.zeros(input_.size()[0])
+        positive_indices = torch.zeros(outputs.size())
+        negative_indices = torch.zeros(outputs.size())
+        L = torch.zeros(outputs.size()[0])
 
-        all_labels_idx = torch.arange(target.size()[1])
+        all_labels_idx = torch.arange(targets.size()[1])
 
-        Y = float(target.size()[1])
-        J = torch.nonzero(target)
+        Y = float(targets.size()[1])
+        J = torch.nonzero(targets)
 
         for i in range(batch_size):
 
-            msk = torch.ones(target.size()[1], dtype=bool)
+            msk = torch.ones(targets.size()[1], dtype=bool)
 
             # Find the positive label for this example
             j = J[i, 1]
@@ -276,7 +276,7 @@ class WARP(Function):
 
                 num_trials += 1
                 # calculate the score margin
-                sample_score_margin = 1 + input_[i, neg_idx] - input_[i, j]
+                sample_score_margin = 1 + outputs[i, neg_idx] - outputs[i, j]
 
             if sample_score_margin < 0:
                 # checks if no violating examples have been found
@@ -288,11 +288,11 @@ class WARP(Function):
 
         loss = L * (
             1
-            - torch.sum(positive_indices * input_, dim=1)
-            + torch.sum(negative_indices * input_, dim=1)
+            - torch.sum(positive_indices * outputs, dim=1)
+            + torch.sum(negative_indices * outputs, dim=1)
         )
 
-        ctx.save_for_backward(input_, target)
+        ctx.save_for_backward(outputs, targets)
         ctx.L = L
         ctx.positive_indices = positive_indices
         ctx.negative_indices = negative_indices
@@ -302,7 +302,7 @@ class WARP(Function):
     # This function has only a single output, so it gets only one gradient
     @staticmethod
     def backward(ctx, grad_output):
-        input_, target = ctx.saved_variables
+        outputs, targets = ctx.saved_variables
         L = Variable(torch.unsqueeze(ctx.L, 1), requires_grad=False)
 
         positive_indices = Variable(ctx.positive_indices, requires_grad=False)
@@ -338,10 +338,10 @@ class WARPLoss(ListwiseLoss):
         import torch
         from catalyst.contrib.nn.criterion import recsys
 
-        input_ = torch.randn(5, 3, requires_grad=True)
-        target = torch.randn(5, 3, requires_grad=True)
+        outputs = torch.randn(5, 3, requires_grad=True)
+        targets = torch.randn(5, 3, requires_grad=True)
 
-        output = recsys.WARPLoss()(input_, target)
+        output = recsys.WARPLoss()(outputs, targets)
         output.backward()
     """
 
@@ -349,18 +349,18 @@ class WARPLoss(ListwiseLoss):
         super().__init__()
         self.max_num_trials = max_num_trials
 
-    def forward(self, input_: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+    def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """Forward propagation method for the WARP loss.
 
         Args:
-            input_: Iterable of tensors containing predictions for all items.
-            target: Iterable of tensors containing true labels for all items.
+            outputs: Iterable of tensors containing predictions for all items.
+            targets: Iterable of tensors containing true labels for all items.
 
         Returns:
             computed loss
         """
-        self._assert_equal_size(input_, target)
-        return WARP.apply(input_, target, self.max_num_trials)
+        self._assert_equal_size(outputs, targets)
+        return WARP.apply(outputs, targets, self.max_num_trials)
 
 
 class RocStarLoss(PairwiseLoss):
@@ -401,34 +401,34 @@ class RocStarLoss(PairwiseLoss):
         size = max(sample_size, sample_size_gamma)
 
         # Randomly init labels
-        self.input_history = torch.rand((size, 1))
-        self.target_history = torch.randint(2, (size, 1))
+        self.outputs_history = torch.rand((size, 1))
+        self.targets_history = torch.randint(2, (size, 1))
 
-    def forward(self, input_: torch.Tensor, target: torch.Tensor) -> torch.Tensor:
+    def forward(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """Forward propagation method for the roc-star loss.
 
         Args:
-            input_: Tensor of model predictions in [0, 1] range. Shape ``(B x 1)``.
-            target: Tensor of true labels in {0, 1}. Shape ``(B x 1)``.
+            outputs: Tensor of model predictions in [0, 1] range. Shape ``(B x 1)``.
+            targets: Tensor of true labels in {0, 1}. Shape ``(B x 1)``.
 
         Returns:
             computed loss
         """
-        self._assert_equal_size(input_, target)
+        self._assert_equal_size(outputs, targets)
 
         if self.steps % self.update_gamma_each == 0:
             self.update_gamma()
         self.steps += 1
 
-        positive = input_[target > 0]
-        negative = input_[target < 1]
+        positive = outputs[targets > 0]
+        negative = outputs[targets < 1]
 
         # Take last `sample_size` elements from history
-        input_history = self.input_history[-self.sample_size :]
-        target_history = self.target_history[-self.sample_size :]
+        outputs_history = self.outputs_history[-self.sample_size :]
+        targets_history = self.targets_history[-self.sample_size :]
 
-        positive_history = input_history[target_history > 0]
-        negative_history = input_history[target_history < 1]
+        positive_history = outputs_history[targets_history > 0]
+        negative_history = outputs_history[targets_history < 1]
 
         if positive.size(0) > 0:
             diff = negative_history.view(1, -1) + self.gamma - positive.view(-1, 1)
@@ -445,19 +445,19 @@ class RocStarLoss(PairwiseLoss):
         loss = loss_negative + loss_positive
 
         # Update FIFO queue
-        batch_size = input_.size(0)
-        self.input_history = torch.cat((self.input_history[batch_size:], input_))
-        self.target_history = torch.cat((self.target_history[batch_size:], target))
+        batch_size = outputs.size(0)
+        self.outputs_history = torch.cat((self.outputs_history[batch_size:], outputs))
+        self.targets_history = torch.cat((self.targets_history[batch_size:], targets))
 
         return loss
 
     def update_gamma(self):
         # Take last `sample_size_gamma` elements from history
-        input_ = self.input_history[-self.sample_size_gamma :]
-        target = self.target_history[-self.sample_size_gamma :]
+        outputs = self.outputs_history[-self.sample_size_gamma :]
+        targets = self.targets_history[-self.sample_size_gamma :]
 
-        positive = input_[target > 0]
-        negative = input_[target < 1]
+        positive = outputs[targets > 0]
+        negative = outputs[targets < 1]
 
         # Create matrix of size sample_size_gamma x sample_size_gamma
         diff = positive.view(-1, 1) - negative.view(1, -1)
