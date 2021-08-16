@@ -206,7 +206,7 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
     those images that are labeled as 0, 1, 2, 3, 4.
     """
 
-    _split = 5
+    _split = 11
     classes = [
         "0 - zero",
         "1 - one",

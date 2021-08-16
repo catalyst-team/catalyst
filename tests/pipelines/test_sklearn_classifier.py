@@ -15,16 +15,18 @@ from catalyst.settings import SETTINGS
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
     from sklearn.linear_model import LogisticRegression
+    from sklearn.neighbors import KNeighborsClassifier
     from sklearn.svm import SVC
 
-TRAIN_EPOCH = 1
-LR = 0.001
+TRAIN_EPOCH = 30
+LR = 0.01
+RANDOM_STATE = 42
 
 
 def train_experiment(device, engine=None):
     from catalyst import utils
 
-    utils.set_global_seed(42)
+    utils.set_global_seed(RANDOM_STATE)
     # 1. train, valid and test loaders
     transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
@@ -63,12 +65,13 @@ def train_experiment(device, engine=None):
             }
 
     callbacks = [
-        # dl.BatchTransformCallback(
-        #     input_key="embeddings",
-        #     output_key="truncated_embeddings",
-        #     transform=partial(torch.clamp, max=1000, min=-1000),
-        #     scope="on_batch_end",
-        # ),
+        dl.PeriodicLoaderCallback(
+            valid_loader_key="train",
+            valid_metric_key="loss",
+            minimize=True,
+            valid=TRAIN_EPOCH + 1,
+            infer=TRAIN_EPOCH + 1,
+        ),
         dl.ControlFlowCallback(
             dl.CriterionCallback(input_key="embeddings", target_key="targets", metric_key="loss"),
             loaders="train",
@@ -79,11 +82,9 @@ def train_experiment(device, engine=None):
                 target_key="targets",
                 train_loader="valid",
                 valid_loader="infer",
-                sklearn_classifier_fn=RandomForestClassifier,
+                sklearn_classifier_fn=KNeighborsClassifier,
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
-                n_estimators=500,
-                max_depth=8,
             ),
             filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
         ),
@@ -104,7 +105,6 @@ def train_experiment(device, engine=None):
         callbacks=callbacks,
         loaders={"train": train_loader, "valid": valid_loader, "infer": test_loader},
         verbose=False,
-        logdir="./logs",
         valid_loader="train",
         valid_metric="loss",
         minimize_valid_metric=True,
@@ -117,3 +117,6 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
+
+
+train_experiment("cpu")

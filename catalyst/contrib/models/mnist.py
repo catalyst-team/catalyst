@@ -51,16 +51,15 @@ class MnistBatchNormNet(nn.Module):
         super().__init__()
         layers = [
             nn.Conv2d(1, 32, 3, 1),
+            nn.LeakyReLU(),
             nn.BatchNorm2d(32),
-            nn.ReLU(),
             nn.Conv2d(32, 64, 3, 1),
-            nn.BatchNorm2d(64),
-            nn.ReLU(),
+            nn.LeakyReLU(),
             nn.MaxPool2d(2),
             Flatten(),
+            nn.BatchNorm1d(9216),
             nn.Linear(9216, 128),
-            nn.BatchNorm1d(128),
-            nn.ReLU(),
+            nn.LeakyReLU(),
             nn.Linear(128, out_features),
             nn.BatchNorm1d(out_features),
         ]
