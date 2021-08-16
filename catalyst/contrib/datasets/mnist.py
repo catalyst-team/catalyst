@@ -215,7 +215,7 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
         "4 - four",
     ]
 
-    def __init__(self, split=5, **kwargs):
+    def __init__(self, **kwargs):
         """
         Raises:
             ValueError: if train argument is False (MnistMLDataset
