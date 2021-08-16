@@ -30,7 +30,9 @@ def train_experiment(device, engine=None):
     # 1. train, valid and test loaders
     transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
-    train_dataset = datasets.MnistMLDataset(root=os.getcwd(), download=True, transform=transforms)
+    train_dataset = datasets.MnistMLDataset(
+        split=11, root=os.getcwd(), download=True, transform=transforms
+    )
     sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=60)
     train_loader = DataLoader(
         dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size

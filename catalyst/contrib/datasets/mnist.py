@@ -215,7 +215,7 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
         "4 - four",
     ]
 
-    def __init__(self, **kwargs):
+    def __init__(self, split=5, **kwargs):
         """
         Raises:
             ValueError: if train argument is False (MnistMLDataset
@@ -227,6 +227,7 @@ class MnistMLDataset(MetricLearningTrainDataset, MNIST):
         else:
             kwargs["train"] = True
         super(MnistMLDataset, self).__init__(**kwargs)
+        self._split = split
         self._filter()
 
     def get_labels(self) -> List[int]:
