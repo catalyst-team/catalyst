@@ -15,7 +15,7 @@ from catalyst.settings import SETTINGS
 if SETTINGS.ml_required:
     from sklearn.linear_model import LogisticRegression
 
-TRAIN_EPOCH = 100
+TRAIN_EPOCH = 3
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -26,7 +26,6 @@ def train_experiment(device, engine=None):
     utils.set_global_seed(RANDOM_STATE)
     # 1. train, valid and test loaders
     transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
-
     train_dataset = datasets.MNIST(
         root=os.getcwd(), transform=transforms, train=False, download=True
     )
@@ -91,6 +90,9 @@ def train_experiment(device, engine=None):
     ]
 
     runner = CustomRunner(input_key="features", output_key="embeddings")
+    import pdb
+
+    pdb.set_trace()
     runner.train(
         engine=engine or dl.DeviceEngine(device),
         model=model,
