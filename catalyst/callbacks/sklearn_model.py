@@ -272,7 +272,6 @@ class SklearnModelCallback(Callback):
             predictions = classifier_predict(features)
             runner.batch[self.predict_key] = torch.tensor(predictions, device=runner.engine.device)
 
-
     def on_loader_end(self, runner: "IRunner") -> None:
         """
         Loader end hook: for the train loader train classifier/for the test check the quality
