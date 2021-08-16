@@ -18,7 +18,7 @@ if SETTINGS.ml_required:
     from sklearn.neighbors import KNeighborsClassifier
     from sklearn.svm import SVC
 
-TRAIN_EPOCH = 30
+TRAIN_EPOCH = 2
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -33,9 +33,7 @@ def train_experiment(device, engine=None):
     train_dataset = datasets.MNIST(
         root=os.getcwd(), transform=transforms, train=True, download=True
     )
-    train_loader = DataLoader(
-        dataset=train_dataset, batch_size=128
-    )
+    train_loader = DataLoader(dataset=train_dataset, batch_size=128)
 
     valid_dataset = datasets.MNIST(
         root=os.getcwd(), transform=transforms, train=False, download=True
@@ -76,8 +74,8 @@ def train_experiment(device, engine=None):
             dl.SklearnModelCallback(
                 feature_key="embeddings",
                 target_key="targets",
-                train_loader="valid",
-                valid_loader="infer",
+                train_loader="train",
+                valid_loader="valid",
                 sklearn_classifier_fn=KNeighborsClassifier,
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
@@ -88,7 +86,7 @@ def train_experiment(device, engine=None):
             dl.AccuracyCallback(
                 target_key="targets", input_key="sklearn_predict", topk_args=(1, 3)
             ),
-            filter_fn=lambda s, e, l: l == "infer" and e > TRAIN_EPOCH,
+            filter_fn=lambda s, e, l: l == "valid" and e > TRAIN_EPOCH,
         ),
     ]
 
@@ -99,7 +97,7 @@ def train_experiment(device, engine=None):
         criterion=criterion,
         optimizer=optimizer,
         callbacks=callbacks,
-        loaders={"train": train_loader, "valid": valid_loader, "infer": test_loader},
+        loaders={"train": train_loader, "valid": valid_loader},
         verbose=False,
         valid_loader="train",
         valid_metric="loss",
@@ -113,6 +111,3 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
-
-
-train_experiment("cpu")
