@@ -30,23 +30,17 @@ def train_experiment(device, engine=None):
     # 1. train, valid and test loaders
     transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
-    train_dataset = datasets.MnistMLDataset(
-        split=11, root=os.getcwd(), download=True, transform=transforms
+    train_dataset = datasets.MNIST(
+        root=os.getcwd(), transform=transforms, train=True, download=True
     )
-    sampler = data.BalanceBatchSampler(labels=train_dataset.get_labels(), p=5, k=60)
     train_loader = DataLoader(
-        dataset=train_dataset, sampler=sampler, batch_size=sampler.batch_size
+        dataset=train_dataset, batch_size=128
     )
 
     valid_dataset = datasets.MNIST(
-        root=os.getcwd(), transform=transforms, train=True, download=True
-    )
-    valid_loader = DataLoader(dataset=valid_dataset, batch_size=512)
-
-    test_dataset = datasets.MNIST(
         root=os.getcwd(), transform=transforms, train=False, download=True
     )
-    test_loader = DataLoader(dataset=test_dataset, batch_size=512)
+    valid_loader = DataLoader(dataset=valid_dataset, batch_size=128)
 
     # 2. model and optimizer
     model = models.MnistBatchNormNet(out_features=16, normalize=True)
