@@ -269,9 +269,9 @@ class SklearnModelCallback(Callback):
             features = runner.batch[self.feature_key].detach().cpu().numpy()
             # classifier predict
             classifier_predict = getattr(self.classifier, self.predict_method)
-            runner.batch[self.predict_key] = torch.Tensor(classifier_predict(features)).to(
-                runner.engine.device
-            )
+            predictions = classifier_predict(features)
+            runner.batch[self.predict_key] = torch.tensor(predictions, device=runner.engine.device)
+
 
     def on_loader_end(self, runner: "IRunner") -> None:
         """
