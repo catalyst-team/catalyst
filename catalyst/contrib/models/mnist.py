@@ -40,4 +40,42 @@ class MnistSimpleNet(nn.Module):
         return self._net(x)
 
 
-__all__ = ["MnistSimpleNet"]
+class MnistBatchNormNet(nn.Module):
+    """Simple MNIST convolutional network with batch norm layers for test purposes."""
+
+    def __init__(self, out_features: int, normalize: bool = True):
+        """
+        Args:
+            out_features: size of the output tensor
+        """
+        super().__init__()
+        layers = [
+            nn.Conv2d(1, 32, 3, 1),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, 3, 1),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.MaxPool2d(2),
+            Flatten(),
+            nn.Linear(9216, 128),
+            nn.BatchNorm1d(128),
+            nn.ReLU(),
+            nn.Linear(128, out_features),
+            nn.BatchNorm1d(out_features),
+        ]
+
+        self._net = nn.Sequential(*layers)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            x: input 1d image tensor with the size of [28 x 28]
+
+        Returns:
+            extracted features
+        """
+        return self._net(x)
+
+
+__all__ = ["MnistSimpleNet", "MnistBatchNormNet"]

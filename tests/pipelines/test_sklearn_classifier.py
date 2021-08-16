@@ -17,7 +17,7 @@ if SETTINGS.ml_required:
     from sklearn.linear_model import LogisticRegression
     from sklearn.svm import SVC
 
-TRAIN_EPOCH = 5
+TRAIN_EPOCH = 1
 LR = 0.001
 
 
@@ -45,7 +45,7 @@ def train_experiment(device, engine=None):
     test_loader = DataLoader(dataset=test_dataset, batch_size=512)
 
     # 2. model and optimizer
-    model = models.MnistSimpleNet(out_features=16, normalize=True)
+    model = models.MnistBatchNormNet(out_features=16, normalize=True)
     optimizer = Adam(model.parameters(), lr=LR)
 
     # 3. criterion with triplets sampling
@@ -63,21 +63,19 @@ def train_experiment(device, engine=None):
             }
 
     callbacks = [
-        dl.BatchTransformCallback(
-            input_key="embeddings",
-            output_key="truncated_embeddings",
-            transform=partial(torch.clamp, max=1000, min=-1000),
-            scope="on_batch_end",
-        ),
+        # dl.BatchTransformCallback(
+        #     input_key="embeddings",
+        #     output_key="truncated_embeddings",
+        #     transform=partial(torch.clamp, max=1000, min=-1000),
+        #     scope="on_batch_end",
+        # ),
         dl.ControlFlowCallback(
-            dl.CriterionCallback(
-                input_key="truncated_embeddings", target_key="targets", metric_key="loss"
-            ),
+            dl.CriterionCallback(input_key="embeddings", target_key="targets", metric_key="loss"),
             loaders="train",
         ),
         dl.ControlFlowCallback(
             dl.SklearnModelCallback(
-                feature_key="truncated_embeddings",
+                feature_key="embeddings",
                 target_key="targets",
                 train_loader="valid",
                 valid_loader="infer",
