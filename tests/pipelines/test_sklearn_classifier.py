@@ -90,9 +90,6 @@ def train_experiment(device, engine=None):
     ]
 
     runner = CustomRunner(input_key="features", output_key="embeddings")
-    import pdb
-
-    pdb.set_trace()
     runner.train(
         engine=engine or dl.DeviceEngine(device),
         model=model,

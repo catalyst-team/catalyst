@@ -1,6 +1,7 @@
 from typing import Callable, Union
 from functools import partial
 import importlib
+import pdb
 
 import torch
 
@@ -282,6 +283,8 @@ class SklearnModelCallback(Callback):
         if runner.loader_key == self._train_loader:
             data = self.storage.compute_key_value()
             # classifier fit
+
+            pdb.set_trace()
             features = data[self.feature_key].detach().cpu().numpy()
             targets = data[self.target_key].detach().cpu().numpy()
             self.classifier = self.classifier_fabric()
