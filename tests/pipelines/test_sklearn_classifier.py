@@ -15,7 +15,7 @@ from catalyst.settings import SETTINGS
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 3
+TRAIN_EPOCH = 10
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -76,7 +76,7 @@ def train_experiment(device, engine=None):
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
                 random_state=RANDOM_STATE,
-                n_estimators=100,
+                n_estimators=200,
             ),
             filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
         ),
