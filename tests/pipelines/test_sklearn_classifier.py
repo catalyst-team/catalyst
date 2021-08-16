@@ -13,12 +13,9 @@ from catalyst.data.transforms import Compose, Normalize, ToTensor
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
-    from sklearn.ensemble import RandomForestClassifier
     from sklearn.linear_model import LogisticRegression
-    from sklearn.neighbors import KNeighborsClassifier
-    from sklearn.svm import SVC
 
-TRAIN_EPOCH = 2
+TRAIN_EPOCH = 100
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -31,9 +28,9 @@ def train_experiment(device, engine=None):
     transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
 
     train_dataset = datasets.MNIST(
-        root=os.getcwd(), transform=transforms, train=True, download=True
+        root=os.getcwd(), transform=transforms, train=False, download=True
     )
-    train_loader = DataLoader(dataset=train_dataset, batch_size=128)
+    train_loader = DataLoader(dataset=train_dataset, batch_size=512, shuffle=True)
 
     valid_dataset = datasets.MNIST(
         root=os.getcwd(), transform=transforms, train=False, download=True
@@ -41,7 +38,7 @@ def train_experiment(device, engine=None):
     valid_loader = DataLoader(dataset=valid_dataset, batch_size=128)
 
     # 2. model and optimizer
-    model = models.MnistBatchNormNet(out_features=16, normalize=True)
+    model = models.MnistSimpleNet(out_features=16, normalize=True)
     optimizer = Adam(model.parameters(), lr=LR)
 
     # 3. criterion with triplets sampling
@@ -76,9 +73,12 @@ def train_experiment(device, engine=None):
                 target_key="targets",
                 train_loader="train",
                 valid_loader="valid",
-                sklearn_classifier_fn=KNeighborsClassifier,
+                sklearn_classifier_fn=LogisticRegression,
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
+                random_state=RANDOM_STATE,
+                solver="sag",
+                max_iter=1000,
             ),
             filter_fn=lambda s, e, l: e > TRAIN_EPOCH,
         ),
