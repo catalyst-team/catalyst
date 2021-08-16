@@ -283,7 +283,8 @@ class SklearnModelCallback(Callback):
         if runner.loader_key == self._train_loader:
             data = self.storage.compute_key_value()
             # classifier fit
-            features, targets = data[self.feature_key].numpy(), data[self.target_key].numpy()
+            features = data[self.feature_key].detach().cpu().numpy()
+            targets = data[self.target_key].detach().cpu().numpy()
             self.classifier = self.classifier_fabric()
             self.classifier.fit(features, targets)
         if runner.loader == self._valid_loader:
