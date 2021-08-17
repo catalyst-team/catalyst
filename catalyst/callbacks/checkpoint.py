@@ -705,21 +705,9 @@ class CheckpointCallback(ICheckpointCallback):
         """
         if runner.is_infer_stage:
             return
-        if (
-            runner.engine.is_ddp
-            and not runner.engine.is_xla_ddp
-            and not runner.engine.is_master_process
-        ):
+        if runner.engine.is_ddp and not runner.engine.is_master_process:
             # worker sync
-            dist.barrier()
-            return
-        if (
-            runner.engine.is_ddp
-            and runner.engine.is_xla_ddp
-            and not runner.engine.is_master_process
-        ):
-            # worker sync
-            xm.rendezvous("checkpoint_on_stage_end")
+            runner.engine.barrier()
             return
 
         # let's log Top-N base metrics
@@ -773,16 +761,9 @@ class CheckpointCallback(ICheckpointCallback):
             }
             _load_runner(logdir=self.logdir, runner=runner, mapping=to_load)
 
-        if (
-            runner.engine.is_ddp
-            and not runner.engine.is_xla_ddp
-            and runner.engine.is_master_process
-        ):
-            # master sync
-            dist.barrier()
-        if runner.engine.is_ddp and runner.engine.is_xla_ddp and runner.engine.is_master_process:
-            # master sync
-            xm.rendezvous("checkpoint_on_stage_end")
+        if runner.engine.is_ddp and runner.engine.is_master_process:
+            # worker sync
+            runner.engine.barrier()
 
 
 __all__ = ["ICheckpointCallback", "CheckpointCallback"]

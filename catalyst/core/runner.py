@@ -4,10 +4,7 @@ from collections import defaultdict, OrderedDict
 from functools import lru_cache
 import logging
 
-import numpy as np
 import torch
-import torch.distributed
-import torch.multiprocessing
 from torch.utils.data import DataLoader, Dataset, DistributedSampler
 
 from catalyst.core.callback import Callback, ICallback
@@ -15,7 +12,6 @@ from catalyst.core.engine import IEngine
 from catalyst.core.logger import ILogger
 from catalyst.core.misc import filter_callbacks_by_node, sort_callbacks_by_order, validate_loaders
 from catalyst.core.trial import ITrial
-from catalyst.settings import SETTINGS
 from catalyst.typing import (
     Criterion,
     Device,
@@ -28,13 +24,7 @@ from catalyst.typing import (
     Sampler,
     Scheduler,
 )
-from catalyst.utils.distributed import ddp_sync_run
 from catalyst.utils.misc import maybe_recursive_call, set_global_seed
-
-if SETTINGS.xla_required:
-    import torch_xla.core.xla_model as xm
-    from torch_xla.distributed.parallel_loader import ParallelLoader
-    import torch_xla.distributed.xla_multiprocessing as xmp
 
 LOGGER = logging.getLogger(__name__)
 
@@ -271,6 +261,7 @@ class IRunner(ICallback, ILogger, ABC):
         self.need_early_stop: bool = False
         self._stage_rank: int = -1
         self._stage_world_size: int = -1
+        self._sync_batch_metrics = False
 
     # @TODO: remove hotfix?
     @property
@@ -310,6 +301,7 @@ class IRunner(ICallback, ILogger, ABC):
 
     @property
     def _log_defaults(self) -> Dict:
+        # TODO: add rank and other dist params here
         return {
             # experiment info
             "run_key": self.run_key,
@@ -699,6 +691,7 @@ class IRunner(ICallback, ILogger, ABC):
         maybe_recursive_call(self.model, "train", mode=self.is_train_loader)
         if isinstance(self.loader.sampler, DistributedSampler):
             self.loader.sampler.set_epoch(self.stage_epoch_step)
+        self.loader = self.engine.autocast_loader(self.loader)
 
     def on_batch_start(self, runner: "IRunner"):
         """Event handler."""
@@ -722,26 +715,25 @@ class IRunner(ICallback, ILogger, ABC):
         """Event handler."""
         # as far as we could `backward` anything from `batch_metrics` on the nodes during training,
         # they could not be synced before, so we have to sync them in the end of the batch
-        # @TODO: could be done better
-        # @TODO: stop every batch sync, as far as it's slow
-        if self.engine.is_xla_ddp:
-            self.batch_metrics = {
-                k: xm.mesh_reduce(k, v.item() if isinstance(v, torch.Tensor) else v, np.mean)
-                for k, v in self.batch_metrics.items()
-            }
-        elif self.engine.is_ddp:
-            self.batch_metrics = {
-                k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-                for k, v in self.batch_metrics.items()
-            }
+        # TODO: do we need it?
+        # if self._sync_batch_metrics:
+        #     self.batch_metrics = self.engine.sync_metrics(self.batch_metrics)
+        # if self.engine.is_xla_ddp:
+        #     self.batch_metrics = {
+        #         k: xm.mesh_reduce(k, v.item() if isinstance(v, torch.Tensor) else v, np.mean)
+        #         for k, v in self.batch_metrics.items()
+        #     }
+        # elif self.engine.is_ddp:
+        #     self.batch_metrics = {
+        #         k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
+        #         for k, v in self.batch_metrics.items()
+        #     }
         self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
         """Event handler."""
         self.log_metrics(metrics=self.loader_metrics, scope="loader")
-        self.epoch_metrics[self.loader_key] = {
-            key: float(value) for key, value in self.loader_metrics.items()
-        }
+        self.epoch_metrics[self.loader_key] = self.loader_metrics
 
     def on_epoch_end(self, runner: "IRunner"):
         """Event handler."""
@@ -804,12 +796,7 @@ class IRunner(ICallback, ILogger, ABC):
         # https://pytorch.org/docs/stable/notes/amp_examples.html#typical-mixed-precision-training
         self._run_event("on_loader_start")
         with torch.set_grad_enabled(self.is_train_loader):
-            loader = (
-                ParallelLoader(self.loader, [self.device]).per_device_loader(self.device)
-                if self.engine.is_xla_ddp
-                else self.loader
-            )
-            for self.loader_batch_step, self.batch in enumerate(loader):
+            for self.loader_batch_step, self.batch in enumerate(self.loader):
                 with self.engine.autocast():
                     self._run_batch()
                 if self.need_early_stop:
@@ -836,21 +823,7 @@ class IRunner(ICallback, ILogger, ABC):
     def _run_experiment(self) -> None:
         self._run_event("on_experiment_start")
         for self.stage_key in self.stages:
-            if self.engine.is_xla_ddp:
-                # XLA ddp-device branch
-                world_size = self.engine.world_size
-                xmp.spawn(
-                    self._run_stage, args=(world_size,), nprocs=world_size, start_method="fork"
-                )
-            elif self.engine.is_ddp:
-                # ddp-device branch
-                world_size = self.engine.world_size
-                torch.multiprocessing.spawn(
-                    self._run_stage, args=(world_size,), nprocs=world_size, join=True,
-                )
-            else:
-                # single-device branch (cpu, gpu, dp, xla)
-                self._run_stage()
+            self.engine.spawn(self._run_stage)
         self._run_event("on_experiment_end")
 
     def run(self) -> "IRunner":

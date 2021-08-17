@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Mapping, Tuple, Union
+from typing import Any, Callable, Dict, List, Mapping, Optional, Tuple, Union
 import copy
 import os
 
@@ -97,6 +97,10 @@ class DeviceEngine(IEngine):
         """Process world size for distributed training."""
         return 1
 
+    @property
+    def backend(self) -> Optional[str]:
+        return None
+
     def sync_device(
         self, tensor_or_module: Union[Dict, List, Tuple, np.ndarray, torch.Tensor, nn.Module]
     ) -> Union[Dict, List, Tuple, torch.Tensor, nn.Module]:
@@ -106,6 +110,9 @@ class DeviceEngine(IEngine):
     def sync_tensor(self, tensor: torch.Tensor, mode: str) -> torch.Tensor:
         """Syncs ``tensor`` over ``world_size`` in distributed mode."""
         return tensor
+
+    def sync_metrics(self, metrics: Dict) -> Dict:
+        return metrics
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -386,9 +393,8 @@ class DistributedDataParallelEngine(DeviceEngine):
         if "world_size" not in self.process_group_kwargs:
             self.process_group_kwargs["world_size"] = torch.cuda.device_count()
 
-        self._world_size = (
-            self.process_group_kwargs.get("world_size", None) or torch.cuda.device_count()
-        )
+        self._backend = self.process_group_kwargs["backend"]
+        self._world_size = self.process_group_kwargs["world_size"]
 
     def __repr__(self):  # noqa: D105
         return (
@@ -408,6 +414,18 @@ class DistributedDataParallelEngine(DeviceEngine):
         """Process world size  for distributed training."""
         return self._world_size
 
+    @property
+    def backend(self) -> Optional[str]:
+        return self._backend
+
+    def barrier(self) -> None:
+        dist.barrier()
+
+    def spawn(self, fn: Callable, *args: Any, **kwargs: Any) -> None:
+        return torch.multiprocessing.spawn(
+            fn, args=(self._world_size,), nprocs=self._world_size, join=True,
+        )
+
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes.
 
@@ -422,6 +440,10 @@ class DistributedDataParallelEngine(DeviceEngine):
 
         self.process_group_kwargs["rank"] = rank
         self.process_group_kwargs["world_size"] = world_size
+
+        os.environ["RANK"] = str(self._rank)
+        os.environ["LOCAL_RANK"] = str(self._rank)
+        os.environ["WORLD_SIZE"] = str(self._world_size)
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
         dist.init_process_group(**self.process_group_kwargs)
@@ -444,6 +466,13 @@ class DistributedDataParallelEngine(DeviceEngine):
             torch.Tensor with synchronized values.
         """
         return ddp_reduce(tensor, mode, self.world_size)
+
+    def sync_metrics(self, metrics: Dict) -> Dict:
+        metrics = {
+            k: self.sync_tensor(torch.tensor(v, device=self.device), "mean")
+            for k, v in metrics.items()
+        }
+        return metrics
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,

@@ -220,16 +220,7 @@ class BatchMetricCallback(MetricCallback):
             runner: current runner
         """
         metrics = self.metric.compute_key_value()
-        if runner.engine.is_xla_ddp:
-            metrics = {
-                k: xm.mesh_reduce(k, v.item() if isinstance(v, torch.Tensor) else v, np.mean)
-                for k, v in metrics.items()
-            }
-        elif runner.engine.is_ddp:
-            metrics = {
-                k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-                for k, v in metrics.items()
-            }
+        metrics = runner.engine.sync_metrics(metrics)
         runner.loader_metrics.update(metrics)
 
 

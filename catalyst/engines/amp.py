@@ -62,6 +62,7 @@ class AMPEngine(DeviceEngine):
         super().__init__(device)
         if scaler_kwargs is None:
             scaler_kwargs = {}
+        # TODO: add OptimizerWithScaler abstraction?
         self.scaler_kwargs = scaler_kwargs
         self.scaler = amp.GradScaler(**self.scaler_kwargs)
 
@@ -79,6 +80,68 @@ class AMPEngine(DeviceEngine):
         """Abstraction over ``optimizer.step()`` step."""
         self.scaler.step(optimizer)
         self.scaler.update()
+
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
+        """
+        Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
+        and some extra info ``**kwargs`` to torch-based checkpoint.
+
+        Args:
+            model: torch model
+            criterion: torch criterion
+            optimizer: torch optimizer
+            scheduler: torch scheduler
+            **kwargs: some extra info to pack
+
+        Returns:
+            torch-based checkpoint with ``model_state_dict``,
+            ``criterion_state_dict``, ``optimizer_state_dict``,
+            ``scheduler_state_dict`` keys.
+        """
+        checkpoint = {"scaler": self.scaler.state_dict()}
+        checkpoint = super().pack_checkpoint(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **checkpoint,
+        )
+        return checkpoint
+
+    def unpack_checkpoint(
+        self,
+        checkpoint: Dict,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
+    ) -> None:
+        """Load checkpoint from file and unpack the content to a model
+        (if not None), criterion (if not None), optimizer (if not None),
+        scheduler (if not None).
+
+        Args:
+            checkpoint: checkpoint to load
+            model: model where should be updated state
+            criterion: criterion where should be updated state
+            optimizer: optimizer where should be updated state
+            scheduler: scheduler where should be updated state
+            kwargs: extra arguments
+        """
+        super().unpack_checkpoint(
+            checkpoint,
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **kwargs,
+        )
+
+        if "scaler" in checkpoint:
+            self.scaler.load_state_dict(checkpoint["scaler"])
 
     # TODO: should be used with forward method? (similar to criterion)
     def autocast(self):
@@ -277,6 +340,68 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         """Abstraction over ``optimizer.step()`` step."""
         self.scaler.step(optimizer)
         self.scaler.update()
+
+    def pack_checkpoint(
+        self, model=None, criterion=None, optimizer=None, scheduler=None, **kwargs,
+    ) -> Dict:
+        """
+        Packs ``model``, ``criterion``, ``optimizer``, ``scheduler``
+        and some extra info ``**kwargs`` to torch-based checkpoint.
+
+        Args:
+            model: torch model
+            criterion: torch criterion
+            optimizer: torch optimizer
+            scheduler: torch scheduler
+            **kwargs: some extra info to pack
+
+        Returns:
+            torch-based checkpoint with ``model_state_dict``,
+            ``criterion_state_dict``, ``optimizer_state_dict``,
+            ``scheduler_state_dict`` keys.
+        """
+        checkpoint = {"scaler": self.scaler.state_dict()}
+        checkpoint = super().pack_checkpoint(
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **checkpoint,
+        )
+        return checkpoint
+
+    def unpack_checkpoint(
+        self,
+        checkpoint: Dict,
+        model=None,
+        criterion=None,
+        optimizer=None,
+        scheduler=None,
+        **kwargs,
+    ) -> None:
+        """Load checkpoint from file and unpack the content to a model
+        (if not None), criterion (if not None), optimizer (if not None),
+        scheduler (if not None).
+
+        Args:
+            checkpoint: checkpoint to load
+            model: model where should be updated state
+            criterion: criterion where should be updated state
+            optimizer: optimizer where should be updated state
+            scheduler: scheduler where should be updated state
+            kwargs: extra arguments
+        """
+        super().unpack_checkpoint(
+            checkpoint,
+            model=model,
+            criterion=criterion,
+            optimizer=optimizer,
+            scheduler=scheduler,
+            **kwargs,
+        )
+
+        if "scaler" in checkpoint:
+            self.scaler.load_state_dict(checkpoint["scaler"])
 
     def autocast(self):
         """AMP context"""

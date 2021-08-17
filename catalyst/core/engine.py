@@ -1,11 +1,10 @@
-from typing import Any, Callable, Dict, List, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 
 import numpy as np
 import torch
 from torch import nn
-import torch.distributed as dist
 
 from catalyst.typing import Criterion, Device, Model, Optimizer, Scheduler
 
@@ -21,11 +20,12 @@ class IEngine(ABC):
     An abstraction that syncs experiment run with
     different hardware-specific configurations.
 
-    - cpu
-    - single-gpu
-    - multi-gpu
-    - amp (nvidia, torch)
-    - ddp (torch, etc)
+    - CPU
+    - GPU
+    - DataParallel (deepspeed, fairscale, nvidia, torch)
+    - AMP (deepspeed, fairscale, nvidia, torch)
+    - DDP (deepspeed, fairscale, nvidia, torch)
+    - XLA
 
     Abstraction, please check out implementations for more details:
 
@@ -40,6 +40,12 @@ class IEngine(ABC):
         """Pytorch device."""
         pass
 
+    # @property
+    # @abstractmethod
+    # def local_rank(self) -> int:
+    #     """Process local rank for distributed training."""
+    #     pass
+
     @property
     @abstractmethod
     def rank(self) -> int:
@@ -52,16 +58,29 @@ class IEngine(ABC):
         """Process world size for distributed training."""
         pass
 
-    # TODO: should we add ddp_type?
-    @property
-    def is_ddp(self) -> bool:
-        """Boolean flag for distributed run."""
-        return self.rank > -1
+    # @property
+    # @abstractmethod
+    # def num_nodes(self) -> int:
+    #     pass
+    #
+    # @property
+    # @abstractmethod
+    # def num_proc_per_node(self) -> int:
+    #     pass
+    #
+    # @property
+    # @abstractmethod
+    # def node_rank(self) -> int:
+    #     pass
 
     @property
-    def is_xla_ddp(self) -> bool:
-        """Boolean flag for XLA distributed run."""
-        return False
+    @abstractmethod
+    def backend(self) -> Optional[str]:
+        pass
+
+    @property
+    def is_ddp(self) -> bool:
+        return self.backend is not None
 
     @property
     def is_master_process(self) -> bool:
@@ -87,6 +106,12 @@ class IEngine(ABC):
         """
         return self.rank > 0
 
+    def barrier(self) -> None:
+        pass
+
+    def spawn(self, fn: Callable, *args: Any, **kwargs: Any) -> None:
+        return fn(*args, **kwargs)
+
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes.
 
@@ -101,14 +126,15 @@ class IEngine(ABC):
         """Clean DDP variables and processes."""
         pass
 
+    # TODO: make context manager
     def ddp_sync_run(self, function: Callable):
         if self.rank > 0:
-            dist.barrier()
+            self.barrier()
         function()
         if self.rank == 0:
-            dist.barrier()
+            self.barrier()
         if self.rank > -1:
-            dist.barrier()
+            self.barrier()
 
     @abstractmethod
     def sync_device(
@@ -120,6 +146,10 @@ class IEngine(ABC):
             tensor_or_module: tensor to mode
         """
         pass
+
+    @abstractmethod
+    def sync_metrics(self, metrics: Dict) -> Dict:
+        return metrics
 
     @abstractmethod
     def sync_tensor(self, tensor: torch.Tensor, mode: str) -> torch.Tensor:
@@ -137,6 +167,8 @@ class IEngine(ABC):
         """Inits the runs components."""
         pass
 
+    # due to FairScale setup, we need to manually delete the model in the end
+    # that's why we need the runner.model here
     @abstractmethod
     def deinit_components(self, runner=None):
         """Deinits the runs components. In distributed mode should destroy process group."""
@@ -260,6 +292,9 @@ class IEngine(ABC):
             context
         """
         return nullcontext()
+
+    def autocast_loader(self, loader):
+        return loader
 
 
 __all__ = ["IEngine"]
