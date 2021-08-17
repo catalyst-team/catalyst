@@ -18,7 +18,7 @@ from catalyst.settings import SETTINGS
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 30
+TRAIN_EPOCH = 14
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -51,7 +51,7 @@ def train_experiment(device, engine=None):
         valid_loader = DataLoader(dataset=valid_dataset, batch_size=128)
 
         # 2. model and optimizer
-        model = models.MnistSimpleNet(out_features=16, normalize=True)
+        model = models.MnistBatchNormNet(out_features=16)
         optimizer = Adam(model.parameters(), lr=LR)
 
         # 3. criterion with triplets sampling
