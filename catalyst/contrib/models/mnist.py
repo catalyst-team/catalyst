@@ -43,7 +43,7 @@ class MnistSimpleNet(nn.Module):
 class MnistBatchNormNet(nn.Module):
     """Simple MNIST convolutional network with batch norm layers for test purposes."""
 
-    def __init__(self, out_features: int, normalize: bool = True):
+    def __init__(self, out_features: int):
         """
         Args:
             out_features: size of the output tensor
