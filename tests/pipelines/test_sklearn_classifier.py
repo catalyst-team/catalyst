@@ -1,12 +1,12 @@
 # flake8: noqa
 import csv
-from functools import partial
-from logging import log
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+import numpy as np
 from pytest import mark
+import torch
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
@@ -18,7 +18,7 @@ from catalyst.settings import SETTINGS
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 4
+TRAIN_EPOCH = 10
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -31,6 +31,13 @@ def read_csv(csv_path: str):
                 colnames = row
             else:
                 yield {colname: val for colname, val in zip(colnames, row)}
+
+
+def safe_tensors(tensor):
+    _array = tensor.detach().cpu().numpy()
+    _array = np.nan_to_num(_array)
+    _tensor = torch.tensor(_array)
+    return _tensor
 
 
 def train_experiment(device, engine=None):
@@ -75,8 +82,14 @@ def train_experiment(device, engine=None):
                 ),
                 loaders="train",
             ),
+            dl.BatchTransformCallback(
+                input_key="embeddings",
+                output_key="safe_embeddings",
+                transform=safe_tensors,
+                scope="on_batch_end",
+            ),
             dl.SklearnModelCallback(
-                feature_key="embeddings",
+                feature_key="safe_embeddings",
                 target_key="targets",
                 train_loader="train",
                 valid_loader="valid",
