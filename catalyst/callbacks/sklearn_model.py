@@ -20,10 +20,10 @@ class SklearnModelCallback(Callback):
         target_key: keys of tensors that should be used as targets in the classifier calculations
         train_loader: train loader name
         valid_loader: valid loader name
-        model_classifier_fn: fabric to produce objects with .fit and predict method
+        model_fn: fabric to produce objects with .fit and predict method
         predict_method: predict method name for the classifier
         predict_key: key to store computed classifier predicts in ``runner.batch`` dictionary
-        model_kwargs: additional parameters for ``model_classifier_fn``
+        model_kwargs: additional parameters for ``model_fn``
 
     .. note::
         catalyst[ml] required for this callback
@@ -93,7 +93,7 @@ class SklearnModelCallback(Callback):
                     target_key="targets",
                     train_loader="train",
                     valid_loader="valid",
-                    model_classifier_fn=LogisticRegression,
+                    model_fn=LogisticRegression,
                     predict_method="predict_proba",
                     predict_key="sklearn_predict"
                 ),
@@ -182,7 +182,7 @@ class SklearnModelCallback(Callback):
                     target_key="targets",
                     train_loader="train",
                     valid_loader="valid",
-                    model_classifier_fn="linear_model.LogisticRegression",
+                    model_fn="linear_model.LogisticRegression",
                     predict_method="predict_proba",
                     predict_key="sklearn_predict"
                 ),
@@ -214,34 +214,36 @@ class SklearnModelCallback(Callback):
     def __init__(
         self,
         feature_key: str,
-        target_key: str,
+        target_key: Union[str, None],
         train_loader: str,
         valid_loader: str,
-        model_classifier_fn: Union[Callable, str],
+        model_fn: Union[Callable, str],
         predict_method: str = "predict",
         predict_key: str = "sklearn_predict",
         **model_kwargs,
     ) -> None:
         super().__init__(order=CallbackOrder.Metric)
 
-        if isinstance(model_classifier_fn, str):
-            base, clf = model_classifier_fn.split(".")
+        if isinstance(model_fn, str):
+            base, clf = model_fn.split(".")
             base = f"sklearn.{base}"
-            model_classifier_fn = getattr(importlib.import_module(base), clf)
+            model_fn = getattr(importlib.import_module(base), clf)
 
-        assert hasattr(
-            model_classifier_fn(), predict_method
-        ), "The classifier must have the predict method!"
+        assert hasattr(model_fn(), predict_method), "The classifier must have the predict method!"
 
         self._train_loader = train_loader
         self._valid_loader = valid_loader
-        self.classifier_fabric = partial(model_classifier_fn, **model_kwargs)
+        self.model_fabric_fn = partial(model_fn, **model_kwargs)
         self.feature_key = feature_key
         self.target_key = target_key
         self.predict_method = predict_method
         self.predict_key = predict_key
-        self.storage = AccumulationMetric(accumulative_fields=[feature_key, target_key])
-        self.classifier = None
+        self.model = None
+
+        if self.target_key:
+            self.storage = AccumulationMetric(accumulative_fields=[feature_key, target_key])
+        if self.target_key is None:
+            self.storage = AccumulationMetric(accumulative_fields=[feature_key])
 
     def on_loader_start(self, runner: "IRunner") -> None:
         """
@@ -257,7 +259,7 @@ class SklearnModelCallback(Callback):
                 num_batches=runner.loader_batch_len,
             )
         if runner.loader_key == self._valid_loader:
-            assert self.classifier is not None, "The train loader has to be processed first!"
+            assert self.model is not None, "The train loader has to be processed first!"
 
     def on_batch_end(self, runner: "IRunner") -> None:
         """On batch end action: get data from runner's batch and update a loader storage with it
@@ -270,7 +272,7 @@ class SklearnModelCallback(Callback):
         if runner.loader_key == self._valid_loader:
             features = runner.batch[self.feature_key].detach().cpu().numpy()
             # classifier predict
-            classifier_predict = getattr(self.classifier, self.predict_method)
+            classifier_predict = getattr(self.model, self.predict_method)
             predictions = classifier_predict(features)
             runner.batch[self.predict_key] = torch.tensor(predictions, device=runner.engine.device)
 
@@ -283,15 +285,19 @@ class SklearnModelCallback(Callback):
         """
         if runner.loader_key == self._train_loader:
             data = self.storage.compute_key_value()
-            # classifier fit
-
+            # model fit
             # pdb.set_trace()
-            features = data[self.feature_key].detach().cpu().numpy()
-            targets = data[self.target_key].detach().cpu().numpy()
-            self.classifier = self.classifier_fabric()
-            self.classifier.fit(features, targets)
+            self.model = self.model_fabric_fn()
+            if self.target_key is None:
+                features = data[self.feature_key].detach().cpu().numpy()
+                self.model.fit(features)
+            else:
+                features = data[self.feature_key].detach().cpu().numpy()
+                targets = data[self.target_key].detach().cpu().numpy()
+                self.model.fit(features, targets)
+
         if runner.loader == self._valid_loader:
-            self.classifier = None
+            self.model = None
 
 
 __all__ = ["SklearnModelCallback"]
