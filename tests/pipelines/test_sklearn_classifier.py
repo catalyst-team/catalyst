@@ -1,24 +1,22 @@
 # flake8: noqa
 import csv
-import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-import numpy as np
 from pytest import mark
 import torch
 from torch.optim import Adam
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, TensorDataset
 
 from catalyst import data, dl
-from catalyst.contrib import datasets, models, nn
-from catalyst.data.transforms import Compose, Normalize, ToTensor
+from catalyst.contrib import nn
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
+    from sklearn.datasets import make_blobs
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 10
+TRAIN_EPOCH = 2
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -33,11 +31,15 @@ def read_csv(csv_path: str):
                 yield {colname: val for colname, val in zip(colnames, row)}
 
 
-def safe_tensors(tensor):
-    _array = tensor.detach().cpu().numpy()
-    _array = np.nan_to_num(_array, posinf=1000000, neginf=-1000000)
-    _tensor = torch.tensor(_array)
-    return _tensor
+class FFN(nn.Module):
+    def __init__(self, num_features, hidden_size, out_features):
+        super(FFN, self).__init__()
+        self._net = nn.Sequential(
+            nn.Linear(num_features, hidden_size), nn.ReLU(), nn.Linear(hidden_size, out_features)
+        )
+
+    def forward(self, x):
+        return self._net(x)
 
 
 def train_experiment(device, engine=None):
@@ -45,20 +47,21 @@ def train_experiment(device, engine=None):
         from catalyst import utils
 
         utils.set_global_seed(RANDOM_STATE)
-        # 1. train, valid and test loaders
-        transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
-        train_dataset = datasets.MNIST(
-            root=os.getcwd(), transform=transforms, train=False, download=True
+        # 1. generate data
+        num_samples, num_features, num_classes = int(1e5), int(1e1), 4
+        X, y = make_blobs(
+            n_samples=num_samples,
+            centers=num_classes,
+            n_features=num_features,
+            random_state=RANDOM_STATE,
         )
-        train_loader = DataLoader(dataset=train_dataset, batch_size=512, shuffle=True)
-
-        valid_dataset = datasets.MNIST(
-            root=os.getcwd(), transform=transforms, train=False, download=True
-        )
-        valid_loader = DataLoader(dataset=valid_dataset, batch_size=128)
+        X, y = torch.tensor(X), torch.tensor(y)
+        dataset = TensorDataset(X, y)
+        loader = DataLoader(dataset, batch_size=64, num_workers=1, shuffle=True)
 
         # 2. model and optimizer
-        model = models.MnistSimpleNet(out_features=16, normalize=True)
+        hidden_size, out_features = 20, 16
+        model = FFN(num_features=num_features, hidden_size=hidden_size, out_features=out_features)
         optimizer = Adam(model.parameters(), lr=LR)
 
         # 3. criterion with triplets sampling
@@ -68,28 +71,16 @@ def train_experiment(device, engine=None):
         # 4. training with catalyst Runner
         class CustomRunner(dl.SupervisedRunner):
             def handle_batch(self, batch) -> None:
-                images, targets = batch["features"].float(), batch["targets"].long()
-                features = self.model(images)
+                features, targets = batch["features"].float(), batch["targets"].long()
+                embeddings = self.model(features)
                 self.batch = {
-                    "embeddings": features,
+                    "embeddings": embeddings,
                     "targets": targets,
                 }
 
         callbacks = [
-            dl.ControlFlowCallback(
-                dl.CriterionCallback(
-                    input_key="embeddings", target_key="targets", metric_key="loss"
-                ),
-                loaders="train",
-            ),
-            dl.BatchTransformCallback(
-                input_key="embeddings",
-                output_key="safe_embeddings",
-                transform=safe_tensors,
-                scope="on_batch_end",
-            ),
             dl.SklearnModelCallback(
-                feature_key="safe_embeddings",
+                feature_key="embeddings",
                 target_key="targets",
                 train_loader="train",
                 valid_loader="valid",
@@ -97,7 +88,7 @@ def train_experiment(device, engine=None):
                 predict_method="predict_proba",
                 predict_key="sklearn_predict",
                 random_state=RANDOM_STATE,
-                n_estimators=500,
+                n_estimators=100,
             ),
             dl.ControlFlowCallback(
                 dl.AccuracyCallback(
@@ -114,7 +105,7 @@ def train_experiment(device, engine=None):
             criterion=criterion,
             optimizer=optimizer,
             callbacks=callbacks,
-            loaders={"train": train_loader, "valid": valid_loader},
+            loaders={"train": loader, "valid": loader},
             verbose=False,
             valid_loader="valid",
             valid_metric="accuracy",
@@ -126,7 +117,7 @@ def train_experiment(device, engine=None):
         valid_path = Path(logdir) / "logs/valid.csv"
         best_accuracy = max(float(row["accuracy"]) for row in read_csv(valid_path))
 
-        assert best_accuracy > 0.5
+        assert best_accuracy > 0.8
 
 
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
