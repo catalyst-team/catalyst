@@ -2,6 +2,7 @@ from typing import Callable, Union
 from functools import partial
 import importlib
 
+import numpy as np
 import torch
 
 from catalyst.core import CallbackOrder, IRunner
@@ -294,6 +295,7 @@ class SklearnModelCallback(Callback):
             else:
                 features = data[self.feature_key].detach().cpu().numpy()
                 targets = data[self.target_key].detach().cpu().numpy()
+                features = np.nan_to_num(features)
                 self.model.fit(features, targets)
 
         if runner.loader == self._valid_loader:

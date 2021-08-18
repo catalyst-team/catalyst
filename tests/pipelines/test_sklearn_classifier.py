@@ -16,7 +16,7 @@ if SETTINGS.ml_required:
     from sklearn.datasets import make_blobs
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 2
+TRAIN_EPOCH = 5
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -31,24 +31,13 @@ def read_csv(csv_path: str):
                 yield {colname: val for colname, val in zip(colnames, row)}
 
 
-class FFN(nn.Module):
-    def __init__(self, num_features, hidden_size, out_features):
-        super(FFN, self).__init__()
-        self._net = nn.Sequential(
-            nn.Linear(num_features, hidden_size), nn.ReLU(), nn.Linear(hidden_size, out_features)
-        )
-
-    def forward(self, x):
-        return self._net(x)
-
-
 def train_experiment(device, engine=None):
     with TemporaryDirectory() as logdir:
         from catalyst import utils
 
         utils.set_global_seed(RANDOM_STATE)
         # 1. generate data
-        num_samples, num_features, num_classes = int(1e5), int(1e1), 4
+        num_samples, num_features, num_classes = int(1e4), int(30), 3
         X, y = make_blobs(
             n_samples=num_samples,
             centers=num_classes,
@@ -59,10 +48,17 @@ def train_experiment(device, engine=None):
         dataset = TensorDataset(X, y)
         loader = DataLoader(dataset, batch_size=64, num_workers=1, shuffle=True)
 
-        # 2. model and optimizer
+        # 2. model, optimizer and scheduler
         hidden_size, out_features = 20, 16
-        model = FFN(num_features=num_features, hidden_size=hidden_size, out_features=out_features)
+        model = nn.Sequential(
+            nn.Linear(num_features, hidden_size),
+            nn.ReLU(),
+            nn.Linear(hidden_size, out_features),
+            nn.Sigmoid(),
+            nn.BatchNorm1d(out_features),
+        )
         optimizer = Adam(model.parameters(), lr=LR)
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
 
         # 3. criterion with triplets sampling
         sampler_inbatch = data.HardTripletsSampler(norm_required=False)
@@ -105,6 +101,7 @@ def train_experiment(device, engine=None):
             criterion=criterion,
             optimizer=optimizer,
             callbacks=callbacks,
+            scheduler=scheduler,
             loaders={"train": loader, "valid": loader},
             verbose=False,
             valid_loader="valid",
@@ -123,3 +120,6 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
+
+
+train_experiment("cpu")
