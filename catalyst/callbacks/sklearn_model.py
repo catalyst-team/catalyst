@@ -1,13 +1,14 @@
 from typing import Callable, Union
 from functools import partial
 import importlib
-import pdb
 
 import torch
 
 from catalyst.core import CallbackOrder, IRunner
 from catalyst.core.callback import Callback
 from catalyst.metrics._metric import AccumulationMetric
+
+# import pdb
 
 
 class SklearnModelCallback(Callback):
@@ -284,7 +285,7 @@ class SklearnModelCallback(Callback):
             data = self.storage.compute_key_value()
             # classifier fit
 
-            pdb.set_trace()
+            # pdb.set_trace()
             features = data[self.feature_key].detach().cpu().numpy()
             targets = data[self.target_key].detach().cpu().numpy()
             self.classifier = self.classifier_fabric()
