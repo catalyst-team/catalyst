@@ -20,10 +20,10 @@ class SklearnModelCallback(Callback):
         target_key: keys of tensors that should be used as targets in the classifier calculations
         train_loader: train loader name
         valid_loader: valid loader name
-        sklearn_classifier_fn: fabric to produce objects with .fit and predict method
+        model_classifier_fn: fabric to produce objects with .fit and predict method
         predict_method: predict method name for the classifier
         predict_key: key to store computed classifier predicts in ``runner.batch`` dictionary
-        classifier_kwargs: additional parameters for ``sklearn_classifier_fn``
+        model_kwargs: additional parameters for ``model_classifier_fn``
 
     .. note::
         catalyst[ml] required for this callback
@@ -93,7 +93,7 @@ class SklearnModelCallback(Callback):
                     target_key="targets",
                     train_loader="train",
                     valid_loader="valid",
-                    sklearn_classifier_fn=LogisticRegression,
+                    model_classifier_fn=LogisticRegression,
                     predict_method="predict_proba",
                     predict_key="sklearn_predict"
                 ),
@@ -182,7 +182,7 @@ class SklearnModelCallback(Callback):
                     target_key="targets",
                     train_loader="train",
                     valid_loader="valid",
-                    sklearn_classifier_fn="linear_model.LogisticRegression",
+                    model_classifier_fn="linear_model.LogisticRegression",
                     predict_method="predict_proba",
                     predict_key="sklearn_predict"
                 ),
@@ -217,25 +217,25 @@ class SklearnModelCallback(Callback):
         target_key: str,
         train_loader: str,
         valid_loader: str,
-        sklearn_classifier_fn: Union[Callable, str],
+        model_classifier_fn: Union[Callable, str],
         predict_method: str = "predict",
         predict_key: str = "sklearn_predict",
-        **classifier_kwargs,
+        **model_kwargs,
     ) -> None:
         super().__init__(order=CallbackOrder.Metric)
 
-        if isinstance(sklearn_classifier_fn, str):
-            base, clf = sklearn_classifier_fn.split(".")
+        if isinstance(model_classifier_fn, str):
+            base, clf = model_classifier_fn.split(".")
             base = f"sklearn.{base}"
-            sklearn_classifier_fn = getattr(importlib.import_module(base), clf)
+            model_classifier_fn = getattr(importlib.import_module(base), clf)
 
         assert hasattr(
-            sklearn_classifier_fn(), predict_method
+            model_classifier_fn(), predict_method
         ), "The classifier must have the predict method!"
 
         self._train_loader = train_loader
         self._valid_loader = valid_loader
-        self.classifier_fabric = partial(sklearn_classifier_fn, **classifier_kwargs)
+        self.classifier_fabric = partial(model_classifier_fn, **model_kwargs)
         self.feature_key = feature_key
         self.target_key = target_key
         self.predict_method = predict_method

@@ -25,7 +25,7 @@ def test_init_from_str():
             target_key="target_key",
             train_loader="train",
             valid_loader="valid_loader",
-            sklearn_classifier_fn=fn,
+            model_classifier_fn=fn,
         )
 
     pathes_with_transform = ["cluster.KMeans", "decomposition.PCA"]
@@ -36,6 +36,6 @@ def test_init_from_str():
             target_key="target_key",
             train_loader="train",
             valid_loader="valid_loader",
-            sklearn_classifier_fn=fn,
+            model_classifier_fn=fn,
             predict_method="transform",
         )

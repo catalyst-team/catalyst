@@ -137,7 +137,7 @@ if __name__ == "__main__":
             target_key="targets",
             train_loader="train",
             valid_loader="valid",
-            sklearn_classifier_fn=LogisticRegression,
+            model_classifier_fn=LogisticRegression,
             predict_key="sklearn_predict",
             predict_method="predict_proba",
         ),
