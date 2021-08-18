@@ -284,7 +284,7 @@ class SklearnModelCallback(Callback):
             data = self.storage.compute_key_value()
             # classifier fit
 
-            # pdb.set_trace()
+            pdb.set_trace()
             features = data[self.feature_key].detach().cpu().numpy()
             targets = data[self.target_key].detach().cpu().numpy()
             self.classifier = self.classifier_fabric()
