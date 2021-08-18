@@ -62,6 +62,7 @@ optimizer = Adam(model.parameters(), lr=0.001)
 # 3. criterion with triplets sampling
 criterion = NTXentLoss(tau=0.1)
 
+
 # 4. training with catalyst Runner
 class CustomRunner(dl.Runner):
     def predict_batch(self, batch):

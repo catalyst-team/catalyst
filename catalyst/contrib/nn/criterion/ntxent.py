@@ -6,7 +6,7 @@ from torch import nn
 
 class NTXentLoss(nn.Module):
     """
-    NTXent loss from `A Simple Framework for Contrastive Learning of Visual Representations`_ paper.
+    NTXent loss from `A Simple Framework for Contrastive Learning of Visual Representations` paper.
 
     Adapter from:
     https://arxiv.org/abs/2002.05709

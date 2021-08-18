@@ -324,7 +324,8 @@ class CifarQGDataset(metric_learning.QueryGalleryDataset):
         self._is_query[: self._query_size] = True
 
     def _filter(self) -> None:
-        """Filter CIFAR10 dataset: select images of 'dog', 'frog', 'horse', 'ship', 'truck' classes."""
+        """Filter CIFAR10 dataset: select images of 'dog', 'frog',
+        'horse', 'ship', 'truck' classes."""
         mask = array(self._cifar.targets) >= self._split
         self._cifar.data = self._cifar.data[mask]
         self._cifar.targets = array(self._cifar.targets)[mask].tolist()
