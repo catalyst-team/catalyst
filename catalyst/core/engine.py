@@ -5,6 +5,7 @@ from contextlib import contextmanager
 import numpy as np
 import torch
 from torch import nn
+from torch.utils.data import DataLoader
 
 from catalyst.typing import Criterion, Device, Model, Optimizer, Scheduler
 
@@ -76,10 +77,12 @@ class IEngine(ABC):
     @property
     @abstractmethod
     def backend(self) -> Optional[str]:
+        """String identifier for distributed backend."""
         pass
 
     @property
     def is_ddp(self) -> bool:
+        """Boolean flag for distributed run."""
         return self.backend is not None
 
     @property
@@ -107,9 +110,31 @@ class IEngine(ABC):
         return self.rank > 0
 
     def barrier(self) -> None:
+        """
+        Synchronizes all processes.
+
+        This collective blocks processes until the all runs enter the function.
+        """
         pass
 
     def spawn(self, fn: Callable, *args: Any, **kwargs: Any) -> None:
+        """Spawns abstraction for``nprocs`` creation with specified ``fn`` and ``args``/``kwargs``.
+
+        Args:
+            fn (function): Function is called as the entrypoint of the
+                spawned process. This function must be defined at the top
+                level of a module so it can be pickled and spawned. This
+                is a requirement imposed by multiprocessing.
+
+                The function is called as ``fn(i, *args)``, where ``i`` is
+                the process index and ``args`` is the passed through tuple
+                of arguments.
+            *args: Arguments passed to spawn method.
+            **kwargs: Keyword-arguments passed to spawn method.
+
+        Returns:
+            wrapped function (if needed).
+        """
         return fn(*args, **kwargs)
 
     def setup_process(self, rank: int = -1, world_size: int = 1):
@@ -128,6 +153,7 @@ class IEngine(ABC):
 
     # TODO: make context manager
     def ddp_sync_run(self, function: Callable):
+        """Function wrapper for synchronous run in the distributed mode."""
         if self.rank > 0:
             self.barrier()
         function()
@@ -149,11 +175,12 @@ class IEngine(ABC):
 
     @abstractmethod
     def sync_metrics(self, metrics: Dict) -> Dict:
+        """Syncs ``metrics`` over ``world_size`` in the distributed mode."""
         return metrics
 
     @abstractmethod
     def sync_tensor(self, tensor: torch.Tensor, mode: str) -> torch.Tensor:
-        """Syncs ``tensor`` over ``world_size`` in distributed mode."""
+        """Syncs ``tensor`` over ``world_size`` in the distributed mode."""
         pass
 
     @abstractmethod
@@ -293,7 +320,8 @@ class IEngine(ABC):
         """
         return nullcontext()
 
-    def autocast_loader(self, loader):
+    def autocast_loader(self, loader: DataLoader):
+        """Loader wrapper for the distributed mode."""
         return loader
 
 

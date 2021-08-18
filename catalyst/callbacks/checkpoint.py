@@ -4,16 +4,10 @@ import os
 from pathlib import Path
 import shutil
 
-import torch.distributed as dist
-
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
-from catalyst.settings import SETTINGS
 from catalyst.tools.metric_handler import MetricHandler
 from catalyst.utils.config import save_config
-
-if SETTINGS.xla_required:
-    import torch_xla.core.xla_model as xm
 
 
 def _save_checkpoint(

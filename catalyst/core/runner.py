@@ -261,7 +261,6 @@ class IRunner(ICallback, ILogger, ABC):
         self.need_early_stop: bool = False
         self._stage_rank: int = -1
         self._stage_world_size: int = -1
-        self._sync_batch_metrics = False
 
     # @TODO: remove hotfix?
     @property
@@ -409,25 +408,6 @@ class IRunner(ICallback, ILogger, ABC):
 
         """
         raise NotImplementedError
-
-    # def get_transforms(self, stage: str = None):
-    #     """Returns the data transforms for a given stage and dataset.
-    #
-    #     Args:
-    #         stage: stage name of interest,
-    #             like "pretrain" / "train" / "finetune" / etc
-    #         dataset: dataset name of interest,
-    #             like "train" / "valid" / "infer"
-    #
-    #     .. note::
-    #         For datasets/loaders naming please follow
-    #         :py:mod:`catalyst.core.runner` documentation.
-    #
-    #     Returns:  # noqa: DAR202
-    #         Data transformations to use for specified dataset.
-    #
-    #     """
-    #     raise NotImplementedError
 
     @abstractmethod  # noqa: WPS463
     def get_loaders(self, stage: str) -> "OrderedDict[str, DataLoader]":
@@ -647,9 +627,6 @@ class IRunner(ICallback, ILogger, ABC):
 
         if self.engine.is_ddp:
             self.engine.setup_process(rank=self._stage_rank, world_size=self._stage_world_size)
-            if not self.engine.is_master_process:
-                del self.loggers
-                self.loggers = {}
 
         self.engine.ddp_sync_run(self._setup_loaders)
         self._setup_components()
@@ -713,22 +690,9 @@ class IRunner(ICallback, ILogger, ABC):
 
     def on_batch_end(self, runner: "IRunner"):
         """Event handler."""
-        # as far as we could `backward` anything from `batch_metrics` on the nodes during training,
-        # they could not be synced before, so we have to sync them in the end of the batch
-        # TODO: do we need it?
-        # if self._sync_batch_metrics:
-        #     self.batch_metrics = self.engine.sync_metrics(self.batch_metrics)
-        # if self.engine.is_xla_ddp:
-        #     self.batch_metrics = {
-        #         k: xm.mesh_reduce(k, v.item() if isinstance(v, torch.Tensor) else v, np.mean)
-        #         for k, v in self.batch_metrics.items()
-        #     }
-        # elif self.engine.is_ddp:
-        #     self.batch_metrics = {
-        #         k: runner.engine.sync_tensor(torch.tensor(v, device=runner.device), "mean")
-        #         for k, v in self.batch_metrics.items()
-        #     }
-        self.log_metrics(metrics=self.batch_metrics, scope="batch")
+        # batch-metrics sync in ddp setup is too computation heavy
+        if not self.engine.is_ddp:
+            self.log_metrics(metrics=self.batch_metrics, scope="batch")
 
     def on_loader_end(self, runner: "IRunner"):
         """Event handler."""

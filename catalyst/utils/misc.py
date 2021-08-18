@@ -10,6 +10,7 @@ from itertools import tee
 import random
 
 import numpy as np
+import torch
 from torch import int as tint, long, short, Tensor
 
 T = TypeVar("T")
@@ -55,15 +56,18 @@ def set_global_seed(seed: int) -> None:
     """
     random.seed(seed)
     np.random.seed(seed)
+
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+
     try:
-        import torch
+        import torch_xla.core.xla_model as xm
     except ImportError:
         pass
     else:
-        torch.manual_seed(seed)
-        if torch.cuda.is_available():
-            torch.cuda.manual_seed(seed)
-            torch.cuda.manual_seed_all(seed)
+        xm.set_rng_state(seed)
 
 
 def maybe_recursive_call(

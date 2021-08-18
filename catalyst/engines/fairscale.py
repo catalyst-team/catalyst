@@ -1,17 +1,13 @@
-from typing import Any, Callable, Dict, Optional, Union
-import copy
+from typing import Any, Dict, Union
 import math
-import os
 import warnings
 
 import torch
 import torch.cuda.amp as amp
-import torch.distributed as dist
 
 from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import SETTINGS
 from catalyst.typing import RunnerCriterion, RunnerModel, RunnerOptimizer, RunnerScheduler
-from catalyst.utils.distributed import ddp_reduce
 
 if SETTINGS.fairscale_required:
     from fairscale.nn import Pipe

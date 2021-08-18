@@ -129,14 +129,37 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         """Process world size  for distributed training."""
         return self._world_size
 
-    def barrier(self) -> None:
-        dist.barrier()
-
     @property
     def backend(self) -> Optional[str]:
+        """String identifier for distributed backend."""
         return self._backend
 
+    def barrier(self) -> None:
+        """
+        Synchronizes all processes.
+
+        This collective blocks processes until the all runs enter the function.
+        """
+        dist.barrier()
+
     def spawn(self, fn: Callable, *args: Any, **kwargs: Any) -> None:
+        """Spawns abstraction for``nprocs`` creation with specified ``fn`` and ``args``/``kwargs``.
+
+        Args:
+            fn (function): Function is called as the entrypoint of the
+                spawned process. This function must be defined at the top
+                level of a module so it can be pickled and spawned. This
+                is a requirement imposed by multiprocessing.
+
+                The function is called as ``fn(i, *args)``, where ``i`` is
+                the process index and ``args`` is the passed through tuple
+                of arguments.
+            *args: Arguments passed to spawn method.
+            **kwargs: Keyword-arguments passed to spawn method.
+
+        Returns:
+            wrapped function (if needed).
+        """
         return torch.multiprocessing.spawn(
             fn, args=(self._world_size,), nprocs=self._world_size, join=True,
         )

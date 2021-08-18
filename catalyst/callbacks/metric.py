@@ -1,17 +1,12 @@
 from typing import Dict, Iterable, Optional, Tuple, Union
 from abc import ABC, abstractmethod
 
-import numpy as np
 import torch
 
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.metrics._functional_metric import FunctionalBatchMetric
 from catalyst.metrics._metric import ICallbackBatchMetric, ICallbackLoaderMetric, IMetric
-from catalyst.settings import SETTINGS
-
-if SETTINGS.xla_required:
-    import torch_xla.core.xla_model as xm
 
 
 class IMetricCallback(Callback, ABC):
