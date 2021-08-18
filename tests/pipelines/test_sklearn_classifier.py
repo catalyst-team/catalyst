@@ -18,7 +18,7 @@ from catalyst.settings import SETTINGS
 if SETTINGS.ml_required:
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 1
+TRAIN_EPOCH = 4
 LR = 0.01
 RANDOM_STATE = 42
 
