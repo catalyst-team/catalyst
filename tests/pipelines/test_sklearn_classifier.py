@@ -35,7 +35,7 @@ def read_csv(csv_path: str):
 
 def safe_tensors(tensor):
     _array = tensor.detach().cpu().numpy()
-    _array = np.nan_to_num(_array)
+    _array = np.nan_to_num(_array, posinf=1000000, neginf=-1000000)
     _tensor = torch.tensor(_array)
     return _tensor
 
