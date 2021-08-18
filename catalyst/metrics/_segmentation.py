@@ -11,7 +11,8 @@ from catalyst.metrics.functional._segmentation import (
     _trevsky,
     get_segmentation_statistics,
 )
-from catalyst.utils.distributed import all_gather, get_rank
+from catalyst.utils import get_device
+from catalyst.utils.distributed import all_gather, get_backend
 
 if SETTINGS.xla_required:
     import torch_xla.core.xla_model as xm
@@ -63,7 +64,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         self.weights = weights
         self.class_names = class_names
         self._checked_params = False
-        self._is_ddp = False
+        self._ddp_backend = None
 
     def _check_parameters(self):
         # check class_names
@@ -83,7 +84,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
     def reset(self):
         """Reset all statistics"""
         self.statistics = {}
-        self._is_ddp = get_rank() > -1
+        self._ddp_backend = get_backend()
 
     def update(self, outputs: torch.Tensor, targets: torch.Tensor) -> torch.Tensor:
         """Updates segmentation statistics with new data and return intermediate metrics values.
@@ -96,8 +97,8 @@ class RegionBasedMetric(ICallbackBatchMetric):
             metric for each class
         """
         tp, fp, fn = get_segmentation_statistics(
-            outputs=outputs.detach(),
-            targets=targets.detach(),
+            outputs=outputs.cpu().detach(),
+            targets=targets.cpu().detach(),
             class_dim=self.class_dim,
             threshold=self.threshold,
         )
@@ -159,21 +160,20 @@ class RegionBasedMetric(ICallbackBatchMetric):
         total_statistics = {}
         macro_metric = 0
         weighted_metric = 0
-        # @TODO: ddp hotfix, could be done better
-        if self._is_ddp:
+        # ddp hotfix, could be done better
+        # but metric must handle DDP on it's own
+        if self._ddp_backend == "xla":
+            device = get_device()
             for _, statistics in self.statistics.items():
                 for key in statistics:
-                    if not SETTINGS.xla_required:
-                        device = statistics[key].device
-                        value: List[torch.Tensor] = all_gather(statistics[key].cpu())
-                        value: torch.Tensor = torch.sum(torch.vstack(value), dim=0).to(device)
-                        statistics[key] = value
-                    else:
-                        device = statistics[key].device
-                        value: torch.Tensor = xm.all_gather(self.statistics[key].cpu()).sum(
-                            dim=0
-                        ).to(device)
-                        statistics[key] = value
+                    value = torch.tensor([statistics[key]], device=device)
+                    statistics[key] = xm.all_gather(value).sum(dim=0)
+        elif self._ddp_backend == "ddp":
+            for _, statistics in self.statistics.items():
+                for key in statistics:
+                    value: List[torch.Tensor] = all_gather(statistics[key])
+                    value: torch.Tensor = torch.sum(torch.vstack(value), dim=0)
+                    statistics[key] = value
 
         for class_idx, statistics in self.statistics.items():
             value = self.metric_fn(**statistics)

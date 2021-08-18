@@ -1,4 +1,4 @@
-from typing import Any, Callable, List
+from typing import Any, Callable, List, Optional
 from collections import OrderedDict
 import os
 import pickle
@@ -23,7 +23,7 @@ def _is_torch_distributed_initialized() -> bool:
 
 
 def _is_xla_distributed_initialized() -> bool:
-    return os.environ.get(xenv.TORCH_DIST_ROOT, None) is not None
+    return SETTINGS.xla_required and os.environ.get(xenv.TORCH_DIST_ROOT, None) is not None
 
 
 def _is_slurm_available():
@@ -72,6 +72,15 @@ def get_nn_from_ddp_module(model: nn.Module) -> nn.Module:
     return model
 
 
+def get_backend() -> Optional[str]:
+    if _is_xla_distributed_initialized():
+        return "xla"
+    elif _is_torch_distributed_initialized():
+        return "ddp"
+    else:
+        return None
+
+
 def get_rank() -> int:
     """
     Returns the rank of the current worker.
@@ -79,7 +88,7 @@ def get_rank() -> int:
     Returns:
         int: ``rank`` if torch.distributed is initialized, otherwise ``-1``
     """
-    if SETTINGS.xla_required and _is_xla_distributed_initialized():
+    if _is_xla_distributed_initialized():
         return xm.get_ordinal()
     elif _is_torch_distributed_initialized():
         return dist.get_rank()
@@ -87,7 +96,33 @@ def get_rank() -> int:
         return -1
 
 
+# def get_local_rank() -> int:
+#     pass
+
+
+def get_world_size() -> int:
+    if _is_xla_distributed_initialized():
+        return xm.xrt_world_size()
+    elif _is_torch_distributed_initialized():
+        return dist.get_world_size()
+    else:
+        return 1
+
+
+# def get_num_nodes() -> int:
+#     pass
+#
+#
+# def get_num_proc_per_nodes() -> int:
+#     pass
+#
+#
+# def get_node_rank() -> int:
+#     pass
+
+
 # TODO: rename
+# TODO: remove, restore? deprecated part
 def _get_slurm_params():
     """Return slurm params for experiment run.
 
@@ -107,6 +142,7 @@ def _get_slurm_params():
 
 
 # TODO: rename
+# TODO: remove, restore? deprecated part
 def get_distributed_params():
     """Returns distributed params for experiment run.
 
@@ -265,7 +301,9 @@ def ddp_sync_run(function: Callable):
 
 
 __all__ = [
+    "get_backend",
     "get_rank",
+    "get_world_size",
     "get_distributed_params",
     "get_nn_from_ddp_module",
     "sum_reduce",
