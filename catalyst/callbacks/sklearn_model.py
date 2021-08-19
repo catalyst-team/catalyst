@@ -8,8 +8,6 @@ from catalyst.core import CallbackOrder, IRunner
 from catalyst.core.callback import Callback
 from catalyst.metrics._metric import AccumulationMetric
 
-# import pdb
-
 
 class SklearnModelCallback(Callback):
     """Callback to train a classifier on the train loader and
