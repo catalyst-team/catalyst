@@ -37,15 +37,15 @@ ICallbackLoaderMetric
     :exclude-members: __init__
     :show-inheritance:
 
-AccumulationMetric
+General Metrics
+----------------------
+
+AccumulativeMetric
 ~~~~~~~~~~~~~~~~~~~~~
-.. autoclass:: catalyst.metrics._metric.AccumulationMetric
+.. autoclass:: catalyst.metrics._accumulative.AccumulativeMetric
     :members:
     :exclude-members: __init__
     :show-inheritance:
-
-General Metrics
-----------------------
 
 AdditiveValueMetric
 ~~~~~~~~~~~~~~~~~~~~

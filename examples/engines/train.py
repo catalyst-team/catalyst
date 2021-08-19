@@ -6,6 +6,7 @@ import os
 
 from torch import nn, optim
 from torch.utils.data import DataLoader
+from torch.utils.data.distributed import DistributedSampler
 
 from catalyst import dl, SETTINGS
 from catalyst.contrib.datasets import CIFAR10
@@ -28,6 +29,11 @@ if SETTINGS.apex_required:
         {"apex-dp": dl.DataParallelAPEXEngine, "apex-ddp": dl.DistributedDataParallelAPEXEngine}
     )
 
+if SETTINGS.deepspeed_required:
+    E2E.update(
+        {"ds-ddp": dl.DistributedDataParallelDeepSpeedEngine,}
+    )
+
 if SETTINGS.fairscale_required:
     E2E.update(
         {
@@ -41,10 +47,8 @@ if SETTINGS.fairscale_required:
         }
     )
 
-if SETTINGS.deepspeed_required:
-    E2E.update(
-        {"ds-ddp": dl.DistributedDataParallelDeepSpeedEngine,}
-    )
+if SETTINGS.xla_required:
+    E2E.update({"xla": dl.XLAEngine, "xla-ddp": dl.DistributedXLAEngine})
 
 
 def conv_block(in_channels, out_channels, pool=False):
@@ -100,9 +104,25 @@ class CustomRunner(dl.IRunner):
         )
         train_data = CIFAR10(os.getcwd(), train=True, download=True, transform=transform)
         valid_data = CIFAR10(os.getcwd(), train=False, download=True, transform=transform)
+        if self.engine.is_ddp:
+            train_sampler = DistributedSampler(
+                train_data,
+                num_replicas=self.engine.world_size,
+                rank=self.engine.rank,
+                shuffle=True,
+            )
+            valid_sampler = DistributedSampler(
+                valid_data,
+                num_replicas=self.engine.world_size,
+                rank=self.engine.rank,
+                shuffle=False,
+            )
+        else:
+            train_sampler = valid_sampler = None
+
         return {
-            "train": DataLoader(train_data, batch_size=32),
-            "valid": DataLoader(valid_data, batch_size=32),
+            "train": DataLoader(train_data, batch_size=32, sampler=train_sampler),
+            "valid": DataLoader(valid_data, batch_size=32, sampler=valid_sampler),
         }
 
     def get_model(self, stage: str):
@@ -140,7 +160,6 @@ class CustomRunner(dl.IRunner):
     def handle_batch(self, batch):
         x, y = batch
         logits = self.model(x)
-
         self.batch = {
             "features": x,
             "targets": y,

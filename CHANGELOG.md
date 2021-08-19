@@ -4,15 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [YY.MM.R] - YYYY-MM-DD
+## [21.08] - YYYY-MM-DD
 
 ### Added
 
--
+- RecSys losses contrib ([#1269](https://github.com/catalyst-team/catalyst/pull/1269))
+- Object Detection Tutorial ([#1271](https://github.com/catalyst-team/catalyst/pull/1271))
+- TPU/XLA support ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - with updated [example](./examples/engines)
 
 ### Changed
 
--
+- Registry moved to `hydra-slayer` ([#1264)](https://github.com/catalyst-team/catalyst/pull/1264))
+- ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - batch metrics sync removed from ddp-runs to speedup training process
+  - `AccumulationMetric` renamed to `AccumulativeMetric`
+    - moved from `catalyst.metrics._metric` to `catalyst.metrics._accumulative`
+    - `accululative_fields` renamed to `keys`
+
 
 ### Removed
 
@@ -20,7 +29,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 
--
+- PeriodicLoaderCallback docsting ([#1279](https://github.com/catalyst-team/catalyst/pull/1279))
+- matplotlib issue ([#1272](https://github.com/catalyst-team/catalyst/pull/1272))
 
 
 ## [21.07] - 2021-07-29
