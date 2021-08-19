@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-
+- SklearnModelCallback ([#1261](https://github.com/catalyst-team/catalyst/pull/1261))
+- Barlow Twins example ([#1261])(https://github.com/catalyst-team/catalyst/pull/1261)
 - RecSys loss functions: `AdaptiveHingeLoss`, `BPRLoss`, `HingeLoss`, `LogisticLoss`, `WARPLoss` ([#1269](https://github.com/catalyst-team/catalyst/pull/1269))
 - object detection examples ([#1271](https://github.com/catalyst-team/catalyst/pull/1271))
 
