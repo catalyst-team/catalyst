@@ -2,7 +2,6 @@ from typing import Callable, Union
 from functools import partial
 import importlib
 
-import numpy as np
 import torch
 
 from catalyst.core import CallbackOrder, IRunner
@@ -256,8 +255,7 @@ class SklearnModelCallback(Callback):
         super().on_loader_start(runner)
         if runner.loader_key == self._train_loader:
             self.storage.reset(
-                num_samples=runner.loader_batch_size * runner.loader_batch_len,
-                num_batches=runner.loader_batch_len,
+                num_samples=runner.loader_sample_len, num_batches=runner.loader_batch_len,
             )
         if runner.loader_key == self._valid_loader:
             assert self.model is not None, "The train loader has to be processed first!"
@@ -269,6 +267,8 @@ class SklearnModelCallback(Callback):
             runner: runner for the experiment.
         """
         if runner.loader_key == self._train_loader:
+            embddings = runner.batch[self.feature_key]
+            assert embddings.isnan().sum() == 0, "NaN before AccumulationMetric!"
             self.storage.update(**runner.batch)
         if runner.loader_key == self._valid_loader:
             features = runner.batch[self.feature_key].detach().cpu().numpy()
@@ -295,7 +295,7 @@ class SklearnModelCallback(Callback):
             else:
                 features = data[self.feature_key].detach().cpu().numpy()
                 targets = data[self.target_key].detach().cpu().numpy()
-                features = np.nan_to_num(features)
+                assert features.isnan().sum() == 0, "NaN after AccumulationMetric!"
                 self.model.fit(features, targets)
 
         if runner.loader == self._valid_loader:
