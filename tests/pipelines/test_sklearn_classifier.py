@@ -13,11 +13,11 @@ from catalyst.contrib import nn
 from catalyst.settings import SETTINGS
 
 if SETTINGS.ml_required:
-    from sklearn.datasets import make_blobs
+    from sklearn.datasets import make_classification
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 5
-LR = 0.01
+TRAIN_EPOCH = 10
+LR = 0.001
 RANDOM_STATE = 42
 
 
@@ -38,11 +38,14 @@ def train_experiment(device, engine=None):
         utils.set_global_seed(RANDOM_STATE)
         # 1. generate data
         num_samples, num_features, num_classes = int(1e4), int(30), 3
-        X, y = make_blobs(
+        X, y = make_classification(
             n_samples=num_samples,
-            centers=num_classes,
             n_features=num_features,
-            random_state=RANDOM_STATE,
+            n_informative=num_features,
+            n_repeated=0,
+            n_redundant=0,
+            n_classes=num_classes,
+            n_clusters_per_class=1,
         )
         X, y = torch.tensor(X), torch.tensor(y)
         dataset = TensorDataset(X, y)
