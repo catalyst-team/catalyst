@@ -10,7 +10,7 @@ class Imagewoof(ImageClassificationDataset):
     resources = [
         (
             "https://s3.amazonaws.com/fast-ai-imageclas/imagewoof2.tgz",
-            "5eaf5bbf4bf16a77c616dc6e8dd5f8e9",
+            "9aafe18bcdb1632c4249a76c458465ba",
         )
     ]
 
@@ -25,7 +25,7 @@ class Imagewoof160(ImageClassificationDataset):
     resources = [
         (
             "https://s3.amazonaws.com/fast-ai-imageclas/imagewoof2-160.tgz",
-            "fcd23cc7dfce8837c95a8f9d63a128b7",
+            "3d200a7be99704a0d7509be2a9fbfe15",
         )
     ]
 
@@ -40,7 +40,7 @@ class Imagewoof320(ImageClassificationDataset):
     resources = [
         (
             "https://s3.amazonaws.com/fast-ai-imageclas/imagewoof2-320.tgz",
-            "af65be7963816efa949fa3c3b4947740",
+            "0f46d997ec2264e97609196c95897a44",
         )
     ]
 

@@ -1,0 +1,90 @@
+shared:
+  num_classes: &num_classes 4
+  num_epochs: &num_epochs 100
+  validation_period: &val_period 5
+  train_file: &train ./datasets/fruit-detection/dataset.json
+  train_imgs_dir: &train_imgs_dir ./datasets/fruit-detection/data/images
+  valid_file: &valid ./datasets/fruit-detection/dataset.json
+  valid_imgs_dir: &valid_imgs_dir ./datasets/fruit-detection/data/images
+
+runner:
+  _target_: CenterNetDetectionRunner
+
+engine:
+  _target_: DeviceEngine
+
+model:
+  _target_: CenterNet
+  num_classes: *num_classes
+
+loggers:
+  console:
+    _target_: ConsoleLogger
+
+stages:
+  initial_training:
+    num_epochs: *num_epochs
+
+    loaders: &loaders
+      batch_size: 16
+      num_workers: 4
+      
+      datasets:
+        train:
+          _target_: CenterNetDataset
+          coco_json_path: *train
+          images_dir: *train_imgs_dir
+          transforms:
+            _target_: albumentations.Compose
+            transforms:
+              - _target_: albu.Resize
+                height: 512
+                width: 512
+              - _target_: albu.Normalize
+              - _target_: albu.ToTensorV2
+            bbox_params:
+              _target_: albu.BboxParams
+              format: albumentations
+
+        valid:
+          _target_: CenterNetDataset
+          coco_json_path: *valid
+          images_dir: *valid_imgs_dir
+          transforms:
+            _target_: albumentations.Compose
+            transforms:
+              - _target_: albu.Resize
+                height: 512
+                width: 512
+              - _target_: albu.Normalize
+              - _target_: albu.ToTensorV2
+            bbox_params:
+              _target_: albu.BboxParams
+              format: albumentations
+
+    criterion:
+      _target_: CenterNetCriterion
+      num_classes: *num_classes
+
+    optimizer:
+      _target_: AdamW
+      lr: 0.001
+
+    callbacks: &callbacks
+      periodic_validation:
+        _target_: PeriodicLoaderCallback
+        valid_loader_key: valid
+        valid_metric_key: mAP
+        minimize: False
+        valid: *val_period
+
+      mAP:
+        _target_: DetectionMeanAveragePrecision
+        num_classes: *num_classes
+        output_type: centernet
+        iou_threshold: 0.5
+        confidence_threshold: 0.25
+
+      optimizer:
+        _target_: OptimizerCallback
+        metric_key: loss

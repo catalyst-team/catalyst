@@ -8,8 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Added
 
-- RecSys losses contrib ([#1269](https://github.com/catalyst-team/catalyst/pull/1269))
-- Object Detection Tutorial ([#1271](https://github.com/catalyst-team/catalyst/pull/1271))
+- RecSys loss functions: `AdaptiveHingeLoss`, `BPRLoss`, `HingeLoss`, `LogisticLoss`, `WARPLoss` ([#1269](https://github.com/catalyst-team/catalyst/pull/1269))
+- object detection examples ([#1271](https://github.com/catalyst-team/catalyst/pull/1271))
 - TPU/XLA support ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
   - with updated [example](./examples/engines)
 
