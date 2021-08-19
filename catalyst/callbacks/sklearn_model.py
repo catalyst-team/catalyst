@@ -1,4 +1,4 @@
-from typing import Callable, Union
+from typing import Callable, List, Union
 from functools import partial
 import importlib
 
@@ -214,7 +214,7 @@ class SklearnModelCallback(Callback):
         feature_key: str,
         target_key: Union[str, None],
         train_loader: str,
-        valid_loader: str,
+        valid_loaders: Union[str, List[str]],
         model_fn: Union[Callable, str],
         predict_method: str = "predict",
         predict_key: str = "sklearn_predict",
@@ -230,7 +230,10 @@ class SklearnModelCallback(Callback):
         assert hasattr(model_fn(), predict_method), "The classifier must have the predict method!"
 
         self._train_loader = train_loader
-        self._valid_loader = valid_loader
+        if isinstance(valid_loaders, str):
+            self._valid_loaders = [valid_loaders]
+        else:
+            self._valid_loaders = valid_loaders
         self.model_fabric_fn = partial(model_fn, **model_kwargs)
         self.feature_key = feature_key
         self.target_key = target_key
@@ -255,7 +258,7 @@ class SklearnModelCallback(Callback):
             self.storage.reset(
                 num_samples=runner.loader_sample_len, num_batches=runner.loader_batch_len,
             )
-        if runner.loader_key == self._valid_loader:
+        if runner.loader_key in self._valid_loaders:
             assert self.model is not None, "The train loader has to be processed first!"
 
     def on_batch_end(self, runner: "IRunner") -> None:
@@ -266,7 +269,7 @@ class SklearnModelCallback(Callback):
         """
         if runner.loader_key == self._train_loader:
             self.storage.update(**runner.batch)
-        if runner.loader_key == self._valid_loader:
+        if runner.loader_key in self._valid_loaders:
             features = runner.batch[self.feature_key].detach().cpu().numpy()
             # classifier predict
             classifier_predict = getattr(self.model, self.predict_method)
@@ -292,9 +295,6 @@ class SklearnModelCallback(Callback):
                 features = data[self.feature_key].detach().cpu().numpy()
                 targets = data[self.target_key].detach().cpu().numpy()
                 self.model.fit(features, targets)
-
-        if runner.loader == self._valid_loader:
-            self.model = None
 
 
 __all__ = ["SklearnModelCallback"]

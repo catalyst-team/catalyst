@@ -24,7 +24,7 @@ def test_init_from_str():
             feature_key="feature_key",
             target_key="target_key",
             train_loader="train",
-            valid_loader="valid_loader",
+            valid_loaders="valid_loader",
             model_fn=fn,
         )
 
@@ -35,7 +35,7 @@ def test_init_from_str():
             feature_key="feature_key",
             target_key="target_key",
             train_loader="train",
-            valid_loader="valid_loader",
+            valid_loaders="valid_loader",
             model_fn=fn,
             predict_method="transform",
         )

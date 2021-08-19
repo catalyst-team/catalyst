@@ -136,7 +136,7 @@ if __name__ == "__main__":
             feature_key="embeddings",
             target_key="targets",
             train_loader="train",
-            valid_loader="valid",
+            valid_loaders="valid",
             model_fn=LogisticRegression,
             predict_key="sklearn_predict",
             predict_method="predict_proba",
