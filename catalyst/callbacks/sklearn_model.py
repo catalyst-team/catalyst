@@ -296,5 +296,15 @@ class SklearnModelCallback(Callback):
                 targets = data[self.target_key].detach().cpu().numpy()
                 self.model.fit(features, targets)
 
+    def on_epoch_end(self, runner: "IRunner") -> None:
+        """
+        Epoch end hook: the callback delete the model.
+
+        Args:
+            runner: current runner
+        """
+        # We need this for the control of a loader order.
+        self.model = None
+
 
 __all__ = ["SklearnModelCallback"]
