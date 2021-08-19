@@ -16,7 +16,7 @@ if SETTINGS.ml_required:
     from sklearn.datasets import make_classification
     from sklearn.ensemble import RandomForestClassifier
 
-TRAIN_EPOCH = 10
+TRAIN_EPOCH = 5
 LR = 0.001
 RANDOM_STATE = 42
 
@@ -54,11 +54,7 @@ def train_experiment(device, engine=None):
         # 2. model, optimizer and scheduler
         hidden_size, out_features = 20, 16
         model = nn.Sequential(
-            nn.Linear(num_features, hidden_size),
-            nn.ReLU(),
-            nn.Linear(hidden_size, out_features),
-            nn.Sigmoid(),
-            nn.BatchNorm1d(out_features),
+            nn.Linear(num_features, hidden_size), nn.ReLU(), nn.Linear(hidden_size, out_features)
         )
         optimizer = Adam(model.parameters(), lr=LR)
         scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, [2])
@@ -117,7 +113,7 @@ def train_experiment(device, engine=None):
         valid_path = Path(logdir) / "logs/valid.csv"
         best_accuracy = max(float(row["accuracy"]) for row in read_csv(valid_path))
 
-        assert best_accuracy > 0.8
+        assert best_accuracy > 0.9
 
 
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
