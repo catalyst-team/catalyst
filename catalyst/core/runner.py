@@ -609,14 +609,14 @@ class IRunner(ICallback, ILogger, ABC):
 
         self.trial = self.get_trial()
         self.engine = self.get_engine()
-        # self.loggers = self.get_loggers()
-        # self.log_hparams(hparams=self.hparams, scope="experiment")
+        self.loggers = self.get_loggers()
+        self.log_hparams(hparams=self.hparams, scope="experiment")
 
     def on_stage_start(self, runner: "IRunner"):
         """Event handler."""
-        if self.engine.is_master_process and len(self.loggers) == 0:
-            self.loggers = self.get_loggers()
-            self.log_hparams(hparams=self.hparams, scope="experiment")
+        # if self.engine.is_master_process and len(self.loggers) == 0:
+        #     self.loggers = self.get_loggers()
+        #     self.log_hparams(hparams=self.hparams, scope="experiment")
 
         assert self.stage_key is not None
         self.is_infer_stage: bool = self.stage_key.startswith("infer")
@@ -627,6 +627,9 @@ class IRunner(ICallback, ILogger, ABC):
 
         if self.engine.is_ddp:
             self.engine.setup_process(rank=self._stage_rank, world_size=self._stage_world_size)
+            if not self.engine.is_master_process:
+                del self.loggers
+                self.loggers = {}
 
         self.engine.ddp_sync_run(self._setup_loaders)
         self._setup_components()
@@ -697,7 +700,10 @@ class IRunner(ICallback, ILogger, ABC):
     def on_loader_end(self, runner: "IRunner"):
         """Event handler."""
         self.log_metrics(metrics=self.loader_metrics, scope="loader")
-        self.epoch_metrics[self.loader_key] = self.loader_metrics
+        self.epoch_metrics[self.loader_key] = {
+            key: float(value) for key, value in self.loader_metrics.items()
+        }
+        # self.epoch_metrics[self.loader_key] = self.loader_metrics
 
     def on_epoch_end(self, runner: "IRunner"):
         """Event handler."""
