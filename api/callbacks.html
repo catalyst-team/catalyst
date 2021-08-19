@@ -368,6 +368,7 @@
 <li><p><a class="reference internal" href="#segmentation-trevskycallback" id="id60">Segmentation – TrevskyCallback</a></p></li>
 <li><p><a class="reference internal" href="#sklearnbatchcallback" id="id61">SklearnBatchCallback</a></p></li>
 <li><p><a class="reference internal" href="#sklearnloadercallback" id="id62">SklearnLoaderCallback</a></p></li>
+<li><p><a class="reference internal" href="#sklearnmodelcallback" id="id63">SklearnModelCallback</a></p></li>
 </ul>
 </li>
 </ul>
@@ -3511,6 +3512,213 @@ in <code class="docutils literal notranslate"><span class="pre">keys</span></cod
 </dd></dl>
 
 </section>
+<section id="sklearnmodelcallback">
+<h3><a class="toc-backref" href="#id63">SklearnModelCallback</a><a class="headerlink" href="#sklearnmodelcallback" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="catalyst.callbacks.sklearn_model.SklearnModelCallback">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.sklearn_model.</code><code class="sig-name descname">SklearnModelCallback</code><span class="sig-paren">(</span><em class="sig-param">feature_key: str, target_key: Optional[str], train_loader: str, valid_loaders: Union[str, List[str]], model_fn: Union[Callable, str], predict_method: str = 'predict', predict_key: str = 'sklearn_predict', **model_kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/sklearn_model.html#SklearnModelCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.sklearn_model.SklearnModelCallback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
+<p>Callback to train a classifier on the train loader and
+to give predictions on the valid loader.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>feature_key</strong> – keys of tensors that should be used as features in the classifier calculations</p></li>
+<li><p><strong>target_key</strong> – keys of tensors that should be used as targets in the classifier calculations</p></li>
+<li><p><strong>train_loader</strong> – train loader name</p></li>
+<li><p><strong>valid_loaders</strong> – valid loaders where model should be predicted</p></li>
+<li><p><strong>model_fn</strong> – fabric to produce objects with .fit and predict method</p></li>
+<li><p><strong>predict_method</strong> – predict method name for the classifier</p></li>
+<li><p><strong>predict_key</strong> – key to store computed classifier predicts in <code class="docutils literal notranslate"><span class="pre">runner.batch</span></code> dictionary</p></li>
+<li><p><strong>model_kwargs</strong> – additional parameters for <code class="docutils literal notranslate"><span class="pre">model_fn</span></code></p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>catalyst[ml] required for this callback</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">sklearn.linear_model</span> <span class="kn">import</span> <span class="n">LogisticRegression</span>
+<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">Adam</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">data</span><span class="p">,</span> <span class="n">dl</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib</span> <span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.transforms</span> <span class="kn">import</span> <span class="n">Compose</span><span class="p">,</span> <span class="n">Normalize</span><span class="p">,</span> <span class="n">ToTensor</span>
+
+<span class="c1"># 1. train and valid loaders</span>
+<span class="n">transforms</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">([</span><span class="n">ToTensor</span><span class="p">(),</span> <span class="n">Normalize</span><span class="p">((</span><span class="mf">0.1307</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.3081</span><span class="p">,))])</span>
+
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MnistMLDataset</span><span class="p">(</span>
+    <span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
+    <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span>
+<span class="p">)</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">BalanceBatchSampler</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">get_labels</span><span class="p">(),</span> <span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span>
+    <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+
+<span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">valid_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">valid_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+
+<span class="c1"># 2. model and optimizer</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">MnistSimpleNet</span><span class="p">(</span><span class="n">out_features</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+
+<span class="c1"># 3. criterion with triplets sampling</span>
+<span class="n">sampler_inbatch</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">HardTripletsSampler</span><span class="p">(</span><span class="n">norm_required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">TripletMarginLossWithSampler</span><span class="p">(</span>
+    <span class="n">margin</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">sampler_inbatch</span><span class="o">=</span><span class="n">sampler_inbatch</span>
+<span class="p">)</span>
+
+<span class="c1"># 4. training with catalyst Runner</span>
+<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">images</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;embeddings&quot;</span><span class="p">:</span> <span class="n">features</span><span class="p">,</span>
+            <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">targets</span><span class="p">,</span>
+        <span class="p">}</span>
+
+<span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">dl</span><span class="o">.</span><span class="n">ControlFlowCallback</span><span class="p">(</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;embeddings&quot;</span><span class="p">,</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span>
+            <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
+        <span class="n">loaders</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">dl</span><span class="o">.</span><span class="n">SklearnModelCallback</span><span class="p">(</span>
+        <span class="n">feature_key</span><span class="o">=</span><span class="s2">&quot;embeddings&quot;</span><span class="p">,</span>
+        <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span>
+        <span class="n">train_loader</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
+        <span class="n">valid_loaders</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+        <span class="n">model_fn</span><span class="o">=</span><span class="n">LogisticRegression</span><span class="p">,</span>
+        <span class="n">predict_method</span><span class="o">=</span><span class="s2">&quot;predict_proba&quot;</span><span class="p">,</span>
+        <span class="n">predict_key</span><span class="o">=</span><span class="s2">&quot;sklearn_predict&quot;</span>
+    <span class="p">),</span>
+    <span class="n">dl</span><span class="o">.</span><span class="n">ControlFlowCallback</span><span class="p">(</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;sklearn_predict&quot;</span><span class="p">,</span> <span class="n">topk_args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="p">),</span>
+        <span class="n">loaders</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span>
+    <span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">output_key</span><span class="o">=</span><span class="s2">&quot;embeddings&quot;</span><span class="p">)</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">train_loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">valid_loader</span><span class="p">},</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span>
+    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span>
+    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">torch.optim</span> <span class="kn">import</span> <span class="n">Adam</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
+
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">data</span><span class="p">,</span> <span class="n">dl</span>
+<span class="kn">from</span> <span class="nn">catalyst.contrib</span> <span class="kn">import</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">nn</span>
+<span class="kn">from</span> <span class="nn">catalyst.data.transforms</span> <span class="kn">import</span> <span class="n">Compose</span><span class="p">,</span> <span class="n">Normalize</span><span class="p">,</span> <span class="n">ToTensor</span>
+
+<span class="c1"># 1. train and valid loaders</span>
+<span class="n">transforms</span> <span class="o">=</span> <span class="n">Compose</span><span class="p">([</span><span class="n">ToTensor</span><span class="p">(),</span> <span class="n">Normalize</span><span class="p">((</span><span class="mf">0.1307</span><span class="p">,),</span> <span class="p">(</span><span class="mf">0.3081</span><span class="p">,))])</span>
+
+<span class="n">train_dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MnistMLDataset</span><span class="p">(</span>
+    <span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span>
+    <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span>
+<span class="p">)</span>
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">BalanceBatchSampler</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">train_dataset</span><span class="o">.</span><span class="n">get_labels</span><span class="p">(),</span> <span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="o">=</span><span class="n">train_dataset</span><span class="p">,</span>
+    <span class="n">sampler</span><span class="o">=</span><span class="n">sampler</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">batch_size</span><span class="p">)</span>
+
+<span class="n">valid_dataset</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">MNIST</span><span class="p">(</span><span class="n">root</span><span class="o">=</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="n">transform</span><span class="o">=</span><span class="n">transforms</span><span class="p">,</span> <span class="n">train</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">valid_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="n">valid_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
+
+<span class="c1"># 2. model and optimizer</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">MnistSimpleNet</span><span class="p">(</span><span class="n">out_features</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">Adam</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+
+<span class="c1"># 3. criterion with triplets sampling</span>
+<span class="n">sampler_inbatch</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">HardTripletsSampler</span><span class="p">(</span><span class="n">norm_required</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">TripletMarginLossWithSampler</span><span class="p">(</span>
+    <span class="n">margin</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">sampler_inbatch</span><span class="o">=</span><span class="n">sampler_inbatch</span>
+<span class="p">)</span>
+
+<span class="c1"># 4. training with catalyst Runner</span>
+<span class="k">class</span> <span class="nc">CustomRunner</span><span class="p">(</span><span class="n">dl</span><span class="o">.</span><span class="n">SupervisedRunner</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">handle_batch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">batch</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">images</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">float</span><span class="p">(),</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;targets&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">long</span><span class="p">()</span>
+        <span class="n">features</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">images</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">batch</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;embeddings&quot;</span><span class="p">:</span> <span class="n">features</span><span class="p">,</span>
+            <span class="s2">&quot;targets&quot;</span><span class="p">:</span> <span class="n">targets</span><span class="p">,</span>
+        <span class="p">}</span>
+
+<span class="n">callbacks</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">dl</span><span class="o">.</span><span class="n">ControlFlowCallback</span><span class="p">(</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">CriterionCallback</span><span class="p">(</span>
+            <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;embeddings&quot;</span><span class="p">,</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span>
+            <span class="n">metric_key</span><span class="o">=</span><span class="s2">&quot;loss&quot;</span><span class="p">),</span>
+        <span class="n">loaders</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">dl</span><span class="o">.</span><span class="n">SklearnModelCallback</span><span class="p">(</span>
+        <span class="n">feature_key</span><span class="o">=</span><span class="s2">&quot;embeddings&quot;</span><span class="p">,</span>
+        <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span>
+        <span class="n">train_loader</span><span class="o">=</span><span class="s2">&quot;train&quot;</span><span class="p">,</span>
+        <span class="n">valid_loaders</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+        <span class="n">model_fn</span><span class="o">=</span><span class="s2">&quot;linear_model.LogisticRegression&quot;</span><span class="p">,</span>
+        <span class="n">predict_method</span><span class="o">=</span><span class="s2">&quot;predict_proba&quot;</span><span class="p">,</span>
+        <span class="n">predict_key</span><span class="o">=</span><span class="s2">&quot;sklearn_predict&quot;</span>
+    <span class="p">),</span>
+    <span class="n">dl</span><span class="o">.</span><span class="n">ControlFlowCallback</span><span class="p">(</span>
+        <span class="n">dl</span><span class="o">.</span><span class="n">AccuracyCallback</span><span class="p">(</span>
+            <span class="n">target_key</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">,</span> <span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;sklearn_predict&quot;</span><span class="p">,</span> <span class="n">topk_args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="p">),</span>
+        <span class="n">loaders</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span>
+    <span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">runner</span> <span class="o">=</span> <span class="n">CustomRunner</span><span class="p">(</span><span class="n">input_key</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">,</span> <span class="n">output_key</span><span class="o">=</span><span class="s2">&quot;embeddings&quot;</span><span class="p">)</span>
+<span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">criterion</span><span class="o">=</span><span class="n">criterion</span><span class="p">,</span>
+    <span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span>
+    <span class="n">callbacks</span><span class="o">=</span><span class="n">callbacks</span><span class="p">,</span>
+    <span class="n">loaders</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;train&quot;</span><span class="p">:</span> <span class="n">train_loader</span><span class="p">,</span> <span class="s2">&quot;valid&quot;</span><span class="p">:</span> <span class="n">valid_loader</span><span class="p">},</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">logdir</span><span class="o">=</span><span class="s2">&quot;./logs&quot;</span><span class="p">,</span>
+    <span class="n">valid_loader</span><span class="o">=</span><span class="s2">&quot;valid&quot;</span><span class="p">,</span>
+    <span class="n">valid_metric</span><span class="o">=</span><span class="s2">&quot;accuracy&quot;</span><span class="p">,</span>
+    <span class="n">minimize_valid_metric</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">num_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 </section>
 </section>
 
@@ -3599,6 +3807,7 @@ in <code class="docutils literal notranslate"><span class="pre">keys</span></cod
 <li><a class="reference internal" href="#segmentation-trevskycallback">Segmentation – TrevskyCallback</a></li>
 <li><a class="reference internal" href="#sklearnbatchcallback">SklearnBatchCallback</a></li>
 <li><a class="reference internal" href="#sklearnloadercallback">SklearnLoaderCallback</a></li>
+<li><a class="reference internal" href="#sklearnmodelcallback">SklearnModelCallback</a></li>
 </ul>
 </li>
 </ul>
