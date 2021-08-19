@@ -187,7 +187,7 @@ class TqdmCallback(Callback):
     """Logs the params into tqdm console."""
 
     def __init__(self):
-        super().__init__(order=CallbackOrder.external, node=CallbackNode.all)
+        super().__init__(order=CallbackOrder.external, node=CallbackNode.master)
         self.tqdm: tqdm = None
         self.step = 0
 

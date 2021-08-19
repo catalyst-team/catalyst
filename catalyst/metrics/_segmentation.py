@@ -162,6 +162,7 @@ class RegionBasedMetric(ICallbackBatchMetric):
         weighted_metric = 0
         # ddp hotfix, could be done better
         # but metric must handle DDP on it's own
+        # TODO: optimise speed
         if self._ddp_backend == "xla":
             device = get_device()
             for _, statistics in self.statistics.items():
