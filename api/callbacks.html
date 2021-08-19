@@ -1603,7 +1603,7 @@ then will be raised an error).</p>
 use <code class="docutils literal notranslate"><span class="pre">train_additional</span></code> every 2 epochs, <code class="docutils literal notranslate"><span class="pre">valid</span></code> - every
 3 epochs and <code class="docutils literal notranslate"><span class="pre">valid_additional</span></code> - every 5 epochs:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">catalyst.dl</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">PeriodicLoaderRunnerCallback</span><span class="p">,</span>
+    <span class="n">SupervisedRunner</span><span class="p">,</span> <span class="n">PeriodicLoaderCallback</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="n">runner</span> <span class="o">=</span> <span class="n">SupervisedRunner</span><span class="p">()</span>
 <span class="n">runner</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
@@ -1617,7 +1617,7 @@ use <code class="docutils literal notranslate"><span class="pre">train_additiona
     <span class="o">...</span>
     <span class="n">callbacks</span><span class="o">=</span><span class="p">[</span>
         <span class="o">...</span>
-        <span class="n">PeriodicLoaderRunnerCallback</span><span class="p">(</span>
+        <span class="n">PeriodicLoaderCallback</span><span class="p">(</span>
             <span class="n">train_additional</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
             <span class="n">valid</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
             <span class="n">valid_additional</span><span class="o">=</span><span class="mi">5</span>

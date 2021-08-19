@@ -336,7 +336,7 @@
 <span class="sd">    .. code-block:: python</span>
 
 <span class="sd">        from catalyst.dl import (</span>
-<span class="sd">            SupervisedRunner, PeriodicLoaderRunnerCallback,</span>
+<span class="sd">            SupervisedRunner, PeriodicLoaderCallback,</span>
 <span class="sd">        )</span>
 <span class="sd">        runner = SupervisedRunner()</span>
 <span class="sd">        runner.train(</span>
@@ -350,7 +350,7 @@
 <span class="sd">            ...</span>
 <span class="sd">            callbacks=[</span>
 <span class="sd">                ...</span>
-<span class="sd">                PeriodicLoaderRunnerCallback(</span>
+<span class="sd">                PeriodicLoaderCallback(</span>
 <span class="sd">                    train_additional=2,</span>
 <span class="sd">                    valid=3,</span>
 <span class="sd">                    valid_additional=5</span>
