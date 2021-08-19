@@ -418,6 +418,7 @@ class DistributedDataParallelEngine(DeviceEngine):
 
     @property
     def backend(self) -> Optional[str]:
+        """String identifier for distributed backend."""
         return self._backend
 
     def barrier(self) -> None:
@@ -436,7 +437,6 @@ class DistributedDataParallelEngine(DeviceEngine):
                 spawned process. This function must be defined at the top
                 level of a module so it can be pickled and spawned. This
                 is a requirement imposed by multiprocessing.
-
                 The function is called as ``fn(i, *args)``, where ``i`` is
                 the process index and ``args`` is the passed through tuple
                 of arguments.

@@ -73,6 +73,7 @@ def get_nn_from_ddp_module(model: nn.Module) -> nn.Module:
 
 
 def get_backend() -> Optional[str]:
+    """Returns the backend for distributed training."""
     if _is_xla_distributed_initialized():
         return "xla"
     elif _is_torch_distributed_initialized():
@@ -101,6 +102,7 @@ def get_rank() -> int:
 
 
 def get_world_size() -> int:
+    """Returns the world size for distributed training."""
     if _is_xla_distributed_initialized():
         return xm.xrt_world_size()
     elif _is_torch_distributed_initialized():

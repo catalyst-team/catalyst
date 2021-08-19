@@ -101,7 +101,7 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         if "backend" not in self.process_group_kwargs:
             self.process_group_kwargs["dist_backend"] = "nccl"
 
-        self._backend = self.process_group_kwargs["backend"]
+        self._backend = self.process_group_kwargs["dist_backend"]
         self._world_size = (
             self.process_group_kwargs.get("world_size", None) or torch.cuda.device_count()
         )
@@ -150,7 +150,6 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
                 spawned process. This function must be defined at the top
                 level of a module so it can be pickled and spawned. This
                 is a requirement imposed by multiprocessing.
-
                 The function is called as ``fn(i, *args)``, where ``i`` is
                 the process index and ``args`` is the passed through tuple
                 of arguments.

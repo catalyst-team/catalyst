@@ -121,8 +121,8 @@ class CustomRunner(dl.IRunner):
             train_sampler = valid_sampler = None
 
         return {
-            "train": DataLoader(train_data, batch_size=32, sampler=train_sampler),
-            "valid": DataLoader(valid_data, batch_size=32, sampler=valid_sampler),
+            "train": DataLoader(train_data, batch_size=32, sampler=train_sampler, num_workers=4),
+            "valid": DataLoader(valid_data, batch_size=32, sampler=valid_sampler, num_workers=4),
         }
 
     def get_model(self, stage: str):

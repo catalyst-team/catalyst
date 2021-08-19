@@ -348,7 +348,6 @@ class PrecisionRecallF1SupportMetric(StatisticsMetric):
         Returns:
             dict of metrics
         """
-
         per_class, micro, macro, weighted = self.compute()
         metrics = self._convert_metrics_to_kv(
             per_class=per_class, micro=micro, macro=macro, weighted=weighted

@@ -125,7 +125,6 @@ class IEngine(ABC):
                 spawned process. This function must be defined at the top
                 level of a module so it can be pickled and spawned. This
                 is a requirement imposed by multiprocessing.
-
                 The function is called as ``fn(i, *args)``, where ``i`` is
                 the process index and ``args`` is the passed through tuple
                 of arguments.

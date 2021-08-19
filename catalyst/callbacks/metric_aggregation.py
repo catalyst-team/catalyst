@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
+from typing import Callable, Dict, List, TYPE_CHECKING, Union
 
 import torch
 
