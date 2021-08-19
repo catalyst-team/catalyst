@@ -17,7 +17,7 @@ class SklearnModelCallback(Callback):
         feature_key: keys of tensors that should be used as features in the classifier calculations
         target_key: keys of tensors that should be used as targets in the classifier calculations
         train_loader: train loader name
-        valid_loader: valid loader name
+        valid_loaders: valid loaders where model should be predicted
         model_fn: fabric to produce objects with .fit and predict method
         predict_method: predict method name for the classifier
         predict_key: key to store computed classifier predicts in ``runner.batch`` dictionary
@@ -90,7 +90,7 @@ class SklearnModelCallback(Callback):
                     feature_key="embeddings",
                     target_key="targets",
                     train_loader="train",
-                    valid_loader="valid",
+                    valid_loaders="valid",
                     model_fn=LogisticRegression,
                     predict_method="predict_proba",
                     predict_key="sklearn_predict"
@@ -179,7 +179,7 @@ class SklearnModelCallback(Callback):
                     feature_key="embeddings",
                     target_key="targets",
                     train_loader="train",
-                    valid_loader="valid",
+                    valid_loaders="valid",
                     model_fn="linear_model.LogisticRegression",
                     predict_method="predict_proba",
                     predict_key="sklearn_predict"
