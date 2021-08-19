@@ -265,8 +265,6 @@ class SklearnModelCallback(Callback):
             runner: runner for the experiment.
         """
         if runner.loader_key == self._train_loader:
-            embddings = runner.batch[self.feature_key]
-            assert embddings.isnan().sum() == 0, "NaN before AccumulationMetric!"
             self.storage.update(**runner.batch)
         if runner.loader_key == self._valid_loader:
             features = runner.batch[self.feature_key].detach().cpu().numpy()
@@ -293,7 +291,6 @@ class SklearnModelCallback(Callback):
             else:
                 features = data[self.feature_key].detach().cpu().numpy()
                 targets = data[self.target_key].detach().cpu().numpy()
-                assert features.isnan().sum() == 0, "NaN after AccumulationMetric!"
                 self.model.fit(features, targets)
 
         if runner.loader == self._valid_loader:
