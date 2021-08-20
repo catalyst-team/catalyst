@@ -4,8 +4,8 @@ import numpy as np
 import pytest
 import torch
 
+from catalyst.metrics._accumulative import AccumulativeMetric
 from catalyst.metrics._cmc_score import CMCMetric, ReidCMCMetric
-from catalyst.metrics._metric import AccumulationMetric
 
 COMPLEX_OUTPUT_TYPE = Iterable[
     Tuple[Iterable[str], int, int, Iterable[Dict[str, torch.Tensor]], Dict[str, torch.Tensor]]
@@ -55,10 +55,10 @@ def generate_batched_data() -> COMPLEX_OUTPUT_TYPE:
 
 def test_accumulation(generate_batched_data) -> None:  # noqa: WPS442
     """
-    Check if AccumulationMetric accumulates all the data correctly along one loader
+    Check if AccumulativeMetric accumulates all the data correctly along one loader
     """
     for (fields_names, num_batches, num_samples, batches, true_values) in generate_batched_data:
-        metric = AccumulationMetric(accumulative_fields=fields_names)
+        metric = AccumulativeMetric(keys=fields_names)
         metric.reset(num_batches=num_batches, num_samples=num_samples)
         for batch in batches:
             metric.update(**batch)
@@ -67,9 +67,9 @@ def test_accumulation(generate_batched_data) -> None:  # noqa: WPS442
 
 
 def test_accumulation_reset(generate_batched_data):  # noqa: WPS442
-    """Check if AccumulationMetric accumulates all the data correctly with multiple resets"""
+    """Check if AccumulativeMetric accumulates all the data correctly with multiple resets"""
     for (fields_names, num_batches, num_samples, batches, true_values) in generate_batched_data:
-        metric = AccumulationMetric(accumulative_fields=fields_names)
+        metric = AccumulativeMetric(keys=fields_names)
         for _ in range(5):
             metric.reset(num_batches=num_batches, num_samples=num_samples)
             for batch in batches:
@@ -79,14 +79,14 @@ def test_accumulation_reset(generate_batched_data):  # noqa: WPS442
 
 
 def test_accumulation_dtype():
-    """Check if AccumulationMetric accumulates all the data with correct types"""
+    """Check if AccumulativeMetric accumulates all the data with correct types"""
     batch_size = 10
     batch = {
         "field_int": torch.randint(low=0, high=5, size=(batch_size, 5)),
         "field_bool": torch.randint(low=0, high=2, size=(batch_size, 10), dtype=torch.bool),
         "field_float32": torch.rand(size=(batch_size, 4), dtype=torch.float32),
     }
-    metric = AccumulationMetric(accumulative_fields=list(batch.keys()))
+    metric = AccumulativeMetric(keys=list(batch.keys()))
     metric.reset(num_samples=batch_size, num_batches=1)
     metric.update(**batch)
     for key in batch:
@@ -95,7 +95,7 @@ def test_accumulation_dtype():
 
 
 def _test_score(
-    metric: AccumulationMetric, batch: Dict[str, torch.Tensor], true_values: Dict[str, float],
+    metric: AccumulativeMetric, batch: Dict[str, torch.Tensor], true_values: Dict[str, float],
 ) -> None:
     """Check if given metric works correctly"""
     metric.reset(num_batches=1, num_samples=len(batch["embeddings"]))

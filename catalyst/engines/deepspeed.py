@@ -1,4 +1,4 @@
-from typing import Any, Dict, Union
+from typing import Any, Callable, Dict, Optional, Union
 import copy
 import os
 
@@ -24,6 +24,8 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
             https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group
         deepspeed_kwargs: parameters for `deepspeed.initialize`.
             More info here: https://deepspeed.readthedocs.io/en/latest/initialize.html
+        train_batch_size: shortcut for train batch size for deepspeed scaling (default: 256)
+            for proper configuration, please use deepspeed_kwargs['config'] instead
 
     Examples:
 
@@ -48,7 +50,7 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
                     address="0.0.0.0",
                     port=23234,
                     process_group_kwargs={"port": 12345},
-                    deepspeed_kwargs={"config": 64}
+                    deepspeed_kwargs={"config": {"train_batch_size": 64}}
                 )
             # ...
 
@@ -82,6 +84,7 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         port: Union[str, int] = None,
         process_group_kwargs: Dict[str, Any] = None,
         deepspeed_kwargs: Dict[str, Any] = None,
+        train_batch_size: int = 256,
     ):
         """Init."""
         super().__init__()
@@ -94,13 +97,18 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
             process_group_kwargs = {}
         self.process_group_kwargs = copy.deepcopy(process_group_kwargs)
 
+        # add missing arguments
+        if "backend" not in self.process_group_kwargs:
+            self.process_group_kwargs["dist_backend"] = "nccl"
+
+        self._backend = self.process_group_kwargs["dist_backend"]
         self._world_size = (
             self.process_group_kwargs.get("world_size", None) or torch.cuda.device_count()
         )
         self.deepspeed_kwargs = deepspeed_kwargs or {}
         self.deepspeed_kwargs["config"] = self.deepspeed_kwargs.get("config", {})
         self.deepspeed_kwargs["config"]["train_batch_size"] = self.deepspeed_kwargs["config"].get(
-            "train_batch_size", 256
+            "train_batch_size", train_batch_size
         )
 
     def __repr__(self):  # noqa: D105
@@ -121,6 +129,40 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         """Process world size  for distributed training."""
         return self._world_size
 
+    @property
+    def backend(self) -> Optional[str]:
+        """String identifier for distributed backend."""
+        return self._backend
+
+    def barrier(self) -> None:
+        """
+        Synchronizes all processes.
+
+        This collective blocks processes until the all runs enter the function.
+        """
+        dist.barrier()
+
+    def spawn(self, fn: Callable, *args: Any, **kwargs: Any) -> None:
+        """Spawns abstraction for``nprocs`` creation with specified ``fn`` and ``args``/``kwargs``.
+
+        Args:
+            fn (function): Function is called as the entrypoint of the
+                spawned process. This function must be defined at the top
+                level of a module so it can be pickled and spawned. This
+                is a requirement imposed by multiprocessing.
+                The function is called as ``fn(i, *args)``, where ``i`` is
+                the process index and ``args`` is the passed through tuple
+                of arguments.
+            *args: Arguments passed to spawn method.
+            **kwargs: Keyword-arguments passed to spawn method.
+
+        Returns:
+            wrapped function (if needed).
+        """
+        return torch.multiprocessing.spawn(
+            fn, args=(self._world_size,), nprocs=self._world_size, join=True,
+        )
+
     def setup_process(self, rank: int = -1, world_size: int = 1):
         """Initialize DDP variables and processes.
 
@@ -134,9 +176,9 @@ class DistributedDataParallelDeepSpeedEngine(DeviceEngine):
         torch.cuda.set_device(int(self._rank))
         self._device = f"cuda:{int(self._rank)}"
 
-        os.environ["RANK"] = str(rank)
-        os.environ["LOCAL_RANK"] = str(rank)
-        os.environ["WORLD_SIZE"] = str(world_size)
+        os.environ["RANK"] = str(self._rank)
+        os.environ["LOCAL_RANK"] = str(self._rank)
+        os.environ["WORLD_SIZE"] = str(self._world_size)
         os.environ["MASTER_ADDR"] = str(self.address)
         os.environ["MASTER_PORT"] = str(self.port)
         deepspeed.init_distributed(**self.process_group_kwargs)

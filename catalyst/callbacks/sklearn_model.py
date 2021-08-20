@@ -6,7 +6,7 @@ import torch
 
 from catalyst.core import CallbackOrder, IRunner
 from catalyst.core.callback import Callback
-from catalyst.metrics._metric import AccumulationMetric
+from catalyst.metrics._accumulative import AccumulativeMetric
 
 
 class SklearnModelCallback(Callback):
@@ -242,9 +242,9 @@ class SklearnModelCallback(Callback):
         self.model = None
 
         if self.target_key:
-            self.storage = AccumulationMetric(accumulative_fields=[feature_key, target_key])
+            self.storage = AccumulativeMetric(keys=[feature_key, target_key])
         if self.target_key is None:
-            self.storage = AccumulationMetric(accumulative_fields=[feature_key])
+            self.storage = AccumulativeMetric(keys=[feature_key])
 
     def on_loader_start(self, runner: "IRunner") -> None:
         """

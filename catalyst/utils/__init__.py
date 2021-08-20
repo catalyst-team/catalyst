@@ -6,6 +6,8 @@ from catalyst.utils.config import load_config, save_config
 from catalyst.utils.data import get_loaders_from_params, get_loader
 
 from catalyst.utils.distributed import (
+    get_backend,
+    get_world_size,
     get_distributed_params,
     get_rank,
     get_nn_from_ddp_module,
