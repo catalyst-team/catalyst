@@ -184,7 +184,9 @@ class MetricAggregationCallback(Callback):
         else:
             metrics_list = self._get_metrics_list(metrics)
             metrics_list = [
-                torch.tensor(v, device=runner.device) if not isinstance(v, torch.Tensor) else v
+                torch.tensor(v, device=runner.device, dtype=torch.float32)
+                if not isinstance(v, torch.Tensor)
+                else v.float()
                 for v in metrics_list
             ]
             metric_aggregated = self.aggregation_fn(metrics_list) * self.multiplier
