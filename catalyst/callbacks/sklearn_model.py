@@ -291,8 +291,7 @@ class SklearnModelCallback(Callback):
             assert (
                 data[self.feature_key].isnan().sum() == 0
             ), "SklearnModelCallback - NaN after Accumulation!"
-            # model fit
-            # pdb.set_trace()
+
             self.model = self.model_fabric_fn()
             if self.target_key is None:
                 features = data[self.feature_key].detach().cpu().numpy()
