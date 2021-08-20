@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Core &mdash; Catalyst 21.07 documentation</title>
+  <title>Core &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -158,7 +158,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -806,11 +806,12 @@ Used to make a train/valid/infer stage during Experiment run.</p>
 <p>An abstraction that syncs experiment run with
 different hardware-specific configurations.</p>
 <ul class="simple">
-<li><p>cpu</p></li>
-<li><p>single-gpu</p></li>
-<li><p>multi-gpu</p></li>
-<li><p>amp (nvidia, torch)</p></li>
-<li><p>ddp (torch, etc)</p></li>
+<li><p>CPU</p></li>
+<li><p>GPU</p></li>
+<li><p>DataParallel (deepspeed, fairscale, nvidia, torch)</p></li>
+<li><p>AMP (deepspeed, fairscale, nvidia, torch)</p></li>
+<li><p>DDP (deepspeed, fairscale, nvidia, torch)</p></li>
+<li><p>XLA</p></li>
 </ul>
 <p>Abstraction, please check out implementations for more details:</p>
 <blockquote>
@@ -839,6 +840,18 @@ Default autocast context does not scale anything.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.core.engine.IEngine.autocast_loader">
+<code class="sig-name descname">autocast_loader</code><span class="sig-paren">(</span><em class="sig-param">loader: torch.utils.data.dataloader.DataLoader</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.autocast_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.autocast_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loader wrapper for the distributed mode.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.engine.IEngine.backend">
+<em class="property">abstract property </em><code class="sig-name descname">backend</code><a class="headerlink" href="#catalyst.core.engine.IEngine.backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>String identifier for distributed backend.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.core.engine.IEngine.backward_loss">
 <em class="property">abstract </em><code class="sig-name descname">backward_loss</code><span class="sig-paren">(</span><em class="sig-param">loss: torch.Tensor</em>, <em class="sig-param">model: torch.nn.modules.module.Module</em>, <em class="sig-param">optimizer: torch.optim.optimizer.Optimizer</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.backward_loss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.backward_loss" title="Permalink to this definition">¶</a></dt>
 <dd><p>Abstraction over <code class="docutils literal notranslate"><span class="pre">loss.backward()</span></code> step.
@@ -856,9 +869,22 @@ Examples - APEX and AMP.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.core.engine.IEngine.barrier">
+<code class="sig-name descname">barrier</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.barrier"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.barrier" title="Permalink to this definition">¶</a></dt>
+<dd><p>Synchronizes all processes.</p>
+<p>This collective blocks processes until the all runs enter the function.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.core.engine.IEngine.cleanup_process">
 <code class="sig-name descname">cleanup_process</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.cleanup_process"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.cleanup_process" title="Permalink to this definition">¶</a></dt>
 <dd><p>Clean DDP variables and processes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="catalyst.core.engine.IEngine.ddp_sync_run">
+<code class="sig-name descname">ddp_sync_run</code><span class="sig-paren">(</span><em class="sig-param">function: Callable</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.ddp_sync_run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.ddp_sync_run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function wrapper for synchronous run in the distributed mode.</p>
 </dd></dl>
 
 <dl class="method">
@@ -993,6 +1019,30 @@ Default is <cite>1</cite>.</p></li>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.core.engine.IEngine.spawn">
+<code class="sig-name descname">spawn</code><span class="sig-paren">(</span><em class="sig-param">fn: Callable</em>, <em class="sig-param">*args: Any</em>, <em class="sig-param">**kwargs: Any</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.spawn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.spawn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Spawns abstraction for``nprocs`` creation with specified <code class="docutils literal notranslate"><span class="pre">fn</span></code> and <code class="docutils literal notranslate"><span class="pre">args</span></code>/<code class="docutils literal notranslate"><span class="pre">kwargs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fn</strong> (<em>function</em>) – Function is called as the entrypoint of the
+spawned process. This function must be defined at the top
+level of a module so it can be pickled and spawned. This
+is a requirement imposed by multiprocessing.
+The function is called as <code class="docutils literal notranslate"><span class="pre">fn(i,</span> <span class="pre">*args)</span></code>, where <code class="docutils literal notranslate"><span class="pre">i</span></code> is
+the process index and <code class="docutils literal notranslate"><span class="pre">args</span></code> is the passed through tuple
+of arguments.</p></li>
+<li><p><strong>*args</strong> – Arguments passed to spawn method.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword-arguments passed to spawn method.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>wrapped function (if needed).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.core.engine.IEngine.sync_device">
 <em class="property">abstract </em><code class="sig-name descname">sync_device</code><span class="sig-paren">(</span><em class="sig-param">tensor_or_module: Union[Dict, List, Tuple, numpy.ndarray, torch.Tensor, torch.nn.modules.module.Module]</em><span class="sig-paren">)</span> &#x2192; Union[Dict, List, Tuple, torch.Tensor, torch.nn.modules.module.Module]<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.sync_device"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.sync_device" title="Permalink to this definition">¶</a></dt>
 <dd><p>Moves <code class="docutils literal notranslate"><span class="pre">tensor_or_module</span></code> to Engine’s device.</p>
@@ -1004,9 +1054,15 @@ Default is <cite>1</cite>.</p></li>
 </dd></dl>
 
 <dl class="method">
+<dt id="catalyst.core.engine.IEngine.sync_metrics">
+<em class="property">abstract </em><code class="sig-name descname">sync_metrics</code><span class="sig-paren">(</span><em class="sig-param">metrics: Dict</em><span class="sig-paren">)</span> &#x2192; Dict<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.sync_metrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.sync_metrics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Syncs <code class="docutils literal notranslate"><span class="pre">metrics</span></code> over <code class="docutils literal notranslate"><span class="pre">world_size</span></code> in the distributed mode.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="catalyst.core.engine.IEngine.sync_tensor">
 <em class="property">abstract </em><code class="sig-name descname">sync_tensor</code><span class="sig-paren">(</span><em class="sig-param">tensor: torch.Tensor</em>, <em class="sig-param">mode: str</em><span class="sig-paren">)</span> &#x2192; torch.Tensor<a class="reference internal" href="../_modules/catalyst/core/engine.html#IEngine.sync_tensor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.core.engine.IEngine.sync_tensor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Syncs <code class="docutils literal notranslate"><span class="pre">tensor</span></code> over <code class="docutils literal notranslate"><span class="pre">world_size</span></code> in distributed mode.</p>
+<dd><p>Syncs <code class="docutils literal notranslate"><span class="pre">tensor</span></code> over <code class="docutils literal notranslate"><span class="pre">world_size</span></code> in the distributed mode.</p>
 </dd></dl>
 
 <dl class="method">

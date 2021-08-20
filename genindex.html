@@ -10,7 +10,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; Catalyst 21.07 documentation</title>
+  <title>Index &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -156,7 +156,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -480,7 +480,7 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/metrics.html#catalyst.metrics._metric.AccumulationMetric">AccumulationMetric (class in catalyst.metrics._metric)</a>
+      <li><a href="api/metrics.html#catalyst.metrics._accumulative.AccumulativeMetric">AccumulativeMetric (class in catalyst.metrics._accumulative)</a>
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._accuracy.accuracy">accuracy() (in module catalyst.metrics.functional._accuracy)</a>
 </li>
@@ -506,10 +506,10 @@
 </li>
       <li><a href="api/engines.html#catalyst.engines.amp.AMPEngine">AMPEngine (class in catalyst.engines.amp)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils.html#catalyst.utils.torch.any2device">any2device() (in module catalyst.utils.torch)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/engines.html#catalyst.engines.apex.APEXEngine">APEXEngine (class in catalyst.engines.apex)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.arcface.ArcFace">ArcFace (class in catalyst.contrib.nn.modules.arcface)</a>
@@ -532,6 +532,8 @@
 </li>
       <li><a href="api/core.html#catalyst.core.engine.IEngine.autocast">autocast() (catalyst.core.engine.IEngine method)</a>
 </li>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.autocast_loader">autocast_loader() (catalyst.core.engine.IEngine method)</a>
+</li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._average_precision.average_precision">average_precision() (in module catalyst.metrics.functional._average_precision)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.swa.average_weights">average_weights() (in module catalyst.utils.swa)</a>
@@ -542,6 +544,8 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.backend">backend() (catalyst.core.engine.IEngine property)</a>
+</li>
       <li><a href="api/core.html#catalyst.core.engine.IEngine.backward_loss">backward_loss() (catalyst.core.engine.IEngine method)</a>
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.pandas.balance_classes">balance_classes() (in module catalyst.contrib.utils.pandas)</a>
@@ -550,14 +554,16 @@
 </li>
       <li><a href="api/data.html#catalyst.data.sampler.BalanceClassSampler">BalanceClassSampler (class in catalyst.data.sampler)</a>
 </li>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.barrier">barrier() (catalyst.core.engine.IEngine method)</a>
+</li>
       <li><a href="api/data.html#catalyst.data.sampler.BatchBalanceClassSampler">BatchBalanceClassSampler (class in catalyst.data.sampler)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.loader.BatchLimitLoaderWrapper">BatchLimitLoaderWrapper (class in catalyst.data.loader)</a>
 </li>
-      <li><a href="api/callbacks.html#catalyst.callbacks.metric.BatchMetricCallback">BatchMetricCallback (class in catalyst.callbacks.metric)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/callbacks.html#catalyst.callbacks.metric.BatchMetricCallback">BatchMetricCallback (class in catalyst.callbacks.metric)</a>
+</li>
       <li><a href="api/callbacks.html#catalyst.callbacks.batch_overfit.BatchOverfitCallback">BatchOverfitCallback (class in catalyst.callbacks.batch_overfit)</a>
 </li>
       <li><a href="api/data.html#catalyst.data.loader.BatchPrefetchLoaderWrapper">BatchPrefetchLoaderWrapper (class in catalyst.data.loader)</a>
@@ -726,15 +732,15 @@
 </li>
       <li><a href="api/data.html#catalyst.data.transforms.Compose">Compose (class in catalyst.data.transforms)</a>
 </li>
-      <li><a href="api/metrics.html#catalyst.metrics._additive.AdditiveValueMetric.compute">compute() (catalyst.metrics._additive.AdditiveValueMetric method)</a>
+      <li><a href="api/metrics.html#catalyst.metrics._accumulative.AccumulativeMetric.compute">compute() (catalyst.metrics._accumulative.AccumulativeMetric method)</a>
 
       <ul>
-        <li><a href="api/metrics.html#catalyst.metrics._metric.AccumulationMetric.compute">(catalyst.metrics._metric.AccumulationMetric method)</a>
+        <li><a href="api/metrics.html#catalyst.metrics._additive.AdditiveValueMetric.compute">(catalyst.metrics._additive.AdditiveValueMetric method)</a>
 </li>
         <li><a href="api/metrics.html#catalyst.metrics._metric.IMetric.compute">(catalyst.metrics._metric.IMetric method)</a>
 </li>
       </ul></li>
-      <li><a href="api/metrics.html#catalyst.metrics._metric.AccumulationMetric.compute_key_value">compute_key_value() (catalyst.metrics._metric.AccumulationMetric method)</a>
+      <li><a href="api/metrics.html#catalyst.metrics._accumulative.AccumulativeMetric.compute_key_value">compute_key_value() (catalyst.metrics._accumulative.AccumulativeMetric method)</a>
 
       <ul>
         <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackBatchMetric.compute_key_value">(catalyst.metrics._metric.ICallbackBatchMetric method)</a>
@@ -788,8 +794,12 @@
 </li>
       <li><a href="api/utils.html#catalyst.utils.distributed.ddp_reduce">ddp_reduce() (in module catalyst.utils.distributed)</a>
 </li>
-      <li><a href="api/utils.html#catalyst.utils.distributed.ddp_sync_run">ddp_sync_run() (in module catalyst.utils.distributed)</a>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.ddp_sync_run">ddp_sync_run() (catalyst.core.engine.IEngine method)</a>
+
+      <ul>
+        <li><a href="api/utils.html#catalyst.utils.distributed.ddp_sync_run">(in module catalyst.utils.distributed)</a>
 </li>
+      </ul></li>
       <li><a href="api/core.html#catalyst.core.engine.IEngine.deinit_components">deinit_components() (catalyst.core.engine.IEngine method)</a>
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.serialization.deserialize">deserialize() (in module catalyst.contrib.utils.serialization)</a>
@@ -798,10 +808,10 @@
 </li>
       <li><a href="api/core.html#catalyst.core.engine.IEngine.device">device() (catalyst.core.engine.IEngine property)</a>
 </li>
-      <li><a href="api/engines.html#catalyst.engines.torch.DeviceEngine">DeviceEngine (class in catalyst.engines.torch)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/engines.html#catalyst.engines.torch.DeviceEngine">DeviceEngine (class in catalyst.engines.torch)</a>
+</li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._segmentation.dice">dice() (in module catalyst.metrics.functional._segmentation)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.segmentation.DiceCallback">DiceCallback (class in catalyst.callbacks.metrics.segmentation)</a>
@@ -939,6 +949,8 @@
       <li><a href="api/utils.html#catalyst.utils.torch.get_available_gpus">get_available_gpus() (in module catalyst.utils.torch)</a>
 </li>
       <li><a href="api/utils.html#catalyst.utils.swa.get_averaged_weights_by_path_mask">get_averaged_weights_by_path_mask() (in module catalyst.utils.swa)</a>
+</li>
+      <li><a href="api/utils.html#catalyst.utils.distributed.get_backend">get_backend() (in module catalyst.utils.distributed)</a>
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.thresholds.get_baseline_thresholds">get_baseline_thresholds() (in module catalyst.contrib.utils.thresholds)</a>
 </li>
@@ -1143,6 +1155,8 @@
 </li>
       </ul></li>
       <li><a href="api/utils.html#catalyst.utils.misc.get_utcnow_time">get_utcnow_time() (in module catalyst.utils.misc)</a>
+</li>
+      <li><a href="api/utils.html#catalyst.utils.distributed.get_world_size">get_world_size() (in module catalyst.utils.distributed)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1660,10 +1674,10 @@
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.visualization.render_figure_to_array">render_figure_to_array() (in module catalyst.contrib.utils.visualization)</a>
 </li>
-      <li><a href="api/metrics.html#catalyst.metrics._additive.AdditiveValueMetric.reset">reset() (catalyst.metrics._additive.AdditiveValueMetric method)</a>
+      <li><a href="api/metrics.html#catalyst.metrics._accumulative.AccumulativeMetric.reset">reset() (catalyst.metrics._accumulative.AccumulativeMetric method)</a>
 
       <ul>
-        <li><a href="api/metrics.html#catalyst.metrics._metric.AccumulationMetric.reset">(catalyst.metrics._metric.AccumulationMetric method)</a>
+        <li><a href="api/metrics.html#catalyst.metrics._additive.AdditiveValueMetric.reset">(catalyst.metrics._additive.AdditiveValueMetric method)</a>
 </li>
         <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackLoaderMetric.reset">(catalyst.metrics._metric.ICallbackLoaderMetric method)</a>
 </li>
@@ -1742,15 +1756,17 @@
 </li>
       <li><a href="api/metrics.html#catalyst.metrics.functional._focal.sigmoid_focal_loss">sigmoid_focal_loss() (in module catalyst.metrics.functional._focal)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnBatchCallback">SklearnBatchCallback (class in catalyst.callbacks.metrics.scikit_learn)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/callbacks.html#catalyst.callbacks.metrics.scikit_learn.SklearnLoaderCallback">SklearnLoaderCallback (class in catalyst.callbacks.metrics.scikit_learn)</a>
 </li>
       <li><a href="api/callbacks.html#catalyst.callbacks.sklearn_model.SklearnModelCallback">SklearnModelCallback (class in catalyst.callbacks.sklearn_model)</a>
 </li>
       <li><a href="api/contrib.html#catalyst.contrib.nn.modules.softmax.SoftMax">SoftMax (class in catalyst.contrib.nn.modules.softmax)</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.spawn">spawn() (catalyst.core.engine.IEngine method)</a>
 </li>
       <li><a href="api/utils.html#catalyst.contrib.utils.pandas.split_dataframe">split_dataframe() (in module catalyst.contrib.utils.pandas)</a>
 </li>
@@ -1795,6 +1811,8 @@
       <li><a href="api/runners.html#catalyst.runners.runner.SupervisedRunner">SupervisedRunner (class in catalyst.runners.runner)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.engine.IEngine.sync_device">sync_device() (catalyst.core.engine.IEngine method)</a>
+</li>
+      <li><a href="api/core.html#catalyst.core.engine.IEngine.sync_metrics">sync_metrics() (catalyst.core.engine.IEngine method)</a>
 </li>
       <li><a href="api/core.html#catalyst.core.engine.IEngine.sync_tensor">sync_tensor() (catalyst.core.engine.IEngine method)</a>
 </li>
@@ -1854,10 +1872,10 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/metrics.html#catalyst.metrics._additive.AdditiveValueMetric.update">update() (catalyst.metrics._additive.AdditiveValueMetric method)</a>
+      <li><a href="api/metrics.html#catalyst.metrics._accumulative.AccumulativeMetric.update">update() (catalyst.metrics._accumulative.AccumulativeMetric method)</a>
 
       <ul>
-        <li><a href="api/metrics.html#catalyst.metrics._metric.AccumulationMetric.update">(catalyst.metrics._metric.AccumulationMetric method)</a>
+        <li><a href="api/metrics.html#catalyst.metrics._additive.AdditiveValueMetric.update">(catalyst.metrics._additive.AdditiveValueMetric method)</a>
 </li>
         <li><a href="api/metrics.html#catalyst.metrics._metric.ICallbackLoaderMetric.update">(catalyst.metrics._metric.ICallbackLoaderMetric method)</a>
 </li>

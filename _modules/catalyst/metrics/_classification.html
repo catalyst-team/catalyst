@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics._classification &mdash; Catalyst 21.07 documentation</title>
+  <title>catalyst.metrics._classification &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -316,6 +316,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 
+<span class="kn">from</span> <span class="nn">catalyst</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics._metric</span> <span class="kn">import</span> <span class="n">ICallbackBatchMetric</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics.functional._classification</span> <span class="kn">import</span> <span class="n">get_aggregated_metrics</span><span class="p">,</span> <span class="n">get_binary_metrics</span>
 <span class="kn">from</span> <span class="nn">catalyst.metrics.functional._misc</span> <span class="kn">import</span> <span class="p">(</span>
@@ -323,7 +324,11 @@
     <span class="n">get_multiclass_statistics</span><span class="p">,</span>
     <span class="n">get_multilabel_statistics</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">all_gather</span><span class="p">,</span> <span class="n">get_rank</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils</span> <span class="kn">import</span> <span class="n">get_device</span>
+<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">all_gather</span><span class="p">,</span> <span class="n">get_backend</span>
+
+<span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">xla_required</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">torch_xla.core.xla_model</span> <span class="k">as</span> <span class="nn">xm</span>
 
 
 <span class="k">class</span> <span class="nc">StatisticsMetric</span><span class="p">(</span><span class="n">ICallbackBatchMetric</span><span class="p">):</span>
@@ -424,7 +429,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span> <span class="o">=</span> <span class="n">num_classes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_ddp</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
     <span class="c1"># multiprocessing could not handle lamdas, so..</span>
@@ -434,7 +439,7 @@
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Reset all the statistics.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mp_hack</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_is_ddp</span> <span class="o">=</span> <span class="n">get_rank</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">=</span> <span class="n">get_backend</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span>
@@ -623,6 +628,20 @@
 <span class="sd">            list of aggregated metrics: per-class, micro, macro and weighted averaging of</span>
 <span class="sd">                precision, recall, f1 score and support metrics</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ddp hotfix, could be done better</span>
+        <span class="c1"># but metric must handle DDP on it&#39;s own</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">==</span> <span class="s2">&quot;xla&quot;</span><span class="p">:</span>
+            <span class="n">device</span> <span class="o">=</span> <span class="n">get_device</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">:</span>
+                <span class="n">key_statistics</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">]],</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+                <span class="n">key_statistics</span> <span class="o">=</span> <span class="n">xm</span><span class="o">.</span><span class="n">all_gather</span><span class="p">(</span><span class="n">key_statistics</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">key_statistics</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">==</span> <span class="s2">&quot;ddp&quot;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">:</span>
+                <span class="n">value</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_gather</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
         <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="n">get_aggregated_metrics</span><span class="p">(</span>
             <span class="n">tp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;tp&quot;</span><span class="p">],</span>
             <span class="n">fp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="s2">&quot;fp&quot;</span><span class="p">],</span>
@@ -640,13 +659,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            dict of metrics</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># @TODO: ddp hotfix, could be done better</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_ddp</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">:</span>
-                <span class="n">value</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_gather</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-                <span class="n">value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">value</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-
         <span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span>
         <span class="n">metrics</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_metrics_to_kv</span><span class="p">(</span>
             <span class="n">per_class</span><span class="o">=</span><span class="n">per_class</span><span class="p">,</span> <span class="n">micro</span><span class="o">=</span><span class="n">micro</span><span class="p">,</span> <span class="n">macro</span><span class="o">=</span><span class="n">macro</span><span class="p">,</span> <span class="n">weighted</span><span class="o">=</span><span class="n">weighted</span>
@@ -707,7 +719,7 @@
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Reset all the statistics and metrics fields.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">outputs</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">targets</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -750,11 +762,14 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            tuple of metrics: precision, recall, f1 score</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># @TODO: ddp hotfix, could be done better</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_ddp</span><span class="p">:</span>
+        <span class="c1"># ddp hotfix, could be done better</span>
+        <span class="c1"># but metric must handle DDP on it&#39;s own</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">==</span> <span class="s2">&quot;xla&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">xm</span><span class="o">.</span><span class="n">mesh_reduce</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ddp_backend</span> <span class="o">==</span> <span class="s2">&quot;ddp&quot;</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">:</span>
-                <span class="n">value</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_gather</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-                <span class="n">value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">value</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">all_gather</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+                <span class="n">value</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">statistics</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
         <span class="n">precision_value</span><span class="p">,</span> <span class="n">recall_value</span><span class="p">,</span> <span class="n">f1_value</span> <span class="o">=</span> <span class="n">get_binary_metrics</span><span class="p">(</span>

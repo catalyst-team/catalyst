@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.engines.fairscale &mdash; Catalyst 21.07 documentation</title>
+  <title>catalyst.engines.fairscale &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -310,19 +310,16 @@
               
   <h1>Source code for catalyst.engines.fairscale</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
-<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">math</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">torch.cuda.amp</span> <span class="k">as</span> <span class="nn">amp</span>
-<span class="kn">import</span> <span class="nn">torch.distributed</span> <span class="k">as</span> <span class="nn">dist</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 
-<span class="kn">from</span> <span class="nn">catalyst.engines.torch</span> <span class="kn">import</span> <span class="n">DeviceEngine</span>
+<span class="kn">from</span> <span class="nn">catalyst.engines.torch</span> <span class="kn">import</span> <span class="n">DeviceEngine</span><span class="p">,</span> <span class="n">DistributedDataParallelEngine</span>
 <span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="n">RunnerCriterion</span><span class="p">,</span> <span class="n">RunnerModel</span><span class="p">,</span> <span class="n">RunnerOptimizer</span><span class="p">,</span> <span class="n">RunnerScheduler</span>
-<span class="kn">from</span> <span class="nn">catalyst.utils.distributed</span> <span class="kn">import</span> <span class="n">ddp_reduce</span>
 
 <span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">fairscale_required</span><span class="p">:</span>
     <span class="kn">from</span> <span class="nn">fairscale.nn</span> <span class="kn">import</span> <span class="n">Pipe</span>
@@ -411,7 +408,6 @@
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
-        <span class="c1"># model = self.sync_device(model)</span>
 
         <span class="k">if</span> <span class="s2">&quot;balance&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pipe_kwargs</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
@@ -425,17 +421,14 @@
 
         <span class="c1"># criterion</span>
         <span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">()</span>
-        <span class="c1"># criterion = self.sync_device(criterion)</span>
-
         <span class="c1"># optimizer</span>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">optimizer_fn</span><span class="p">(</span><span class="n">pipe_model</span><span class="p">)</span>
-        <span class="c1"># optimizer = self.sync_device(optimizer)</span>
-
         <span class="c1"># scheduler</span>
         <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">()</span>
-        <span class="c1"># scheduler = self.sync_device(scheduler)</span>
+
         <span class="k">return</span> <span class="n">pipe_model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span>
 
+    <span class="c1"># due to FairScale setup, we need to manually delete the model in the end</span>
     <span class="k">def</span> <span class="nf">deinit_components</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Deinits the runs components. In distributed mode should destroy process group.&quot;&quot;&quot;</span>
         <span class="c1"># For some reasons FairScale requires to delete the Pipe model</span>
@@ -454,12 +447,15 @@
         <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="SharedDataParallelFairScaleEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine">[docs]</a><span class="k">class</span> <span class="nc">SharedDataParallelFairScaleEngine</span><span class="p">(</span><span class="n">DeviceEngine</span><span class="p">):</span>
+<div class="viewcode-block" id="SharedDataParallelFairScaleEngine"><a class="viewcode-back" href="../../../api/engines.html#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine">[docs]</a><span class="k">class</span> <span class="nc">SharedDataParallelFairScaleEngine</span><span class="p">(</span><span class="n">DistributedDataParallelEngine</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Distributed FairScale MultiGPU training device engine.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address: address to use for backend.</span>
 <span class="sd">        port: port to use for backend.</span>
+<span class="sd">        sync_bn: boolean flag for batchnorm synchonization during disributed training.</span>
+<span class="sd">            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch</span>
+<span class="sd">            distributed only. Default, False.</span>
 <span class="sd">        ddp_kwargs: parameters for `fairscale.nn.data_parallel.ShardedDataParallel`.</span>
 <span class="sd">            More info here:</span>
 <span class="sd">            https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html</span>
@@ -514,96 +510,10 @@
 
 <span class="sd">        stages:</span>
 <span class="sd">            ...</span>
-
+<span class="sd">    .. _convert_sync_batchnorm:</span>
+<span class="sd">        https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#</span>
+<span class="sd">        torch.nn.SyncBatchNorm.convert_sync_batchnorm</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">address</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">port</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">ddp_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">process_group_kwargs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">address</span> <span class="o">=</span> <span class="n">address</span> <span class="ow">or</span> <span class="s2">&quot;localhost&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">port</span> <span class="ow">or</span> <span class="mi">12345</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="kc">None</span>
-
-        <span class="k">if</span> <span class="n">ddp_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">ddp_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">ddp_kwargs</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">process_group_kwargs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">process_group_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">process_group_kwargs</span><span class="p">)</span>
-        <span class="c1"># add missing arguments</span>
-        <span class="k">if</span> <span class="s2">&quot;backend&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">[</span><span class="s2">&quot;backend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;nccl&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;world_size&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">[</span><span class="s2">&quot;world_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;world_size&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">device_count</span><span class="p">()</span>
-        <span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># noqa: D105</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(address=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;port=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;ddp_kwargs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;process_group_kwargs=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="si">}</span><span class="s2">)&quot;</span>
-        <span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">rank</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Process rank for distributed training.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">world_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Process world size  for distributed training.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span>
-
-    <span class="k">def</span> <span class="nf">setup_process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">world_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Initialize DDP variables and processes.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            rank: process rank. Default is `-1`.</span>
-<span class="sd">            world_size: number of devices in netwok to expect for train.</span>
-<span class="sd">                Default is `1`.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">=</span> <span class="n">rank</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_world_size</span> <span class="o">=</span> <span class="n">world_size</span>
-        <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">set_device</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_device</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;cuda:</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">[</span><span class="s2">&quot;rank&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">[</span><span class="s2">&quot;world_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">world_size</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_ADDR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">address</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MASTER_PORT&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">)</span>
-
-        <span class="n">dist</span><span class="o">.</span><span class="n">init_process_group</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">process_group_kwargs</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">cleanup_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Clean DDP variables and processes.&quot;&quot;&quot;</span>
-        <span class="n">dist</span><span class="o">.</span><span class="n">barrier</span><span class="p">()</span>
-        <span class="n">dist</span><span class="o">.</span><span class="n">destroy_process_group</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">sync_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tensor</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Syncs ``tensor`` over ``world_size`` in distributed mode.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            tensor: tensor to sync across the processes.</span>
-<span class="sd">            mode: tensor synchronization type,</span>
-<span class="sd">                should be one of &#39;sum&#39; or &#39;mean&#39;.</span>
-<span class="sd">                Default is &#39;mean&#39;.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            torch.Tensor with synchronized values.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">ddp_reduce</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">world_size</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">model_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">criterion_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">optimizer_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scheduler_fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -611,6 +521,8 @@
         <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sync_bn</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">SyncBatchNorm</span><span class="o">.</span><span class="n">convert_sync_batchnorm</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
         <span class="n">criterion</span> <span class="o">=</span> <span class="n">criterion_fn</span><span class="p">()</span>
         <span class="n">criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">criterion</span><span class="p">)</span>
@@ -624,18 +536,6 @@
         <span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler_fn</span><span class="p">(</span><span class="n">optimizer</span><span class="p">)</span>
         <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">scheduler</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span><span class="p">,</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">scheduler</span>
-
-    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Abstraction over ``model.zero_grad()`` step.&quot;&quot;&quot;</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">backward_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Abstraction over ``loss.backward()`` step.&quot;&quot;&quot;</span>
-        <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">optimizer_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">loss</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Abstraction over ``optimizer.step()`` step.&quot;&quot;&quot;</span>
-        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">pack_checkpoint</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -674,6 +574,9 @@
 <span class="sd">    Args:</span>
 <span class="sd">        address: address to use for backend.</span>
 <span class="sd">        port: port to use for backend.</span>
+<span class="sd">        sync_bn: boolean flag for batchnorm synchonization during disributed training.</span>
+<span class="sd">            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch</span>
+<span class="sd">            distributed only. Default, False.</span>
 <span class="sd">        ddp_kwargs: parameters for `fairscale.nn.data_parallel.ShardedDataParallel`.</span>
 <span class="sd">            Docs for `fairscale.nn.ShardedDataParallel`:</span>
 <span class="sd">            https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html</span>
@@ -735,6 +638,9 @@
 <span class="sd">        stages:</span>
 <span class="sd">            ...</span>
 
+<span class="sd">    .. _convert_sync_batchnorm:</span>
+<span class="sd">        https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#</span>
+<span class="sd">        torch.nn.SyncBatchNorm.convert_sync_batchnorm</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -782,6 +688,9 @@
 <span class="sd">    Args:</span>
 <span class="sd">        address: address to use for backend.</span>
 <span class="sd">        port: port to use for backend.</span>
+<span class="sd">        sync_bn: boolean flag for batchnorm synchonization during disributed training.</span>
+<span class="sd">            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch</span>
+<span class="sd">            distributed only. Default, False.</span>
 <span class="sd">        ddp_kwargs: parameters for `fairscale.nn.data_parallel.FullyShardedDataParallel`.</span>
 <span class="sd">            Docs for `fairscale.nn.FullyShardedDataParallel`:</span>
 <span class="sd">            https://fairscale.readthedocs.io/en/latest/api/nn/fsdp.html</span>
@@ -837,6 +746,9 @@
 <span class="sd">        stages:</span>
 <span class="sd">            ...</span>
 
+<span class="sd">    .. _convert_sync_batchnorm:</span>
+<span class="sd">        https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#</span>
+<span class="sd">        torch.nn.SyncBatchNorm.convert_sync_batchnorm</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">init_components</span><span class="p">(</span>
@@ -845,6 +757,8 @@
         <span class="sd">&quot;&quot;&quot;Inits the runs components.&quot;&quot;&quot;</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">model_fn</span><span class="p">()</span>
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sync_device</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sync_bn</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">SyncBatchNorm</span><span class="o">.</span><span class="n">convert_sync_batchnorm</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
 
         <span class="n">model</span> <span class="o">=</span> <span class="n">FullyShardedDataParallel</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">ddp_kwargs</span><span class="p">)</span>
 

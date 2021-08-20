@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Metrics &mdash; Catalyst 21.07 documentation</title>
+  <title>Metrics &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -158,7 +158,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -326,11 +326,11 @@
 <li><p><a class="reference internal" href="#imetric" id="id16">IMetric</a></p></li>
 <li><p><a class="reference internal" href="#icallbackbatchmetric" id="id17">ICallbackBatchMetric</a></p></li>
 <li><p><a class="reference internal" href="#icallbackloadermetric" id="id18">ICallbackLoaderMetric</a></p></li>
-<li><p><a class="reference internal" href="#accumulationmetric" id="id19">AccumulationMetric</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#general-metrics" id="id20">General Metrics</a></p>
+<li><p><a class="reference internal" href="#general-metrics" id="id19">General Metrics</a></p>
 <ul>
+<li><p><a class="reference internal" href="#accumulativemetric" id="id20">AccumulativeMetric</a></p></li>
 <li><p><a class="reference internal" href="#additivevaluemetric" id="id21">AdditiveValueMetric</a></p></li>
 <li><p><a class="reference internal" href="#confusionmatrixmetric" id="id22">ConfusionMatrixMetric</a></p></li>
 <li><p><a class="reference internal" href="#functionalbatchmetric" id="id23">FunctionalBatchMetric</a></p></li>
@@ -554,17 +554,20 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 </dd></dl>
 
 </section>
-<section id="accumulationmetric">
-<h3><a class="toc-backref" href="#id19">AccumulationMetric</a><a class="headerlink" href="#accumulationmetric" title="Permalink to this headline">¶</a></h3>
+</section>
+<section id="general-metrics">
+<h2><a class="toc-backref" href="#id19">General Metrics</a><a class="headerlink" href="#general-metrics" title="Permalink to this headline">¶</a></h2>
+<section id="accumulativemetric">
+<h3><a class="toc-backref" href="#id20">AccumulativeMetric</a><a class="headerlink" href="#accumulativemetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="catalyst.metrics._metric.AccumulationMetric">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._metric.</code><code class="sig-name descname">AccumulationMetric</code><span class="sig-paren">(</span><em class="sig-param">accumulative_fields: Iterable[str] = None</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_metric.html#AccumulationMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._metric.AccumulationMetric" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.metrics._accumulative.AccumulativeMetric">
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._accumulative.</code><code class="sig-name descname">AccumulativeMetric</code><span class="sig-paren">(</span><em class="sig-param">keys: Iterable[str] = None</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_accumulative.html#AccumulativeMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._accumulative.AccumulativeMetric" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._metric.ICallbackLoaderMetric" title="catalyst.metrics._metric.ICallbackLoaderMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._metric.ICallbackLoaderMetric</span></code></a></p>
 <p>This metric accumulates all the input data along loader</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>accumulative_fields</strong> – list of keys to accumulate data from batch</p></li>
+<li><p><strong>keys</strong> – list of keys to accumulate data from batch</p></li>
 <li><p><strong>compute_on_call</strong> – if True, allows compute metric’s value on call</p></li>
 <li><p><strong>prefix</strong> – metric prefix</p></li>
 <li><p><strong>suffix</strong> – metric suffix</p></li>
@@ -572,8 +575,8 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 </dd>
 </dl>
 <dl class="method">
-<dt id="catalyst.metrics._metric.AccumulationMetric.compute">
-<code class="sig-name descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict[str, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/_metric.html#AccumulationMetric.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._metric.AccumulationMetric.compute" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.metrics._accumulative.AccumulativeMetric.compute">
+<code class="sig-name descname">compute</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict[str, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/_accumulative.html#AccumulativeMetric.compute"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._accumulative.AccumulativeMetric.compute" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return accumulated data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -583,8 +586,8 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.metrics._metric.AccumulationMetric.compute_key_value">
-<code class="sig-name descname">compute_key_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict[str, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/_metric.html#AccumulationMetric.compute_key_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._metric.AccumulationMetric.compute_key_value" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.metrics._accumulative.AccumulativeMetric.compute_key_value">
+<code class="sig-name descname">compute_key_value</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict[str, torch.Tensor]<a class="reference internal" href="../_modules/catalyst/metrics/_accumulative.html#AccumulativeMetric.compute_key_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._accumulative.AccumulativeMetric.compute_key_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return accumulated data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -594,8 +597,8 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.metrics._metric.AccumulationMetric.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param">num_batches: int</em>, <em class="sig-param">num_samples: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/metrics/_metric.html#AccumulationMetric.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._metric.AccumulationMetric.reset" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.metrics._accumulative.AccumulativeMetric.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param">num_batches: int</em>, <em class="sig-param">num_samples: int</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/metrics/_accumulative.html#AccumulativeMetric.reset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._accumulative.AccumulativeMetric.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset metrics fields</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -608,8 +611,8 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 </dd></dl>
 
 <dl class="method">
-<dt id="catalyst.metrics._metric.AccumulationMetric.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/metrics/_metric.html#AccumulationMetric.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._metric.AccumulationMetric.update" title="Permalink to this definition">¶</a></dt>
+<dt id="catalyst.metrics._accumulative.AccumulativeMetric.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/catalyst/metrics/_accumulative.html#AccumulativeMetric.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._accumulative.AccumulativeMetric.update" title="Permalink to this definition">¶</a></dt>
 <dd><p>Update accumulated data with new batch</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -621,9 +624,6 @@ default: <code class="docutils literal notranslate"><span class="pre">True</span
 </dd></dl>
 
 </section>
-</section>
-<section id="general-metrics">
-<h2><a class="toc-backref" href="#id20">General Metrics</a><a class="headerlink" href="#general-metrics" title="Permalink to this headline">¶</a></h2>
 <section id="additivevaluemetric">
 <h3><a class="toc-backref" href="#id21">AdditiveValueMetric</a><a class="headerlink" href="#additivevaluemetric" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
@@ -1648,7 +1648,7 @@ Counts metrics with macro, micro and weighted average.</p>
 <dl class="class">
 <dt id="catalyst.metrics._cmc_score.CMCMetric">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._cmc_score.</code><code class="sig-name descname">CMCMetric</code><span class="sig-paren">(</span><em class="sig-param">embeddings_key: str</em>, <em class="sig-param">labels_key: str</em>, <em class="sig-param">is_query_key: str</em>, <em class="sig-param">topk_args: Iterable[int] = None</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_cmc_score.html#CMCMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._cmc_score.CMCMetric" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._metric.AccumulationMetric" title="catalyst.metrics._metric.AccumulationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._metric.AccumulationMetric</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._accumulative.AccumulativeMetric" title="catalyst.metrics._accumulative.AccumulativeMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._accumulative.AccumulativeMetric</span></code></a></p>
 <p>Cumulative Matching Characteristics</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1799,7 +1799,7 @@ Counts metrics with macro, micro and weighted average.</p>
 <dl class="class">
 <dt id="catalyst.metrics._cmc_score.ReidCMCMetric">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.metrics._cmc_score.</code><code class="sig-name descname">ReidCMCMetric</code><span class="sig-paren">(</span><em class="sig-param">embeddings_key: str</em>, <em class="sig-param">pids_key: str</em>, <em class="sig-param">cids_key: str</em>, <em class="sig-param">is_query_key: str</em>, <em class="sig-param">topk_args: Iterable[int] = None</em>, <em class="sig-param">compute_on_call: bool = True</em>, <em class="sig-param">prefix: Optional[str] = None</em>, <em class="sig-param">suffix: Optional[str] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/metrics/_cmc_score.html#ReidCMCMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.metrics._cmc_score.ReidCMCMetric" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._metric.AccumulationMetric" title="catalyst.metrics._metric.AccumulationMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._metric.AccumulationMetric</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.metrics._accumulative.AccumulativeMetric" title="catalyst.metrics._accumulative.AccumulativeMetric"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.metrics._accumulative.AccumulativeMetric</span></code></a></p>
 <p>Cumulative Matching Characteristics for Reid case</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -4629,10 +4629,10 @@ with shape [bs; …, 1]</p></li>
 <li><a class="reference internal" href="#imetric">IMetric</a></li>
 <li><a class="reference internal" href="#icallbackbatchmetric">ICallbackBatchMetric</a></li>
 <li><a class="reference internal" href="#icallbackloadermetric">ICallbackLoaderMetric</a></li>
-<li><a class="reference internal" href="#accumulationmetric">AccumulationMetric</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#general-metrics">General Metrics</a><ul>
+<li><a class="reference internal" href="#accumulativemetric">AccumulativeMetric</a></li>
 <li><a class="reference internal" href="#additivevaluemetric">AdditiveValueMetric</a></li>
 <li><a class="reference internal" href="#confusionmatrixmetric">ConfusionMatrixMetric</a></li>
 <li><a class="reference internal" href="#functionalbatchmetric">FunctionalBatchMetric</a></li>

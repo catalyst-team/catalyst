@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Utilities &mdash; Catalyst 21.07 documentation</title>
+  <title>Utilities &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -157,7 +157,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -500,6 +500,12 @@ workers</p></li>
 <section id="module-catalyst.utils.distributed">
 <span id="distributed"></span><h3><a class="toc-backref" href="#id4">Distributed</a><a class="headerlink" href="#module-catalyst.utils.distributed" title="Permalink to this headline">¶</a></h3>
 <dl class="function">
+<dt id="catalyst.utils.distributed.get_backend">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_backend</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Optional[str]<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_backend"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_backend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the backend for distributed training.</p>
+</dd></dl>
+
+<dl class="function">
 <dt id="catalyst.utils.distributed.get_rank">
 <code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_rank</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_rank"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_rank" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the rank of the current worker.</p>
@@ -511,6 +517,12 @@ workers</p></li>
 <dd class="field-even"><p>int</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="catalyst.utils.distributed.get_world_size">
+<code class="sig-prename descclassname">catalyst.utils.distributed.</code><code class="sig-name descname">get_world_size</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="reference internal" href="../_modules/catalyst/utils/distributed.html#get_world_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.utils.distributed.get_world_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the world size for distributed training.</p>
 </dd></dl>
 
 <dl class="function">

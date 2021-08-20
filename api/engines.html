@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Engines &mdash; Catalyst 21.07 documentation</title>
+  <title>Engines &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -158,7 +158,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -321,47 +321,47 @@
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#amp" id="id1">AMP</a></p>
+<li><p><a class="reference internal" href="#amp" id="id5">AMP</a></p>
 <ul>
-<li><p><a class="reference internal" href="#ampengine" id="id2">AMPEngine</a></p></li>
-<li><p><a class="reference internal" href="#dataparallelampengine" id="id3">DataParallelAMPEngine</a></p></li>
-<li><p><a class="reference internal" href="#distributeddataparallelampengine" id="id4">DistributedDataParallelAMPEngine</a></p></li>
+<li><p><a class="reference internal" href="#ampengine" id="id6">AMPEngine</a></p></li>
+<li><p><a class="reference internal" href="#dataparallelampengine" id="id7">DataParallelAMPEngine</a></p></li>
+<li><p><a class="reference internal" href="#distributeddataparallelampengine" id="id8">DistributedDataParallelAMPEngine</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#apex" id="id5">Apex</a></p>
+<li><p><a class="reference internal" href="#apex" id="id9">Apex</a></p>
 <ul>
-<li><p><a class="reference internal" href="#apexengine" id="id6">APEXEngine</a></p></li>
-<li><p><a class="reference internal" href="#dataparallelapexengine" id="id7">DataParallelApexEngine</a></p></li>
-<li><p><a class="reference internal" href="#distributeddataparallelapexengine" id="id8">DistributedDataParallelApexEngine</a></p></li>
+<li><p><a class="reference internal" href="#apexengine" id="id10">APEXEngine</a></p></li>
+<li><p><a class="reference internal" href="#dataparallelapexengine" id="id11">DataParallelApexEngine</a></p></li>
+<li><p><a class="reference internal" href="#distributeddataparallelapexengine" id="id12">DistributedDataParallelApexEngine</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#deepspeed" id="id9">DeepSpeed</a></p>
+<li><p><a class="reference internal" href="#deepspeed" id="id13">DeepSpeed</a></p>
 <ul>
-<li><p><a class="reference internal" href="#distributeddataparalleldeepspeedengine" id="id10">DistributedDataParallelDeepSpeedEngine</a></p></li>
+<li><p><a class="reference internal" href="#distributeddataparalleldeepspeedengine" id="id14">DistributedDataParallelDeepSpeedEngine</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#fairscale" id="id11">FairScale</a></p>
+<li><p><a class="reference internal" href="#fairscale" id="id15">FairScale</a></p>
 <ul>
-<li><p><a class="reference internal" href="#pipelineparallelfairscaleengine" id="id12">PipelineParallelFairScaleEngine</a></p></li>
-<li><p><a class="reference internal" href="#shareddataparallelfairscaleengine" id="id13">SharedDataParallelFairScaleEngine</a></p></li>
-<li><p><a class="reference internal" href="#shareddataparallelfairscaleampengine" id="id14">SharedDataParallelFairScaleAMPEngine</a></p></li>
-<li><p><a class="reference internal" href="#fullyshareddataparallelfairscaleengine" id="id15">FullySharedDataParallelFairScaleEngine</a></p></li>
+<li><p><a class="reference internal" href="#pipelineparallelfairscaleengine" id="id16">PipelineParallelFairScaleEngine</a></p></li>
+<li><p><a class="reference internal" href="#shareddataparallelfairscaleengine" id="id17">SharedDataParallelFairScaleEngine</a></p></li>
+<li><p><a class="reference internal" href="#shareddataparallelfairscaleampengine" id="id18">SharedDataParallelFairScaleAMPEngine</a></p></li>
+<li><p><a class="reference internal" href="#fullyshareddataparallelfairscaleengine" id="id19">FullySharedDataParallelFairScaleEngine</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#torch" id="id16">Torch</a></p>
+<li><p><a class="reference internal" href="#torch" id="id20">Torch</a></p>
 <ul>
-<li><p><a class="reference internal" href="#deviceengine" id="id17">DeviceEngine</a></p></li>
-<li><p><a class="reference internal" href="#dataparallelengine" id="id18">DataParallelEngine</a></p></li>
-<li><p><a class="reference internal" href="#distributeddataparallelengine" id="id19">DistributedDataParallelEngine</a></p></li>
+<li><p><a class="reference internal" href="#deviceengine" id="id21">DeviceEngine</a></p></li>
+<li><p><a class="reference internal" href="#dataparallelengine" id="id22">DataParallelEngine</a></p></li>
+<li><p><a class="reference internal" href="#distributeddataparallelengine" id="id23">DistributedDataParallelEngine</a></p></li>
 </ul>
 </li>
 </ul>
 </div>
 <p>You could check engines overview under <a class="reference external" href="https://github.com/catalyst-team/catalyst/tree/master/examples/engines">examples/engines</a> section.</p>
 <section id="amp">
-<h2><a class="toc-backref" href="#id1">AMP</a><a class="headerlink" href="#amp" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id5">AMP</a><a class="headerlink" href="#amp" title="Permalink to this headline">¶</a></h2>
 <section id="ampengine">
-<h3><a class="toc-backref" href="#id2">AMPEngine</a><a class="headerlink" href="#ampengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id6">AMPEngine</a><a class="headerlink" href="#ampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.amp.AMPEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">AMPEngine</code><span class="sig-paren">(</span><em class="sig-param">device: str = 'cuda'</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#AMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.AMPEngine" title="Permalink to this definition">¶</a></dt>
@@ -415,7 +415,7 @@ Possible parameters:
 
 </section>
 <section id="dataparallelampengine">
-<h3><a class="toc-backref" href="#id3">DataParallelAMPEngine</a><a class="headerlink" href="#dataparallelampengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id7">DataParallelAMPEngine</a><a class="headerlink" href="#dataparallelampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.amp.DataParallelAMPEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DataParallelAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
@@ -465,10 +465,10 @@ Possible parameters:
 
 </section>
 <section id="distributeddataparallelampengine">
-<h3><a class="toc-backref" href="#id4">DistributedDataParallelAMPEngine</a><a class="headerlink" href="#distributeddataparallelampengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id8">DistributedDataParallelAMPEngine</a><a class="headerlink" href="#distributeddataparallelampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.amp.DistributedDataParallelAMPEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DistributedDataParallelAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DistributedDataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DistributedDataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.amp.</code><code class="sig-name descname">DistributedDataParallelAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/amp.html#DistributedDataParallelAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.amp.DistributedDataParallelAMPEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="catalyst.engines.torch.DistributedDataParallelEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DistributedDataParallelEngine</span></code></a></p>
 <p>Distributed AMP multi-gpu training device engine.</p>
 <dl class="field-list simple">
@@ -476,6 +476,9 @@ Possible parameters:
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>address</strong> – address to use for backend.</p></li>
 <li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>sync_bn</strong> – boolean flag for batchnorm synchonization during disributed training.
+if True, applies PyTorch <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#torch.nn.SyncBatchNorm.convert_sync_batchnorm">convert_sync_batchnorm</a> to the model for native torch
+distributed only. Default, False.</p></li>
 <li><p><strong>ddp_kwargs</strong> – parameters for <cite>torch.nn.parallel.DistributedDataParallel</cite>.
 More info here:
 <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel">https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel</a></p></li>
@@ -540,9 +543,9 @@ Possible parameters:
 </section>
 </section>
 <section id="apex">
-<h2><a class="toc-backref" href="#id5">Apex</a><a class="headerlink" href="#apex" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id9">Apex</a><a class="headerlink" href="#apex" title="Permalink to this headline">¶</a></h2>
 <section id="apexengine">
-<h3><a class="toc-backref" href="#id6">APEXEngine</a><a class="headerlink" href="#apexengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id10">APEXEngine</a><a class="headerlink" href="#apexengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.apex.APEXEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">APEXEngine</code><span class="sig-paren">(</span><em class="sig-param">device: str = 'cuda'</em>, <em class="sig-param">apex_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/apex.html#APEXEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.apex.APEXEngine" title="Permalink to this definition">¶</a></dt>
@@ -600,7 +603,7 @@ except models and optimizers (they will be forwared automatically).</p>
 
 </section>
 <section id="dataparallelapexengine">
-<h3><a class="toc-backref" href="#id7">DataParallelApexEngine</a><a class="headerlink" href="#dataparallelapexengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id11">DataParallelApexEngine</a><a class="headerlink" href="#dataparallelapexengine" title="Permalink to this headline">¶</a></h3>
 <dl class="attribute">
 <dt id="catalyst.engines.apex.DataParallelApexEngine">
 <code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">DataParallelApexEngine</code><a class="headerlink" href="#catalyst.engines.apex.DataParallelApexEngine" title="Permalink to this definition">¶</a></dt>
@@ -609,7 +612,7 @@ except models and optimizers (they will be forwared automatically).</p>
 
 </section>
 <section id="distributeddataparallelapexengine">
-<h3><a class="toc-backref" href="#id8">DistributedDataParallelApexEngine</a><a class="headerlink" href="#distributeddataparallelapexengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id12">DistributedDataParallelApexEngine</a><a class="headerlink" href="#distributeddataparallelapexengine" title="Permalink to this headline">¶</a></h3>
 <dl class="attribute">
 <dt id="catalyst.engines.apex.DistributedDataParallelApexEngine">
 <code class="sig-prename descclassname">catalyst.engines.apex.</code><code class="sig-name descname">DistributedDataParallelApexEngine</code><a class="headerlink" href="#catalyst.engines.apex.DistributedDataParallelApexEngine" title="Permalink to this definition">¶</a></dt>
@@ -619,12 +622,12 @@ except models and optimizers (they will be forwared automatically).</p>
 </section>
 </section>
 <section id="deepspeed">
-<h2><a class="toc-backref" href="#id9">DeepSpeed</a><a class="headerlink" href="#deepspeed" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id13">DeepSpeed</a><a class="headerlink" href="#deepspeed" title="Permalink to this headline">¶</a></h2>
 <section id="distributeddataparalleldeepspeedengine">
-<h3><a class="toc-backref" href="#id10">DistributedDataParallelDeepSpeedEngine</a><a class="headerlink" href="#distributeddataparalleldeepspeedengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id14">DistributedDataParallelDeepSpeedEngine</a><a class="headerlink" href="#distributeddataparalleldeepspeedengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.deepspeed.DistributedDataParallelDeepSpeedEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.deepspeed.</code><code class="sig-name descname">DistributedDataParallelDeepSpeedEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">deepspeed_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/deepspeed.html#DistributedDataParallelDeepSpeedEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.deepspeed.DistributedDataParallelDeepSpeedEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.deepspeed.</code><code class="sig-name descname">DistributedDataParallelDeepSpeedEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">deepspeed_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">train_batch_size: int = 256</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/deepspeed.html#DistributedDataParallelDeepSpeedEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.deepspeed.DistributedDataParallelDeepSpeedEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
 <p>Distributed DeepSpeed MultiGPU training device engine.</p>
 <dl class="field-list simple">
@@ -637,6 +640,8 @@ More info here:
 <a class="reference external" href="https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group">https://pytorch.org/docs/stable/distributed.html#torch.distributed.init_process_group</a></p></li>
 <li><p><strong>deepspeed_kwargs</strong> – parameters for <cite>deepspeed.initialize</cite>.
 More info here: <a class="reference external" href="https://deepspeed.readthedocs.io/en/latest/initialize.html">https://deepspeed.readthedocs.io/en/latest/initialize.html</a></p></li>
+<li><p><strong>train_batch_size</strong> – shortcut for train batch size for deepspeed scaling (default: 256)
+for proper configuration, please use deepspeed_kwargs[‘config’] instead</p></li>
 </ul>
 </dd>
 </dl>
@@ -659,7 +664,7 @@ More info here: <a class="reference external" href="https://deepspeed.readthedoc
             <span class="n">address</span><span class="o">=</span><span class="s2">&quot;0.0.0.0&quot;</span><span class="p">,</span>
             <span class="n">port</span><span class="o">=</span><span class="mi">23234</span><span class="p">,</span>
             <span class="n">process_group_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;port&quot;</span><span class="p">:</span> <span class="mi">12345</span><span class="p">},</span>
-            <span class="n">deepspeed_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">}</span>
+            <span class="n">deepspeed_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;config&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;train_batch_size&quot;</span><span class="p">:</span> <span class="mi">64</span><span class="p">}}</span>
         <span class="p">)</span>
     <span class="c1"># ...</span>
 </pre></div>
@@ -690,9 +695,9 @@ More info here: <a class="reference external" href="https://deepspeed.readthedoc
 </section>
 </section>
 <section id="fairscale">
-<h2><a class="toc-backref" href="#id11">FairScale</a><a class="headerlink" href="#fairscale" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id15">FairScale</a><a class="headerlink" href="#fairscale" title="Permalink to this headline">¶</a></h2>
 <section id="pipelineparallelfairscaleengine">
-<h3><a class="toc-backref" href="#id12">PipelineParallelFairScaleEngine</a><a class="headerlink" href="#pipelineparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id16">PipelineParallelFairScaleEngine</a><a class="headerlink" href="#pipelineparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.PipelineParallelFairScaleEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">PipelineParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">pipe_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#PipelineParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.PipelineParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
@@ -746,17 +751,20 @@ Docs for <cite>fairscale.nn.Pipe</cite>:
 
 </section>
 <section id="shareddataparallelfairscaleengine">
-<h3><a class="toc-backref" href="#id13">SharedDataParallelFairScaleEngine</a><a class="headerlink" href="#shareddataparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id17">SharedDataParallelFairScaleEngine</a><a class="headerlink" href="#shareddataparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.SharedDataParallelFairScaleEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">SharedDataParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#SharedDataParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">SharedDataParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#SharedDataParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="catalyst.engines.torch.DistributedDataParallelEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DistributedDataParallelEngine</span></code></a></p>
 <p>Distributed FairScale MultiGPU training device engine.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>address</strong> – address to use for backend.</p></li>
 <li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>sync_bn</strong> – boolean flag for batchnorm synchonization during disributed training.
+if True, applies PyTorch <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#torch.nn.SyncBatchNorm.convert_sync_batchnorm">convert_sync_batchnorm</a> to the model for native torch
+distributed only. Default, False.</p></li>
 <li><p><strong>ddp_kwargs</strong> – parameters for <cite>fairscale.nn.data_parallel.ShardedDataParallel</cite>.
 More info here:
 <a class="reference external" href="https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html">https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html</a></p></li>
@@ -814,7 +822,7 @@ More info here:
 
 </section>
 <section id="shareddataparallelfairscaleampengine">
-<h3><a class="toc-backref" href="#id14">SharedDataParallelFairScaleAMPEngine</a><a class="headerlink" href="#shareddataparallelfairscaleampengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id18">SharedDataParallelFairScaleAMPEngine</a><a class="headerlink" href="#shareddataparallelfairscaleampengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">SharedDataParallelFairScaleAMPEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">scaler_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#SharedDataParallelFairScaleAMPEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleAMPEngine" title="Permalink to this definition">¶</a></dt>
@@ -825,6 +833,9 @@ More info here:
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>address</strong> – address to use for backend.</p></li>
 <li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>sync_bn</strong> – boolean flag for batchnorm synchonization during disributed training.
+if True, applies PyTorch <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#torch.nn.SyncBatchNorm.convert_sync_batchnorm">convert_sync_batchnorm</a> to the model for native torch
+distributed only. Default, False.</p></li>
 <li><p><strong>ddp_kwargs</strong> – parameters for <cite>fairscale.nn.data_parallel.ShardedDataParallel</cite>.
 Docs for <cite>fairscale.nn.ShardedDataParallel</cite>:
 <a class="reference external" href="https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html">https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html</a></p></li>
@@ -888,10 +899,10 @@ Possible parameters:
 
 </section>
 <section id="fullyshareddataparallelfairscaleengine">
-<h3><a class="toc-backref" href="#id15">FullySharedDataParallelFairScaleEngine</a><a class="headerlink" href="#fullyshareddataparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id19">FullySharedDataParallelFairScaleEngine</a><a class="headerlink" href="#fullyshareddataparallelfairscaleengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">FullySharedDataParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#FullySharedDataParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.fairscale.</code><code class="sig-name descname">FullySharedDataParallelFairScaleEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/fairscale.html#FullySharedDataParallelFairScaleEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.fairscale.FullySharedDataParallelFairScaleEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.fairscale.SharedDataParallelFairScaleEngine" title="catalyst.engines.fairscale.SharedDataParallelFairScaleEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.fairscale.SharedDataParallelFairScaleEngine</span></code></a></p>
 <p>Distributed FairScale MultiGPU training device engine.</p>
 <dl class="field-list simple">
@@ -899,6 +910,9 @@ Possible parameters:
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>address</strong> – address to use for backend.</p></li>
 <li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>sync_bn</strong> – boolean flag for batchnorm synchonization during disributed training.
+if True, applies PyTorch <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#torch.nn.SyncBatchNorm.convert_sync_batchnorm">convert_sync_batchnorm</a> to the model for native torch
+distributed only. Default, False.</p></li>
 <li><p><strong>ddp_kwargs</strong> – parameters for <cite>fairscale.nn.data_parallel.FullyShardedDataParallel</cite>.
 Docs for <cite>fairscale.nn.FullyShardedDataParallel</cite>:
 <a class="reference external" href="https://fairscale.readthedocs.io/en/latest/api/nn/fsdp.html">https://fairscale.readthedocs.io/en/latest/api/nn/fsdp.html</a></p></li>
@@ -957,9 +971,9 @@ More info here:
 </section>
 </section>
 <section id="torch">
-<h2><a class="toc-backref" href="#id16">Torch</a><a class="headerlink" href="#torch" title="Permalink to this headline">¶</a></h2>
+<h2><a class="toc-backref" href="#id20">Torch</a><a class="headerlink" href="#torch" title="Permalink to this headline">¶</a></h2>
 <section id="deviceengine">
-<h3><a class="toc-backref" href="#id17">DeviceEngine</a><a class="headerlink" href="#deviceengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id21">DeviceEngine</a><a class="headerlink" href="#deviceengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.torch.DeviceEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DeviceEngine</code><span class="sig-paren">(</span><em class="sig-param">device: str = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DeviceEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DeviceEngine" title="Permalink to this definition">¶</a></dt>
@@ -1008,7 +1022,7 @@ More info here:
 
 </section>
 <section id="dataparallelengine">
-<h3><a class="toc-backref" href="#id18">DataParallelEngine</a><a class="headerlink" href="#dataparallelengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id22">DataParallelEngine</a><a class="headerlink" href="#dataparallelengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.torch.DataParallelEngine">
 <em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DataParallelEngine</code><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DataParallelEngine" title="Permalink to this definition">¶</a></dt>
@@ -1051,10 +1065,10 @@ More info here:
 
 </section>
 <section id="distributeddataparallelengine">
-<h3><a class="toc-backref" href="#id19">DistributedDataParallelEngine</a><a class="headerlink" href="#distributeddataparallelengine" title="Permalink to this headline">¶</a></h3>
+<h3><a class="toc-backref" href="#id23">DistributedDataParallelEngine</a><a class="headerlink" href="#distributeddataparallelengine" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.engines.torch.DistributedDataParallelEngine">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedDataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedDataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.engines.torch.</code><code class="sig-name descname">DistributedDataParallelEngine</code><span class="sig-paren">(</span><em class="sig-param">address: str = None</em>, <em class="sig-param">port: Union[str</em>, <em class="sig-param">int] = None</em>, <em class="sig-param">sync_bn: bool = False</em>, <em class="sig-param">ddp_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em>, <em class="sig-param">process_group_kwargs: Dict[str</em>, <em class="sig-param">Any] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/engines/torch.html#DistributedDataParallelEngine"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.engines.torch.DistributedDataParallelEngine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.engines.torch.DeviceEngine" title="catalyst.engines.torch.DeviceEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.engines.torch.DeviceEngine</span></code></a></p>
 <p>Distributed MultiGPU training device engine.</p>
 <dl class="field-list simple">
@@ -1062,6 +1076,9 @@ More info here:
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>address</strong> – address to use for backend.</p></li>
 <li><p><strong>port</strong> – port to use for backend.</p></li>
+<li><p><strong>sync_bn</strong> – boolean flag for batchnorm synchonization during disributed training.
+if True, applies PyTorch <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#torch.nn.SyncBatchNorm.convert_sync_batchnorm">convert_sync_batchnorm</a> to the model for native torch
+distributed only. Default, False.</p></li>
 <li><p><strong>ddp_kwargs</strong> – parameters for <cite>torch.nn.parallel.DistributedDataParallel</cite>.
 More info here:
 <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel">https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel</a></p></li>

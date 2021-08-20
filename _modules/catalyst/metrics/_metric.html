@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.metrics._metric &mdash; Catalyst 21.07 documentation</title>
+  <title>catalyst.metrics._metric &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -309,11 +309,8 @@
              <article itemprop="articleBody" id="catalyst-article" class="catalyst-article">
               
   <h1>Source code for catalyst.metrics._metric</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
-
-<span class="kn">import</span> <span class="nn">torch</span>
 
 
 <div class="viewcode-block" id="IMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.IMetric">[docs]</a><span class="k">class</span> <span class="nc">IMetric</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
@@ -474,104 +471,7 @@
         <span class="k">pass</span></div></div>
 
 
-<div class="viewcode-block" id="AccumulationMetric"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.AccumulationMetric">[docs]</a><span class="k">class</span> <span class="nc">AccumulationMetric</span><span class="p">(</span><span class="n">ICallbackLoaderMetric</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;This metric accumulates all the input data along loader</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        accumulative_fields: list of keys to accumulate data from batch</span>
-<span class="sd">        compute_on_call: if True, allows compute metric&#39;s value on call</span>
-<span class="sd">        prefix: metric prefix</span>
-<span class="sd">        suffix: metric suffix</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">accumulative_fields</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">compute_on_call</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">suffix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Init AccumulationMetric&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">compute_on_call</span><span class="o">=</span><span class="n">compute_on_call</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="n">suffix</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">accumulative_fields</span> <span class="o">=</span> <span class="n">accumulative_fields</span> <span class="ow">or</span> <span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">collected_batches</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">collected_samples</span> <span class="o">=</span> <span class="kc">None</span>
-
-<div class="viewcode-block" id="AccumulationMetric.reset"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.AccumulationMetric.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_batches</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Reset metrics fields</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            num_batches: expected number of batches</span>
-<span class="sd">            num_samples: expected number of samples to accumulate</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span> <span class="o">=</span> <span class="n">num_samples</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">collected_batches</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">collected_samples</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="kc">None</span></div>
-
-    <span class="k">def</span> <span class="nf">_allocate_memory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape_type_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Allocate memory for data accumulation</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            shape_type_dict: dict that contains information about shape of each tensor and</span>
-<span class="sd">                it&#39;s dtype</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">shape_type_dict</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span>
-                <span class="n">size</span><span class="o">=</span><span class="n">shape_type_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;shape&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">shape_type_dict</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="s2">&quot;dtype&quot;</span><span class="p">],</span>
-            <span class="p">)</span>
-
-<div class="viewcode-block" id="AccumulationMetric.update"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.AccumulationMetric.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update accumulated data with new batch</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            **kwargs: tensors that should be accumulates</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">collected_batches</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">shape_type_dict</span> <span class="o">=</span> <span class="p">{}</span>
-            <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">accumulative_fields</span><span class="p">:</span>
-                <span class="n">shape_type_dict</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-                <span class="n">shape_type_dict</span><span class="p">[</span><span class="n">field_name</span><span class="p">][</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">num_samples</span><span class="p">,</span>
-                    <span class="o">*</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]),</span>
-                <span class="p">)</span>
-                <span class="n">shape_type_dict</span><span class="p">[</span><span class="n">field_name</span><span class="p">][</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_allocate_memory</span><span class="p">(</span><span class="n">shape_type_dict</span><span class="o">=</span><span class="n">shape_type_dict</span><span class="p">)</span>
-        <span class="n">bs</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="k">for</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">accumulative_fields</span><span class="p">:</span>
-            <span class="n">bs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="p">[</span><span class="n">field_name</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">collected_samples</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">collected_samples</span> <span class="o">+</span> <span class="n">bs</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">kwargs</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span><span class="o">.</span><span class="n">detach</span><span class="p">()</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
-            <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">collected_samples</span> <span class="o">+=</span> <span class="n">bs</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">collected_batches</span> <span class="o">+=</span> <span class="mi">1</span></div>
-
-<div class="viewcode-block" id="AccumulationMetric.compute"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.AccumulationMetric.compute">[docs]</a>    <span class="k">def</span> <span class="nf">compute</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return accumulated data</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict of accumulated data</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span></div>
-
-<div class="viewcode-block" id="AccumulationMetric.compute_key_value"><a class="viewcode-back" href="../../../api/metrics.html#catalyst.metrics._metric.AccumulationMetric.compute_key_value">[docs]</a>    <span class="k">def</span> <span class="nf">compute_key_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Return accumulated data</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            dict of accumulated data</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute</span><span class="p">()</span></div></div>
-
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;IMetric&quot;</span><span class="p">,</span> <span class="s2">&quot;ICallbackBatchMetric&quot;</span><span class="p">,</span> <span class="s2">&quot;ICallbackLoaderMetric&quot;</span><span class="p">,</span> <span class="s2">&quot;AccumulationMetric&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;IMetric&quot;</span><span class="p">,</span> <span class="s2">&quot;ICallbackBatchMetric&quot;</span><span class="p">,</span> <span class="s2">&quot;ICallbackLoaderMetric&quot;</span><span class="p">]</span>
 </pre></div>
 
              </article>

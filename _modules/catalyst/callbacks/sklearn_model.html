@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.callbacks.sklearn_model &mdash; Catalyst 21.07 documentation</title>
+  <title>catalyst.callbacks.sklearn_model &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -317,7 +317,7 @@
 
 <span class="kn">from</span> <span class="nn">catalyst.core</span> <span class="kn">import</span> <span class="n">CallbackOrder</span><span class="p">,</span> <span class="n">IRunner</span>
 <span class="kn">from</span> <span class="nn">catalyst.core.callback</span> <span class="kn">import</span> <span class="n">Callback</span>
-<span class="kn">from</span> <span class="nn">catalyst.metrics._metric</span> <span class="kn">import</span> <span class="n">AccumulationMetric</span>
+<span class="kn">from</span> <span class="nn">catalyst.metrics._accumulative</span> <span class="kn">import</span> <span class="n">AccumulativeMetric</span>
 
 
 <div class="viewcode-block" id="SklearnModelCallback"><a class="viewcode-back" href="../../../api/callbacks.html#catalyst.callbacks.sklearn_model.SklearnModelCallback">[docs]</a><span class="k">class</span> <span class="nc">SklearnModelCallback</span><span class="p">(</span><span class="n">Callback</span><span class="p">):</span>
@@ -553,9 +553,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_key</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="n">AccumulationMetric</span><span class="p">(</span><span class="n">accumulative_fields</span><span class="o">=</span><span class="p">[</span><span class="n">feature_key</span><span class="p">,</span> <span class="n">target_key</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="n">AccumulativeMetric</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="n">feature_key</span><span class="p">,</span> <span class="n">target_key</span><span class="p">])</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target_key</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="n">AccumulationMetric</span><span class="p">(</span><span class="n">accumulative_fields</span><span class="o">=</span><span class="p">[</span><span class="n">feature_key</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">storage</span> <span class="o">=</span> <span class="n">AccumulativeMetric</span><span class="p">(</span><span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="n">feature_key</span><span class="p">])</span>
 
     <span class="k">def</span> <span class="nf">on_loader_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runner</span><span class="p">:</span> <span class="s2">&quot;IRunner&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>

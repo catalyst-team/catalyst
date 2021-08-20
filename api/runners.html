@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Runners &mdash; Catalyst 21.07 documentation</title>
+  <title>Runners &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -158,7 +158,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -1560,7 +1560,7 @@ Used for Catalyst Config API.</p>
 <h3><a class="toc-backref" href="#id19">SupervisedHydraRunner</a><a class="headerlink" href="#supervisedhydrarunner" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.runners.hydra.SupervisedHydraRunner">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.runners.hydra.</code><code class="sig-name descname">SupervisedHydraRunner</code><span class="sig-paren">(</span><em class="sig-param">cfg: omegaconf.dictconfig.DictConfig = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">target_key: str = 'targets'</em>, <em class="sig-param">loss_key: str = 'loss'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#SupervisedHydraRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.hydra.SupervisedHydraRunner" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.runners.hydra.</code><code class="sig-name descname">SupervisedHydraRunner</code><span class="sig-paren">(</span><em class="sig-param">cfg: Optional[omegaconf.dictconfig.DictConfig] = None</em>, <em class="sig-param">input_key: Any = 'features'</em>, <em class="sig-param">output_key: Any = 'logits'</em>, <em class="sig-param">target_key: str = 'targets'</em>, <em class="sig-param">loss_key: str = 'loss'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/runners/hydra.html#SupervisedHydraRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.runners.hydra.SupervisedHydraRunner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#catalyst.runners.supervised.ISupervisedRunner" title="catalyst.runners.supervised.ISupervisedRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.runners.supervised.ISupervisedRunner</span></code></a>, <a class="reference internal" href="#catalyst.runners.hydra.HydraRunner" title="catalyst.runners.hydra.HydraRunner"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.runners.hydra.HydraRunner</span></code></a></p>
 <p>HydraRunner for supervised tasks</p>
 <dl class="field-list simple">

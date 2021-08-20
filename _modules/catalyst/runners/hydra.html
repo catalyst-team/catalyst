@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>catalyst.runners.hydra &mdash; Catalyst 21.07 documentation</title>
+  <title>catalyst.runners.hydra &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -155,7 +155,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -315,8 +315,6 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">import</span> <span class="nn">hydra</span>
-<span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">OmegaConf</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span><span class="p">,</span> <span class="n">Dataset</span>
 
 <span class="kn">from</span> <span class="nn">catalyst.callbacks</span> <span class="kn">import</span> <span class="n">CheckpointCallback</span><span class="p">,</span> <span class="n">ICheckpointCallback</span>
@@ -333,6 +331,7 @@
 <span class="kn">from</span> <span class="nn">catalyst.loggers.tensorboard</span> <span class="kn">import</span> <span class="n">TensorboardLogger</span>
 <span class="kn">from</span> <span class="nn">catalyst.runners.misc</span> <span class="kn">import</span> <span class="n">do_lr_linear_scaling</span><span class="p">,</span> <span class="n">get_model_parameters</span>
 <span class="kn">from</span> <span class="nn">catalyst.runners.supervised</span> <span class="kn">import</span> <span class="n">ISupervisedRunner</span>
+<span class="kn">from</span> <span class="nn">catalyst.settings</span> <span class="kn">import</span> <span class="n">SETTINGS</span>
 <span class="kn">from</span> <span class="nn">catalyst.typing</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">Criterion</span><span class="p">,</span>
     <span class="n">Model</span><span class="p">,</span>
@@ -347,6 +346,10 @@
 <span class="kn">from</span> <span class="nn">catalyst.utils.data</span> <span class="kn">import</span> <span class="n">get_loaders_from_params</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.misc</span> <span class="kn">import</span> <span class="n">get_short_hash</span><span class="p">,</span> <span class="n">get_utcnow_time</span>
 <span class="kn">from</span> <span class="nn">catalyst.utils.torch</span> <span class="kn">import</span> <span class="n">get_available_engine</span>
+
+<span class="k">if</span> <span class="n">SETTINGS</span><span class="o">.</span><span class="n">hydra_required</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">hydra</span>
+    <span class="kn">from</span> <span class="nn">omegaconf</span> <span class="kn">import</span> <span class="n">DictConfig</span><span class="p">,</span> <span class="n">OmegaConf</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -363,10 +366,10 @@
 <span class="sd">        .. _`minimal examples`: https://github.com/catalyst-team/catalyst#minimal-examples</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cfg</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Init.&quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">cfg</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_apex</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">apex</span> <span class="ow">or</span> <span class="kc">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_amp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">args</span><span class="o">.</span><span class="n">amp</span> <span class="ow">or</span> <span class="kc">False</span>
@@ -488,11 +491,11 @@
 
         <span class="k">return</span> <span class="n">loggers</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_transform_from_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_transform_from_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="n">hydra</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">instantiate</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">transform</span>
 
-<div class="viewcode-block" id="HydraRunner.get_transform"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_transform">[docs]</a>    <span class="k">def</span> <span class="nf">get_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<div class="viewcode-block" id="HydraRunner.get_transform"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_transform">[docs]</a>    <span class="k">def</span> <span class="nf">get_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the data transforms for a dataset.</span>
 
@@ -505,7 +508,7 @@
         <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_transform_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">transform</span></div>
 
-    <span class="k">def</span> <span class="nf">_get_dataset_from_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_dataset_from_params</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Dataset&quot;</span><span class="p">:</span>
         <span class="n">transform_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;transform&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">transform_params</span><span class="p">:</span>
             <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transform</span><span class="p">(</span><span class="n">transform_params</span><span class="p">)</span>
@@ -575,7 +578,7 @@
         <span class="k">return</span> <span class="n">loaders</span></div>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_model_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerModel</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_model_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerModel</span><span class="p">:</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">is_key_value</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">_key_value</span> <span class="ow">or</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">is_key_value</span><span class="p">:</span>
@@ -591,12 +594,12 @@
 <div class="viewcode-block" id="HydraRunner.get_model"><a class="viewcode-back" href="../../../api/runners.html#catalyst.runners.hydra.HydraRunner.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerModel</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the model for a given stage.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="s2">&quot;model&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="p">,</span> <span class="s2">&quot;config must contain &#39;model&#39; key&quot;</span>
-        <span class="n">model_params</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">model</span>
+        <span class="n">model_params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">model</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_model_from_params</span><span class="p">(</span><span class="n">model_params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">model</span></div>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_criterion_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerCriterion</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_get_criterion_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerCriterion</span><span class="p">:</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">is_key_value</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">_key_value</span> <span class="ow">or</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">is_key_value</span><span class="p">:</span>
@@ -612,12 +615,12 @@
         <span class="sd">&quot;&quot;&quot;Returns the criterion for a given stage.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;criterion&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">criterion_params</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">criterion</span>
+        <span class="n">criterion_params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">criterion</span>
         <span class="n">criterion</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_criterion_from_params</span><span class="p">(</span><span class="n">criterion_params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">criterion</span></div>
 
     <span class="k">def</span> <span class="nf">_get_optimizer_from_params</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">RunnerModel</span><span class="p">,</span> <span class="n">stage</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optimizer</span><span class="p">:</span>
         <span class="c1"># @TODO 1: refactor; this method is too long</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
@@ -664,7 +667,7 @@
         <span class="k">if</span> <span class="s2">&quot;optimizer&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="n">optimizer_params</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">optimizer</span>
+        <span class="n">optimizer_params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">optimizer</span>
         <span class="n">optimizer_params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">optimizer_params</span><span class="p">)</span>
         <span class="n">is_key_value</span> <span class="o">=</span> <span class="n">optimizer_params</span><span class="o">.</span><span class="n">_key_value</span> <span class="ow">or</span> <span class="kc">False</span>
 
@@ -683,7 +686,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">_get_scheduler_from_params</span><span class="p">(</span>
-        <span class="o">*</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">RunnerOptimizer</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span>
+        <span class="o">*</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">:</span> <span class="n">RunnerOptimizer</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">RunnerScheduler</span><span class="p">:</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">is_key_value</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">_key_value</span> <span class="ow">or</span> <span class="kc">False</span>
@@ -707,12 +710,12 @@
         <span class="sd">&quot;&quot;&quot;Returns the schedulers for a given stage.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;scheduler&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]:</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="n">scheduler_params</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">scheduler</span>
+        <span class="n">scheduler_params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_config</span><span class="o">.</span><span class="n">stages</span><span class="p">[</span><span class="n">stage</span><span class="p">]</span><span class="o">.</span><span class="n">scheduler</span>
         <span class="n">scheduler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_scheduler_from_params</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">optimizer</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">scheduler_params</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">scheduler</span></div>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_get_callback_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">DictConfig</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_get_callback_from_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span><span class="p">):</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">deepcopy</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">wrapper_params</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_wrapper&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">target</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;_target_&quot;</span><span class="p">)</span>
@@ -771,7 +774,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">cfg</span><span class="p">:</span> <span class="n">DictConfig</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">cfg</span><span class="p">:</span> <span class="s2">&quot;DictConfig&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">input_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;features&quot;</span><span class="p">,</span>
         <span class="n">output_key</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="s2">&quot;logits&quot;</span><span class="p">,</span>
         <span class="n">target_key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;targets&quot;</span><span class="p">,</span>

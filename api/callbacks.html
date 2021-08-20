@@ -10,7 +10,7 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Callbacks &mdash; Catalyst 21.07 documentation</title>
+  <title>Callbacks &mdash; Catalyst 21.08 documentation</title>
   
 
   
@@ -158,7 +158,7 @@
               
               
                 <div class="version">
-                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.07</a>
+                  <a href="https://catalyst-team.github.io/catalyst/versions.html">21.08</a>
                 </div>
               
             
@@ -1540,7 +1540,7 @@ there are several of them and they are in a dictionary format.</p></li>
 <h3><a class="toc-backref" href="#id36">OptunaPruningCallback</a><a class="headerlink" href="#optunapruningcallback" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="catalyst.callbacks.optuna.OptunaPruningCallback">
-<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.optuna.</code><code class="sig-name descname">OptunaPruningCallback</code><span class="sig-paren">(</span><em class="sig-param">loader_key: str</em>, <em class="sig-param">metric_key: str</em>, <em class="sig-param">minimize: bool</em>, <em class="sig-param">min_delta: float = 1e-06</em>, <em class="sig-param">trial: optuna.trial._trial.Trial = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/optuna.html#OptunaPruningCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optuna.OptunaPruningCallback" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">catalyst.callbacks.optuna.</code><code class="sig-name descname">OptunaPruningCallback</code><span class="sig-paren">(</span><em class="sig-param">loader_key: str</em>, <em class="sig-param">metric_key: str</em>, <em class="sig-param">minimize: bool</em>, <em class="sig-param">min_delta: float = 1e-06</em>, <em class="sig-param">trial: Optional[optuna.trial._trial.Trial] = None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/catalyst/callbacks/optuna.html#OptunaPruningCallback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#catalyst.callbacks.optuna.OptunaPruningCallback" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="core.html#catalyst.core.callback.Callback" title="catalyst.core.callback.Callback"><code class="xref py py-class docutils literal notranslate"><span class="pre">catalyst.core.callback.Callback</span></code></a></p>
 <p>Optuna callback for pruning unpromising runs.
 This callback can be used for early stopping (pruning) unpromising runs.</p>
