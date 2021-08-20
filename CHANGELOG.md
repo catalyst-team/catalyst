@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - Barlow Twins example ([#1261](https://github.com/catalyst-team/catalyst/pull/1261))
 - TPU/XLA support ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
   - with updated [example](./examples/engines)
+- native `sync_bn` support for all available engines ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - Torch, AMP, Apex, FairScale
 
 ### Changed
 

@@ -311,6 +311,9 @@ class DistributedDataParallelEngine(DeviceEngine):
     Args:
         address: address to use for backend.
         port: port to use for backend.
+        sync_bn: boolean flag for batchnorm synchonization during disributed training.
+            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            distributed only. Default, False.
         ddp_kwargs: parameters for `torch.nn.parallel.DistributedDataParallel`.
             More info here:
             https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel
@@ -366,12 +369,16 @@ class DistributedDataParallelEngine(DeviceEngine):
         stages:
             ...
 
+    .. _convert_sync_batchnorm: https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+        torch.nn.SyncBatchNorm.convert_sync_batchnorm
+
     """
 
     def __init__(
         self,
         address: str = None,
         port: Union[str, int] = None,
+        sync_bn: bool = False,
         ddp_kwargs: Dict[str, Any] = None,
         process_group_kwargs: Dict[str, Any] = None,
     ):
@@ -379,6 +386,7 @@ class DistributedDataParallelEngine(DeviceEngine):
         super().__init__()
         self.address = address or "localhost"
         self.port = port or 12345
+        self._sync_bn = sync_bn
         self._rank = 0
         self._device = None
 
@@ -510,8 +518,12 @@ class DistributedDataParallelEngine(DeviceEngine):
         model = model_fn()
         model = self.sync_device(model)
         if isinstance(model, nn.Module):
+            if self._sync_bn:
+                model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
             model = DistributedDataParallel(model, **self.ddp_kwargs)
         elif isinstance(model, dict):
+            if self._sync_bn:
+                model = {k: nn.SyncBatchNorm.convert_sync_batchnorm(v) for k, v in model.items()}
             model = {k: DistributedDataParallel(v, **self.ddp_kwargs) for k, v in model.items()}
         else:
             raise ValueError("Model should be ``nn.Module`` or ``dict``")

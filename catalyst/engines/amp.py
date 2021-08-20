@@ -240,6 +240,9 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
     Args:
         address: address to use for backend.
         port: port to use for backend.
+        sync_bn: boolean flag for batchnorm synchonization during disributed training.
+            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            distributed only. Default, False.
         ddp_kwargs: parameters for `torch.nn.parallel.DistributedDataParallel`.
             More info here:
             https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel
@@ -301,12 +304,15 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         stages:
             ...
 
+    .. _convert_sync_batchnorm: https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+        torch.nn.SyncBatchNorm.convert_sync_batchnorm
     """
 
     def __init__(
         self,
         address: str = None,
         port: Union[str, int] = None,
+        sync_bn: bool = False,
         ddp_kwargs: Dict[str, Any] = None,
         process_group_kwargs: Dict[str, Any] = None,
         scaler_kwargs: Dict[str, Any] = None,
@@ -315,6 +321,7 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         super().__init__(
             address=address,
             port=port,
+            sync_bn=sync_bn,
             ddp_kwargs=ddp_kwargs,
             process_group_kwargs=process_group_kwargs,
         )

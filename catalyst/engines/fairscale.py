@@ -4,6 +4,7 @@ import warnings
 
 import torch
 import torch.cuda.amp as amp
+import torch.nn as nn
 
 from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import SETTINGS
@@ -141,6 +142,9 @@ class SharedDataParallelFairScaleEngine(DistributedDataParallelEngine):
     Args:
         address: address to use for backend.
         port: port to use for backend.
+        sync_bn: boolean flag for batchnorm synchonization during disributed training.
+            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            distributed only. Default, False.
         ddp_kwargs: parameters for `fairscale.nn.data_parallel.ShardedDataParallel`.
             More info here:
             https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html
@@ -195,7 +199,8 @@ class SharedDataParallelFairScaleEngine(DistributedDataParallelEngine):
 
         stages:
             ...
-
+    .. _convert_sync_batchnorm: https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+        torch.nn.SyncBatchNorm.convert_sync_batchnorm
     """
 
     def init_components(
@@ -204,6 +209,8 @@ class SharedDataParallelFairScaleEngine(DistributedDataParallelEngine):
         """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
+        if self._sync_bn:
+            model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
 
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
@@ -255,6 +262,9 @@ class SharedDataParallelFairScaleAMPEngine(SharedDataParallelFairScaleEngine):
     Args:
         address: address to use for backend.
         port: port to use for backend.
+        sync_bn: boolean flag for batchnorm synchonization during disributed training.
+            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            distributed only. Default, False.
         ddp_kwargs: parameters for `fairscale.nn.data_parallel.ShardedDataParallel`.
             Docs for `fairscale.nn.ShardedDataParallel`:
             https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html
@@ -316,6 +326,8 @@ class SharedDataParallelFairScaleAMPEngine(SharedDataParallelFairScaleEngine):
         stages:
             ...
 
+    .. _convert_sync_batchnorm: https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+        torch.nn.SyncBatchNorm.convert_sync_batchnorm
     """
 
     def __init__(
@@ -363,6 +375,9 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
     Args:
         address: address to use for backend.
         port: port to use for backend.
+        sync_bn: boolean flag for batchnorm synchonization during disributed training.
+            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            distributed only. Default, False.
         ddp_kwargs: parameters for `fairscale.nn.data_parallel.FullyShardedDataParallel`.
             Docs for `fairscale.nn.FullyShardedDataParallel`:
             https://fairscale.readthedocs.io/en/latest/api/nn/fsdp.html
@@ -418,6 +433,8 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
         stages:
             ...
 
+    .. _convert_sync_batchnorm: https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+        torch.nn.SyncBatchNorm.convert_sync_batchnorm
     """
 
     def init_components(
@@ -426,6 +443,8 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
         """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
+        if self._sync_bn:
+            model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
 
         model = FullyShardedDataParallel(model, **self.ddp_kwargs)
 
