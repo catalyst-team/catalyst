@@ -65,23 +65,17 @@ criterion = NTXentLoss(tau=0.1)
 
 # 4. training with catalyst Runner
 class CustomRunner(dl.Runner):
-    def predict_batch(self, batch):
-        # model inference step
-        emb1 = self.model(batch["image_aug1"].to(self.device))
-        emb2 = self.model(batch["image_aug2"].to(self.device))
-        return emb1, emb2
-
     def handle_batch(self, batch):
         # model train/valid step
         # unpack the batch
         emb1 = self.model(batch["image_aug1"].to(self.device))
         emb2 = self.model(batch["image_aug2"].to(self.device))
-        return emb1, emb2
+        self.batch = {"proj1": emb1, "proj2": emb2}
 
 
 callbacks = [
     dl.ControlFlowCallback(
-        dl.CriterionCallback(input_key="image_aug1", target_key="image_aug2", metric_key="loss"),
+        dl.CriterionCallback(input_key="proj1", target_key="proj2", metric_key="loss"),
         loaders="train",
     )
 ]
