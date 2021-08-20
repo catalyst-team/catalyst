@@ -288,7 +288,9 @@ class SklearnModelCallback(Callback):
         """
         if runner.loader_key == self._train_loader:
             data = self.storage.compute_key_value()
-            assert data[self.feature_key].isnan().sum() == 0, "Nan before Accumulation"
+            assert (
+                data[self.feature_key].isnan().sum() == 0
+            ), "SklearnModelCallback - NaN after Accumulation!"
             # model fit
             # pdb.set_trace()
             self.model = self.model_fabric_fn()

@@ -10,7 +10,6 @@ from torch.optim import Adam
 from torch.utils.data import DataLoader
 
 from catalyst import data, dl
-from catalyst.callbacks.control_flow import ControlFlowCallback
 from catalyst.contrib import datasets, models, nn
 from catalyst.data.transforms import Compose, Normalize, ToTensor
 from catalyst.settings import SETTINGS
@@ -18,7 +17,7 @@ from catalyst.settings import SETTINGS
 if SETTINGS.ml_required:
     from sklearn.linear_model import LogisticRegression
 
-TRAIN_EPOCH = 10
+TRAIN_EPOCH = 2
 LR = 0.01
 RANDOM_STATE = 42
 
@@ -41,7 +40,7 @@ def train_experiment(device, engine=None):
         # 1. train, valid and test loaders
         transforms = Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])
         train_dataset = datasets.MNIST(
-            root=os.getcwd(), download=True, transform=transforms, train=True
+            root=os.getcwd(), download=True, transform=transforms, train=False
         )
         labels = train_dataset.targets.tolist()
         sampler = data.BalanceBatchSampler(labels=labels, p=5, k=10)
@@ -130,3 +129,6 @@ def train_experiment(device, engine=None):
 @mark.skipif(not SETTINGS.ml_required, reason="catalyst[ml] required")
 def test_on_cpu():
     train_experiment("cpu")
+
+
+train_experiment("cpu")
