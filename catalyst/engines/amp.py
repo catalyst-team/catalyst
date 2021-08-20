@@ -304,7 +304,8 @@ class DistributedDataParallelAMPEngine(DistributedDataParallelEngine):
         stages:
             ...
 
-    .. _convert_sync_batchnorm: https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+    .. _convert_sync_batchnorm:
+        https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
         torch.nn.SyncBatchNorm.convert_sync_batchnorm
     """
 
