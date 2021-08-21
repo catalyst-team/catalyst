@@ -4,8 +4,6 @@ import os
 from pathlib import Path
 import shutil
 
-import torch.distributed as dist
-
 from catalyst.core.callback import Callback, CallbackNode, CallbackOrder
 from catalyst.core.runner import IRunner
 from catalyst.tools.metric_handler import MetricHandler
@@ -703,7 +701,7 @@ class CheckpointCallback(ICheckpointCallback):
             return
         if runner.engine.is_ddp and not runner.engine.is_master_process:
             # worker sync
-            dist.barrier()
+            runner.engine.barrier()
             return
 
         # let's log Top-N base metrics
@@ -758,8 +756,8 @@ class CheckpointCallback(ICheckpointCallback):
             _load_runner(logdir=self.logdir, runner=runner, mapping=to_load)
 
         if runner.engine.is_ddp and runner.engine.is_master_process:
-            # master sync
-            dist.barrier()
+            # worker sync
+            runner.engine.barrier()
 
 
 __all__ = ["ICheckpointCallback", "CheckpointCallback"]

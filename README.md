@@ -71,13 +71,11 @@ model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.02)
 
+train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
 loaders = {
-    "train": DataLoader(
-        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-    ),
-    "valid": DataLoader(
-        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-    ),
+    "train": DataLoader(train_data, batch_size=32),
+    "valid": DataLoader(valid_data, batch_size=32),
 }
 
 runner = dl.SupervisedRunner(
@@ -220,13 +218,11 @@ from catalyst.contrib.datasets import MNIST
 model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
 optimizer = optim.Adam(model.parameters(), lr=0.02)
 
+train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
 loaders = {
-    "train": DataLoader(
-        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-    ),
-    "valid": DataLoader(
-        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-    ),
+    "train": DataLoader(train_data, batch_size=32),
+    "valid": DataLoader(valid_data, batch_size=32),
 }
 
 class CustomRunner(dl.Runner):
@@ -626,13 +622,11 @@ model = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.Adam(model.parameters(), lr=0.02)
 
+train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
 loaders = {
-    "train": DataLoader(
-        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-    ),
-    "valid": DataLoader(
-        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-    ),
+    "train": DataLoader(train_data, batch_size=32),
+    "valid": DataLoader(valid_data, batch_size=32),
 }
 
 runner = dl.SupervisedRunner()
@@ -688,13 +682,11 @@ model = nn.Sequential(
 criterion = IoULoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.02)
 
+train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
 loaders = {
-    "train": DataLoader(
-        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-    ),
-    "valid": DataLoader(
-        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-    ),
+    "train": DataLoader(train_data, batch_size=32),
+    "valid": DataLoader(valid_data, batch_size=32),
 }
 
 class CustomRunner(dl.SupervisedRunner):
@@ -750,13 +742,11 @@ student = nn.Sequential(nn.Flatten(), nn.Linear(28 * 28, 10))
 criterion = {"cls": nn.CrossEntropyLoss(), "kl": nn.KLDivLoss(reduction="batchmean")}
 optimizer = optim.Adam(student.parameters(), lr=0.02)
 
+train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
 loaders = {
-    "train": DataLoader(
-        MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-    ),
-    "valid": DataLoader(
-        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-    ),
+    "train": DataLoader(train_data, batch_size=32),
+    "valid": DataLoader(valid_data, batch_size=32),
 }
 
 class DistilRunner(dl.Runner):
@@ -934,11 +924,8 @@ optimizer = {
     "generator": torch.optim.Adam(generator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
     "discriminator": torch.optim.Adam(discriminator.parameters(), lr=0.0003, betas=(0.5, 0.999)),
 }
-loaders = {
-    "train": DataLoader(
-        MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-    )
-}
+train_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
+loaders = {"train": DataLoader(train_data, batch_size=32)}
 
 class CustomRunner(dl.Runner):
     def predict_batch(self, batch):
@@ -1099,13 +1086,11 @@ class CustomRunner(dl.IRunner):
         return 3
 
     def get_loaders(self, stage: str):
+        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
         loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-            ),
+            "train": DataLoader(train_data, batch_size=32),
+            "valid": DataLoader(valid_data, batch_size=32),
         }
         return loaders
 
@@ -1202,13 +1187,11 @@ class CustomRunner(dl.IRunner):
         return 3
 
     def get_loaders(self, stage: str):
+        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
         loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-            ),
+            "train": DataLoader(train_data, batch_size=32),
+            "valid": DataLoader(valid_data, batch_size=32),
         }
         return loaders
 
@@ -1311,13 +1294,11 @@ class CustomRunner(dl.IRunner):
         return 3
 
     def get_loaders(self, stage: str):
+        train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+        valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
         loaders = {
-            "train": DataLoader(
-                MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-            ),
-            "valid": DataLoader(
-                MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-            ),
+            "train": DataLoader(train_data, batch_size=32),
+            "valid": DataLoader(valid_data, batch_size=32),
         }
         return loaders
 
@@ -1409,13 +1390,11 @@ def objective(trial):
     lr = trial.suggest_loguniform("lr", 1e-3, 1e-1)
     num_hidden = int(trial.suggest_loguniform("num_hidden", 32, 128))
 
+    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
     loaders = {
-        "train": DataLoader(
-            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-        ),
-        "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-        ),
+        "train": DataLoader(train_data, batch_size=32),
+        "valid": DataLoader(valid_data, batch_size=32),
     }
     model = nn.Sequential(
         nn.Flatten(), nn.Linear(784, num_hidden), nn.ReLU(), nn.Linear(num_hidden, 10)
@@ -1562,7 +1541,7 @@ runner.run()
 - Training stages support.
 - Deep Learning best practices: SWA, AdamW, Ranger optimizer, OneCycle, and more.
 - Workflow best practices: fp16 support, distributed training, slurm support.
-- Any hardware backend supported: [AMP, Apex, FairScale, DeepSpeed](./examples/engines)
+- Any hardware backend supported: [AMP, Apex, DeepSpeed, FairScale, XLA](./examples/engines)
 
 
 ### Tests
@@ -1582,6 +1561,7 @@ best practices for your deep learning research and development.
 
 ### Documentation
 - [master](https://catalyst-team.github.io/catalyst/)
+- [21.07](https://catalyst-team.github.io/catalyst/v21.07/index.html)
 - [21.06](https://catalyst-team.github.io/catalyst/v21.06/index.html)
 - [21.05](https://catalyst-team.github.io/catalyst/v21.05/index.html) ([Catalyst — A PyTorch Framework for Accelerated Deep Learning R&D](https://medium.com/pytorch/catalyst-a-pytorch-framework-for-accelerated-deep-learning-r-d-ad9621e4ca88?source=friends_link&sk=885b4409aecab505db0a63b06f19dcef))
 - [21.04/21.04.1](https://catalyst-team.github.io/catalyst/v21.04/index.html), [21.04.2](https://catalyst-team.github.io/catalyst/v21.04.2/index.html)

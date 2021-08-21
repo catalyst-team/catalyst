@@ -46,13 +46,11 @@ Getting started
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.02)
 
+    train_data = MNIST(os.getcwd(), train=True, download=True, transform=ToTensor())
+    valid_data = MNIST(os.getcwd(), train=False, download=True, transform=ToTensor())
     loaders = {
-        "train": DataLoader(
-            MNIST(os.getcwd(), train=True, download=True, transform=ToTensor()), batch_size=32
-        ),
-        "valid": DataLoader(
-            MNIST(os.getcwd(), train=False, download=True, transform=ToTensor()), batch_size=32
-        ),
+        "train": DataLoader(train_data, batch_size=32),
+        "valid": DataLoader(valid_data, batch_size=32),
     }
 
     runner = dl.SupervisedRunner(

@@ -339,9 +339,10 @@ class NeptuneLogger(ILogger):
         """Flushes the loggers."""
         pass
 
-    def close_log(self) -> None:
+    def close_log(self, scope: str = None) -> None:
         """Closes the loggers."""
-        self.run.wait()
+        if scope is None or scope == "experiment":
+            self.run.wait()
 
 
 __all__ = ["NeptuneLogger"]

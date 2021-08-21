@@ -4,11 +4,48 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
-## [YY.MM.R] - YYYY-MM-DD
+## [21.08] - YYYY-MM-DD
+
+### Added
+
+- RecSys loss functions: `AdaptiveHingeLoss`, `BPRLoss`, `HingeLoss`, `LogisticLoss`, `WARPLoss` ([#1269](https://github.com/catalyst-team/catalyst/pull/1269))
+- object detection examples ([#1271](https://github.com/catalyst-team/catalyst/pull/1271))
+- SklearnModelCallback ([#1261](https://github.com/catalyst-team/catalyst/pull/1261))
+- Barlow Twins example ([#1261](https://github.com/catalyst-team/catalyst/pull/1261))
+- TPU/XLA support ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - with updated [example](./examples/engines)
+- native `sync_bn` support for all available engines ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - Torch, AMP, Apex, FairScale
+
+### Changed
+
+- Registry moved to `hydra-slayer` ([#1264)](https://github.com/catalyst-team/catalyst/pull/1264))
+- ([#1275](https://github.com/catalyst-team/catalyst/pull/1275))
+  - batch metrics sync removed from ddp-runs to speedup training process
+  - `AccumulationMetric` renamed to `AccumulativeMetric`
+    - moved from `catalyst.metrics._metric` to `catalyst.metrics._accumulative`
+    - `accululative_fields` renamed to `keys`
+
+
+### Removed
+
+-
+
+### Fixed
+
+- PeriodicLoaderCallback docsting ([#1279](https://github.com/catalyst-team/catalyst/pull/1279))
+- matplotlib issue ([#1272](https://github.com/catalyst-team/catalyst/pull/1272))
+
+
+## [21.07] - 2021-07-29
 
 ### Added
 
 - added `pre-commit` hook to run codestyle checker on commit ([#1257](https://github.com/catalyst-team/catalyst/pull/1257))
+- `on publish` github action for docker and docs added ([#1260](https://github.com/catalyst-team/catalyst/pull/1260))
+- MixupCallback and `utils.mixup_batch` ([#1241](https://github.com/catalyst-team/catalyst/pull/1241))
+- Barlow twins loss ([#1259](https://github.com/catalyst-team/catalyst/pull/1259))
+- BatchBalanceClassSampler ([#1262](https://github.com/catalyst-team/catalyst/pull/1262))
 
 ### Changed
 
@@ -23,7 +60,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 - make `expdir` in `catalyst-dl run` optional ([#1249](https://github.com/catalyst-team/catalyst/pull/1249))
 - Bump neptune-client from 0.9.5 to 0.9.8 in `requirements-neptune.txt` ([#1251](https://github.com/catalyst-team/catalyst/pull/1251))
 - automatic merge for master (with [Mergify](https://mergify.io/)) fixed ([#1250](https://github.com/catalyst-team/catalyst/pull/1250))
-- Evaluate loader custom model bug was fixed [#1254](https://github.com/catalyst-team/catalyst/pull/1254)
+- Evaluate loader custom model bug was fixed ([#1254](https://github.com/catalyst-team/catalyst/pull/1254))
+- `BatchPrefetchLoaderWrapper` issue with batch-based PyTorch samplers ([#1262](https://github.com/catalyst-team/catalyst/pull/1262))
+- Adapted MlflowLogger for new config hierarchy ([#1263](https://github.com/catalyst-team/catalyst/pull/1263))
+
 
 ## [21.06] - 2021-06-29
 
