@@ -1,9 +1,11 @@
 from typing import TYPE_CHECKING
 
-import optuna
-
 from catalyst.core.callback import Callback, CallbackOrder
+from catalyst.settings import SETTINGS
 from catalyst.tools.metric_handler import MetricHandler
+
+if SETTINGS.optuna_required:
+    import optuna
 
 if TYPE_CHECKING:
     from catalyst.core.runner import IRunner
@@ -56,7 +58,7 @@ class OptunaPruningCallback(Callback):
         metric_key: str,
         minimize: bool,
         min_delta: float = 1e-6,
-        trial: optuna.Trial = None,
+        trial: "optuna.Trial" = None,
     ):
         """Init."""
         super().__init__(CallbackOrder.External)

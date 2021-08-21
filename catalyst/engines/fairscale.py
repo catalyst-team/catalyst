@@ -1,17 +1,14 @@
 from typing import Any, Dict, Union
-import copy
 import math
-import os
 import warnings
 
 import torch
 import torch.cuda.amp as amp
-import torch.distributed as dist
+import torch.nn as nn
 
-from catalyst.engines.torch import DeviceEngine
+from catalyst.engines.torch import DeviceEngine, DistributedDataParallelEngine
 from catalyst.settings import SETTINGS
 from catalyst.typing import RunnerCriterion, RunnerModel, RunnerOptimizer, RunnerScheduler
-from catalyst.utils.distributed import ddp_reduce
 
 if SETTINGS.fairscale_required:
     from fairscale.nn import Pipe
@@ -100,7 +97,6 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
     ):
         """Inits the runs components."""
         model = model_fn()
-        # model = self.sync_device(model)
 
         if "balance" not in self.pipe_kwargs:
             warnings.warn(
@@ -114,17 +110,14 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
 
         # criterion
         criterion = criterion_fn()
-        # criterion = self.sync_device(criterion)
-
         # optimizer
         optimizer = optimizer_fn(pipe_model)
-        # optimizer = self.sync_device(optimizer)
-
         # scheduler
         scheduler = scheduler_fn()
-        # scheduler = self.sync_device(scheduler)
+
         return pipe_model, criterion, optimizer, scheduler
 
+    # due to FairScale setup, we need to manually delete the model in the end
     def deinit_components(self, runner):
         """Deinits the runs components. In distributed mode should destroy process group."""
         # For some reasons FairScale requires to delete the Pipe model
@@ -143,12 +136,15 @@ class PipelineParallelFairScaleEngine(DeviceEngine):
         optimizer.step()
 
 
-class SharedDataParallelFairScaleEngine(DeviceEngine):
+class SharedDataParallelFairScaleEngine(DistributedDataParallelEngine):
     """Distributed FairScale MultiGPU training device engine.
 
     Args:
         address: address to use for backend.
         port: port to use for backend.
+        sync_bn: boolean flag for batchnorm synchonization during disributed training.
+            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            distributed only. Default, False.
         ddp_kwargs: parameters for `fairscale.nn.data_parallel.ShardedDataParallel`.
             More info here:
             https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html
@@ -203,96 +199,10 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
 
         stages:
             ...
-
+    .. _convert_sync_batchnorm:
+        https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+        torch.nn.SyncBatchNorm.convert_sync_batchnorm
     """
-
-    def __init__(
-        self,
-        address: str = None,
-        port: Union[str, int] = None,
-        ddp_kwargs: Dict[str, Any] = None,
-        process_group_kwargs: Dict[str, Any] = None,
-    ):
-        """Init."""
-        super().__init__()
-        self.address = address or "localhost"
-        self.port = port or 12345
-        self._rank = 0
-        self._device = None
-
-        if ddp_kwargs is None:
-            ddp_kwargs = {}
-        self.ddp_kwargs = copy.deepcopy(ddp_kwargs)
-
-        if process_group_kwargs is None:
-            process_group_kwargs = {}
-        self.process_group_kwargs = copy.deepcopy(process_group_kwargs)
-        # add missing arguments
-        if "backend" not in self.process_group_kwargs:
-            self.process_group_kwargs["backend"] = "nccl"
-        if "world_size" not in self.process_group_kwargs:
-            self.process_group_kwargs["world_size"] = torch.cuda.device_count()
-
-        self._world_size = (
-            self.process_group_kwargs.get("world_size", None) or torch.cuda.device_count()
-        )
-
-    def __repr__(self):  # noqa: D105
-        return (
-            f"{self.__class__.__name__}(address={self.address}, "
-            f"port={self.port}, "
-            f"ddp_kwargs={self.ddp_kwargs}, "
-            f"process_group_kwargs={self.process_group_kwargs})"
-        )
-
-    @property
-    def rank(self) -> int:
-        """Process rank for distributed training."""
-        return self._rank
-
-    @property
-    def world_size(self) -> int:
-        """Process world size  for distributed training."""
-        return self._world_size
-
-    def setup_process(self, rank: int = -1, world_size: int = 1):
-        """Initialize DDP variables and processes.
-
-        Args:
-            rank: process rank. Default is `-1`.
-            world_size: number of devices in netwok to expect for train.
-                Default is `1`.
-        """
-        self._rank = rank
-        self._world_size = world_size
-        torch.cuda.set_device(int(self._rank))
-        self._device = f"cuda:{int(self._rank)}"
-
-        self.process_group_kwargs["rank"] = rank
-        self.process_group_kwargs["world_size"] = world_size
-        os.environ["MASTER_ADDR"] = str(self.address)
-        os.environ["MASTER_PORT"] = str(self.port)
-
-        dist.init_process_group(**self.process_group_kwargs)
-
-    def cleanup_process(self):
-        """Clean DDP variables and processes."""
-        dist.barrier()
-        dist.destroy_process_group()
-
-    def sync_tensor(self, tensor: torch.Tensor, mode: str) -> torch.Tensor:
-        """Syncs ``tensor`` over ``world_size`` in distributed mode.
-
-        Args:
-            tensor: tensor to sync across the processes.
-            mode: tensor synchronization type,
-                should be one of 'sum' or 'mean'.
-                Default is 'mean'.
-
-        Returns:
-            torch.Tensor with synchronized values.
-        """
-        return ddp_reduce(tensor, mode, self.world_size)
 
     def init_components(
         self, model_fn=None, criterion_fn=None, optimizer_fn=None, scheduler_fn=None,
@@ -300,6 +210,8 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
         """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
+        if self._sync_bn:
+            model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
 
         criterion = criterion_fn()
         criterion = self.sync_device(criterion)
@@ -313,18 +225,6 @@ class SharedDataParallelFairScaleEngine(DeviceEngine):
         scheduler = scheduler_fn(optimizer)
         scheduler = self.sync_device(scheduler)
         return model, criterion, optimizer, scheduler
-
-    def zero_grad(self, loss, model, optimizer) -> None:
-        """Abstraction over ``model.zero_grad()`` step."""
-        model.zero_grad()
-
-    def backward_loss(self, loss, model, optimizer) -> None:
-        """Abstraction over ``loss.backward()`` step."""
-        loss.backward()
-
-    def optimizer_step(self, loss, model, optimizer) -> None:
-        """Abstraction over ``optimizer.step()`` step."""
-        optimizer.step()
 
     def pack_checkpoint(
         self,
@@ -363,6 +263,9 @@ class SharedDataParallelFairScaleAMPEngine(SharedDataParallelFairScaleEngine):
     Args:
         address: address to use for backend.
         port: port to use for backend.
+        sync_bn: boolean flag for batchnorm synchonization during disributed training.
+            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            distributed only. Default, False.
         ddp_kwargs: parameters for `fairscale.nn.data_parallel.ShardedDataParallel`.
             Docs for `fairscale.nn.ShardedDataParallel`:
             https://fairscale.readthedocs.io/en/latest/api/nn/sharded_ddp.html
@@ -424,6 +327,9 @@ class SharedDataParallelFairScaleAMPEngine(SharedDataParallelFairScaleEngine):
         stages:
             ...
 
+    .. _convert_sync_batchnorm:
+        https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+        torch.nn.SyncBatchNorm.convert_sync_batchnorm
     """
 
     def __init__(
@@ -471,6 +377,9 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
     Args:
         address: address to use for backend.
         port: port to use for backend.
+        sync_bn: boolean flag for batchnorm synchonization during disributed training.
+            if True, applies PyTorch `convert_sync_batchnorm`_ to the model for native torch
+            distributed only. Default, False.
         ddp_kwargs: parameters for `fairscale.nn.data_parallel.FullyShardedDataParallel`.
             Docs for `fairscale.nn.FullyShardedDataParallel`:
             https://fairscale.readthedocs.io/en/latest/api/nn/fsdp.html
@@ -526,6 +435,9 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
         stages:
             ...
 
+    .. _convert_sync_batchnorm:
+        https://pytorch.org/docs/stable/generated/torch.nn.SyncBatchNorm.html#
+        torch.nn.SyncBatchNorm.convert_sync_batchnorm
     """
 
     def init_components(
@@ -534,6 +446,8 @@ class FullySharedDataParallelFairScaleEngine(SharedDataParallelFairScaleEngine):
         """Inits the runs components."""
         model = model_fn()
         model = self.sync_device(model)
+        if self._sync_bn:
+            model = nn.SyncBatchNorm.convert_sync_batchnorm(model)
 
         model = FullyShardedDataParallel(model, **self.ddp_kwargs)
 

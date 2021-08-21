@@ -1,10 +1,7 @@
 import itertools
 
-import matplotlib
-import numpy as np
-
-matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np
 
 # def tensor_to_ndimage(
 #     images: torch.Tensor,

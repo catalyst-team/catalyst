@@ -2,10 +2,15 @@ from typing import Dict, Tuple
 
 import torch
 
+from catalyst import SETTINGS
 from catalyst.metrics._metric import ICallbackLoaderMetric
 from catalyst.metrics.functional._auc import auc, binary_auc
 from catalyst.metrics.functional._misc import process_multilabel_components
-from catalyst.utils.distributed import all_gather, get_rank
+from catalyst.utils import get_device
+from catalyst.utils.distributed import all_gather, get_backend
+
+if SETTINGS.xla_required:
+    import torch_xla.core.xla_model as xm
 
 
 class AUCMetric(ICallbackLoaderMetric):
@@ -126,13 +131,14 @@ class AUCMetric(ICallbackLoaderMetric):
         """Init."""
         super().__init__(compute_on_call=compute_on_call, prefix=prefix, suffix=suffix)
         self.metric_name = f"{self.prefix}auc{self.suffix}"
+        self._ddp_backend = None
         self.scores = []
         self.targets = []
-        self._is_ddp = get_rank() > -1
+        self.reset(0, 0)
 
     def reset(self, num_batches, num_samples) -> None:
         """Resets all fields"""
-        self._is_ddp = get_rank() > -1
+        self._ddp_backend = get_backend()
         self.scores = []
         self.targets = []
 
@@ -151,8 +157,15 @@ class AUCMetric(ICallbackLoaderMetric):
         targets = torch.cat(self.targets)
         scores = torch.cat(self.scores)
 
-        # @TODO: ddp hotfix, could be done better
-        if self._is_ddp:
+        # ddp hotfix, could be done better
+        # but metric must handle DDP on it's own
+        if self._ddp_backend == "xla":
+            # if you have "RuntimeError: Aborted: Session XXX is not found" here
+            # please, ask Google for a more powerful TPU setup ;)
+            device = get_device()
+            scores = xm.all_gather(scores.to(device)).cpu().detach()
+            targets = xm.all_gather(targets.to(device)).cpu().detach()
+        elif self._ddp_backend == "ddp":
             scores = torch.cat(all_gather(scores))
             targets = torch.cat(all_gather(targets))
 

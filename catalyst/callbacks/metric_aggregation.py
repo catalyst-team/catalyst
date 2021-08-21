@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, TYPE_CHECKING, Union
+from typing import Callable, Dict, List, TYPE_CHECKING, Union
 
 import torch
 
@@ -165,7 +165,7 @@ class MetricAggregationCallback(Callback):
         elif callable(mode):
             self.aggregation_fn = mode
 
-    def _preprocess(self, metrics: Any) -> List[float]:
+    def _get_metrics_list(self, metrics: Dict) -> List[float]:
         if self.metrics is not None:
             try:
                 if self.mode == "weighted_sum":
@@ -176,15 +176,22 @@ class MetricAggregationCallback(Callback):
                 raise KeyError(f"Could not found required key out of {metrics.keys()}")
         else:
             result = list(metrics.values())
-        result = [metric.float() for metric in result]
         return result
 
-    def _process_metrics(self, metrics: Dict, runner: "IRunner") -> None:
+    def _process_metrics(self, scope: str, metrics: Dict, runner: "IRunner") -> None:
         if callable(self.mode):
             metric_aggregated = self.aggregation_fn(metrics, runner) * self.multiplier
         else:
-            metrics_processed = self._preprocess(metrics)
-            metric_aggregated = self.aggregation_fn(metrics_processed) * self.multiplier
+            metrics_list = self._get_metrics_list(metrics)
+            metrics_list = [
+                torch.tensor(v, device=runner.device, dtype=torch.float32)
+                if not isinstance(v, torch.Tensor)
+                else v.float()
+                for v in metrics_list
+            ]
+            metric_aggregated = self.aggregation_fn(metrics_list) * self.multiplier
+        if scope == "loader":
+            metric_aggregated = float(metric_aggregated)
         metrics[self.metric_key] = metric_aggregated
 
     def on_batch_end(self, runner: "IRunner") -> None:
@@ -193,8 +200,9 @@ class MetricAggregationCallback(Callback):
         Args:
             runner: current runner
         """
+        # import ipdb; ipdb.set_trace()
         if self.scope == "batch":
-            self._process_metrics(runner.batch_metrics, runner)
+            self._process_metrics("batch", runner.batch_metrics, runner)
 
     def on_loader_end(self, runner: "IRunner") -> None:
         """Computes the metric and add it to the loader metrics.
@@ -202,7 +210,7 @@ class MetricAggregationCallback(Callback):
         Args:
             runner: current runner
         """
-        self._process_metrics(runner.loader_metrics, runner)
+        self._process_metrics("loader", runner.loader_metrics, runner)
 
 
 __all__ = [
