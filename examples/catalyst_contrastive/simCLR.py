@@ -88,7 +88,10 @@ runner.train(
     criterion=criterion,
     optimizer=optimizer,
     callbacks=callbacks,
-    loaders={"train": train_loader, "valid": valid_loader},
+    loaders={
+        "train": train_loader,
+        # "valid": valid_loader
+    },
     verbose=False,
     logdir="./logs",
     valid_loader="train",
