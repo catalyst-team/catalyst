@@ -1,3 +1,4 @@
+import numpy as np
 from torch.utils.data import Dataset, IterableDataset
 
 
@@ -12,9 +13,8 @@ class simCLRDatasetWrapper(Dataset):
         return len(self.dataset)
 
     def __getitem__(self, idx):
-        batch = self.dataset.__getitem__(idx)
+        sample, target = self.dataset.__getitem__(idx)
 
-        batch = batch[0]
-        batch1 = self.transforms(batch)
-        batch2 = self.transforms(batch)
-        return {"image_aug1": batch1, "image_aug2": batch2}
+        aug_1 = self.transforms(sample)
+        aug_2 = self.transforms(sample)
+        return {"aug1": aug_1, "aug2": aug_2, "target": target}
