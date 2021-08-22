@@ -1,3 +1,4 @@
+# flake8: noqa
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
@@ -5,10 +6,10 @@ from torchvision.transforms import ColorJitter, Lambda, RandomCrop, ToPILImage, 
 
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
-from catalyst.contrib.datasets.cv.cifar import Cifar10MLDataset, CifarQGDataset
-from catalyst.contrib.datawrappers import simCLRDatasetWrapper
+from catalyst.contrib.data.datawrappers import simCLRDatasetWrapper
+from catalyst.contrib.datasets.cifar import Cifar10MLDataset, CifarQGDataset
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
-from catalyst.contrib.nn.critrion.ntxent import NTXentLoss
+from catalyst.contrib.nn.criterion import NTXentLoss
 from catalyst.data.transforms import Compose, Normalize, ToTensor
 
 batch_size = 10

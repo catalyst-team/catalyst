@@ -1,5 +1,5 @@
 # flake8: noqa
-from typing import Any, Callable, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 import os
 import pickle
 
