@@ -85,7 +85,7 @@ runner.train(
     valid_loader="train",
     valid_metric="loss",
     minimize_valid_metric=True,
-    num_epochs=1,
+    num_epochs=100,
 )
 
 print(list(model.parameters())[0][0][0])
