@@ -51,9 +51,11 @@ class NTXentLoss(nn.Module):
 
         pos_loss = self.cosineSim(features1, features2).sum(dim=0) / self.tau
         list_neg_loss = [
-            torch.exp(self.cosineSim(features1, torch.roll(features2, i, 1))) for i in range(1, bs)
+            torch.exp(self.cosineSim(features1, torch.roll(features2, i, 1)) / self.tau)
+            for i in range(0, bs)
         ]
-        neg_loss = torch.stack(list_neg_loss, dim=0).sum(dim=0).sum(dim=0)
+        # todo torch.exp(self.cosineSim(features1, torch.roll(features2, i, 1)))/ self.tau for i in range(0, bs)
+        neg_loss = torch.log(torch.stack(list_neg_loss, dim=0).sum(dim=0)).sum(dim=0)
 
-        loss = pos_loss - torch.log(neg_loss / self.tau)
+        loss = -pos_loss + neg_loss
         return loss
