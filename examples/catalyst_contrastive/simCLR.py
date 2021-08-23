@@ -13,7 +13,7 @@ from catalyst.contrib.datasets.cifar import Cifar10MLDataset, CifarQGDataset
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion import NTXentLoss
 
-batch_size = 10
+batch_size = 1000
 
 transforms = torchvision.transforms.Compose(
     [
@@ -61,7 +61,7 @@ optimizer = Adam(model.parameters(), lr=0.001)
 # 3. criterion with triplets sampling
 criterion = NTXentLoss(tau=0.1)
 
-
+print(model.params()[0][0][0])
 callbacks = [
     dl.ControlFlowCallback(
         dl.CriterionCallback(input_key="proj1", target_key="proj2", metric_key="loss"),
@@ -85,5 +85,7 @@ runner.train(
     valid_loader="train",
     valid_metric="loss",
     minimize_valid_metric=True,
-    num_epochs=20,
+    num_epochs=1,
 )
+
+print(model.params()[0][0][0])
