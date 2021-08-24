@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.optim import Adam
 import torchvision
 from torchvision.datasets import CIFAR10
+from torchvision.transforms.transforms import ColorJitter
 
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
@@ -20,7 +21,7 @@ transforms = torchvision.transforms.Compose(
         torchvision.transforms.RandomResizedCrop(32),
         torchvision.transforms.ToTensor(),
         torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
-        torchvision.ColorJitter(
+        torchvision.transforms.ColorJitter(
             aug_strength * 0.8, aug_strength * 0.8, aug_strength * 0.8, aug_strength * 0.2
         ),
     ]
