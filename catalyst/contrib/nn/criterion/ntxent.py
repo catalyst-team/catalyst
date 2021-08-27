@@ -1,25 +1,28 @@
-from typing import List, Union
-
 import torch
 from torch import nn
 
 
 class NTXentLoss(nn.Module):
-    """
-    NTXent loss from `A Simple Framework for Contrastive Learning of Visual Representations` paper.
+    """A Contrastive embedding loss.
 
-    Adapter from:
-    https://arxiv.org/abs/2002.05709
+    It has been proposed in `A Simple Framework
+    for Contrastive Learning of Visual Representations`_.
 
     Example:
-        >>> import torch
-        >>> from torch.nn import functional as F
-        >>> from catalyst.contrib.nn import NTXent
-        >>>
-        >>> features = F.normalize(torch.rand(256, 64, requires_grad=True))
-        >>> labels = torch.randint(high=10, size=(256))
-        >>> criterion = NTXent(tau=0.25)
-        >>> criterion(features1, features2)
+
+    .. code-block:: python
+
+        import torch
+        from torch.nn import functional as F
+        from catalyst.contrib.nn import NTXentLoss
+
+        embeddings_left = F.normalize(torch.rand(256, 64, requires_grad=True))
+        embeddings_right = F.normalize(torch.rand(256, 64, requires_grad=True))
+        criterion = NTXentLoss(tau = 0.1)
+        criterion(embeddings_left, embeddings_right)
+
+    .. _`A Simple Framework for Contrastive Learning of Visual Representations`:
+        https://arxiv.org/abs/2103.03230
     """
 
     def __init__(self, tau: float) -> None:
@@ -54,7 +57,7 @@ class NTXentLoss(nn.Module):
             torch.exp(self.cosineSim(features1, torch.roll(features2, i, 1)) / self.tau)
             for i in range(0, bs)
         ]
-        # todo torch.exp(self.cosineSim(features1, torch.roll(features2, i, 1)))/ self.tau for i in range(0, bs)
+        # todo try different places for temparature
         neg_loss = torch.log(torch.stack(list_neg_loss, dim=0).sum(dim=0)).sum(dim=0)
 
         loss = -pos_loss + neg_loss
