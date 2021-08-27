@@ -44,7 +44,7 @@ def _is_albumentations_available():
 
 def _is_xla_available():
     try:
-        import torch_xla  # noqa: F401
+        import torch_xla.core.xla_model as xm  # noqa: F401
 
         return True
     except ModuleNotFoundError:
@@ -167,6 +167,15 @@ def _is_wandb_available():
         return False
 
 
+def _is_comet_available():
+    try:
+        import comet_ml # noqa: F401
+
+        return True
+    except ImportError:
+        return False
+
+
 def _is_neptune_available():
     try:
         import neptune.new as neptune  # noqa: F401
@@ -217,6 +226,7 @@ class Settings(FrozenClass):
         neptune_required: Optional[bool] = None,
         mlflow_required: Optional[bool] = None,
         wandb_required: Optional[bool] = None,
+        comet_required: Optional[bool] = None,
         # [extras]
         use_lz4: Optional[bool] = None,
         use_pyarrow: Optional[bool] = None,
@@ -329,6 +339,12 @@ class Settings(FrozenClass):
             wandb_required,
             _is_wandb_available,
             "wandb is not available, to install it, " "run `pip install wandb`.",
+        )
+
+        self.comet_required: bool = _get_optional_value(
+            comet_required,
+            _is_comet_available,
+            "comet is not available, to install, run 'pip install comet_ml'."
         )
 
         # self.wandb_required: bool = wandb_required
