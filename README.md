@@ -1541,7 +1541,7 @@ runner.run()
 - Training stages support.
 - Deep Learning best practices: SWA, AdamW, Ranger optimizer, OneCycle, and more.
 - Workflow best practices: fp16 support, distributed training, slurm support.
-- Any hardware backend supported: [AMP, Apex, FairScale, DeepSpeed](./examples/engines)
+- Any hardware backend supported: [AMP, Apex, DeepSpeed, FairScale, XLA](./examples/engines)
 
 
 ### Tests

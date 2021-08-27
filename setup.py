@@ -14,7 +14,7 @@ from setuptools import Command, find_packages, setup
 
 # Package meta-data.
 NAME = "catalyst"
-DESCRIPTION = "Catalyst. PyTorch framework for DL research and development."
+DESCRIPTION = "Catalyst. Accelerated deep learning R&D with PyTorch."
 URL = "https://github.com/catalyst-team/catalyst"
 EMAIL = "scitator@gmail.com"
 AUTHOR = "Sergey Kolesnikov"
@@ -86,20 +86,21 @@ class UploadCommand(Command):
 
 # Specific dependencies.
 extras = {
-    "dev": load_requirements("requirements/requirements-dev.txt"),
+    "albu": load_requirements("requirements/requirements-albu.txt"),
     "cv": load_requirements("requirements/requirements-cv.txt"),
-    "ml": load_requirements("requirements/requirements-ml.txt"),
-    "nifti": load_requirements("requirements/requirements-nifti.txt"),
+    "deepspeed": load_requirements("requirements/requirements-deepspeed.txt"),
+    "dev": load_requirements("requirements/requirements-dev.txt"),
+    "fairscale": load_requirements("requirements/requirements-fairscale.txt"),
     "hydra": load_requirements("requirements/requirements-hydra.txt"),
-    "optuna": load_requirements("requirements/requirements-optuna.txt"),
-    "onnx": load_requirements("requirements/requirements-onnx.txt"),
-    "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
+    "ml": load_requirements("requirements/requirements-ml.txt"),
     "mlflow": load_requirements("requirements/requirements-mlflow.txt"),
     "neptune": load_requirements("requirements/requirements-neptune.txt"),
+    "nifti": load_requirements("requirements/requirements-nifti.txt"),
+    "onnx-gpu": load_requirements("requirements/requirements-onnx-gpu.txt"),
+    "onnx": load_requirements("requirements/requirements-onnx.txt"),
+    "optuna": load_requirements("requirements/requirements-optuna.txt"),
     "wandb": load_requirements("requirements/requirements-wandb.txt"),
-    "fairscale": load_requirements("requirements/requirements-fairscale.txt"),
-    "deepspeed": load_requirements("requirements/requirements-deepspeed.txt"),
-    "albu": load_requirements("requirements/requirements-albu.txt"),
+    # "xla": load_requirements("requirements/requirements-xla.txt"),
 }
 extras["all"] = extras["cv"] + extras["ml"] + extras["hydra"] + extras["optuna"]
 # Meta dependency groups.

@@ -44,7 +44,7 @@ def _is_albumentations_available():
 
 def _is_xla_available():
     try:
-        import torch_xla.core.xla_model as xm  # noqa: F401
+        import torch_xla  # noqa: F401
 
         return True
     except ModuleNotFoundError:
