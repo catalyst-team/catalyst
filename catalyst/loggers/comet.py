@@ -86,7 +86,7 @@ class CometLogger(ILogger):
         experiment_id: str = None,
         comet_mode: str = "online",
         tags: List = None,
-        logging_frequency: int = 10,
+        logging_frequency: int = 1,
         **experiment_kwargs,
     ) -> None:
         self.comet_mode = comet_mode
