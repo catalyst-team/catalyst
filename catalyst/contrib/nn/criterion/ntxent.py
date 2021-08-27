@@ -25,15 +25,22 @@ class NTXentLoss(nn.Module):
         https://arxiv.org/abs/2103.03230
     """
 
-    def __init__(self, tau: float) -> None:
+    def __init__(self, tau: float, reduction: str = "mean") -> None:
         """
 
         Args:
-            tau: tau to use
+            tau: temperature
+            reduction (string, optional): specifies the reduction to apply to the output:
+                ``"none"`` | ``"mean"`` | ``"sum"``.
+                ``"none"``: no reduction will be applied,
+                ``"mean"``: the sum of the output will be divided by the number of
+                positive pairs in the output,
+                ``"sum"``: the output will be summed.
         """
         super().__init__()
         self.tau = tau
         self.cosineSim = nn.CosineSimilarity()
+        self.reduction = reduction
 
     def forward(self, features1: torch.Tensor, features2: torch.Tensor) -> torch.Tensor:
         """
@@ -61,4 +68,7 @@ class NTXentLoss(nn.Module):
         neg_loss = torch.log(torch.stack(list_neg_loss, dim=0).sum(dim=0)).sum(dim=0)
 
         loss = -pos_loss + neg_loss
+        if self.reduction == "mean":
+            loss = loss / features1.shape[0]
+
         return loss
