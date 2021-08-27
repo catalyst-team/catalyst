@@ -15,8 +15,10 @@ if SETTINGS.wandb_required:
 if SETTINGS.neptune_required:
     from catalyst.loggers.neptune import NeptuneLogger
 
-__all__ = ["ConsoleLogger", "CSVLogger", "TensorboardLogger"]
+if SETTINGS.comet_required:
+    from catalyst.loggers.comet import CometLogger
 
+__all__ = ["ConsoleLogger", "CSVLogger", "TensorboardLogger"]
 
 if SETTINGS.mlflow_required:
     __all__ += ["MLflowLogger"]
@@ -26,3 +28,6 @@ if SETTINGS.wandb_required:
 
 if SETTINGS.neptune_required:
     __all__ += ["NeptuneLogger"]
+
+if SETTINGS.comet_required:
+    __all__ += ["CometLogger"]
