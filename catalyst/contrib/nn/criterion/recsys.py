@@ -382,6 +382,19 @@ class RocStarLoss(PairwiseLoss):
             Default: ``10``.
         update_gamma_each: Number of steps after which to recompute gamma value.
             Default: ``10``.
+
+    Example:
+
+        .. code-block:: python
+
+            import torch
+            from catalyst.contrib.nn.criterion import recsys
+
+            outputs = torch.randn(5, 1, requires_grad=True)
+            targets = torch.randn(5, 1, requires_grad=True)
+
+            output = recsys.RocStarLoss()(outputs, targets)
+            output.backward()
     """
 
     def __init__(
