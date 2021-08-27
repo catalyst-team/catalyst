@@ -446,8 +446,12 @@ class RocStarLoss(PairwiseLoss):
 
         # Update FIFO queue
         batch_size = outputs.size(0)
-        self.outputs_history = torch.cat((self.outputs_history[batch_size:], outputs))
-        self.targets_history = torch.cat((self.targets_history[batch_size:], targets))
+        self.outputs_history = torch.cat(
+            (self.outputs_history[batch_size:], outputs.clone().detach())
+        )
+        self.targets_history = torch.cat(
+            (self.targets_history[batch_size:], targets.clone().detach())
+        )
 
         return loss
 
