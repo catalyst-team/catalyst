@@ -8,10 +8,10 @@ class simCLRDatasetWrapper(Dataset):
     ):
         super().__init__()
 
-        if not isinstance(transform_right, None) and not isinstance(transform_left, None):
+        if not transform_right is None and not transform_left is None:
             self.transform_right = transform_right
             self.transform_left = transform_left
-        elif not isinstance(transforms, None):
+        elif not transforms is None:
             self.transform_right = transforms
             self.transform_left = transforms
         else:
