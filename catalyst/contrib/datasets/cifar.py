@@ -279,9 +279,9 @@ class Cifar10MLDataset(metric_learning.MetricLearningTrainDataset, CIFAR10):
 
     def _filter(self) -> None:
         """Filter CIFAR dataset: select images of 0, 1, 2, 3, 4 classes."""
-        mask = array(self.targets) < self._split
+        mask = np.array(self.targets) < self._split
         self.data = self.data[mask]
-        self.targets = array(self.targets)[mask].tolist()
+        self.targets = np.array(self.targets)[mask].tolist()
 
 
 class CifarQGDataset(metric_learning.QueryGalleryDataset):
@@ -326,9 +326,9 @@ class CifarQGDataset(metric_learning.QueryGalleryDataset):
     def _filter(self) -> None:
         """Filter CIFAR10 dataset: select images of 'dog', 'frog',
         'horse', 'ship', 'truck' classes."""
-        mask = array(self._cifar.targets) >= self._split
+        mask = np.array(self._cifar.targets) >= self._split
         self._cifar.data = self._cifar.data[mask]
-        self._cifar.targets = array(self._cifar.targets)[mask].tolist()
+        self._cifar.targets = np.array(self._cifar.targets)[mask].tolist()
 
     def __getitem__(self, idx: int) -> Dict[str, Any]:
         """

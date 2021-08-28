@@ -39,7 +39,7 @@ class NTXentLoss(nn.Module):
         """
         super().__init__()
         self.tau = tau
-        self.cosineSim = nn.CosineSimilarity()
+        self.cosine_sim = nn.CosineSimilarity()
         self.reduction = reduction
 
     def forward(self, features1: torch.Tensor, features2: torch.Tensor) -> torch.Tensor:
@@ -69,11 +69,11 @@ class NTXentLoss(nn.Module):
         # torch.exp(1) self similarity
         exp_sim_sum = exp_cosine_matrix.sum(dim=1) - e**(1/self.tau)
         neg_loss = torch.log(exp_sim_sum).sum()
-        pos_loss = self.cosineSim(features1, features2).sum(dim=0) / self.tau
+        pos_loss = self.cosine_sim(features1, features2).sum(dim=0) / self.tau
         
         # 2*poss_loss (i,j) and (j,i)
         loss = -2*pos_loss + neg_loss
         if self.reduction == "mean":
-            loss = loss / feature_matrix.shape[0]
+            loss = loss / (2*bs)
 
         return loss
