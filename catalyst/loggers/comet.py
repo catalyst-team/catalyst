@@ -97,8 +97,7 @@ class CometLogger(ILogger):
         self.comet_mode = comet_mode
         self.logging_frequency = logging_frequency
 
-        self.experiment = self._get_experiment(self.comet_mode,
-                                               self.experiment_id)
+        self.experiment = self._get_experiment(self.comet_mode, self.experiment_id)
         self.experiment.log_other("Created from", "Catalyst")
         if tags is not None:
             self.experiment.add_tags(tags)
@@ -114,9 +113,7 @@ class CometLogger(ILogger):
                 )
 
             return comet_ml.OfflineExperiment(
-                workspace=self.workspace,
-                project_name=self.project_name,
-                **self.experiment_kwargs,
+                workspace=self.workspace, project_name=self.project_name, **self.experiment_kwargs,
             )
 
         else:
@@ -129,9 +126,7 @@ class CometLogger(ILogger):
                 )
 
             return comet_ml.Experiment(
-                workspace=self.workspace,
-                project_name=self.project_name,
-                **self.experiment_kwargs,
+                workspace=self.workspace, project_name=self.project_name, **self.experiment_kwargs,
             )
 
     def log_metrics(
@@ -193,9 +188,7 @@ class CometLogger(ILogger):
 
         self.image_name = f"{scope}_{tag}"
 
-        self.experiment.log_image(image,
-                                  name=self.image_name,
-                                  step=global_batch_step)
+        self.experiment.log_image(image, name=self.image_name, step=global_batch_step)
 
     def log_hparams(
         self,
@@ -237,6 +230,7 @@ class CometLogger(ILogger):
         metadata_parameters = {
             "stage_key": stage_key,
             "loader_key": loader_key,
+            "scope": scope,
         }
         passed_metadata_parameters = {
             k: v for k, v in metadata_parameters.items() if v is not None
@@ -244,14 +238,14 @@ class CometLogger(ILogger):
         if path_to_artifact:
             self.experiment.log_asset(
                 path_to_artifact,
-                tag,
+                file_name=tag,
                 step=global_batch_step,
                 metadata=passed_metadata_parameters,
             )
         else:
             self.experiment.log_asset_data(
                 pickle.dumps(artifact),
-                tag,
+                filen_name=tag,
                 step=global_batch_step,
                 epoch=global_epoch_step,
                 metadata=passed_metadata_parameters,
