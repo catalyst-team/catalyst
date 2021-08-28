@@ -3,13 +3,21 @@ from torch.utils.data import Dataset, IterableDataset
 
 
 class simCLRDatasetWrapper(Dataset):
-    def __init__(self, dataset: Dataset, transform_left, transform_right=None):
+    def __init__(
+        self, dataset: Dataset, transforms=None, transform_left=None, transform_right=None
+    ):
         super().__init__()
-        self.transform_left = transform_left
-        if not isinstance(transform_right, None):
+
+        if not isinstance(transform_right, None) and not isinstance(transform_left, None):
             self.transform_right = transform_right
+            self.transform_left = transform_left
+        elif not isinstance(transforms, None):
+            self.transform_right = transforms
+            self.transform_left = transforms
         else:
-            self.transform_right = transform_left
+            raise ValueError(
+                "Specify transforms or transform_left and transform_right simultaneously."
+            )
         self.dataset = dataset
 
     def __len__(self):
