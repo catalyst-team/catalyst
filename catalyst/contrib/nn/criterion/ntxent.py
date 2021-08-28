@@ -1,6 +1,6 @@
 import torch
 from torch import nn
-
+from math import e
 
 class NTXentLoss(nn.Module):
     """A Contrastive embedding loss.
@@ -59,16 +59,21 @@ class NTXentLoss(nn.Module):
         ), f"Invalid shape of input features: {features1.shape} and {features2.shape}"
         bs = features1.shape[0]
 
-        pos_loss = self.cosineSim(features1, features2).sum(dim=0) / self.tau
-        list_neg_loss = [
-            torch.exp(self.cosineSim(features1, torch.roll(features2, i, 1)) / self.tau)
-            for i in range(0, bs)
-        ]
-        # todo try different places for temparature
-        neg_loss = torch.log(torch.stack(list_neg_loss, dim=0).sum(dim=0)).sum(dim=0)
+        feature_matrix = torch.cat([features1, features2])
+        feature_matrix = torch.nn.functional.normalize(feature_matrix)
+        cosine_matrix = (2 - torch.cdist(feature_matrix, feature_matrix) ** 2) / 2
 
-        loss = -pos_loss + neg_loss
+        # todo try different places for temparature
+        exp_cosine_matrix = torch.exp(cosine_matrix / self.tau)
+        # neg part of the loss
+        # torch.exp(1) self similarity
+        exp_sim_sum = exp_cosine_matrix.sum(dim=1) - e**(1/self.tau)
+        neg_loss = torch.log(exp_sim_sum).sum()
+        pos_loss = self.cosineSim(features1, features2).sum(dim=0) / self.tau
+        
+        # 2*poss_loss (i,j) and (j,i)
+        loss = -2*pos_loss + neg_loss
         if self.reduction == "mean":
-            loss = loss / features1.shape[0]
+            loss = loss / feature_matrix.shape[0]
 
         return loss
