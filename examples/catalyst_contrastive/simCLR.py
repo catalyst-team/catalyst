@@ -40,14 +40,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
     batch_size = args.batch_size
     aug_strength = args.aug_strength
-    transforms = torchvision.transform_left.Compose(
+    transforms = torchvision.transforms.Compose(
         [
-            torchvision.transform_left.RandomResizedCrop(32),
-            torchvision.transform_left.ToTensor(),
-            torchvision.transform_left.Normalize(
-                [0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]
-            ),
-            torchvision.transform_left.ColorJitter(
+            torchvision.transforms.RandomResizedCrop(32),
+            torchvision.transforms.ToTensor(),
+            torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
+            torchvision.transforms.ColorJitter(
                 aug_strength * 0.8, aug_strength * 0.8, aug_strength * 0.8, aug_strength * 0.2
             ),
         ]
