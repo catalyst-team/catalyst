@@ -16,8 +16,8 @@ class CometLogger(ILogger):
 
     You will need a Comet API Key to log your Catalyst runs to Comet.
     You can sign up for a free account here: https://www.comet.ml/signup
-    
-    Check out our Quickstart Guide to learn more: 
+
+    Check out our Quickstart Guide to learn more:
     https://www.comet.ml/docs/quick-start/.
 
     Args:
