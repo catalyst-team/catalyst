@@ -6,7 +6,6 @@ class simCLRDatasetWrapper(Dataset):
     def __init__(self, dataset: Dataset, transforms):
         super().__init__()
         self.transforms = transforms
-        self._dataset = dataset
         self.dataset = dataset
 
     def __len__(self):

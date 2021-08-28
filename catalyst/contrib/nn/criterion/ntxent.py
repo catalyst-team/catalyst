@@ -69,6 +69,6 @@ class NTXentLoss(nn.Module):
 
         loss = -pos_loss + neg_loss
         if self.reduction == "mean":
-            loss = loss / features1.shape[0]
+            loss = loss / bs
 
         return loss
