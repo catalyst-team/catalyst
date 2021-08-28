@@ -7,10 +7,9 @@ import torch.nn.functional as F
 from torch.optim import Adam
 import torchvision
 
-from catalyst import data, dl
-from catalyst.contrib import datasets, models, nn
+from catalyst import dl
+from catalyst.contrib import nn
 from catalyst.contrib.data.datawrappers import simCLRDatasetWrapper
-from catalyst.contrib.datasets.cifar import Cifar10MLDataset, CifarQGDataset
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion import NTXentLoss
 
@@ -41,21 +40,24 @@ if __name__ == "__main__":
     args = parser.parse_args()
     batch_size = args.batch_size
     aug_strength = args.aug_strength
-    transforms = torchvision.transforms.Compose(
+    transforms = torchvision.transform_left.Compose(
         [
-            torchvision.transforms.RandomResizedCrop(32),
-            torchvision.transforms.ToTensor(),
-            torchvision.transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]),
-            torchvision.transforms.ColorJitter(
+            torchvision.transform_left.RandomResizedCrop(32),
+            torchvision.transform_left.ToTensor(),
+            torchvision.transform_left.Normalize(
+                [0.4914, 0.4822, 0.4465], [0.2023, 0.1994, 0.2010]
+            ),
+            torchvision.transform_left.ColorJitter(
                 aug_strength * 0.8, aug_strength * 0.8, aug_strength * 0.8, aug_strength * 0.2
             ),
         ]
     )
 
-    # Cifar10MLDataset has mistakes 
+    # Cifar10MLDataset has mistakes
     # cifar_train = Cifar10MLDataset(root="./data", download=True, transform=None)
-    
+
     from torchvision.datasets import CIFAR10
+
     cifar_train = CIFAR10(root="./data", download=True, transform=None)
     simCLR_train = simCLRDatasetWrapper(cifar_train, transforms=transforms)
     train_loader = torch.utils.data.DataLoader(
