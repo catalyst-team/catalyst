@@ -169,7 +169,7 @@ def _is_wandb_available():
 
 def _is_comet_available():
     try:
-        import comet_ml # noqa: F401
+        import comet_ml  # noqa: F401
 
         return True
     except ImportError:
@@ -344,7 +344,7 @@ class Settings(FrozenClass):
         self.comet_required: bool = _get_optional_value(
             comet_required,
             _is_comet_available,
-            "comet is not available, to install, run 'pip install comet_ml'."
+            "comet is not available, to install, run 'pip install comet_ml'.",
         )
 
         # self.wandb_required: bool = wandb_required
@@ -561,7 +561,6 @@ class MergedConfigParser:
 SETTINGS = Settings.parse()
 setattr(SETTINGS, "IS_CUDA_AVAILABLE", IS_CUDA_AVAILABLE)  # noqa: B010
 setattr(SETTINGS, "NUM_CUDA_DEVICES", NUM_CUDA_DEVICES)  # noqa: B010
-
 
 __all__ = [
     "SETTINGS",
