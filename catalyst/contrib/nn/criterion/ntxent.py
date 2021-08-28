@@ -59,9 +59,9 @@ class NTXentLoss(nn.Module):
         ), f"Invalid shape of input features: {features1.shape} and {features2.shape}"
         bs = features1.shape[0]
 
-        pos_loss = self.cosineSim(features1, features2).sum(dim=0) / self.tau
+        pos_loss = self.cosine_sim(features1, features2).sum(dim=0) / self.tau
         list_neg_loss = [
-            torch.exp(self.cosineSim(features1, torch.roll(features2, i, 1)) / self.tau)
+            torch.exp(self.cosine_sim(features1, torch.roll(features2, i, 1)) / self.tau)
             for i in range(0, bs)
         ]
         # todo try different places for temparature
