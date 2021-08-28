@@ -65,7 +65,6 @@ optimizer = Adam(model.parameters(), lr=0.001)
 # 3. criterion with triplets sampling
 criterion = NTXentLoss(tau=0.1)
 
-print(list(model.parameters())[0][0][0])
 callbacks = [
     dl.ControlFlowCallback(
         dl.CriterionCallback(input_key="proj1", target_key="proj2", metric_key="loss"),
@@ -91,5 +90,3 @@ runner.train(
     minimize_valid_metric=True,
     num_epochs=100,
 )
-
-print(list(model.parameters())[0][0][0])
