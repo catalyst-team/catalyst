@@ -39,7 +39,7 @@ class NTXentLoss(nn.Module):
         """
         super().__init__()
         self.tau = tau
-        self.cosineSim = nn.CosineSimilarity()
+        self.cosine_sim = nn.CosineSimilarity()
         self.reduction = reduction
 
     def forward(self, features1: torch.Tensor, features2: torch.Tensor) -> torch.Tensor:
