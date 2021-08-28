@@ -6,8 +6,6 @@ import torch
 import torch.nn.functional as F
 from torch.optim import Adam
 import torchvision
-from torchvision.datasets import CIFAR10
-from torchvision.transforms.transforms import ColorJitter
 
 from catalyst import data, dl
 from catalyst.contrib import datasets, models, nn
@@ -16,33 +14,33 @@ from catalyst.contrib.datasets.cifar import Cifar10MLDataset, CifarQGDataset
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion import NTXentLoss
 
-parser = argparse.ArgumentParser(description="Train Barlow Twins on cifar-10")
+parser = argparse.ArgumentParser(description="Train SimCLR on cifar-10")
 parser.add_argument("--feature_dim", default=128, type=int, help="Feature dim for latent vector")
 parser.add_argument("--temperature", default=0.5, type=float, help="Temperature used in softmax")
 parser.add_argument(
-    "--batch_size", default=1024, type=int, help="Number of images in each mini-batch"
+    "--batch-size", default=1024, type=int, help="Number of images in each mini-batch"
 )
 parser.add_argument(
-    "--learning_rate", default=0.001, type=float, help="Learning rate for optimizer"
+    "--learning-rate", default=0.001, type=float, help="Learning rate for optimizer"
 )
 parser.add_argument(
     "--epochs", default=100, type=int, help="Number of sweeps over the dataset to train"
 )
 parser.add_argument(
-    "--num_workers", default=8, type=float, help="Number of workers to process a dataloader"
+    "--num-workers", default=8, type=float, help="Number of workers to process a dataloader"
 )
 parser.add_argument(
     "--logdir", default="./logdir", type=str, help="Logs directory (tensorboard, weights, etc)",
 )
 
 parser.add_argument(
-    "--aug_strength", default=1.0, type=float, help="Strength of augmentations",
+    "--aug-strength", default=1.0, type=float, help="Strength of augmentations",
 )
 
 if __name__ == "__main__":
     args = parser.parse_args()
     batch_size = args.batch_size
-    aug_strength = parser.aug_strength
+    aug_strength = args.aug_strength
     transforms = torchvision.transforms.Compose(
         [
             torchvision.transforms.RandomResizedCrop(32),
