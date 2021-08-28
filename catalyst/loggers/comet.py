@@ -245,7 +245,7 @@ class CometLogger(ILogger):
         else:
             self.experiment.log_asset_data(
                 pickle.dumps(artifact),
-                filen_name=tag,
+                file_name=tag,
                 step=global_batch_step,
                 epoch=global_epoch_step,
                 metadata=passed_metadata_parameters,
