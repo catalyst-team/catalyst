@@ -38,11 +38,17 @@ class NTXentLoss(nn.Module):
                 ``"mean"``: the sum of the output will be divided by the number of
                 positive pairs in the output,
                 ``"sum"``: the output will be summed.
+
+        Raises:
+            ValueError: if reduction is not mean, sum or none
         """
         super().__init__()
         self.tau = tau
         self.cosine_sim = nn.CosineSimilarity()
         self.reduction = reduction
+
+        if self.reduction not in ["none", "mean", "sum"]:
+            raise ValueError(f"Reduction should be: mean, sum, none. But got - {self.reduction}!")
 
     def forward(self, features1: torch.Tensor, features2: torch.Tensor) -> torch.Tensor:
         """
@@ -59,7 +65,6 @@ class NTXentLoss(nn.Module):
         assert (
             features1.shape == features2.shape
         ), f"Invalid shape of input features: {features1.shape} and {features2.shape}"
-        bs = features1.shape[0]
 
         feature_matrix = torch.cat([features1, features2])
         feature_matrix = torch.nn.functional.normalize(feature_matrix)
