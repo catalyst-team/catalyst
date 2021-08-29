@@ -52,10 +52,11 @@ if __name__ == "__main__":
         ]
     )
 
-    # Cifar10MLDataset has mistakes 
+    # Cifar10MLDataset has mistakes
     # cifar_train = Cifar10MLDataset(root="./data", download=True, transform=None)
-    
+
     from torchvision.datasets import CIFAR10
+
     cifar_train = CIFAR10(root="./data", download=True, transform=None)
     simCLR_train = simCLRDatasetWrapper(cifar_train, transforms=transforms)
     train_loader = torch.utils.data.DataLoader(

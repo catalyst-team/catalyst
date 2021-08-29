@@ -1,6 +1,8 @@
+from math import e
+
 import torch
 from torch import nn
-from math import e
+
 
 class NTXentLoss(nn.Module):
     """A Contrastive embedding loss.
@@ -67,13 +69,13 @@ class NTXentLoss(nn.Module):
         exp_cosine_matrix = torch.exp(cosine_matrix / self.tau)
         # neg part of the loss
         # torch.exp(1) self similarity
-        exp_sim_sum = exp_cosine_matrix.sum(dim=1) - e**(1/self.tau)
+        exp_sim_sum = exp_cosine_matrix.sum(dim=1) - e ** (1 / self.tau)
         neg_loss = torch.log(exp_sim_sum).sum()
         pos_loss = self.cosine_sim(features1, features2).sum(dim=0) / self.tau
-        
+
         # 2*poss_loss (i,j) and (j,i)
-        loss = -2*pos_loss + neg_loss
+        loss = -2 * pos_loss + neg_loss
         if self.reduction == "mean":
-            loss = loss / (2*bs)
+            loss = loss / (2 * bs)
 
         return loss
