@@ -87,3 +87,9 @@ class NTXentLoss(nn.Module):
         elif self.reduction == "sum":
             loss = loss.sum()
         return loss
+
+if __name__ == '__main__':
+    emb1 = torch.tensor([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+    emb2 = torch.tensor([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]])
+    
+    print(NTXentLoss(tau=1)(emb1, emb2).item())
