@@ -24,7 +24,7 @@ class NTXentLoss(nn.Module):
         criterion(embeddings_left, embeddings_right)
 
     .. _`A Simple Framework for Contrastive Learning of Visual Representations`:
-        https://arxiv.org/abs/2103.03230
+        https://arxiv.org/abs/2002.05709
     """
 
     def __init__(self, tau: float, reduction: str = "mean") -> None:

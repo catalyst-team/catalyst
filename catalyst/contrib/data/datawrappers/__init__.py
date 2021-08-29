@@ -1,1 +1,2 @@
-from catalyst.contrib.data.datawrappers.simCLR import simCLRDatasetWrapper
+# flake8: noqa
+from catalyst.contrib.data.datawrappers.contrastive_dataset import ContrastiveDataset
