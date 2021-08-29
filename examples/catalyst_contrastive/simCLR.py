@@ -7,10 +7,9 @@ import torch.nn.functional as F
 from torch.optim import Adam
 import torchvision
 
-from catalyst import data, dl
-from catalyst.contrib import datasets, models, nn
+from catalyst import dl
+from catalyst.contrib import nn
 from catalyst.contrib.data.datawrappers import simCLRDatasetWrapper
-from catalyst.contrib.datasets.cifar import Cifar10MLDataset, CifarQGDataset
 from catalyst.contrib.models.cv.encoders import ResnetEncoder
 from catalyst.contrib.nn.criterion import NTXentLoss
 
