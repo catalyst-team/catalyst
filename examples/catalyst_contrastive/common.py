@@ -1,3 +1,4 @@
+# flake8: noqa
 from catalyst import dl
 
 
