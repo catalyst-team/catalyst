@@ -70,12 +70,14 @@ class NTXentLoss(nn.Module):
         # neg part of the loss
         # torch.exp(1) self similarity
         exp_sim_sum = exp_cosine_matrix.sum(dim=1) - e ** (1 / self.tau)
-        neg_loss = torch.log(exp_sim_sum).sum()
-        pos_loss = self.cosine_sim(features1, features2).sum(dim=0) / self.tau
+        neg_loss = torch.log(exp_sim_sum)
+        pos_loss = self.cosine_sim(features1, features2) / self.tau
+        pos_loss = torch.cat([pos_loss, pos_loss])
 
         # 2*poss_loss (i,j) and (j,i)
-        loss = -2 * pos_loss + neg_loss
+        loss = -pos_loss + neg_loss
         if self.reduction == "mean":
-            loss = loss / (2 * bs)
-
+            loss = loss.mean()
+        elif self.reduction == "sum":
+            loss = loss.sum()
         return loss
