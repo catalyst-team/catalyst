@@ -217,3 +217,29 @@ def test_barlow_twins_loss(
         embeddings_left, embeddings_right
     ).item()
     assert np.isclose(value, true_value)
+
+
+@pytest.mark.parametrize(
+    "embeddings_left,embeddings_right,tau,true_value",
+    (
+        (
+            torch.tensor([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]),
+            torch.tensor([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]),
+            1,
+            0.90483244155,
+        ),
+    ),
+)
+def test_ntxent_loss(
+    embeddings_left: torch.Tensor, embeddings_right: torch.Tensor, tau: float, true_value: float,
+):
+    """
+    Test NTXent Loss
+    Args:
+        embeddings_left: left objects embeddings [batch_size, features_dim]
+        embeddings_right: right objects embeddings [batch_size, features_dim]
+        tau: temperature 
+        true_value: expected loss value
+    """
+    value = NTXentLoss(tau=tau)(embeddings_left, embeddings_right).item()
+    assert np.isclose(value, true_value)
