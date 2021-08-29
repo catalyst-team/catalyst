@@ -68,6 +68,7 @@ class NTXentLoss(nn.Module):
 
         feature_matrix = torch.cat([features1, features2])
         feature_matrix = torch.nn.functional.normalize(feature_matrix)
+        # if ||x|| = ||y|| = 1 then||x-y||^2 = 2 - 2<x,y>
         cosine_matrix = (2 - torch.cdist(feature_matrix, feature_matrix) ** 2) / 2
 
         # todo try different places for temparature
