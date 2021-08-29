@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Callable, Dict
 
 from torch.utils.data import Dataset
 
@@ -37,14 +37,19 @@ class ContrastiveDataset(Dataset):
     """
 
     def __init__(
-        self, dataset: Dataset, transforms=None, transform_left=None, transform_right=None
+        self,
+        dataset: Dataset,
+        transforms: Callable = None,
+        transform_left: Callable = None,
+        transform_right: Callable = None,
     ) -> None:
         """
         Args:
-            dataset: original dataset for agumention
-            transforms: transform
-            transform_left: transform
-            transform_right: transform
+            dataset: original dataset for augmentation
+            transforms: transforms which will be applied to original batch to get both left and right output batch.
+            transform_left: transform only for left batch
+            transform_right: transform only for right batch
+
         """
         super().__init__()
 
@@ -56,7 +61,7 @@ class ContrastiveDataset(Dataset):
             self.transform_left = transforms
         else:
             raise ValueError(
-                "Specify transforms or transform_left and transform_right simultaneously."
+                "Specify transforms or 'transform_left' and 'transform_right' simultaneously or only 'transforms'."
             )
         self.dataset = dataset
 
